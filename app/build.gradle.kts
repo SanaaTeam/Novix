@@ -70,7 +70,7 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest")
 
     reports {
-        xml.required.set(true)
+        xml.required.set(false)
         html.required.set(true)
     }
 
