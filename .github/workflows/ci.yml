@@ -23,7 +23,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Run tests with coverage
-        run: ./gradlew test jacocoTestReport
+        run: ./gradlew :app:testDebugUnitTest :app:jacocoTestReport
+
 
       - name: Check if coverage is >= 80%
         run: |
