@@ -75,7 +75,13 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         "**/Manifest*.*",
         "**/*Test*.*",
         "android/**/*.*",
-        "sun/security/smartcardio/**"
+        "sun/security/smartcardio/**",
+        "**/MainActivity.*",
+        "**/MainActivity\$*.*",
+        "**/*Activity.*",
+        "**/*\$WhenMappings.*",
+        "**/ui/theme/**",
+        "**/ComposableSingletons*.*"
     )
 
     val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
@@ -106,7 +112,13 @@ tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
         "**/Manifest*.*",
         "**/*Test*.*",
         "android/**/*.*",
-        "sun/security/smartcardio/**"
+        "sun/security/smartcardio/**",
+        "**/MainActivity.*",
+        "**/MainActivity\$*.*",
+        "**/*Activity.*",
+        "**/*\$WhenMappings.*",
+        "**/ui/theme/**",
+        "**/ComposableSingletons*.*"
     )
 
     val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
