@@ -27,8 +27,8 @@ jobs:
 
       - name: Check if coverage is >= 80%
         run: |
-          MISSED=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[^\"]+" app/build/reports/jacoco/test/jacocoTestReport.xml)
-          COVERED=$(grep -oPm1 "(?<=<counter type=\"LINE\" covered=\")[^\"]+" app/build/reports/jacoco/test/jacocoTestReport.xml)
+          MISSED=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[^\"]+"  app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml)
+          COVERED=$(grep -oPm1 "(?<=<counter type=\"LINE\" covered=\")[^\"]+"  app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml)
           TOTAL=$(awk -v m=$MISSED -v c=$COVERED 'BEGIN {print m + c}')
           PERCENT=$(awk -v m=$MISSED -v c=$COVERED 'BEGIN {print (c / (c + m)) * 100}')
           echo "Line coverage is $PERCENT%"
