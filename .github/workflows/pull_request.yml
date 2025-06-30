@@ -20,7 +20,7 @@ jobs:
           cache: 'gradle'
 
       - name: Grant execute permissions for gradlew
-        run: git update-index --chmod=+x gradlew
+        run: chmod +x ./gradlew
 
       - name: Build Project
         run: ./gradlew build
