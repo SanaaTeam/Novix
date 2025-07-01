@@ -9,6 +9,9 @@ jobs:
   test-coverage:
     runs-on: ubuntu-latest
 
+    env:
+      COVERAGE_THRESHOLD: 80
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -16,28 +19,35 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '22'
+          java-version: '11'
           distribution: 'temurin'
 
-      - name: Grant execute permission for Gradlew
+      - name: Grant permission for Gradle
         run: chmod +x ./gradlew
 
-      - name: Run tests with coverage
+      - name: Run Unit Tests with Coverage
         run: ./gradlew :app:testDebugUnitTest :app:jacocoTestReport
 
 
-      - name: Check if coverage is >= 80%
+      - name: Parse & Evaluate Line Coverage Report
         run: |
-          MISSED=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[^\"]+"  app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml)
-          COVERED=$(grep -oPm1 "(?<=<counter type=\"LINE\" covered=\")[^\"]+"  app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml)
-          TOTAL=$(awk -v m=$MISSED -v c=$COVERED 'BEGIN {print m + c}')
-          PERCENT=$(awk -v m=$MISSED -v c=$COVERED 'BEGIN {print (c / (c + m)) * 100}')
-          echo "Line coverage is $PERCENT%"
-          THRESHOLD=80
-          RESULT=$(awk -v p=$PERCENT -v t=$THRESHOLD 'BEGIN {print (p < t)}')
-          if [[ $RESULT == 1 ]]; then
-            echo "Coverage below 80%!"
+          COVERAGE_XML="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
+          MISSED=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[^\"]+" "$COVERAGE_XML")
+          COVERED=$(grep -oPm1 "(?<=<counter type=\"LINE\" covered=\")[^\"]+" "$COVERAGE_XML")
+
+          if [[ -z "$MISSED" || -z "$COVERED" ]]; then
+            echo "Failed to extract coverage data from report"
+            exit 1
+          fi
+
+          TOTAL=$(echo "$MISSED + $COVERED" | bc)
+          PERCENT=$(echo "scale=2; ($COVERED / $TOTAL) * 100" | bc)
+
+          echo "Line coverage: $PERCENT%"
+
+          if (( $(echo "$PERCENT < $COVERAGE_THRESHOLD" | bc -l) )); then
+            echo "Coverage below ${COVERAGE_THRESHOLD}%!"
             exit 1
           else
-            echo "Coverage passed with $PERCENT%"
+            echo "Coverage passed with ${PERCENT}%"
           fi
