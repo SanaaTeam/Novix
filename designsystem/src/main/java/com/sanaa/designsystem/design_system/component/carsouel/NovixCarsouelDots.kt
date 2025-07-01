@@ -1,11 +1,12 @@
 package com.sanaa.designsystem.design_system.component.carsouel
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,12 +45,24 @@ fun NovixCarsouelDots(
             val isSelected = index == selectedIndex
             val animatedBackgroundColor by animateColorAsState(
                 targetValue = if (isSelected) Theme.colors.primary else Theme.colors.onPrimaryHint,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessHigh
+                ),
             )
             val animatedStrokeColor by animateColorAsState(
                 targetValue = if (isSelected) Color.Transparent else Theme.colors.stroke,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessHigh
+                ),
             )
             val animatedDotSize by animateDpAsState(
                 targetValue = if (isSelected) 8.dp else 5.dp,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioNoBouncy,
+                    stiffness = Spring.StiffnessHigh
+                ),
             )
 
             Box(
@@ -73,7 +89,8 @@ fun NovixCarsouelDots(
 @PreviewLightDark
 @Composable
 private fun PreviewNovixCarsouelDots() {
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
+    NovixTheme(isDarkMode = true) {
+        var selectedIndex by remember { mutableIntStateOf(2) }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,7 +101,8 @@ private fun PreviewNovixCarsouelDots() {
         ) {
             NovixCarsouelDots(
                 totalDots = 10,
-                selectedIndex = 2
+                selectedIndex = selectedIndex,
+                onDotClick = { selectedIndex = it }
             )
         }
     }
