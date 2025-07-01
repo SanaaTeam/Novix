@@ -22,7 +22,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun AppTopBar(
     modifier: Modifier = Modifier,
-    screenTitle: String? = null,
+    screenTitle: String = "",
     leftContent: @Composable () -> Unit = {},
     rightContent: @Composable () -> Unit = {},
 ) {
@@ -31,21 +31,18 @@ fun AppTopBar(
             .height(56.dp)
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(space = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         leftContent()
-        screenTitle?.let {
-            Text(
-                text = it,
-                style = Theme.textStyle.title.large,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(),
-                color = Theme.colors.title,
-            )
-            rightContent()
-        }
+        Text(
+            text = screenTitle,
+            style = Theme.textStyle.title.large,
+            modifier = Modifier
+                .weight(1f),
+            color = Theme.colors.title,
+        )
+        rightContent()
     }
 }
 
@@ -70,13 +67,13 @@ private fun AppTopBarPreview() {
                     )
 
                 },
+                screenTitle = "Title",
                 rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_plus),
                         onClick = {}
                     )
                 },
-                screenTitle = "Title"
             )
         }
     }
