@@ -66,23 +66,22 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
+val fileFilter = listOf(
+    "**/R.class", "**/R$*.class",
+    "**/BuildConfig.*",
+    "**/Manifest*.*",
+    "**/*Test*.*",
+    "android/**/*.*",
+    "sun/security/smartcardio/**",
+    "**/MainActivity.*",
+    "**/MainActivity\$*.*",
+    "**/*Activity.*",
+    "**/*\$WhenMappings.*",
+    "**/ui/theme/**",
+    "**/ComposableSingletons*.*"
+)
 tasks.register<JacocoReport>("jacocoTestReport") {
     dependsOn("testDebugUnitTest")
-
-    val fileFilter = listOf(
-        "**/R.class", "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "sun/security/smartcardio/**",
-        "**/MainActivity.*",
-        "**/MainActivity\$*.*",
-        "**/*Activity.*",
-        "**/*\$WhenMappings.*",
-        "**/ui/theme/**",
-        "**/ComposableSingletons*.*"
-    )
 
     val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
@@ -102,24 +101,8 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         html.required.set(true)
     }
 }
-
 tasks.register<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
     dependsOn("jacocoTestReport")
-
-    val fileFilter = listOf(
-        "**/R.class", "**/R$*.class",
-        "**/BuildConfig.*",
-        "**/Manifest*.*",
-        "**/*Test*.*",
-        "android/**/*.*",
-        "sun/security/smartcardio/**",
-        "**/MainActivity.*",
-        "**/MainActivity\$*.*",
-        "**/*Activity.*",
-        "**/*\$WhenMappings.*",
-        "**/ui/theme/**",
-        "**/ComposableSingletons*.*"
-    )
 
     val debugTree = fileTree("${layout.buildDirectory.get()}/tmp/kotlin-classes/debug") {
         exclude(fileFilter)
