@@ -24,7 +24,7 @@ val darkSchemaColors = NovixColors(
     statusColors = StatusColors(
         redAccent = Color(0xFFF75662),
         greenAccent = Color(0xFF19744D),
+        greenVariant = Color(0xFF1D1F1E),
         yellowAccent = Color(0xFFCFC657),
-        greenVariant = Color(0xFF1D1F1E)
     )
 )

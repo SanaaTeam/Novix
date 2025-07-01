@@ -88,7 +88,7 @@ private fun PrimaryButtonPreview() {
             PrimaryButton(
                 text = "Watch",
                 onClick = {},
-                icon = painterResource(R.drawable.plus_icon)
+                icon = painterResource(R.drawable.icon_plus)
             )
 
 

@@ -61,7 +61,7 @@ private fun PreviewNegativeButton() {
                 text = "Watch",
                 onClick = { isLoading = !isLoading },
                 isLoading = isLoading,
-                icon = painterResource(id = R.drawable.plus_icon),
+                icon = painterResource(id = R.drawable.icon_plus),
             )
         }
     }

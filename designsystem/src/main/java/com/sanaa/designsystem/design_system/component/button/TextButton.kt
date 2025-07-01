@@ -22,9 +22,9 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun TextButton(
-    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     textColor: Color = Theme.colors.primary,
     isEnabled: Boolean = true,
     isLoading: Boolean = false

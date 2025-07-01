@@ -31,8 +31,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun FabButton(
     icon: Painter,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
     isLoading: Boolean = false,
     backgroundColor: Color = Theme.colors.primary,
@@ -96,17 +96,17 @@ private fun PreviewFabButton() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             FabButton(
-                icon = painterResource(id = R.drawable.plus_icon),
+                icon = painterResource(id = R.drawable.icon_plus),
                 onClick = {},
                 isLoading = true
             )
             FabButton(
-                icon = painterResource(id = R.drawable.plus_icon),
+                icon = painterResource(id = R.drawable.icon_plus),
                 onClick = {},
                 isLoading = false
             )
             FabButton(
-                icon = painterResource(id = R.drawable.plus_icon),
+                icon = painterResource(id = R.drawable.icon_plus),
                 onClick = {},
                 isLoading = false,
                 isEnabled = false

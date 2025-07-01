@@ -22,7 +22,7 @@ import com.sanaa.designsystem.R
 @Composable
 internal fun AnimatedLoadingIndicator(
     size: Dp = 20.dp,
-    icon: Painter = painterResource(id = R.drawable.loading_indicator_icon),
+    icon: Painter = painterResource(id = R.drawable.icon_loading_indicator),
     iconTint: Color = Color.Unspecified,
     modifier: Modifier = Modifier
 ) {

@@ -28,8 +28,8 @@ data class NovixColors(
 data class StatusColors(
     val redAccent: Color,
     val greenAccent: Color,
+    val greenVariant: Color,
     val yellowAccent: Color,
-    val greenVariant: Color
 )
 
 val LocalNovixColors = staticCompositionLocalOf { lightSchemaColors }

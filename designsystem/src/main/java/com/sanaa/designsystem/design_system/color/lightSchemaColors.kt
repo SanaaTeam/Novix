@@ -15,7 +15,7 @@ val lightSchemaColors = NovixColors(
     surface = Color(0xFFFCF9F5),
     surfaceHigh = Color(0xFFFFFFFF),
     onPrimary = Color(0xDEFFFFFF),
-    onPrimaryHint = Color(0x141F1F1F),
+    onPrimaryHint = Color(0x61FFFFFF),
     iconBackground = Color(0xB2000000),
     iconBackgroundLow = Color(0x52FFFFFF),
     backgroundLow = Color(0x08FFFFFF),
@@ -24,7 +24,7 @@ val lightSchemaColors = NovixColors(
     statusColors = StatusColors(
         redAccent = Color(0xFFF75662),
         greenAccent = Color(0xFF19744D),
+        greenVariant = Color(0xFFCFE5DC),
         yellowAccent = Color(0xFFFFC74D),
-        greenVariant = Color(0xFFCFE5DC)
     )
 )

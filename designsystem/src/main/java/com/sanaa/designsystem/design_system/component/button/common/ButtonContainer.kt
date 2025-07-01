@@ -26,6 +26,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 internal fun ButtonContainer(
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isLoading: Boolean = false,
     isEnabled: Boolean = true,
@@ -35,7 +36,6 @@ internal fun ButtonContainer(
     verticalPadding: Dp = 8.dp,
     horizontalPadding: Dp = 16.dp,
     shape: Shape = RoundedCornerShape(12.dp),
-    onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit
 ) {
 
@@ -43,21 +43,20 @@ internal fun ButtonContainer(
         targetValue = if (isEnabled) iconTint else Theme.colors.onPrimaryHint
     )
     val elementsArrangement =
-        if (icon != null && !isLoading || isLoading) Arrangement.spacedBy(8.dp) else Arrangement.Center
+        if (icon != null || isLoading) Arrangement.spacedBy(8.dp) else Arrangement.Center
 
     Row(
-        modifier = modifier.run {
-            height(height = 48.dp)
-                .clip(shape)
-                .background(
-                    color = backgroundColor
-                )
-                .clickable(
-                    enabled = isEnabled && !isLoading,
-                    onClick = onClick
-                )
-                .padding(vertical = verticalPadding, horizontal = horizontalPadding)
-        },
+        modifier = modifier
+            .height(height = 48.dp)
+            .clip(shape)
+            .background(
+                color = backgroundColor
+            )
+            .clickable(
+                enabled = isEnabled && !isLoading,
+                onClick = onClick
+            )
+            .padding(vertical = verticalPadding, horizontal = horizontalPadding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = elementsArrangement,
     ) {

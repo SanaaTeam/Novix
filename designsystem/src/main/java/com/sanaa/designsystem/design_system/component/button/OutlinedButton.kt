@@ -26,8 +26,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun OutlinedButton(
     text: String,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
     textColor: Color = Theme.colors.primary,
     isEnabled: Boolean = true,
     isLoading: Boolean = false,
@@ -77,7 +77,7 @@ private fun PreviewOutlinedButton() {
             OutlinedButton(
                 text = "Watch",
                 onClick = {},
-                icon = painterResource(R.drawable.plus_icon)
+                icon = painterResource(R.drawable.icon_plus)
             )
         }
     }
