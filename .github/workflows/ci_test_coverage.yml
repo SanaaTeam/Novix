@@ -51,3 +51,11 @@ jobs:
           else
             echo "Coverage passed with ${PERCENT}%"
           fi
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          flags: unittests
+          name: novix-coverage-report
