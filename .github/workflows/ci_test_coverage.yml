@@ -25,37 +25,13 @@ jobs:
       - name: Grant permission for Gradle
         run: chmod +x ./gradlew
 
-      - name: Run Unit Tests with Coverage
-        run: ./gradlew :app:testDebugUnitTest :app:jacocoTestReport
-
-
-      - name: Parse & Evaluate Line Coverage Report
-        run: |
-          COVERAGE_XML="app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml"
-          MISSED=$(grep -oPm1 "(?<=<counter type=\"LINE\" missed=\")[^\"]+" "$COVERAGE_XML")
-          COVERED=$(grep -oPm1 "(?<=<counter type=\"LINE\" covered=\")[^\"]+" "$COVERAGE_XML")
-
-          if [[ -z "$MISSED" || -z "$COVERED" ]]; then
-            echo "Failed to extract coverage data from report"
-            exit 1
-          fi
-
-          TOTAL=$(echo "$MISSED + $COVERED" | bc)
-          PERCENT=$(echo "scale=2; ($COVERED / $TOTAL) * 100" | bc)
-
-          echo "Line coverage: $PERCENT%"
-
-          if (( $(echo "$PERCENT < $COVERAGE_THRESHOLD" | bc -l) )); then
-            echo "Coverage below ${COVERAGE_THRESHOLD}%!"
-            exit 1
-          else
-            echo "Coverage passed with ${PERCENT}%"
-          fi
+      - name: Run Unit Tests with Kover Coverage
+        run: ./gradlew :app:testDebugUnitTest :app:koverVerify :app:koverXmlReport :app:koverHtmlReport
 
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: app/build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml
+          files: app/build/reports/kover/report.xml
           flags: unittests
           name: novix-coverage-report
