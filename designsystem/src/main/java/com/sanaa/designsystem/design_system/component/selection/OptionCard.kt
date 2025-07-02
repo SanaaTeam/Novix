@@ -32,21 +32,21 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun OptionCard(
     label: String,
-    onClick: (String) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
 ) {
     val animatedBackgroundColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.primaryVariant else Color.Transparent,
-        animationSpec = tween(durationMillis = 150)
+        animationSpec = tween(durationMillis = 100)
     )
     val animatedStrokeColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.primary else Theme.colors.stroke,
-        animationSpec = tween(durationMillis = 150)
+        animationSpec = tween(durationMillis = 100)
     )
     val animatedBorderWidth by animateDpAsState(
         targetValue = if (isSelected) 1.5.dp else 1.dp,
-        animationSpec = tween(durationMillis = 150)
+        animationSpec = tween(durationMillis = 100)
     )
 
 
@@ -63,7 +63,7 @@ fun OptionCard(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = remember { ripple(bounded = true) },
-                onClick = { onClick(label) }
+                onClick = onClick
             )
             .padding(horizontal = 12.dp)
             .height(56.dp), contentAlignment = Alignment.CenterStart

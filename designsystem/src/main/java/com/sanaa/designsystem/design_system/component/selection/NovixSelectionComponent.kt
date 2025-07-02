@@ -18,18 +18,18 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixSelectionComponent(
-    options: List<String>,
-    selectedOption: String,
-    onOptionSelected: (String) -> Unit,
+fun <T> NovixSelectionComponent(
+    options: List<Option<T>>,
+    selectedValue: T,
+    onOptionSelected: (T) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         options.forEach { option ->
             OptionCard(
-                label = option,
-                onClick = onOptionSelected,
-                isSelected = option == selectedOption,
+                label = option.label,
+                onClick = { onOptionSelected(option.value) },
+                isSelected = option.value == selectedValue,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
@@ -37,6 +37,11 @@ fun NovixSelectionComponent(
         }
     }
 }
+
+data class Option<T>(
+    val label: String,
+    val value: T
+)
 
 @Preview
 @Composable
@@ -51,8 +56,14 @@ private fun PreviewOptionsCard() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             NovixSelectionComponent(
-                options = listOf("Option 1", "Option 2", "Option 3"),
-                selectedOption = selected,
+                options =
+                    listOf(
+                        Option("Option 1", "Option 1"),
+                        Option("Option 2", "Option 2"),
+                        Option("Option 3", "Option 3"),
+                        Option("Option 4", "Option 4"),
+                    ),
+                selectedValue = selected,
                 onOptionSelected = { selected = it }
             )
         }
