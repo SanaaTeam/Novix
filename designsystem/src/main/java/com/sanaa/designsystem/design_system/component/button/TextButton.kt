@@ -1,5 +1,6 @@
 package com.sanaa.designsystem.design_system.component.button
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,11 +45,12 @@ fun TextButton(
             ),
             color = animatedTextColor
         )
-        if (isLoading) {
-            AnimatedLoadingIndicator(
-                iconTint = textColor,
-                modifier = Modifier.padding(start = 4.dp)
-            )
+        Crossfade(isLoading) { loading ->
+            if (loading)
+                AnimatedLoadingIndicator(
+                    iconTint = textColor,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
         }
     }
 

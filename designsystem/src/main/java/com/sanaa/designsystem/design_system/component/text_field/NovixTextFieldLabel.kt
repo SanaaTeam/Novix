@@ -14,7 +14,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTextFiledLabel(
+fun NovixTextFieldLabel(
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -28,7 +28,7 @@ fun NovixTextFiledLabel(
 
 @PreviewLightDark
 @Composable
-private fun NovixTextFiledLabelPreview() {
+private fun NovixTextFieldLabelPreview() {
     NovixTheme(
         isDarkMode = isSystemInDarkTheme()
     ) {
@@ -37,7 +37,7 @@ private fun NovixTextFiledLabelPreview() {
                 .background(color = Theme.colors.surface)
                 .padding(16.dp)
         ) {
-            NovixTextFiledLabel(text = "Title")
+            NovixTextFieldLabel(text = "Title")
         }
     }
 

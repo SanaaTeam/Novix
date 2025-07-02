@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -33,7 +35,7 @@ fun ActorCard(
     modifier: Modifier = Modifier,
     playedCharacter: String? = null,
 ) {
-    Row(
+    Box(
         modifier = modifier
             .height(78.dp)
             .fillMaxWidth()
@@ -53,6 +55,7 @@ fun ActorCard(
                         topStart = 12.dp,
                     )
                 )
+                .zIndex(10f)
                 .clip(
                     RoundedCornerShape(
                         topEnd = 12.dp,
@@ -66,7 +69,7 @@ fun ActorCard(
                 .height(55.dp)
                 .fillMaxWidth()
                 .align(
-                    Alignment.Bottom
+                    Alignment.BottomStart
                 )
                 .background(
                     color = Theme.colors.surface,
@@ -77,23 +80,23 @@ fun ActorCard(
                 .border(
                     width = 1.dp,
                     color = Theme.colors.stroke,
-                    shape = RoundedCornerShape(topEnd = 12.dp, bottomEnd = 12.dp)
-                )
-                .padding(
-                    start = 8.dp
+                    shape = RoundedCornerShape(
+                        topEnd = 12.dp,
+                        bottomEnd = 12.dp,
+                        bottomStart = 12.dp
+                    )
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 86.dp),
             ) {
                 Text(
                     text = actorName,
                     style = Theme.textStyle.title.medium,
                     color = Theme.colors.body,
-                    modifier = Modifier.padding(
-                        top = 8.dp
-                    )
                 )
                 playedCharacter?.let {
                     Text(
