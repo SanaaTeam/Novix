@@ -65,7 +65,6 @@ fun NovixSnackBar(
             text = message,
             style = Theme.textStyle.body.medium,
             color = Theme.colors.title,
-            modifier = Modifier.weight(1f),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

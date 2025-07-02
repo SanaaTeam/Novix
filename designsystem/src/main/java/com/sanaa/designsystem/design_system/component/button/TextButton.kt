@@ -1,7 +1,13 @@
 package com.sanaa.designsystem.design_system.component.button
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,12 +54,19 @@ fun TextButton(
             ),
             color = animatedTextColor
         )
-        Crossfade(isLoading) { loading ->
-            if (loading)
+        AnimatedContent(
+            targetState = isLoading,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(150)) + expandHorizontally() togetherWith
+                        fadeOut(animationSpec = tween(150)) + shrinkHorizontally()
+            }
+        ) { loading ->
+            if (loading) {
                 AnimatedLoadingIndicator(
                     iconTint = textColor,
                     modifier = Modifier.padding(start = 4.dp)
                 )
+            }
         }
     }
 
@@ -60,6 +76,7 @@ fun TextButton(
 @Composable
 private fun TextButtonPreview() {
     NovixTheme(isSystemInDarkTheme()) {
+        var isLoading by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .background(color = Theme.colors.surface)
@@ -67,7 +84,7 @@ private fun TextButtonPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            TextButton(text = "Watch", onClick = {}, isLoading = true)
+            TextButton(text = "Watch", onClick = { isLoading = !isLoading }, isLoading = isLoading)
             TextButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
         }
     }

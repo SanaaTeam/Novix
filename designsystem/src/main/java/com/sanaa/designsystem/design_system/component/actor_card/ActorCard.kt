@@ -7,7 +7,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.R
@@ -64,10 +63,10 @@ fun ActorCard(
                     )
                 ),
         )
-        Row(
+        Column(
             modifier = Modifier
-                .height(55.dp)
                 .fillMaxWidth()
+                .height(55.dp)
                 .align(
                     Alignment.BottomStart
                 )
@@ -85,32 +84,27 @@ fun ActorCard(
                         bottomEnd = 12.dp,
                         bottomStart = 12.dp
                     )
-                ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 86.dp),
-            ) {
-                Text(
-                    text = actorName,
-                    style = Theme.textStyle.title.medium,
-                    color = Theme.colors.body,
                 )
-                playedCharacter?.let {
-                    Text(
-                        text = it,
-                        style = Theme.textStyle.label.small,
-                        color = Theme.colors.hint
-                    )
-                }
+                .padding(start = 86.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = actorName,
+                style = Theme.textStyle.title.medium,
+                color = Theme.colors.body,
+            )
+            playedCharacter?.let {
+                Text(
+                    text = it,
+                    style = Theme.textStyle.label.small,
+                    color = Theme.colors.hint
+                )
             }
         }
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun PreviewActorCard() {
     NovixTheme(isSystemInDarkTheme()) {

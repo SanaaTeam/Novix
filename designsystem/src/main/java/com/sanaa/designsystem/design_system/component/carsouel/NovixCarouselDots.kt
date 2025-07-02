@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixCarsouelDots(
+fun NovixCarouselDots(
     totalDots: Int,
     selectedIndex: Int,
     modifier: Modifier = Modifier,
@@ -89,7 +90,7 @@ fun NovixCarsouelDots(
 @PreviewLightDark
 @Composable
 private fun PreviewNovixCarsouelDots() {
-    NovixTheme(isDarkMode = true) {
+    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         var selectedIndex by remember { mutableIntStateOf(2) }
         Column(
             modifier = Modifier
@@ -99,7 +100,7 @@ private fun PreviewNovixCarsouelDots() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NovixCarsouelDots(
+            NovixCarouselDots(
                 totalDots = 10,
                 selectedIndex = selectedIndex,
                 onDotClick = { selectedIndex = it }
