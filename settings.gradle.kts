@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Novix"
 include(":app")
+include(":inappropriate_image_viewer_library")
