@@ -29,7 +29,7 @@ fun ImageViewer(
     modifier: Modifier = Modifier,
     blurRadius: Dp = 20.dp,
     blurredEdgeTreatment: BlurredEdgeTreatment = BlurredEdgeTreatment.Rectangle,
-    overlayColor: Color = Color(0xAA000000), // Semi-transparent black
+    overlayColor: Color = Color(0xAA000000),
     sfwThreshold: Float = 0.5f,
     nsfwThreshold: Float = 0.5f,
 ) {
@@ -38,7 +38,6 @@ fun ImageViewer(
     var blurImage by remember { mutableStateOf(true) }
     val isAndroid12OrAbove = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
-    Log.d("NSFW", "ImageViewer: before box, line 41")
     Box(modifier = modifier) {
         AsyncImage(
             model = ImageRequest.Builder(context)
@@ -62,13 +61,12 @@ fun ImageViewer(
                 )
             },
             onError = {
-                // Handle error
                 blurImage = true
             }
         )
         if (blurImage && !isAndroid12OrAbove) {
             Box(
-                modifier = Modifier
+                modifier = modifier
                     .matchParentSize()
                     .background(overlayColor)
             )
