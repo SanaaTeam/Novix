@@ -5,6 +5,15 @@ plugins {
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.kover)
 }
+val excludedPackages = listOf(
+    "*.R",
+    "*.R_*",
+    "*.BuildConfig*",
+    "*.Manifest*",
+    "com.sanaa.novix.ui.theme.*",
+    "*.ComposableSingletons*",
+    "*.MainActivity*"
+)
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
     kover {
@@ -12,13 +21,7 @@ allprojects {
             filters {
                 excludes {
                     classes(
-                        "*.R",
-                        "*.R_*",
-                        "*.BuildConfig*",
-                        "*.Manifest*",
-                        "com.sanaa.novix.ui.theme.*",
-                        "*.ComposableSingletons*",
-                        "*.MainActivity*"
+                        excludedPackages
                     )
                 }
             }
