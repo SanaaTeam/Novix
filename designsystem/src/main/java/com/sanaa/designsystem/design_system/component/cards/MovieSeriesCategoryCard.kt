@@ -90,7 +90,6 @@ private fun PreviewMovieCategorySeriesCard() {
     NovixTheme(isSystemInDarkTheme()) {
         Row(
             modifier = Modifier
-                .fillMaxSize()
                 .background(color = Theme.colors.surface)
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),

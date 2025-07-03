@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.text_style
+package com.sanaa.designsystem.design_system.theme.text_style
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -7,13 +7,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.sanaa.designsystem.R
 
-val IBMPlexSansArabic = FontFamily(
+private val IBMPlexSansArabic = FontFamily(
     Font(R.font.ibm_plex_sans_arabic_semibold, FontWeight.SemiBold),
     Font(R.font.ibm_plex_sans_arabic_regular, FontWeight.Normal),
     Font(R.font.ibm_plex_sans_arabic_medium, FontWeight.Medium),
 )
 
-val defaultTextStyle = NovixTextStyle(
+internal val defaultTextStyle = NovixTextStyle(
     headLine = SizedTextStyle(
         large = TextStyle(
             fontFamily = IBMPlexSansArabic,

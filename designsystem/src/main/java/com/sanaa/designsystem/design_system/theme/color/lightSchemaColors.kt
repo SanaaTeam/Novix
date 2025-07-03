@@ -1,8 +1,8 @@
-package com.sanaa.designsystem.design_system.color
+package com.sanaa.designsystem.design_system.theme.color
 
 import androidx.compose.ui.graphics.Color
 
-val lightSchemaColors = NovixColors(
+internal val lightSchemaColors = NovixColors(
     primary = Color(0xFFF77053),
     secondary = Color(0xFF80071F),
     primaryVariant = Color(0xFFF9E8E5),

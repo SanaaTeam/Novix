@@ -33,7 +33,7 @@ fun NovixNavBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = Theme.colors.stroke)
+            .background(color = Theme.colors.surface)
             .drawBehind {
                 drawLine(
                     color = strokeColor,

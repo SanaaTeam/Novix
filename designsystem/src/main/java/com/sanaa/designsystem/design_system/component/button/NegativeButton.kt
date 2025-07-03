@@ -58,7 +58,7 @@ private fun PreviewNegativeButton() {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             NegativeButton(
-                text = "Watch",
+                text = "Delete",
                 onClick = { isLoading = !isLoading },
                 isLoading = isLoading,
                 icon = painterResource(id = R.drawable.icon_plus),

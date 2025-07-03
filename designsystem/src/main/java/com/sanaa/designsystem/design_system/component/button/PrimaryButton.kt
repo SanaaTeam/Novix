@@ -92,8 +92,11 @@ private fun PrimaryButtonPreview() {
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)
             )
-
-
+            PrimaryButton(
+                text = "Watch",
+                onClick = {},
+                icon = painterResource(R.drawable.icon_plus)
+            )
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.text_style
+package com.sanaa.designsystem.design_system.theme.text_style
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle

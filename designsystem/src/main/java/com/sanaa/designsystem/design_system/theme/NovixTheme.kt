@@ -2,11 +2,11 @@ package com.sanaa.designsystem.design_system.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import com.sanaa.designsystem.design_system.color.LocalNovixColors
-import com.sanaa.designsystem.design_system.color.darkSchemaColors
-import com.sanaa.designsystem.design_system.color.lightSchemaColors
-import com.sanaa.designsystem.design_system.text_style.LocalNovixTextStyle
-import com.sanaa.designsystem.design_system.text_style.defaultTextStyle
+import com.sanaa.designsystem.design_system.theme.color.LocalNovixColors
+import com.sanaa.designsystem.design_system.theme.color.darkSchemaColors
+import com.sanaa.designsystem.design_system.theme.color.lightSchemaColors
+import com.sanaa.designsystem.design_system.theme.text_style.LocalNovixTextStyle
+import com.sanaa.designsystem.design_system.theme.text_style.defaultTextStyle
 
 @Composable
 fun NovixTheme(

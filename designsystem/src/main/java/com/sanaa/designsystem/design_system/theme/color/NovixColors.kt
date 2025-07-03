@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.color
+package com.sanaa.designsystem.design_system.theme.color
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
