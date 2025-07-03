@@ -16,9 +16,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,17 +37,14 @@ fun OptionCard(
     isSelected: Boolean = false,
 ) {
     val animatedBackgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.primaryVariant else Color.Transparent,
-        animationSpec = tween(durationMillis = 100)
-    )
+        targetValue = if (isSelected) Theme.colors.primaryVariant else Color.Unspecified,
+        animationSpec = tween(durationMillis = 20)    )
     val animatedStrokeColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.primary else Theme.colors.stroke,
-        animationSpec = tween(durationMillis = 100)
-    )
+        animationSpec = tween(durationMillis = 20)    )
     val animatedBorderWidth by animateDpAsState(
         targetValue = if (isSelected) 1.5.dp else 1.dp,
-        animationSpec = tween(durationMillis = 100)
-    )
+        animationSpec = tween(durationMillis = 20)    )
 
 
     Box(
@@ -62,7 +59,7 @@ fun OptionCard(
             .clip(RoundedCornerShape(12.dp))
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = remember { ripple(bounded = true) },
+                indication = null,
                 onClick = onClick
             )
             .padding(horizontal = 12.dp)
@@ -81,6 +78,7 @@ fun OptionCard(
 @Composable
 private fun PreviewOptionCard() {
     NovixTheme(isSystemInDarkTheme()) {
+        var selected = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .background(color = Theme.colors.surface)
@@ -90,8 +88,8 @@ private fun PreviewOptionCard() {
         ) {
             OptionCard(
                 label = "Option 1",
-                isSelected = true,
-                onClick = {},
+                isSelected = selected.value,
+                onClick = { selected.value = !selected.value },
             )
             OptionCard(
                 label = "Option 2",
