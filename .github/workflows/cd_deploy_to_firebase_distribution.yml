@@ -1,0 +1,49 @@
+name: Build & upload to Firebase App Distribution
+
+on:
+  workflow_run:
+    workflows: [ "Verify build compile" ]
+    types:
+      - completed
+
+jobs:
+  distribute:
+    name: Distribute bundle to firebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Build signed APK
+        run: ./gradlew assembleRelease
+
+      - name: Show available build-tools
+        run: ls /usr/local/lib/android/sdk/build-tools/
+
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          debug: true
