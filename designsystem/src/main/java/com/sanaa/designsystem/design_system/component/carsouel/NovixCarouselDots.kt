@@ -89,7 +89,7 @@ fun NovixCarouselDots(
 
 @PreviewLightDark
 @Composable
-private fun PreviewNovixCarsouelDots() {
+private fun PreviewNovixCarouselDots() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         var selectedIndex by remember { mutableIntStateOf(2) }
         Column(
