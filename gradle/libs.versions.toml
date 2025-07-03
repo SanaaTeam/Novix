@@ -1,5 +1,6 @@
 [versions]
 agp = "8.10.1"
+cloudy = "0.2.3"
 coilCompose = "2.6.0"
 kotlin = "2.0.21"
 coreKtx = "1.16.0"
@@ -15,6 +16,7 @@ tensorflowLiteTaskVision = "0.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

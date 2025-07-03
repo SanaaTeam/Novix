@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.AndroidResources
-
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -34,10 +32,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-
-    fun AndroidResources.() {
-        noCompress += "tflite"
-    }
 }
 
 dependencies {
@@ -50,6 +44,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     api(libs.coil.compose)
+    implementation(libs.cloudy)
     // Task Vision library for classifiers (includes JNI interpreter)
     implementation(libs.tensorflow.lite.task.vision)
 }
