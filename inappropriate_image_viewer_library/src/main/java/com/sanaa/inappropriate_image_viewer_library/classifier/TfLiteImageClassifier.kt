@@ -1,8 +1,7 @@
-package com.sanaa.inappropriate_image_viewer_library.data
+package com.sanaa.inappropriate_image_viewer_library.classifier
 
 import android.content.Context
 import android.graphics.Bitmap
-import com.sanaa.inappropriate_image_viewer_library.domain.Classification
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.core.BaseOptions
@@ -62,3 +61,8 @@ internal class TfLiteImageClassifier(private val context: Context) {
         private const val NSFW_LABEL = "1"
     }
 }
+
+internal data class Classification(
+    val label: String,
+    val score: Float,
+)

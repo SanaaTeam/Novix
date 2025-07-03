@@ -1,8 +1,7 @@
-package com.sanaa.inappropriate_image_viewer_library.presentation
+package com.sanaa.inappropriate_image_viewer_library.component
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -20,7 +19,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.graphics.scale
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.sanaa.inappropriate_image_viewer_library.data.TfLiteImageClassifier
+import com.sanaa.inappropriate_image_viewer_library.classifier.TfLiteImageClassifier
 
 @Composable
 fun ImageViewer(
