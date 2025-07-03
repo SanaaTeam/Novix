@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
@@ -43,4 +44,10 @@ internal fun AnimatedLoadingIndicator(
             .size(size)
             .rotate(rotation)
     )
+}
+
+@Preview
+@Composable
+private fun PreviewLoadingIndicator() {
+    AnimatedLoadingIndicator()
 }

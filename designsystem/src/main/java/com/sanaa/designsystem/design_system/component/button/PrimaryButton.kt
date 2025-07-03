@@ -25,7 +25,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun PrimaryButton(
-    text: String,
+    text: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isEnabled: Boolean = true,
@@ -63,11 +63,13 @@ fun PrimaryButton(
         shape = RoundedCornerShape(12.dp),
         onClick = onClick,
     ) {
-        Text(
-            text = text,
-            color = animateTextColor,
-            style = Theme.textStyle.label.large
-        )
+        text?.let {
+            Text(
+                text = text,
+                color = animateTextColor,
+                style = Theme.textStyle.label.large
+            )
+        }
     }
 }
 
@@ -86,7 +88,7 @@ private fun PrimaryButtonPreview() {
             PrimaryButton(text = "Watch", onClick = {}, isLoading = true)
             PrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
             PrimaryButton(
-                text = "Watch",
+                text = null,
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)
             )

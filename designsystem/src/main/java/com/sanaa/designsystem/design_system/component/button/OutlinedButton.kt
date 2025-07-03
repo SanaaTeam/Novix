@@ -25,7 +25,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun OutlinedButton(
-    text: String,
+    text: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     textColor: Color = Theme.colors.primary,
@@ -53,11 +53,13 @@ fun OutlinedButton(
         iconTint = iconTint,
         onClick = onClick,
     ) {
-        Text(
-            text = text,
-            color = animateTextColor,
-            style = Theme.textStyle.label.large
-        )
+        text?.let {
+            Text(
+                text = text,
+                color = animateTextColor,
+                style = Theme.textStyle.label.large
+            )
+        }
     }
 }
 

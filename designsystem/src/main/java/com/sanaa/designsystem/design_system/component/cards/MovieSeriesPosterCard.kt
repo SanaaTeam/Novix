@@ -95,7 +95,8 @@ private fun PreviewMovieSeriesPosterCard() {
                     poster = painterResource(R.drawable.movie_poster),
                     topLeftContent = {
                         SaveIconChip(
-                            onClick = {})
+                            onClick = {}
+                        )
                     },
                 )
             }
@@ -104,13 +105,15 @@ private fun PreviewMovieSeriesPosterCard() {
                     poster = painterResource(R.drawable.movie_poster),
                     topLeftContent = {
                         SaveIconChip(
-                            onClick = {})
+                            onClick = {}
+                        )
                     },
                     topRightContent = {
                         MovieSeriesRatingChip(
                             rating = "9.9"
                         )
-                    })
+                    }
+                )
             }
         }
     }
