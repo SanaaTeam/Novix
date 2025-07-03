@@ -27,7 +27,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun NovixNavBar(
-    modifier: Modifier = Modifier, content: @Composable RowScope.() -> Unit
+    modifier: Modifier = Modifier,
+    content: @Composable RowScope.() -> Unit
 ) {
     val strokeColor = Theme.colors.stroke
     Row(
