@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.AndroidResources
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -32,6 +34,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    fun AndroidResources.() {
+        noCompress += "tflite"
+    }
 }
 
 dependencies {
@@ -46,9 +52,4 @@ dependencies {
     implementation(libs.coil.compose)
     // Task Vision library for classifiers (includes JNI interpreter)
     implementation(libs.tensorflow.lite.task.vision)
-
-    // Optional: GPU acceleration
-    implementation(libs.tensorflow.lite.gpu.delegate.plugin)
-    implementation(libs.tensorflow.lite.gpu)
-
 }
