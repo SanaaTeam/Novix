@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -113,7 +114,7 @@ fun PasswordTextField(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun PreviewPasswordTextField() {
     NovixTheme(true) {

@@ -14,10 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -33,9 +29,7 @@ fun HomeTopBar(
     logoLabel: String = stringResource(id = R.string.novix),
     subtitle: String = stringResource(id = R.string.home_bar_subtitle),
 ) {
-    val iconGradient = Brush.verticalGradient(
-        colors = listOf(Theme.colors.primary, Theme.colors.primary)
-    )
+
     Row(
         modifier = modifier
             .height(48.dp)
@@ -46,15 +40,8 @@ fun HomeTopBar(
         Icon(
             imageVector = ImageVector.vectorResource(id = R.drawable.icon_logo),
             contentDescription = null,
-            modifier = Modifier
-                .size(48.dp)
-                .graphicsLayer(alpha = 0.99f)
-                .drawWithCache {
-                    onDrawWithContent {
-                        drawContent()
-                        drawRect(iconGradient, blendMode = BlendMode.SrcAtop)
-                    }
-                },
+            modifier = Modifier.size(48.dp),
+            tint = Theme.colors.primary
         )
         Column {
             Text(
