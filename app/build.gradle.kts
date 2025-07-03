@@ -7,11 +7,11 @@ plugins {
 
 android {
     namespace = "com.sanaa.novix"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.sanaa.novix"
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
