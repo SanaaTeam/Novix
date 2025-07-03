@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.chips.MovieSeriesRatingChip
@@ -55,11 +56,7 @@ fun MovieSeriesPosterCard(
                 .matchParentSize()
                 .align(Alignment.TopStart),
         ) {
-            Box(
-                modifier = Modifier.align(Alignment.TopStart)
-            ) {
-                topLeftContent()
-            }
+            topLeftContent()
             Box(
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
@@ -69,10 +66,10 @@ fun MovieSeriesPosterCard(
     }
 }
 
-@Preview
+@PreviewLightDark
 @Composable
 private fun PreviewMovieSeriesPosterCard() {
-    NovixTheme(false) {
+    NovixTheme(isSystemInDarkTheme()) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(
                 minSize = 140.dp
@@ -98,8 +95,7 @@ private fun PreviewMovieSeriesPosterCard() {
                     poster = painterResource(R.drawable.movie_poster),
                     topLeftContent = {
                         SaveIconChip(
-                            onClick = {}
-                        )
+                            onClick = {})
                     },
                 )
             }
@@ -108,15 +104,13 @@ private fun PreviewMovieSeriesPosterCard() {
                     poster = painterResource(R.drawable.movie_poster),
                     topLeftContent = {
                         SaveIconChip(
-                            onClick = {}
-                        )
+                            onClick = {})
                     },
                     topRightContent = {
                         MovieSeriesRatingChip(
                             rating = "9.9"
                         )
-                    }
-                )
+                    })
             }
         }
     }

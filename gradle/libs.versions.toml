@@ -11,6 +11,10 @@ composeBom = "2024.09.00"
 appcompat = "1.6.1"
 material = "1.10.0"
 junitKtx = "1.2.1"
+compileSdk = "35"
+minSdk = "26"
+targetSdk = "35"
+jvmTarget = "11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
