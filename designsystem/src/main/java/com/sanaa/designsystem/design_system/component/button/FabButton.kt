@@ -44,13 +44,16 @@ fun FabButton(
     val animatedIconTint by animateColorAsState(
         targetValue = if (isEnabled) iconTint else Theme.colors.onPrimaryHint
     )
+    val animatedShadowColor by animateColorAsState(
+        targetValue = if (isEnabled) Color(0x1FC65A42) else Color.Transparent
+    )
     Box(
         modifier = modifier
             .clip(shape = RoundedCornerShape(12.dp))
             .background(color = animatedBackgroundColor)
             .then(
                 if (isEnabled) Modifier.dropShadow(
-                    color = Color(0x1FC65A42),
+                    color = animatedShadowColor,
                     blur = 12.dp,
                     offsetX = 0.dp,
                     offsetY = 4.dp

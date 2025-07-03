@@ -41,6 +41,9 @@ fun PrimaryButton(
     val animatedBackgroundColor by animateColorAsState(
         targetValue = if (isEnabled) backgroundColor else Theme.colors.disable,
     )
+    val animatedShadowColor by animateColorAsState(
+        targetValue = if (isEnabled) Color(0x1F0D0608) else Color.Transparent
+    )
 
     ButtonContainer(
         modifier = modifier
@@ -48,7 +51,7 @@ fun PrimaryButton(
                 if (isEnabled)
                     Modifier.innerShadow(
                         shape = RoundedCornerShape(12.dp),
-                        color = Color(0x1F0D0608),
+                        color = animatedShadowColor,
                         blur = 12.dp,
                         offsetX = 2.dp,
                         offsetY = 4.dp,
