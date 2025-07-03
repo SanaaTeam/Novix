@@ -1,0 +1,26 @@
+name: Verify build compile
+
+on:
+  pull_request:
+    branches: [main, development]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permissions for gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Project
+        run: ./gradlew build
