@@ -49,7 +49,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation(libs.coil.compose)
+    api(libs.coil.compose)
     // Task Vision library for classifiers (includes JNI interpreter)
     implementation(libs.tensorflow.lite.task.vision)
 }

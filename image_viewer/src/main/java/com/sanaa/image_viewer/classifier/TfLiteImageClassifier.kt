@@ -1,4 +1,4 @@
-package com.sanaa.inappropriate_image_viewer_library.classifier
+package com.sanaa.image_viewer.classifier
 
 import android.content.Context
 import android.graphics.Bitmap
