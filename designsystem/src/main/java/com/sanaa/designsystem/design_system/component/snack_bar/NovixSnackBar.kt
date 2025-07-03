@@ -51,7 +51,7 @@ fun NovixSnackBar(
             )
             .height(56.dp)
             .padding(horizontal = 12.dp, vertical = 16.dp)
-            .width(328.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
