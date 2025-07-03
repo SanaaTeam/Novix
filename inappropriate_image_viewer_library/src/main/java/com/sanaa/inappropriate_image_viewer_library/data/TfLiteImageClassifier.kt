@@ -3,35 +3,25 @@ package com.sanaa.inappropriate_image_viewer_library.data
 import android.content.Context
 import android.graphics.Bitmap
 import com.sanaa.inappropriate_image_viewer_library.domain.Classification
-import com.sanaa.inappropriate_image_viewer_library.domain.ImageClassifierRepository
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.task.core.BaseOptions
 import org.tensorflow.lite.task.vision.classifier.ImageClassifier
 
-class TfLiteImageClassifier(
-    private val context: Context,
-    private val modelPath: String,
-) : ImageClassifierRepository {
+internal class TfLiteImageClassifier(private val context: Context) {
 
     private var classifier: ImageClassifier? = null
 
-    private fun setupClassifier() {
-        val baseOptions = BaseOptions.builder()
-            .setNumThreads(2).build()
-        val options = ImageClassifier.ImageClassifierOptions.builder()
-            .setBaseOptions(baseOptions)
-            .setMaxResults(2)
-            .build()
+    fun isInappropriateImage(bitmap: Bitmap, sfwThreshold: Float, nsfwThreshold: Float): Boolean {
+        val classifications = classify(bitmap)
 
-        try {
-            classifier = ImageClassifier.createFromFileAndOptions(context, modelPath, options)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        val sfwScore = classifications.find { it.label == SFW_LABEL }?.score ?: 0f
+        val nsfwScore = classifications.find { it.label == NSFW_LABEL }?.score ?: 0f
+
+        return (sfwScore < sfwThreshold && nsfwScore > nsfwThreshold)
     }
 
-    override fun classify(bitmap: Bitmap): List<Classification> {
+    private fun classify(bitmap: Bitmap): List<Classification> {
         if (classifier == null) {
             setupClassifier()
         }
@@ -44,14 +34,31 @@ class TfLiteImageClassifier(
         return results.flatMap { classifications ->
             classifications.categories.mapIndexed { index, category ->
                 Classification(
-                    name = labels[category.label.toIntOrNull() ?: 0], // Assuming index 0 is SFW and 1 is NSFW
+                    label = category.label,
                     score = category.score
                 )
             }
         }
     }
 
-    companion object{
-        private val labels = listOf("SFW", "NSFW")
+    private fun setupClassifier() {
+        val baseOptions = BaseOptions.builder()
+            .setNumThreads(2).build()
+        val options = ImageClassifier.ImageClassifierOptions.builder()
+            .setBaseOptions(baseOptions)
+            .setMaxResults(2)
+            .build()
+
+        try {
+            classifier = ImageClassifier.createFromFileAndOptions(context, MODEL_PATH, options)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    companion object {
+        private const val MODEL_PATH = "nsfw_model.tflite"
+        private const val SFW_LABEL = "0"
+        private const val NSFW_LABEL = "1"
     }
 }
