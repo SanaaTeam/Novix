@@ -2,9 +2,9 @@ package com.sanaa.designsystem.design_system.component.novix_scaffold
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -25,7 +25,7 @@ fun NovixScaffold(
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     backgroundShapes: @Composable () -> Unit = {},
-    content: @Composable () -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
@@ -40,10 +40,9 @@ fun NovixScaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .background(contentBackground)
-                .padding(innerPadding)
         ) {
             backgroundShapes()
-            content()
+            content(innerPadding)
         }
     }
 }
