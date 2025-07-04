@@ -23,19 +23,18 @@ jobs:
         shell: bash
         run: |
           if [ -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
-            echo "Decoding google-services.json from secret"
+            echo "✅  Decoding google-services.json from secret…"
             echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
             grep -q '"project_info"' app/google-services.json
           else
-            echo "Secret missing – creating stub google-services.json"
-            cat > app/google-services.json <<'JSON'
-            {
-              "project_info": {
-                "project_number": "000000000000",
-                "project_id": "stub-project"
-              }
-            }
-            JSON
+            echo "ℹ️  Secret missing – using stub google-services.json"
+            printf '%s\n' \
+              '{' \
+              '  "project_info": {' \
+              '    "project_number": "000000000000",' \
+              '    "project_id": "stub-project"' \
+              '  }' \
+              '}' > app/google-services.json
           fi
 
       - name: Make gradlew executable
