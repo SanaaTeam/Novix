@@ -21,6 +21,11 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Verify google-services.json content
+        run: |
+          echo "🔍 Showing google-services.json content"
+          cat app/google-services.json
+
       - name: Prepare google-services.json
         shell: bash
         run: |
