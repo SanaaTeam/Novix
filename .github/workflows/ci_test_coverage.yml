@@ -12,18 +12,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Restore google-services.json
-        env:
-          GOOGLE_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
-        run: |
-          echo "$GOOGLE_JSON_B64" | base64 -d > app/google-services.json
-
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
-          cache: 'gradle'
+          distribution: temurin
+          cache: gradle
+
+      - name: Restore google-services.json
+        run: |
+          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d | tr -d '\r' > app/google-services.json
+        env:
+          GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
       - name: Grant permission for Gradle
         run: chmod +x ./gradlew
