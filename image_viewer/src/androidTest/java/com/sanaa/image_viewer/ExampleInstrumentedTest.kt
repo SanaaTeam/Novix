@@ -1,4 +1,4 @@
-package com.sanaa.inappropriate_image_viewer_library
+package com.sanaa.image_viewer
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

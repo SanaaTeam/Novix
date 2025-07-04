@@ -1,4 +1,4 @@
-package com.sanaa.inappropriate_image_viewer_library
+package com.sanaa.image_viewer
 
 import org.junit.Test
 
