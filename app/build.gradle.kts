@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kover)
 }
 
 android {
@@ -28,7 +30,6 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
 
-            // Enable Crashlytics and Analytics in debug
             manifestPlaceholders["crashlytics_debug"] = "true"
             manifestPlaceholders["analytics_debug"] = "true"
         }
@@ -84,5 +85,22 @@ dependencies {
 
     implementation(libs.timber)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+
+    implementation(libs.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.cloudy)
+    implementation(libs.material)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.tensorflow.lite.task.vision)
+
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.kotlinx.serialization.json)
 }
