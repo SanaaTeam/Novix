@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "Novix"
 include(":app")
 include(":feature:authentication:presentation")
@@ -65,4 +65,5 @@ include(":data:repositories:saved_content")
 include(":data:repositories:search")
 include(":data:repositories:series")
 include(":data:repositories:user_profile")
+include(":image_viewer")
 include(":designsystem")
