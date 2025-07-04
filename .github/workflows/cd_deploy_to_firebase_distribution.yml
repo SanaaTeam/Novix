@@ -21,6 +21,12 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Prepare google-services.json
+        shell: bash
+        run: |
+          mkdir -p app/src/release
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/src/release/google-services.json
+
       - name: Build signed APK
         run: ./gradlew assembleRelease
 
