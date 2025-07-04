@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.actor_card
+package com.sanaa.designsystem.design_system.component.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
