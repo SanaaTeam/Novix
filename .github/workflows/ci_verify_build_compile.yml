@@ -20,8 +20,11 @@ jobs:
           cache: gradle
 
       - name: Restore google-services.json
+        shell: bash
         run: |
-          echo "$GOOGLE_SERVICES_JSON_BASE64" | base64 -d | tr -d '\r' > app/google-services.json
+          printf '%s' "$GOOGLE_SERVICES_JSON_BASE64" | tr -d '\r\n' | base64 -d > app/google-services.json
+          # sanity-check – fail fast if decode went wrong
+          grep -q '"project_info"' app/google-services.json
         env:
           GOOGLE_SERVICES_JSON_BASE64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
 
