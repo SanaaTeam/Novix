@@ -44,13 +44,12 @@ allprojects {
 
 dependencies {
     kover(projects.app)
-    kover(projects.domain.authentication.repository)
-    kover(projects.domain.movies.repository)
-    kover(projects.domain.actors.repository)
+    kover(projects.domain.authentication)
+    kover(projects.domain.movies)
     kover(projects.domain.series)
-    kover(projects.domain.savedContent.repository)
-    kover(projects.domain.search.repository)
-    kover(projects.domain.userProfile.repository)
+    kover(projects.domain.savedContent)
+    kover(projects.domain.search)
+    kover(projects.domain.userProfile)
     kover(projects.data.remoteDataSource.actors)
     kover(projects.data.remoteDataSource.authentication)
     kover(projects.data.remoteDataSource.movies)
