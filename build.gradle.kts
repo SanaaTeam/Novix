@@ -21,7 +21,8 @@ val excludedPackages = listOf(
     "*.ComposableSingletons*",
     "*.MainActivity*",
     "*.NovixApp*",
-    "com.sanaa.image_viewer.*"
+    "com.sanaa.image_viewer.*",
+    "com.sanaa.designsystem.*",
 )
 
 allprojects {
