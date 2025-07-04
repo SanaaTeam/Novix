@@ -24,8 +24,20 @@ jobs:
       - name: Prepare google-services.json
         shell: bash
         run: |
-          mkdir -p app/src/release
-          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/src/release/google-services.json
+          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "✅  Decoding google-services.json from secret…"
+            echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
+            grep -q '"project_info"' app/google-services.json
+          else
+            echo "ℹ️  Secret missing – using stub google-services.json"
+            printf '%s\n' \
+              '{' \
+              '  "project_info": {' \
+              '    "project_number": "000000000000",' \
+              '    "project_id": "stub-project"' \
+              '  }' \
+              '}' > app/google-services.json
+          fi
 
       - name: Build signed APK
         run: ./gradlew assembleRelease
