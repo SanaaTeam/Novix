@@ -16,7 +16,8 @@ val excludedPackages = listOf(
     "com.sanaa.novix.ui.theme.*",
     "*.ComposableSingletons*",
     "*.MainActivity*",
-    "com.sanaa.image_viewer.*"
+    "com.sanaa.image_viewer.*",
+    "com.sanaa.designsystem.*",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
