@@ -1,21 +1,26 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
     alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.android.library) apply false
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.kover)
 }
 val excludedPackages = listOf(
     "*.R",
     "*.R_*",
+    "**.di.**",
+    "**.logging.**",
     "*.BuildConfig*",
     "*.Manifest*",
     "com.sanaa.novix.ui.theme.*",
     "*.ComposableSingletons*",
     "*.MainActivity*",
+    "*.NovixApp*",
     "com.sanaa.image_viewer.*",
     "com.sanaa.designsystem.*",
 )
@@ -24,19 +29,11 @@ allprojects {
     kover {
         reports {
             filters {
-                excludes {
-                    classes(
-                        excludedPackages
-                    )
-                }
+                excludes { classes(excludedPackages) }
             }
             total {
                 verify {
-                    rule {
-                        bound {
-                            minValue = 80
-                        }
-                    }
+                    rule { bound { minValue = 80 } }
                 }
             }
         }
