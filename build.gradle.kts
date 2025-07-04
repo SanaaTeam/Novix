@@ -20,6 +20,7 @@ val excludedPackages = listOf(
     "com.sanaa.novix.ui.theme.*",
     "*.ComposableSingletons*",
     "*.MainActivity*",
+    "*.NovixApp*",
     "com.sanaa.image_viewer.*"
 )
 
