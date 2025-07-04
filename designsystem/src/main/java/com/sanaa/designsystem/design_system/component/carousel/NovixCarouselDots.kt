@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.carsouel
+package com.sanaa.designsystem.design_system.component.carousel
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
