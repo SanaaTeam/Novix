@@ -27,8 +27,6 @@ android {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
 
             manifestPlaceholders["crashlytics_debug"] = "true"
             manifestPlaceholders["analytics_debug"] = "true"
