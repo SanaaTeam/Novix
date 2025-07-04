@@ -73,7 +73,8 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 
 firebase-appdistribution = { id = "com.google.firebase.appdistribution", version = "5.1.1" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
-kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover"  }
+
 
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
