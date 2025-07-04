@@ -3,7 +3,6 @@ name: Verify build compile
 on:
   pull_request:
     branches: [main, development]
-
   workflow_dispatch:
 
 jobs:
@@ -12,6 +11,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Restore google-services.json
+        env:
+          GOOGLE_JSON_B64: ${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}
+        run: |
+          echo "$GOOGLE_JSON_B64" | base64 -d > app/google-services.json
+
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:

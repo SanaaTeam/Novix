@@ -13,6 +13,8 @@ plugins {
 val excludedPackages = listOf(
     "*.R",
     "*.R_*",
+    "**.di.**",
+    "**.logging.**",
     "*.BuildConfig*",
     "*.Manifest*",
     "com.sanaa.novix.ui.theme.*",
