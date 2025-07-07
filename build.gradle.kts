@@ -43,8 +43,6 @@ allprojects {
 dependencies {
     kover(projects.app)
     kover(projects.domain.authentication)
-//    kover(projects.domain.movies)
-//    kover(projects.domain.series)
     kover(projects.domain.savedContent)
     kover(projects.domain.search)
     kover(projects.domain.userProfile)
