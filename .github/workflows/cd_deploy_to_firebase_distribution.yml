@@ -27,25 +27,21 @@ jobs:
           cat app/google-services.json
 
       - name: Prepare google-services.json
-        shell: bash
         run: |
-          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
-            echo "✅  Decoding google-services.json from secret…"
-            echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
-            grep -q '"project_info"' app/google-services.json
-            # 👇 Optional: Copy to release variant folder too
-            mkdir -p app/src/release
-            cp app/google-services.json app/src/release/google-services.json
-          else
-            echo "ℹ️  Secret missing – using stub google-services.json"
-            printf '%s\n' \
-              '{' \
-              '  "project_info": {' \
-              '    "project_number": "000000000000",' \
-              '    "project_id": "stub-project"' \
-              '  }' \
-              '}' > app/google-services.json
+          # stop the build immediately if the secret is missing
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "::error ::GOOGLE_SERVICES_JSON_BASE64 secret missing – add it in repo settings"
+            exit 1
           fi
+
+          # decode the secret into the standard location
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
+
+          # make sure the release variant can see it
+          mkdir -p app/src/release
+          cp app/google-services.json app/src/release/google-services.json
+
+          echo "✅ google-services.json written (size: $(wc -c < app/google-services.json) bytes)"
 
       - name: Build signed APK
         run: ./gradlew assembleRelease
