@@ -11,3 +11,6 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
     }
 }
+dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+}
