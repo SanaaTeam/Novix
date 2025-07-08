@@ -8,11 +8,11 @@ import model.SearchCategory
 import model.SearchHistoryItem
 import model.TvSeries
 import repository.SearchHistoryRepository
-import repository.TvSeriesRepository
+import repository.SearchRepository
 
 
 class SearchTvSeriesUseCase(
-    private val tvRepo: TvSeriesRepository,
+    private val searchRepository: SearchRepository,
     private val historyRepo: SearchHistoryRepository
 ) {
     suspend fun execute(query: String, filters: MediaFilters?, language: Language): List<TvSeries> {
@@ -25,6 +25,6 @@ class SearchTvSeriesUseCase(
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             )
         )
-        return tvRepo.searchTvSeries(query, filters, language)
+        return searchRepository.searchTvSeries(query, filters, language)
     }
 }

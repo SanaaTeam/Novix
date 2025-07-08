@@ -8,11 +8,11 @@ import model.MediaFilters
 import model.Movie
 import model.SearchCategory
 import model.SearchHistoryItem
-import repository.MovieRepository
 import repository.SearchHistoryRepository
+import repository.SearchRepository
 
 class SearchMoviesUseCase(
-    private val movieRepo: MovieRepository,
+    private val searchRepository: SearchRepository,
     private val historyRepo: SearchHistoryRepository
 ) {
     suspend fun execute(query: String, filters: MediaFilters?, language: Language): List<Movie> {
@@ -25,6 +25,6 @@ class SearchMoviesUseCase(
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             )
         )
-        return movieRepo.searchMovies(query, filters, language)
+        return searchRepository.searchMovies(query, filters, language)
     }
 }

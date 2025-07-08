@@ -6,12 +6,12 @@ import model.Actor
 import model.Language
 import model.SearchCategory
 import model.SearchHistoryItem
-import repository.ActorRepository
+import repository.SearchRepository
 import repository.SearchHistoryRepository
 
 
 class SearchActorsUseCase(
-    private val actorRepo: ActorRepository,
+    private val searchRepository: SearchRepository,
     private val historyRepo: SearchHistoryRepository
 ) {
     suspend fun execute(query: String, language: Language): List<Actor> {
@@ -24,6 +24,6 @@ class SearchActorsUseCase(
                 Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             )
         )
-        return actorRepo.searchActors(query, language)
+        return searchRepository.searchActors(query, language)
     }
 }
