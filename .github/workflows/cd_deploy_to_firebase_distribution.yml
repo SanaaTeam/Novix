@@ -5,6 +5,7 @@ on:
     workflows: [ "Verify build compile" ]
     types:
       - completed
+    workflow_dispatch:
 
 jobs:
   distribute:
