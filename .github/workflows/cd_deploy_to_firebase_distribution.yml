@@ -5,7 +5,7 @@ on:
     workflows: [ "Verify build compile" ]
     types:
       - completed
-    workflow_dispatch:
+  workflow_dispatch:
 
 jobs:
   distribute:
@@ -21,11 +21,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-
-      - name: Verify google-services.json content
-        run: |
-          echo "🔍 Showing google-services.json content"
-          cat app/google-services.json
 
       - name: Prepare google-services.json
         run: |
