@@ -6,6 +6,6 @@ data class SearchHistoryItem(
     val query: String,
     val category: SearchCategory,
     val filters: MediaFilters? = null,
-    val language: String,
+    val language: Language,
     val timestamp: LocalDateTime
 )
