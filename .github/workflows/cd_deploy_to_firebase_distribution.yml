@@ -21,6 +21,28 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Verify google-services.json content
+        run: |
+          echo "🔍 Showing google-services.json content"
+          cat app/google-services.json
+
+      - name: Prepare google-services.json
+        run: |
+          # stop the build immediately if the secret is missing
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "::error ::GOOGLE_SERVICES_JSON_BASE64 secret missing – add it in repo settings"
+            exit 1
+          fi
+
+          # decode the secret into the standard location
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
+
+          # make sure the release variant can see it
+          mkdir -p app/src/release
+          cp app/google-services.json app/src/release/google-services.json
+
+          echo "✅ google-services.json written (size: $(wc -c < app/google-services.json) bytes)"
+
       - name: Build signed APK
         run: ./gradlew assembleRelease
 
