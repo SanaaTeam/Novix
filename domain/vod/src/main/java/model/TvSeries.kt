@@ -3,7 +3,7 @@ import kotlinx.datetime.LocalDate
 
 data class TvSeries(
     val id: String,
-    val imageUrl: String,
+    val posterImageUrl: String,
     val title: String,
     val description: String,
     val seasons: List<Season>,
