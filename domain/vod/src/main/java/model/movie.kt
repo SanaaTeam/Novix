@@ -8,6 +8,6 @@ data class Movie(
     val description: String,
     val actors: List<String>,
     val releaseDate: LocalDate,
-    val genres: List<String>,
+    val genres: List<Genre>,
     val imdbRating: Float?
 )
