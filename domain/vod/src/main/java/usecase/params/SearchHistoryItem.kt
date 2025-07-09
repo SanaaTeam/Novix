@@ -1,5 +1,6 @@
-package entity
+package usecase.params
 
+import entity.Language
 import kotlinx.datetime.LocalDateTime
 
 data class SearchHistoryItem(

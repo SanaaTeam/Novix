@@ -3,9 +3,9 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import entity.Language
-import entity.MediaFilters
-import entity.SearchCategory
-import entity.SearchHistoryItem
+import usecase.params.MediaFilters
+import usecase.params.SearchCategory
+import usecase.params.SearchHistoryItem
 import entity.TvSeries
 import repository.SearchHistoryRepository
 import repository.SearchRepository

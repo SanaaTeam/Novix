@@ -1,4 +1,4 @@
-package entity
+package usecase.params
 
 enum class SearchCategory {
     MOVIE,
