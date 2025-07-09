@@ -2,7 +2,7 @@ package repository
 
 import entity.Actor
 import entity.Language
-import usecase.params.MediaFilters
+import usecase.search.MediaFilters
 import entity.Movie
 import entity.TvSeries
 

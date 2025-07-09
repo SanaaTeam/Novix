@@ -4,8 +4,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import entity.Actor
 import entity.Language
-import usecase.params.SearchCategory
-import usecase.params.SearchHistoryItem
+import usecase.search.SearchCategory
+import usecase.search.SearchHistoryItem
 import repository.SearchRepository
 import repository.SearchHistoryRepository
 

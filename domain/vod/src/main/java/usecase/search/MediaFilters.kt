@@ -1,4 +1,4 @@
-package usecase.params
+package usecase.search
 
 data class MediaFilters(
     val releaseYear: Int? = null,

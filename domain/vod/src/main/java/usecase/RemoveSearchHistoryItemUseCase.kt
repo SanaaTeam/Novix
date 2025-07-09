@@ -1,7 +1,7 @@
 package usecase
 
 import repository.SearchHistoryRepository
-import usecase.params.SearchHistoryItem
+import usecase.search.SearchHistoryItem
 
 class RemoveSearchHistoryItemUseCase(
     private val historyRepo: SearchHistoryRepository

@@ -1,6 +1,6 @@
 package usecase
 
-import usecase.params.SearchHistoryItem
+import usecase.search.SearchHistoryItem
 import repository.SearchHistoryRepository
 
 class GetSearchHistoryUseCase(

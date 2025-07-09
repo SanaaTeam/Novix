@@ -4,10 +4,10 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import entity.Language
-import usecase.params.MediaFilters
+import usecase.search.MediaFilters
 import entity.Movie
-import usecase.params.SearchCategory
-import usecase.params.SearchHistoryItem
+import usecase.search.SearchCategory
+import usecase.search.SearchHistoryItem
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 
