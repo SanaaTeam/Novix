@@ -1,6 +1,6 @@
 package usecase.search
 
-data class SearchActorHistoryOutput(
+data class SearchActorOutput(
     val id: Long? = null,
     val name: String,
     val profileImageUrl: String,
