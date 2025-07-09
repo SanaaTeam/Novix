@@ -1,4 +1,4 @@
-package model
+package entity
 
 data class Actor(
     val id: String,

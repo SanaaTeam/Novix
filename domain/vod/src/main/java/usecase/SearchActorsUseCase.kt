@@ -2,10 +2,10 @@ package usecase
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import model.Actor
-import model.Language
-import model.SearchCategory
-import model.SearchHistoryItem
+import entity.Actor
+import entity.Language
+import entity.SearchCategory
+import entity.SearchHistoryItem
 import repository.SearchRepository
 import repository.SearchHistoryRepository
 

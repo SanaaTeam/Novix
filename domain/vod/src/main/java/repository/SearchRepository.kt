@@ -1,10 +1,10 @@
 package repository
 
-import model.Actor
-import model.Language
-import model.MediaFilters
-import model.Movie
-import model.TvSeries
+import entity.Actor
+import entity.Language
+import entity.MediaFilters
+import entity.Movie
+import entity.TvSeries
 
 interface SearchRepository {
     suspend fun searchActors(query: String, language: Language): List<Actor>

@@ -1,4 +1,4 @@
-package model
+package entity
 
 data class MediaFilters(
     val releaseYear: Int? = null,

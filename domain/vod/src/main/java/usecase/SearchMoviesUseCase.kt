@@ -3,11 +3,11 @@ package usecase
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import model.Language
-import model.MediaFilters
-import model.Movie
-import model.SearchCategory
-import model.SearchHistoryItem
+import entity.Language
+import entity.MediaFilters
+import entity.Movie
+import entity.SearchCategory
+import entity.SearchHistoryItem
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 

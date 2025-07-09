@@ -1,4 +1,4 @@
-package model
+package entity
 
 import kotlinx.datetime.LocalDateTime
 

@@ -1,6 +1,6 @@
 package repository
 
-import model.SearchHistoryItem
+import entity.SearchHistoryItem
 
 interface SearchHistoryRepository {
     suspend fun getSearchHistory(): List<SearchHistoryItem>

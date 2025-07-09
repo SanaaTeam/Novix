@@ -1,4 +1,4 @@
-package model
+package entity
 import kotlinx.datetime.LocalDate
 
 data class TvSeries(

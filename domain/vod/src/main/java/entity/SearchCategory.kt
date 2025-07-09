@@ -1,4 +1,4 @@
-package model
+package entity
 
 enum class SearchCategory {
     MOVIE,

@@ -1,6 +1,6 @@
 package usecase
 
-import model.SearchHistoryItem
+import entity.SearchHistoryItem
 import repository.SearchHistoryRepository
 
 class GetSearchHistoryUseCase(
