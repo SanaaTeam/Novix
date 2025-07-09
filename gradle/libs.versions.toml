@@ -1,6 +1,11 @@
 [versions]
+activityComposeVersion = "1.9.0"
 agp = "8.10.1"
+composeBomVersion = "2024.06.00"
+foundationLayoutAndroid = "1.6.8"
 koinAndroid = "4.0.4"
+koinAndroidVersion = "4.0.4"
+koinAndroidxCompose = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
@@ -11,6 +16,8 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 firebaseAnalytics = "22.5.0"
+lifecycleRuntimeKtxVersion = "2.8.3"
+lifecycleViewmodelCompose = "2.8.3"
 timber = "5.0.1"
 
 cloudy = "0.2.3"
@@ -37,12 +44,19 @@ namespace = "com.sanaa.novix"
 testRunner = "androidx.test.runner.AndroidJUnitRunner"
 
 [libraries]
+androidx-activity-compose-v190 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
+androidx-compose-bom-v20240600 = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-foundation-layout-android = { module = "androidx.compose.foundation:foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-lifecycle-runtime-ktx-v283 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
+insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
@@ -61,6 +75,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
+material3 = { module = "androidx.compose.material3:material3" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
@@ -77,11 +93,14 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
-koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-core = { group = "io.insert-koin", name = "koin-core"}
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+ui = { module = "androidx.compose.ui:ui" }
+ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
