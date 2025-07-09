@@ -1,13 +1,21 @@
 package repository
 
-import entity.Actor
 import entity.Language
 import usecase.search.MediaFilters
-import entity.Movie
-import entity.TvSeries
+import usecase.search.SearchActorHistoryOutput
+import usecase.search.SearchMediaHistoryOutput
 
 interface SearchRepository {
-    suspend fun searchActors(query: String, language: Language): List<Actor>
-    suspend fun searchMovies(query: String, filters: MediaFilters?, language: Language): List<Movie>
-    suspend fun searchTvSeries(query: String, filters: MediaFilters?, language: Language): List<TvSeries>
+    suspend fun searchActors(query: String, language: Language): List<SearchActorHistoryOutput>
+    suspend fun searchMovies(
+        query: String,
+        filters: MediaFilters?,
+        language: Language
+    ): List<SearchMediaHistoryOutput>
+
+    suspend fun searchTvSeries(
+        query: String,
+        filters: MediaFilters?,
+        language: Language
+    ): List<SearchMediaHistoryOutput>
 }
