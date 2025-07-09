@@ -11,5 +11,18 @@ enum class Genre {
     DOCUMENTARY,
     ANIMATION,
     FANTASY,
-    ADVENTURE
+    ADVENTURE,
+    CRIME,
+    FAMILY,
+    HISTORY,
+    KIDS,
+    MYSTERY,
+    MUSIC,
+    NEWS,
+    REALITY,
+    SOAP,
+    TALK,
+    WAR,
+    WESTERN,
+    TV_MOVIE
 }
