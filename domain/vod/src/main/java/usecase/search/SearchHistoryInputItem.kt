@@ -3,7 +3,7 @@ package usecase.search
 import entity.Language
 import kotlinx.datetime.LocalDateTime
 
-data class SearchHistoryItem(
+data class SearchHistoryInputItem(
     val id: Long? = null,
     val query: String,
     val category: SearchCategory,

@@ -1,10 +1,10 @@
 package usecase
 
-import usecase.search.SearchHistoryItem
 import repository.SearchHistoryRepository
+import usecase.search.SearchHistoryOutputItem
 
 class GetSearchHistoryUseCase(
     private val historyRepo: SearchHistoryRepository
 ) {
-    suspend fun execute(): List<SearchHistoryItem> = historyRepo.getSearchHistory()
+    suspend fun execute(): List<SearchHistoryOutputItem> = historyRepo.getSearchHistory()
 }

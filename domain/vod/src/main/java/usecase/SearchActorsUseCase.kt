@@ -7,7 +7,7 @@ import kotlinx.datetime.LocalDateTime
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.SearchCategory
-import usecase.search.SearchHistoryItem
+import usecase.search.SearchHistoryInputItem
 
 class SearchActorsUseCase(
     private val searchRepository: SearchRepository,
@@ -15,7 +15,7 @@ class SearchActorsUseCase(
 ) {
     suspend fun execute(query: String, language: Language): List<Actor> {
         historyRepo.addSearchHistoryItem(
-            SearchHistoryItem(
+            SearchHistoryInputItem(
                 query = query,
                 category = SearchCategory.MOVIE,
                 filters = null,
