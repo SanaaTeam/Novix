@@ -1,5 +1,7 @@
 [versions]
 agp = "8.10.1"
+junitJupiterApi = "5.13.3"
+junitJupiterEngine = "5.13.3"
 koinAndroid = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
@@ -26,6 +28,8 @@ koinBom = "4.1.0"
 navigationCompose = "2.7.7"
 coil = "2.7.0"
 kotlinxSerialization = "1.6.3"
+mockkMockkVersion = "1.14.0"
+kotlinxCoroutinesTestVersion = "1.7.3"
 
 compileSdk = "35"
 minSdk = "26"
@@ -45,8 +49,12 @@ firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+mockk-v1140 = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
+kotlinx-coroutines-test-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }

@@ -13,4 +13,13 @@ kotlin {
 }
 dependencies {
     implementation(libs.kotlinx.datetime)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.mockk.v1140)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(kotlin("test"))
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
