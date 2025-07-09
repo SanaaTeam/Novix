@@ -52,4 +52,5 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.androidx.foundation.layout.android)
     implementation(platform(libs.androidx.compose.bom.v20240600))
+    implementation(libs.androidx.ui.tooling.preview)
 }
