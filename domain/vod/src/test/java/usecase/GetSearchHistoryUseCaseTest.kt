@@ -7,24 +7,24 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SearchHistoryRepository
 
-class GetMovieSearchHistoryUseCaseTest {
+class GetSearchHistoryUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
-    private lateinit var getSearchHistoryUseCase: GetMovieSearchHistoryUseCase
+    private lateinit var getSearchHistoryUseCase: GetSearchHistoryUseCase
 
     @BeforeEach
     fun setUp() {
-        getSearchHistoryUseCase = GetMovieSearchHistoryUseCase(searchHistoryRepository)
+        getSearchHistoryUseCase = GetSearchHistoryUseCase(searchHistoryRepository)
     }
 
     @Test
-    fun `execute() should call getMovieSearchHistory() from SearchHistoryRepository when get searched movie history`() =
+    fun `execute() should call getSearchHistory() from SearchHistoryRepository when get searched history`() =
         runTest {
             // When
             getSearchHistoryUseCase.execute()
 
             // Then
             coVerify {
-                searchHistoryRepository.getMovieSearchHistory()
+                searchHistoryRepository.getSearchHistory()
             }
         }
 }
