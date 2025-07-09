@@ -4,6 +4,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import entity.Actor
 import entity.Language
+import extensions.now
+import kotlinx.datetime.LocalDateTime
 import usecase.search.SearchCategory
 import usecase.search.SearchHistoryItem
 import repository.SearchRepository
@@ -21,7 +23,7 @@ class SearchActorsUseCase(
                 SearchCategory.ACTOR,
                 null,
                 language,
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                LocalDateTime.now()
             )
         )
         return searchRepository.searchActors(query, language)

@@ -6,6 +6,8 @@ import kotlinx.datetime.toLocalDateTime
 import entity.Language
 import usecase.search.MediaFilters
 import entity.Movie
+import extensions.now
+import kotlinx.datetime.LocalDateTime
 import usecase.search.SearchCategory
 import usecase.search.SearchHistoryItem
 import repository.SearchHistoryRepository
@@ -22,7 +24,7 @@ class SearchMoviesUseCase(
                 SearchCategory.MOVIE,
                 filters,
                 language,
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                LocalDateTime.now()
             )
         )
         return searchRepository.searchMovies(query, filters, language)

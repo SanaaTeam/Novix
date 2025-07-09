@@ -7,6 +7,8 @@ import usecase.search.MediaFilters
 import usecase.search.SearchCategory
 import usecase.search.SearchHistoryItem
 import entity.TvSeries
+import extensions.now
+import kotlinx.datetime.LocalDateTime
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 
@@ -22,7 +24,7 @@ class SearchTvSeriesUseCase(
                 SearchCategory.TV_SERIES,
                 filters,
                 language,
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                LocalDateTime.now()
             )
         )
         return searchRepository.searchTvSeries(query, filters, language)
