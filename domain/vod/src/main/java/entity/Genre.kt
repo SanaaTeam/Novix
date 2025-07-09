@@ -2,16 +2,16 @@ package entity
 
 enum class Genre {
     ACTION,
+    ADVENTURE,
     COMEDY,
     DRAMA,
     HORROR,
-    SCI_FI,
+    SCIENCE_FICTION,
+    FANTASY,
     ROMANCE,
     THRILLER,
     DOCUMENTARY,
     ANIMATION,
-    FANTASY,
-    ADVENTURE,
     CRIME,
     FAMILY,
     HISTORY,
@@ -24,5 +24,7 @@ enum class Genre {
     TALK,
     WAR,
     WESTERN,
-    TV_MOVIE
+    TV_MOVIE,
+    ACTION_AND_ADVENTURE,
+    SCI_FI_AND_FANTASY
 }
