@@ -9,12 +9,13 @@ import repository.SearchRepository
 import usecase.search.MediaFilters
 import usecase.search.SearchCategory
 import usecase.search.SearchHistoryInputItem
+import usecase.search.SearchMediaOutput
 
 class SearchTvSeriesUseCase(
     private val searchRepository: SearchRepository,
     private val historyRepo: SearchHistoryRepository
 ) {
-    suspend fun execute(query: String, filters: MediaFilters?, language: Language): List<TvSeries> {
+    suspend fun execute(query: String, filters: MediaFilters?, language: Language): List<SearchMediaOutput> {
         historyRepo.addSearchHistoryItem(
             SearchHistoryInputItem(
                 query = query,
