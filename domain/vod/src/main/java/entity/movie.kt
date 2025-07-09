@@ -2,7 +2,7 @@ package entity
 import kotlinx.datetime.LocalDate
 
 data class Movie(
-    val id: String,
+    val id: Long,
     val posterImageUrl: String,
     val title: String,
     val description: String,

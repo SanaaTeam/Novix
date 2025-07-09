@@ -2,7 +2,7 @@ package entity
 import kotlinx.datetime.LocalDate
 
 data class TvSeries(
-    val id: String,
+    val id: Long,
     val posterImageUrl: String,
     val title: String,
     val description: String,
@@ -13,14 +13,14 @@ data class TvSeries(
     val imdbRating: Float?,
 )
 data class Season(
-    val id: String,
+    val id: Long,
     val title: String,
     val number: Int,
     val episodes: List<Episode>
 )
 
 data class Episode(
-    val id: String,
+    val id: Long,
     val title: String,
     val description: String,
     val durationMinutes: Int,

@@ -17,11 +17,11 @@ class SearchTvSeriesUseCase(
     suspend fun execute(query: String, filters: MediaFilters?, language: Language): List<TvSeries> {
         historyRepo.addSearchHistoryItem(
             SearchHistoryItem(
-                query,
-                SearchCategory.TV_SERIES,
-                filters,
-                language,
-                LocalDateTime.now()
+                query = query,
+                category = SearchCategory.MOVIE,
+                filters = filters,
+                language = language,
+                timestamp = LocalDateTime.now()
             )
         )
         return searchRepository.searchTvSeries(query, filters, language)

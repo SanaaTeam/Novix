@@ -16,11 +16,11 @@ class SearchActorsUseCase(
     suspend fun execute(query: String, language: Language): List<Actor> {
         historyRepo.addSearchHistoryItem(
             SearchHistoryItem(
-                query,
-                SearchCategory.ACTOR,
-                null,
-                language,
-                LocalDateTime.now()
+                query = query,
+                category = SearchCategory.MOVIE,
+                filters = null,
+                language = language,
+                timestamp = LocalDateTime.now()
             )
         )
         return searchRepository.searchActors(query, language)
