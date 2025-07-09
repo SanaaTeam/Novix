@@ -25,12 +25,13 @@ fun SearchScreenContent() {
                 screenTitle = "Search"
             )
         }
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .padding(top = 50.dp)
         ) {
-            SearchSection()        }
+            SearchSection()
+        }
 
     }
 }
