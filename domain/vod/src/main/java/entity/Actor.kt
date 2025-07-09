@@ -7,7 +7,7 @@ data class Actor(
     val age: Int?,
     val region: String?,
     val lastShow: String?,
-    val gender: Gender = Gender.MALE
+    val gender: Gender
 ) {
     enum class Gender {
         MALE,
