@@ -1,6 +1,6 @@
 package usecase.search
 
-data class SearchHistoryOutputItem(
+data class SearchMovieHistoryOutput(
     val id: Long? = null,
     val title: String,
     val posterImageUrl: String,

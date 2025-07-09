@@ -1,11 +1,13 @@
 package repository
 
 import usecase.search.RecentViewedItem
+import usecase.search.SearchActorHistoryOutput
 import usecase.search.SearchHistoryInputItem
-import usecase.search.SearchHistoryOutputItem
+import usecase.search.SearchMovieHistoryOutput
 
 interface SearchHistoryRepository {
-    suspend fun getSearchHistory(): List<SearchHistoryOutputItem>
+    suspend fun getMovieSearchHistory(): List<SearchMovieHistoryOutput>
+    suspend fun getActorSearchHistory(): List<SearchActorHistoryOutput>
     suspend fun clearSearchHistory()
     suspend fun addSearchHistoryItem(item: SearchHistoryInputItem)
     suspend fun removeSearchHistoryItem(id: Long)
