@@ -4,6 +4,7 @@ import entity.Language
 import kotlinx.datetime.LocalDateTime
 
 data class SearchHistoryItem(
+    val id: String,
     val query: String,
     val category: SearchCategory,
     val filters: MediaFilters? = null,

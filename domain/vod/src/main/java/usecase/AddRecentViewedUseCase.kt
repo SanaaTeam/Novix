@@ -2,8 +2,8 @@ package usecase
 
 import repository.SearchHistoryRepository
 
-class ClearRecentWatchingUseCase(
+class AddRecentViewedUseCase(
     private val historyRepo: SearchHistoryRepository
 ) {
-    suspend fun execute() = historyRepo.clearRecentWatching()
+    suspend fun execute(id: String) = historyRepo.addRecentViewedItem(id)
 }

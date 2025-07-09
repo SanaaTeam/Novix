@@ -1,6 +1,6 @@
 package repository
 
-import usecase.search.RecentWatchingItem
+import usecase.search.RecentViewedItem
 import usecase.search.SearchHistoryItem
 
 interface SearchHistoryRepository {
@@ -9,7 +9,7 @@ interface SearchHistoryRepository {
     suspend fun addSearchHistoryItem(item: SearchHistoryItem)
     suspend fun removeSearchHistoryItem(item: SearchHistoryItem)
 
-    suspend fun getRecentWatching(): List<RecentWatchingItem>
-    suspend fun addRecentWatching(item: RecentWatchingItem)
-    suspend fun clearRecentWatching()
+    suspend fun getRecentViewed(): List<RecentViewedItem>
+    suspend fun addRecentViewedItem(id: String)
+    suspend fun clearRecentViewed()
 }
