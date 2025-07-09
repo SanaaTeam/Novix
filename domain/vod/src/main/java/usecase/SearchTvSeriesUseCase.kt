@@ -1,17 +1,14 @@
 package usecase
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+
 import entity.Language
-import usecase.search.MediaFilters
-import usecase.search.SearchCategory
-import usecase.search.SearchHistoryItem
 import entity.TvSeries
 import extensions.now
 import kotlinx.datetime.LocalDateTime
 import repository.SearchHistoryRepository
 import repository.SearchRepository
-
+import usecase.search.MediaFilters
+import usecase.search.SearchCategory
+import usecase.search.SearchHistoryItem
 
 class SearchTvSeriesUseCase(
     private val searchRepository: SearchRepository,

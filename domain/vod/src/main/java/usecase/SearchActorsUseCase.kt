@@ -1,16 +1,13 @@
 package usecase
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+
 import entity.Actor
 import entity.Language
 import extensions.now
 import kotlinx.datetime.LocalDateTime
+import repository.SearchHistoryRepository
+import repository.SearchRepository
 import usecase.search.SearchCategory
 import usecase.search.SearchHistoryItem
-import repository.SearchRepository
-import repository.SearchHistoryRepository
-
 
 class SearchActorsUseCase(
     private val searchRepository: SearchRepository,
