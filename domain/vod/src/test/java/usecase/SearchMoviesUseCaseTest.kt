@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SearchHistoryRepository
 import repository.SearchRepository
+import usecase.search.MediaFilters
 
 class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -20,7 +21,7 @@ class SearchMoviesUseCaseTest {
     }
 
     @Test
-    fun `execute() should call searchMovies() from SearchRepository when search a movie`() =
+    fun `execute() should call searchMovies() from SearchRepository when search a movie without filters`() =
         runTest {
             // Given
             val query = "Movie"
@@ -28,6 +29,24 @@ class SearchMoviesUseCaseTest {
 
             // When
             searchMoviesUseCase.execute(query, null, language)
+
+            // Then
+            coVerify {
+                searchHistoryRepository.addSearchHistoryItem(any())
+                searchRepository.searchMovies(any(), any(), any())
+            }
+        }
+
+    @Test
+    fun `execute() should call searchMovies() from SearchRepository when search a movie with filters`() =
+        runTest {
+            // Given
+            val query = "Movie"
+            val language = Language.ARABIC
+            val filter = MediaFilters()
+
+            // When
+            searchMoviesUseCase.execute(query, filter, language)
 
             // Then
             coVerify {

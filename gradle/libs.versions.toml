@@ -34,6 +34,7 @@ kotlinxCoroutinesTestVersion = "1.7.3"
 compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
+truth = "1.4.4"
 versionCode = "1"
 versionName = "1.0"
 javaVersion = "11"
@@ -92,6 +93,7 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

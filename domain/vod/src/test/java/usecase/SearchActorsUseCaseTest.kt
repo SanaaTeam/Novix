@@ -24,7 +24,7 @@ class SearchActorsUseCaseTest {
     fun `execute() should call searchActors() from SearchRepository when search an actor`() =
         runTest {
             // Given
-            val query = "Movie"
+            val query = "Actor"
             val language = Language.ARABIC
 
             // When
