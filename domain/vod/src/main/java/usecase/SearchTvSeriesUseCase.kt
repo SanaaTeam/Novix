@@ -18,7 +18,7 @@ class SearchTvSeriesUseCase(
         historyRepo.addSearchHistoryItem(
             SearchHistoryInputItem(
                 query = query,
-                category = SearchCategory.MOVIE,
+                category = SearchCategory.TV_SERIES,
                 filters = filters,
                 language = language,
                 timestamp = LocalDateTime.now()

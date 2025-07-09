@@ -17,7 +17,7 @@ class SearchActorsUseCase(
         historyRepo.addSearchHistoryItem(
             SearchHistoryInputItem(
                 query = query,
-                category = SearchCategory.MOVIE,
+                category = SearchCategory.ACTOR,
                 filters = null,
                 language = language,
                 timestamp = LocalDateTime.now()
