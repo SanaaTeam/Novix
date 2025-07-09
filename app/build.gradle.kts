@@ -103,4 +103,7 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.kotlinx.serialization.json)
+    
+    // Local Data Sources
+    implementation(project(":data:local_data_source:search"))
 }

@@ -25,6 +25,10 @@ koinBom = "4.1.0"
 navigationCompose = "2.7.7"
 coil = "2.7.0"
 kotlinxSerialization = "1.6.3"
+room = "2.7.2"
+hilt = "2.51"
+coroutines = "1.8.1"
+ksp = "2.0.21-1.0.28"
 
 compileSdk = "35"
 minSdk = "26"
@@ -35,6 +39,7 @@ javaVersion = "11"
 applicationId = "com.sanaa.novix"
 namespace = "com.sanaa.novix"
 testRunner = "androidx.test.runner.AndroidJUnitRunner"
+roomCompiler = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -82,6 +87,18 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+
+# Room dependencies
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+
+# Coroutines
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Hilt dependencies
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -90,6 +107,8 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 firebase-appdistribution = { id = "com.google.firebase.appdistribution", version = "5.1.1" }
 google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
