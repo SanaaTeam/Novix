@@ -1,5 +1,4 @@
-package com.sanaa.search.network
-
+package com.sanaa.search
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto
 import com.sanaa.search.dto.TvSearchDto
@@ -11,7 +10,7 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
 
-class SearchRemoteDataSource(private val client: HttpClient) {
+class SearchRemoteDataSourceImpl(private val client: HttpClient) {
     private val BASE_URL = "https://api.themoviedb.org/3"
     private val API_KEY = "75d83fe5482f3d79987ef22e6dae9800"
 
