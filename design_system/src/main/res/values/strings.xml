@@ -2,4 +2,8 @@
     <string name="novix">Novix</string>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
+    <string name="no_search_result_message">
+        No search result, please try with another keyword!</string>
+    <string name="empty_search_message">
+        Start exploring! Search for your favorite movies, series and shows</string>
 </resources>
