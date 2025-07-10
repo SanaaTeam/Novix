@@ -22,7 +22,8 @@ enum class Genre {
     REALITY,
     SOAP,
     TALK,
-    WAR,//   WESTERN,
+    WAR,
+    WESTERN,
     TV_MOVIE,
     ACTION_AND_ADVENTURE,
     SCI_FI_AND_FANTASY
