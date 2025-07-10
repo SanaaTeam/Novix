@@ -15,7 +15,7 @@ class LocalSearchHistoryDataSourceImpl(
         queryDao.insertQuery(QueryLocalDto(query = query))
     }
 
-    override fun getAllQueries(limit: Int): Flow<List<String>> {
+    override fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>> {
         return queryDao.getAllQueries(limit)
     }
 

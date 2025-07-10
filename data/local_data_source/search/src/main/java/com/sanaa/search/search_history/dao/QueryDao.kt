@@ -12,8 +12,8 @@ interface QueryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuery(query: QueryLocalDto)
 
-    @Query("SELECT search_query FROM queries ORDER BY timestamp DESC LIMIT :limit")
-    fun getAllQueries(limit: Int): Flow<List<String>>
+    @Query("SELECT * FROM queries ORDER BY timestamp DESC LIMIT :limit")
+    fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>>
 
     @Query("DELETE FROM queries WHERE id = :id")
     suspend fun deleteQueryById(id: Int)

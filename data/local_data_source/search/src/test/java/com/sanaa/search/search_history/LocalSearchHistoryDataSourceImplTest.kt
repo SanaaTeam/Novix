@@ -58,6 +58,8 @@ class LocalSearchHistoryDataSourceImplTest {
             id = 1,
             title = "test title",
             imageUrl = "test imageUrl",
+            isSaved = false,
+            mediaType = "test mediaType"
         )
         // When
         dataSource.insertRecentViewed(recentViewed)
@@ -82,6 +84,7 @@ class LocalSearchHistoryDataSourceImplTest {
         // Then
         coVerify { recentViewedDao.deleteAllRecentViewed() }
     }
+
     @Test
     fun `deleteAllQueries should call deleteAllQueries on queryDao`() = runTest {
         // When

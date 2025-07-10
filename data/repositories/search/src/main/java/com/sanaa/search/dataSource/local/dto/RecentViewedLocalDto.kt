@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "recent_viewed")
 data class RecentViewedLocalDto(
     @PrimaryKey
-    val id: Long,
+    val id: Int,
     @ColumnInfo(name = "title")
     val title: String,
     @ColumnInfo(name = "image_url")
@@ -15,5 +15,7 @@ data class RecentViewedLocalDto(
     @ColumnInfo(name = "is_saved")
     val isSaved: Boolean = false,
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    @ColumnInfo(name = "media_type")
+    val mediaType: String
 )
