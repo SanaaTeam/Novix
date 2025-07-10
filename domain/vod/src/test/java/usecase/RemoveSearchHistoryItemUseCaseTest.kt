@@ -20,7 +20,7 @@ class RemoveSearchHistoryItemUseCaseTest {
     fun `execute() should call removeSearchHistoryItem() from SearchHistoryRepository when remove item form the search history`() =
         runTest {
             // Given
-            val id = 1L
+            val id = 1
 
             // When
             removeSearchHistoryItemUseCase.execute(id)
