@@ -5,14 +5,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.componants.SearchSection
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen() {
     SearchScreenContent()
 }
 
@@ -22,7 +24,7 @@ fun SearchScreenContent() {
         topBar = {
             AppTopBar(
                 modifier = Modifier.statusBarsPadding(),
-                screenTitle = "Search"
+                screenTitle = stringResource(R.string.search)
 
             )
         }
