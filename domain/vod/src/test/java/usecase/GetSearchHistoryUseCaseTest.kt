@@ -1,11 +1,15 @@
 package usecase
 
-import io.mockk.coVerify
+import com.google.common.truth.Truth.assertThat
+import extensions.now
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SearchHistoryRepository
+import usecase.search.SearchHistory
 
 class GetSearchHistoryUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
@@ -17,14 +21,35 @@ class GetSearchHistoryUseCaseTest {
     }
 
     @Test
-    fun `execute() should call getSearchHistory() from SearchHistoryRepository when get searched history`() =
+    fun `execute() should return history list when available`() =
         runTest {
+            // Given
+            coEvery { searchHistoryRepository.getSearchHistory() } returns SearchHistoryList
+
             // When
-            getSearchHistoryUseCase.execute()
+            val result = getSearchHistoryUseCase.execute()
 
             // Then
-            coVerify {
-                searchHistoryRepository.getSearchHistory()
-            }
+            assertThat(result).isEqualTo(SearchHistoryList)
         }
+
+    @Test
+    fun `execute() should return empty list when there are no search history available`() =
+        runTest {
+            // Given
+            coEvery { searchHistoryRepository.getSearchHistory() } returns emptyList()
+
+            // When
+            val result = getSearchHistoryUseCase.execute()
+
+            // Then
+            assertThat(result).isEmpty()
+        }
+
+    companion object {
+        private val SearchHistoryList = listOf(
+            SearchHistory(1L, "Search Query 1", timestamp = LocalDateTime.now()),
+            SearchHistory(2L, "Search Query 2", timestamp = LocalDateTime.now()),
+        )
+    }
 }

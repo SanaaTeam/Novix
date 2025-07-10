@@ -1,6 +1,8 @@
 package usecase
 
+import com.google.common.truth.Truth.assertThat
 import entity.Language
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -9,6 +11,7 @@ import org.junit.jupiter.api.Test
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.MediaFilters
+import usecase.search.SearchMediaOutput
 
 class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -21,37 +24,63 @@ class SearchMoviesUseCaseTest {
     }
 
     @Test
-    fun `execute() should call searchMovies() from SearchRepository when search a movie without filters`() =
+    fun `execute() should add SearchHistoryItem and return movie search result without filters`() =
         runTest {
             // Given
             val query = "Movie"
             val language = Language.ARABIC
+            val filters = null
+            coEvery {
+                searchRepository.searchMovies(
+                    query,
+                    filters,
+                    language
+                )
+            } returns searchMediaOutputList
 
             // When
-            searchMoviesUseCase.execute(query, null, language)
+            val result = searchMoviesUseCase.execute(query, filters, language)
 
             // Then
             coVerify {
                 searchHistoryRepository.addSearchHistoryItem(any())
-                searchRepository.searchMovies(any(), any(), any())
             }
+            assertThat(result).isEqualTo(searchMediaOutputList)
         }
 
     @Test
-    fun `execute() should call searchMovies() from SearchRepository when search a movie with filters`() =
+    fun `execute() should add SearchHistoryItem and return movie search result with filters`() =
         runTest {
             // Given
             val query = "Movie"
             val language = Language.ARABIC
-            val filter = MediaFilters()
+            val filters = MediaFilters()
+            coEvery {
+                searchRepository.searchMovies(
+                    query,
+                    filters,
+                    language
+                )
+            } returns searchMediaOutputList
 
             // When
-            searchMoviesUseCase.execute(query, filter, language)
+            val result = searchMoviesUseCase.execute(query, filters, language)
 
             // Then
             coVerify {
                 searchHistoryRepository.addSearchHistoryItem(any())
-                searchRepository.searchMovies(any(), any(), any())
             }
+            assertThat(result).isEqualTo(searchMediaOutputList)
         }
+
+    companion object {
+        private val searchMediaOutputList = listOf(
+            SearchMediaOutput(
+                id = 1L,
+                title = "title",
+                posterImageUrl = "imageUrl",
+                isSaved = true
+            )
+        )
+    }
 }

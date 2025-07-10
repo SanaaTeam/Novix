@@ -1,7 +1,8 @@
 package usecase
 
+import com.google.common.truth.Truth.assertThat
 import entity.Language
-import io.mockk.coVerify
+import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SearchHistoryRepository
 import repository.SearchRepository
+import usecase.search.SearchActorOutput
 
 class SearchActorsUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -21,19 +23,31 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `execute() should call searchActors() from SearchRepository when search an actor`() =
+    fun `execute() should add SearchHistoryItem and return actor search result`() =
         runTest {
             // Given
             val query = "Actor"
             val language = Language.ARABIC
+            coEvery { searchRepository.searchActors(query, language) } returns searchActorOutputList
+
 
             // When
-            searchActorsUseCase.execute(query, language)
+            val result = searchActorsUseCase.execute(query, language)
 
             // Then
             coVerifyOrder {
                 searchHistoryRepository.addSearchHistoryItem(any())
-                searchRepository.searchActors(any(), any())
             }
+            assertThat(result).isEqualTo(searchActorOutputList)
         }
+
+    companion object {
+        private val searchActorOutputList = listOf(
+            SearchActorOutput(
+                id = 1L,
+                name = "title",
+                profileImageUrl = "imgUrl",
+            )
+        )
+    }
 }

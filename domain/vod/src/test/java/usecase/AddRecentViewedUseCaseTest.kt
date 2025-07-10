@@ -18,7 +18,7 @@ class AddRecentViewedUseCaseTest {
     }
 
     @Test
-    fun `execute() should call addRecentViewedItem() from SearchHistoryRepository when add recent viewed movies`(): Unit =
+    fun `execute() should call addRecentViewedItem() from SearchHistoryRepository with the correct input when add recent viewed movies`(): Unit =
         runTest {
             // Given
             val item = RecentViewedItem(1L, "https://image.com")
