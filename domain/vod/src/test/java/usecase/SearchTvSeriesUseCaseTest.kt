@@ -1,77 +1,57 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import entity.Language
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.MediaFilters
 import usecase.search.SearchMediaOutput
 
 class SearchTvSeriesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
     private lateinit var searchTvSeriesUseCase: SearchTvSeriesUseCase
 
     @BeforeEach
     fun setUp() {
-        searchTvSeriesUseCase = SearchTvSeriesUseCase(searchRepository, searchHistoryRepository)
+        searchTvSeriesUseCase = SearchTvSeriesUseCase(searchRepository)
     }
 
     @Test
-    fun `execute() should add SearchHistoryItem and return tv series search result without filters`() =
+    fun `execute() should return tv series search result when search without filters`() =
         runTest {
             // Given
             val query = "Tv Series"
-            val language = Language.ARABIC
             val filters = null
             coEvery {
-                searchRepository.searchTvSeries(
-                    query,
-                    filters,
-                    language
-                )
+                searchRepository.searchTvSeries(query, filters)
             } returns searchMediaOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters, language)
+            val result = searchTvSeriesUseCase.execute(query, filters)
 
             // Then
-            coVerify {
-                searchHistoryRepository.addSearchHistoryItem(any())
-            }
             assertThat(result).isEqualTo(searchMediaOutputList)
 
         }
 
     @Test
-    fun `execute() should add SearchHistoryItem and return tv series search result with filters`() =
+    fun `execute() should return tv series search result when search with filters`() =
         runTest {
             // Given
             val query = "Tv Series"
-            val language = Language.ARABIC
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchTvSeries(
-                    query,
-                    filters,
-                    language
-                )
+                searchRepository.searchTvSeries(query, filters)
             } returns searchMediaOutputList
 
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters, language)
+            val result = searchTvSeriesUseCase.execute(query, filters)
 
             // Then
-            coVerify {
-                searchHistoryRepository.addSearchHistoryItem(any())
-            }
             assertThat(result).isEqualTo(searchMediaOutputList)
 
         }
@@ -79,7 +59,7 @@ class SearchTvSeriesUseCaseTest {
     companion object {
         private val searchMediaOutputList = listOf(
             SearchMediaOutput(
-                id = 1L,
+                id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
                 isSaved = true

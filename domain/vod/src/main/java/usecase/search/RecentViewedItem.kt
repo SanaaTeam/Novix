@@ -1,6 +1,6 @@
 package usecase.search
 
 data class RecentViewedItem(
-    val id: Long? = null,
+    val id: Int,
     val posterImageUrl: String,
 )

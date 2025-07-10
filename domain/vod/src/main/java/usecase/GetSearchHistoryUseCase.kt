@@ -1,11 +1,11 @@
 package usecase
 
+import kotlinx.coroutines.flow.Flow
 import repository.SearchHistoryRepository
 import usecase.search.SearchHistory
-import usecase.search.SearchHistoryInputItem
 
 class GetSearchHistoryUseCase(
     private val historyRepo: SearchHistoryRepository
 ) {
-    suspend fun execute(): List<SearchHistory> = historyRepo.getSearchHistory()
+    suspend fun execute(): Flow<List<SearchHistory>> = historyRepo.getSearchHistory()
 }

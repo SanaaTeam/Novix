@@ -1,7 +1,7 @@
 package usecase.search
 
 data class SearchActorOutput(
-    val id: Long? = null,
+    val id: Int,
     val name: String,
     val profileImageUrl: String,
 )
