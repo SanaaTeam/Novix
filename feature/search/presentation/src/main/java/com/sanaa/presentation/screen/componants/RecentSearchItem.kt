@@ -54,10 +54,7 @@ fun RecentSearchItem(
                 contentDescription = null,
                 tint = Theme.colors.hint,
                 modifier = Modifier
-                    .clickable(onClick = onCancelClicked,
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    )
+                    .clickable(onClick = onCancelClicked)
             )
         }
         if (!isLast) {
