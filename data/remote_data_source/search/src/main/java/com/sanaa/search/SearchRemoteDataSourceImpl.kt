@@ -12,7 +12,6 @@ import io.ktor.client.request.parameter
 
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
-    //private val languageProvider: LanguageProvider
 ): SearchRemoteDataSource {
 
     private companion object {

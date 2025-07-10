@@ -1,6 +1,5 @@
 package com.sanaa.search.network
 
-import android.R.attr.level
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
