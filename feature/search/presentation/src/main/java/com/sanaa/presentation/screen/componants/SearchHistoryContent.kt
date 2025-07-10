@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.componants
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,8 @@ fun SearchHistoryContent(
         LazyRow(
             modifier = Modifier
                 .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp)
         ) {
             itemsIndexed(recentViewed) {index, item ->
                 MovieSeriesPosterCard(
@@ -124,7 +126,7 @@ val recentSearchesList = listOf(
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchPreview() {
+private fun SearchHistoryContentPreview() {
     SearchHistoryContent(
         recentSearches = recentSearchesList,
         recentViewed = recentViewedList
