@@ -2,4 +2,11 @@
     <string name="novix">Novix</string>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
+    <string name="released_year">Released year</string>
+    <string name="genres">Genres</string>
+    <string name="imdb_rating">IMDb rating</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
 </resources>

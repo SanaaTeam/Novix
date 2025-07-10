@@ -29,7 +29,7 @@ fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = stringResource(com.sanaa.presentation.R.string.filter),
+            text = stringResource(R.string.filter),
             style = Theme.textStyle.title.large,
             color = Theme.colors.title
         )
@@ -51,7 +51,7 @@ fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
         ) {
             Icon(
                 painter = painterResource(R.drawable.cancel),
-                contentDescription = stringResource(com.sanaa.presentation.R.string.cancel),
+                contentDescription = stringResource(R.string.cancel),
                 modifier = Modifier.size(16.dp),
                 tint = Theme.colors.title
             )
