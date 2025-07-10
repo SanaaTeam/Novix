@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.presentation.screen.componants.EmptySearchState
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.componants.SearchSection
 
@@ -31,8 +32,8 @@ fun SearchScreenContent() {
             modifier = Modifier.padding(innerPadding)
         ) {
             SearchSection()
+            EmptySearchState()
         }
-
     }
 }
 
