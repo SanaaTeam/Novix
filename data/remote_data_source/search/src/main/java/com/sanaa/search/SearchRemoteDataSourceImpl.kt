@@ -17,7 +17,6 @@ class SearchRemoteDataSourceImpl(
 
     private companion object {
         const val BASE_URL = "https://api.themoviedb.org/3"
-        const val API_KEY = "75d83fe5482f3d79987ef22e6dae9800"
         const val PAGE_NUMBER = 1
     }
 
@@ -29,7 +28,7 @@ class SearchRemoteDataSourceImpl(
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
             parameter("language", "en")
-            parameter("api_key", API_KEY)
+            parameter("api_key", TmdbConfig.apiKey)
         }.body()
     }
 
