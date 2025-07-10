@@ -1,6 +1,8 @@
 [versions]
 activityComposeVersion = "1.9.0"
 agp = "8.10.1"
+junitJupiterApi = "5.13.3"
+junitJupiterEngine = "5.13.3"
 composeBomVersion = "2024.06.00"
 foundationLayoutAndroid = "1.6.8"
 koinAndroid = "4.0.4"
@@ -9,6 +11,7 @@ koinAndroidxCompose = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
+kotlinxDatetime = "0.6.2"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.01"
@@ -32,10 +35,13 @@ koinBom = "4.1.0"
 navigationCompose = "2.7.7"
 coil = "2.7.0"
 kotlinxSerialization = "1.6.3"
+mockkMockkVersion = "1.14.0"
+kotlinxCoroutinesTestVersion = "1.7.3"
 
 compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
+truth = "1.4.4"
 versionCode = "1"
 versionName = "1.0"
 javaVersion = "11"
@@ -58,8 +64,12 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 
 insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+mockk-v1140 = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
+kotlinx-coroutines-test-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -77,6 +87,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
 material3 = { module = "androidx.compose.material3:material3" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
@@ -98,6 +109,7 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
 ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
