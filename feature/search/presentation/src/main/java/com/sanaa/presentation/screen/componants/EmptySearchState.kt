@@ -22,7 +22,9 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun EmptySearchState() {
+fun EmptySearchState(
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),

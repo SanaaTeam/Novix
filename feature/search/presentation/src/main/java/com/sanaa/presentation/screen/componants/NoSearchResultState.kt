@@ -24,7 +24,9 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun NoSearchResultState() {
+fun NoSearchResultState(
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = Modifier
             .fillMaxSize(),

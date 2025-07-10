@@ -33,6 +33,8 @@ fun SearchScreenContent() {
         ) {
             SearchSection()
             EmptySearchState()
+//            NoSearchResultState()
+
         }
     }
 }
