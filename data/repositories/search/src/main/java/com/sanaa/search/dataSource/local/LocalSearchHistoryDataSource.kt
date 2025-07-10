@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface LocalSearchHistoryDataSource {
     suspend fun insertQuery(query: String)
-    suspend fun deleteQuery(query: String)
     fun getAllQueries(limit: Int): Flow<List<String>>
     suspend fun deleteQueryById(id: Int)
     suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto)

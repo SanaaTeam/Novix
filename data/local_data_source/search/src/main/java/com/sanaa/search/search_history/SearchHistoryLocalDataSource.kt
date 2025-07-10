@@ -15,10 +15,6 @@ class LocalSearchHistoryDataSourceImpl(
         queryDao.insertQuery(QueryLocalDto(query = query))
     }
 
-    override suspend fun deleteQuery(query: String) {
-        queryDao.deleteQuery(query)
-    }
-
     override fun getAllQueries(limit: Int): Flow<List<String>> {
         return queryDao.getAllQueries(limit)
     }
@@ -26,7 +22,6 @@ class LocalSearchHistoryDataSourceImpl(
     override suspend fun deleteQueryById(id: Int) {
         queryDao.deleteQueryById(id)
     }
-
 
     override suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto) {
         recentViewedDao.insertRecentViewed(recentViewed)
