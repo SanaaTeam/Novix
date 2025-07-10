@@ -15,8 +15,8 @@ interface QueryDao {
     @Query("DELETE FROM queries WHERE search_query = :query")
     suspend fun deleteQuery(query: String)
 
-    @Query("SELECT search_query FROM queries ORDER BY timestamp DESC LIMIT 10")
-    fun getAllQueries(): Flow<List<String>>
+    @Query("SELECT search_query FROM queries ORDER BY timestamp DESC LIMIT :limit")
+    fun getAllQueries(limit: Int): Flow<List<String>>
 
     @Query("DELETE FROM queries WHERE id = :id")
     suspend fun deleteQueryById(id: Int)

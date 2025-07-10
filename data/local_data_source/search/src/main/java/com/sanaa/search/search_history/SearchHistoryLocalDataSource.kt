@@ -18,26 +18,22 @@ class SearchHistoryLocalDataSource(
         queryDao.deleteQuery(query)
     }
 
-    fun getAllQueries(): Flow<List<String>> {
-        return queryDao.getAllQueries()
+    fun getAllQueries(limit: Int): Flow<List<String>> {
+        return queryDao.getAllQueries(limit)
     }
 
     suspend fun deleteQueryById(id: Int) {
         queryDao.deleteQueryById(id)
     }
 
-    suspend fun insertRecentViewed(title: String, imageUrl: String, isSaved: Boolean) {
-        recentViewedDao.insertRecentViewed(
-            RecentViewedLocalDto(
-                title = title,
-                imageUrl = imageUrl,
-                isSaved = isSaved
-            )
-        )
+    suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto) {
+        recentViewedDao.insertRecentViewed(recentViewed)
     }
 
-    fun getAllRecentViewed(): Flow<List<RecentViewedLocalDto>> {
-        return recentViewedDao.getAllRecentViewed()
+    fun getAllRecentViewed(
+        limit: Int
+    ): Flow<List<RecentViewedLocalDto>> {
+        return recentViewedDao.getAllRecentViewed(limit)
     }
 
     suspend fun deleteAllRecentViewed() {

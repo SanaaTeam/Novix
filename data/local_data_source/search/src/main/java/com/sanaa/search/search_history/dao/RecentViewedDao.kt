@@ -13,8 +13,8 @@ interface RecentViewedDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto)
 
-    @Query("SELECT * FROM recent_viewed ORDER BY timestamp DESC LIMIT 10")
-    fun getAllRecentViewed(): Flow<List<RecentViewedLocalDto>>
+    @Query("SELECT * FROM recent_viewed ORDER BY timestamp DESC LIMIT :limit")
+    fun getAllRecentViewed(limit: Int): Flow<List<RecentViewedLocalDto>>
 
     @Query("DELETE FROM recent_viewed")
     suspend fun deleteAllRecentViewed()
