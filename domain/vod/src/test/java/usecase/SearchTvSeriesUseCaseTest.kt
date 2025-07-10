@@ -1,0 +1,89 @@
+package usecase
+
+import com.google.common.truth.Truth.assertThat
+import entity.Language
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import repository.SearchHistoryRepository
+import repository.SearchRepository
+import usecase.search.MediaFilters
+import usecase.search.SearchMediaOutput
+
+class SearchTvSeriesUseCaseTest {
+    private var searchRepository: SearchRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private lateinit var searchTvSeriesUseCase: SearchTvSeriesUseCase
+
+    @BeforeEach
+    fun setUp() {
+        searchTvSeriesUseCase = SearchTvSeriesUseCase(searchRepository, searchHistoryRepository)
+    }
+
+    @Test
+    fun `execute() should add SearchHistoryItem and return tv series search result without filters`() =
+        runTest {
+            // Given
+            val query = "Tv Series"
+            val language = Language.ARABIC
+            val filters = null
+            coEvery {
+                searchRepository.searchTvSeries(
+                    query,
+                    filters,
+                    language
+                )
+            } returns searchMediaOutputList
+
+            // When
+            val result = searchTvSeriesUseCase.execute(query, filters, language)
+
+            // Then
+            coVerify {
+                searchHistoryRepository.addSearchHistoryItem(any())
+            }
+            assertThat(result).isEqualTo(searchMediaOutputList)
+
+        }
+
+    @Test
+    fun `execute() should add SearchHistoryItem and return tv series search result with filters`() =
+        runTest {
+            // Given
+            val query = "Tv Series"
+            val language = Language.ARABIC
+            val filters = MediaFilters()
+            coEvery {
+                searchRepository.searchTvSeries(
+                    query,
+                    filters,
+                    language
+                )
+            } returns searchMediaOutputList
+
+
+            // When
+            val result = searchTvSeriesUseCase.execute(query, filters, language)
+
+            // Then
+            coVerify {
+                searchHistoryRepository.addSearchHistoryItem(any())
+            }
+            assertThat(result).isEqualTo(searchMediaOutputList)
+
+        }
+
+    companion object {
+        private val searchMediaOutputList = listOf(
+            SearchMediaOutput(
+                id = 1L,
+                title = "title",
+                posterImageUrl = "imageUrl",
+                isSaved = true
+            )
+        )
+    }
+}
