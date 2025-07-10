@@ -27,7 +27,9 @@ class GetRecentViewedUseCaseTest {
     fun `execute() should return recent viewed list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getRecentViewed() } returns flowOf(recentViewedList)
+            coEvery {
+                searchHistoryRepository.getRecentViewed(any())
+            } returns flowOf(recentViewedList)
 
             // When
             val result = getRecentViewedUseCase.execute().single()
@@ -40,7 +42,7 @@ class GetRecentViewedUseCaseTest {
     fun `execute() should return empty list when no recent viewed items are available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getRecentViewed() } returns flowOf(emptyList())
+            coEvery { searchHistoryRepository.getRecentViewed(any()) } returns flowOf(emptyList())
 
             // When
             val result = getRecentViewedUseCase.execute().single()
@@ -54,7 +56,7 @@ class GetRecentViewedUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.getRecentViewed()
+                searchHistoryRepository.getRecentViewed(any())
             } throws NotFoundException("Recent View")
 
             // When, Then

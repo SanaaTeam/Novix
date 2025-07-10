@@ -28,7 +28,7 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return history list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory() } returns flowOf(SearchHistoryList)
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(SearchHistoryList)
 
             // When
             val result = getSearchHistoryUseCase.execute().single()
@@ -41,7 +41,7 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return empty list when there are no search history available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory() } returns flowOf(emptyList())
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(emptyList())
 
             // When
             val result = getSearchHistoryUseCase.execute().single()
@@ -55,7 +55,7 @@ class GetSearchHistoryUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.getSearchHistory()
+                searchHistoryRepository.getSearchHistory(any())
             } throws NotFoundException("Search History")
 
             // When, Then
