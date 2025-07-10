@@ -29,15 +29,3 @@ object KtorClient {
         }
     }
 }
-
-//val networkModule = module {
-//    single { KtorClientProvider().client }
-//}
-//
-//val appModule = module {
-//    single<LanguageProvider> { DeviceLanguageProvider() }
-//    single { SearchRemoteDataSourceImpl(get(), get()) }
-//}
-//startKoin {
-//    modules(networkModule)
-//}
