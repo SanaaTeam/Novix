@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="released_year">Released year</string>
+    <string name="genres">Genres</string>
+    <string name="imdb_rating">IMDb rating</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
+    <string name="apply">Apply</string>
+</resources>
