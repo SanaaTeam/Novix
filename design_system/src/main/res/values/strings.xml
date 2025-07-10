@@ -6,4 +6,8 @@
         No search result, please try with another keyword!</string>
     <string name="empty_search_message">
         Start exploring! Search for your favorite movies, series and shows</string>
+    <string name="search">Search</string>
+    <string name="recent_viewed">Recent viewed</string>
+    <string name="clear_all">Clear all</string>
+    <string name="recent_search">Recent search</string>
 </resources>
