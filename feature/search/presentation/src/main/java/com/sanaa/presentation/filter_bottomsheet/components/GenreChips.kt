@@ -13,15 +13,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sanaa.presentation.R
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenreChips(
-    title: String,
     genres: List<String>,
     selectedGenre: String,
     onGenreSelected: (String) -> Unit,
@@ -29,7 +30,7 @@ fun GenreChips(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = title,
+            text = stringResource(R.string.genres),
             style = Theme.textStyle.title.small,
             color = Theme.colors.title
         )
@@ -70,7 +71,6 @@ fun GenreChipsPreview() {
 
         Column(modifier = Modifier.padding(16.dp)) {
             GenreChips(
-                title = "Genres",
                 genres = genres,
                 selectedGenre = selectedGenre,
                 onGenreSelected = { genre ->

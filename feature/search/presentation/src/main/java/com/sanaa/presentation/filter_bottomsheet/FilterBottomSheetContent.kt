@@ -3,9 +3,12 @@ package com.sanaa.presentation.filter_bottomsheet
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,31 +46,36 @@ fun FilterBottomSheetContent(
             .fillMaxWidth()
             .padding(16.dp),
     ) {
-        BottomSheetHeader(onCancelClicked = onCloseClicked)
 
-        if (uiState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        } else {
-            CustomYearRangeSlider(
-                modifier = Modifier.padding(top = 24.dp),
-                title = stringResource(R.string.released_year),
-                value = uiState.yearRange,
-                onValueChange = onYearRangeChanged
-            )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
+        ) {
+            BottomSheetHeader(onCancelClicked = onCloseClicked)
 
-            GenreChips(
-                title = stringResource(R.string.genres),
-                genres = uiState.allGenres,
-                selectedGenre = uiState.selectedGenre,
-                onGenreSelected = onGenreSelected
-            )
+            if (uiState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+            } else {
+                CustomYearRangeSlider(
+                    title = stringResource(R.string.released_year),
+                    value = uiState.yearRange,
+                    onValueChange = onYearRangeChanged
+                )
 
-            IMDbRatingSelector(
-                modifier = Modifier.padding(top = 24.dp),
-                title = stringResource(R.string.imdb_rating),
-                currentRating = uiState.imdbRating,
-                onRatingChanged = onRatingChanged
-            )
+                GenreChips(
+                    genres = uiState.allGenres,
+                    selectedGenre = uiState.selectedGenre,
+                    onGenreSelected = onGenreSelected
+                )
+
+                IMDbRatingSelector(
+                    title = stringResource(R.string.imdb_rating),
+                    currentRating = uiState.imdbRating,
+                    onRatingChanged = onRatingChanged
+                )
+            }
         }
 
         FilterActions(
@@ -84,7 +92,7 @@ private fun FilterActions(
     onClearClicked: () -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top = 24.dp),
+        modifier = Modifier.padding(top=24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         PrimaryButton(
@@ -107,7 +115,7 @@ private fun FilterActions(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun FilterBottomSheetContentPreview() {
-    NovixTheme() {
+    NovixTheme(true) {
         var previewYearRange by remember { mutableStateOf(1995f..2015f) }
         var previewSelectedGenre by remember { mutableStateOf("Animation") }
         var previewRating by remember { mutableStateOf(8) }

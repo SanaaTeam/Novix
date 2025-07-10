@@ -1,6 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -34,19 +35,25 @@ fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
         )
         Box(
             modifier = Modifier
+                .background(
+                    color = Theme.colors.iconBackgroundLow,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .clickable(onClick = onCancelClicked)
                 .border(
                     width = 1.dp,
                     color = Theme.colors.stroke,
                     shape = RoundedCornerShape(8.dp)
+
                 )
                 .padding(8.dp)
 
         ) {
-            Image(
+            Icon(
                 painter = painterResource(R.drawable.cancel),
-                contentDescription = "cancel",
-                modifier = Modifier.size(16.dp)
+                contentDescription = stringResource(com.sanaa.presentation.R.string.cancel),
+                modifier = Modifier.size(16.dp),
+                tint = Theme.colors.title
             )
         }
     }
