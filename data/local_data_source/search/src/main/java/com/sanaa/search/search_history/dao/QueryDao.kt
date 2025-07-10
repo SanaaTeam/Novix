@@ -17,4 +17,7 @@ interface QueryDao {
 
     @Query("DELETE FROM queries WHERE id = :id")
     suspend fun deleteQueryById(id: Int)
+
+    @Query("DELETE FROM queries")
+    suspend fun deleteAllQueries()
 }

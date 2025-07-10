@@ -37,4 +37,7 @@ class LocalSearchHistoryDataSourceImpl(
         recentViewedDao.deleteAllRecentViewed()
     }
 
+    override suspend fun deleteAllQueries() {
+        queryDao.deleteAllQueries()
+    }
 }

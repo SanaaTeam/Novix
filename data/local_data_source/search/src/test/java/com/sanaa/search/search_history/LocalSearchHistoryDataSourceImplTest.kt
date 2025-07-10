@@ -82,4 +82,11 @@ class LocalSearchHistoryDataSourceImplTest {
         // Then
         coVerify { recentViewedDao.deleteAllRecentViewed() }
     }
+    @Test
+    fun `deleteAllQueries should call deleteAllQueries on queryDao`() = runTest {
+        // When
+        dataSource.deleteAllQueries()
+        // Then
+        coVerify { queryDao.deleteAllQueries() }
+    }
 }

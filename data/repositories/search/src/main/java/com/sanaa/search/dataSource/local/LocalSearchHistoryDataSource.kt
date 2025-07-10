@@ -10,5 +10,5 @@ interface LocalSearchHistoryDataSource {
     suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto)
     fun getAllRecentViewed(limit: Int): Flow<List<RecentViewedLocalDto>>
     suspend fun deleteAllRecentViewed()
-
+    suspend fun deleteAllQueries()
 }
