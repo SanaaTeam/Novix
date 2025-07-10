@@ -21,20 +21,21 @@ import com.sanaa.designsystem.design_system.component.text_field.NovixTextField
 
 @Composable
 fun SearchSection(
-    onClick: ()->Unit = {}
+    text: String,
+    onClick: ()->Unit = {},
+    onTextChange: (String) -> Unit = {}
 ) {
    Row(
        modifier = Modifier
-           .height(56.dp)
+           .height(48.dp)
            .padding(horizontal = 16.dp)
            .fillMaxWidth(),
        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
        verticalAlignment = Alignment.CenterVertically
    ) {
-       var text by remember { mutableStateOf("") }
        NovixTextField(
            value = text,
-           onValueChange = { text = it },
+           onValueChange = onTextChange,
            icon = painterResource(R.drawable.icon_search),
            modifier = Modifier
                .weight(1f)
@@ -50,5 +51,9 @@ fun SearchSection(
 @Preview(showBackground = true)
 @Composable
 private fun SearchAppBarPreview() {
-    SearchSection()
+    var text by remember { mutableStateOf("") }
+    SearchSection(
+        text = text,
+        onTextChange = {text = it}
+    )
 }

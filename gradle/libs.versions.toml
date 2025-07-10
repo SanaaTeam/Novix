@@ -1,10 +1,10 @@
 [versions]
 activityComposeVersion = "1.9.0"
 agp = "8.10.1"
-composeBomVersion = "2024.06.00"
-foundationLayoutAndroid = "1.6.8"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
+composeBomVersion = "2024.06.00"
+foundationLayoutAndroid = "1.6.8"
 koinAndroid = "4.0.4"
 koinAndroidVersion = "4.0.4"
 koinAndroidxCompose = "4.0.4"
@@ -69,6 +69,7 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 mockk-v1140 = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
+
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
 kotlinx-coroutines-test-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
@@ -111,10 +112,10 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
 ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
