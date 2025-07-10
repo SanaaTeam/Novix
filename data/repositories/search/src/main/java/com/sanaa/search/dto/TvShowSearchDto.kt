@@ -12,5 +12,5 @@ data class TvShowSearchDto(
     val name: String,
 
     @SerialName("poster_path")
-    val posterImage: String,
+    val posterImagePath: String,
  )

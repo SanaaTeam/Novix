@@ -12,5 +12,5 @@ data class MovieSearchDto(
     val title: String,
 
     @SerialName("poster_path")
-    val posterImage: String,
+    val posterImagePath: String,
 )
