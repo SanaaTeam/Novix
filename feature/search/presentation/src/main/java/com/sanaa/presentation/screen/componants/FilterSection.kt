@@ -24,7 +24,7 @@ fun FilterSection(
 ) {
     Box(
         modifier = Modifier
-            .size(height = 52.dp, width = 48.dp)
+            .size(height = 48.dp, width = 52.dp)
             .background(
                 color = Theme.colors.primary,
                 shape = RoundedCornerShape(12.dp)

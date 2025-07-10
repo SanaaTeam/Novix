@@ -25,7 +25,7 @@ fun SearchSection(
 ) {
    Row(
        modifier = Modifier
-           .height(56.dp)
+           .height(48.dp)
            .padding(horizontal = 16.dp)
            .fillMaxWidth(),
        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
