@@ -1,8 +1,9 @@
 package com.sanaa.search
 
+import com.sanaa.search.dataSource.SearchRemoteDataSource
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto
-import com.sanaa.search.dto.TvSearchDto
+import com.sanaa.search.dto.TvShowSearchDto
 import com.sanaa.search.response.SearchResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -35,7 +36,7 @@ class SearchRemoteDataSourceImpl(
     override suspend fun searchActors(query: String): SearchResponse<ActorSearchDto> =
         search(path = "person", query)
 
-    override suspend fun searchTv(query: String): SearchResponse<TvSearchDto> =
+    override suspend fun searchTv(query: String): SearchResponse<TvShowSearchDto> =
         search(path = "tv", query)
 
     override suspend fun searchMovies(query: String): SearchResponse<MovieSearchDto> =
