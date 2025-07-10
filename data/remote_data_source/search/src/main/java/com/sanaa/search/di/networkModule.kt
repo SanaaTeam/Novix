@@ -12,6 +12,10 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
 val networkModule = module {
+    single<String> {
+        "https://api.themoviedb.org/3"
+    }
+
     single<HttpClient> { HttpClient(CIO) {
         install(ContentNegotiation) {
             json(Json {

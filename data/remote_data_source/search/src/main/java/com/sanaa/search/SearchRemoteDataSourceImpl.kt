@@ -13,18 +13,14 @@ import io.ktor.client.request.parameter
 
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
+    private val baseUrl: String
 ): SearchRemoteDataSource {
-
-    private companion object {
-        const val BASE_URL = "https://api.themoviedb.org/3"
-        const val PAGE_NUMBER = 1
-    }
 
     private suspend inline fun <reified T> search(
         path: String,
         query: String,
     ): SearchResponse<T> {
-        return client.get("$BASE_URL/search/$path") {
+        return client.get("$baseUrl/search/$path") {
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
             parameter("language", "en")
@@ -40,4 +36,9 @@ class SearchRemoteDataSourceImpl(
 
     override suspend fun searchMovies(query: String): SearchResponse<MovieSearchDto> =
         search(path = "movie", query)
+
+    private companion object {
+        const val PAGE_NUMBER = 1
+    }
+
 }
