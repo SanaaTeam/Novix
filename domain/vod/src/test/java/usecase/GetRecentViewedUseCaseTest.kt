@@ -1,6 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
+import exceptions.NotFoundException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -8,8 +9,10 @@ import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
-import usecase.search.RecentViewedItem
+import usecase.search.MediaType
+import usecase.search.RecentViewedMedia
 
 class GetRecentViewedUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
@@ -46,10 +49,24 @@ class GetRecentViewedUseCaseTest {
             assertThat(result).isEmpty()
         }
 
+    @Test
+    fun `execute() should throw NotFoundException when when try to get recent viewed media failed`() =
+        runTest {
+            // Given
+            coEvery {
+                searchHistoryRepository.getRecentViewed()
+            } throws NotFoundException("Recent View")
+
+            // When, Then
+            assertThrows<NotFoundException> {
+                getRecentViewedUseCase.execute()
+            }
+        }
+
     companion object {
         private val recentViewedList = listOf(
-            RecentViewedItem(1, "https://image.com/1"),
-            RecentViewedItem(2, "https://image.com/2")
+            RecentViewedMedia(1, "https://image.com/1", MediaType.MOVIE),
+            RecentViewedMedia(2, "https://image.com/2", MediaType.MOVIE)
         )
     }
 }

@@ -1,22 +1,43 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
+import exceptions.FailedToDeleteException
 import io.mockk.coEvery
+import io.mockk.coVerifyOrder
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.SearchActorOutput
 
 class SearchActorsUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
     private lateinit var searchActorsUseCase: SearchActorsUseCase
 
     @BeforeEach
     fun setUp() {
-        searchActorsUseCase = SearchActorsUseCase(searchRepository)
+        searchActorsUseCase = SearchActorsUseCase(searchHistoryRepository, searchRepository)
     }
+
+    @Test
+    fun `execute() should call searchActors() from SearchRepository when search an actor`() =
+        runTest {
+            // Given
+            val query = "Actor"
+
+            // When
+            searchActorsUseCase.execute(query)
+
+            // Then
+            coVerifyOrder {
+                searchHistoryRepository.addSearchHistory(query)
+            }
+        }
+
 
     @Test
     fun `execute() should return actor search result when search`() =
@@ -30,6 +51,22 @@ class SearchActorsUseCaseTest {
 
             // Then
             assertThat(result).isEqualTo(searchActorOutputList)
+        }
+
+
+    @Test
+    fun `execute() should throw FailedToDeleteException when try to clear search an actor failed`() =
+        runTest {
+            // Given
+            val query = "Sam"
+            coEvery {
+                searchRepository.searchActors(query)
+            } throws FailedToDeleteException("Actor")
+
+            // When, Then
+            assertThrows<FailedToDeleteException> {
+                searchActorsUseCase.execute(query)
+            }
         }
 
     companion object {

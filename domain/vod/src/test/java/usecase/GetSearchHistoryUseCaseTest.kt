@@ -1,6 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
+import exceptions.NotFoundException
 import extensions.now
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -10,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 import usecase.search.SearchHistory
 
@@ -46,6 +48,20 @@ class GetSearchHistoryUseCaseTest {
 
             // Then
             assertThat(result).isEmpty()
+        }
+
+    @Test
+    fun `execute() should throw NotFoundException when when try to search in the history failed`() =
+        runTest {
+            // Given
+            coEvery {
+                searchHistoryRepository.getSearchHistory()
+            } throws NotFoundException("Search History")
+
+            // When, Then
+            assertThrows<NotFoundException> {
+                getSearchHistoryUseCase.execute()
+            }
         }
 
     companion object {
