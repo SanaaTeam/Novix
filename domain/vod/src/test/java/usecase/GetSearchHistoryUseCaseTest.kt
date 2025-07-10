@@ -48,8 +48,8 @@ class GetSearchHistoryUseCaseTest {
 
     companion object {
         private val SearchHistoryList = listOf(
-            SearchHistory("Search Query 1", timestamp = LocalDateTime.now()),
-            SearchHistory("Search Query 2", timestamp = LocalDateTime.now()),
+            SearchHistory(1, "Search Query 1", timestamp = LocalDateTime.now()),
+            SearchHistory(2, "Search Query 2", timestamp = LocalDateTime.now()),
         )
     }
 }
