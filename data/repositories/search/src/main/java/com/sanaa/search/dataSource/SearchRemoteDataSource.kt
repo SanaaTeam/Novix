@@ -1,8 +1,8 @@
-package com.sanaa.search
+package com.sanaa.search.dataSource
 
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto
-import com.sanaa.search.dto.TvSearchDto
+import com.sanaa.search.dto.TvShowSearchDto
 import com.sanaa.search.response.SearchResponse
 
 interface SearchRemoteDataSource {
@@ -13,7 +13,7 @@ interface SearchRemoteDataSource {
 
     suspend fun searchTv(
         query: String
-    ): SearchResponse<TvSearchDto>
+    ): SearchResponse<TvShowSearchDto>
 
     suspend fun searchMovies(
         query: String
