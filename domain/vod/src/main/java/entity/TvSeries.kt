@@ -7,7 +7,7 @@ data class TvSeries(
     val title: String,
     val description: String,
     val seasons: List<Season>,
-    val actorIds: List<String>,
+    val actorIds: List<Long>,
     val releaseDate: LocalDate,
     val genres: List<Genre>,
     val imdbRating: Float?,

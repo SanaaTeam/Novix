@@ -6,7 +6,7 @@ data class Movie(
     val posterImageUrl: String,
     val title: String,
     val description: String,
-    val actorIds: List<String>,
+    val actorIds: List<Long>,
     val releaseDate: LocalDate,
     val genres: List<Genre>,
     val imdbRating: Float?
