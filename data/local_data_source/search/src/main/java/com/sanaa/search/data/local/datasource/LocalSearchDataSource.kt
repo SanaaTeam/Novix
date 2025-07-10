@@ -1,19 +1,20 @@
 package com.sanaa.search.data.local.datasource
 
-import com.sanaa.search.data.local.entity.SearchResultEntity
+import com.sanaa.search.data.local.entity.SearchResultLocalDto
 
 interface LocalSearchDataSource {
 
-    suspend fun saveSearchResults(
+    suspend fun saveSearchResult(
         query: String,
         language: String,
-        results: List<SearchResultEntity>
+        itemId: Int,
+        itemType: String
     )
 
     suspend fun getCachedResults(
         query: String,
         language: String
-    ): List<SearchResultEntity>
+    ): List<SearchResultLocalDto>
 
     suspend fun clearExpiredResults()
 } 
