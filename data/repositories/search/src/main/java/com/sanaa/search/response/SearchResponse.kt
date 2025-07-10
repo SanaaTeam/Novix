@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SearchResponse<T>(
     @SerialName("page")
-    val page: Int = 1,
+    val page: Int,
 
     @SerialName("results")
-    val results: List<T> = emptyList(),
+    val results: List<T>,
 
     @SerialName("total_pages")
-    val totalPages: Int = 1,
+    val totalPages: Int,
 
     @SerialName("total_results")
-    val totalResults: Int = 0
+    val totalResults: Int
 )
