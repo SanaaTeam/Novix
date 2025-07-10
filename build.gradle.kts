@@ -27,8 +27,8 @@ val excludedPackages = listOf(
     "com.sanaa.designsystem.*",
     "entity.**",
     "usecase.search.**",
-    "dao.**",
-    "dto.**"
+    "**.dao.**",
+    "**.dto.**"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
