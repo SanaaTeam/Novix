@@ -11,13 +11,11 @@ import org.junit.jupiter.api.Test
 
 class LocalSearchHistoryDataSourceImplTest {
     private lateinit var dataSource: LocalSearchHistoryDataSourceImpl
-    private lateinit var queryDao: QueryDao
-    private lateinit var recentViewedDao: RecentViewedDao
+    private var queryDao: QueryDao = mockk(relaxed = true)
+    private var recentViewedDao: RecentViewedDao = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        queryDao = mockk(relaxed = true)
-        recentViewedDao = mockk(relaxed = true)
         dataSource = LocalSearchHistoryDataSourceImpl(queryDao, recentViewedDao)
     }
 
