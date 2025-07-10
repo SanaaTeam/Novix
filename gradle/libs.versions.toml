@@ -6,8 +6,6 @@ junitJupiterEngine = "5.13.3"
 composeBomVersion = "2024.06.00"
 foundationLayoutAndroid = "1.6.8"
 koinAndroid = "4.0.4"
-koinAndroidVersion = "4.0.4"
-koinAndroidxCompose = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
@@ -85,6 +83,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
+material3 = { module = "androidx.compose.material3:material3" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
 material3 = { module = "androidx.compose.material3:material3" }

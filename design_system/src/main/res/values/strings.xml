@@ -2,4 +2,10 @@
     <string name="novix">Novix</string>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
+    <string name="search">Search</string>
+    <string name="icon_filter">icon filter</string>
+    <string name="shutter_island">Shutter island</string>
+    <string name="recent_viewed">Recent viewed</string>
+    <string name="clear_all">Clear all</string>
+    <string name="recent_search">Recent search</string>
 </resources>

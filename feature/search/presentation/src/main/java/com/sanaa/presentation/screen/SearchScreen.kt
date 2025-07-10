@@ -4,33 +4,85 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
+import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.componants.SearchSection
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier) {
+fun SearchScreen() {
     SearchScreenContent()
 }
 
 @Composable
 fun SearchScreenContent() {
+    var searchText by remember { mutableStateOf("") }
     NovixScaffold(
         topBar = {
             AppTopBar(
                 modifier = Modifier.statusBarsPadding(),
-                screenTitle = "Search"
-
+                screenTitle = stringResource(R.string.search)
             )
+        },
+        bottomBar = {
+            var selectedIndex by remember { mutableIntStateOf(0) }
+            NovixNavBar {
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = selectedIndex == 0,
+                    onClick = { selectedIndex = 0 },
+                    iconRes = R.drawable.icon_home,
+                    selectedIconRes = R.drawable.icon_home_selected,
+                )
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = selectedIndex == 1,
+                    onClick = { selectedIndex = 1 },
+                    iconRes = R.drawable.icon_search,
+                    selectedIconRes = R.drawable.icon_search_selected
+                )
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = selectedIndex == 2,
+                    onClick = { selectedIndex = 2 },
+                    iconRes = R.drawable.icon_category,
+                    selectedIconRes = R.drawable.icon_category_selected
+                )
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = selectedIndex == 3,
+                    onClick = { selectedIndex = 3 },
+                    iconRes = R.drawable.icon_save,
+                    selectedIconRes = R.drawable.icon_save_selected
+                )
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = selectedIndex == 4,
+                    onClick = { selectedIndex = 4 },
+                    iconRes = R.drawable.icon_account,
+                    selectedIconRes = R.drawable.icon_account_selected
+                )
+            }
         }
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding)
         ) {
-            SearchSection()
+            SearchSection(
+                text = searchText,
+                onTextChange = { searchText = it },
+            )
         }
 
     }
