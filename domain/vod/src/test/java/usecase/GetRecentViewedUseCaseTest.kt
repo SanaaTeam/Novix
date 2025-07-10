@@ -46,8 +46,8 @@ class GetRecentViewedUseCaseTest {
 
     companion object {
         private val recentViewedList = listOf(
-            RecentViewedItem(1L, "https://image.com/1"),
-            RecentViewedItem(2L, "https://image.com/2")
+            RecentViewedItem(1, "https://image.com/1"),
+            RecentViewedItem(2, "https://image.com/2")
         )
     }
 }
