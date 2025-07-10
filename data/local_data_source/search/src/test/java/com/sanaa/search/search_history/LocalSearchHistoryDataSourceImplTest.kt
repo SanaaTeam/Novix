@@ -28,7 +28,7 @@ class LocalSearchHistoryDataSourceImplTest {
         // When
         dataSource.insertQuery(query)
         // Then
-        coVerify { queryDao.insertQuery(any()) }
+        coVerify { queryDao.insertQuery(match { it.query == query }) }
     }
 
     @Test
