@@ -6,7 +6,17 @@ import com.sanaa.search.dto.TvSearchDto
 import com.sanaa.search.response.SearchResponse
 
 interface SearchRemoteDataSource {
-    suspend fun searchPerson(query: String, page: Int = 1): SearchResponse<ActorSearchDto>
-    suspend fun searchTv(query: String, page: Int = 1): SearchResponse<TvSearchDto>
-    suspend fun searchMovie(query: String, page: Int = 1): SearchResponse<MovieSearchDto>
+
+    suspend fun searchActors(
+        query: String
+    ): SearchResponse<ActorSearchDto>
+
+    suspend fun searchTv(
+        query: String
+    ): SearchResponse<TvSearchDto>
+
+    suspend fun searchMovies(
+        query: String
+    ): SearchResponse<MovieSearchDto>
+
 }

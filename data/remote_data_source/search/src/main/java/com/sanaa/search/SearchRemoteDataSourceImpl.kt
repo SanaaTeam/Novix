@@ -1,4 +1,5 @@
 package com.sanaa.search
+
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto
 import com.sanaa.search.dto.TvSearchDto
@@ -9,36 +10,35 @@ import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 
+class SearchRemoteDataSourceImpl(
+    private val client: HttpClient,
+    //private val languageProvider: LanguageProvider
+): SearchRemoteDataSource {
 
-class SearchRemoteDataSourceImpl(private val client: HttpClient) {
-    private val BASE_URL = "https://api.themoviedb.org/3"
-    private val API_KEY = "75d83fe5482f3d79987ef22e6dae9800"
+    private companion object {
+        const val BASE_URL = "https://api.themoviedb.org/3"
+        const val API_KEY = "75d83fe5482f3d79987ef22e6dae9800"
+        const val PAGE_NUMBER = 1
+    }
 
-    suspend fun searchPerson(query: String, page: Int = 1): SearchResponse<ActorSearchDto> {
-        return client.get("$BASE_URL/search/person") {
+    private suspend inline fun <reified T> search(
+        path: String,
+        query: String,
+    ): SearchResponse<T> {
+        return client.get("$BASE_URL/search/$path") {
             parameter("query", query)
-            parameter("page", page)
-            parameter("language", "en-US")
-            parameter("include_adult", false)
+            parameter("page", PAGE_NUMBER)
+            parameter("language", "en")
             parameter("api_key", API_KEY)
         }.body()
     }
 
-    suspend fun searchTv(query: String, page: Int = 1): SearchResponse<TvSearchDto> {
-        return client.get("$BASE_URL/search/tv") {
-            parameter("query", query)
-            parameter("page", page)
-            parameter("language", "en-US")
-            parameter("api_key", API_KEY)
-        }.body()
-    }
+    override suspend fun searchActors(query: String): SearchResponse<ActorSearchDto> =
+        search(path = "person", query)
 
-    suspend fun searchMovie(query: String, page: Int = 1): SearchResponse<MovieSearchDto> {
-        return client.get("$BASE_URL/search/movie") {
-            parameter("query", query)
-            parameter("page", page)
-            parameter("language", "en-US")
-            parameter("api_key", API_KEY)
-        }.body()
-    }
+    override suspend fun searchTv(query: String): SearchResponse<TvSearchDto> =
+        search(path = "tv", query)
+
+    override suspend fun searchMovies(query: String): SearchResponse<MovieSearchDto> =
+        search(path = "movie", query)
 }
