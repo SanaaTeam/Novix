@@ -1,4 +1,4 @@
-package com.sanaa.search.search_history.dto
+package com.sanaa.search.dataSource.local.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

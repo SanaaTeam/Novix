@@ -1,42 +1,44 @@
 package com.sanaa.search.search_history
 
+import com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
+import com.sanaa.search.dataSource.local.dto.QueryLocalDto
+import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.search_history.dao.QueryDao
 import com.sanaa.search.search_history.dao.RecentViewedDao
-import com.sanaa.search.search_history.dto.QueryLocalDto
-import com.sanaa.search.search_history.dto.RecentViewedLocalDto
 import kotlinx.coroutines.flow.Flow
 
-class SearchHistoryLocalDataSource(
+class LocalSearchHistoryDataSourceImpl(
     private val queryDao: QueryDao,
     private val recentViewedDao: RecentViewedDao
-) {
-    suspend fun insertQuery(query: String) {
+) : LocalSearchHistoryDataSource {
+    override suspend fun insertQuery(query: String) {
         queryDao.insertQuery(QueryLocalDto(query = query))
     }
 
-    suspend fun deleteQuery(query: String) {
+    override suspend fun deleteQuery(query: String) {
         queryDao.deleteQuery(query)
     }
 
-    fun getAllQueries(limit: Int): Flow<List<String>> {
+    override fun getAllQueries(limit: Int): Flow<List<String>> {
         return queryDao.getAllQueries(limit)
     }
 
-    suspend fun deleteQueryById(id: Int) {
+    override suspend fun deleteQueryById(id: Int) {
         queryDao.deleteQueryById(id)
     }
 
-    suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto) {
+
+    override suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto) {
         recentViewedDao.insertRecentViewed(recentViewed)
     }
 
-    fun getAllRecentViewed(
+    override fun getAllRecentViewed(
         limit: Int
     ): Flow<List<RecentViewedLocalDto>> {
         return recentViewedDao.getAllRecentViewed(limit)
     }
 
-    suspend fun deleteAllRecentViewed() {
+    override suspend fun deleteAllRecentViewed() {
         recentViewedDao.deleteAllRecentViewed()
     }
 
