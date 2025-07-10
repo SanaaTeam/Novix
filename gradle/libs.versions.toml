@@ -32,6 +32,9 @@ kotlinxSerialization = "1.6.3"
 mockkMockkVersion = "1.14.0"
 kotlinxCoroutinesTestVersion = "1.7.3"
 
+room = "2.7.2"
+ksp = "2.0.21-1.0.27"
+
 compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
@@ -42,6 +45,7 @@ javaVersion = "11"
 applicationId = "com.sanaa.novix"
 namespace = "com.sanaa.novix"
 testRunner = "androidx.test.runner.AndroidJUnitRunner"
+junitJupiter = "5.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -97,6 +101,14 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
+#room
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
@@ -110,3 +122,10 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.4" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+[bundles]
+room = [
+    "androidx-room-runtime",
+    "androidx-room-ktx",
+    "androidx-room-testing"
+]

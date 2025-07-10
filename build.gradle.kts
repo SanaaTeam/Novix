@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.kover)
+    alias(libs.plugins.ksp) apply false
+
 }
 val excludedPackages = listOf(
     "*.R",
@@ -24,7 +26,9 @@ val excludedPackages = listOf(
     "com.sanaa.image_viewer.*",
     "com.sanaa.designsystem.*",
     "entity.**",
-    "usecase.search.**"
+    "usecase.search.**",
+    "**.dao.**",
+    "**.dto.**"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
