@@ -24,6 +24,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun SearchHistoryContent(
     onClearRecentViewClicked: () -> Unit = {},
     onClearRecentSearchClicked: () -> Unit = {},
+    onCancelClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
     recentViewed: List<Int> = emptyList(),
 ) {
@@ -61,7 +62,8 @@ fun SearchHistoryContent(
             itemsIndexed(recentSearches) { index, item ->
                 RecentSearchItem(
                     text = item,
-                    isLast = index == recentSearches.lastIndex
+                    isLast = index == recentSearches.lastIndex,
+                    onCancelClicked = onCancelClicked
                 )
             }
         }
