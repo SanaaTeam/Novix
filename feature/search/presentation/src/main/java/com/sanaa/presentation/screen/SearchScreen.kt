@@ -6,29 +6,29 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.componants.SearchSection
 
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
-
+    SearchScreenContent()
 }
 
 @Composable
 fun SearchScreenContent() {
     NovixScaffold(
-        modifier = Modifier.statusBarsPadding(),
         topBar = {
             AppTopBar(
+                modifier = Modifier.statusBarsPadding(),
                 screenTitle = "Search"
+
             )
         }
-    ) {
+    ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(top = 50.dp)
+            modifier = Modifier.padding(innerPadding)
         ) {
             SearchSection()
         }
@@ -36,8 +36,18 @@ fun SearchScreenContent() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "en")
 @Composable
-private fun SearchScreenPreview() {
-    SearchScreenContent()
+private fun SearchScreenPreviewLight() {
+    NovixTheme(false) {
+        SearchScreenContent()
+    }
+}
+
+@Preview(showBackground = true, locale = "en")
+@Composable
+private fun SearchScreenPreviewDark() {
+    NovixTheme(true) {
+        SearchScreenContent()
+    }
 }
