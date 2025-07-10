@@ -20,7 +20,7 @@ class SearchTvSeriesUseCaseTest {
     }
 
     @Test
-    fun `execute() should return tv series search result without filters`() =
+    fun `execute() should return tv series search result when search without filters`() =
         runTest {
             // Given
             val query = "Tv Series"
@@ -38,7 +38,7 @@ class SearchTvSeriesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return tv series search result with filters`() =
+    fun `execute() should return tv series search result when search with filters`() =
         runTest {
             // Given
             val query = "Tv Series"

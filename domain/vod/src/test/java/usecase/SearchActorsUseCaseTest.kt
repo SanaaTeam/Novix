@@ -19,12 +19,11 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `execute() should return actor search result`() =
+    fun `execute() should return actor search result when search`() =
         runTest {
             // Given
             val query = "Actor"
             coEvery { searchRepository.searchActors(query) } returns searchActorOutputList
-
 
             // When
             val result = searchActorsUseCase.execute(query)

@@ -20,7 +20,7 @@ class SearchMoviesUseCaseTest {
     }
 
     @Test
-    fun `execute() should return movie search result without filters`() =
+    fun `execute() should return movie search result when search without filters`() =
         runTest {
             // Given
             val query = "Movie"
@@ -37,7 +37,7 @@ class SearchMoviesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return movie search result with filters`() =
+    fun `execute() should return movie search result when search with filters`() =
         runTest {
             // Given
             val query = "Movie"
