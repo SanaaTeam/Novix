@@ -1,11 +1,14 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -27,6 +30,7 @@ fun SearchHistoryContent(
     onClearRecentViewClicked: () -> Unit = {},
     onClearRecentSearchClicked: () -> Unit = {},
     onCancelClicked: () -> Unit = {},
+    onSaveIconClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
     recentViewed: List<Int> = emptyList(),
 ) {
@@ -38,17 +42,20 @@ fun SearchHistoryContent(
             onActionClick = onClearRecentViewClicked
         )
         LazyRow(
-            modifier = Modifier
-                .padding(bottom = 24.dp),
+            modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp)
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 24.dp
+            )
         ) {
-            itemsIndexed(recentViewed) {index, item ->
+            itemsIndexed(recentViewed) { index, item ->
                 MovieSeriesPosterCard(
-                    poster = painterResource(id =item),
+                    poster = painterResource(id = item),
                     topLeftContent = {
                         SaveIconChip(
-                            onClick = {}
+                            onClick = onSaveIconClicked
                         )
                     },
                 )
@@ -59,14 +66,25 @@ fun SearchHistoryContent(
             actionText = stringResource(R.string.clear_all),
             onActionClick = onClearRecentSearchClicked
         )
-        LazyColumn ( modifier = Modifier
-            .padding(bottom = 38.dp)){
+        LazyColumn(
+            modifier = Modifier
+                .padding(bottom = 38.dp)
+        ) {
             itemsIndexed(recentSearches) { index, item ->
                 RecentSearchItem(
                     text = item,
-                    isLast = index == recentSearches.lastIndex,
                     onCancelClicked = onCancelClicked
                 )
+                if (index != recentSearches.lastIndex) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 12.dp)
+                            .height(1.dp)
+                            .background(color = Theme.colors.stroke)
+                    )
+                }
             }
         }
     }
@@ -101,32 +119,30 @@ fun SectionHeader(
     }
 }
 
-
-val recentViewedList = listOf(
-    R.drawable.movie_poster,
-    R.drawable.movie_poster1,
-    R.drawable.movie_poster2,
-    R.drawable.movie_poster3,
-    R.drawable.movie_poster,
-    R.drawable.movie_poster1,
-    R.drawable.movie_poster2,
-    R.drawable.movie_poster3,
-    R.drawable.movie_poster,
-    R.drawable.movie_poster1,
-    R.drawable.movie_poster2,
-    R.drawable.movie_poster3,
-)
-val recentSearchesList = listOf(
-    "Shutter island", "Inception", "Tenet",
-    "Memento", "Shutter island", "Inception",
-    "Tenet", "Memento","Shutter island", "Inception", "Tenet",
-    "Memento", "Shutter island", "Inception",
-    "Tenet", "Memento"
-)
-
 @Preview(showBackground = true)
 @Composable
 private fun SearchHistoryContentPreview() {
+    val recentViewedList = listOf(
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+    )
+    val recentSearchesList = listOf(
+        "Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento", "Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento"
+    )
     SearchHistoryContent(
         recentSearches = recentSearchesList,
         recentViewed = recentViewedList
