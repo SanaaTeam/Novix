@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.state.ActorUiModel
@@ -28,7 +28,7 @@ fun ActorsContent(
         items(actors) { actor ->
             ActorCard(
                 actorName = actor.name,
-                actorImage = painterResource(id = actor.imageRes),
+                actorImage = rememberAsyncImagePainter(model = actor.imageUrl),
                 playedCharacter = null
             )
         }
