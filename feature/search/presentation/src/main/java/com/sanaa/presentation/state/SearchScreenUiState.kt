@@ -12,20 +12,20 @@ data class SearchScreenUiState(
 data class MovieUiModel(
     val id: Int,
     val title: String,
-    val imageRes: Int,
+    val imageUrl: String,
     val rating: String
 )
 
 data class ActorUiModel(
     val id: Int,
     val name: String,
-    val imageRes: Int
+    val imageUrl: String
 )
 
 data class TvShowUiModel(
     val id: Int,
     val title: String,
-    val imageRes: Int,
+    val imageUrl: String,
     val rating: String
 )
 
