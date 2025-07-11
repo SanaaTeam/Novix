@@ -21,7 +21,7 @@ class AddRecentViewedUseCaseTest {
     fun `execute() should call addRecentViewedItem() from SearchHistoryRepository with the correct input when add recent viewed movies`(): Unit =
         runTest {
             // Given
-            val item = RecentViewedItem(1L, "https://image.com")
+            val item = RecentViewedItem(1, "https://image.com")
 
             // When
             addRecentViewedUseCase.execute(item)

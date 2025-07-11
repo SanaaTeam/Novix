@@ -1,0 +1,35 @@
+package com.sanaa.presentation.screen.componants
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.cards.ActorCard
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.state.ActorUiModel
+
+@Composable
+fun ActorsContent(
+    actors: List<ActorUiModel>
+) {
+    Column(
+        modifier = Modifier
+            .background(color = Theme.colors.surface)
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        actors.forEach { actor ->
+            ActorCard(
+                actorName = actor.name,
+                actorImage = painterResource(id = actor.imageRes),
+                playedCharacter = null
+            )
+        }
+    }
+}

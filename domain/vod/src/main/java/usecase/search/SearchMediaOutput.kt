@@ -1,8 +1,8 @@
 package usecase.search
 
 data class SearchMediaOutput(
-    val id: Long? = null,
+    val id: Int,
     val title: String,
     val posterImageUrl: String,
-    val isSaved: Boolean = false
+    val isSaved: Boolean
 )

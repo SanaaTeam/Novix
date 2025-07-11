@@ -6,11 +6,10 @@ foundationLayoutAndroid = "1.6.8"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
 koinAndroid = "4.0.4"
-koinAndroidVersion = "4.0.4"
-koinAndroidxCompose = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
+kotlinxCoroutinesCore = "1.8.1"
 kotlinxDatetime = "0.6.2"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
@@ -66,7 +65,9 @@ insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-com
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
 mockk-v1140 = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
+
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
 kotlinx-coroutines-test-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
@@ -88,6 +89,8 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndr
 koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
 material3 = { module = "androidx.compose.material3:material3" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
+material3 = { module = "androidx.compose.material3:material3" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
