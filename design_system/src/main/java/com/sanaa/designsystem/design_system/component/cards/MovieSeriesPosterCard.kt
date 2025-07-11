@@ -31,11 +31,12 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun MovieSeriesPosterCard(
-    poster: Painter,
     modifier: Modifier = Modifier,
+    poster: Painter = painterResource(R.drawable.movie_poster),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
+    boastImage: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -45,12 +46,7 @@ fun MovieSeriesPosterCard(
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
     ) {
-        Image(
-            painter = poster,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.FillBounds
-        )
+        boastImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -85,6 +81,14 @@ private fun PreviewMovieSeriesPosterCard() {
             item {
                 MovieSeriesPosterCard(
                     poster = painterResource(R.drawable.movie_poster),
+                    boastImage = {
+                        Image(
+                            painter = painterResource(R.drawable.movie_poster),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    },
                     topLeftContent = {
                         MovieSeriesRatingChip(
                             rating = "9.9"

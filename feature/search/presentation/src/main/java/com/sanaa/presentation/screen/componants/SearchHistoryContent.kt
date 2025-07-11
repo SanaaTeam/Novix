@@ -24,6 +24,7 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 
 @Composable
 fun SearchHistoryContent(
@@ -33,7 +34,7 @@ fun SearchHistoryContent(
     onRecentSearchItemClicked: () -> Unit = {},
     onSaveIconClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
-    recentViewed: List<Int> = emptyList(),
+    recentViewed: List<String> = emptyList(),
 ) {
     Column(modifier = Modifier.padding(top = 12.dp)) {
 
@@ -51,9 +52,14 @@ fun SearchHistoryContent(
                 bottom = 24.dp
             )
         ) {
+
             itemsIndexed(recentViewed) { _, item ->
                 MovieSeriesPosterCard(
-                    poster = painterResource(id = item),
+                    boastImage = {
+                        RemoteCensoredImageViewer(
+                            imageUrl = item
+                        )
+                    },
                     topLeftContent = {
                         SaveIconChip(
                             onClick = onSaveIconClicked
@@ -122,28 +128,22 @@ fun SectionHeader(
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
 private fun SearchPreview() {
     val recentViewedList = listOf(
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg"
     )
     val recentSearchesList = listOf(
         "Shutter island", "Inception", "Tenet",
         "Memento", "Shutter island", "Inception",
-        "Tenet", "Memento","Shutter island", "Inception", "Tenet",
+        "Tenet", "Memento", "Shutter island", "Inception", "Tenet",
         "Memento", "Shutter island", "Inception",
         "Tenet", "Memento"
     )
