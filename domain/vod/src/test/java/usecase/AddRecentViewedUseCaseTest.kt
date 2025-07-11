@@ -22,10 +22,10 @@ class AddRecentViewedUseCaseTest {
     }
 
     @Test
-    fun `execute() should call addRecentViewedItem() from SearchHistoryRepository with the correct input when add recent viewed movies`(): Unit =
+    fun `execute() should call addRecentViewedMedia() from SearchHistoryRepository with the correct input when add recent viewed movies`(): Unit =
         runTest {
             // Given
-            val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE)
+            val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
 
             // When
             addRecentViewedUseCase.execute(item)
@@ -40,7 +40,7 @@ class AddRecentViewedUseCaseTest {
     fun `execute() should throw FailedToAddException when there is a problem with adding the recent viewed item`(): Unit =
         runTest {
             // Given
-            val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE)
+            val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
             coEvery {
                 searchHistoryRepository.addRecentViewedMedia(item)
             } throws FailedToAddException("Recent View Item")

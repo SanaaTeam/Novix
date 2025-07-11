@@ -20,7 +20,7 @@ class SearchActorsUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        searchActorsUseCase = SearchActorsUseCase(searchHistoryRepository, searchRepository)
+        searchActorsUseCase = SearchActorsUseCase(searchRepository, searchHistoryRepository)
     }
 
     @Test

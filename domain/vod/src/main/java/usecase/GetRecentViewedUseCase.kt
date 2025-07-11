@@ -11,6 +11,6 @@ class GetRecentViewedUseCase(
         historyRepo.getRecentViewed(RECENT_MEDIA_SIZE_LIMIT)
 
     companion object {
-        const val RECENT_MEDIA_SIZE_LIMIT = 10
+        private const val RECENT_MEDIA_SIZE_LIMIT = 10
     }
 }

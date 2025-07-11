@@ -7,8 +7,8 @@ import usecase.search.MediaType
 import usecase.search.SearchMediaOutput
 
 class SearchMoviesUseCase(
-    private val searchHistoryRepository: SearchHistoryRepository,
     private val searchRepository: SearchRepository,
+    private val searchHistoryRepository: SearchHistoryRepository,
 ) {
     suspend fun execute(query: String, filters: MediaFilters?): List<SearchMediaOutput> {
         searchHistoryRepository.addSearchHistory(query)

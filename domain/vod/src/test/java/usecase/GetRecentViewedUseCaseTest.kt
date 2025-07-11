@@ -67,8 +67,8 @@ class GetRecentViewedUseCaseTest {
 
     companion object {
         private val recentViewedList = listOf(
-            RecentViewedMedia(1, "https://image.com/1", MediaType.MOVIE),
-            RecentViewedMedia(2, "https://image.com/2", MediaType.MOVIE)
+            RecentViewedMedia(1, "https://image.com/1", MediaType.MOVIE, false),
+            RecentViewedMedia(2, "https://image.com/2", MediaType.MOVIE, false)
         )
     }
 }

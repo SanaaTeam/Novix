@@ -10,6 +10,6 @@ class GetSearchHistoryUseCase(
     suspend fun execute(): Flow<List<SearchHistory>> = historyRepo.getSearchHistory(HISTORY_ITEM_LIMIT)
 
     companion object{
-        const val HISTORY_ITEM_LIMIT = 10
+        private const val HISTORY_ITEM_LIMIT = 10
     }
 }

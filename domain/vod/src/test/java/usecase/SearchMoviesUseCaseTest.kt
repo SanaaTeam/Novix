@@ -22,7 +22,7 @@ class SearchMoviesUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        searchMoviesUseCase = SearchMoviesUseCase(searchHistoryRepository, searchRepository)
+        searchMoviesUseCase = SearchMoviesUseCase(searchRepository, searchHistoryRepository)
     }
 
     @Test
