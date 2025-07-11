@@ -15,6 +15,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import usecase.AddRecentViewedUseCase
+import usecase.ClearRecentViewedUseCase
+import usecase.ClearSearchHistoryUseCase
+import usecase.GetRecentViewedUseCase
+import usecase.GetSearchHistoryUseCase
+import usecase.RemoveSearchHistoryItemUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -23,9 +28,11 @@ class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvSeriesUseCase: SearchTvSeriesUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
-    private val addRecentViewedUseCase: AddRecentViewedUseCase
-) : ViewModel(), SearchScreenInteractionsListener
-{ private val _uiState = MutableStateFlow(SearchScreenUiState())
+    private val addRecentViewedUseCase: AddRecentViewedUseCase,
+    private val getRecentViewedUseCase: GetRecentViewedUseCase,
+    private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
+) : ViewModel(), SearchScreenInteractionsListener {
+    private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
@@ -48,6 +55,50 @@ class SearchViewModel(
         }
     }
 
+    override fun onRecentSearchItemClicked() {
+
+    }
+    private fun loadResentViewedImageList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                getRecentViewedUseCase.execute().collectLatest { recentViewed ->
+                    _uiState.update {
+                        it.copy(resentViewedImageList = recentViewed.map { it ->
+                            it.posterImageUrl
+                        })
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                }
+            }
+        }
+    }
+
+    private fun loadResentSearchTitleList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                getSearchHistoryUseCase.execute().collectLatest { searchHistory ->
+                    _uiState.update {
+                        it.copy(resentSearchTitleList = searchHistory.map { it ->
+                            it.query
+                        })
+                    }
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                }
+            }
+        }
+    }
+
+
+
+
     private suspend fun loadMediaByTab(query: String) {
         when (_uiState.value.selectedTabIndex) {
             0 -> loadMovies(query)
@@ -56,13 +107,27 @@ class SearchViewModel(
         }
     }
 
+    override fun onClearRecentViewClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onClearRecentSearchClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCancelRecentSearchItemClicked() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSaveIconClicked() {
+        TODO("Not yet implemented")
+    }
+
     override fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
     }
 
-    override fun onRecentSearchItemClicked() {
 
-    }
 
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
@@ -143,31 +208,6 @@ class SearchViewModel(
             _uiState.update {
                 it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
-        }
-    }
-
-    override fun onClearRecentViewClicked() {
-    }
-
-    override fun onClearRecentSearchClicked() {
-    }
-
-    override fun onCancelClicked() {
-    }
-
-    override fun onSaveIconClicked() {
-    }
-
-    private fun loadResentViewedImageList() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-
-        }
-    }
-
-    private fun loadResentSearchTitleList() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
         }
     }
 
