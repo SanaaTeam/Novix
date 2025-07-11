@@ -2,8 +2,9 @@ package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,14 +18,14 @@ import com.sanaa.presentation.state.ActorUiModel
 fun ActorsContent(
     actors: List<ActorUiModel>
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
-            .background(color = Theme.colors.surface)
+            .background(Theme.colors.surface)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        actors.forEach { actor ->
+        items(actors) { actor ->
             ActorCard(
                 actorName = actor.name,
                 actorImage = painterResource(id = actor.imageRes),
@@ -32,4 +33,5 @@ fun ActorsContent(
             )
         }
     }
+
 }
