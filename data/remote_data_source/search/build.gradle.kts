@@ -49,10 +49,19 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.mockk.v1140)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.truth)
+    testImplementation("io.ktor:ktor-client-mock:2.3.13")
+    implementation("org.slf4j:slf4j-android:1.7.36")
+    testImplementation(kotlin("test"))
+
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
