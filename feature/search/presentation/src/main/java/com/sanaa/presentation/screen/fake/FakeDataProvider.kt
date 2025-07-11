@@ -43,4 +43,26 @@ object FakeDataProvider {
         )
     )
 
+    val fakeRecentViewedList = listOf(
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+    )
+    val fakeRecentSearchesList = listOf(
+        "Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento", "Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento"
+    )
+
 }
