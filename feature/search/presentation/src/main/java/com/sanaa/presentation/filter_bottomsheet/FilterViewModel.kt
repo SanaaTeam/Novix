@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import usecase.search.MediaFilters
 
-class FilterViewModel() : ViewModel() {
+class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
 
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState = _uiState.asStateFlow()
@@ -32,11 +32,11 @@ class FilterViewModel() : ViewModel() {
         }
     }
 
-    fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
+    override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
         _uiState.update { it.copy(yearRange = newRange) }
     }
 
-    fun onGenreSelected(genre: Genre) {
+    override fun onGenreSelected(genre: Genre) {
         _uiState.update { currentState ->
             val newSelectedGenres = currentState.selectedGenres.toMutableSet()
             if (newSelectedGenres.contains(genre)) {
@@ -48,11 +48,11 @@ class FilterViewModel() : ViewModel() {
         }
     }
 
-    fun onRatingChanged(newRating: Int) {
+    override fun onRatingChanged(newRating: Int) {
         _uiState.update { it.copy(imdbRating = newRating) }
     }
 
-    fun onClearFilters() {
+    override fun onClearFilters() {
         _uiState.update { currentState ->
             FilterUiState(
                 allGenres = currentState.allGenres,
@@ -61,7 +61,7 @@ class FilterViewModel() : ViewModel() {
         }
     }
 
-    fun onApplyClicked() {
+    override fun onApplyClicked() {
         viewModelScope.launch {
             val currentState = _uiState.value
             val mediaFilters = MediaFilters(

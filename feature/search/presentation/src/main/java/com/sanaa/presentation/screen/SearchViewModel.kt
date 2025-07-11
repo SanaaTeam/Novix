@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel : ViewModel(), SearchScreenInteractionsListener {
     private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
@@ -22,7 +22,7 @@ class SearchViewModel : ViewModel() {
         loadMovies()
     }
 
-    fun onTabSelected(index: Int) {
+    override fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
 
         when (index) {
@@ -84,5 +84,20 @@ class SearchViewModel : ViewModel() {
             }
         }
     }
+
+    override fun onSaveIconClicked(){
+
+    }
+    override fun onCancelClicked(){
+
+    }
+
+    override fun onClearRecentSearchClicked(){
+
+    }
+    override fun onClearRecentViewClicked(){
+
+    }
+
 
 }
