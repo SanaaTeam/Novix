@@ -1,7 +1,6 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.FailedToDeleteException
 import exceptions.NotFoundException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -79,7 +78,7 @@ class SearchTvSeriesUseCaseTest {
 
 
     @Test
-    fun `execute() should throw NotFoundException when try to search an actor failed`() =
+    fun `execute() should throw NotFoundException when try to search an tv series failed`() =
         runTest {
             // Given
             val query = "Sam"

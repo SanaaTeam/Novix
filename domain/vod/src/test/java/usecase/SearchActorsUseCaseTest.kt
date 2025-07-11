@@ -56,7 +56,7 @@ class SearchActorsUseCaseTest {
 
 
     @Test
-    fun `execute() should throw NotFoundException when try to clear search an actor failed`() =
+    fun `execute() should throw NotFoundException when try to search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
