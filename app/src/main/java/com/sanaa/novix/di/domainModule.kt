@@ -3,6 +3,7 @@ package com.sanaa.novix.di
 import org.koin.dsl.module
 import usecase.AddRecentViewedUseCase
 import usecase.ClearRecentViewedUseCase
+import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
 import usecase.SearchActorsUseCase
@@ -16,5 +17,6 @@ val domainModule = module {
     factory { GetRecentViewedUseCase(get()) }
     factory { GetSearchHistoryUseCase(get()) }
     factory { ClearRecentViewedUseCase(get()) }
+    factory { ClearSearchHistoryUseCase(get()) }
 
 }

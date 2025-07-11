@@ -32,6 +32,7 @@ class SearchViewModel(
     private val getRecentViewedUseCase: GetRecentViewedUseCase,
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
+    private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     ) : ViewModel(), SearchScreenInteractionsListener {
     private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
@@ -122,7 +123,16 @@ class SearchViewModel(
     }
 
     override fun onClearRecentSearchClicked() {
-        TODO("Not yet implemented")
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            try {
+                clearSearchHistoryUseCase.execute()
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                }
+            }
+        }
     }
 
     override fun onCancelRecentSearchItemClicked() {
