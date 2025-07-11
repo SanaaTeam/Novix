@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import usecase.AddRecentViewedUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -22,9 +23,9 @@ class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvSeriesUseCase: SearchTvSeriesUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
-) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(SearchScreenUiState())
+    private val addRecentViewedUseCase: AddRecentViewedUseCase
+) : ViewModel(), SearchScreenInteractionsListener
+{ private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
     private val _searchQuery = MutableStateFlow("")
@@ -32,6 +33,8 @@ class SearchViewModel(
 
 
     init {
+        loadResentSearchTitleList()
+        loadResentViewedImageList()
         viewModelScope.launch {
             loadMediaByTab(query = "")
         }
@@ -53,7 +56,7 @@ class SearchViewModel(
         }
     }
 
-    fun onTabSelected(index: Int) {
+    override fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
     }
 
@@ -138,5 +141,31 @@ class SearchViewModel(
             }
         }
     }
+
+    override fun onClearRecentViewClicked() {
+    }
+
+    override fun onClearRecentSearchClicked() {
+    }
+
+    override fun onCancelClicked() {
+    }
+
+    override fun onSaveIconClicked() {
+    }
+
+    private fun loadResentViewedImageList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+
+        }
+    }
+
+    private fun loadResentSearchTitleList() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+        }
+    }
+
 
 }
