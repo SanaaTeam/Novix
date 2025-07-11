@@ -9,11 +9,11 @@ data class ActorSearchDto(
     val id: Int,
 
     @SerialName("name")
-    val name: String,
+    val name: String?,
 
     @SerialName("profile_path")
-    val profileImagePath: String,
+    val profileImagePath: String?,
 
     @SerialName("gender")
-    val gender: Int,
+    val gender: Int?
 )
