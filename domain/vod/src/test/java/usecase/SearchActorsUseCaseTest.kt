@@ -2,6 +2,7 @@ package usecase
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.FailedToDeleteException
+import exceptions.NotFoundException
 import io.mockk.coEvery
 import io.mockk.coVerifyOrder
 import io.mockk.mockk
@@ -55,16 +56,16 @@ class SearchActorsUseCaseTest {
 
 
     @Test
-    fun `execute() should throw FailedToDeleteException when try to clear search an actor failed`() =
+    fun `execute() should throw NotFoundException when try to clear search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
             coEvery {
                 searchRepository.searchActors(query)
-            } throws FailedToDeleteException("Actor")
+            } throws NotFoundException("Actor")
 
             // When, Then
-            assertThrows<FailedToDeleteException> {
+            assertThrows<NotFoundException> {
                 searchActorsUseCase.execute(query)
             }
         }

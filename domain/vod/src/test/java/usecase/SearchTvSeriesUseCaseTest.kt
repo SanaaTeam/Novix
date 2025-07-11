@@ -2,6 +2,7 @@ package usecase
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.FailedToDeleteException
+import exceptions.NotFoundException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -78,16 +79,16 @@ class SearchTvSeriesUseCaseTest {
 
 
     @Test
-    fun `execute() should throw FailedToDeleteException when try to clear search an movie failed`() =
+    fun `execute() should throw NotFoundException when try to search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
             coEvery {
                 searchRepository.searchMedia(query, null, MediaType.TV_SERIES)
-            } throws FailedToDeleteException("Movie")
+            } throws NotFoundException("Movie")
 
             // When, Then
-            assertThrows<FailedToDeleteException> {
+            assertThrows<NotFoundException> {
                 searchTvSeriesUseCase.execute(query, null)
             }
         }
