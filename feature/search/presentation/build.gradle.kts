@@ -36,6 +36,7 @@ android {
 
 dependencies {
     implementation(project(":design_system"))
+    implementation(project(":domain:vod"))
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -53,4 +54,6 @@ dependencies {
     implementation(libs.androidx.foundation.layout.android)
     implementation(platform(libs.androidx.compose.bom.v20240600))
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
 }
