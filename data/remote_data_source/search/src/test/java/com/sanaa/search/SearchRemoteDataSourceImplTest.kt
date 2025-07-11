@@ -1,13 +1,12 @@
 package com.sanaa.search
 
-import com.sanaa.search.dto.ActorSearchDto
-import com.sanaa.search.dto.MovieSearchDto
-import com.sanaa.search.dto.TvShowSearchDto
+import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
+import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
+import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
 import com.sanaa.search.response.SearchResponse
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.mockk.every
@@ -111,7 +110,6 @@ class SearchRemoteDataSourceImplTest {
                     id = 1,
                     name = "Tom Hanks",
                     profileImagePath = "/path",
-                    gender = 0
                 )
             ),
             totalPages = 1,
@@ -176,7 +174,7 @@ class SearchRemoteDataSourceImplTest {
                     title = "Inception",
                     posterImagePath = "/path",
                     releaseDate = "",
-                    voteAverage = 0.0,
+                    voteAverage = 0.0f,
                     genreIds = emptyList()
                 )
             ),

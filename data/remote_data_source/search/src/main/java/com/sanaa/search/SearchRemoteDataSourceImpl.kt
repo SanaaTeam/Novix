@@ -1,9 +1,9 @@
 package com.sanaa.search
 
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
-import com.sanaa.search.dto.ActorSearchDto
-import com.sanaa.search.dto.MovieSearchDto
-import com.sanaa.search.dto.TvShowSearchDto
+import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
+import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
+import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
 import com.sanaa.search.response.SearchResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
