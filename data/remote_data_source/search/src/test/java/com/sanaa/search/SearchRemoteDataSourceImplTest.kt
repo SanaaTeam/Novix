@@ -1,5 +1,6 @@
 package com.sanaa.search
 
+import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto
 import com.sanaa.search.dto.TvShowSearchDto
@@ -22,6 +23,7 @@ class SearchRemoteDataSourceImplTest {
 
     private lateinit var client: HttpClient
     private lateinit var dataSource: SearchRemoteDataSourceImpl
+    private lateinit var languageProvider: LanguageProvider
     private val baseUrl = "https://api.themoviedb.org/3"
     private val apiKey = "test_api_key"
     private lateinit var mockEngine: MockEngine
@@ -97,7 +99,7 @@ class SearchRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
-        dataSource = SearchRemoteDataSourceImpl(client, baseUrl)
+        dataSource = SearchRemoteDataSourceImpl(client, baseUrl, languageProvider)
     }
 
     @Test
