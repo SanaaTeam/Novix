@@ -107,7 +107,7 @@ fun SearchScreenContent(filterViewModel: FilterViewModel = koinViewModel()) {
             SearchSection(
                 text = searchText,
                 onTextChange = { searchText = it },
-                onClick = { showBottomSheet = true }
+                onFilterClicked = { showBottomSheet = true }
             )
         }
     }
