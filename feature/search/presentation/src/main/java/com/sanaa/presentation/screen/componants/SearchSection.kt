@@ -16,13 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.text_field.NovixTextField
 
 
 @Composable
 fun SearchSection(
     text: String,
-    onClick: ()->Unit = {},
+    onFilterClicked: ()->Unit = {},
     onTextChange: (String) -> Unit = {}
 ) {
    Row(
@@ -41,8 +42,10 @@ fun SearchSection(
                .weight(1f)
 
        )
-       FilterSection(
-           onClick = onClick
+       PrimaryButton(
+           text = null,
+           onClick = onFilterClicked,
+           icon = painterResource(R.drawable.icon_filter)
        )
    }
 
