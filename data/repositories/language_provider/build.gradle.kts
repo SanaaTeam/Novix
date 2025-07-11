@@ -5,10 +5,10 @@ plugins {
 
 android {
     namespace = "com.example.language_provider"
-    compileSdk = 35
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        minSdk = 24
+        minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    
+
     implementation(projects.domain.vod)
 
     implementation(libs.androidx.core.ktx)
