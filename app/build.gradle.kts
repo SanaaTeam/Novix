@@ -105,5 +105,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     
     // Local Data Sources
-    implementation(project(":data:local_data_source:search"))
+    implementation(projects.data.localDataSource.search)
 }

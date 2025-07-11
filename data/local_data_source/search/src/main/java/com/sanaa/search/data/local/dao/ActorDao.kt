@@ -12,6 +12,6 @@ interface ActorDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertActor(actor: ActorsLocalDto)
 
-    @Query("SELECT * FROM actors WHERE name LIKE '%' || :query || '%' LIMIT 1")
+    @Query("SELECT * FROM actor WHERE name LIKE '%' || :query || '%' LIMIT 1")
     suspend fun getActorByQuery(query: String): ActorsLocalDto?
 }

@@ -12,7 +12,7 @@ interface SeriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSeries(series: SeriesLocalDto)
 
-    @Query("SELECT * FROM series WHERE release_year BETWEEN :minYear AND :maxYear AND genres LIKE :genre AND imdb_rating >= :rating")
+    @Query("SELECT * FROM serie WHERE release_year BETWEEN :minYear AND :maxYear AND genres LIKE :genre AND imdb_rating >= :rating")
     suspend fun getFilteredSeries(minYear: Int, maxYear: Int, genre: String, rating: Float): List<SeriesLocalDto>
 
 } 

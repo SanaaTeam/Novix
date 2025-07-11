@@ -1,8 +1,7 @@
 package com.sanaa.search.search_history
-
-import com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
+
 import com.sanaa.search.search_history.dao.QueryDao
 import com.sanaa.search.search_history.dao.RecentViewedDao
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +23,7 @@ class LocalSearchHistoryDataSourceImpl(
     }
 
     override suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto) {
-        recentViewedDao.insertRecentViewed(recentViewed)
+        recentViewedDao.insertRecentViewedWithCleanup(recentViewed)
     }
 
     override fun getAllRecentViewed(

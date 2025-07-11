@@ -6,6 +6,7 @@ import com.sanaa.search.data.local.db.AppDatabase
 import com.sanaa.search.data.local.dao.SearchDao
 import com.sanaa.search.data.local.dao.SearchResultDao
 import com.sanaa.search.data.local.datasource.LocalSearchDataSource
+import com.sanaa.search.data.local.datasource.LocalSearchDataSourceImpl
 import org.koin.android.ext.koin.androidContext
 
 val localDatabaseModule = module {
@@ -24,6 +25,20 @@ val localDatabaseModule = module {
 
     single<SearchResultDao> {
         get<AppDatabase>().searchResultDao()
+    }
+
+    single<com.sanaa.search.search_history.dao.QueryDao> {
+        get<AppDatabase>().queryDao()
+    }
+    single<com.sanaa.search.search_history.dao.RecentViewedDao> {
+        get<AppDatabase>().recentViewedDao()
+    }
+
+    single<LocalSearchDataSource> {
+        LocalSearchDataSourceImpl(
+            searchDao = get<SearchDao>(),
+            searchResultDao = get<SearchResultDao>()
+        )
     }
 
 } 

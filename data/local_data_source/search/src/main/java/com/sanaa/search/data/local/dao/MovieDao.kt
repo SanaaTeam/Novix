@@ -13,7 +13,7 @@ interface MovieDao {
     suspend fun insertMovie(movie: MoviesLocalDto)
 
     @Query("""
-        SELECT * FROM movies 
+        SELECT * FROM movie 
         WHERE (:query IS NULL OR title LIKE '%' || :query || '%')
           AND (:minYear IS NULL OR release_year >= :minYear)
           AND (:maxYear IS NULL OR release_year <= :maxYear)

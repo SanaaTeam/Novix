@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "series")
+@Entity(tableName = "serie")
 data class SeriesLocalDto(
     @PrimaryKey
     @ColumnInfo(name = "series_id")

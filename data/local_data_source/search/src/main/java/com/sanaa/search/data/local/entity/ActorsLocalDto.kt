@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "actors")
+@Entity(tableName = "actor")
 data class ActorsLocalDto(
     @PrimaryKey
     @ColumnInfo(name = "actor_id")

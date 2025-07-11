@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 
 @Entity(
-    tableName = "search_results",
+    tableName = "search_result",
     primaryKeys = ["search_id", "item_id", "item_type"],
     foreignKeys = [
         ForeignKey(
