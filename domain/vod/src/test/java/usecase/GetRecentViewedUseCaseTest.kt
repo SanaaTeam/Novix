@@ -1,7 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.NotFoundException
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.flowOf
@@ -52,15 +52,15 @@ class GetRecentViewedUseCaseTest {
         }
 
     @Test
-    fun `execute() should throw NotFoundException when when try to get recent viewed media failed`() =
+    fun `execute() should throw RetrievingDataFailureException when when try to get recent viewed media failed`() =
         runTest {
             // Given
             coEvery {
                 searchHistoryRepository.getRecentViewed(any())
-            } throws NotFoundException("Recent View")
+            } throws RetrievingDataFailureException("Recent View")
 
             // When, Then
-            assertThrows<NotFoundException> {
+            assertThrows<RetrievingDataFailureException> {
                 getRecentViewedUseCase.execute()
             }
         }

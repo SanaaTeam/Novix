@@ -1,10 +1,9 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.FailedToDeleteException
-import exceptions.NotFoundException
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
-import io.mockk.coVerifyOrder
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -34,7 +33,7 @@ class SearchActorsUseCaseTest {
             searchActorsUseCase.execute(query)
 
             // Then
-            coVerifyOrder {
+            coVerify {
                 searchHistoryRepository.addSearchHistory(query)
             }
         }
@@ -56,16 +55,16 @@ class SearchActorsUseCaseTest {
 
 
     @Test
-    fun `execute() should throw NotFoundException when try to search an actor failed`() =
+    fun `execute() should throw RetrievingDataFailureException when try to search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
             coEvery {
                 searchRepository.searchActors(query)
-            } throws NotFoundException("Actor")
+            } throws RetrievingDataFailureException("")
 
             // When, Then
-            assertThrows<NotFoundException> {
+            assertThrows<RetrievingDataFailureException> {
                 searchActorsUseCase.execute(query)
             }
         }

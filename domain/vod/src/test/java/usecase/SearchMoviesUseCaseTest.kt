@@ -1,8 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.FailedToDeleteException
-import exceptions.NotFoundException
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -76,16 +75,16 @@ class SearchMoviesUseCaseTest {
         }
 
     @Test
-    fun `execute() should throw NotFoundException when try to search a movie failed`() =
+    fun `execute() should throw RetrievingDataFailureException when try to search a movie failed`() =
         runTest {
             // Given
             val query = "Sam"
             coEvery {
                 searchRepository.searchMedia(query, null, MediaType.MOVIE)
-            } throws NotFoundException("Actor")
+            } throws RetrievingDataFailureException("")
 
             // When, Then
-            assertThrows<NotFoundException> {
+            assertThrows<RetrievingDataFailureException> {
                 searchMoviesUseCase.execute(query, null)
             }
         }

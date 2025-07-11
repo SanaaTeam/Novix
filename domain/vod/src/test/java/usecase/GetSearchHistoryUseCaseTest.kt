@@ -1,7 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.NotFoundException
+import exceptions.RetrievingDataFailureException
 import extensions.now
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -56,10 +56,10 @@ class GetSearchHistoryUseCaseTest {
             // Given
             coEvery {
                 searchHistoryRepository.getSearchHistory(any())
-            } throws NotFoundException("Search History")
+            } throws RetrievingDataFailureException("Search History")
 
             // When, Then
-            assertThrows<NotFoundException> {
+            assertThrows<RetrievingDataFailureException> {
                 getSearchHistoryUseCase.execute()
             }
         }
