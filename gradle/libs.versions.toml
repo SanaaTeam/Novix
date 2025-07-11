@@ -1,9 +1,13 @@
 [versions]
 agp = "8.10.1"
+junitJupiterApi = "5.13.3"
+junitJupiterEngine = "5.13.3"
 koinAndroid = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
+kotlinxCoroutinesCore = "1.8.1"
+kotlinxDatetime = "0.6.2"
 lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
 composeBom = "2025.06.01"
@@ -25,16 +29,23 @@ koinBom = "4.1.0"
 navigationCompose = "2.7.7"
 coil = "2.7.0"
 kotlinxSerialization = "1.6.3"
+mockkMockkVersion = "1.14.0"
+kotlinxCoroutinesTestVersion = "1.7.3"
+
+room = "2.7.2"
+ksp = "2.0.21-1.0.27"
 
 compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
+truth = "1.4.4"
 versionCode = "1"
 versionName = "1.0"
 javaVersion = "11"
 applicationId = "com.sanaa.novix"
 namespace = "com.sanaa.novix"
 testRunner = "androidx.test.runner.AndroidJUnitRunner"
+junitJupiter = "5.8.1"
 
 kotlinx-coroutines = "1.6.4"
 
@@ -66,8 +77,13 @@ firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+mockk-v1140 = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
+kotlinx-coroutines-test-v173 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -83,6 +99,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
@@ -104,8 +121,17 @@ koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compos
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+
+#room
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+
+
 mockk = { module = "io.mockk:mockk", version = "1.13.13" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -120,3 +146,10 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.4" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+[bundles]
+room = [
+    "androidx-room-runtime",
+    "androidx-room-ktx",
+    "androidx-room-testing"
+]
