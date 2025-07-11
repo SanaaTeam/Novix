@@ -6,10 +6,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "recent_viewed")
 data class RecentViewedLocalDto(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
-    @ColumnInfo(name = "title")
-    val title: String,
+    @PrimaryKey
+    val id: Int,
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
     @ColumnInfo(name = "is_saved")

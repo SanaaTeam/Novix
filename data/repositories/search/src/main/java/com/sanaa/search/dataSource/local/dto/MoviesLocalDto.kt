@@ -22,5 +22,7 @@ data class MoviesLocalDto(
     @ColumnInfo(name = "imdb_rating")
     val imdbRating: Float?,
     @ColumnInfo(name = "language")
-    val language: String
-) 
+    val language: String,
+    @ColumnInfo(name = "timestamp")
+    val timestamp: Long = System.currentTimeMillis()
+)

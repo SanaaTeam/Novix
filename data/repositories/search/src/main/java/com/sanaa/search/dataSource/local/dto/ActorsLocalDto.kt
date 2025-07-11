@@ -17,4 +17,6 @@ data class ActorsLocalDto(
     val imagePath: String?,
     @ColumnInfo(name = "language")
     val language: String,
-) 
+    @ColumnInfo(name = "timestamp")
+    val timestamp: Long = System.currentTimeMillis()
+)
