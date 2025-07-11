@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.data.repositories.search)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -44,7 +45,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-    
+
     // Koin dependencies
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
@@ -54,4 +55,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.mockk.v1140)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.truth)
+    testImplementation(kotlin("test"))
+
+    implementation(libs.bundles.room)
+}
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
