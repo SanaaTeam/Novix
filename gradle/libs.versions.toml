@@ -117,7 +117,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
 koin-core = { group = "io.insert-koin", name = "koin-core" }
-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinBom" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
