@@ -1,8 +1,8 @@
-package com.example.language_provider
+package com.example.env_config
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.*
 import java.util.Locale
+import org.junit.jupiter.api.Test
 
 class DeviceLanguageProviderTest {
 
