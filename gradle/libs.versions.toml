@@ -6,8 +6,6 @@ foundationLayoutAndroid = "1.6.8"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
 koinAndroid = "4.0.4"
-koinAndroidVersion = "4.0.4"
-koinAndroidxCompose = "4.0.4"
 kotlin = "2.0.21"
 firebaseBom = "33.16.0"
 coreKtx = "1.16.0"
@@ -88,6 +86,8 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndr
 koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
 material3 = { module = "androidx.compose.material3:material3" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
+material3 = { module = "androidx.compose.material3:material3" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }

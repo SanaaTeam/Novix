@@ -49,7 +49,7 @@ fun MovieSeriesPosterCard(
             painter = poster,
             contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.FillBounds
         )
         Box(
             modifier = Modifier
