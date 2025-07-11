@@ -13,4 +13,14 @@ data class MovieSearchDto(
 
     @SerialName("poster_path")
     val posterImagePath: String,
+
+    @SerialName("release_date")
+    val releaseDate: String,
+
+    @SerialName("vote_average")
+    val voteAverage: Double,
+
+    @SerialName("genre_ids")
+    val genreIds: List<Int>
+
 )

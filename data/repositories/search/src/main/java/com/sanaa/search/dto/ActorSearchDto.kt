@@ -12,5 +12,8 @@ data class ActorSearchDto(
     val name: String,
 
     @SerialName("profile_path")
-    val profileImagePath: String
+    val profileImagePath: String,
+
+    @SerialName("gender")
+    val gender: Int,
 )
