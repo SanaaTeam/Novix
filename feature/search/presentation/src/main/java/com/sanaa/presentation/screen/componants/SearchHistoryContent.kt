@@ -24,8 +24,6 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.fake.FakeDataProvider.fakeRecentSearchesList
-import com.sanaa.presentation.screen.fake.FakeDataProvider.fakeRecentViewedList
 
 @Composable
 fun SearchHistoryContent(
@@ -124,8 +122,8 @@ fun SectionHeader(
 @Preview(showBackground = true)
 @Composable
 private fun SearchHistoryContentPreview() {
-    SearchHistoryContent(
-        recentSearches = fakeRecentSearchesList,
-        recentViewed = fakeRecentViewedList
-    )
+//    SearchHistoryContent(
+//        recentSearches = fakeRecentSearchesList,
+//        recentViewed = fakeRecentViewedList
+//    )
 }
