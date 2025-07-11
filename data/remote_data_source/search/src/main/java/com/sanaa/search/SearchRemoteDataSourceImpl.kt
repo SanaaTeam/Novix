@@ -24,7 +24,7 @@ class SearchRemoteDataSourceImpl(
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
             parameter("language", "en")
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
+            parameter("api_key", TmdbConfig.apiKey)
         }.body()
     }
 
