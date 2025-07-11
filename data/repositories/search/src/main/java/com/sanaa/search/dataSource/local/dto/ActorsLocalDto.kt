@@ -13,6 +13,8 @@ data class ActorsLocalDto(
     val name: String,
     @ColumnInfo(name = "image_path")
     val imagePath: String?,
+    @ColumnInfo(name = "gender")
+    val gender: String,
     @ColumnInfo(name = "language")
     val language: String,
     @ColumnInfo(name = "timestamp")
