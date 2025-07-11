@@ -1,7 +1,11 @@
 package com.sanaa.presentation.state
 
+import com.sanaa.designsystem.R
+
 data class SearchScreenUiState(
     val selectedTabIndex: Int = 0,
+    val resentViewedImageList: List<Int> = emptyList(),
+    val resentSearchTitleList : List<String> = emptyList(),
     val isLoading: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
