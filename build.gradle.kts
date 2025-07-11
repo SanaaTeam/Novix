@@ -28,7 +28,8 @@ val excludedPackages = listOf(
     "entity.**",
     "usecase.search.**",
     "**.dao.**",
-    "**.dto.**"
+    "**.dto.**",
+    "exceptions.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
