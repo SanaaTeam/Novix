@@ -56,7 +56,7 @@ class SearchHistoryRepositoryImplTest {
         // When
         repository.addSearchHistory(query)
         // Then
-        coEvery { localDataSource.insertQuery(query) }
+        coVerify { localDataSource.insertQuery(query) }
     }
 
     @Test
@@ -77,7 +77,7 @@ class SearchHistoryRepositoryImplTest {
         // When
         repository.clearSearchHistory()
         // Then
-        coEvery { localDataSource.deleteAllQueries() }
+        coVerify { localDataSource.deleteAllQueries() }
     }
 
     @Test
@@ -98,7 +98,7 @@ class SearchHistoryRepositoryImplTest {
         // When
         repository.removeSearchHistoryById(id)
         // Then
-        coEvery { localDataSource.deleteQueryById(id) }
+        coVerify { localDataSource.deleteQueryById(id) }
     }
 
     @Test
@@ -181,7 +181,7 @@ class SearchHistoryRepositoryImplTest {
         // When
         repository.clearRecentViewed()
         // Then
-        coEvery { localDataSource.deleteAllRecentViewed() }
+        coVerify { localDataSource.deleteAllRecentViewed() }
     }
 
     @Test
