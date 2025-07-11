@@ -20,13 +20,4 @@ interface QueryDao {
 
     @Query("DELETE FROM queries")
     suspend fun deleteAllQueries()
-
-    @Query("DELETE FROM queries WHERE timestamp < :timestamp")
-    suspend fun deleteOldQueries(timestamp: Long)
-
-    suspend fun insertQueryWithCleanup(query: QueryLocalDto) {
-        val oneHourAgo = System.currentTimeMillis() - 60 * 60 * 1000
-        deleteOldQueries(oneHourAgo)
-        insertQuery(query)
-    }
 }

@@ -80,7 +80,9 @@ class LocalCachedSearchDataSourceImpl(
         val cachedResults = getCachedResults(query, "actor")
         
         if (cachedResults.isNotEmpty()) {
-            return emptyList()
+            return cachedResults.mapNotNull { result ->
+                actorDao.getActorByQuery(result.itemId.toString())
+            }
         }
         
         return listOfNotNull(actorDao.getActorByQuery(query))
@@ -90,7 +92,10 @@ class LocalCachedSearchDataSourceImpl(
         val cachedResults = getCachedResults(query, "movie")
         
         if (cachedResults.isNotEmpty()) {
-            return emptyList()
+            // Return cached movies based on cached results
+            return cachedResults.mapNotNull { result ->
+                movieDao.getFilteredMovies(query = result.itemId.toString()).firstOrNull()
+            }
         }
         
         return movieDao.getFilteredMovies(query = query)
@@ -100,7 +105,15 @@ class LocalCachedSearchDataSourceImpl(
         val cachedResults = getCachedResults(query, "tv_series")
         
         if (cachedResults.isNotEmpty()) {
-            return emptyList()
+            // Return cached TV series based on cached results
+            return cachedResults.mapNotNull { result ->
+                seriesDao.getFilteredSeries(
+                    minYear = 1900,
+                    maxYear = 2030,
+                    genre = "",
+                    rating = 0f
+                ).firstOrNull()
+            }
         }
 
         return emptyList()

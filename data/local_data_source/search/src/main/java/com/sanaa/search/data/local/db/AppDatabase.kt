@@ -14,6 +14,8 @@ import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
+import com.sanaa.search.search_history.dao.QueryDao
+import com.sanaa.search.search_history.dao.RecentViewedDao
 
 @Database(
     entities = [
@@ -34,6 +36,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun seriesDao(): SeriesDao
     abstract fun actorDao(): ActorDao
-    abstract fun queryDao(): com.sanaa.search.search_history.dao.QueryDao
-    abstract fun recentViewedDao(): com.sanaa.search.search_history.dao.RecentViewedDao
+    abstract fun queryDao(): QueryDao
+    abstract fun recentViewedDao(): RecentViewedDao
 } 

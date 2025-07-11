@@ -10,6 +10,8 @@ import com.sanaa.search.data.local.dao.MovieDao
 import com.sanaa.search.data.local.dao.SeriesDao
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.data.local.datasource.LocalCachedSearchDataSourceImpl
+import com.sanaa.search.search_history.dao.QueryDao
+import com.sanaa.search.search_history.dao.RecentViewedDao
 import org.koin.android.ext.koin.androidContext
 
 val localDatabaseModule = module {
@@ -42,10 +44,11 @@ val localDatabaseModule = module {
         get<AppDatabase>().seriesDao()
     }
 
-    single<com.sanaa.search.search_history.dao.QueryDao> {
+    single<QueryDao> {
         get<AppDatabase>().queryDao()
     }
-    single<com.sanaa.search.search_history.dao.RecentViewedDao> {
+    
+    single<RecentViewedDao> {
         get<AppDatabase>().recentViewedDao()
     }
 
