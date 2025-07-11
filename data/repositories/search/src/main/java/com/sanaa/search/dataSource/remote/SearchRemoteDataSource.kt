@@ -1,4 +1,4 @@
-package com.sanaa.search.dataSource
+package com.sanaa.search.dataSource.remote
 
 import com.sanaa.search.dto.ActorSearchDto
 import com.sanaa.search.dto.MovieSearchDto

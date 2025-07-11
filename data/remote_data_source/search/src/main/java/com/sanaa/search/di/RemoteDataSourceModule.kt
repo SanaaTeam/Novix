@@ -1,7 +1,7 @@
 package com.sanaa.search.di
 
 import com.sanaa.search.SearchRemoteDataSourceImpl
-import com.sanaa.search.dataSource.SearchRemoteDataSource
+import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import org.koin.dsl.module
 
 val remoteDataSource = module {
