@@ -36,6 +36,7 @@ class MainActivity : ComponentActivity() {
             NovixTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
 //                    MainScreen(Modifier.padding(padding))
+                    padding
                     SearchScreen()
                 }
             }

@@ -61,7 +61,6 @@ firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
-insert-koin-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
@@ -86,11 +85,8 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
-koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
 material3 = { module = "androidx.compose.material3:material3" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-koin-android-v356 = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
-material3 = { module = "androidx.compose.material3:material3" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
