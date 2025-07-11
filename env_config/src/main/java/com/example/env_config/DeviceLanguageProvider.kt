@@ -1,6 +1,6 @@
-package com.example.language_provider
+package com.example.env_config
 
-import repository.LanguageProvider
+import com.example.env_config.service.LanguageProvider
 import java.util.Locale
 
 class DeviceLanguageProvider(
