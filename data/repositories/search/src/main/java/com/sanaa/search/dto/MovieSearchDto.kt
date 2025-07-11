@@ -18,7 +18,7 @@ data class MovieSearchDto(
     val releaseDate: String?,
 
     @SerialName("vote_average")
-    val voteAverage: Double?,
+    val voteAverage: Float?,
 
     @SerialName("genre_ids")
     val genreIds: List<Int>?
