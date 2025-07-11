@@ -8,8 +8,6 @@ import androidx.room.PrimaryKey
 data class RecentViewedLocalDto(
     @PrimaryKey
     val id: Int,
-    @ColumnInfo(name = "title")
-    val title: String,
     @ColumnInfo(name = "image_url")
     val imageUrl: String,
     @ColumnInfo(name = "is_saved")
