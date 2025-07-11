@@ -9,6 +9,9 @@ import com.sanaa.presentation.state.TvShowUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import usecase.SearchActorsUseCase
@@ -24,96 +27,116 @@ class SearchViewModel(
     private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+
     init {
-        searchMediaByTab()
+        viewModelScope.launch {
+            loadMediaByTab(query = "")
+        }
+        viewModelScope.launch {
+            _searchQuery
+                .debounce(500)
+                .distinctUntilChanged()
+                .collectLatest { query ->
+                    loadMediaByTab(query)
+                }
+        }
+    }
+
+    private suspend fun loadMediaByTab(query: String) {
+        when (_uiState.value.selectedTabIndex) {
+            0 -> loadMovies(query)
+            1 -> loadTvShows(query)
+            2 -> loadActors(query)
+        }
     }
 
     fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
-        searchMediaByTab()
     }
 
     fun onSearchQueryChanged(query: String) {
+        _searchQuery.value = query
         _uiState.update { it.copy(searchQuery = query) }
-        searchMediaByTab()
     }
 
-    private fun searchMediaByTab() {
-        when (_uiState.value.selectedTabIndex) {
-            0 -> loadMovies()
-            1 -> loadTvShows()
-            2 -> loadActors()
-        }
-    }
 
-    private fun loadMovies() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            try {
-                val movies = searchMoviesUseCase.execute(
-                    query = _uiState.value.searchQuery,
-                    filters = null
-                ).map {
-                    MovieUiModel(
-                        id = it.id,
-                        title = it.title,
-                        imageUrl = it.posterImageUrl,
-                        rating = ""
-                    )
-                }
+    private suspend fun loadMovies(query: String) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
 
-                _uiState.update {
-                    it.copy(isLoading = false, movies = movies)
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
+        try {
+            val movies = searchMoviesUseCase.execute(
+                query = query,
+                filters = null
+            ).map {
+                MovieUiModel(
+                    id = it.id,
+                    title = it.title,
+                    imageUrl = it.posterImageUrl,
+                    rating = ""
+                )
+            }
+
+            _uiState.update {
+                it.copy(isLoading = false, movies = movies)
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
         }
     }
 
-    private fun loadTvShows() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            try {
-                val tvShows = searchTvSeriesUseCase.execute(
-                    query = _uiState.value.searchQuery,
-                    filters = null
-                ).map {
-                    TvShowUiModel(
-                        id = it.id,
-                        title = it.title,
-                        imageUrl = it.posterImageUrl,
-                        rating = ""
-                    )
-                }
 
-                _uiState.update {
-                    it.copy(isLoading = false, tvShows = tvShows)
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
+    private suspend fun loadTvShows(query: String) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        try {
+            val tvShows = searchTvSeriesUseCase.execute(
+                query = query,
+                filters = null
+            ).map {
+                TvShowUiModel(
+                    id = it.id,
+                    title = it.title,
+                    imageUrl = it.posterImageUrl,
+                    rating = ""
+                )
+            }
+
+            _uiState.update {
+                it.copy(isLoading = false, tvShows = tvShows)
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
         }
     }
 
-    private fun loadActors() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
-            try {
-                val actors = searchActorsUseCase.execute(query = _uiState.value.searchQuery).map {
-                    ActorUiModel(
-                        id = it.id,
-                        name = it.name,
-                        imageUrl = it.profileImageUrl
-                    )
-                }
 
-                _uiState.update {
-                    it.copy(isLoading = false, actors = actors)
-                }
-            } catch (e: Exception) {
-                _uiState.update { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
+    private suspend fun loadActors(query: String) {
+        _uiState.update { it.copy(isLoading = true, error = null) }
+
+        try {
+            val actors = searchActorsUseCase.execute(query).map {
+                ActorUiModel(
+                    id = it.id,
+                    name = it.name,
+                    imageUrl = it.profileImageUrl
+                )
+            }
+
+            _uiState.update {
+                it.copy(isLoading = false, actors = actors)
+            }
+        } catch (e: Exception) {
+            _uiState.update {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
         }
     }
+
 }
