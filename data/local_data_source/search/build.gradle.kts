@@ -46,6 +46,9 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // WorkManager for background cache cleanup
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+
     // Koin dependencies
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
