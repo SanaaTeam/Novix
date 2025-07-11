@@ -1,6 +1,7 @@
 package com.sanaa.presentation.state
 
 data class SearchScreenUiState(
+    val searchQuery: String = "",
     val selectedTabIndex: Int = 0,
     val isLoading: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
