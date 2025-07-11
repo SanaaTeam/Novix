@@ -111,7 +111,6 @@ class SearchRemoteDataSourceImplTest {
                     id = 1,
                     name = "Tom Hanks",
                     profileImagePath = "/path",
-                    gender = 0
                 )
             ),
             totalPages = 1,
@@ -143,7 +142,7 @@ class SearchRemoteDataSourceImplTest {
                     name = "Breaking Bad",
                     posterImagePath = "/path",
                     releaseDate = "",
-                    voteAverage = 0.0,
+                    voteAverage = 0f,
                     genreIds = emptyList()
                 )
             ),
@@ -176,7 +175,7 @@ class SearchRemoteDataSourceImplTest {
                     title = "Inception",
                     posterImagePath = "/path",
                     releaseDate = "",
-                    voteAverage = 0.0,
+                    voteAverage = 0f,
                     genreIds = emptyList()
                 )
             ),

@@ -14,11 +14,11 @@ data class TvShowSearchDto(
     @SerialName("poster_path")
     val posterImagePath: String?,
 
-    @SerialName("release_date")
+    @SerialName("first_air_date")
     val releaseDate: String?,
 
     @SerialName("vote_average")
-    val voteAverage: Double?,
+    val voteAverage: Float?,
 
     @SerialName("genre_ids")
     val genreIds: List<Int>?
