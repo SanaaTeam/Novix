@@ -2,6 +2,7 @@ package com.sanaa.presentation.filter_bottomsheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +29,7 @@ import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
+import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import entity.Genre
 
 @Composable
@@ -45,19 +46,24 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(16.dp),
     ) {
-
         Column(
             modifier = Modifier
-                .weight(1f)
+                .weight(1f, fill = false)
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             BottomSheetHeader(onCancelClicked = onCloseClicked)
-
             if (uiState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    WavyProgressIndicator()
+                }
             } else {
                 CustomYearRangeSlider(
                     title = stringResource(R.string.released_year),
