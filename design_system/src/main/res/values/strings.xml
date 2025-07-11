@@ -1,5 +1,8 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="novix">Novix</string>
+    <string name="offline_title">Oops! It looks like you\'re offline.</string>
+    <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
+    <string name="offline_note">Retry</string>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
 </resources>
