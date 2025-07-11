@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,39 +22,40 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun RecentSearchItem(
     text: String = stringResource(R.string.shutter_island),
-    onCancelClicked: () -> Unit = {}
+    onDeleteClicked: () -> Unit = {}
 ) {
-    Column {
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .padding(bottom = 12.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
 
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.icon_clock),
-                contentDescription = null,
-                tint = Theme.colors.hint,
-                modifier = Modifier.size(20.dp)
-            )
-            Text(
-                text = text,
-                style = Theme.textStyle.body.medium,
-                color = Theme.colors.title,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(
-                painter = painterResource(id = R.drawable.icon_cancel),
-                contentDescription = null,
-                tint = Theme.colors.hint,
-                modifier = Modifier.size(16.dp)
-                    .clickable(onClick = onCancelClicked)
-            )
-        }
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .padding(bottom = 12.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.icon_clock),
+            contentDescription = null,
+            tint = Theme.colors.hint,
+            modifier = Modifier.size(20.dp)
+        )
+        Text(
+            text = text,
+            style = Theme.textStyle.body.medium,
+            color = Theme.colors.title,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.icon_cancel),
+            contentDescription = null,
+            tint = Theme.colors.hint,
+            modifier = Modifier
+                .size(16.dp)
+                .clickable(onClick = onDeleteClicked)
+        )
     }
+
 
 }
 
