@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -58,8 +59,18 @@ fun RecentSearchItem(
 
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, locale = "en")
 @Composable
-private fun RecentSearchItemPreview() {
-    RecentSearchItem()
+private fun RecentSearchItemPreviewLight() {
+    NovixTheme(false) {
+        RecentSearchItem()
+    }
+}
+
+@Preview(showBackground = true, locale = "en")
+@Composable
+private fun RecentSearchItemPreviewDark() {
+    NovixTheme(true) {
+        RecentSearchItem()
+    }
 }
