@@ -1,4 +1,5 @@
 package com.sanaa.search.search_history
+import com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 

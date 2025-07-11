@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sanaa.search.data.local.entity.ActorsLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
 
 @Dao
 interface ActorDao {

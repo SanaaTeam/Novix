@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sanaa.search.data.local.entity.SearchResultLocalDto
+import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
 
 @Dao
 interface SearchResultDao {
@@ -15,23 +15,31 @@ interface SearchResultDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(result: SearchResultLocalDto)
 
-    @Query("""
+    @Query(
+        """
         SELECT sr.* FROM search_result sr
-        INNER JOIN searches s ON sr.search_id = s.search_id
+        INNER JOIN searches s ON sr.id = s.id
         WHERE s.query = :query AND s.language = :language
-    """)
-    suspend fun getByQueryAndLanguage(query: String, language: String): List<SearchResultLocalDto>
+    """
+    )
+    suspend fun getByQueryAndLanguage(
+        query: String,
+        language: String,
+        type: String
+    ): List<SearchResultLocalDto>
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM search_result 
-        WHERE search_id IN (
-            SELECT search_id FROM searches 
+        WHERE id IN (
+            SELECT id FROM searches 
             WHERE timestamp < :timestamp
         )
-    """)
+    """
+    )
     suspend fun deleteOldResults(timestamp: Long)
 
-    @Query("DELETE FROM search_result WHERE search_id = :searchId")
+    @Query("DELETE FROM search_result WHERE id = :searchId")
     suspend fun deleteBySearchId(searchId: Long)
 
     suspend fun insertWithCleanup(result: SearchResultLocalDto) {

@@ -1,21 +1,20 @@
-package com.sanaa.search.data.local.entity
+package com.sanaa.search.dataSource.local.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "searches")
+@Entity(
+    tableName = "searches", primaryKeys = ["query", "language"],
+)
 data class SearchLocalDto(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "search_id")
-    val searchId: Long = 0L,
-
+    @ColumnInfo(name = "id")
+    val id: Int = 0,
     @ColumnInfo(name = "query")
     val query: String,
-
     @ColumnInfo(name = "language")
     val language: String,
-
     @ColumnInfo(name = "timestamp")
     val timestamp: Long = System.currentTimeMillis()
 ) 

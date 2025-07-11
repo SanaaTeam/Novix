@@ -4,12 +4,14 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.sanaa.search.data.local.dao.ActorDao
 import com.sanaa.search.data.local.dao.MovieDao
+import com.sanaa.search.data.local.dao.SearchDao
+import com.sanaa.search.data.local.dao.SearchResultDao
 import com.sanaa.search.data.local.dao.SeriesDao
-import com.sanaa.search.data.local.entity.ActorsLocalDto
-import com.sanaa.search.data.local.entity.MoviesLocalDto
-import com.sanaa.search.data.local.entity.SearchLocalDto
-import com.sanaa.search.data.local.entity.SearchResultLocalDto
-import com.sanaa.search.data.local.entity.SeriesLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
+import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.SearchLocalDto
+import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
+import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 
@@ -18,7 +20,7 @@ import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
         SearchLocalDto::class,
         SearchResultLocalDto::class,
         MoviesLocalDto::class,
-        SeriesLocalDto::class,
+        TvSeriesLocalDto::class,
         ActorsLocalDto::class,
         QueryLocalDto::class,
         RecentViewedLocalDto::class
