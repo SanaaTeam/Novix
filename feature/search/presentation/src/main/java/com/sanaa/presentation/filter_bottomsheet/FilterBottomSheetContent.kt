@@ -1,5 +1,8 @@
 package com.sanaa.presentation.filter_bottomsheet
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,10 +56,14 @@ fun FilterBottomSheetContent(
             modifier = Modifier
                 .weight(1f, fill = false)
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             BottomSheetHeader(onCancelClicked = onCloseClicked)
-            if (uiState.isLoading) {
+
+            AnimatedVisibility(
+                visible = uiState.isLoading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -64,24 +72,32 @@ fun FilterBottomSheetContent(
                 ) {
                     WavyProgressIndicator()
                 }
-            } else {
-                CustomYearRangeSlider(
-                    title = stringResource(R.string.released_year),
-                    value = uiState.yearRange,
-                    onValueChange = onYearRangeChanged
-                )
+            }
 
-                GenreChips(
-                    genres = uiState.allGenres,
-                    selectedGenres = uiState.selectedGenres,
-                    onGenreSelected = onGenreSelected
-                )
+            AnimatedVisibility(
+                visible = !uiState.isLoading,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                    CustomYearRangeSlider(
+                        title = stringResource(R.string.released_year),
+                        value = uiState.yearRange,
+                        onValueChange = onYearRangeChanged
+                    )
 
-                IMDbRatingSelector(
-                    title = stringResource(R.string.imdb_rating),
-                    currentRating = uiState.imdbRating,
-                    onRatingChanged = onRatingChanged
-                )
+                    GenreChips(
+                        genres = uiState.allGenres,
+                        selectedGenres = uiState.selectedGenres,
+                        onGenreSelected = onGenreSelected
+                    )
+
+                    IMDbRatingSelector(
+                        title = stringResource(R.string.imdb_rating),
+                        currentRating = uiState.imdbRating,
+                        onRatingChanged = onRatingChanged
+                    )
+                }
             }
         }
 
@@ -116,7 +132,6 @@ private fun FilterActions(
                 .height(48.dp),
             text = stringResource(R.string.clear)
         )
-
     }
 }
 
@@ -134,13 +149,20 @@ fun FilterBottomSheetContentPreview() {
             )
         }
         var previewRating by remember { mutableStateOf(8) }
+        var isLoading by remember { mutableStateOf(true) }
+
+        // Simulate loading and then showing content for the preview
+        LaunchedEffect(Unit) {
+            kotlinx.coroutines.delay(2000)
+            isLoading = false
+        }
 
         val previewState = FilterUiState(
             yearRange = previewYearRange,
             allGenres = Genre.entries.toTypedArray().take(9),
             selectedGenres = previewSelectedGenres,
             imdbRating = previewRating,
-            isLoading = false
+            isLoading = isLoading
         )
 
         FilterBottomSheetContent(

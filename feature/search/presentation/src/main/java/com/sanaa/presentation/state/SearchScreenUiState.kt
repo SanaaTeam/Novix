@@ -1,6 +1,5 @@
 package com.sanaa.presentation.state
 
-import com.sanaa.designsystem.R
 
 data class SearchScreenUiState(
     val searchQuery: String = "",
