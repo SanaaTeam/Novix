@@ -22,7 +22,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun RecentSearchItem(
     text: String = stringResource(R.string.shutter_island),
-    onDeleteClicked: () -> Unit = {}
+    onDeleteClicked: () -> Unit = {},
+    onRecentSearchItemClicked: () -> Unit = {}
 ) {
 
     Row(
@@ -34,18 +35,27 @@ fun RecentSearchItem(
         verticalAlignment = Alignment.CenterVertically
 
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.icon_clock),
-            contentDescription = null,
-            tint = Theme.colors.hint,
-            modifier = Modifier.size(20.dp)
-        )
-        Text(
-            text = text,
-            style = Theme.textStyle.body.medium,
-            color = Theme.colors.title,
-            modifier = Modifier.weight(1f)
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .weight(1f)
+                .clickable(
+                    onClick = onRecentSearchItemClicked
+                )
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.icon_clock),
+                contentDescription = null,
+                tint = Theme.colors.hint,
+                modifier = Modifier.size(20.dp)
+            )
+            Text(
+                text = text,
+                style = Theme.textStyle.body.medium,
+                color = Theme.colors.title,
+            )
+        }
         Icon(
             painter = painterResource(id = R.drawable.icon_cancel),
             contentDescription = null,

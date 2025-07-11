@@ -60,6 +60,10 @@ class SearchViewModel(
         _uiState.update { it.copy(selectedTabIndex = index) }
     }
 
+    override fun onRecentSearchItemClicked() {
+
+    }
+
     fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         _uiState.update { it.copy(searchQuery = query) }

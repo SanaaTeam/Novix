@@ -30,6 +30,7 @@ fun SearchHistoryContent(
     onClearRecentViewClicked: () -> Unit = {},
     onClearRecentSearchClicked: () -> Unit = {},
     onCancelClicked: () -> Unit = {},
+    onRecentSearchItemClicked: () -> Unit = {},
     onSaveIconClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
     recentViewed: List<Int> = emptyList(),
@@ -73,7 +74,8 @@ fun SearchHistoryContent(
             itemsIndexed(recentSearches) { index, item ->
                 RecentSearchItem(
                     text = item,
-                    onDeleteClicked = onCancelClicked
+                    onDeleteClicked = onCancelClicked,
+                    onRecentSearchItemClicked = onRecentSearchItemClicked
                 )
                 if (index != recentSearches.lastIndex) {
                     Box(
@@ -119,11 +121,34 @@ fun SectionHeader(
     }
 }
 
+
+
 @Preview(showBackground = true)
 @Composable
-private fun SearchHistoryContentPreview() {
-//    SearchHistoryContent(
-//        recentSearches = fakeRecentSearchesList,
-//        recentViewed = fakeRecentViewedList
-//    )
+private fun SearchPreview() {
+    val recentViewedList = listOf(
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+        R.drawable.movie_poster,
+        R.drawable.movie_poster1,
+        R.drawable.movie_poster2,
+        R.drawable.movie_poster3,
+    )
+    val recentSearchesList = listOf(
+        "Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento","Shutter island", "Inception", "Tenet",
+        "Memento", "Shutter island", "Inception",
+        "Tenet", "Memento"
+    )
+    SearchHistoryContent(
+        recentSearches = recentSearchesList,
+        recentViewed = recentViewedList
+    )
 }
