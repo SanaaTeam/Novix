@@ -2,17 +2,22 @@ package com.sanaa.presentation.filter_bottomsheet
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
+import entity.Genre
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import usecase.search.MediaFilters
 
-class FilterViewModel(/* Domains' usecases */) : ViewModel() {
+class FilterViewModel() : ViewModel() {
 
     private val _uiState = MutableStateFlow(FilterUiState())
-    val uiState: StateFlow<FilterUiState> = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
+
+    private val _filterResult = MutableSharedFlow<MediaFilters>()
+    val filterResult = _filterResult.asSharedFlow()
 
     init {
         fetchGenres()
@@ -20,9 +25,7 @@ class FilterViewModel(/* Domains' usecases */) : ViewModel() {
 
     private fun fetchGenres() {
         viewModelScope.launch {
-            delay(500)
-            val genresFromApi = listOf("All", "Comedy", "Action", "Crime", "Adventure", "Animation", "Documentary", "Drama", "Family")
-
+            val genresFromApi = Genre.entries
             _uiState.update { currentState ->
                 currentState.copy(allGenres = genresFromApi, isLoading = false)
             }
@@ -33,8 +36,16 @@ class FilterViewModel(/* Domains' usecases */) : ViewModel() {
         _uiState.update { it.copy(yearRange = newRange) }
     }
 
-    fun onGenreSelected(genre: String) {
-        _uiState.update { it.copy(selectedGenre = genre) }
+    fun onGenreSelected(genre: Genre) {
+        _uiState.update { currentState ->
+            val newSelectedGenres = currentState.selectedGenres.toMutableSet()
+            if (newSelectedGenres.contains(genre)) {
+                newSelectedGenres.remove(genre)
+            } else {
+                newSelectedGenres.add(genre)
+            }
+            currentState.copy(selectedGenres = newSelectedGenres)
+        }
     }
 
     fun onRatingChanged(newRating: Int) {
@@ -45,13 +56,22 @@ class FilterViewModel(/* Domains' usecases */) : ViewModel() {
         _uiState.update { currentState ->
             FilterUiState(
                 allGenres = currentState.allGenres,
-                isLoading = false,
-                selectedGenre = "All"
+                isLoading = false
             )
         }
     }
 
     fun onApplyClicked() {
-        println("Applying filters: ${_uiState.value}")
+        viewModelScope.launch {
+            val currentState = _uiState.value
+            val mediaFilters = MediaFilters(
+                startYear = currentState.yearRange.start.toInt(),
+                endYear = currentState.yearRange.endInclusive.toInt(),
+                genres = currentState.selectedGenres.toList(),
+                imdbRating = currentState.imdbRating.toFloat()
+            )
+            _filterResult.emit(mediaFilters)
+        }
     }
 }
+

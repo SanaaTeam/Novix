@@ -29,12 +29,13 @@ import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
+import entity.Genre
 
 @Composable
 fun FilterBottomSheetContent(
     uiState: FilterUiState,
     onYearRangeChanged: (ClosedFloatingPointRange<Float>) -> Unit,
-    onGenreSelected: (String) -> Unit,
+    onGenreSelected: (Genre) -> Unit,
     onRatingChanged: (Int) -> Unit,
     onClearClicked: () -> Unit,
     onApplyClicked: () -> Unit,
@@ -66,7 +67,7 @@ fun FilterBottomSheetContent(
 
                 GenreChips(
                     genres = uiState.allGenres,
-                    selectedGenre = uiState.selectedGenre,
+                    selectedGenres = uiState.selectedGenres,
                     onGenreSelected = onGenreSelected
                 )
 
@@ -78,6 +79,8 @@ fun FilterBottomSheetContent(
             }
         }
 
+        Spacer(modifier = Modifier.height(24.dp))
+
         FilterActions(
             onApplyClicked = onApplyClicked,
             onClearClicked = onClearClicked
@@ -85,14 +88,13 @@ fun FilterBottomSheetContent(
     }
 }
 
-
 @Composable
 private fun FilterActions(
     onApplyClicked: () -> Unit,
     onClearClicked: () -> Unit
 ) {
     Column(
-        modifier = Modifier.padding(top=24.dp),
+        modifier = Modifier.padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         PrimaryButton(
@@ -112,28 +114,25 @@ private fun FilterActions(
     }
 }
 
-@Preview(showBackground = true, locale = "ar")
+@Preview(showBackground = true)
 @Composable
 fun FilterBottomSheetContentPreview() {
     NovixTheme(true) {
         var previewYearRange by remember { mutableStateOf(1995f..2015f) }
-        var previewSelectedGenre by remember { mutableStateOf("Animation") }
+        var previewSelectedGenres by remember {
+            mutableStateOf(
+                setOf(
+                    Genre.ANIMATION,
+                    Genre.ACTION
+                )
+            )
+        }
         var previewRating by remember { mutableStateOf(8) }
 
         val previewState = FilterUiState(
             yearRange = previewYearRange,
-            allGenres = listOf(
-                "All",
-                "Comedy",
-                "Action",
-                "Crime",
-                "Adventure",
-                "Animation",
-                "Documentary",
-                "Drama",
-                "Family"
-            ),
-            selectedGenre = previewSelectedGenre,
+            allGenres = Genre.entries.toTypedArray().take(9),
+            selectedGenres = previewSelectedGenres,
             imdbRating = previewRating,
             isLoading = false
         )
@@ -141,11 +140,16 @@ fun FilterBottomSheetContentPreview() {
         FilterBottomSheetContent(
             uiState = previewState,
             onYearRangeChanged = { newRange -> previewYearRange = newRange },
-            onGenreSelected = { newGenre -> previewSelectedGenre = newGenre },
+            onGenreSelected = { genre ->
+                val updatedGenres = previewSelectedGenres.toMutableSet()
+                if (updatedGenres.contains(genre)) updatedGenres.remove(genre)
+                else updatedGenres.add(genre)
+                previewSelectedGenres = updatedGenres
+            },
             onRatingChanged = { newRating -> previewRating = newRating },
             onClearClicked = {
                 previewYearRange = 1995f..2012f
-                previewSelectedGenre = "All"
+                previewSelectedGenres = emptySet()
                 previewRating = 8
             },
             onApplyClicked = {},

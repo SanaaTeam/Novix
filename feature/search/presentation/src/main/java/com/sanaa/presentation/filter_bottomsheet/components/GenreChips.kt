@@ -16,21 +16,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.R
+import com.sanaa.designsystem.R as DesignSystemR
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
+import entity.Genre
+import java.util.Locale
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenreChips(
-    genres: List<String>,
-    selectedGenre: String,
-    onGenreSelected: (String) -> Unit,
+    genres: List<Genre>,
+    selectedGenres: Set<Genre>,
+    onGenreSelected: (Genre) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = stringResource(R.string.genres),
+            text = stringResource(DesignSystemR.string.genres),
             style = Theme.textStyle.title.small,
             color = Theme.colors.title
         )
@@ -44,8 +46,8 @@ fun GenreChips(
         ) {
             genres.forEach { genre ->
                 CategoryChip(
-                    text = genre,
-                    isSelected = (genre == selectedGenre),
+                    text = genre.toReadableString(),
+                    isSelected = (genre in selectedGenres),
                     onClick = { onGenreSelected(genre) }
                 )
             }
@@ -53,29 +55,39 @@ fun GenreChips(
     }
 }
 
+private fun Genre.toReadableString(): String {
+    return this.name.replace('_', ' ').lowercase(Locale.getDefault())
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+}
+
+
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun GenreChipsPreview() {
-    val genres = listOf(
-        "All",
-        "Comedy",
-        "Action",
-        "Crime",
-        "Adventure",
-        "Animation",
-        "Documentary",
-        "Drama",
-        "Family"
-    )
-    var selectedGenre by remember { mutableStateOf("Animation") }
+    val genres = Genre.entries
+    var selectedGenres by remember { mutableStateOf(setOf(Genre.ANIMATION)) }
 
-        Column(modifier = Modifier.padding(16.dp)) {
-            GenreChips(
-                genres = genres,
-                selectedGenre = selectedGenre,
-                onGenreSelected = { genre ->
-                    selectedGenre = genre
+    Column(modifier = Modifier.padding(16.dp)) {
+        GenreChips(
+            genres = genres,
+            selectedGenres = selectedGenres,
+            onGenreSelected = { genre ->
+                selectedGenres = if (genre in selectedGenres) {
+                    selectedGenres - genre
+                } else {
+                    selectedGenres + genre
                 }
-            )
-        }
+            }
+        )
+    }
 }
+
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Composable
+fun GenreChipsPreviewNoGenresSelected() {
+    val genres = Genre.entries
+    Column(modifier = Modifier.padding(16.dp)) {
+        GenreChips(genres = genres, selectedGenres = emptySet(), onGenreSelected = {})
+    }
+}
+
