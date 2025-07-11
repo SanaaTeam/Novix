@@ -8,6 +8,9 @@ import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 interface LocalCachedSearchDataSource {
 
     suspend fun addSearchResult(query: String, language: String, itemId: Int, itemType: String)
+   
+    suspend fun addSearchResults(query: String, language: String, results: List<Pair<Int, String>>)
+    
     suspend fun getCachedResults(
         query: String,
         language: String,

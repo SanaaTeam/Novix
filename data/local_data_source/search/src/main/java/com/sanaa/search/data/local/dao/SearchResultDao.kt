@@ -19,7 +19,7 @@ interface SearchResultDao {
         """
         SELECT sr.* FROM search_result sr
         INNER JOIN searches s ON sr.id = s.id
-        WHERE s.query = :query AND s.language = :language
+        WHERE s.query = :query AND s.language = :language AND sr.item_type = :type
     """
     )
     suspend fun getByQueryAndLanguage(
@@ -39,18 +39,9 @@ interface SearchResultDao {
     )
     suspend fun deleteOldResults(timestamp: Long)
 
+    @Query("DELETE FROM searches WHERE timestamp < :timestamp")
+    suspend fun deleteExpiredSearches(timestamp: Long)
+
     @Query("DELETE FROM search_result WHERE id = :searchId")
     suspend fun deleteBySearchId(searchId: Long)
-
-    suspend fun insertWithCleanup(result: SearchResultLocalDto) {
-        val oneHourAgo = System.currentTimeMillis() - 60 * 60 * 1000
-        deleteOldResults(oneHourAgo)
-        insert(result)
-    }
-
-    suspend fun insertAllWithCleanup(results: List<SearchResultLocalDto>) {
-        val oneHourAgo = System.currentTimeMillis() - 60 * 60 * 1000
-        deleteOldResults(oneHourAgo)
-        insertAll(results)
-    }
 } 
