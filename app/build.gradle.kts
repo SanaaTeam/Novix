@@ -106,4 +106,7 @@ dependencies {
     
     // Local Data Sources
     implementation(projects.data.localDataSource.search)
+    
+    // Language Provider
+    implementation(projects.data.repositories.languageProvider)
 }

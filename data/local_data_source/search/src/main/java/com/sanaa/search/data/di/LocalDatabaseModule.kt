@@ -8,7 +8,7 @@ import com.sanaa.search.data.local.dao.SearchResultDao
 import com.sanaa.search.data.local.dao.ActorDao
 import com.sanaa.search.data.local.dao.MovieDao
 import com.sanaa.search.data.local.dao.SeriesDao
-import com.sanaa.search.dataSource.local.LocalCachedSearchDataSource
+import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.data.local.datasource.LocalCachedSearchDataSourceImpl
 import org.koin.android.ext.koin.androidContext
 
@@ -49,13 +49,14 @@ val localDatabaseModule = module {
         get<AppDatabase>().recentViewedDao()
     }
 
-    single<LocalCachedSearchDataSource> {
+    single<LocalCacheSearchDataSource> {
         LocalCachedSearchDataSourceImpl(
             searchDao = get<SearchDao>(),
             searchResultDao = get<SearchResultDao>(),
             actorDao = get<ActorDao>(),
             movieDao = get<MovieDao>(),
-            seriesDao = get<SeriesDao>()
+            seriesDao = get<SeriesDao>(),
+            languageProvider = get()
         )
     }
 

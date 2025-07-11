@@ -1,5 +1,6 @@
 package com.sanaa.novix.di
 
+import com.example.language_provider.di.languageProviderModule
 import com.sanaa.search.data.di.localDatabaseModule
 import com.sanaa.search.data.di.repositoryModule
 import com.sanaa.search.domain.di.domainModule
@@ -10,6 +11,7 @@ val appModule = module {
     includes(
         firebaseModule, 
         loggingModule, 
+        languageProviderModule,
         localDatabaseModule,
         repositoryModule,
         domainModule,

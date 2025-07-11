@@ -37,6 +37,7 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.search)
+    implementation(projects.data.repositories.languageProvider)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
