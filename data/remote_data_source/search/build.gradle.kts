@@ -57,8 +57,7 @@ dependencies {
     testImplementation(libs.mockk.v1140)
     testImplementation(libs.kotlinx.coroutines.test.v173)
     testImplementation(libs.truth)
-    testImplementation("io.ktor:ktor-client-mock:2.3.13")
-    implementation("org.slf4j:slf4j-android:1.7.36")
+    testImplementation(libs.ktor.client.mock)
     testImplementation(kotlin("test"))
 
 }
