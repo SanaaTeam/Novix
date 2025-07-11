@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.novix.ui.theme.NovixTheme
+import com.sanaa.presentation.screen.SearchScreen
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             NovixTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { padding ->
-                    MainScreen(Modifier.padding(padding))
+//                    MainScreen(Modifier.padding(padding))
+                    SearchScreen()
                 }
             }
         }

@@ -104,7 +104,6 @@ ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
-koin-core = { group = "io.insert-koin", name = "koin-core"}
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
@@ -113,6 +112,24 @@ ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+
+#koin
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
+koin-logging = { module = "io.insert-koin:koin-logger-slf4j" }
+koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
+koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
+
+[bundles]
+koin = [
+    "koin-core",
+    "koin-android",
+    "koin-coroutines",
+    "koin-logging",
+    "koin-core-viewmodel",
+    "koin-androidx-compose",
+    "koin-androidx-compose-navigation"
+]
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
