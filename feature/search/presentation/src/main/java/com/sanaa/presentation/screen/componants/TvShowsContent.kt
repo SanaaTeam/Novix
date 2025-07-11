@@ -8,8 +8,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -27,7 +27,7 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>) {
     ) {
         items(tvShows) { movie ->
             MovieSeriesPosterCard(
-                poster = painterResource(id = movie.imageRes),
+                poster = rememberAsyncImagePainter(model = movie.imageUrl),
                 topLeftContent = {
                     SaveIconChip(
                         onClick = {}
