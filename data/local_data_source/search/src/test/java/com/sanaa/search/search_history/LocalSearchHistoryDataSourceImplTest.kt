@@ -54,7 +54,6 @@ class LocalSearchHistoryDataSourceImplTest {
         // Given
         val recentViewed = RecentViewedLocalDto(
             id = 1,
-            title = "test title",
             imageUrl = "test imageUrl",
             isSaved = false,
             mediaType = "test mediaType"

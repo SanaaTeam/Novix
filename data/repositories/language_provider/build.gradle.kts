@@ -1,11 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
-    namespace = "com.sanaa.search"
+    namespace = "com.example.language_provider"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -34,24 +33,13 @@ android {
 }
 
 dependencies {
+
     implementation(projects.domain.vod)
-    implementation(libs.ktor.serialization.kotlinx.json)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.bundles.room)
-    implementation(libs.kotlinx.datetime)
-    testImplementation(libs.mockk.v1140)
-    testImplementation(libs.kotlinx.coroutines.test.v173)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
-
-}
-tasks.withType<Test> {
-    useJUnitPlatform()
 }
