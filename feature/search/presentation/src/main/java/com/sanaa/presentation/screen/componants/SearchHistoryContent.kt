@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -50,7 +50,7 @@ fun SearchHistoryContent(
                 bottom = 24.dp
             )
         ) {
-            itemsIndexed(recentViewed) { index, item ->
+            itemsIndexed(recentViewed) { _, item ->
                 MovieSeriesPosterCard(
                     poster = painterResource(id = item),
                     topLeftContent = {
@@ -68,12 +68,12 @@ fun SearchHistoryContent(
         )
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = 38.dp)
+                .padding(bottom = 12.dp)
         ) {
             itemsIndexed(recentSearches) { index, item ->
                 RecentSearchItem(
                     text = item,
-                    onCancelClicked = onCancelClicked
+                    onDeleteClicked = onCancelClicked
                 )
                 if (index != recentSearches.lastIndex) {
                     Box(
@@ -110,11 +110,11 @@ fun SectionHeader(
             color = Theme.colors.body,
             modifier = Modifier.weight(1f)
         )
-        Text(
+        TextButton(
             text = actionText,
-            style = Theme.textStyle.label.medium,
-            color = Theme.colors.primary,
-            modifier = Modifier.clickable(onClick = onActionClick)
+            onClick = onActionClick,
+            isLoading = false,
+            isEnabled = true
         )
     }
 }
