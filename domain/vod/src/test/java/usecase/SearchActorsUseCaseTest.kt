@@ -24,7 +24,7 @@ class SearchActorsUseCaseTest {
     }
 
     @Test
-    fun `execute() should call searchActors() from SearchRepository when search an actor`() =
+    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search an actor`() =
         runTest {
             // Given
             val query = "Actor"

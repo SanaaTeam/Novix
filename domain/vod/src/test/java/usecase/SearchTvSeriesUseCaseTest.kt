@@ -26,7 +26,7 @@ class SearchTvSeriesUseCaseTest {
     }
 
     @Test
-    fun `execute() should call addSearchHistory() from SearchRepository when search a tv series`() =
+    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
         runTest {
             // Given
             val query = "TvSeries"
