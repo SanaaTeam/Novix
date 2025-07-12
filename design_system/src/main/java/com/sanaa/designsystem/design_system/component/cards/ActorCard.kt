@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,17 +34,21 @@ fun ActorCard(
     modifier: Modifier = Modifier,
     playedCharacter: String? = null,
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val placeholderResId = if (isDarkTheme) {
+        R.drawable.icon_placeholder_dark
+    } else {
+        R.drawable.icon_placeholder_light
+    }
     Box(
         modifier = modifier
             .height(78.dp)
             .fillMaxWidth()
     ) {
-        Image(
-            painter = actorImage,
-            contentDescription = actorName,
-            contentScale = ContentScale.Crop,
+        Box(
             modifier = Modifier
-                .width(78.dp)
+                .size(78.dp)
+                .background(Theme.colors.surface)
                 .border(
                     width = 1.dp,
                     color = Theme.colors.stroke,
@@ -62,7 +66,24 @@ fun ActorCard(
                         topStart = 12.dp,
                     )
                 ),
-        )
+            contentAlignment = Alignment.Center
+        ) {
+
+
+            Image(
+                painter = painterResource(placeholderResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(56.dp)
+
+            )
+            Image(
+                painter = actorImage,
+                contentDescription = actorName,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
