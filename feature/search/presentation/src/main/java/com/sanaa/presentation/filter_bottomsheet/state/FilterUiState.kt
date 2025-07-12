@@ -1,4 +1,4 @@
-package com.sanaa.presentation.filter_bottomsheet
+package com.sanaa.presentation.filter_bottomsheet.state
 
 import entity.Genre
 

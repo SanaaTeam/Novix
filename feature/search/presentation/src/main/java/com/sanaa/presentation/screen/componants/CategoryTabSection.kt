@@ -7,8 +7,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.R
-import com.sanaa.presentation.screen.CategoryTab
-import com.sanaa.presentation.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState
 
 @Composable
 fun CategoryTabSection(
@@ -69,7 +68,7 @@ private fun NoSearchResultState() {
 
 @Composable
 private fun DefaultState(uiState: SearchScreenUiState) {
-    val showEmptyMessage = uiState.resentSearchTitleList.isEmpty()
+    val showEmptyMessage = uiState.recentSearchQueries.isEmpty()
     if (showEmptyMessage) {
         EmptySearchState(
             icon = painterResource(id = R.drawable.empty_search),
@@ -77,8 +76,8 @@ private fun DefaultState(uiState: SearchScreenUiState) {
         )
     } else {
         SearchHistoryContent(
-            recentViewed = uiState.resentViewedImageList,
-            recentSearches = uiState.resentSearchTitleList
+            recentViewed = uiState.recentViewedImageUrls,
+            recentSearches = uiState.recentSearchQueries
         )
     }
 }
