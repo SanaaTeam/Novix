@@ -24,11 +24,13 @@ import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
+import entity.Genre
 
 @Composable
 fun FilterBottomSheetContent(
     uiState: FilterUiState,
-    onEvent: (FilterEvent) -> Unit
+    listener: FilterBottomSheetInteractionsListener,
+    onDismissRequest: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -41,7 +43,7 @@ fun FilterBottomSheetContent(
                 .weight(1f, fill = false)
                 .verticalScroll(rememberScrollState()),
         ) {
-            BottomSheetHeader(onCancelClicked = { onEvent(FilterEvent.Close) })
+            BottomSheetHeader(onCancelClicked = onDismissRequest)
 
             AnimatedVisibility(visible = uiState.isLoading) {
                 WavyProgressIndicator()
@@ -52,25 +54,28 @@ fun FilterBottomSheetContent(
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
-                        onValueChange = { onEvent(FilterEvent.YearRangeChanged(it)) }
+                        onValueChange = listener::onYearRangeChanged
                     )
                     GenreChips(
                         genres = uiState.allGenres,
                         selectedGenres = uiState.selectedGenres,
-                        onGenreSelected = { onEvent(FilterEvent.GenreSelected(it)) }
+                        onGenreSelected = listener::onGenreSelected
                     )
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
-                        onRatingChanged = { onEvent(FilterEvent.RatingChanged(it)) }
+                        onRatingChanged = listener::onRatingChanged
                     )
                 }
             }
         }
         Spacer(modifier = Modifier.height(24.dp))
         FilterActions(
-            onApplyClicked = { onEvent(FilterEvent.Apply) },
-            onClearClicked = { onEvent(FilterEvent.Clear) }
+            onApplyClicked = {
+                listener.onApplyClicked()
+                onDismissRequest()
+            },
+            onClearClicked = listener::onClearFilters
         )
     }
 }

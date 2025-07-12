@@ -14,16 +14,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
@@ -34,12 +31,12 @@ import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent
-import com.sanaa.presentation.filter_bottomsheet.FilterEvent
+import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchSection
+import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -60,11 +57,12 @@ fun SearchScreen(
     }
 
     NovixTheme(isSystemInDarkTheme()) {
+
         SearchScreenContent(
             uiState = uiState,
             filterUiState = filterUiState,
-            listener = searchViewModel,
-            onFilterEvent = filterViewModel::onEvent,
+            searchListener = searchViewModel,
+            filterListener = filterViewModel,
         )
     }
 }
@@ -74,12 +72,18 @@ fun SearchScreen(
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
     filterUiState: FilterUiState,
-    listener: SearchScreenInteractionsListener,
-    onFilterEvent: (FilterEvent) -> Unit,
+    searchListener: SearchScreenInteractionsListener,
+    filterListener: FilterBottomSheetInteractionsListener,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    val dismissSheet: () -> Unit = {
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) showBottomSheet = false
+        }
+    }
 
     NovixScaffold(
         topBar = {
@@ -112,7 +116,7 @@ fun SearchScreenContent(
         Column {
             SearchSection(
                 text = uiState.searchQuery,
-                onTextChange = listener::onSearchQueryChanged,
+                onTextChange = searchListener::onSearchQueryChanged,
                 onFilterClicked = { showBottomSheet = true }
             )
             Spacer(Modifier.height(12.dp))
@@ -127,9 +131,9 @@ fun SearchScreenContent(
             } else {
                 CategoryTabSection(
                     selectedTabIndex = uiState.selectedTabIndex,
-                    onTabSelected = listener::onTabSelected,
+                    onTabSelected = searchListener::onTabSelected,
                     uiState = uiState,
-                    listener = listener
+                    listener = searchListener
                 )
             }
         }
@@ -138,20 +142,14 @@ fun SearchScreenContent(
     if (showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.statusBarsPadding(),
-            onDismissRequest = { showBottomSheet = false },
+            onDismissRequest = dismissSheet,
             sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(
                 uiState = filterUiState,
-                onEvent = { event ->
-                    onFilterEvent(event)
-                    if (event is FilterEvent.Apply || event is FilterEvent.Close) {
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            if (!sheetState.isVisible) showBottomSheet = false
-                        }
-                    }
-                }
+                listener = filterListener,
+                onDismissRequest = dismissSheet
             )
         }
     }

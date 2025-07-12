@@ -166,10 +166,6 @@ class SearchViewModel(
         }
     }
 
-//    override fun onRecentSearchItemClicked(searchText: String) {
-//        TODO("Not yet implemented")
-//    }
-
     override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
 

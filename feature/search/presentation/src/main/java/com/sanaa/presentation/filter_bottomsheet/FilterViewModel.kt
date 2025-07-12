@@ -12,16 +12,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import usecase.search.MediaFilters
 
-sealed interface FilterEvent {
-    data class YearRangeChanged(val range: ClosedFloatingPointRange<Float>) : FilterEvent
-    data class GenreSelected(val genre: Genre) : FilterEvent
-    data class RatingChanged(val rating: Int) : FilterEvent
-    object Clear : FilterEvent
-    object Apply : FilterEvent
-    object Close: FilterEvent
-}
-
-class FilterViewModel : ViewModel() {
+class FilterViewModel : ViewModel(), FilterBottomSheetInteractionsListener {
 
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState = _uiState.asStateFlow()
@@ -33,28 +24,17 @@ class FilterViewModel : ViewModel() {
         fetchGenres()
     }
 
-    fun onEvent(event: FilterEvent) {
-        when (event) {
-            is FilterEvent.YearRangeChanged -> onYearRangeChanged(event.range)
-            is FilterEvent.GenreSelected -> onGenreSelected(event.genre)
-            is FilterEvent.RatingChanged -> onRatingChanged(event.rating)
-            FilterEvent.Clear -> onClearFilters()
-            FilterEvent.Apply -> onApplyClicked()
-            FilterEvent.Close -> {}
-        }
-    }
-
     private fun fetchGenres() {
         viewModelScope.launch {
             _uiState.update { it.copy(allGenres = Genre.entries, isLoading = false) }
         }
     }
 
-    private fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
+    override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
         _uiState.update { it.copy(yearRange = newRange, isDefaultState = false) }
     }
 
-    private fun onGenreSelected(genre: Genre) {
+    override fun onGenreSelected(genre: Genre) {
         _uiState.update { currentState ->
             val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
                 if (contains(genre)) remove(genre) else add(genre)
@@ -63,17 +43,17 @@ class FilterViewModel : ViewModel() {
         }
     }
 
-    private fun onRatingChanged(newRating: Int) {
+    override fun onRatingChanged(newRating: Int) {
         _uiState.update { it.copy(imdbRating = newRating, isDefaultState = false) }
     }
 
-    private fun onClearFilters() {
+    override fun onClearFilters() {
         _uiState.update {
             FilterUiState(allGenres = it.allGenres, isLoading = false, isDefaultState = true)
         }
     }
 
-    private fun onApplyClicked() {
+    override fun onApplyClicked() {
         viewModelScope.launch {
             val currentState = _uiState.value
             val mediaFilters = if (currentState.isDefaultState) {
@@ -83,7 +63,7 @@ class FilterViewModel : ViewModel() {
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),
                     genres = currentState.selectedGenres.toList(),
-                    imdbRating = currentState.imdbRating.toFloat()
+                    imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
                 )
             }
             _filterResult.emit(mediaFilters)
