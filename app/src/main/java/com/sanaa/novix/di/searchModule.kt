@@ -10,7 +10,6 @@ val searchModule = module {
     viewModel { FilterViewModel() }
     viewModel {
         SearchViewModel(
-            dispatcher = Dispatchers.IO
             get(),
             get(),
             get(),
@@ -19,6 +18,10 @@ val searchModule = module {
             get(),
             get(),
             get(),
+            get(),
+
+            dispatcher = Dispatchers.IO
+
         )
     }
 }
