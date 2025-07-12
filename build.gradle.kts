@@ -25,6 +25,11 @@ val excludedPackages = listOf(
     "*.NovixApp*",
     "com.sanaa.image_viewer.*",
     "com.sanaa.designsystem.*",
+    "com.sanaa.search.remote.*",
+    "com.sanaa.search.dto.*",
+    "com.sanaa.search.response.*",
+    "com.sanaa.search.di.*",
+    "com.sanaa.search.*",
     "entity.**",
     "usecase.search.**",
     "**.dao.**",
@@ -48,6 +53,7 @@ allprojects {
 }
 
 dependencies {
+    kover(projects.envConfig)
     kover(projects.app)
     kover(projects.domain.authentication)
     kover(projects.domain.savedContent)
