@@ -2,13 +2,11 @@ package com.sanaa.search.dataSource.local.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "actor", primaryKeys = ["id", "language"],
 )
 data class ActorsLocalDto(
-    @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "name")
@@ -19,4 +17,4 @@ data class ActorsLocalDto(
     val language: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long = System.currentTimeMillis()
-) 
+)
