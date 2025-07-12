@@ -35,7 +35,10 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":design_system"))
+    implementation(libs.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -44,4 +47,10 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.ui)
+    implementation(libs.ui.graphics)
+    implementation(libs.ui.tooling.preview)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(platform(libs.androidx.compose.bom.v20240600))
+    implementation(libs.androidx.ui.tooling.preview)
 }

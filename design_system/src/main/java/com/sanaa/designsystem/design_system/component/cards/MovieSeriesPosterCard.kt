@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,6 +40,7 @@ fun MovieSeriesPosterCard(
     Box(
         modifier = modifier
             .height(210.dp)
+            .width(158.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
