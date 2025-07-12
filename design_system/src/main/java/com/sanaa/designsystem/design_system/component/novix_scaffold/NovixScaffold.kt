@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
@@ -18,18 +19,19 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun NovixScaffold(
     modifier: Modifier = Modifier,
+    cancelInnerPadding: Boolean = false,
     floatingActionButton: @Composable () -> Unit = {},
     backgroundColor: Color = Theme.colors.primary,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
-    backgroundShapes: @Composable () -> Unit = {NovixBackgroundShapes()},
+    backgroundShapes: @Composable () -> Unit = { NovixBackgroundShapes() },
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = { topBar() },
+        topBar = topBar,
         bottomBar = bottomBar,
         floatingActionButton = floatingActionButton,
         contentColor = contentColor,
@@ -40,6 +42,9 @@ fun NovixScaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .background(contentBackground)
+                .then(
+                    if (cancelInnerPadding) Modifier else Modifier.padding(innerPadding)
+                )
         ) {
             backgroundShapes()
             content(innerPadding)

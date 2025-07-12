@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -123,13 +122,7 @@ fun SearchScreenContent(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier//.padding(innerPadding)
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
-                )
-        ) {
+        Column {
             SearchSection(
                 text = uiState.searchQuery,
                 onTextChange = { listener.onSearchQueryChanged(it) },
