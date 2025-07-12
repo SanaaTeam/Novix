@@ -47,7 +47,7 @@ class SearchViewModel(
         loadResentSearchTitleList()
         loadResentViewedImageList()
         viewModelScope.launch {
-            loadMediaByTab(query = "")
+            //  loadMediaByTab(query = "")
         }
         viewModelScope.launch {
             _searchQuery
