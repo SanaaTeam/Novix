@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
-import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.state.TvShowUiModel
@@ -45,9 +43,9 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>) {
                     RemoteCensoredImageViewer(
                         imageUrl = movie.imageUrl,
                         modifier = Modifier.fillMaxWidth(),
-                        blurRadius = 1000,
-                        sfwThreshold = 0.7f,
-                        nsfwThreshold = 0.2f,
+                        blurRadius = 150,
+                        sfwThreshold = 0.75f,
+                        nsfwThreshold = 0.15f,
                         contentDescription = movie.title,
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(placeholderResId),
