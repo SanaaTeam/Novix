@@ -5,7 +5,7 @@ data class SearchScreenUiState(
     val searchQuery: String = "",
     val selectedTabIndex: Int = 0,
     val resentViewedImageList: List<String> = emptyList(),
-    val resentSearchTitleList : List<String> = emptyList(),
+    val resentSearchTitleList: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
