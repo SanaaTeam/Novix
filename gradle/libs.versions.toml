@@ -39,6 +39,9 @@ kotlinxSerialization = "1.6.3"
 mockkMockkVersion = "1.14.0"
 kotlinxCoroutinesTestVersion = "1.7.3"
 
+room = "2.7.2"
+ksp = "2.0.21-1.0.27"
+
 compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
@@ -49,6 +52,12 @@ javaVersion = "11"
 applicationId = "com.sanaa.novix"
 namespace = "com.sanaa.novix"
 testRunner = "androidx.test.runner.AndroidJUnitRunner"
+junitJupiter = "5.8.1"
+
+kotlinx-coroutines = "1.6.4"
+
+
+
 
 [libraries]
 androidx-activity-compose-v190 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
@@ -65,7 +74,7 @@ firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "fir
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
-
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
@@ -109,6 +118,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
 
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
@@ -117,23 +127,23 @@ ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
+#room
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
+
+
+mockk = { module = "io.mockk:mockk", version = "1.13.13" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 #koin
-koin-core = { module = "io.insert-koin:koin-core" }
 koin-coroutines = { module = "io.insert-koin:koin-core-coroutines" }
 koin-logging = { module = "io.insert-koin:koin-logger-slf4j" }
 koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
 
-[bundles]
-koin = [
-    "koin-core",
-    "koin-android",
-    "koin-coroutines",
-    "koin-logging",
-    "koin-core-viewmodel",
-    "koin-androidx-compose",
-    "koin-androidx-compose-navigation"
-]
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -148,3 +158,29 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.4" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+[bundles]
+room = [
+    "androidx-room-runtime",
+    "androidx-room-ktx",
+    "androidx-room-testing"
+]
+
+ktor = [
+    "ktor-client-core",
+    "ktor-client-cio",
+    "ktor-client-logging",
+    "ktor-client-content-negotiation",
+    "ktor-serialization-kotlinx-json"
+]
+
+koin = [
+    "koin-core",
+    "koin-android",
+    "koin-androidx-compose"
+]
+
+coroutines = [
+    "kotlinx-coroutines-core",
+    "kotlinx-coroutines-android"
+]

@@ -1,6 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
+import exceptions.RetrievingDataFailureException
 import extensions.now
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -10,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 import usecase.search.SearchHistory
 
@@ -26,7 +28,7 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return history list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory() } returns flowOf(SearchHistoryList)
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(SearchHistoryList)
 
             // When
             val result = getSearchHistoryUseCase.execute().single()
@@ -39,13 +41,27 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return empty list when there are no search history available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory() } returns flowOf(emptyList())
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(emptyList())
 
             // When
             val result = getSearchHistoryUseCase.execute().single()
 
             // Then
             assertThat(result).isEmpty()
+        }
+
+    @Test
+    fun `execute() should throw NotFoundException when when try to search in the history failed`() =
+        runTest {
+            // Given
+            coEvery {
+                searchHistoryRepository.getSearchHistory(any())
+            } throws RetrievingDataFailureException("Search History")
+
+            // When, Then
+            assertThrows<RetrievingDataFailureException> {
+                getSearchHistoryUseCase.execute()
+            }
         }
 
     companion object {
