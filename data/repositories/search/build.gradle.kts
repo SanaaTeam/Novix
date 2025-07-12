@@ -52,7 +52,6 @@ dependencies {
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.bundles.room)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.mockk.v1140)

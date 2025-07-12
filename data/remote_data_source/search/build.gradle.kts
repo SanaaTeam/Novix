@@ -55,7 +55,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.mockk.v1140)
     testImplementation(libs.kotlinx.coroutines.test.v173)
     testImplementation(libs.truth)
