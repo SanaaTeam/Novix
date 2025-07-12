@@ -23,6 +23,11 @@ fun CategoryTabSection(
             onCategorySelected = onTabSelected
         )
 
+        if (uiState.noInternetConnection) {
+            DisconnectScreen { }
+            return
+        }
+
         when (selectedTabIndex) {
             0 -> {
                 if (uiState.searchQuery.isEmpty())

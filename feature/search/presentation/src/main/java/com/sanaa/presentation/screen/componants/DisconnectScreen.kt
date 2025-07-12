@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,7 +53,6 @@ fun DisconnectScreen(
 ) {
     Box(
         modifier = modifier
-            .background(Theme.colors.surface)
             .statusBarsPadding(),
         contentAlignment = Alignment.Center
     ) {

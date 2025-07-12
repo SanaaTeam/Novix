@@ -9,6 +9,7 @@ data class SearchScreenUiState(
     val resentViewedImageList: List<String> = emptyList(),
     val resentSearchTitleList: List<String> = emptyList(),
     val isLoading: Boolean = false,
+    val noInternetConnection: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
     val actors: List<ActorUiModel> = emptyList(),
