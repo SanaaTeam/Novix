@@ -8,12 +8,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.R
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 
 @Composable
 fun CategoryTabSection(
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit,
     uiState: SearchScreenUiState,
+    listener: SearchScreenInteractionsListener,
 ) {
     val tabs = listOf("Movies", "TV Shows", "Actors")
 
@@ -29,7 +31,7 @@ fun CategoryTabSection(
         when (selectedTabIndex) {
             0 -> {
                 if (uiState.searchQuery.isEmpty())
-                    DefaultState(uiState)
+                    DefaultState(uiState, listener)
                 else if (uiState.movies.isEmpty())
                     NoSearchResultState()
                 else
@@ -38,7 +40,7 @@ fun CategoryTabSection(
 
             1 -> {
                 if (uiState.searchQuery.isEmpty())
-                    DefaultState(uiState)
+                    DefaultState(uiState, listener)
                 else if (uiState.movies.isEmpty())
                     NoSearchResultState()
                 else
@@ -48,7 +50,7 @@ fun CategoryTabSection(
 
             2 -> {
                 if (uiState.searchQuery.isEmpty())
-                    DefaultState(uiState)
+                    DefaultState(uiState, listener)
                 else if (uiState.movies.isEmpty())
                     NoSearchResultState()
                 else
@@ -67,7 +69,7 @@ private fun NoSearchResultState() {
 }
 
 @Composable
-private fun DefaultState(uiState: SearchScreenUiState) {
+private fun DefaultState(uiState: SearchScreenUiState, listener: SearchScreenInteractionsListener) {
     val showEmptyMessage = uiState.recentSearchQueries.isEmpty()
     if (showEmptyMessage) {
         EmptySearchState(
@@ -76,6 +78,11 @@ private fun DefaultState(uiState: SearchScreenUiState) {
         )
     } else {
         SearchHistoryContent(
+            onClearRecentViewClicked = { listener.onClearRecentViewClicked() },
+            onClearRecentSearchClicked = { listener.onClearRecentSearchClicked() },
+            onCancelClicked = { searchText -> listener.onCancelRecentSearchItemClicked(searchText) },
+            onRecentSearchItemClicked = { searchText -> listener.onRecentSearchItemClicked(searchText) },
+            onSaveIconClicked = { listener.onSaveIconClicked() },
             recentViewed = uiState.recentViewedImageUrls,
             recentSearches = uiState.recentSearchQueries
         )

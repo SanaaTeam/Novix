@@ -21,8 +21,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun RecentSearchItem(
     text: String ,
-    onDeleteClicked: () -> Unit = {},
-    onRecentSearchItemClicked: () -> Unit = {}
+    onDeleteClicked: (String) -> Unit = {},
+    onRecentSearchItemClicked: (String) -> Unit = {}
 ) {
 
     Row(
@@ -40,7 +40,7 @@ fun RecentSearchItem(
             modifier = Modifier
                 .weight(1f)
                 .clickable(
-                    onClick = onRecentSearchItemClicked
+                    onClick = { onRecentSearchItemClicked(text) }
                 )
         ) {
             Icon(
@@ -61,7 +61,7 @@ fun RecentSearchItem(
             tint = Theme.colors.hint,
             modifier = Modifier
                 .size(16.dp)
-                .clickable(onClick = onDeleteClicked)
+                .clickable(onClick = { onDeleteClicked(text) })
         )
     }
 

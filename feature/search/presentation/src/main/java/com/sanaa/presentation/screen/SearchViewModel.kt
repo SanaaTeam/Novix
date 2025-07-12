@@ -20,6 +20,7 @@ import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
+import usecase.RemoveSearchHistoryUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -34,6 +35,7 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
+    private val removeSearchHistoryUseCase: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState()),
     SearchScreenInteractionsListener {
@@ -164,6 +166,10 @@ class SearchViewModel(
         }
     }
 
+//    override fun onRecentSearchItemClicked(searchText: String) {
+//        TODO("Not yet implemented")
+//    }
+
     override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
 
@@ -181,7 +187,7 @@ class SearchViewModel(
         tryToExecute(clearSearchHistoryUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
     }
 
-    override fun onRecentSearchItemClicked() { /* Not yet implemented */ }
-    override fun onCancelRecentSearchItemClicked() { /* Not yet implemented */ }
+    override fun onRecentSearchItemClicked(searchText: String) { /* Not yet implemented */ }
+    override fun onCancelRecentSearchItemClicked(searchText: String) { /* Not yet implemented */ }
     override fun onSaveIconClicked() { /* Not yet implemented */ }
 }
