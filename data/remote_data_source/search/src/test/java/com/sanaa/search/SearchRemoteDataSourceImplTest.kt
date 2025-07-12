@@ -11,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -99,6 +100,8 @@ class SearchRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
+        languageProvider = mockk()
+
         dataSource = SearchRemoteDataSourceImpl(client, baseUrl, languageProvider)
     }
 
@@ -118,6 +121,8 @@ class SearchRemoteDataSourceImplTest {
             totalPages = 1,
             totalResults = 1
         )
+
+        every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchActors(query)
@@ -151,6 +156,7 @@ class SearchRemoteDataSourceImplTest {
             totalPages = 1,
             totalResults = 1
         )
+        every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchTv(query)
@@ -184,6 +190,7 @@ class SearchRemoteDataSourceImplTest {
             totalPages = 1,
             totalResults = 1
         )
+        every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchMovies(query)
