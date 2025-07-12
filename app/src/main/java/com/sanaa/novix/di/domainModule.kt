@@ -19,20 +19,7 @@ val domainModule = module {
     factory { GetSearchHistoryUseCase(get()) }
     factory { ClearRecentViewedUseCase(get()) }
     factory { ClearSearchHistoryUseCase(get()) }
-    factory { SearchMoviesUseCase(get(), get()) }
-    factory { SearchTvSeriesUseCase(get(), get()) }
-    factory { SearchActorsUseCase(get(), get()) }
-    factory { GetRecentViewedUseCase(get()) }
-    factory { GetSearchHistoryUseCase(get()) }
-    factory { ClearRecentViewedUseCase(get()) }
-    factory { ClearSearchHistoryUseCase(get()) }
-    factory { SearchMoviesUseCase(get(), get()) }
-    factory { SearchTvSeriesUseCase(get(), get()) }
-    factory { SearchActorsUseCase(get(), get()) }
-    factory { GetRecentViewedUseCase(get()) }
-    factory { GetSearchHistoryUseCase(get()) }
-    factory { ClearRecentViewedUseCase(get()) }
-    factory { ClearSearchHistoryUseCase(get()) }
+    factory { RemoveSearchHistoryUseCase(get()) }
     factory { AddRecentViewedUseCase(get()) }
     factory { RemoveSearchHistoryUseCase(get()) }
 }

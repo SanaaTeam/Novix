@@ -44,9 +44,9 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiM
                 RemoteCensoredImageViewer(
                     imageUrl = movie.imageUrl,
                     modifier = Modifier.fillMaxWidth(),
-                    blurRadius = 1000,
-                    sfwThreshold = 0.7f,
-                    nsfwThreshold = 0.2f,
+                    blurRadius = 150,
+                    sfwThreshold = 0.75f,
+                    nsfwThreshold = 0.15f,
                     contentDescription = movie.title,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(placeholderResId),

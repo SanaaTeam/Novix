@@ -26,6 +26,11 @@ import com.sanaa.presentation.state.RecentViewedUiModel
 @Composable
 fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {
     val isDarkTheme = isSystemInDarkTheme()
+        val placeholderResId = if (isDarkTheme) {
+            R.drawable.movie_placeholder_dark
+        } else {
+            R.drawable.movie_placeholder_light
+        }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
@@ -36,11 +41,6 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        val placeholderResId = if (isDarkTheme) {
-            R.drawable.movie_placeholder_dark
-        } else {
-            R.drawable.movie_placeholder_light
-        }
         items(movies) { movie ->
             Log.d("MoviesContent", "Movie: $movie")
             MovieSeriesPosterCard(boastImage = {
@@ -48,9 +48,9 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                     imageUrl = movie.imageUrl,
                     modifier = Modifier.fillMaxWidth(),
                     contentScale = ContentScale.Crop,
-                    blurRadius = 1000,
-                    sfwThreshold = 0.7f,
-                    nsfwThreshold = 0.2f,
+                    blurRadius = 150,
+                    sfwThreshold = 0.75f,
+                    nsfwThreshold = 0.15f,
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
                 )
