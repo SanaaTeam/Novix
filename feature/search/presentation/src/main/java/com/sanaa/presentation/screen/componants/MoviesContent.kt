@@ -38,7 +38,7 @@ fun MoviesContent(movies: List<MovieUiModel>) {
                         contentScale = ContentScale.Crop,
                         blurRadius = 1000,
                         sfwThreshold = 0.7f,
-                        nsfwThreshold = 0.5f
+                        nsfwThreshold = 0.2f
                     )
                 },
                 topLeftContent = {

@@ -34,7 +34,7 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>) {
                         modifier = Modifier.fillMaxWidth(),
                         blurRadius = 1000,
                         sfwThreshold = 0.7f,
-                        nsfwThreshold = 0.5f,
+                        nsfwThreshold = 0.2f,
                         contentDescription = movie.title,
                         contentScale = ContentScale.Crop
                     )
