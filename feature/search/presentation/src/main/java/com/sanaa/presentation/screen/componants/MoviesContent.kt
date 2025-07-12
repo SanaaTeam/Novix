@@ -1,7 +1,9 @@
 package com.sanaa.presentation.screen.componants
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -9,10 +11,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.state.MovieUiModel
 
 @Composable
@@ -27,14 +28,16 @@ fun MoviesContent(movies: List<MovieUiModel>) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(movies) { movie ->
+            Log.d("MoviesContent", "Movie: $movie")
             MovieSeriesPosterCard(
-                poster = rememberAsyncImagePainter(model = movie.imageUrl),
-                topLeftContent = {
-                    SaveIconChip(
-                        onClick = {}
+                boastImage = {
+                    RemoteCensoredImageViewer(
+                        imageUrl = movie.imageUrl,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 },
-            )
+
+                )
         }
     }
 
