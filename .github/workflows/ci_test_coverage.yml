@@ -39,6 +39,11 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
+      - name: Generate keys.properties
+        run: |
+          echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" > keys.properties
+          cp keys.properties ./data/remote_data_source/search/keys.properties
+
       - name: Run unit tests + Kover
         run: ./gradlew test koverVerify koverXmlReport koverHtmlReport
 

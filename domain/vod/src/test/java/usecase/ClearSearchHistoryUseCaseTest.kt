@@ -1,10 +1,13 @@
 package usecase
 
+import exceptions.FailedToDeleteException
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 
 class ClearSearchHistoryUseCaseTest {
@@ -25,6 +28,20 @@ class ClearSearchHistoryUseCaseTest {
             // Then
             coVerify {
                 searchHistoryRepository.clearSearchHistory()
+            }
+        }
+
+    @Test
+    fun `execute() should throw FailedToDeleteException when try to clear searched history failed`() =
+        runTest {
+            // Given
+            coEvery {
+                searchHistoryRepository.clearSearchHistory()
+            } throws FailedToDeleteException("Search History")
+
+            // When, Then
+            assertThrows<FailedToDeleteException> {
+                clearSearchHistoryUseCase.execute()
             }
         }
 }
