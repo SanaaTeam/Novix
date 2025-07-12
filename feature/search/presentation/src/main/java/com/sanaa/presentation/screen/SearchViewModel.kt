@@ -22,6 +22,7 @@ import usecase.GetSearchHistoryUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
+import usecase.search.MediaFilters
 
 class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
@@ -33,13 +34,14 @@ class SearchViewModel(
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-
-    ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
+) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
 
     private val _searchQuery = MutableStateFlow("")
     val searchQuery = _searchQuery.asStateFlow()
 
+    private val _filters = MutableStateFlow<MediaFilters?>(null)
+    val filters = _filters.asStateFlow()
 
     init {
         loadResentSearchTitleList()
@@ -113,6 +115,7 @@ class SearchViewModel(
         }
     }
 
+
     override fun onClearRecentViewClicked() {
         updateState { it.copy(isLoading = true, error = null) }
 
@@ -167,6 +170,11 @@ class SearchViewModel(
     override fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         updateState { it.copy(searchQuery = query) }
+    }
+
+    override fun onFilterApplied(filters: MediaFilters) {
+        updateState { it.copy(filters = filters) }
+        // searchMediaByTab()
     }
 
     private fun loadMovies(query: String) {

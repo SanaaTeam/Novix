@@ -66,6 +66,8 @@ fun SearchScreenContent(
 
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collectLatest { filters: MediaFilters ->
+            listener.onFilterApplied(filters)
+
             println("New search filters applied: $filters")
         }
     }

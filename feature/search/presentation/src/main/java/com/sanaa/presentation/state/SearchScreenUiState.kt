@@ -1,5 +1,7 @@
 package com.sanaa.presentation.state
 
+import usecase.search.MediaFilters
+
 
 data class SearchScreenUiState(
     val searchQuery: String = "",
@@ -10,7 +12,8 @@ data class SearchScreenUiState(
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
     val actors: List<ActorUiModel> = emptyList(),
-    val error: String? = null
+    val error: String? = null,
+    val filters: MediaFilters? = null,
 )
 
 data class MovieUiModel(
