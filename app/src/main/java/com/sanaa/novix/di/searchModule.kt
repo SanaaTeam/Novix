@@ -19,9 +19,8 @@ val searchModule = module {
             get(),
             get(),
             get(),
-
-            dispatcher = Dispatchers.IO
-
+            get(),
+            Dispatchers.IO
         )
     }
 }

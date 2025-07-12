@@ -6,6 +6,7 @@ import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
+import usecase.RemoveSearchHistoryUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -33,4 +34,5 @@ val domainModule = module {
     factory { ClearRecentViewedUseCase(get()) }
     factory { ClearSearchHistoryUseCase(get()) }
     factory { AddRecentViewedUseCase(get()) }
+    factory { RemoveSearchHistoryUseCase(get()) }
 }
