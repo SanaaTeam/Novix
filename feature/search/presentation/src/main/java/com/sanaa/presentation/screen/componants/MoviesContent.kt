@@ -1,12 +1,10 @@
 package com.sanaa.presentation.screen.componants
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,10 +19,12 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.MovieUiModel
+import com.sanaa.presentation.state.RecentViewedUiModel
 
 @Composable
-fun MoviesContent(movies: List<MovieUiModel>) {
+fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {
     val isDarkTheme = isSystemInDarkTheme()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
@@ -43,22 +43,28 @@ fun MoviesContent(movies: List<MovieUiModel>) {
         }
         items(movies) { movie ->
             Log.d("MoviesContent", "Movie: $movie")
-            MovieSeriesPosterCard(
-                boastImage = {
-                    RemoteCensoredImageViewer(
+            MovieSeriesPosterCard(boastImage = {
+                RemoteCensoredImageViewer(
+                    imageUrl = movie.imageUrl,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                    blurRadius = 1000,
+                    sfwThreshold = 0.7f,
+                    nsfwThreshold = 0.2f,
+                    placeholder = painterResource(placeholderResId),
+                    error = painterResource(placeholderResId),
+                )
+            }, topLeftContent = {
+                SaveIconChip(onClick = {})
+            }, onCardClick = {
+                onMovieClick(
+                    RecentViewedUiModel(
+                        id = movie.id,
                         imageUrl = movie.imageUrl,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop,
-                        blurRadius = 1000,
-                        sfwThreshold = 0.7f,
-                        nsfwThreshold = 0.2f,
-                        placeholder = painterResource(placeholderResId),
-                        error = painterResource(placeholderResId),
+                        mediaType = MediaTypeUi.MOVIE.name
                     )
-                },
-                topLeftContent = {
-                    SaveIconChip(onClick = {})
-                }
+                )
+            }
 
             )
         }

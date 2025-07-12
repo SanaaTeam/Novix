@@ -1,9 +1,8 @@
 package com.sanaa.presentation.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
@@ -32,6 +30,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.screen.componants.CategoryTabSection
+import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.state.SearchScreenUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -128,13 +127,20 @@ fun SearchScreenContent(
                 onTextChange = { listener.onSearchQueryChanged(it) },
                 onFilterClicked = { showBottomSheet = true }
             )
-            Spacer(Modifier.height(12.dp))
-
-            CategoryTabSection(
-                selectedTabIndex = uiState.selectedTabIndex,
-                onTabSelected = { listener.onTabSelected(it) },
-                uiState = uiState
-            )
+            AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
+                CategoryTabSection(
+                    selectedTabIndex = uiState.selectedTabIndex,
+                    uiState = uiState,
+                    interactionsListener = listener,
+                )
+            }
+            AnimatedVisibility(uiState.searchQuery.isBlank()) {
+                SearchHistoryContent(
+                    recentSearches = uiState.resentSearchTitleList,
+                    recentViewed = uiState.resentViewedImageList,
+                    interactionsListener = listener,
+                )
+            }
         }
     }
 

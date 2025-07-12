@@ -1,22 +1,26 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.button.TextButton
@@ -24,65 +28,94 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.presentation.screen.SearchScreenInteractionsListener
+import com.sanaa.presentation.state.RecentSearchUiModel
+import com.sanaa.presentation.state.RecentViewedUiModel
 
 @Composable
 fun SearchHistoryContent(
-    onClearRecentViewClicked: () -> Unit = {},
-    onClearRecentSearchClicked: () -> Unit = {},
-    onCancelClicked: () -> Unit = {},
-    onRecentSearchItemClicked: () -> Unit = {},
-    onSaveIconClicked: () -> Unit = {},
-    recentSearches: List<String> = emptyList(),
-    recentViewed: List<String> = emptyList(),
+    interactionsListener: SearchScreenInteractionsListener,
+    recentSearches: List<RecentSearchUiModel> = emptyList(),
+    recentViewed: List<RecentViewedUiModel> = emptyList(),
 ) {
-    Column(modifier = Modifier.padding(top = 12.dp)) {
-        if (recentViewed.isNotEmpty()) {
-            SectionHeader(
-                title = stringResource(R.string.recent_viewed),
-                actionText = stringResource(R.string.clear_all),
-                onActionClick = onClearRecentViewClicked
-            )
-            LazyRow(
-                modifier = Modifier,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    bottom = 24.dp
-                )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        AnimatedVisibility(recentSearches.isEmpty() && recentViewed.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {
-                itemsIndexed(recentViewed) { _, item ->
-                    MovieSeriesPosterCard(
-                        boastImage = {
-                            RemoteCensoredImageViewer(
-                                imageUrl = item
-                            )
-                        },
-                        topLeftContent = {
-                            SaveIconChip(
-                                onClick = onSaveIconClicked
-                            )
-                        },
+                EmptySearchState(
+                    icon = painterResource(id = R.drawable.empty_search),
+                    text = stringResource(id = R.string.empty_search_message),
+
                     )
-                }
             }
         }
+        LazyColumn(
+            modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp)
+        ) {
+            if (recentViewed.isNotEmpty()) {
+                item {
+                    SectionHeader(
+                        modifier = Modifier.padding(top = 12.dp),
+                        title = stringResource(R.string.recent_viewed),
+                        actionText = stringResource(R.string.clear_all),
+                        onActionClick = interactionsListener::onClearRecentViewClicked
+                    )
+                }
 
-        if (recentSearches.isNotEmpty()) {
-            SectionHeader(
-                title = stringResource(R.string.recent_search),
-                actionText = stringResource(R.string.clear_all),
-                onActionClick = onClearRecentSearchClicked
-            )
-            LazyColumn(
-                modifier = Modifier
-                    .padding(bottom = 12.dp)
-            ) {
+                item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        itemsIndexed(recentViewed) { _, item ->
+                            MovieSeriesPosterCard(
+                                modifier = Modifier
+                                    .width(158.dp)
+                                    .height(210.dp),
+                                boastImage = {
+                                    RemoteCensoredImageViewer(
+                                        imageUrl = item.imageUrl,
+                                        modifier = Modifier,
+                                        contentScale = ContentScale.Crop,
+                                        blurRadius = 1000,
+                                        sfwThreshold = 0.7f,
+                                        nsfwThreshold = 0.2f,
+                                    )
+                                },
+                                topLeftContent = {
+                                    SaveIconChip(
+                                        onClick = interactionsListener::onSaveIconClicked
+                                    )
+                                },
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (recentSearches.isNotEmpty()) {
+                item {
+                    SectionHeader(
+                        title = stringResource(R.string.recent_search),
+                        actionText = stringResource(R.string.clear_all),
+                        onActionClick = interactionsListener::onClearRecentSearchClicked,
+                        modifier = Modifier.padding(top = 24.dp)
+                    )
+                }
+
                 itemsIndexed(recentSearches) { index, item ->
                     RecentSearchItem(
-                        text = item,
-                        onDeleteClicked = onCancelClicked,
-                        onRecentSearchItemClicked = onRecentSearchItemClicked
+                        text = item.title,
+                        onDeleteClicked = {
+                            interactionsListener.onCancelRecentSearchItemClicked(item.id)
+                        },
+                        onRecentSearchItemClicked = {
+                            interactionsListener.onRecentSearchItemClicked(item.title)
+                        },
+                        modifier = Modifier
                     )
                     if (index != recentSearches.lastIndex) {
                         Box(
@@ -96,20 +129,18 @@ fun SearchHistoryContent(
                     }
                 }
             }
+
         }
     }
-
-
 }
+
 
 @Composable
 fun SectionHeader(
-    title: String,
-    actionText: String,
-    onActionClick: () -> Unit,
+    title: String, actionText: String, onActionClick: () -> Unit, modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp)
@@ -121,36 +152,7 @@ fun SectionHeader(
             modifier = Modifier.weight(1f)
         )
         TextButton(
-            text = actionText,
-            onClick = onActionClick,
-            isLoading = false,
-            isEnabled = true
+            text = actionText, onClick = onActionClick, isLoading = false, isEnabled = true
         )
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun SearchPreview() {
-    val recentViewedList = listOf(
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
-        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg"
-    )
-    val recentSearchesList = listOf(
-        "Shutter island", "Inception", "Tenet",
-        "Memento", "Shutter island", "Inception",
-        "Tenet", "Memento", "Shutter island", "Inception", "Tenet",
-        "Memento", "Shutter island", "Inception",
-        "Tenet", "Memento"
-    )
-    SearchHistoryContent(
-        recentSearches = recentSearchesList,
-        recentViewed = recentViewedList
-    )
 }
