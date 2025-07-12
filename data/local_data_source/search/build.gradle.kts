@@ -59,8 +59,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.mockk.v1140)
-    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
 

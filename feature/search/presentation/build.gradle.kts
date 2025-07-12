@@ -56,7 +56,7 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(libs.androidx.foundation.layout.android)
-    implementation(platform(libs.androidx.compose.bom.v20240600))
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.tooling.preview)
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
