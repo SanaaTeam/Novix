@@ -19,7 +19,6 @@ import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
-import usecase.RemoveSearchHistoryItemUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -33,7 +32,7 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
-    ) : ViewModel(), SearchScreenInteractionsListener {
+) : ViewModel(), SearchScreenInteractionsListener {
     private val _uiState = MutableStateFlow(SearchScreenUiState())
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
@@ -60,6 +59,7 @@ class SearchViewModel(
     override fun onRecentSearchItemClicked() {
 
     }
+
     private fun loadResentViewedImageList() {
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
@@ -99,8 +99,6 @@ class SearchViewModel(
     }
 
 
-
-
     private suspend fun loadMediaByTab(query: String) {
         when (_uiState.value.selectedTabIndex) {
             0 -> loadMovies(query)
@@ -136,20 +134,19 @@ class SearchViewModel(
     }
 
     override fun onCancelRecentSearchItemClicked() {
-        TODO("Not yet implemented")
+        //     TODO("Not yet implemented")
     }
 
-    override fun onSaveIconClicked() {
-        TODO("Not yet implemented")
-    }
 
     override fun onTabSelected(index: Int) {
         _uiState.update { it.copy(selectedTabIndex = index) }
+        viewModelScope.launch {
+            loadMediaByTab(_searchQuery.value)
+        }
     }
 
 
-
-    fun onSearchQueryChanged(query: String) {
+    override fun onSearchQueryChanged(query: String) {
         _searchQuery.value = query
         _uiState.update { it.copy(searchQuery = query) }
     }
@@ -229,6 +226,10 @@ class SearchViewModel(
                 it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
         }
+    }
+
+
+    override fun onSaveIconClicked() {
     }
 
 
