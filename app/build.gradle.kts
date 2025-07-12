@@ -18,9 +18,13 @@ android {
         applicationId = libs.versions.applicationId.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.versionName.get()
         testInstrumentationRunner = libs.versions.testRunner.get()
+
+        val ciCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull()
+        val ciName = System.getenv("CI_VERSION_NAME")
+
+        versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
+        versionName = ciName ?: libs.versions.versionName.get()
     }
 
     buildTypes {
