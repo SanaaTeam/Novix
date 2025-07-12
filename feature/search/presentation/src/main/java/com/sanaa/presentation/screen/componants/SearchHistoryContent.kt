@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,18 +20,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 
 @Composable
 fun SearchHistoryContent(
     onClearRecentViewClicked: () -> Unit = {},
     onClearRecentSearchClicked: () -> Unit = {},
     onCancelClicked: () -> Unit = {},
+    onRecentSearchItemClicked: () -> Unit = {},
     onSaveIconClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
-    recentViewed: List<Int> = emptyList(),
+    recentViewed: List<String> = emptyList(),
 ) {
     Column(modifier = Modifier.padding(top = 12.dp)) {
 
@@ -50,9 +52,14 @@ fun SearchHistoryContent(
                 bottom = 24.dp
             )
         ) {
-            itemsIndexed(recentViewed) { index, item ->
+
+            itemsIndexed(recentViewed) { _, item ->
                 MovieSeriesPosterCard(
-                    poster = painterResource(id = item),
+                    boastImage = {
+                        RemoteCensoredImageViewer(
+                            imageUrl = item
+                        )
+                    },
                     topLeftContent = {
                         SaveIconChip(
                             onClick = onSaveIconClicked
@@ -68,12 +75,13 @@ fun SearchHistoryContent(
         )
         LazyColumn(
             modifier = Modifier
-                .padding(bottom = 38.dp)
+                .padding(bottom = 12.dp)
         ) {
             itemsIndexed(recentSearches) { index, item ->
                 RecentSearchItem(
                     text = item,
-                    onCancelClicked = onCancelClicked
+                    onDeleteClicked = onCancelClicked,
+                    onRecentSearchItemClicked = onRecentSearchItemClicked
                 )
                 if (index != recentSearches.lastIndex) {
                     Box(
@@ -110,31 +118,27 @@ fun SectionHeader(
             color = Theme.colors.body,
             modifier = Modifier.weight(1f)
         )
-        Text(
+        TextButton(
             text = actionText,
-            style = Theme.textStyle.label.medium,
-            color = Theme.colors.primary,
-            modifier = Modifier.clickable(onClick = onActionClick)
+            onClick = onActionClick,
+            isLoading = false,
+            isEnabled = true
         )
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
-private fun SearchHistoryContentPreview() {
+private fun SearchPreview() {
     val recentViewedList = listOf(
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
-        R.drawable.movie_poster,
-        R.drawable.movie_poster1,
-        R.drawable.movie_poster2,
-        R.drawable.movie_poster3,
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg",
+        "https://watanimg.elwatannews.com/image_archive/648x316/18368297091635153597.jpg"
     )
     val recentSearchesList = listOf(
         "Shutter island", "Inception", "Tenet",

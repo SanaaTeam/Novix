@@ -7,8 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -31,26 +31,24 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun MovieSeriesPosterCard(
-    poster: Painter,
     modifier: Modifier = Modifier,
+    poster: Painter = painterResource(R.drawable.movie_poster),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
+    boastImage: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
-            .height(210.dp)
+            .aspectRatio(
+                ratio = (158 / 210f)
+            )
             .width(158.dp)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
     ) {
-        Image(
-            painter = poster,
-            contentDescription = null,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
+        boastImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -85,6 +83,14 @@ private fun PreviewMovieSeriesPosterCard() {
             item {
                 MovieSeriesPosterCard(
                     poster = painterResource(R.drawable.movie_poster),
+                    boastImage = {
+                        Image(
+                            painter = painterResource(R.drawable.movie_poster),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    },
                     topLeftContent = {
                         MovieSeriesRatingChip(
                             rating = "9.9"

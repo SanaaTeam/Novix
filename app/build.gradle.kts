@@ -18,9 +18,13 @@ android {
         applicationId = libs.versions.applicationId.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
-        versionName = libs.versions.versionName.get()
         testInstrumentationRunner = libs.versions.testRunner.get()
+
+        val ciCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull()
+        val ciName = System.getenv("CI_VERSION_NAME")
+
+        versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
+        versionName = ciName ?: libs.versions.versionName.get()
     }
 
     buildTypes {
@@ -59,7 +63,14 @@ android {
 }
 
 dependencies {
-    implementation(project(":feature:search:presentation"))
+
+    implementation(projects.envConfig)
+    implementation(projects.domain.vod)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.data.repositories.search)
+    implementation(projects.data.remoteDataSource.search)
+
+    implementation(projects.data.remoteDataSource.search)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -104,4 +115,10 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.kotlinx.serialization.json)
+    
+    // Local Data Sources
+    implementation(projects.data.localDataSource.search)
+    
+    // Language Provider
+    implementation(projects.envConfig)
 }
