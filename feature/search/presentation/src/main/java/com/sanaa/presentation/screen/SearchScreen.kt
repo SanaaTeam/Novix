@@ -57,15 +57,14 @@ fun SearchScreenContent(
     uiState: SearchScreenUiState,
     filterViewModel: FilterViewModel,
     listener: SearchScreenInteractionsListener,
-
-    ) {
+) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collectLatest { filters: MediaFilters ->
+        filterViewModel.filterResult.collectLatest { filters: MediaFilters? ->
             listener.onFilterApplied(filters)
 
             println("New search filters applied: $filters")

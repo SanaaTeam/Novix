@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
@@ -21,7 +20,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun RecentSearchItem(
-    text: String = stringResource(R.string.shutter_island),
+    text: String ,
     onDeleteClicked: () -> Unit = {},
     onRecentSearchItemClicked: () -> Unit = {}
 ) {
@@ -73,7 +72,7 @@ fun RecentSearchItem(
 @Composable
 private fun RecentSearchItemPreviewLight() {
     NovixTheme(false) {
-        RecentSearchItem()
+        RecentSearchItem("Shutter island")
     }
 }
 
@@ -81,6 +80,6 @@ private fun RecentSearchItemPreviewLight() {
 @Composable
 private fun RecentSearchItemPreviewDark() {
     NovixTheme(true) {
-        RecentSearchItem()
+        RecentSearchItem("Shutter island")
     }
 }
