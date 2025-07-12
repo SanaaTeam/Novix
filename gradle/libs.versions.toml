@@ -1,5 +1,21 @@
 [versions]
+
+# Project Config
+compileSdk = "35"
+minSdk = "26"
+targetSdk = "35"
+truth = "1.4.4"
+versionCode = "1"
+versionName = "1.0"
+javaVersion = "11"
+applicationId = "com.sanaa.novix"
+namespace = "com.sanaa.novix"
+testRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+# Dependancies versions
 agp = "8.10.1"
+
+
 composeBomVersion = "2024.06.00"
 foundationLayoutAndroid = "1.6.8"
 junitJupiterApi = "5.13.3"
@@ -33,93 +49,58 @@ navigationCompose = "2.7.7"
 kotlinxSerialization = "1.6.3"
 mockkMockkVersion = "1.14.0"
 kotlinxCoroutinesTestVersion = "1.7.3"
-
 room = "2.7.2"
 ksp = "2.0.21-1.0.27"
-
-compileSdk = "35"
-minSdk = "26"
-targetSdk = "35"
-truth = "1.4.4"
-versionCode = "1"
-versionName = "1.0"
-javaVersion = "11"
-applicationId = "com.sanaa.novix"
-namespace = "com.sanaa.novix"
-testRunner = "androidx.test.runner.AndroidJUnitRunner"
 junitJupiter = "5.8.1"
-roomCompiler = "2.7.2"
-
 kotlinx-coroutines = "1.6.4"
 workRuntimeKtx = "2.10.2"
 
 
-
-
 [libraries]
-androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
-androidx-compose-material3-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+# AndroidX
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-foundation-layout-android = { module = "androidx.compose.foundation:foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+# Lifecycle
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
+
+
+# Compose
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+androidx-ui-compose = { group = "androidx.compose.ui", name = "ui" }
+androidx-ui-compose-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
+androidx-ui-compose-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-ui-compose-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-ui-compose-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-ui-compose-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+# Material
+androidx-compose-material3-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
-androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
-firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
-firebase-perf = { module = "com.google.firebase:firebase-perf" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
-ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
-kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
-mockk = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
-
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
-
-androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
-androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-
-androidx-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-
-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 material3 = { module = "androidx.compose.material3:material3" }
-kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+# Compose Related
 cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 
-ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
-ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
-ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
-ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
-koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
-koin-core = { group = "io.insert-koin", name = "koin-core" }
-
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
-ui = { module = "androidx.compose.ui:ui" }
-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 # Coroutines
-truth = { module = "com.google.truth:truth", version.ref = "truth" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+
+
+# Koin
+koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
+koin-core = { group = "io.insert-koin", name = "koin-core" }
+koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
+
 
 #room
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
@@ -127,8 +108,42 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 
+
+# ktor
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+
+# Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
+firebase-perf = { module = "com.google.firebase:firebase-perf" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+
+
+# Test
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
+# junit
+junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "junitJupiterApi" }
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junitJupiterEngine" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
+# Mock
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
+
+
+# Other
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 
 
 [plugins]
@@ -152,6 +167,7 @@ room = [
     "androidx-room-ktx",
     "androidx-room-testing"
 ]
+
 ktor = [
     "ktor-client-core",
     "ktor-client-cio",

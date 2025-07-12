@@ -75,18 +75,18 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.compose)
+    implementation(libs.androidx.ui.compose.graphics)
+    implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.androidx.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
 
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.androidx.ui.compose.tooling)
+    debugImplementation(libs.androidx.ui.compose.test.manifest)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics.ndk)
