@@ -1,5 +1,6 @@
 package com.sanaa.search
 
+import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
@@ -10,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.mockkObject
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
@@ -22,6 +24,7 @@ class SearchRemoteDataSourceImplTest {
 
     private lateinit var client: HttpClient
     private lateinit var dataSource: SearchRemoteDataSourceImpl
+    private lateinit var languageProvider: LanguageProvider
     private val baseUrl = "https://api.themoviedb.org/3"
     private val apiKey = "test_api_key"
     private lateinit var mockEngine: MockEngine
@@ -47,7 +50,7 @@ class SearchRemoteDataSourceImplTest {
                     "$baseUrl/search/person" -> respond(
                         content = """{
                             "page": 1,
-                            "results": [{"id": 1, "name": "Tom Hanks", "profile_path": "/path"}],
+                            "results": [{"id": 1, "name": "Tom Hanks", "profile_path": "/path", "gender": 2}],
                             "total_pages": 1,
                             "total_results": 1
                         }""",
@@ -57,7 +60,7 @@ class SearchRemoteDataSourceImplTest {
                     "$baseUrl/search/tv" -> respond(
                         content = """{
                             "page": 1,
-                            "results": [{"id": 1, "name": "Breaking Bad", "poster_path": "/path"}],
+                            "results": [{"id": 1, "name": "Breaking Bad", "poster_path": "/path", "first_air_date": null, "vote_average": null, "genre_ids": null}],
                             "total_pages": 1,
                             "total_results": 1
                         }""",
@@ -67,7 +70,7 @@ class SearchRemoteDataSourceImplTest {
                     "$baseUrl/search/movie" -> respond(
                         content = """{
                             "page": 1,
-                            "results": [{"id": 1, "title": "Inception", "poster_path": "/path"}],
+                            "results": [{"id": 1, "title": "Inception", "poster_path": "/path", "release_date": null, "vote_average": null, "genre_ids": null}],
                             "total_pages": 1,
                             "total_results": 1
                         }""",
@@ -91,16 +94,19 @@ class SearchRemoteDataSourceImplTest {
                     ignoreUnknownKeys = true
                     prettyPrint = true
                     isLenient = true
+                    coerceInputValues = true
                 })
             }
             expectSuccess = false
         }
 
-        dataSource = SearchRemoteDataSourceImpl(client, baseUrl)
+        languageProvider = mockk()
+
+        dataSource = SearchRemoteDataSourceImpl(client, baseUrl, languageProvider)
     }
 
     @Test
-    fun `searchActors should make GET request with correct parameters and return SearchResponse`() = runTest {
+    fun `should make GET request with correct parameters and return SearchResponse when valid actor query`() = runTest {
         // Given
         val query = "Tom Hanks"
         val expectedResponse = SearchResponse<ActorSearchDto>(
@@ -116,6 +122,8 @@ class SearchRemoteDataSourceImplTest {
             totalResults = 1
         )
 
+        every { languageProvider.getCurrentLanguage() } returns "en"
+
         // When
         val result = dataSource.searchActors(query)
 
@@ -130,7 +138,7 @@ class SearchRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `searchTv should make GET request with correct parameters and return SearchResponse`() = runTest {
+    fun `should make GET request with correct parameters and return SearchResponse when valid tv query`() = runTest {
         // Given
         val query = "Breaking Bad"
         val expectedResponse = SearchResponse<TvShowSearchDto>(
@@ -140,14 +148,15 @@ class SearchRemoteDataSourceImplTest {
                     id = 1,
                     name = "Breaking Bad",
                     posterImagePath = "/path",
-                    releaseDate = "",
-                    voteAverage = 0.0,
-                    genreIds = emptyList()
+                    releaseDate = null,
+                    voteAverage = null,
+                    genreIds = null
                 )
             ),
             totalPages = 1,
             totalResults = 1
         )
+        every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchTv(query)
@@ -163,7 +172,7 @@ class SearchRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `searchMovies should make GET request with correct parameters and return SearchResponse`() = runTest {
+    fun `should make GET request with correct parameters and return SearchResponse when valid movie query`() = runTest {
         // Given
         val query = "Inception"
         val expectedResponse = SearchResponse<MovieSearchDto>(
@@ -173,14 +182,15 @@ class SearchRemoteDataSourceImplTest {
                     id = 1,
                     title = "Inception",
                     posterImagePath = "/path",
-                    releaseDate = "",
-                    voteAverage = 0.0f,
-                    genreIds = emptyList()
+                    releaseDate = null,
+                    voteAverage = null,
+                    genreIds = null
                 )
             ),
             totalPages = 1,
             totalResults = 1
         )
+        every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchMovies(query)

@@ -59,6 +59,9 @@ android {
 }
 
 dependencies {
+
+    implementation(projects.envConfig)
+
     implementation(projects.data.remoteDataSource.search)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

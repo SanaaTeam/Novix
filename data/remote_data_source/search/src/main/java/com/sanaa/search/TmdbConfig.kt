@@ -1,7 +1,4 @@
 package com.sanaa.search
-import android.content.Context
-import java.io.File
-import java.util.*
 
 
 object TmdbConfig {

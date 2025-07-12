@@ -5,5 +5,5 @@ import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import org.koin.dsl.module
 
 val remoteDataSource = module {
-    single<SearchRemoteDataSource> { SearchRemoteDataSourceImpl(get(), get()) }
+    single<SearchRemoteDataSource> { SearchRemoteDataSourceImpl(get(), get(),get()) }
 }

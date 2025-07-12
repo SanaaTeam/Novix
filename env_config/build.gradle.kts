@@ -13,6 +13,9 @@ kotlin {
 }
 dependencies {
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.mockk.v1140)

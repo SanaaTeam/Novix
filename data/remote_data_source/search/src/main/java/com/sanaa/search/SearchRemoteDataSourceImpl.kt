@@ -1,5 +1,6 @@
 package com.sanaa.search
 
+import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
@@ -13,7 +14,8 @@ import io.ktor.client.request.parameter
 
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String
+    private val baseUrl: String,
+    private val languageProvider: LanguageProvider
 ): SearchRemoteDataSource {
 
     private suspend inline fun <reified T> search(
@@ -23,7 +25,7 @@ class SearchRemoteDataSourceImpl(
         return client.get("$baseUrl/search/$path") {
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
-            parameter("language", "en")
+            parameter("language", languageProvider.getCurrentLanguage())
             parameter("api_key", TmdbConfig.apiKey)
         }.body()
     }
