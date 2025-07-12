@@ -44,7 +44,6 @@ android {
 }
 
 dependencies {
-
     implementation(projects.envConfig)
 
     implementation(projects.data.repositories.search)

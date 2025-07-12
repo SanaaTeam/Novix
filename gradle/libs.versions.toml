@@ -56,6 +56,7 @@ junitJupiter = "5.8.1"
 roomCompiler = "2.7.2"
 
 kotlinx-coroutines = "1.6.4"
+workRuntimeKtx = "2.10.2"
 
 
 
@@ -71,6 +72,7 @@ androidx-lifecycle-runtime-ktx-v283 = { module = "androidx.lifecycle:lifecycle-r
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-crashlytics-ndk = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 firebase-perf = { module = "com.google.firebase:firebase-perf" }

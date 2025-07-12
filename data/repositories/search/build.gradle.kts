@@ -39,8 +39,6 @@ dependencies {
     implementation(projects.envConfig)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
 
     // Room dependencies
     implementation(libs.androidx.room.runtime)

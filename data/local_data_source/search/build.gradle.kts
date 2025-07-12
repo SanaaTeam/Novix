@@ -40,8 +40,6 @@ dependencies {
     implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
 
     // Room dependencies
     implementation(libs.androidx.room.runtime)
@@ -50,7 +48,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     // WorkManager for background cache cleanup
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation(libs.androidx.work.runtime.ktx)
 
     // Koin dependencies
     implementation(platform(libs.koin.bom))
