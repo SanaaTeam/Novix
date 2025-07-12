@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
-        buildConfigField("String", "TMDB_API_KEY", apiKey)
+        buildConfigField("String", "TMDB_API_KEY", "\"$apiKey\"")
         minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
