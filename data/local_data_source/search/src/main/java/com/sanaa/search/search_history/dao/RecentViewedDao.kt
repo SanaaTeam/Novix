@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RecentViewedDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRecentViewed(recentViewed: RecentViewedLocalDto)
 
