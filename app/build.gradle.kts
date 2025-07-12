@@ -64,6 +64,7 @@ dependencies {
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.data.repositories.search)
+    implementation(projects.data.remoteDataSource.search)
 
     implementation(projects.data.remoteDataSource.search)
     implementation(libs.androidx.core.ktx)
@@ -110,4 +111,10 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.ktor.client.logging)
     implementation(libs.kotlinx.serialization.json)
+    
+    // Local Data Sources
+    implementation(projects.data.localDataSource.search)
+    
+    // Language Provider
+    implementation(projects.envConfig)
 }
