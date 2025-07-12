@@ -96,9 +96,9 @@ dependencies {
     implementation(libs.timber)
 
     implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.koin)
+
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
@@ -107,16 +107,11 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.tensorflow.lite.task.vision)
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.logging)
     implementation(libs.kotlinx.serialization.json)
-    
+
     // Local Data Sources
     implementation(projects.data.localDataSource.search)
-    
+
     // Language Provider
     implementation(projects.envConfig)
 }
