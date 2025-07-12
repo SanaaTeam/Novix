@@ -17,7 +17,7 @@ fun CategoryTabSection(
         CategoryTab(
             categories = tabs,
             selectedIndex = selectedTabIndex,
-            onCategorySelected = { onTabSelected }
+            onCategorySelected = onTabSelected
         )
 
         when (selectedTabIndex) {
