@@ -10,8 +10,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.state.MovieUiModel
@@ -33,11 +35,18 @@ fun MoviesContent(movies: List<MovieUiModel>) {
                 boastImage = {
                     RemoteCensoredImageViewer(
                         imageUrl = movie.imageUrl,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                        blurRadius = 1000,
+                        sfwThreshold = 0.7f,
+                        nsfwThreshold = 0.5f
                     )
                 },
+                topLeftContent = {
+                    SaveIconChip(onClick = {})
+                }
 
-                )
+            )
         }
     }
 
