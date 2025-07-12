@@ -19,6 +19,7 @@ import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
+import usecase.RemoveSearchHistoryUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
@@ -33,6 +34,7 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
+    private val removeSearchHistoryUseCase: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
@@ -71,8 +73,11 @@ class SearchViewModel(
         }
     }
 
-    override fun onRecentSearchItemClicked() {
-
+    override fun onRecentSearchItemClicked(searchText: String) {
+        _searchQuery.value = searchText
+        updateState { it.copy(searchQuery = searchText) }
+        
+        loadMediaByTab(searchText)
     }
 
     private fun loadResentViewedImageList() {
@@ -166,8 +171,28 @@ class SearchViewModel(
     }
 
 
-    override fun onCancelRecentSearchItemClicked() {
-        //     TODO("Not yet implemented")
+    override fun onCancelRecentSearchItemClicked(searchText: String) {
+        updateState { it.copy(isLoading = true, error = null) }
+
+        tryToExecute(
+            callee = {
+                getSearchHistoryUseCase.execute().collectLatest { searchHistory ->
+                    val itemToRemove = searchHistory.find { it.query == searchText }
+                    itemToRemove?.let { item ->
+                        removeSearchHistoryUseCase.execute(item.id)
+                    }
+                }
+            },
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+                loadResentSearchTitleList()
+            },
+            onError = { e ->
+                updateState {
+                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                }
+            }
+        )
     }
 
 

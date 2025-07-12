@@ -29,8 +29,8 @@ import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 fun SearchHistoryContent(
     onClearRecentViewClicked: () -> Unit = {},
     onClearRecentSearchClicked: () -> Unit = {},
-    onCancelClicked: () -> Unit = {},
-    onRecentSearchItemClicked: () -> Unit = {},
+    onCancelClicked: (String) -> Unit = {},
+    onRecentSearchItemClicked: (String) -> Unit = {},
     onSaveIconClicked: () -> Unit = {},
     recentSearches: List<String> = emptyList(),
     recentViewed: List<String> = emptyList(),
@@ -81,8 +81,8 @@ fun SearchHistoryContent(
                 itemsIndexed(recentSearches) { index, item ->
                     RecentSearchItem(
                         text = item,
-                        onDeleteClicked = onCancelClicked,
-                        onRecentSearchItemClicked = onRecentSearchItemClicked
+                        onDeleteClicked = { onCancelClicked(item) },
+                        onRecentSearchItemClicked = { onRecentSearchItemClicked(item) }
                     )
                     if (index != recentSearches.lastIndex) {
                         Box(

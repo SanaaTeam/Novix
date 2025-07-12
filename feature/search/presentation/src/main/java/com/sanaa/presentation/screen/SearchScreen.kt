@@ -133,7 +133,8 @@ fun SearchScreenContent(
             CategoryTabSection(
                 selectedTabIndex = uiState.selectedTabIndex,
                 onTabSelected = { listener.onTabSelected(it) },
-                uiState = uiState
+                uiState = uiState,
+                listener = listener
             )
         }
     }
