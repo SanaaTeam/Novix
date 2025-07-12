@@ -49,7 +49,7 @@ fun RemoteCensoredImageViewer(
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var blurImage by remember { mutableStateOf(true) }
+    var blurImage by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         AsyncImage(
