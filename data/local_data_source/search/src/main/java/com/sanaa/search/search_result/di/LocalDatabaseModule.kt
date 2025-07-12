@@ -1,18 +1,19 @@
-package com.sanaa.search.data.di
+package com.sanaa.search.search_result.di
 
 import androidx.room.Room
-import org.koin.dsl.module
-import com.sanaa.search.data.local.db.AppDatabase
-import com.sanaa.search.data.local.dao.SearchDao
-import com.sanaa.search.data.local.dao.SearchResultDao
-import com.sanaa.search.data.local.dao.ActorDao
-import com.sanaa.search.data.local.dao.MovieDao
-import com.sanaa.search.data.local.dao.SeriesDao
+import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
-import com.sanaa.search.data.local.datasource.LocalCachedSearchDataSourceImpl
+import com.sanaa.search.search_result.dao.ActorDao
+import com.sanaa.search.search_result.dao.MovieDao
+import com.sanaa.search.search_result.dao.SearchDao
+import com.sanaa.search.search_result.dao.SearchResultDao
+import com.sanaa.search.search_result.dao.SeriesDao
+import com.sanaa.search.search_result.LocalCachedSearchDataSourceImpl
+import com.sanaa.search.search_result.db.AppDatabase
 import com.sanaa.search.search_history.dao.QueryDao
 import com.sanaa.search.search_history.dao.RecentViewedDao
 import org.koin.android.ext.koin.androidContext
+import org.koin.dsl.module
 
 val localDatabaseModule = module {
 
@@ -47,7 +48,7 @@ val localDatabaseModule = module {
     single<QueryDao> {
         get<AppDatabase>().queryDao()
     }
-    
+
     single<RecentViewedDao> {
         get<AppDatabase>().recentViewedDao()
     }
@@ -59,7 +60,7 @@ val localDatabaseModule = module {
             actorDao = get<ActorDao>(),
             movieDao = get<MovieDao>(),
             seriesDao = get<SeriesDao>(),
-            languageProvider = get()
+            languageProvider = get<LanguageProvider>(),
         )
     }
 

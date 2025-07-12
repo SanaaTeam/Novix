@@ -1,21 +1,21 @@
-package com.sanaa.search.data.local.db
+package com.sanaa.search.search_result.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.sanaa.search.data.local.dao.ActorDao
-import com.sanaa.search.data.local.dao.MovieDao
-import com.sanaa.search.data.local.dao.SearchDao
-import com.sanaa.search.data.local.dao.SearchResultDao
-import com.sanaa.search.data.local.dao.SeriesDao
 import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
 import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.QueryLocalDto
+import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
-import com.sanaa.search.dataSource.local.dto.QueryLocalDto
-import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.search_history.dao.QueryDao
 import com.sanaa.search.search_history.dao.RecentViewedDao
+import com.sanaa.search.search_result.dao.ActorDao
+import com.sanaa.search.search_result.dao.MovieDao
+import com.sanaa.search.search_result.dao.SearchDao
+import com.sanaa.search.search_result.dao.SearchResultDao
+import com.sanaa.search.search_result.dao.SeriesDao
 
 @Database(
     entities = [

@@ -1,4 +1,4 @@
-package com.sanaa.search.data.local.dao
+package com.sanaa.search.search_result.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -12,7 +12,7 @@ interface SeriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSeries(series: TvSeriesLocalDto)
 
-    @Query("SELECT * FROM tv_series WHERE release_year BETWEEN :minYear AND :maxYear AND genres LIKE :genre AND imdb_rating >= :rating")
-    suspend fun getFilteredSeries(minYear: Int, maxYear: Int, genre: String, rating: Float): List<TvSeriesLocalDto>
+    @Query("SELECT * FROM tv_series WHERE LOWER(title) LIKE '%' || LOWER(:query) || '%'")
+    suspend fun getFilteredSeries(query: String): List<TvSeriesLocalDto>
 
 } 

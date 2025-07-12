@@ -1,4 +1,4 @@
-package com.sanaa.search.data.local.dao
+package com.sanaa.search.search_result.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -17,9 +17,11 @@ interface SearchResultDao {
 
     @Query(
         """
-        SELECT sr.* FROM search_result sr
-        INNER JOIN searches s ON sr.id = s.id
-        WHERE s.query = :query AND s.language = :language AND sr.item_type = :type
+    SELECT sr.* FROM search_result sr
+    INNER JOIN searches s ON sr.id = s.id
+    WHERE LOWER(s.`query`) = LOWER(:query)
+      AND s.language = :language
+      AND sr.item_type = :type
     """
     )
     suspend fun getByQueryAndLanguage(
