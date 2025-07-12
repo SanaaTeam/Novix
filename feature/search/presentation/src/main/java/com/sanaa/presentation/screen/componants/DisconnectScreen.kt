@@ -115,11 +115,3 @@ fun DisconnectScreenPreview() {
         DisconnectScreen(onRetryClick = {})
     }
 }
-
-//@Preview(showBackground = true, heightDp = 800, widthDp = 360)
-//@Composable
-//fun DisconnectScreenDarkPreview() {
-//    NovixTheme(isDarkMode = true) {
-//        DisconnectScreen(onRetryClick = {})
-//    }
-//}
