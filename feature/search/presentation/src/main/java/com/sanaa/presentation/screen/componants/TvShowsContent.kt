@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
-import com.sanaa.presentation.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.TvShowUiModel
 
 @Composable
 fun TvShowsContent(tvShows: List<TvShowUiModel>) {

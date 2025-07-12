@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
-import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.state.ActorUiModel
+import com.sanaa.presentation.screen.state.ActorUiModel
 
 @Composable
 fun ActorsContent(

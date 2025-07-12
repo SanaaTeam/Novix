@@ -1,6 +1,5 @@
 package com.sanaa.presentation.base
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -11,22 +10,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<T>(
-    initialState: T,
-    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : ViewModel() {
-    private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
-    val state: StateFlow<T> by lazy { _state.asStateFlow() }
+abstract class BaseViewModel<T>(initialState: T) : ViewModel() {
+
+    private val _state = MutableStateFlow(initialState)
+    val state: StateFlow<T> = _state.asStateFlow()
 
     protected fun updateState(updater: (T) -> T) {
         _state.update(updater)
     }
 
-    protected fun <T> tryToExecute(
-        callee: suspend () -> T,
-        onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
-        dispatcher: CoroutineDispatcher = defaultDispatcher,
+    protected fun <R> tryToExecute(
+        callee: suspend () -> R,
+        onSuccess: (R) -> Unit,
+        onError: (Exception) -> Unit,
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) {
         viewModelScope.launch(dispatcher) {
             try {
@@ -37,5 +34,4 @@ abstract class BaseViewModel<T>(
             }
         }
     }
-
 }

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen
+package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
