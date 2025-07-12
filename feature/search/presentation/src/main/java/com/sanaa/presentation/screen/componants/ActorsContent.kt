@@ -23,7 +23,6 @@ fun ActorsContent(
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Theme.colors.surface)
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

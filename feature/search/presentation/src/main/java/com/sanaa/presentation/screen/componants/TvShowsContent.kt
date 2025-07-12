@@ -34,7 +34,6 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>) {
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Theme.colors.surface)
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
