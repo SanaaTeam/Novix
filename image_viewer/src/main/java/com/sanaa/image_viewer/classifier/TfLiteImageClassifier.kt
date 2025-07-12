@@ -18,7 +18,7 @@ internal class TfLiteImageClassifier(private val context: Context) {
         val sfwScore = classifications.find { it.label == SFW_LABEL }?.score ?: 0f
         val nsfwScore = classifications.find { it.label == NSFW_LABEL }?.score ?: 0f
 
-        return (sfwScore < sfwThreshold && nsfwScore > nsfwThreshold)
+        return (sfwScore < sfwThreshold || nsfwScore > nsfwThreshold)
     }
 
     private fun classify(bitmap: Bitmap): List<Classification> {

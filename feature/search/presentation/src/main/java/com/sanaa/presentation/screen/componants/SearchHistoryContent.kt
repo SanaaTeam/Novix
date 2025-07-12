@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +40,12 @@ fun SearchHistoryContent(
 ) {
     Column(modifier = Modifier.padding(top = 12.dp)) {
         if (recentViewed.isNotEmpty()) {
+            val isDarkTheme = isSystemInDarkTheme()
+            val placeholderResId = if (isDarkTheme) {
+                com.sanaa.presentation.R.drawable.movie_placeholder_dark
+            } else {
+                com.sanaa.presentation.R.drawable.movie_placeholder_light
+            }
             SectionHeader(
                 title = stringResource(R.string.recent_viewed),
                 actionText = stringResource(R.string.clear_all),
@@ -55,7 +64,14 @@ fun SearchHistoryContent(
                     MovieSeriesPosterCard(
                         boastImage = {
                             RemoteCensoredImageViewer(
-                                imageUrl = item
+                                imageUrl = item,
+                                modifier = Modifier.fillMaxWidth(),
+                                contentScale = ContentScale.Crop,
+                                blurRadius = 150,
+                                sfwThreshold = 0.75f,
+                                nsfwThreshold = 0.15f,
+                                placeholder = painterResource(placeholderResId),
+                                error = painterResource(placeholderResId),
                             )
                         },
                         topLeftContent = {
