@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.search)
-    implementation(projects.data.repositories.languageProvider)
+    implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -46,6 +46,7 @@ dependencies {
     // Room dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    testImplementation(libs.junit.jupiter)
     ksp(libs.androidx.room.compiler)
 
     // WorkManager for background cache cleanup
