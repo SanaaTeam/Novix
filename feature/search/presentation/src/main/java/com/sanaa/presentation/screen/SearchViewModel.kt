@@ -184,7 +184,7 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
-    override fun onFilterApplied(filters: MediaFilters) {
+    override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
         //     searchMediaByTab()
         loadMediaByTab(_searchQuery.value)
@@ -201,7 +201,7 @@ class SearchViewModel(
     }
 
     private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
-        return searchMoviesUseCase.execute(query, filters = null).map {
+        return searchMoviesUseCase.execute(query, filters = state.value.filters).map {
             MovieUiModel(
                 id = it.id,
                 title = it.title,
@@ -231,7 +231,7 @@ class SearchViewModel(
     }
 
     private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
-        return searchTvSeriesUseCase.execute(query, filters = null).map {
+        return searchTvSeriesUseCase.execute(query, filters = state.value.filters).map {
             TvShowUiModel(
                 id = it.id,
                 title = it.title,
