@@ -2,4 +2,21 @@
     <string name="novix">Novix</string>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
+    <string name="no_search_result_message">
+        No search result, please try with another keyword!</string>
+    <string name="empty_search_message">
+        Start exploring! Search for your favorite movies, series and shows</string>
+    <string name="search">Search</string>
+    <string name="icon_filter">icon filter</string>
+    <string name="shutter_island">Shutter island</string>
+    <string name="recent_viewed">Recent viewed</string>
+    <string name="clear_all">Clear all</string>
+    <string name="recent_search">Recent search</string>
+    <string name="released_year">Released year</string>
+    <string name="genres">Genres</string>
+    <string name="imdb_rating">IMDb rating</string>
+    <string name="clear">Clear</string>
+    <string name="filter">Filter</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
 </resources>

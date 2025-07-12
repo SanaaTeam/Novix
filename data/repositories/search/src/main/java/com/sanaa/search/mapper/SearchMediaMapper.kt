@@ -11,7 +11,7 @@ fun MoviesLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(
         id = id,
         title = title,
-        posterImageUrl = imagePath ?: "",
+        posterImageUrl = (imageUrl + imagePath),
         isSaved = isSaved,
     )
 }
@@ -20,7 +20,7 @@ fun MovieSearchDto.toLocalDto(language: String): MoviesLocalDto {
     return MoviesLocalDto(
         id = id,
         title = title ?: "",
-        imagePath = posterImagePath,
+        imagePath = imageUrl + posterImagePath,
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -32,7 +32,7 @@ fun MovieSearchDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(
         id = id,
         title = title ?: "",
-        posterImageUrl = posterImagePath ?: "",
+        posterImageUrl = imageUrl + posterImagePath ?: "",
         isSaved = isSaved
     )
 }
@@ -41,7 +41,7 @@ fun TvSeriesLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(
         id = id,
         title = title,
-        posterImageUrl = imagePath ?: "",
+        posterImageUrl = (imageUrl + imagePath) ?: "",
         isSaved = isSaved,
     )
 }
@@ -50,7 +50,7 @@ fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
     return TvSeriesLocalDto(
         id = id,
         title = name ?: "",
-        imagePath = posterImagePath,
+        imagePath = imageUrl + posterImagePath,
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -62,7 +62,9 @@ fun TvShowSearchDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(
         id = id,
         title = name ?: "",
-        posterImageUrl = posterImagePath ?: "",
+        posterImageUrl = imageUrl + posterImagePath ?: "",
         isSaved = isSaved
     )
 }
+
+ val imageUrl = "https://image.tmdb.org/t/p/original"

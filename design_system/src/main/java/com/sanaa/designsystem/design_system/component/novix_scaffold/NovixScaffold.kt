@@ -24,7 +24,7 @@ fun NovixScaffold(
     bottomBar: @Composable () -> Unit = {},
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
-    backgroundShapes: @Composable () -> Unit = {},
+    backgroundShapes: @Composable () -> Unit = {NovixBackgroundShapes()},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(

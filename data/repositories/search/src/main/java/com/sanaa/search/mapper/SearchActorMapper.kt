@@ -8,7 +8,7 @@ fun ActorsLocalDto.toSearchOutput(): SearchActorOutput {
     return SearchActorOutput(
         id = id,
         name = name,
-        profileImageUrl = imagePath ?: "",
+        profileImageUrl = imageUrl + imagePath ?: "",
     )
 }
 
@@ -16,7 +16,7 @@ fun ActorSearchDto.toLocalDto(language: String): ActorsLocalDto {
     return ActorsLocalDto(
         id = id,
         name = name ?: "",
-        imagePath = profileImagePath ?: "",
+        imagePath = imageUrl + profileImagePath ?: "",
         language = language,
     )
 }
@@ -25,6 +25,6 @@ fun ActorSearchDto.toSearchOutput(): SearchActorOutput {
     return SearchActorOutput(
         id = id,
         name = name ?: "",
-        profileImageUrl = profileImagePath ?: "",
+        profileImageUrl = imageUrl + profileImagePath ?: "",
     )
 }

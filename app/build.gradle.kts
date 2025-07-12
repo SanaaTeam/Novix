@@ -65,6 +65,10 @@ android {
 dependencies {
 
     implementation(projects.envConfig)
+    implementation(projects.domain.vod)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.data.repositories.search)
+    implementation(projects.data.remoteDataSource.search)
 
     implementation(projects.data.remoteDataSource.search)
     implementation(libs.androidx.core.ktx)
