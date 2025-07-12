@@ -83,8 +83,7 @@ class FilterViewModel : ViewModel() {
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),
                     genres = currentState.selectedGenres.toList(),
-                    imdbRating = currentState.imdbRating.toFloat()
-                )
+                    imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null)
             }
             _filterResult.emit(mediaFilters)
         }
