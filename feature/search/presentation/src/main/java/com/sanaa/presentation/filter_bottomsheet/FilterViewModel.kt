@@ -91,5 +91,9 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
                 _filterResult.emit(mediaFilters)
         }
     }
+
+    companion object {
+        val defaultState = MediaFilters()
+    }
 }
 
