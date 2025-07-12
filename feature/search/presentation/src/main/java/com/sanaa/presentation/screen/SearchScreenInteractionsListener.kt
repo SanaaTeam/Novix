@@ -10,5 +10,5 @@ interface SearchScreenInteractionsListener {
     fun onTabSelected(index: Int)
     fun onRecentSearchItemClicked()
     fun onSearchQueryChanged(title: String)
-    fun onFilterApplied(filters: MediaFilters)
+    fun onFilterApplied(filters: MediaFilters?)
 }

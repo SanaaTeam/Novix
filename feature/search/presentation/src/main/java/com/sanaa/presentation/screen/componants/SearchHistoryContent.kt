@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,61 +36,64 @@ fun SearchHistoryContent(
     recentViewed: List<String> = emptyList(),
 ) {
     Column(modifier = Modifier.padding(top = 12.dp)) {
-
-        SectionHeader(
-            title = stringResource(R.string.recent_viewed),
-            actionText = stringResource(R.string.clear_all),
-            onActionClick = onClearRecentViewClicked
-        )
-        LazyRow(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 24.dp
+        if (recentViewed.isNotEmpty()) {
+            SectionHeader(
+                title = stringResource(R.string.recent_viewed),
+                actionText = stringResource(R.string.clear_all),
+                onActionClick = onClearRecentViewClicked
             )
-        ) {
-
-            itemsIndexed(recentViewed) { _, item ->
-                MovieSeriesPosterCard(
-                    boastImage = {
-                        RemoteCensoredImageViewer(
-                            imageUrl = item
-                        )
-                    },
-                    topLeftContent = {
-                        SaveIconChip(
-                            onClick = onSaveIconClicked
-                        )
-                    },
+            LazyRow(
+                modifier = Modifier,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 24.dp
                 )
+            ) {
+                itemsIndexed(recentViewed) { _, item ->
+                    MovieSeriesPosterCard(
+                        boastImage = {
+                            RemoteCensoredImageViewer(
+                                imageUrl = item
+                            )
+                        },
+                        topLeftContent = {
+                            SaveIconChip(
+                                onClick = onSaveIconClicked
+                            )
+                        },
+                    )
+                }
             }
         }
-        SectionHeader(
-            title = stringResource(R.string.recent_search),
-            actionText = stringResource(R.string.clear_all),
-            onActionClick = onClearRecentSearchClicked
-        )
-        LazyColumn(
-            modifier = Modifier
-                .padding(bottom = 12.dp)
-        ) {
-            itemsIndexed(recentSearches) { index, item ->
-                RecentSearchItem(
-                    text = item,
-                    onDeleteClicked = onCancelClicked,
-                    onRecentSearchItemClicked = onRecentSearchItemClicked
-                )
-                if (index != recentSearches.lastIndex) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .padding(bottom = 12.dp)
-                            .height(1.dp)
-                            .background(color = Theme.colors.stroke)
+
+        if (recentSearches.isNotEmpty()) {
+            SectionHeader(
+                title = stringResource(R.string.recent_search),
+                actionText = stringResource(R.string.clear_all),
+                onActionClick = onClearRecentSearchClicked
+            )
+            LazyColumn(
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+            ) {
+                itemsIndexed(recentSearches) { index, item ->
+                    RecentSearchItem(
+                        text = item,
+                        onDeleteClicked = onCancelClicked,
+                        onRecentSearchItemClicked = onRecentSearchItemClicked
                     )
+                    if (index != recentSearches.lastIndex) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                                .padding(bottom = 12.dp)
+                                .height(1.dp)
+                                .background(color = Theme.colors.stroke)
+                        )
+                    }
                 }
             }
         }

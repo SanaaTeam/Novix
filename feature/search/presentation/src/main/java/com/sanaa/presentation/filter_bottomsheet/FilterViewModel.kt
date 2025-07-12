@@ -16,7 +16,7 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val _filterResult = MutableSharedFlow<MediaFilters>()
+    private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
 
     init {
@@ -33,7 +33,12 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
     }
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        _uiState.update { it.copy(yearRange = newRange) }
+        _uiState.update {
+            it.copy(
+                yearRange = newRange,
+                isDefaultState = false,
+            )
+        }
     }
 
     override fun onGenreSelected(genre: Genre) {
@@ -44,19 +49,28 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
             } else {
                 newSelectedGenres.add(genre)
             }
-            currentState.copy(selectedGenres = newSelectedGenres)
+            currentState.copy(
+                selectedGenres = newSelectedGenres,
+                isDefaultState = false
+            )
         }
     }
 
     override fun onRatingChanged(newRating: Int) {
-        _uiState.update { it.copy(imdbRating = newRating) }
+        _uiState.update {
+            it.copy(
+                imdbRating = newRating,
+                isDefaultState = false
+            )
+        }
     }
 
     override fun onClearFilters() {
         _uiState.update { currentState ->
             FilterUiState(
                 allGenres = currentState.allGenres,
-                isLoading = false
+                isLoading = false,
+                isDefaultState = true,
             )
         }
     }
@@ -70,7 +84,11 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
                 genres = currentState.selectedGenres.toList(),
                 imdbRating = currentState.imdbRating.toFloat()
             )
-            _filterResult.emit(mediaFilters)
+
+            if (currentState.isDefaultState)
+                _filterResult.emit(null)
+            else
+                _filterResult.emit(mediaFilters)
         }
     }
 }

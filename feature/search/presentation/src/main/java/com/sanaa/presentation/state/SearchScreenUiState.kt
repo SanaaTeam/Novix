@@ -20,19 +20,19 @@ data class MovieUiModel(
     val id: Int,
     val title: String,
     val imageUrl: String,
-    val rating: String
+    val rating: String,
 )
 
 data class ActorUiModel(
     val id: Int,
     val name: String,
-    val imageUrl: String
+    val imageUrl: String,
 )
 
 data class TvShowUiModel(
     val id: Int,
     val title: String,
     val imageUrl: String,
-    val rating: String
+    val rating: String,
 )
 
