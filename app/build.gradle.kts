@@ -66,7 +66,6 @@ dependencies {
     implementation(projects.data.repositories.search)
     implementation(projects.data.remoteDataSource.search)
 
-    implementation(projects.data.remoteDataSource.search)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
