@@ -1,4 +1,4 @@
-package com.sanaa.search.response
+package com.sanaa.search.dataSource.remote.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

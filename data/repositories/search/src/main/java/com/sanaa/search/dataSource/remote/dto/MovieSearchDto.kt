@@ -1,20 +1,20 @@
-package com.sanaa.search.dto
+package com.sanaa.search.dataSource.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TvShowSearchDto(
+data class MovieSearchDto(
     @SerialName("id")
     val id: Int,
 
-    @SerialName("name")
-    val name: String?,
+    @SerialName("title")
+    val title: String?,
 
     @SerialName("poster_path")
     val posterImagePath: String?,
 
-    @SerialName("first_air_date")
+    @SerialName("release_date")
     val releaseDate: String?,
 
     @SerialName("vote_average")
@@ -22,4 +22,4 @@ data class TvShowSearchDto(
 
     @SerialName("genre_ids")
     val genreIds: List<Int>?
- )
+)
