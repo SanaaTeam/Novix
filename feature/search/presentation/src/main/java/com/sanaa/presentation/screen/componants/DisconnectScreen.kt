@@ -1,14 +1,19 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,9 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -70,6 +76,7 @@ fun DisconnectScreen(
                 contentDescription = "disconnect",
                 modifier = Modifier.size(82.dp)
             )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
@@ -94,45 +101,25 @@ fun DisconnectScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
+                text = stringResource(id = R.string.offline_note),
                 onClick = onRetryClick,
-                modifier = Modifier
-                    .size(width = 72.dp, height = 48.dp),
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, Theme.colors.stroke),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    containerColor = Theme.colors.surface,
-                    contentColor = Theme.colors.body
-                ),
-                contentPadding = PaddingValues(8.dp)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.offline_note),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = Theme.colors.primary,
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
+            )
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, widthDp = 360)
+@PreviewLightDark()
 @Composable
 fun DisconnectScreenPreview() {
-    NovixTheme {
+    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         DisconnectScreen(onRetryClick = {})
     }
 }
 
-@Preview(showBackground = true, heightDp = 800, widthDp = 360)
-@Composable
-fun DisconnectScreenDarkPreview() {
-    NovixTheme(isDarkMode = true) {
-        DisconnectScreen(onRetryClick = {})
-    }
-}
+//@Preview(showBackground = true, heightDp = 800, widthDp = 360)
+//@Composable
+//fun DisconnectScreenDarkPreview() {
+//    NovixTheme(isDarkMode = true) {
+//        DisconnectScreen(onRetryClick = {})
+//    }
+//}
