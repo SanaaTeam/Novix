@@ -17,13 +17,4 @@ interface RecentViewedDao {
 
     @Query("DELETE FROM recent_viewed")
     suspend fun deleteAllRecentViewed()
-
-    suspend fun insertRecentViewedWithCleanup(recentViewed: RecentViewedLocalDto) {
-        val oneHourAgo = System.currentTimeMillis() - 60 * 60 * 1000
-        deleteOldRecentViewed(oneHourAgo)
-        insertRecentViewed(recentViewed)
-    }
-
-    @Query("DELETE FROM recent_viewed WHERE timestamp < :timestamp")
-    suspend fun deleteOldRecentViewed(timestamp: Long)
 }
