@@ -66,7 +66,7 @@ fun IMDbRatingSelector(
                             val newRating = (change.position.x / rowSize.width * maxRating)
                                 .coerceIn(0f, maxRating.toFloat())
                                 .roundToInt()
-                                .coerceIn(1, maxRating)
+                                .coerceIn(0, maxRating)
 
                             if (newRating != currentRating) {
                                 onRatingChanged(newRating)
@@ -131,7 +131,7 @@ private fun Star(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun IMDbRatingSelectorPreview() {
-    var currentRating by remember { mutableIntStateOf(8) }
+    var currentRating by remember { mutableIntStateOf(0) }
         Column(modifier = Modifier.padding(16.dp)) {
             IMDbRatingSelector(
                 title = "IMDb rating",

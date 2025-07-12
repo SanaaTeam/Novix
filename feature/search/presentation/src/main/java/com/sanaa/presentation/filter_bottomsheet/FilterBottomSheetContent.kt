@@ -148,7 +148,7 @@ fun FilterBottomSheetContentPreview() {
                 )
             )
         }
-        var previewRating by remember { mutableStateOf(8) }
+        var previewRating by remember { mutableStateOf(0) }
         var isLoading by remember { mutableStateOf(true) }
 
         // Simulate loading and then showing content for the preview
@@ -178,7 +178,7 @@ fun FilterBottomSheetContentPreview() {
             onClearClicked = {
                 previewYearRange = 1995f..2012f
                 previewSelectedGenres = emptySet()
-                previewRating = 8
+                previewRating = 0
             },
             onApplyClicked = {},
             onCloseClicked = {}
