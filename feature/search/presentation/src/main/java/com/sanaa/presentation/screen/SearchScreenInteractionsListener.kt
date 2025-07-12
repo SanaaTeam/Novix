@@ -7,4 +7,5 @@ interface SearchScreenInteractionsListener {
     fun onSaveIconClicked()
     fun onTabSelected(index: Int)
     fun onRecentSearchItemClicked()
+    fun onSearchQueryChanged(title: String)
 }
