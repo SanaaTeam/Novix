@@ -8,7 +8,6 @@ import androidx.room.PrimaryKey
     tableName = "movie", primaryKeys = ["id", "language"],
 )
 data class MoviesLocalDto(
-    @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "title")
