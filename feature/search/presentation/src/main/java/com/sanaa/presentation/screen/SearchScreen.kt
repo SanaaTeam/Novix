@@ -121,7 +121,7 @@ fun SearchScreenContent(
             )
             Spacer(Modifier.height(12.dp))
 
-            if (uiState.isLoading && uiState.searchQuery.isNotBlank()) {
+            if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
