@@ -24,7 +24,6 @@ import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
-import entity.Genre
 
 @Composable
 fun FilterBottomSheetContent(
