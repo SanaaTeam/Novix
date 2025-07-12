@@ -1,10 +1,10 @@
 package com.sanaa.search
 
 import com.example.env_config.service.LanguageProvider
-import com.sanaa.search.dto.ActorSearchDto
-import com.sanaa.search.dto.MovieSearchDto
-import com.sanaa.search.dto.TvShowSearchDto
-import com.sanaa.search.response.SearchResponse
+import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
+import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
+import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
+import com.sanaa.search.dataSource.remote.response.SearchResponse
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
 import io.ktor.client.plugins.contentnegotiation.*
