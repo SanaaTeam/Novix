@@ -54,7 +54,19 @@ class SearchViewModel(
                 .debounce(500)
                 .distinctUntilChanged()
                 .collectLatest { query ->
-                    loadMediaByTab(query)
+                    if (query.isBlank()) {
+                        updateState {
+                            it.copy(
+                                movies = emptyList(),
+                                tvShows = emptyList(),
+                                actors = emptyList(),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    } else {
+                        loadMediaByTab(query)
+                    }
                 }
         }
     }
@@ -174,7 +186,8 @@ class SearchViewModel(
 
     override fun onFilterApplied(filters: MediaFilters) {
         updateState { it.copy(filters = filters) }
-        // searchMediaByTab()
+        //     searchMediaByTab()
+        loadMediaByTab(_searchQuery.value)
     }
 
     private fun loadMovies(query: String) {
