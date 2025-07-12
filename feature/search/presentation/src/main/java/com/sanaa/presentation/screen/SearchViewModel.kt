@@ -4,6 +4,8 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.state.ActorUiModel
 import com.sanaa.presentation.state.MovieUiModel
+import com.sanaa.presentation.state.RecentSearchUiModel
+import com.sanaa.presentation.state.RecentViewedUiModel
 import com.sanaa.presentation.state.SearchScreenUiState
 import com.sanaa.presentation.state.TvShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,10 +21,13 @@ import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
+import usecase.RemoveSearchHistoryUseCase
 import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
 import usecase.search.MediaFilters
+import usecase.search.MediaType
+import usecase.search.RecentViewedMedia
 
 class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
@@ -33,6 +38,7 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
+    private val deleteSearchItem: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
@@ -50,72 +56,73 @@ class SearchViewModel(
             //  loadMediaByTab(query = "")
         }
         viewModelScope.launch {
-            _searchQuery
-                .debounce(500)
-                .distinctUntilChanged()
-                .collectLatest { query ->
-                    if (query.isBlank()) {
-                        updateState {
-                            it.copy(
-                                movies = emptyList(),
-                                tvShows = emptyList(),
-                                actors = emptyList(),
-                                isLoading = false,
-                                error = null
-                            )
-                        }
-                    } else {
-                        loadMediaByTab(query)
+            _searchQuery.debounce(500).distinctUntilChanged().collectLatest { query ->
+                if (query.isBlank()) {
+                    updateState {
+                        it.copy(
+                            movies = emptyList(),
+                            tvShows = emptyList(),
+                            actors = emptyList(),
+                            isLoading = false,
+                            error = null
+                        )
                     }
+                } else {
+                    loadMediaByTab(query)
                 }
+            }
         }
     }
 
-    override fun onRecentSearchItemClicked() {
+    override fun onRecentSearchItemClicked(query: String) {
+        updateState { it.copy(searchQuery = query) }
+        _searchQuery.value = query
 
     }
 
     private fun loadResentViewedImageList() {
         updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(
-            callee = {
-                getRecentViewedUseCase.execute().collectLatest { recentViewed ->
-                    updateState {
-                        it.copy(
-                            resentViewedImageList = recentViewed.map { it.posterImageUrl }
-                        )
-                    }
-                }
-            },
-            onError = { e ->
+        tryToExecute(callee = {
+            getRecentViewedUseCase.execute().collectLatest { recentViewed ->
                 updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                    it.copy(
+                        resentViewedImageList = recentViewed.map {
+                            RecentViewedUiModel(
+                                id = it.id,
+                                imageUrl = it.posterImageUrl,
+                                mediaType = it.mediaType.name,
+                                isSaved = it.isSaved
+                            )
+                        })
                 }
             }
-        )
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
+            }
+        })
     }
 
 
     private fun loadResentSearchTitleList() {
         updateState { it.copy(isLoading = true, error = null) }
 
-        tryToExecute(
-            callee = {
-                getSearchHistoryUseCase.execute().collectLatest { searchHistory ->
-                    updateState {
-                        it.copy(
-                            resentSearchTitleList = searchHistory.map { it.query }
-                        )
-                    }
-                }
-            },
-            onError = { e ->
+        tryToExecute(callee = {
+            getSearchHistoryUseCase.execute().collectLatest { searchHistory ->
                 updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
+                    it.copy(
+                        resentSearchTitleList = searchHistory.map {
+                            RecentSearchUiModel(
+                                id = it.id, title = it.query
+                            )
+                        })
                 }
             }
-        )
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
+            }
+        })
     }
 
 
@@ -131,43 +138,44 @@ class SearchViewModel(
     override fun onClearRecentViewClicked() {
         updateState { it.copy(isLoading = true, error = null) }
 
-        tryToExecute(
-            callee = {
-                clearRecentViewedUseCase.execute()
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
+        tryToExecute(callee = {
+            clearRecentViewedUseCase.execute()
+        }, onSuccess = {
+            updateState { it.copy(isLoading = false) }
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
-        )
+        })
     }
 
 
     override fun onClearRecentSearchClicked() {
         updateState { it.copy(isLoading = true, error = null) }
 
-        tryToExecute(
-            callee = {
-                clearSearchHistoryUseCase.execute()
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
+        tryToExecute(callee = {
+            clearSearchHistoryUseCase.execute()
+        }, onSuccess = {
+            updateState { it.copy(isLoading = false) }
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
             }
-        )
+        })
     }
 
 
-    override fun onCancelRecentSearchItemClicked() {
-        //     TODO("Not yet implemented")
+    override fun onCancelRecentSearchItemClicked(id: Int) {
+        updateState { it.copy(isLoading = true, error = null) }
+        tryToExecute(callee = {
+            deleteSearchItem.execute(id)
+        }, onSuccess = {
+            updateState { it.copy(isLoading = false) }
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
+            }
+        })
     }
 
 
@@ -190,6 +198,20 @@ class SearchViewModel(
         loadMediaByTab(_searchQuery.value)
     }
 
+    override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
+        tryToExecute(
+            callee = {
+                addRecentViewedUseCase.execute(
+                    RecentViewedMedia(
+                        id = viewed.id,
+                        mediaType = MediaType.MOVIE,
+                        posterImageUrl = viewed.imageUrl,
+                        isSaved = viewed.isSaved
+                    )
+                )
+            })
+    }
+
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
 
@@ -203,10 +225,7 @@ class SearchViewModel(
     private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
         return searchMoviesUseCase.execute(query, filters = state.value.filters).map {
             MovieUiModel(
-                id = it.id,
-                title = it.title,
-                imageUrl = it.posterImageUrl,
-                rating = ""
+                id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = ""
             )
         }
     }
@@ -233,10 +252,7 @@ class SearchViewModel(
     private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
         return searchTvSeriesUseCase.execute(query, filters = state.value.filters).map {
             TvShowUiModel(
-                id = it.id,
-                title = it.title,
-                imageUrl = it.posterImageUrl,
-                rating = ""
+                id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = ""
             )
         }
     }
@@ -263,9 +279,7 @@ class SearchViewModel(
     private suspend fun loadActorsOperation(query: String): List<ActorUiModel> {
         return searchActorsUseCase.execute(query).map {
             ActorUiModel(
-                id = it.id,
-                name = it.name,
-                imageUrl = it.profileImageUrl
+                id = it.id, name = it.name, imageUrl = it.profileImageUrl
             )
         }
     }
@@ -281,6 +295,4 @@ class SearchViewModel(
 
     override fun onSaveIconClicked() {
     }
-
-
 }
