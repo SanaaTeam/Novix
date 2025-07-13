@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -11,8 +11,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
+import search.search.MediaType
+import search.search.RecentViewedMedia
 
 class GetRecentViewedUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)

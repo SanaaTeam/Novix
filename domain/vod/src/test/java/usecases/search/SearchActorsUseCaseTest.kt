@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 import repository.SearchRepository
-import usecase.search.SearchActorOutput
+import search.search.SearchActorOutput
 
 class SearchActorsUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)

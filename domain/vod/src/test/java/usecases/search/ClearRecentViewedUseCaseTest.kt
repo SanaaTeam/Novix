@@ -1,6 +1,5 @@
-package usecase
+package usecases.search
 
-import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import io.mockk.coEvery
 import io.mockk.coVerify

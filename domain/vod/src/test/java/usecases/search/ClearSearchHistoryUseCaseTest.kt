@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import exceptions.FailedToDeleteException
 import io.mockk.coEvery
@@ -10,42 +10,38 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 
-class RemoveSearchHistoryUseCaseTest {
+class ClearSearchHistoryUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
-    private lateinit var removeSearchHistoryUseCase: RemoveSearchHistoryUseCase
+    private lateinit var clearSearchHistoryUseCase: ClearSearchHistoryUseCase
 
     @BeforeEach
     fun setUp() {
-        removeSearchHistoryUseCase = RemoveSearchHistoryUseCase(searchHistoryRepository)
+        clearSearchHistoryUseCase = ClearSearchHistoryUseCase(searchHistoryRepository)
     }
 
     @Test
-    fun `execute() should call removeSearchHistoryById() from SearchHistoryRepository when remove item form the search history`() =
+    fun `execute() should call clearSearchHistory() from SearchHistoryRepository when clear searched history`() =
         runTest {
-            // Given
-            val id = 1
-
             // When
-            removeSearchHistoryUseCase.execute(id)
+            clearSearchHistoryUseCase.execute()
 
             // Then
             coVerify {
-                searchHistoryRepository.removeSearchHistoryById(id)
+                searchHistoryRepository.clearSearchHistory()
             }
         }
 
     @Test
-    fun `execute() should throw FailedToDeleteException when try to clear recent viewed failed`() =
+    fun `execute() should throw FailedToDeleteException when try to clear searched history failed`() =
         runTest {
             // Given
-            val id = 1
             coEvery {
-                searchHistoryRepository.removeSearchHistoryById(id)
+                searchHistoryRepository.clearSearchHistory()
             } throws FailedToDeleteException("Search History")
 
             // When, Then
             assertThrows<FailedToDeleteException> {
-                removeSearchHistoryUseCase.execute(id)
+                clearSearchHistoryUseCase.execute()
             }
         }
 }

@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import exceptions.FailedToAddException
 import io.mockk.coEvery
@@ -9,8 +9,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
+import search.search.MediaType
+import search.search.RecentViewedMedia
 
 class AddRecentViewedUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
