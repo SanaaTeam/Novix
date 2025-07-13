@@ -25,7 +25,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onYearRangeChanged() should change range`() = runTest {
+    fun `onYearRangeChanged() should change range when called`() = runTest {
         // Given
         val range = 1995f..2012f
 
@@ -41,7 +41,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onGenreSelected() should change genre`() = runTest {
+    fun `onGenreSelected() should change genre when called`() = runTest {
         // Given
         val genre = Genre.ACTION
 
@@ -60,7 +60,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onRatingChanged() should change rate`() = runTest {
+    fun `onRatingChanged() should change rate when called`() = runTest {
         // Given
         val rate = 10
 
@@ -79,7 +79,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onClearFilters()`() = runTest {
+    fun `onClearFilters() should clear filter by set values to default when called`() = runTest {
         // When
         filterViewModel.onClearFilters()
 
@@ -96,7 +96,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onApplyClicked() should init media filter when filters are default`() = runTest {
+    fun `onApplyClicked() should init media filter when filters are default when called`() = runTest {
         // When
         filterViewModel.onApplyClicked()
 
@@ -108,7 +108,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onApplyClicked() should change the media filter when filters are default`() = runTest {
+    fun `onApplyClicked() should change the media filter when filters are default when called`() = runTest {
         // When
         filterViewModel.onRatingChanged(1)
         filterViewModel.onApplyClicked()
