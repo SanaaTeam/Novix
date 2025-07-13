@@ -24,7 +24,7 @@ fun CategoryTabSection(
         )
 
         if (uiState.noInternetConnection) {
-            DisconnectScreen { }
+            NetworkDisconnectionContact (onRetryClick = {})
             return
         }
 

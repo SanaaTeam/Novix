@@ -1,17 +1,15 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,40 +22,17 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.button.OutlinedButton
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun DisconnectScreen(
-    onRetryClick: () -> Unit
-) {
-    NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }
-    ) { innerPadding ->
-        DisconnectScreen(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-            onRetryClick = onRetryClick
-        )
-    }
-}
-
-@Composable
-fun DisconnectScreen(
+fun NetworkDisconnectionContact(
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onRetryClick: () -> Unit
 ) {
-    Box(
-        modifier = modifier
-            .statusBarsPadding(),
-        contentAlignment = Alignment.Center
-    ) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
             verticalArrangement = Arrangement.Center,
@@ -103,13 +78,13 @@ fun DisconnectScreen(
                 onClick = onRetryClick,
             )
         }
-    }
+
 }
 
 @PreviewLightDark()
 @Composable
-fun DisconnectScreenPreview() {
+fun DisconnectContactPreview() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        DisconnectScreen(onRetryClick = {})
+        NetworkDisconnectionContact(onRetryClick = {},modifier = Modifier.background(color = Theme.colors.surface))
     }
 }
