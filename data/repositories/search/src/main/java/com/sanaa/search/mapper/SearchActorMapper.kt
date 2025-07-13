@@ -8,7 +8,7 @@ fun ActorsLocalDto.toSearchOutput(): SearchActorOutput {
     return SearchActorOutput(
         id = id,
         name = name,
-        profileImageUrl = (imageUrl + imagePath),
+        profileImageUrl = (imageUrl + imagePath ),
     )
 }
 
@@ -28,3 +28,4 @@ fun ActorSearchDto.toSearchOutput(): SearchActorOutput {
         profileImageUrl = (imageUrl + profileImagePath),
     )
 }
+

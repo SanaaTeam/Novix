@@ -50,7 +50,7 @@ fun CategoryTabSection(
             }
 
             1 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.tvShows.isEmpty()) NoSearchResultState()
                 else TvShowsContent(
                     uiState.tvShows, onTvShowClick = {
                         interactionsListener.onSearchResultMediaClicked(it)
@@ -59,7 +59,7 @@ fun CategoryTabSection(
             }
 
             2 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.actors.isEmpty()) NoSearchResultState()
                 else ActorsContent(uiState.actors)
             }
         }
