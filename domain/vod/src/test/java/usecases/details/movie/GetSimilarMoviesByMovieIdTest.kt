@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class GetSimilarMoviesByMovieIdTest(){
+class GetSimilarMoviesByMovieIdTest{
     private lateinit var movieRepository: MovieRepository
     private lateinit var getSimilarMoviesByMovieId: GetSimilarMoviesByMovieId
 
