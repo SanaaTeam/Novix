@@ -1,36 +1,26 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.sanaa.presentation.base.BaseViewModel
 import entity.Genre
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import usecase.search.MediaFilters
 
-class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
+class FilterViewModel(
+    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<FilterUiState>(FilterUiState(), dispatcher),
+    FilterBottomSheetInteractionsListener {
 
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
-
-    init {
-        fetchGenres()
-    }
-
-    private fun fetchGenres() {
-        viewModelScope.launch {
-            val genresFromApi = Genre.entries
-            _uiState.update { currentState ->
-                currentState.copy(allGenres = genresFromApi, isLoading = false)
-            }
-        }
-    }
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
         _uiState.update {
@@ -76,24 +66,22 @@ class FilterViewModel() : ViewModel(), FilterBottomSheetInteractionsListener {
     }
 
     override fun onApplyClicked() {
-        viewModelScope.launch {
-            val currentState = _uiState.value
-            val mediaFilters = MediaFilters(
-                startYear = currentState.yearRange.start.toInt(),
-                endYear = currentState.yearRange.endInclusive.toInt(),
-                genres = currentState.selectedGenres.toList(),
-                imdbRating = currentState.imdbRating.toFloat()
-            )
+        tryToExecute(
+            callee = {
+                val currentState = _uiState.value
+                val mediaFilters = MediaFilters(
+                    startYear = currentState.yearRange.start.toInt(),
+                    endYear = currentState.yearRange.endInclusive.toInt(),
+                    genres = currentState.selectedGenres.toList(),
+                    imdbRating = currentState.imdbRating.toFloat()
+                )
 
-            if (currentState.isDefaultState)
-                _filterResult.emit(null)
-            else
-                _filterResult.emit(mediaFilters)
-        }
-    }
-
-    companion object {
-        val defaultState = MediaFilters()
+                if (currentState.isDefaultState)
+                    _filterResult.emit(null)
+                else
+                    _filterResult.emit(mediaFilters)
+            }
+        )
     }
 }
 

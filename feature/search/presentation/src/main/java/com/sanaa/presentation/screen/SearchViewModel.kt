@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import usecase.AddRecentViewedUseCase
 import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
@@ -28,7 +27,6 @@ class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val searchTvSeriesUseCase: SearchTvSeriesUseCase,
     private val searchActorsUseCase: SearchActorsUseCase,
-    private val addRecentViewedUseCase: AddRecentViewedUseCase,
     private val getRecentViewedUseCase: GetRecentViewedUseCase,
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
@@ -75,7 +73,7 @@ class SearchViewModel(
 
     }
 
-    private fun loadResentViewedImageList() {
+    fun loadResentViewedImageList() {
         updateState { it.copy(isLoading = true, error = null) }
 
         tryToExecute(
@@ -88,16 +86,12 @@ class SearchViewModel(
                     }
                 }
             },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
-            }
+            onError = ::onLoadError
         )
     }
 
 
-    private fun loadResentSearchTitleList() {
+    fun loadResentSearchTitleList() {
         updateState { it.copy(isLoading = true, error = null) }
 
         tryToExecute(
@@ -110,20 +104,16 @@ class SearchViewModel(
                     }
                 }
             },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
-            }
+            onError = ::onLoadError
         )
     }
 
 
     private fun loadMediaByTab(query: String) {
         when (state.value.selectedTabIndex) {
-            0 -> loadMovies(query)
-            1 -> loadTvShows(query)
-            2 -> loadActors(query)
+            MOVIE_INDEX -> loadMovies(query)
+            TV_SHOW_INDEX -> loadTvShows(query)
+            ACTOR_INDEX -> loadActors(query)
         }
     }
 
@@ -138,11 +128,7 @@ class SearchViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
-            }
+            onError = ::onLoadError
         )
     }
 
@@ -157,25 +143,13 @@ class SearchViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = { e ->
-                updateState {
-                    it.copy(isLoading = false, error = e.message ?: "Unknown error")
-                }
-            }
+            onError = ::onLoadError
         )
     }
 
-
-    override fun onCancelRecentSearchItemClicked() {
-        //     TODO("Not yet implemented")
-    }
-
-
     override fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
-        viewModelScope.launch {
-            loadMediaByTab(_searchQuery.value)
-        }
+        loadMediaByTab(_searchQuery.value)
     }
 
 
@@ -196,7 +170,7 @@ class SearchViewModel(
         tryToExecute(
             callee = { loadMoviesOperation(query) },
             onSuccess = ::onLoadMoviesSuccess,
-            onError = ::onLoadMoviesError
+            onError = ::onLoadError
         )
     }
 
@@ -215,18 +189,13 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, movies = movies) }
     }
 
-    private fun onLoadMoviesError(e: Exception) {
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
-    }
-
-
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
 
         tryToExecute(
             callee = { loadTvShowsOperation(query) },
             onSuccess = ::onLoadTvShowsSuccess,
-            onError = ::onLoadTvShowsError
+            onError = ::onLoadError
         )
     }
 
@@ -245,18 +214,13 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, tvShows = tvShows) }
     }
 
-    private fun onLoadTvShowsError(e: Exception) {
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
-    }
-
-
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
 
         tryToExecute(
             callee = { loadActorsOperation(query) },
             onSuccess = ::onLoadActorsSuccess,
-            onError = ::onLoadActorsError
+            onError = ::onLoadError
         )
     }
 
@@ -274,13 +238,13 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, actors = actors) }
     }
 
-    private fun onLoadActorsError(e: Exception) {
+    private fun onLoadError(e: Exception) {
         updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
     }
 
-
-    override fun onSaveIconClicked() {
+    companion object {
+        const val MOVIE_INDEX = 0
+        const val TV_SHOW_INDEX = 1
+        const val ACTOR_INDEX = 2
     }
-
-
 }

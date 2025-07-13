@@ -46,6 +46,7 @@ compileSdk = "35"
 minSdk = "26"
 targetSdk = "35"
 truth = "1.4.4"
+turbine = "1.2.1"
 versionCode = "1"
 versionName = "1.0"
 javaVersion = "11"
@@ -146,7 +147,7 @@ koin-logging = { module = "io.insert-koin:koin-logger-slf4j" }
 koin-core-viewmodel = { module = "io.insert-koin:koin-core-viewmodel" }
 koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation" }
 
-
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -38,9 +38,9 @@ dependencies {
     implementation(project(":design_system"))
     implementation(project(":domain:vod"))
     implementation(project(":image_viewer"))
-    implementation (libs.androidx.compose.material3.material3)
-    implementation (libs.androidx.material3.window.size.class1)
-    implementation (libs.androidx.material3.adaptive.navigation.suite)
+    implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
 
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -61,4 +61,18 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.mockk.v1140)
+    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.truth)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.turbine)
+    implementation(libs.kotlinx.datetime)
+
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
