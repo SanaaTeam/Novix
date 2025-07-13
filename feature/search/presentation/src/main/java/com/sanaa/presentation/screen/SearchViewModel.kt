@@ -81,7 +81,7 @@ class SearchViewModel(
                 }
                 .catch { e -> onDataLoadError(e as Exception) }
                 .collectLatest { viewed ->
-                    updateState { it.copy(resentViewedMedia = viewed) }
+                    updateState { it.copy(recentViewedMedia = viewed) }
                 }
         }
     }
@@ -92,7 +92,7 @@ class SearchViewModel(
                 .map { items -> items.map { RecentSearchUiModel(id = it.id, title = it.query) } }
                 .catch { e -> onDataLoadError(e as Exception) }
                 .collectLatest { queries ->
-                    updateState { it.copy(resentSearchQueries = queries) }
+                    updateState { it.copy(recentSearchQueries = queries) }
                 }
         }
     }

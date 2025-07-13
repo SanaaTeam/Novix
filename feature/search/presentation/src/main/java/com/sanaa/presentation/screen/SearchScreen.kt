@@ -124,8 +124,8 @@ fun SearchScreenContent(
             }
             AnimatedVisibility(uiState.searchQuery.isBlank()) {
                 SearchHistoryContent(
-                    recentSearches = uiState.resentSearchQueries,
-                    recentViewed = uiState.resentViewedMedia,
+                    recentSearches = uiState.recentSearchQueries,
+                    recentViewed = uiState.recentViewedMedia,
                     interactionsListener = searchListener,
                 )
             }
