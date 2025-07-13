@@ -4,17 +4,16 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.state.ActorUiModel
 import com.sanaa.presentation.state.MovieUiModel
-import com.sanaa.presentation.state.RecentSearchUiModel
-import com.sanaa.presentation.state.RecentViewedUiModel
 import com.sanaa.presentation.state.SearchScreenUiState
 import com.sanaa.presentation.state.TvShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import usecase.AddRecentViewedUseCase
 import usecase.ClearRecentViewedUseCase
@@ -26,8 +25,6 @@ import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
 import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
 
 class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
@@ -40,93 +37,67 @@ class SearchViewModel(
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     private val deleteSearchItem: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
+) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState()),
     SearchScreenInteractionsListener {
 
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery = _searchQuery.asStateFlow()
-
-    private val _filters = MutableStateFlow<MediaFilters?>(null)
-    val filters = _filters.asStateFlow()
-
     init {
-        loadResentSearchTitleList()
-        loadResentViewedImageList()
+        observeRecentViewedItems()
+        observeRecentSearchHistory()
+        observeSearchQueryChanges()
+    }
+
+    @OptIn(FlowPreview::class)
+    private fun observeSearchQueryChanges() {
         viewModelScope.launch {
-            //  loadMediaByTab(query = "")
-        }
-        viewModelScope.launch {
-            _searchQuery.debounce(500).distinctUntilChanged().collectLatest { query ->
-                if (query.isBlank()) {
-                    updateState {
-                        it.copy(
-                            movies = emptyList(),
-                            tvShows = emptyList(),
-                            actors = emptyList(),
-                            isLoading = false,
-                            error = null
-                        )
+            state.map { it.searchQuery }
+                .distinctUntilChanged()
+                .debounce(500L)
+                .collectLatest { query ->
+                    if (query.isBlank()) {
+                        clearSearchResults()
+                    } else {
+                        loadMediaByTab(query)
                     }
-                } else {
-                    loadMediaByTab(query)
                 }
-            }
         }
     }
 
-    override fun onRecentSearchItemClicked(query: String) {
-        updateState { it.copy(searchQuery = query) }
-        _searchQuery.value = query
-
-    }
-
-    private fun loadResentViewedImageList() {
-        updateState { it.copy(isLoading = true, error = null) }
-        tryToExecute(callee = {
-            getRecentViewedUseCase.execute().collectLatest { recentViewed ->
-                updateState {
-                    it.copy(
-                        resentViewedImageList = recentViewed.map {
-                            RecentViewedUiModel(
-                                id = it.id,
-                                imageUrl = it.posterImageUrl,
-                                mediaType = it.mediaType.name,
-                                isSaved = it.isSaved
-                            )
-                        })
+    private fun observeRecentViewedItems() {
+        viewModelScope.launch {
+            getRecentViewedUseCase.execute()
+                .map { items -> items.map { it.posterImageUrl } }
+                .catch { e -> onDataLoadError(e as Exception) }
+                .collectLatest { urls ->
+                    updateState { it.copy(recentViewedImageUrls = urls) }
                 }
-            }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
+        }
     }
 
-
-    private fun loadResentSearchTitleList() {
-        updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(callee = {
-            getSearchHistoryUseCase.execute().collectLatest { searchHistory ->
-                updateState {
-                    it.copy(
-                        resentSearchTitleList = searchHistory.map {
-                            RecentSearchUiModel(
-                                id = it.id, title = it.query
-                            )
-                        })
+    private fun observeRecentSearchHistory() {
+        viewModelScope.launch {
+            getSearchHistoryUseCase.execute()
+                .map { items -> items.map { it.query } }
+                .catch { e -> onDataLoadError(e as Exception) }
+                .collectLatest { queries ->
+                    updateState { it.copy(recentSearchQueries = queries) }
                 }
-            }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
+        }
     }
 
+    private fun clearSearchResults() {
+        updateState {
+            it.copy(
+                movies = emptyList(),
+                tvShows = emptyList(),
+                actors = emptyList(),
+                isLoading = false,
+                error = null
+            )
+        }
+    }
 
     private fun loadMediaByTab(query: String) {
+        if (query.isBlank()) return
         when (state.value.selectedTabIndex) {
             0 -> loadMovies(query)
             1 -> loadTvShows(query)
@@ -134,99 +105,14 @@ class SearchViewModel(
         }
     }
 
-
-    override fun onClearRecentViewClicked() {
-        updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(callee = {
-            clearRecentViewedUseCase.execute()
-        }, onSuccess = {
-            updateState { it.copy(isLoading = false) }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
-    }
-
-
-    override fun onClearRecentSearchClicked() {
-        updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(callee = {
-            clearSearchHistoryUseCase.execute()
-        }, onSuccess = {
-            updateState { it.copy(isLoading = false) }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
-    }
-
-
-    override fun onCancelRecentSearchItemClicked(id: Int) {
-        updateState { it.copy(isLoading = true, error = null) }
-        tryToExecute(callee = {
-            deleteSearchItem.execute(id)
-        }, onSuccess = {
-            updateState { it.copy(isLoading = false) }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
-    }
-
-
-    override fun onTabSelected(index: Int) {
-        updateState { it.copy(selectedTabIndex = index) }
-        viewModelScope.launch {
-            loadMediaByTab(_searchQuery.value)
-        }
-    }
-
-
-    override fun onSearchQueryChanged(query: String) {
-        _searchQuery.value = query
-        updateState { it.copy(searchQuery = query) }
-    }
-
-    override fun onFilterApplied(filters: MediaFilters?) {
-        updateState { it.copy(filters = filters) }
-        //     searchMediaByTab()
-        loadMediaByTab(_searchQuery.value)
-    }
-
-    override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
-        tryToExecute(
-            callee = {
-                addRecentViewedUseCase.execute(
-                    RecentViewedMedia(
-                        id = viewed.id,
-                        mediaType = MediaType.MOVIE,
-                        posterImageUrl = viewed.imageUrl,
-                        isSaved = viewed.isSaved
-                    )
-                )
-            })
-    }
-
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(
-            callee = { loadMoviesOperation(query) },
-            onSuccess = ::onLoadMoviesSuccess,
-            onError = ::onLoadMoviesError
-        )
+        tryToExecute({ loadMoviesOperation(query) }, ::onLoadMoviesSuccess, ::onDataLoadError)
     }
 
     private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
         return searchMoviesUseCase.execute(query, filters = state.value.filters).map {
-            MovieUiModel(
-                id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = ""
-            )
+            MovieUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
         }
     }
 
@@ -234,26 +120,14 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, movies = movies) }
     }
 
-    private fun onLoadMoviesError(e: Exception) {
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
-    }
-
-
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(
-            callee = { loadTvShowsOperation(query) },
-            onSuccess = ::onLoadTvShowsSuccess,
-            onError = ::onLoadTvShowsError
-        )
+        tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
     }
 
     private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
         return searchTvSeriesUseCase.execute(query, filters = state.value.filters).map {
-            TvShowUiModel(
-                id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = ""
-            )
+            TvShowUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
         }
     }
 
@@ -261,26 +135,14 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, tvShows = tvShows) }
     }
 
-    private fun onLoadTvShowsError(e: Exception) {
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
-    }
-
-
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null) }
-
-        tryToExecute(
-            callee = { loadActorsOperation(query) },
-            onSuccess = ::onLoadActorsSuccess,
-            onError = ::onLoadActorsError
-        )
+        tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
     }
 
     private suspend fun loadActorsOperation(query: String): List<ActorUiModel> {
         return searchActorsUseCase.execute(query).map {
-            ActorUiModel(
-                id = it.id, name = it.name, imageUrl = it.profileImageUrl
-            )
+            ActorUiModel(id = it.id, name = it.name, imageUrl = it.profileImageUrl)
         }
     }
 
@@ -288,11 +150,49 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, actors = actors) }
     }
 
-    private fun onLoadActorsError(e: Exception) {
+    private fun onDataLoadError(e: Exception) {
         updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
     }
 
 
-    override fun onSaveIconClicked() {
+    override fun onSearchQueryChanged(query: String) {
+        updateState { it.copy(searchQuery = query) }
+    }
+
+    override fun onTabSelected(index: Int) {
+        updateState { it.copy(selectedTabIndex = index) }
+        if (state.value.searchQuery.isNotBlank()) {
+            loadMediaByTab(state.value.searchQuery)
+        }
+    }
+
+    override fun onFilterApplied(filters: MediaFilters?) {
+        updateState { it.copy(filters = filters) }
+
+        val currentQuery = state.value.searchQuery
+        if (currentQuery.isNotBlank()) {
+            loadMediaByTab(currentQuery)
+        }
+    }
+
+    override fun onClearRecentViewClicked() {
+        tryToExecute(clearRecentViewedUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
+    }
+
+    override fun onClearRecentSearchClicked() {
+        tryToExecute(
+            clearSearchHistoryUseCase::execute,
+            onSuccess = {},
+            onError = ::onDataLoadError
+        )
+    }
+
+    override fun onRecentSearchItemClicked(searchText: String) { /* Not yet implemented */
+    }
+
+    override fun onCancelRecentSearchItemClicked(searchText: String) { /* Not yet implemented */
+    }
+
+    override fun onSaveIconClicked() { /* Not yet implemented */
     }
 }

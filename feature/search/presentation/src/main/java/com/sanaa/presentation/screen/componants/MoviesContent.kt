@@ -69,5 +69,4 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
             )
         }
     }
-
 }

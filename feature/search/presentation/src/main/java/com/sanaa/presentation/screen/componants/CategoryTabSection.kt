@@ -9,7 +9,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.presentation.screen.CategoryTab
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.state.SearchScreenUiState
 
