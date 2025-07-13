@@ -1,4 +1,4 @@
-package repository
+package search.repository
 
 import usecase.search.MediaFilters
 import usecase.search.MediaType

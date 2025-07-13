@@ -1,4 +1,4 @@
-package usecase
+package search.usecase
 
 import repository.SearchHistoryRepository
 

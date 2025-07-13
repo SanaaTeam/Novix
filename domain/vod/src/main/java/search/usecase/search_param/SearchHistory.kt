@@ -1,4 +1,4 @@
-package usecase.search
+package search.usecase.search_param
 
 import kotlinx.datetime.LocalDateTime
 

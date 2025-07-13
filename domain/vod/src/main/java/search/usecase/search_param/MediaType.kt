@@ -1,4 +1,4 @@
-package usecase.search
+package search.usecase.search_param
 
 enum class MediaType {
     MOVIE,

@@ -1,4 +1,4 @@
-package usecase.search
+package search.usecase.search_param
 
 data class RecentViewedMedia(
     val id: Int,

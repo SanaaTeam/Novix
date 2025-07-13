@@ -1,4 +1,4 @@
-package repository
+package search.repository
 
 import kotlinx.coroutines.flow.Flow
 import usecase.search.RecentViewedMedia
