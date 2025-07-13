@@ -36,6 +36,20 @@ class GetSimilarMoviesByMovieIdTest(){
         assertThat(result).isEqualTo(similarMovies)
     }
 
+    @Test
+    fun `execute() should return empty list when there are no similar movies`() = runTest {
+        // Given
+        val movieId = 2
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } returns emptyList()
+
+        // When
+        val result = getSimilarMoviesByMovieId.execute(movieId)
+
+        // Then
+        assertThat(result).isEmpty()
+    }
+
+
 
     companion object {
         private val testMovie1 = Movie(
