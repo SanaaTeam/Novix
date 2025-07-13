@@ -2,10 +2,12 @@ package com.sanaa.presentation.screen
 
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
-import com.sanaa.presentation.screen.state.ActorUiModel
-import com.sanaa.presentation.screen.state.MovieUiModel
-import com.sanaa.presentation.screen.state.SearchScreenUiState
-import com.sanaa.presentation.screen.state.TvShowUiModel
+import com.sanaa.presentation.state.ActorUiModel
+import com.sanaa.presentation.state.MovieUiModel
+import com.sanaa.presentation.state.RecentSearchUiModel
+import com.sanaa.presentation.state.RecentViewedUiModel
+import com.sanaa.presentation.state.SearchScreenUiState
+import com.sanaa.presentation.state.TvShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -25,6 +27,8 @@ import usecase.SearchActorsUseCase
 import usecase.SearchMoviesUseCase
 import usecase.SearchTvSeriesUseCase
 import usecase.search.MediaFilters
+import usecase.search.MediaType
+import usecase.search.RecentViewedMedia
 
 class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,
@@ -35,7 +39,7 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
-    private val removeSearchHistoryUseCase: RemoveSearchHistoryUseCase,
+    private val deleteSearchItem: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState()),
     SearchScreenInteractionsListener {
@@ -65,10 +69,19 @@ class SearchViewModel(
     private fun observeRecentViewedItems() {
         viewModelScope.launch {
             getRecentViewedUseCase.execute()
-                .map { items -> items.map { it.posterImageUrl } }
+                .map { items ->
+                    items.map {
+                        RecentViewedUiModel(
+                            id = it.id,
+                            imageUrl = it.posterImageUrl,
+                            mediaType = it.mediaType.name,
+                            isSaved = it.isSaved
+                        )
+                    }
+                }
                 .catch { e -> onDataLoadError(e as Exception) }
-                .collectLatest { urls ->
-                    updateState { it.copy(recentViewedImageUrls = urls) }
+                .collectLatest { viewed ->
+                    updateState { it.copy(recentViewedMedia = viewed) }
                 }
         }
     }
@@ -76,7 +89,7 @@ class SearchViewModel(
     private fun observeRecentSearchHistory() {
         viewModelScope.launch {
             getSearchHistoryUseCase.execute()
-                .map { items -> items.map { it.query } }
+                .map { items -> items.map { RecentSearchUiModel(id = it.id, title = it.query) } }
                 .catch { e -> onDataLoadError(e as Exception) }
                 .collectLatest { queries ->
                     updateState { it.copy(recentSearchQueries = queries) }
@@ -175,15 +188,53 @@ class SearchViewModel(
         }
     }
 
+    override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
+        tryToExecute(
+            callee = {
+                addRecentViewedUseCase.execute(
+                    RecentViewedMedia(
+                        id = viewed.id,
+                        posterImageUrl = viewed.imageUrl,
+                        mediaType = MediaType.valueOf(viewed.mediaType),
+                        isSaved = viewed.isSaved
+                    )
+                )
+            },
+            onSuccess = {},
+            onError = {}
+        )
+    }
+
     override fun onClearRecentViewClicked() {
         tryToExecute(clearRecentViewedUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
     }
 
     override fun onClearRecentSearchClicked() {
-        tryToExecute(clearSearchHistoryUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
+        tryToExecute(
+            clearSearchHistoryUseCase::execute,
+            onSuccess = {},
+            onError = ::onDataLoadError
+        )
     }
 
-    override fun onRecentSearchItemClicked(searchText: String) { /* Not yet implemented */ }
-    override fun onCancelRecentSearchItemClicked(searchText: String) { /* Not yet implemented */ }
-    override fun onSaveIconClicked() { /* Not yet implemented */ }
+    override fun onDeleteRecentSearchItem(id: Int) {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(callee = {
+            deleteSearchItem.execute(id)
+        }, onSuccess = {
+            updateState { it.copy(isLoading = false) }
+        }, onError = { e ->
+            updateState {
+                it.copy(isLoading = false, error = e.message ?: "Unknown error")
+            }
+        })
+    }
+
+    override fun onRecentSearchItemClicked(query: String) {
+        updateState { it.copy(searchQuery = query) }
+
+    }
+
+    override fun onSaveIconClicked() { /* Not yet implemented */
+    }
 }

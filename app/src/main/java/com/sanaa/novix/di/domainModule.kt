@@ -21,4 +21,5 @@ val domainModule = module {
     factory { ClearSearchHistoryUseCase(get()) }
     factory { RemoveSearchHistoryUseCase(get()) }
     factory { AddRecentViewedUseCase(get()) }
+    factory { RemoveSearchHistoryUseCase(get()) }
 }
