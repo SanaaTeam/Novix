@@ -1,6 +1,9 @@
 package com.sanaa.presentation.filter_bottomsheet
 
 import com.sanaa.presentation.base.BaseViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -23,65 +26,43 @@ class FilterViewModel(
     val filterResult = _filterResult.asSharedFlow()
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        _uiState.update {
-            it.copy(
-                yearRange = newRange,
-                isDefaultState = false,
-            )
-        }
+        _uiState.update { it.copy(yearRange = newRange, isDefaultState = false) }
     }
 
     override fun onGenreSelected(genre: Genre) {
         _uiState.update { currentState ->
-            val newSelectedGenres = currentState.selectedGenres.toMutableSet()
-            if (newSelectedGenres.contains(genre)) {
-                newSelectedGenres.remove(genre)
-            } else {
-                newSelectedGenres.add(genre)
+            val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
+                if (contains(genre)) remove(genre) else add(genre)
             }
-            currentState.copy(
-                selectedGenres = newSelectedGenres,
-                isDefaultState = false
-            )
+            currentState.copy(selectedGenres = newSelectedGenres, isDefaultState = false)
         }
     }
 
     override fun onRatingChanged(newRating: Int) {
-        _uiState.update {
-            it.copy(
-                imdbRating = newRating,
-                isDefaultState = false
-            )
-        }
+        _uiState.update { it.copy(imdbRating = newRating, isDefaultState = false) }
     }
 
     override fun onClearFilters() {
-        _uiState.update { currentState ->
-            FilterUiState(
-                allGenres = currentState.allGenres,
-                isLoading = false,
-                isDefaultState = true,
-            )
+        _uiState.update {
+            FilterUiState(allGenres = it.allGenres, isLoading = false, isDefaultState = true)
         }
     }
 
     override fun onApplyClicked() {
-        tryToExecute(
-            callee = {
-                val currentState = _uiState.value
-                val mediaFilters = MediaFilters(
+        SearchViewModel {
+            val currentState = _uiState.value
+            val mediaFilters = if (currentState.isDefaultState) {
+                null
+            } else {
+                MediaFilters(
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),
                     genres = currentState.selectedGenres.toList(),
-                    imdbRating = currentState.imdbRating.toFloat()
+                    imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
                 )
-
-                if (currentState.isDefaultState)
-                    _filterResult.emit(null)
-                else
-                    _filterResult.emit(mediaFilters)
             }
-        )
+            _filterResult.emit(mediaFilters)
+        }
+
     }
 }
-

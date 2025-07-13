@@ -6,8 +6,8 @@ import usecase.search.MediaFilters
 data class SearchScreenUiState(
     val searchQuery: String = "",
     val selectedTabIndex: Int = 0,
-    val resentViewedImageList: List<String> = emptyList(),
-    val resentSearchTitleList: List<String> = emptyList(),
+    val recentViewedMedia: List<RecentViewedUiModel> = emptyList(),
+    val recentSearchQueries: List<RecentSearchUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
@@ -36,3 +36,19 @@ data class TvShowUiModel(
     val rating: String,
 )
 
+data class RecentSearchUiModel(
+    val id: Int = 0,
+    val title: String = "",
+)
+
+data class RecentViewedUiModel(
+    val id: Int = 0,
+    val imageUrl: String = "",
+    val mediaType: String = "",
+    val isSaved: Boolean = false,
+)
+
+enum class MediaTypeUi {
+    MOVIE,
+    TV_SERIES,
+}

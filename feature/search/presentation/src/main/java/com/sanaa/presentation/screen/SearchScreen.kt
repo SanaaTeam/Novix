@@ -1,9 +1,8 @@
 package com.sanaa.presentation.screen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,15 +11,13 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
@@ -30,11 +27,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent
+import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
+import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
+import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.state.SearchScreenUiState
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.MediaFilters
@@ -45,11 +44,21 @@ fun SearchScreen(
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
+    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        filterViewModel.filterResult.collect { filters: MediaFilters? ->
+            searchViewModel.onFilterApplied(filters)
+        }
+    }
+
     NovixTheme(isSystemInDarkTheme()) {
+
         SearchScreenContent(
             uiState = uiState,
-            filterViewModel = filterViewModel,
-            listener = searchViewModel,
+            filterUiState = filterUiState,
+            searchListener = searchViewModel,
+            filterListener = filterViewModel,
         )
     }
 }
@@ -58,19 +67,17 @@ fun SearchScreen(
 @Composable
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
-    filterViewModel: FilterViewModel,
-    listener: SearchScreenInteractionsListener,
+    filterUiState: FilterUiState,
+    searchListener: SearchScreenInteractionsListener,
+    filterListener: FilterBottomSheetInteractionsListener,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by remember { mutableStateOf(false) }
+    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collectLatest { filters: MediaFilters? ->
-            listener.onFilterApplied(filters)
-
-            println("New search filters applied: $filters")
+    val dismissSheet: () -> Unit = {
+        scope.launch { sheetState.hide() }.invokeOnCompletion {
+            if (!sheetState.isVisible) showBottomSheet = false
         }
     }
 
@@ -82,107 +89,63 @@ fun SearchScreenContent(
             )
         },
         bottomBar = {
-            var selectedIndex by remember { mutableIntStateOf(1) }
             NovixNavBar(modifier = Modifier.navigationBarsPadding()) {
-                NovixNavBarItem(
-                    modifier = Modifier.weight(1f),
-                    isSelected = selectedIndex == 0,
-                    onClick = { selectedIndex = 0 },
-                    iconRes = R.drawable.icon_home,
-                    selectedIconRes = R.drawable.icon_home_selected,
+                val navItems = listOf(
+                    R.drawable.icon_home to R.drawable.icon_home_selected,
+                    R.drawable.icon_search to R.drawable.icon_search_selected,
+                    R.drawable.icon_category to R.drawable.icon_category_selected,
+                    R.drawable.icon_save to R.drawable.icon_save_selected,
+                    R.drawable.icon_account to R.drawable.icon_account_selected,
                 )
-                NovixNavBarItem(
-                    modifier = Modifier.weight(1f),
-                    isSelected = selectedIndex == 1,
-                    onClick = { selectedIndex = 1 },
-                    iconRes = R.drawable.icon_search,
-                    selectedIconRes = R.drawable.icon_search_selected
-                )
-                NovixNavBarItem(
-                    modifier = Modifier.weight(1f),
-                    isSelected = selectedIndex == 2,
-                    onClick = { selectedIndex = 2 },
-                    iconRes = R.drawable.icon_category,
-                    selectedIconRes = R.drawable.icon_category_selected
-                )
-                NovixNavBarItem(
-                    modifier = Modifier.weight(1f),
-                    isSelected = selectedIndex == 3,
-                    onClick = { selectedIndex = 3 },
-                    iconRes = R.drawable.icon_save,
-                    selectedIconRes = R.drawable.icon_save_selected
-                )
-                NovixNavBarItem(
-                    modifier = Modifier.weight(1f),
-                    isSelected = selectedIndex == 4,
-                    onClick = { selectedIndex = 4 },
-                    iconRes = R.drawable.icon_account,
-                    selectedIconRes = R.drawable.icon_account_selected
-                )
+                navItems.forEachIndexed { index, (icon, selectedIcon) ->
+                    NovixNavBarItem(
+                        modifier = Modifier.weight(1f),
+                        isSelected = index == 1,
+                        onClick = { /* TODO: Handle app-wide navigation */ },
+                        iconRes = icon,
+                        selectedIconRes = selectedIcon,
+                    )
+                }
             }
         }
-    ) { innerPadding ->
+    ) { _ ->
         Column {
             SearchSection(
                 text = uiState.searchQuery,
-                onTextChange = { listener.onSearchQueryChanged(it) },
+                onTextChange = searchListener::onSearchQueryChanged,
                 onFilterClicked = { showBottomSheet = true }
             )
-            Spacer(Modifier.height(12.dp))
 
-            CategoryTabSection(
-                selectedTabIndex = uiState.selectedTabIndex,
-                onTabSelected = { listener.onTabSelected(it) },
-                uiState = uiState
-            )
+            AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
+                CategoryTabSection(
+                    selectedTabIndex = uiState.selectedTabIndex,
+                    uiState = uiState,
+                    interactionsListener = searchListener,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+            }
+            AnimatedVisibility(uiState.searchQuery.isBlank()) {
+                SearchHistoryContent(
+                    recentSearches = uiState.recentSearchQueries,
+                    recentViewed = uiState.recentViewedMedia,
+                    interactionsListener = searchListener,
+                )
+            }
         }
     }
 
     if (showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.statusBarsPadding(),
-            onDismissRequest = { showBottomSheet = false },
+            onDismissRequest = dismissSheet,
             sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(
                 uiState = filterUiState,
-                onYearRangeChanged = filterViewModel::onYearRangeChanged,
-                onGenreSelected = filterViewModel::onGenreSelected,
-                onRatingChanged = filterViewModel::onRatingChanged,
-                onClearClicked = filterViewModel::onClearFilters,
-                onApplyClicked = {
-                    filterViewModel.onApplyClicked()
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                },
-                onCloseClicked = {
-                    scope.launch { sheetState.hide() }.invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            showBottomSheet = false
-                        }
-                    }
-                }
+                listener = filterListener,
+                onDismissRequest = dismissSheet
             )
         }
-    }
-}
-
-@Preview(showBackground = true, locale = "en")
-@Composable
-private fun SearchScreenPreviewLight() {
-    NovixTheme(false) {
-        //   SearchScreenContent()
-    }
-}
-
-@Preview(showBackground = true, locale = "en")
-@Composable
-private fun SearchScreenPreviewDark() {
-    NovixTheme(true) {
-        //   SearchScreenContent()
     }
 }

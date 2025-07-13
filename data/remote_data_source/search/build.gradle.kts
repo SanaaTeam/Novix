@@ -44,7 +44,6 @@ android {
 }
 
 dependencies {
-
     implementation(projects.envConfig)
 
     implementation(projects.data.repositories.search)
@@ -54,11 +53,9 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
-    testImplementation(libs.mockk)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation(libs.mockk.v1140)
-    testImplementation(libs.kotlinx.coroutines.test.v173)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.truth)
     testImplementation(libs.ktor.client.mock)
     testImplementation(kotlin("test"))
