@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 
@@ -41,7 +42,7 @@ fun CategoryTabSection(
                 WavyProgressIndicator()
             }
         } else  if (uiState.noInternetConnection) {
-            NetworkDisconnectionContact (onRetryClick = {})
+            NetworkDisconnectionContact(onRetryClick = {})
             return
         } else when (selectedTabIndex) {
             0 -> {
