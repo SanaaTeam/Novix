@@ -42,8 +42,12 @@ fun CategoryTabSection(
                 WavyProgressIndicator()
             }
         } else  if (uiState.noInternetConnection) {
-            NetworkDisconnectionContact(onRetryClick = {})
-            return
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                NetworkDisconnectionContact(onRetryClick = {})
+            }
         } else when (selectedTabIndex) {
             0 -> {
                 if (uiState.movies.isEmpty()) NoSearchResultState()
@@ -51,6 +55,7 @@ fun CategoryTabSection(
                     interactionsListener.onSearchResultMediaClicked(it)
                 })
             }
+
 
             1 -> {
                 if (uiState.movies.isEmpty()) NoSearchResultState()
