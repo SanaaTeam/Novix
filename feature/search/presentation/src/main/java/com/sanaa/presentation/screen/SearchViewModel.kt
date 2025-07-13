@@ -2,12 +2,12 @@ package com.sanaa.presentation.screen
 
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
-import com.sanaa.presentation.state.ActorUiModel
-import com.sanaa.presentation.state.MovieUiModel
-import com.sanaa.presentation.state.RecentSearchUiModel
-import com.sanaa.presentation.state.RecentViewedUiModel
-import com.sanaa.presentation.state.SearchScreenUiState
-import com.sanaa.presentation.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.ActorUiModel
+import com.sanaa.presentation.screen.state.MovieUiModel
+import com.sanaa.presentation.screen.state.RecentSearchUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -235,6 +235,5 @@ class SearchViewModel(
 
     }
 
-    override fun onSaveIconClicked() { /* Not yet implemented */
-    }
+    override fun onSaveIconClicked() { /* Not yet implemented */ }
 }

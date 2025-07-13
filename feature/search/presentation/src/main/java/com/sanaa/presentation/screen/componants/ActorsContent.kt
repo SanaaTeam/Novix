@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
-import com.sanaa.presentation.state.ActorUiModel
+import com.sanaa.presentation.screen.state.ActorUiModel
 
 @Composable
 fun ActorsContent(
