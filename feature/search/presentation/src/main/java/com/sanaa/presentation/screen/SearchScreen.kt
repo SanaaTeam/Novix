@@ -2,9 +2,7 @@ package com.sanaa.presentation.screen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,7 +32,6 @@ import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
-import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import com.sanaa.presentation.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -119,30 +115,20 @@ fun SearchScreenContent(
                 onFilterClicked = { showBottomSheet = true }
             )
 
-            if (uiState.isLoading) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    WavyProgressIndicator()
-                }
-            } else {
-                AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
-                    CategoryTabSection(
-                        selectedTabIndex = uiState.selectedTabIndex,
-                        uiState = uiState,
-                        interactionsListener = searchListener,
-                    )
-                }
-                AnimatedVisibility(uiState.searchQuery.isBlank()) {
-                    SearchHistoryContent(
-                        recentSearches = uiState.resentSearchTitleList,
-                        recentViewed = uiState.resentViewedImageList,
-                        interactionsListener = searchListener,
-                    )
-                }
+            AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
+                CategoryTabSection(
+                    selectedTabIndex = uiState.selectedTabIndex,
+                    uiState = uiState,
+                    interactionsListener = searchListener,
+                )
             }
-
+            AnimatedVisibility(uiState.searchQuery.isBlank()) {
+                SearchHistoryContent(
+                    recentSearches = uiState.resentSearchTitleList,
+                    recentViewed = uiState.resentViewedImageList,
+                    interactionsListener = searchListener,
+                )
+            }
         }
     }
 

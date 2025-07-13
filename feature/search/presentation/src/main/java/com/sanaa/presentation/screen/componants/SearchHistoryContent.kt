@@ -44,9 +44,7 @@ fun SearchHistoryContent(
         modifier = Modifier.fillMaxSize()
     ) {
         AnimatedVisibility(
-            recentSearches.isEmpty() && recentViewed.isEmpty(),
-            enter = fadeIn(),
-            exit = fadeOut()
+            recentSearches.isEmpty() && recentViewed.isEmpty(), enter = fadeIn(), exit = fadeOut()
         ) {
             Box(
                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
@@ -58,7 +56,11 @@ fun SearchHistoryContent(
                     )
             }
         }
-        AnimatedVisibility(recentSearches.isNotEmpty() || recentViewed.isNotEmpty()) {
+        AnimatedVisibility(
+            recentSearches.isNotEmpty() || recentViewed.isNotEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             LazyColumn(
                 modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
             ) {
@@ -75,9 +77,7 @@ fun SearchHistoryContent(
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                bottom = 24.dp
+                                start = 16.dp, end = 16.dp, bottom = 24.dp
                             )
                         ) {
                             itemsIndexed(recentViewed) { _, item ->
@@ -115,7 +115,8 @@ fun SearchHistoryContent(
                         )
                     }
 
-                    itemsIndexed(recentSearches) { index, item ->
+                    itemsIndexed(
+                        recentSearches, key = { _, item -> item.id }) { index, item ->
                         RecentSearchItem(
                             text = item.title,
                             onDeleteClicked = {
@@ -124,7 +125,7 @@ fun SearchHistoryContent(
                             onRecentSearchItemClicked = {
                                 interactionsListener.onRecentSearchItemClicked(item.title)
                             },
-                            modifier = Modifier
+                            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
                         )
                         if (index != recentSearches.lastIndex) {
                             Box(
