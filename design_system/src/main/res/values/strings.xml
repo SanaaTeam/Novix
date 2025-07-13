@@ -20,4 +20,5 @@
     <string name="filter">Filter</string>
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
+    <string name="search_hint">Search…</string>
 </resources>

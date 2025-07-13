@@ -19,10 +19,12 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
-import com.sanaa.presentation.state.MovieUiModel
+import com.sanaa.presentation.screen.state.MediaTypeUi
+import com.sanaa.presentation.screen.state.MovieUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 @Composable
-fun MoviesContent(movies: List<MovieUiModel>) {
+fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {
     val isDarkTheme = isSystemInDarkTheme()
         val placeholderResId = if (isDarkTheme) {
             R.drawable.movie_placeholder_dark
@@ -41,22 +43,29 @@ fun MoviesContent(movies: List<MovieUiModel>) {
 
         items(movies) { movie ->
             Log.d("MoviesContent", "Movie: $movie")
-            MovieSeriesPosterCard(
-                boastImage = {
-                    RemoteCensoredImageViewer(
+            MovieSeriesPosterCard(boastImage = {
+                RemoteCensoredImageViewer(
+                    imageUrl = movie.imageUrl,
+                    modifier = Modifier.fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                    blurRadius = 150,
+                    sfwThreshold = 0.75f,
+                    nsfwThreshold = 0.15f,
+                    placeholder = painterResource(placeholderResId),
+                    error = painterResource(placeholderResId),
+                )
+            }, topLeftContent = {
+                SaveIconChip(onClick = {})
+            }, onCardClick = {
+                onMovieClick(
+                    RecentViewedUiModel(
+                        id = movie.id,
                         imageUrl = movie.imageUrl,
-                        modifier = Modifier.fillMaxWidth(),
-                        contentScale = ContentScale.Crop,
-                        blurRadius = 150,
-                        sfwThreshold = 0.75f,
-                        nsfwThreshold = 0.15f,
-                        placeholder = painterResource(placeholderResId),
-                        error = painterResource(placeholderResId),
+                        mediaType = MediaTypeUi.MOVIE.name
                     )
-                },
-                topLeftContent = {
-                    SaveIconChip(onClick = {})
-                }
+                )
+            }
+
             )
         }
     }

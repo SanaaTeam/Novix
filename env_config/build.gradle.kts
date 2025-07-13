@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.mockk.v1140)
+    testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
 }

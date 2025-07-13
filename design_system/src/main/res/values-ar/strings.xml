@@ -20,4 +20,5 @@
     <string name="filter">تصفية</string>
     <string name="apply">تطبيق</string>
     <string name="cancel">إلغاء</string>
+    <string name="search_hint">بحث…</string>
 </resources>

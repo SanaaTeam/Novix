@@ -48,6 +48,13 @@ fun ActorCard(
         Box(
             modifier = Modifier
                 .size(78.dp)
+                .clip(
+                    RoundedCornerShape(
+                        topEnd = 12.dp,
+                        bottomStart = 12.dp,
+                        topStart = 12.dp,
+                    )
+                )
                 .background(Theme.colors.surface)
                 .border(
                     width = 1.dp,
@@ -58,14 +65,7 @@ fun ActorCard(
                         topStart = 12.dp,
                     )
                 )
-                .zIndex(10f)
-                .clip(
-                    RoundedCornerShape(
-                        topEnd = 12.dp,
-                        bottomStart = 12.dp,
-                        topStart = 12.dp,
-                    )
-                ),
+                .zIndex(10f),
             contentAlignment = Alignment.Center
         ) {
 
@@ -94,7 +94,7 @@ fun ActorCard(
                 .background(
                     color = Theme.colors.surface,
                     shape = RoundedCornerShape(
-                        topEnd = 12.dp, bottomEnd = 12.dp
+                        topEnd = 12.dp, bottomEnd = 12.dp, bottomStart = 12.dp
                     )
                 )
                 .border(

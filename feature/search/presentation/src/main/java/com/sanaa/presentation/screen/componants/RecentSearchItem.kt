@@ -20,13 +20,14 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun RecentSearchItem(
-    text: String ,
+    text: String,
+    modifier: Modifier = Modifier,
     onDeleteClicked: () -> Unit = {},
-    onRecentSearchItemClicked: () -> Unit = {}
-) {
+    onRecentSearchItemClicked: () -> Unit = {},
 
+    ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp)
             .fillMaxWidth(),

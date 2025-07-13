@@ -7,21 +7,19 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val searchModule = module {
-    viewModel { FilterViewModel() }
+    viewModel { FilterViewModel(dispatcher = Dispatchers.IO) }
     viewModel {
         SearchViewModel(
             get(),
             get(),
             get(),
-
             get(),
             get(),
             get(),
             get(),
             get(),
-
-            dispatcher = Dispatchers.IO
-
+            get(),
+            dispatcher = Dispatchers.IO,
         )
     }
 }
