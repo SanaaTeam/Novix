@@ -5,12 +5,14 @@ import details.repository.MovieRepository
 import details.usecase.movie.GetSimilarMoviesByMovieId
 import entity.Genre
 import entity.Movie
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class GetSimilarMoviesByMovieIdTest(){
     private lateinit var movieRepository: MovieRepository
@@ -47,6 +49,17 @@ class GetSimilarMoviesByMovieIdTest(){
 
         // Then
         assertThat(result).isEmpty()
+    }
+    @Test
+    fun `execute() should throw exception when repository fails`() = runTest {
+        // Given
+        val movieId = 1
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } throws RetrievingDataFailureException("Failed to retrieve similar movies")
+
+        // When / Then
+        assertThrows<RetrievingDataFailureException> {
+            getSimilarMoviesByMovieId.execute(movieId)
+        }
     }
 
 
