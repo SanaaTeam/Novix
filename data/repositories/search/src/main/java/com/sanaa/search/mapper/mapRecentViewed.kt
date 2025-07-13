@@ -1,8 +1,8 @@
 package com.sanaa.search.mapper
 
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
 
 fun RecentViewedMedia.toDto(time: Long = System.currentTimeMillis()): RecentViewedLocalDto {
     return RecentViewedLocalDto(

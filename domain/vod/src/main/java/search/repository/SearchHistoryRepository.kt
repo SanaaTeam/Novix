@@ -1,8 +1,8 @@
 package search.repository
 
 import kotlinx.coroutines.flow.Flow
-import usecase.search.RecentViewedMedia
-import usecase.search.SearchHistory
+import search.usecase.search_param.RecentViewedMedia
+import search.usecase.search_param.SearchHistory
 
 interface SearchHistoryRepository {
     suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>>

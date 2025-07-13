@@ -36,7 +36,7 @@ import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
