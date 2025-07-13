@@ -25,7 +25,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onYearRangeChanged() should change range when called`() = runTest {
+    fun `onYearRangeChanged() should change range state when called`() = runTest {
         // Given
         val range = 1995f..2012f
 
@@ -41,7 +41,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onGenreSelected() should change genre when called`() = runTest {
+    fun `onGenreSelected() should change genre state when called`() = runTest {
         // Given
         val genre = Genre.ACTION
 
@@ -60,7 +60,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onRatingChanged() should change rate when called`() = runTest {
+    fun `onRatingChanged() should change rate state when called`() = runTest {
         // Given
         val rate = 10
 
