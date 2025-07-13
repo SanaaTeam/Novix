@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen
 
-import com.sanaa.presentation.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import usecase.search.MediaFilters
 
 interface SearchScreenInteractionsListener {

@@ -26,7 +26,7 @@ class SearchRemoteDataSourceImpl(
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
             parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", TmdbConfig.apiKey)
+            parameter("api_key", BuildConfig.TMDB_API_KEY)
         }.body()
     }
 
