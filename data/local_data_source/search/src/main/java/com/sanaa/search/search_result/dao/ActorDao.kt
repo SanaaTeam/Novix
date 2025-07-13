@@ -12,5 +12,5 @@ interface ActorDao {
     suspend fun insertActor(actor: ActorsLocalDto)
 
     @Query("SELECT * FROM actor WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'")
-    suspend fun getActorByQuery(query: String): List<ActorsLocalDto>
+    suspend fun getActorsByQuery(query: String): List<ActorsLocalDto>
 }

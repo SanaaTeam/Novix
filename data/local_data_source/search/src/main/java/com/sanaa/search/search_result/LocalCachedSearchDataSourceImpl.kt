@@ -81,12 +81,12 @@ class LocalCachedSearchDataSourceImpl(
         val cachedResults = getCachedResults(query, "actor")
 
         if (cachedResults.isNotEmpty()) {
-            return cachedResults.flatMap { result ->
-                actorDao.getActorByQuery(result.itemId.toString())
+            return cachedResults.mapNotNull { result ->
+                actorDao.getActorsByQuery(result.itemId.toString()).firstOrNull()
             }
         }
 
-        return actorDao.getActorByQuery(query)
+        return actorDao.getActorsByQuery(query)
     }
 
     override suspend fun getMoviesByQuery(query: String): List<MoviesLocalDto> {
