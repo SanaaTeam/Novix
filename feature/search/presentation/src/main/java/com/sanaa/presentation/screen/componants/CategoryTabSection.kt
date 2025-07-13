@@ -31,16 +31,14 @@ fun CategoryTabSection(
 
         when (selectedTabIndex) {
             0 -> {
-                if (uiState.searchQuery.isEmpty()) DefaultState(uiState)
-                else if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.movies.isEmpty()) NoSearchResultState()
                 else MoviesContent(uiState.movies, onMovieClick = {
                     interactionsListener.onSearchResultMediaClicked(it)
                 })
             }
 
             1 -> {
-                if (uiState.searchQuery.isEmpty()) DefaultState(uiState)
-                else if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.movies.isEmpty()) NoSearchResultState()
                 else TvShowsContent(
                     uiState.tvShows, onTvShowClick = {
                         interactionsListener.onSearchResultMediaClicked(it)
@@ -49,8 +47,7 @@ fun CategoryTabSection(
             }
 
             2 -> {
-                if (uiState.searchQuery.isEmpty()) DefaultState(uiState)
-                else if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.movies.isEmpty()) NoSearchResultState()
                 else ActorsContent(uiState.actors)
             }
         }
@@ -63,15 +60,4 @@ private fun NoSearchResultState() {
         icon = painterResource(id = R.drawable.empty_search),
         text = stringResource(id = R.string.no_search_result_message)
     )
-}
-
-@Composable
-private fun DefaultState(uiState: SearchScreenUiState) {
-    val showEmptyMessage = uiState.resentSearchTitleList.isEmpty()
-    if (showEmptyMessage) {
-        EmptySearchState(
-            icon = painterResource(id = R.drawable.empty_search),
-            text = stringResource(id = R.string.empty_search_message)
-        )
-    }
 }

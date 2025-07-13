@@ -1,6 +1,8 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +43,11 @@ fun SearchHistoryContent(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        AnimatedVisibility(recentSearches.isEmpty() && recentViewed.isEmpty()) {
+        AnimatedVisibility(
+            recentSearches.isEmpty() && recentViewed.isEmpty(),
+            enter = fadeIn(),
+            exit = fadeOut()
+        ) {
             Box(
                 modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
             ) {

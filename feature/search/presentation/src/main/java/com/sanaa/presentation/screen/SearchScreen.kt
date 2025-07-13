@@ -36,7 +36,7 @@ import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
-import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.MediaFilters
@@ -118,20 +118,7 @@ fun SearchScreenContent(
                 onTextChange = searchListener::onSearchQueryChanged,
                 onFilterClicked = { showBottomSheet = true }
             )
-            AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
-                CategoryTabSection(
-                    selectedTabIndex = uiState.selectedTabIndex,
-                    uiState = uiState,
-                    interactionsListener = listener,
-                )
-            }
-            AnimatedVisibility(uiState.searchQuery.isBlank()) {
-                SearchHistoryContent(
-                    recentSearches = uiState.resentSearchTitleList,
-                    recentViewed = uiState.resentViewedImageList,
-                    interactionsListener = listener,
-                )
-            }
+
             if (uiState.isLoading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -139,7 +126,23 @@ fun SearchScreenContent(
                 ) {
                     WavyProgressIndicator()
                 }
+            } else {
+                AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
+                    CategoryTabSection(
+                        selectedTabIndex = uiState.selectedTabIndex,
+                        uiState = uiState,
+                        interactionsListener = searchListener,
+                    )
+                }
+                AnimatedVisibility(uiState.searchQuery.isBlank()) {
+                    SearchHistoryContent(
+                        recentSearches = uiState.resentSearchTitleList,
+                        recentViewed = uiState.resentViewedImageList,
+                        interactionsListener = searchListener,
+                    )
+                }
             }
+
         }
     }
 

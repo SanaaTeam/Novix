@@ -47,8 +47,8 @@ data class RecentViewedUiModel(
     val mediaType: String = "",
     val isSaved: Boolean = false,
 )
-enum class MediaTypeUi{
+
+enum class MediaTypeUi {
     MOVIE,
     TV_SERIES,
 }
-
