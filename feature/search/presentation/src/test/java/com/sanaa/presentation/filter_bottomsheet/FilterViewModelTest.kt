@@ -11,6 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.search.MediaFilters
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
@@ -24,7 +25,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onYearRangeChanged()`() = runTest {
+    fun `onYearRangeChanged() should change range`() = runTest {
         // Given
         val range = 1995f..2012f
 
@@ -40,7 +41,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onGenreSelected()`() = runTest {
+    fun `onGenreSelected() should change genre`() = runTest {
         // Given
         val genre = Genre.ACTION
 
@@ -59,7 +60,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onRatingChanged()`() = runTest {
+    fun `onRatingChanged() should change rate`() = runTest {
         // Given
         val rate = 10
 
@@ -95,7 +96,7 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onApplyClicked()`() = runTest {
+    fun `onApplyClicked() should init media filter when filters are default`() = runTest {
         // When
         filterViewModel.onApplyClicked()
 
@@ -103,6 +104,25 @@ class FilterViewModelTest {
         filterViewModel.filterResult.test {
             val item = awaitItem()
             Truth.assertThat(item).isEqualTo(null)
+        }
+    }
+
+    @Test
+    fun `onApplyClicked() should change the media filter when filters are default`() = runTest {
+        // When
+        filterViewModel.onRatingChanged(1)
+        filterViewModel.onApplyClicked()
+
+        // Then
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+            Truth.assertThat(item).isEqualTo(
+                MediaFilters(
+                    startYear = 1980,
+                    endYear = 2025,
+                    imdbRating = 1f
+                )
+            )
         }
     }
 
