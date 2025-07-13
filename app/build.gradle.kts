@@ -75,19 +75,18 @@ dependencies {
     implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.compose)
+    implementation(libs.androidx.ui.compose.graphics)
+    implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.androidx.material3)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
 
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.androidx.ui.compose.tooling)
+    debugImplementation(libs.androidx.ui.compose.test.manifest)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics.ndk)
@@ -97,9 +96,9 @@ dependencies {
     implementation(libs.timber)
 
     implementation(platform(libs.koin.bom))
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.androidx.compose)
+    implementation(libs.bundles.ktor)
+    implementation(libs.bundles.koin)
+
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
@@ -108,16 +107,11 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.tensorflow.lite.task.vision)
 
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.cio)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.ktor.client.logging)
     implementation(libs.kotlinx.serialization.json)
-    
+
     // Local Data Sources
     implementation(projects.data.localDataSource.search)
-    
+
     // Language Provider
     implementation(projects.envConfig)
 }
