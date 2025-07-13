@@ -9,11 +9,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
-import repository.SearchRepository
-import search.search.MediaFilters
-import search.search.MediaType
-import search.search.SearchMediaOutput
+import search.repository.SearchHistoryRepository
+import search.repository.SearchRepository
+import search.usecase.SearchMoviesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchMediaOutput
 
 class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)

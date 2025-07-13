@@ -1,8 +1,8 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
-import repository.SearchRepository
-import usecase.search.SearchActorOutput
+import search.repository.SearchHistoryRepository
+import search.repository.SearchRepository
+import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsUseCase(
     private val searchRepository: SearchRepository,
