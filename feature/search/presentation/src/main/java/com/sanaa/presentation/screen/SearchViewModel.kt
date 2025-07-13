@@ -39,7 +39,7 @@ class SearchViewModel(
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase,
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
 
@@ -187,18 +187,14 @@ class SearchViewModel(
     override fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
-        if (searchQuery.isNotBlank()) {
-            loadMediaByTab(searchQuery)
-        }
+        loadMediaByTab(searchQuery)
     }
 
     override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
 
         val currentQuery = state.value.searchQuery
-        if (currentQuery.isNotBlank()) {
-            loadMediaByTab(currentQuery)
-        }
+        loadMediaByTab(currentQuery)
     }
 
     override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {

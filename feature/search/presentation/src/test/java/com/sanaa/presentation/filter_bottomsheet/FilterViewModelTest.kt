@@ -60,6 +60,26 @@ class FilterViewModelTest {
     }
 
     @Test
+    fun `onGenreSelected() should remove genre state when called tiwce`() = runTest {
+        // Given
+        val genre = Genre.ACTION
+
+        // When
+        filterViewModel.onGenreSelected(genre)
+        filterViewModel.onGenreSelected(genre)
+
+        // Then
+        filterViewModel.uiState.test {
+            val item = awaitItem()
+            val expected = FilterUiState(
+                selectedGenres = emptySet(),
+                isDefaultState = false
+            )
+            Truth.assertThat(item).isEqualTo(expected)
+        }
+    }
+
+    @Test
     fun `onRatingChanged() should change rate state when called`() = runTest {
         // Given
         val rate = 10
@@ -96,34 +116,62 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onApplyClicked() should init media filter when filters are default when called`() = runTest {
-        // When
-        filterViewModel.onApplyClicked()
+    fun `onApplyClicked() should init media filter when filters are default`() =
+        runTest {
+            // When
+            filterViewModel.onApplyClicked()
 
-        // Then
-        filterViewModel.filterResult.test {
-            val item = awaitItem()
-            Truth.assertThat(item).isEqualTo(null)
+            // Then
+            filterViewModel.filterResult.test {
+                val item = awaitItem()
+                Truth.assertThat(item).isEqualTo(null)
+            }
         }
-    }
 
     @Test
-    fun `onApplyClicked() should change the media filter when filters are default when called`() = runTest {
-        // When
-        filterViewModel.onRatingChanged(1)
-        filterViewModel.onApplyClicked()
+    fun `onApplyClicked() should change the media filter when filters are default`() =
+        runTest {
+            // Given
+            val rate = 1f
 
-        // Then
-        filterViewModel.filterResult.test {
-            val item = awaitItem()
-            Truth.assertThat(item).isEqualTo(
-                MediaFilters(
-                    startYear = 1980,
-                    endYear = 2025,
-                    imdbRating = 1f
+            // When
+            filterViewModel.onRatingChanged(rate.toInt())
+            filterViewModel.onApplyClicked()
+
+            // Then
+            filterViewModel.filterResult.test {
+                val item = awaitItem()
+                Truth.assertThat(item).isEqualTo(
+                    MediaFilters(
+                        startYear = 1980,
+                        endYear = 2025,
+                        imdbRating = rate
+                    )
                 )
-            )
+            }
         }
-    }
+
+    @Test
+    fun `onApplyClicked() should change the media filter without rating when rate sent are 0`() =
+        runTest {
+            // Given
+            val rate = 0f
+
+            // When
+            filterViewModel.onRatingChanged(rate.toInt())
+            filterViewModel.onApplyClicked()
+
+            // Then
+            filterViewModel.filterResult.test {
+                val item = awaitItem()
+                Truth.assertThat(item).isEqualTo(
+                    MediaFilters(
+                        startYear = 1980,
+                        endYear = 2025,
+                        imdbRating = null
+                    )
+                )
+            }
+        }
 
 }

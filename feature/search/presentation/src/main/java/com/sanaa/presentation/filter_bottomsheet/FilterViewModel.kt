@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import usecase.search.MediaFilters
 
 class FilterViewModel(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<FilterUiState>(FilterUiState(), dispatcher),
     FilterBottomSheetInteractionsListener {
 
