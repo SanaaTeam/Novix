@@ -6,10 +6,8 @@ import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
-import com.sanaa.presentation.state.ActorUiModel
-import com.sanaa.presentation.state.MovieUiModel
-import com.sanaa.presentation.state.SearchScreenUiState
-import com.sanaa.presentation.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.TvShowUiModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -69,8 +67,11 @@ class SearchViewModel(
     }
 
     fun observeRecentViewedItems() {
-        updateState { it.copy(isLoading = true, error = null ,noInternetConnection = false,
-        ) }
+        updateState {
+            it.copy(
+                isLoading = true, error = null, noInternetConnection = false
+            )
+        }
 
         tryToExecute(
             callee = {
@@ -86,8 +87,11 @@ class SearchViewModel(
                         }
                     }
                     .collectLatest { viewed ->
-                        updateState { it.copy(recentViewedMedia = viewed,noInternetConnection = false,
-                        ) }
+                        updateState {
+                            it.copy(
+                                recentViewedMedia = viewed, noInternetConnection = false
+                            )
+                        }
                     }
             },
             onError = ::onDataLoadError
@@ -107,7 +111,12 @@ class SearchViewModel(
                         }
                     }
                     .collectLatest { queries ->
-                        updateState { it.copy(recentSearchQueries = queries,noInternetConnection = false,) }
+                        updateState {
+                            it.copy(
+                                recentSearchQueries = queries,
+                                noInternetConnection = false
+                            )
+                        }
                     }
             },
             onError = ::onDataLoadError
@@ -136,7 +145,7 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState { it.copy(isLoading = true, error = null,noInternetConnection = false,) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadMoviesOperation(query) }, ::onLoadMoviesSuccess, ::onDataLoadError)
     }
 
@@ -147,11 +156,11 @@ class SearchViewModel(
     }
 
     private fun onLoadMoviesSuccess(movies: List<MovieUiModel>) {
-        updateState { it.copy(isLoading = false, movies = movies,noInternetConnection = false,) }
+        updateState { it.copy(isLoading = false, movies = movies, noInternetConnection = false) }
     }
 
     private fun loadTvShows(query: String) {
-        updateState { it.copy(isLoading = true, error = null,noInternetConnection = false,) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
     }
 
@@ -162,11 +171,11 @@ class SearchViewModel(
     }
 
     private fun onLoadTvShowsSuccess(tvShows: List<TvShowUiModel>) {
-        updateState { it.copy(isLoading = false, tvShows = tvShows,noInternetConnection = false,) }
+        updateState { it.copy(isLoading = false, tvShows = tvShows, noInternetConnection = false) }
     }
 
     private fun loadActors(query: String) {
-        updateState { it.copy(isLoading = true, error = null,noInternetConnection = false,) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
     }
 
@@ -195,7 +204,13 @@ class SearchViewModel(
                 )
             }
         else
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error",noInternetConnection = false) }
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    error = e.message ?: "Unknown error",
+                    noInternetConnection = false
+                )
+            }
     }
 
 
@@ -248,7 +263,7 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
-            onSuccess = { updateState { it.copy(isLoading = false) } },
+            onSuccess = { updateState { it.copy(isLoading = false,noInternetConnection = false) } },
             ::onDataLoadError
         )
     }
