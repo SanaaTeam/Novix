@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_bar_subtitle">ولد من نوفا، صنع لفليكس</string>
-    <string name="view_all">الكل</string>
-    <string name="no_search_result_message">لايوجد نتائج، يرجى تجربة مدخل آخر</string>
-    <string name="empty_search_message">إبداء التصفح! ابحث عن افلامك ومسلسلاتك المفضلة</string>
-    <string name="search">بحث</string>
-    <string name="icon_filter">ايقونة البحث</string>
-    <string name="recent_viewed">المستعرضة مسبقا</string>
-    <string name="clear_all">حذف الكل</string>
-    <string name="recent_search">تم بحثها سابقا</string>
-    <string name="released_year">سنة الإصدار</string>
-    <string name="genres">الفئات</string>
-    <string name="imdb_rating">تقييم IMDb</string>
-    <string name="clear">مسح</string>
-    <string name="filter">تصفية</string>
-    <string name="apply">تطبيق</string>
-    <string name="cancel">إلغاء</string>
-    <string name="search_hint">بحث…</string>
+    <string name="app_name">نوفيكس</string>
     
     <!-- Tab Labels -->
     <string name="movies">أفلام</string>
@@ -47,8 +31,8 @@
     <string name="genre_reality">واقعي</string>
     <string name="genre_news">أخبار</string>
     <string name="genre_tv_movie">أفلام تلفزيونية</string>
-    <string name="genre_western">الغرب الأمريكي</string>
+    <string name="genre_western">غربي</string>
     <string name="genre_war_and_politics">الحروب والسياسة</string>
     <string name="genre_sci_fi_and_fantasy">خيال علمي وفانتازيا</string>
     <string name="genre_action_and_adventure">أكشن ومغامرة</string>
-</resources>
+</resources> 

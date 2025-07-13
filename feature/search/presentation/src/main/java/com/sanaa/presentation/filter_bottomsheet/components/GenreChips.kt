@@ -46,7 +46,7 @@ fun GenreChips(
         ) {
             genres.forEach { genre ->
                 CategoryChip(
-                    text = genre.toReadableString(),
+                    text = genre.toLocalizedString(),
                     isSelected = (genre in selectedGenres),
                     onClick = { onGenreSelected(genre) }
                 )
@@ -55,9 +55,37 @@ fun GenreChips(
     }
 }
 
-private fun Genre.toReadableString(): String {
-    return this.name.replace('_', ' ').lowercase(Locale.getDefault())
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+@Composable
+private fun Genre.toLocalizedString(): String {
+    return when (this) {
+        Genre.DRAMA -> stringResource(DesignSystemR.string.genre_drama)
+        Genre.COMEDY -> stringResource(DesignSystemR.string.genre_comedy)
+        Genre.ADVENTURE -> stringResource(DesignSystemR.string.genre_adventure)
+        Genre.ACTION -> stringResource(DesignSystemR.string.genre_action)
+        Genre.ROMANCE -> stringResource(DesignSystemR.string.genre_romance)
+        Genre.FANTASY -> stringResource(DesignSystemR.string.genre_fantasy)
+        Genre.SCIENCE_FICTION -> stringResource(DesignSystemR.string.genre_science_fiction)
+        Genre.HORROR -> stringResource(DesignSystemR.string.genre_horror)
+        Genre.CRIME -> stringResource(DesignSystemR.string.genre_crime)
+        Genre.ANIMATION -> stringResource(DesignSystemR.string.genre_animation)
+        Genre.DOCUMENTARY -> stringResource(DesignSystemR.string.genre_documentary)
+        Genre.THRILLER -> stringResource(DesignSystemR.string.genre_thriller)
+        Genre.MUSIC -> stringResource(DesignSystemR.string.genre_music)
+        Genre.MYSTERY -> stringResource(DesignSystemR.string.genre_mystery)
+        Genre.KIDS -> stringResource(DesignSystemR.string.genre_kids)
+        Genre.HISTORY -> stringResource(DesignSystemR.string.genre_history)
+        Genre.FAMILY -> stringResource(DesignSystemR.string.genre_family)
+        Genre.WAR -> stringResource(DesignSystemR.string.genre_war)
+        Genre.TALK -> stringResource(DesignSystemR.string.genre_talk)
+        Genre.SOAP -> stringResource(DesignSystemR.string.genre_soap)
+        Genre.REALITY -> stringResource(DesignSystemR.string.genre_reality)
+        Genre.NEWS -> stringResource(DesignSystemR.string.genre_news)
+        Genre.TV_MOVIE -> stringResource(DesignSystemR.string.genre_tv_movie)
+        Genre.WESTERN -> stringResource(DesignSystemR.string.genre_western)
+        Genre.WAR_AND_POLITICS -> stringResource(DesignSystemR.string.genre_war_and_politics)
+        Genre.SCI_FI_AND_FANTASY -> stringResource(DesignSystemR.string.genre_sci_fi_and_fantasy)
+        Genre.ACTION_AND_ADVENTURE -> stringResource(DesignSystemR.string.genre_action_and_adventure)
+    }
 }
 
 
