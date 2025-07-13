@@ -81,7 +81,7 @@ class SearchViewModel(
                 }
                 .catch { e -> onDataLoadError(e as Exception) }
                 .collectLatest { viewed ->
-                    updateState { it.copy(resentViewedImageList = viewed) }
+                    updateState { it.copy(resentViewedMedia = viewed) }
                 }
         }
     }
@@ -92,7 +92,7 @@ class SearchViewModel(
                 .map { items -> items.map { RecentSearchUiModel(id = it.id, title = it.query) } }
                 .catch { e -> onDataLoadError(e as Exception) }
                 .collectLatest { queries ->
-                    updateState { it.copy(resentSearchTitleList = queries) }
+                    updateState { it.copy(resentSearchQueries = queries) }
                 }
         }
     }
@@ -217,7 +217,7 @@ class SearchViewModel(
         )
     }
 
-    override fun onCancelRecentSearchItemClicked(id: Int) {
+    override fun onDeleteRecentSearchItem(id: Int) {
         updateState { it.copy(isLoading = true) }
         tryToExecute(callee = {
             deleteSearchItem.execute(id)

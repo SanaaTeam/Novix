@@ -120,7 +120,7 @@ fun SearchHistoryContent(
                         RecentSearchItem(
                             text = item.title,
                             onDeleteClicked = {
-                                interactionsListener.onCancelRecentSearchItemClicked(item.id)
+                                interactionsListener.onDeleteRecentSearchItem(item.id)
                             },
                             onRecentSearchItemClicked = {
                                 interactionsListener.onRecentSearchItemClicked(item.title)

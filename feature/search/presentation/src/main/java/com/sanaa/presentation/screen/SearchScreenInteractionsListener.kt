@@ -6,7 +6,7 @@ import usecase.search.MediaFilters
 interface SearchScreenInteractionsListener {
     fun onClearRecentViewClicked()
     fun onClearRecentSearchClicked()
-    fun onCancelRecentSearchItemClicked(id: Int)
+    fun onDeleteRecentSearchItem(id: Int)
     fun onSaveIconClicked()
     fun onTabSelected(index: Int)
     fun onRecentSearchItemClicked(query: String)
