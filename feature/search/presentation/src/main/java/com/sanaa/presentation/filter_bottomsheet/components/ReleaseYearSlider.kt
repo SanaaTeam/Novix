@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 
@@ -126,13 +127,23 @@ fun CustomYearRangeSlider(
                         val activeStartPx = activeStartFraction * trackEndX
                         val activeEndPx = activeEndFraction * trackEndX
 
-                        drawLine(
-                            color = activeColor,
-                            start = Offset(activeStartPx, trackStartY),
-                            end = Offset(activeEndPx, trackStartY),
-                            strokeWidth = trackStrokeWidth,
-                            cap = StrokeCap.Round
-                        )
+                        if (layoutDirection == LayoutDirection.Rtl) {
+                            drawLine(
+                                color = activeColor,
+                                start = Offset(trackEndX - activeEndPx, trackStartY),
+                                end = Offset(trackEndX - activeStartPx, trackStartY),
+                                strokeWidth = trackStrokeWidth,
+                                cap = StrokeCap.Round
+                            )
+                        } else {
+                            drawLine(
+                                color = activeColor,
+                                start = Offset(activeStartPx, trackStartY),
+                                end = Offset(activeEndPx, trackStartY),
+                                strokeWidth = trackStrokeWidth,
+                                cap = StrokeCap.Round
+                            )
+                        }
                     }
                 }
             }
@@ -154,12 +165,12 @@ private fun CircularThumb(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, locale = "ar")
 @Composable
 fun CustomYearRangeSliderPreview() {
     var sliderPosition by remember { mutableStateOf(1995f..2012f) }
 
-    Column(modifier = Modifier.padding(0.dp)) {
+    Column(modifier = Modifier.padding(16.dp)) {
         CustomYearRangeSlider(
             title = "Released year",
             value = sliderPosition,

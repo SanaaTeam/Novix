@@ -49,7 +49,7 @@ fun RemoteCensoredImageViewer(
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var blurImage by remember { mutableStateOf(true) }
+    var blurImage by remember { mutableStateOf(false) }
 
     Box(modifier = modifier) {
         AsyncImage(
@@ -59,14 +59,14 @@ fun RemoteCensoredImageViewer(
                 .build(),
             modifier = modifier.cloudy(radius = blurRadius, enabled = blurImage),
             onSuccess = { success ->
+                blurImage = true
                 val bitmap = success.result.drawable.toBitmap()
                 blurImage = classifier.isInappropriateImage(
                     bitmap = bitmap,
                     sfwThreshold = sfwThreshold,
                     nsfwThreshold = nsfwThreshold
                 )
-                if (onSuccess != null)
-                    onSuccess(success)
+                if (onSuccess != null) onSuccess(success)
             },
             contentDescription = contentDescription,
             placeholder = placeholder,

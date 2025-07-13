@@ -1,7 +1,9 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.R
@@ -16,11 +18,13 @@ fun CategoryTabSection(
 ) {
     val tabs = listOf("Movies", "TV Shows", "Actors")
 
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
         CategoryTab(
             categories = tabs,
             selectedIndex = selectedTabIndex,
-            onCategorySelected = onTabSelected
+            onCategorySelected = onTabSelected,
         )
 
         if (uiState.noInternetConnection) {

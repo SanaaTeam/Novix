@@ -1,6 +1,7 @@
 package usecase
 
 import com.google.common.truth.Truth.assertThat
+import entity.Actor
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -75,6 +76,7 @@ class SearchActorsUseCaseTest {
                 id = 1,
                 name = "title",
                 profileImageUrl = "imgUrl",
+                gender = Actor.Gender.MALE,
             )
         )
     }

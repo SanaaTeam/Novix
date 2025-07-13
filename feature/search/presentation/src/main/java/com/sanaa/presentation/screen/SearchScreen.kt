@@ -1,9 +1,10 @@
 package com.sanaa.presentation.screen
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -44,11 +45,13 @@ fun SearchScreen(
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
-    SearchScreenContent(
-        uiState = uiState,
-        filterViewModel = filterViewModel,
-        listener = searchViewModel,
-    )
+    NovixTheme(isSystemInDarkTheme()) {
+        SearchScreenContent(
+            uiState = uiState,
+            filterViewModel = filterViewModel,
+            listener = searchViewModel,
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,7 +83,7 @@ fun SearchScreenContent(
         },
         bottomBar = {
             var selectedIndex by remember { mutableIntStateOf(1) }
-            NovixNavBar {
+            NovixNavBar(modifier = Modifier.navigationBarsPadding()) {
                 NovixNavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 0,
@@ -119,13 +122,7 @@ fun SearchScreenContent(
             }
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier//.padding(innerPadding)
-                .padding(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
-                )
-        ) {
+        Column {
             SearchSection(
                 text = uiState.searchQuery,
                 onTextChange = { listener.onSearchQueryChanged(it) },
