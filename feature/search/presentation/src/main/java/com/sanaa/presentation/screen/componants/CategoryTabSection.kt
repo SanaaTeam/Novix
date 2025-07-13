@@ -19,13 +19,14 @@ import com.sanaa.presentation.state.SearchScreenUiState
 fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
-    interactionsListener: SearchScreenInteractionsListener
+    interactionsListener: SearchScreenInteractionsListener,
+    modifier: Modifier = Modifier,
 ) {
     val tabs = listOf("Movies", "TV Shows", "Actors")
 
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(top = 12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier.padding(top = 12.dp)
     ) {
         CategoryTab(
             categories = tabs,

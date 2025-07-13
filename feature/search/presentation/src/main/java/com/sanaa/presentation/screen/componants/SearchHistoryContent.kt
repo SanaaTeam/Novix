@@ -130,6 +130,10 @@ fun SearchHistoryContent(
                         if (index != recentSearches.lastIndex) {
                             Box(
                                 modifier = Modifier
+                                    .animateItem(
+                                        fadeInSpec = null,
+                                        fadeOutSpec = null
+                                    )
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
                                     .padding(bottom = 12.dp)
