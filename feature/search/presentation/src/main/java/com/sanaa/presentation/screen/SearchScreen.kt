@@ -33,7 +33,7 @@ import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
-import com.sanaa.presentation.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.MediaFilters

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.state
+package com.sanaa.presentation.screen.state
 
 import usecase.search.MediaFilters
 

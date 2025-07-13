@@ -31,8 +31,8 @@ import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
-import com.sanaa.presentation.state.RecentSearchUiModel
-import com.sanaa.presentation.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.RecentSearchUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 @Composable
 fun SearchHistoryContent(

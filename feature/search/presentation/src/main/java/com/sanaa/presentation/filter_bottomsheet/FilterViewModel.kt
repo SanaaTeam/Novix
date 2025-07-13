@@ -1,8 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet
 
 import com.sanaa.presentation.base.BaseViewModel
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
@@ -49,20 +47,21 @@ class FilterViewModel(
     }
 
     override fun onApplyClicked() {
-        SearchViewModel {
-            val currentState = _uiState.value
-            val mediaFilters = if (currentState.isDefaultState) {
-                null
-            } else {
-                MediaFilters(
-                    startYear = currentState.yearRange.start.toInt(),
-                    endYear = currentState.yearRange.endInclusive.toInt(),
-                    genres = currentState.selectedGenres.toList(),
-                    imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
-                )
+        tryToExecute(
+            callee = {
+                val currentState = _uiState.value
+                val mediaFilters = if (currentState.isDefaultState) {
+                    null
+                } else {
+                    MediaFilters(
+                        startYear = currentState.yearRange.start.toInt(),
+                        endYear = currentState.yearRange.endInclusive.toInt(),
+                        genres = currentState.selectedGenres.toList(),
+                        imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
+                    )
+                }
+                _filterResult.emit(mediaFilters)
             }
-            _filterResult.emit(mediaFilters)
-        }
-
+        )
     }
 }

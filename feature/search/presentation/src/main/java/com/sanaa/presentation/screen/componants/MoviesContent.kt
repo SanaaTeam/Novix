@@ -19,9 +19,9 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
-import com.sanaa.presentation.state.MediaTypeUi
-import com.sanaa.presentation.state.MovieUiModel
-import com.sanaa.presentation.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.MediaTypeUi
+import com.sanaa.presentation.screen.state.MovieUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 @Composable
 fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {

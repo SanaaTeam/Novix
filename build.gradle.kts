@@ -37,6 +37,9 @@ val excludedPackages = listOf(
     "com.sanaa.search.repository.*",
     "com.sanaa.presentation.filter_bottomsheet.components.*",
     "com.sanaa.presentation.screen.componants.*",
+    "com.sanaa.presentation.screen.state.*",
+    "com.sanaa.presentation.screen.SearchScreen*",
+    "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent*",
     "com.sanaa.search.search_result.db.*",
 )
 allprojects {

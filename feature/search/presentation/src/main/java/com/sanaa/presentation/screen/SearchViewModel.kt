@@ -2,16 +2,15 @@ package com.sanaa.presentation.screen
 
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
-import com.sanaa.presentation.state.ActorUiModel
-import com.sanaa.presentation.state.MovieUiModel
-import com.sanaa.presentation.state.RecentSearchUiModel
-import com.sanaa.presentation.state.RecentViewedUiModel
-import com.sanaa.presentation.state.SearchScreenUiState
-import com.sanaa.presentation.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.ActorUiModel
+import com.sanaa.presentation.screen.state.MovieUiModel
+import com.sanaa.presentation.screen.state.RecentSearchUiModel
+import com.sanaa.presentation.screen.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -39,9 +38,9 @@ class SearchViewModel(
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
-    private val deleteSearchItem: RemoveSearchHistoryUseCase,
+    private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase,
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState()),
+) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
 
     init {
@@ -66,35 +65,48 @@ class SearchViewModel(
         }
     }
 
-    private fun observeRecentViewedItems() {
-        viewModelScope.launch {
-            getRecentViewedUseCase.execute()
-                .map { items ->
-                    items.map {
-                        RecentViewedUiModel(
-                            id = it.id,
-                            imageUrl = it.posterImageUrl,
-                            mediaType = it.mediaType.name,
-                            isSaved = it.isSaved
-                        )
+    fun observeRecentViewedItems() {
+        updateState { it.copy(isLoading = true, error = null) }
+
+        tryToExecute(
+            callee = {
+                getRecentViewedUseCase.execute()
+                    .map { items ->
+                        items.map {
+                            RecentViewedUiModel(
+                                id = it.id,
+                                imageUrl = it.posterImageUrl,
+                                mediaType = it.mediaType.name,
+                                isSaved = it.isSaved
+                            )
+                        }
                     }
-                }
-                .catch { e -> onDataLoadError(e as Exception) }
-                .collectLatest { viewed ->
-                    updateState { it.copy(recentViewedMedia = viewed) }
-                }
-        }
+                    .collectLatest { viewed ->
+                        updateState { it.copy(recentViewedMedia = viewed) }
+                    }
+            },
+            onError = ::onDataLoadError
+        )
     }
 
-    private fun observeRecentSearchHistory() {
-        viewModelScope.launch {
-            getSearchHistoryUseCase.execute()
-                .map { items -> items.map { RecentSearchUiModel(id = it.id, title = it.query) } }
-                .catch { e -> onDataLoadError(e as Exception) }
-                .collectLatest { queries ->
-                    updateState { it.copy(recentSearchQueries = queries) }
-                }
-        }
+    fun observeRecentSearchHistory() {
+        tryToExecute(
+            callee = {
+                getSearchHistoryUseCase.execute()
+                    .map { items ->
+                        items.map {
+                            RecentSearchUiModel(
+                                id = it.id,
+                                title = it.query
+                            )
+                        }
+                    }
+                    .collectLatest { queries ->
+                        updateState { it.copy(recentSearchQueries = queries) }
+                    }
+            },
+            onError = ::onDataLoadError
+        )
     }
 
     private fun clearSearchResults() {
@@ -112,9 +124,9 @@ class SearchViewModel(
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
         when (state.value.selectedTabIndex) {
-            0 -> loadMovies(query)
-            1 -> loadTvShows(query)
-            2 -> loadActors(query)
+            MOVIE_INDEX -> loadMovies(query)
+            TV_SHOW_INDEX -> loadTvShows(query)
+            ACTOR_INDEX -> loadActors(query)
         }
     }
 
@@ -174,8 +186,9 @@ class SearchViewModel(
 
     override fun onTabSelected(index: Int) {
         updateState { it.copy(selectedTabIndex = index) }
-        if (state.value.searchQuery.isNotBlank()) {
-            loadMediaByTab(state.value.searchQuery)
+        val searchQuery = state.value.searchQuery
+        if (searchQuery.isNotBlank()) {
+            loadMediaByTab(searchQuery)
         }
     }
 
@@ -200,8 +213,7 @@ class SearchViewModel(
                     )
                 )
             },
-            onSuccess = {},
-            onError = {}
+            onError = ::onDataLoadError
         )
     }
 
@@ -218,23 +230,25 @@ class SearchViewModel(
     }
 
     override fun onDeleteRecentSearchItem(id: Int) {
-        updateState { it.copy(isLoading = true) }
-        tryToExecute(callee = {
-            deleteSearchItem.execute(id)
-        }, onSuccess = {
-            updateState { it.copy(isLoading = false) }
-        }, onError = { e ->
-            updateState {
-                it.copy(isLoading = false, error = e.message ?: "Unknown error")
-            }
-        })
+        updateState { it.copy(isLoading = true, error = null) }
+        tryToExecute(
+            callee = { deleteSearchItemUseCase.execute(id) },
+            onSuccess = { updateState { it.copy(isLoading = false) } },
+            ::onDataLoadError
+        )
     }
 
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
+    }
+
+    override fun onSaveIconClicked() {
 
     }
 
-    override fun onSaveIconClicked() { /* Not yet implemented */
+    companion object {
+        const val MOVIE_INDEX = 0
+        const val TV_SHOW_INDEX = 1
+        const val ACTOR_INDEX = 2
     }
 }

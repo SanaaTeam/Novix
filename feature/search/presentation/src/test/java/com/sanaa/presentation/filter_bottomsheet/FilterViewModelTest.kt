@@ -2,8 +2,10 @@ package com.sanaa.presentation.filter_bottomsheet
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth
+import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -14,6 +16,7 @@ class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
     private val testDispatcher = StandardTestDispatcher()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
