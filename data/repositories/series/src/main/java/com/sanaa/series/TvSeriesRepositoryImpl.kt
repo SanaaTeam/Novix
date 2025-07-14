@@ -39,32 +39,25 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
     }
 
     override suspend fun getTvSeriesSeason(
-        seriesId: Int,
-        seasonNumber: Int
+        seriesId: Int, seasonNumber: Int
     ): Season {
         TODO("Not yet implemented")
     }
 
     override suspend fun getEpisodeDetails(
-        seriesId: Int,
-        seasonNumber: Int,
-        episodeNumber: Int
+        seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): Episode {
         TODO("Not yet implemented")
     }
 
     override suspend fun getEpisodeImages(
-        seriesId: Int,
-        seasonNumber: Int,
-        episodeNumber: Int
+        seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<String> {
         TODO("Not yet implemented")
     }
 
     override suspend fun getEpisodeGuestsOfHonor(
-        seriesId: Int,
-        seasonNumber: Int,
-        episodeNumber: Int
+        seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<Actor> {
         TODO("Not yet implemented")
     }

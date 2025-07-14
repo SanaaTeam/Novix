@@ -1,9 +1,13 @@
 package com.sanaa.series.mapper
 
+import com.sanaa.series.dto.EpisodeDto
 import com.sanaa.series.dto.GenreDto
+import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
 import com.sanaa.series.dto.VideoDto
+import entity.Episode
 import entity.Genre
+import entity.Season
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
 
@@ -18,6 +22,30 @@ fun TvSeriesDto.toEntity(video: List<VideoDto>): TvSeries {
         genres = genres.map { it.toEntity() },
         seasonsCount = seasonsCount,
         trailerUrl = video.map { it.toEntity() }.first(),
+    )
+}
+
+fun SeasonDto.toEntity(): Season {
+    return Season(
+        id = id,
+        title = name,
+        overview = overview,
+        number = seasonNumber,
+        episodes = episodes.map { it.toEntity() }
+    )
+}
+
+
+fun EpisodeDto.toEntity(): Episode {
+    return Episode(
+        id = id,
+        title = name,
+        overview = overview,
+        seasonNumber = seasonNumber,
+        number = episodeNumber,
+        imdbRating = voteAverage,
+        durationMinutes = runtime,
+        releaseDate = LocalDate.parse(airDate),
     )
 }
 
