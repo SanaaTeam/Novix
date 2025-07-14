@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,7 +34,7 @@ import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
-import com.sanaa.presentation.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.MediaFilters
@@ -73,6 +74,7 @@ fun SearchScreenContent(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
+    var isSliderDragging by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
@@ -137,14 +139,19 @@ fun SearchScreenContent(
     if (showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.statusBarsPadding(),
-            onDismissRequest = dismissSheet,
-            sheetState = sheetState,
+            onDismissRequest = {
+                if (!isSliderDragging) {
+                    dismissSheet()
+                }
+            },            sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(
                 uiState = filterUiState,
                 listener = filterListener,
-                onDismissRequest = dismissSheet
+                onDismissRequest = dismissSheet,
+                isSliderDragging = isSliderDragging,
+                onSliderDragStateChanged = { isSliderDragging = it }
             )
         }
     }

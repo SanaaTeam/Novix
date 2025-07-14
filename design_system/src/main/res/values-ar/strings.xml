@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_bar_subtitle">ولد من نوفا، صنع لفليكس</string>
-    <string name="view_all">الكل</string>
+    <string name="novix">نوفكس</string>
+    <string name="offline_title">عذرًا! يبدو أنك غير متصل بالإنترنت.</string>
+    <string name="offline_subtitle">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار </string>
+    <string name="offline_note">إعادة المحاولة</string>
+    <string name="home_bar_subtitle">ولدت من نوفا، وصُنعت لفليكس.</string>
+    <string name="view_all">عرض الكل</string>
     <string name="no_search_result_message">لايوجد نتائج، يرجى تجربة مدخل آخر</string>
     <string name="empty_search_message">إبداء التصفح! ابحث عن افلامك ومسلسلاتك المفضلة</string>
     <string name="search">بحث</string>
-    <string name="icon_filter">ايقونة البحث</string>
+    <string name="icon_filter">ايقونة التصفية</string>
     <string name="recent_viewed">المستعرضة مسبقا</string>
     <string name="clear_all">حذف الكل</string>
     <string name="recent_search">تم بحثها سابقا</string>
