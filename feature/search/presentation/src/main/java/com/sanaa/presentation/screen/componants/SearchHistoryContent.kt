@@ -136,7 +136,6 @@ fun SearchHistoryContent(
                                     )
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
-                                    .padding(bottom = 12.dp)
                                     .height(1.dp)
                                     .background(color = Theme.colors.stroke)
                             )
