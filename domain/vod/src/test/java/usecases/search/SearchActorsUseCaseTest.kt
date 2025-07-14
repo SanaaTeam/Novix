@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException

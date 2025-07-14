@@ -1,4 +1,4 @@
-package usecase
+package usecases.search
 
 import exceptions.FailedToAddException
 import io.mockk.coEvery
@@ -12,6 +12,7 @@ import search.repository.SearchHistoryRepository
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.search_param.MediaType
 import search.usecase.search_param.RecentViewedMedia
+
 
 class AddRecentViewedUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
