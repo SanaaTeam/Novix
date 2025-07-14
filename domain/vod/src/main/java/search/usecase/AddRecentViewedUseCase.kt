@@ -1,8 +1,7 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
-import usecase.search.RecentViewedMedia
-
+import search.repository.SearchHistoryRepository
+import search.usecase.search_param.RecentViewedMedia
 class AddRecentViewedUseCase(
     private val historyRepo: SearchHistoryRepository
 ) {

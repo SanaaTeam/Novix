@@ -8,9 +8,11 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
-import search.search.MediaType
-import search.search.RecentViewedMedia
+import search.repository.SearchHistoryRepository
+import search.usecase.AddRecentViewedUseCase
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
+
 
 class AddRecentViewedUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)

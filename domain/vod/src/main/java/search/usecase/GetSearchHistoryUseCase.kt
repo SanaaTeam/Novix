@@ -1,8 +1,8 @@
 package search.usecase
 
 import kotlinx.coroutines.flow.Flow
-import repository.SearchHistoryRepository
-import usecase.search.SearchHistory
+import search.repository.SearchHistoryRepository
+import search.usecase.search_param.SearchHistory
 
 class GetSearchHistoryUseCase(
     private val historyRepo: SearchHistoryRepository,

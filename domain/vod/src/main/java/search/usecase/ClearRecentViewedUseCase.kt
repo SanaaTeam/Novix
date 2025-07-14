@@ -1,6 +1,6 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
+import search.repository.SearchHistoryRepository
 
 class ClearRecentViewedUseCase(
     private val historyRepo: SearchHistoryRepository

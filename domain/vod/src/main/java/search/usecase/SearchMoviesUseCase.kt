@@ -1,10 +1,11 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
-import repository.SearchRepository
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.SearchMediaOutput
+import search.repository.SearchHistoryRepository
+import search.repository.SearchRepository
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchMediaOutput
+
 
 class SearchMoviesUseCase(
     private val searchRepository: SearchRepository,
