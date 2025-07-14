@@ -1,6 +1,7 @@
 package com.sanaa.series
 
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import com.sanaa.series.mapper.toDtoId
 import com.sanaa.series.mapper.toEntity
 import details.repository.TvSeriesRepository
 import entity.Actor
@@ -15,8 +16,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
     TvSeriesRepository {
     override suspend fun getTvSeriesDetails(id: Int): TvSeries {
         try {
-            val video = remoteDataSource.getTvSeriesVideos(id)
-            return remoteDataSource.getTvSeries(id).toEntity(video)
+            return remoteDataSource.getTvSeries(id).toEntity()
         } catch (_: Exception) {
             throw NotFoundException("Tv Series not found")
         }
@@ -33,43 +33,78 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
 
     override suspend fun getTvSeriesImages(id: Int): List<String> {
         try {
-            val images = remoteDataSource.getTvSeriesImages(id)
-            return images
+            return remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }
         } catch (_: Exception) {
             throw NotFoundException("Images not found")
         }
     }
 
     override suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> {
-        TODO("Not yet implemented")
+        try {
+            val tvSeries = remoteDataSource.getTvSeriesByGenre(genre.toDtoId())
+            return tvSeries.map { it.toEntity() }
+        } catch (_: Exception) {
+            throw NotFoundException("Tv Series not found")
+        }
     }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> {
-        TODO("Not yet implemented")
+        try {
+            return remoteDataSource.getTvSeriesCast(id).map { it.toEntity() }
+        } catch (_: Exception) {
+            throw NotFoundException("Cast not found")
+        }
     }
 
     override suspend fun getTvSeriesSeason(
         seriesId: Int, seasonNumber: Int
     ): Season {
-        TODO("Not yet implemented")
+        try {
+            return remoteDataSource.getTvSeriesSeasonDetails(seriesId, seasonNumber).toEntity()
+        } catch (_: Exception) {
+            throw NotFoundException("Season not found")
+        }
     }
 
     override suspend fun getEpisodeDetails(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): Episode {
-        TODO("Not yet implemented")
+        try {
+            return remoteDataSource.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
+                .toEntity()
+        } catch (_: Exception) {
+            throw NotFoundException("Episode not found")
+        }
     }
 
     override suspend fun getEpisodeImages(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<String> {
-        TODO("Not yet implemented")
+        try {
+            return remoteDataSource.getEpisodeImages(seriesId, seasonNumber, episodeNumber)
+                .map { it.toEntity() }
+        } catch (_: Exception) {
+            throw NotFoundException("Tv series not found")
+        }
     }
 
     override suspend fun getEpisodeGuestsOfHonor(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<Actor> {
-        TODO("Not yet implemented")
+        try {
+            return remoteDataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
+                .map { it.toEntity() }
+        } catch (_: Exception) {
+            throw NotFoundException("Tv series not found")
+        }
     }
 
+    override suspend fun getTvSeriesTrailer(id: Int): String? {
+        try {
+            val videos = remoteDataSource.getTvSeriesVideos(id)
+            return videos.firstOrNull()?.toEntity()
+        } catch (_: Exception) {
+            throw NotFoundException("Tv Series not found")
+        }
+    }
 }

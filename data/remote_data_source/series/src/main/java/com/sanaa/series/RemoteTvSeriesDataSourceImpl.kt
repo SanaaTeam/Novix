@@ -4,6 +4,7 @@ import com.example.env_config.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.EpisodeDto
+import com.sanaa.series.dto.ImageDto
 import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
@@ -52,10 +53,10 @@ class RemoteTvSeriesDataSourceImpl(
         return fetchTvSeries(path = "tv", id = seriesId, subPath = "season/$seasonNumber")
     }
 
-    override suspend fun getTvSeriesImages(id: Int): List<String> {
+    override suspend fun getTvSeriesImages(id: Int): List<ImageDto> {
         return fetchTvSeries<ImagesResponse>(
             path = "tv", id = id, subPath = "images"
-        ).backdrops.map { it.filePath }
+        ).backdrops
     }
 
     override suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeriesDto> {
@@ -88,12 +89,12 @@ class RemoteTvSeriesDataSourceImpl(
 
     override suspend fun getEpisodeImages(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
-    ): List<String> {
+    ): List<ImageDto> {
         return fetchTvSeries<ImagesResponse>(
             path = "tv",
             id = seriesId,
             subPath = "season/$seasonNumber/episode/$episodeNumber/images"
-        ).backdrops.map { it.toString() }
+        ).backdrops
     }
 
     override suspend fun getEpisodeGuestsOfHonor(

@@ -16,7 +16,8 @@ fun ActorDto.toEntity(): Actor {
         lastShow = null,
         birthDate = null,
         deathDate = null,
-        placeOfBirth = null
+        placeOfBirth = null,
+        biography = ""
     )
 }
 

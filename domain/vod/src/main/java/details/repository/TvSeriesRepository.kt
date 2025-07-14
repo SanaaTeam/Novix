@@ -19,4 +19,6 @@ interface TvSeriesRepository {
     suspend fun getEpisodeGuestsOfHonor(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<Actor>
+
+    suspend fun getTvSeriesTrailer(id: Int): String?
 }

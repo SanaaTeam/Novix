@@ -51,3 +51,8 @@ data class VideoDto(
 data class GenreDto(
     @SerialName("id") val id: Int = 0, @SerialName("name") val name: String = ""
 )
+
+@Serializable
+class ImageDto(
+    @SerialName("file_path") val filePath: String,
+)

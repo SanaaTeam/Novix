@@ -11,7 +11,6 @@ data class TvSeries(
     val imdbRating: Float,
     val posterImageUrl: String,
     val seasonsCount: Int,
-    val trailerUrl: String
 )
 
 data class Season(
