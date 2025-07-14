@@ -12,8 +12,9 @@ import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
-import usecase.search.SearchHistory
+import search.repository.SearchHistoryRepository
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.search_param.SearchHistory
 
 class GetSearchHistoryUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
@@ -28,7 +29,9 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return history list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(SearchHistoryList)
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(
+                SearchHistoryList
+            )
 
             // When
             val result = getSearchHistoryUseCase.execute().single()

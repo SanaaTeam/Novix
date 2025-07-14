@@ -1,6 +1,6 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
+import search.repository.SearchHistoryRepository
 
 class ClearSearchHistoryUseCase(
     private val historyRepo: SearchHistoryRepository
