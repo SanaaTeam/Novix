@@ -26,7 +26,7 @@
     <string name="genre_news">News</string>
     <string name="genre_tv_movie">TV Movie</string>
     <string name="genre_western">Western</string>
-    <string name="genre_war_and_politics">War and Politics</string>
-    <string name="genre_sci_fi_and_fantasy">Sci-Fi and Fantasy</string>
-    <string name="genre_action_and_adventure">Action and Adventure</string>
+    <string name="genre_war_and_politics">War&amp;Politics</string>
+    <string name="genre_sci_fi_and_fantasy">Sci-Fi&amp;Fantasy</string>
+    <string name="genre_action_and_adventure">Action&amp;Adventure</string>
 </resources>
