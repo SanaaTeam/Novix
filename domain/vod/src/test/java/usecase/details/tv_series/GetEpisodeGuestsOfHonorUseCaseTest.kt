@@ -1,7 +1,8 @@
-package usecase
+package usecase.details.tv_series
 
 import details.repository.TvSeriesRepository
 import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
+import entity.Actor
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -23,7 +24,7 @@ class GetEpisodeGuestsOfHonorUseCaseTest {
     @Test
     fun `execute() should return list of guests from TvSeriesRepository`() = runTest {
         // Given
-        val expected = listOf(mockk<entity.Actor>(), mockk<entity.Actor>())
+        val expected = listOf(mockk<Actor>(), mockk<Actor>())
         coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } returns expected
 
         // When

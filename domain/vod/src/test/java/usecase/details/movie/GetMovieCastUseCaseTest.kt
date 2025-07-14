@@ -1,4 +1,4 @@
-package usecases.details.movie
+package usecase.details.movie
 
 import details.repository.MovieRepository
 import details.usecase.movie.GetMovieCastUseCase

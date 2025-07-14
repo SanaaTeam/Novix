@@ -1,8 +1,8 @@
-package usecases.details.movie
+package usecase.details.movie
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.MovieRepository
-import details.usecase.movie.GetMoviesByCategory
+import details.usecase.movie.GetSimilarMoviesByMovieId
 import entity.Genre
 import entity.Movie
 import exceptions.RetrievingDataFailureException
@@ -11,57 +11,59 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
 
-class GetMoviesByCategoryTest {
+class GetSimilarMoviesByMovieIdTest{
     private lateinit var movieRepository: MovieRepository
-    private lateinit var getMoviesByCategory: GetMoviesByCategory
+    private lateinit var getSimilarMoviesByMovieId: GetSimilarMoviesByMovieId
 
     @BeforeEach
     fun setUp() {
         movieRepository = mockk()
-        getMoviesByCategory = GetMoviesByCategory(movieRepository)
+        getSimilarMoviesByMovieId = GetSimilarMoviesByMovieId(movieRepository)
     }
+
     @Test
-    fun `execute() should return movies when available`() = runTest {
+    fun `execute() should return similar movies when available`() = runTest {
         // Given
-        val category = Genre.ACTION
-        val movies = listOf(testMovie1, testMovie2)
-        coEvery { movieRepository.getMoviesByCategory(category) } returns movies
+        val movieId = 1
+        val similarMovies = listOf(testMovie1, testMovie2)
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } returns similarMovies
 
         // When
-        val result = getMoviesByCategory.execute(category)
+        val result = getSimilarMoviesByMovieId.execute(movieId)
 
         // Then
-        assertThat(result).isEqualTo(movies)
+        assertThat(result).isEqualTo(similarMovies)
     }
+
     @Test
-    fun `execute() should return empty list when there are no movies in the category`() = runTest {
+    fun `execute() should return empty list when there are no similar movies`() = runTest {
         // Given
-        val category = Genre.DRAMA
-        coEvery { movieRepository.getMoviesByCategory(category) } returns emptyList()
+        val movieId = 2
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } returns emptyList()
 
         // When
-        val result = getMoviesByCategory.execute(category)
+        val result = getSimilarMoviesByMovieId.execute(movieId)
 
         // Then
         assertThat(result).isEmpty()
     }
-
     @Test
     fun `execute() should throw exception when repository fails`() = runTest {
         // Given
-        val category = Genre.COMEDY
-        coEvery {
-            movieRepository.getMoviesByCategory(category)
-        } throws RetrievingDataFailureException("Failed to retrieve movies by category")
+        val movieId = 1
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } throws RetrievingDataFailureException("Failed to retrieve similar movies")
 
         // When / Then
         assertThrows<RetrievingDataFailureException> {
-            getMoviesByCategory.execute(category)
+            getSimilarMoviesByMovieId.execute(movieId)
         }
     }
+
+
+
     companion object {
         private val testMovie1 = Movie(
             id = 101,
@@ -85,4 +87,5 @@ class GetMoviesByCategoryTest {
             overview = "Overview of movie 2"
         )
     }
+
 }

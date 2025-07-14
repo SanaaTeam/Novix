@@ -1,4 +1,4 @@
-package usecase
+package usecase.details.tv_series
 
 import details.repository.TvSeriesRepository
 import details.usecase.tv_series.GetEpisodeImagesUseCase

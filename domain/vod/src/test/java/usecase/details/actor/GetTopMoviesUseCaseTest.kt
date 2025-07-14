@@ -1,4 +1,4 @@
-package usecase.details
+package usecase.details.actor
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
@@ -74,21 +74,21 @@ class GetTopMoviesUseCaseTest {
                 id = 1,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/poster1.jpg",
                 title = "Blockbuster One",
-                description = "A big summer action film.",
-                actorIds = listOf(10, 11, 12),
-                releaseDate = LocalDate(2023, 5, 12),
                 genres = listOf(action),
-                imdbRating = 8.6f
+                imdbRating = 8.6f,
+                duration = 137,                       // minutes
+                releaseDate = LocalDate(2023, 5, 12),
+                overview = "A big summer action film."
             ),
             Movie(
                 id = 2,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/poster2.jpg",
                 title = "Critically-Acclaimed Drama",
-                description = "Award-winning character study.",
-                actorIds = listOf(10, 15),
-                releaseDate = LocalDate(2022, 11, 3),
                 genres = listOf(drama),
-                imdbRating = 8.2f
+                imdbRating = 8.2f,
+                duration = 126,                       // minutes
+                releaseDate = LocalDate(2022, 11, 3),
+                overview = "An award-winning character study."
             )
         )
     }

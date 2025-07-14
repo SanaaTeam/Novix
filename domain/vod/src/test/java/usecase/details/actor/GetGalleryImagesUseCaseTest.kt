@@ -1,4 +1,4 @@
-package usecase.details
+package usecase.details.actor
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository

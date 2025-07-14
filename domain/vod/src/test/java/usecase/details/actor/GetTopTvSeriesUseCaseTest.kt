@@ -1,4 +1,4 @@
-package usecase.details
+package usecase.details.actor
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
@@ -65,69 +65,77 @@ class GetTopTvSeriesUseCaseTest {
     }
 
     companion object {
-        // Re-usable genres
         private val sciFi = Genre.SCIENCE_FICTION
-        private val crime  = Genre.CRIME
+        private val crime = Genre.CRIME
 
-        // Episodes
         private val s1e1 = Episode(
             id = 1,
             title = "Pilot",
-            description = "The story begins.",
+            number = 1,
+            seasonNumber = 1,
+            imdbRating = 8.1f,
+            overview = "The story begins.",
             durationMinutes = 52,
             releaseDate = LocalDate(2021, 9, 10)
         )
         private val s1e2 = Episode(
             id = 2,
             title = "Into the Unknown",
-            description = "Mysteries deepen.",
+            number = 2,
+            seasonNumber = 1,
+            imdbRating = 8.4f,
+            overview = "Mysteries deepen.",
             durationMinutes = 50,
             releaseDate = LocalDate(2021, 9, 17)
         )
         private val season1 = Season(
             id = 11,
             title = "Season 1",
+            overview = "The inaugural season of *Future Worlds*.",
             number = 1,
-            episodes = listOf(s1e1, s1e2)
+            episodesCount = 2      // s1e1 + s1e2
         )
 
         private val c1e1 = Episode(
             id = 3,
             title = "Dark Streets",
-            description = "A crime is uncovered.",
+            number = 1,
+            seasonNumber = 1,
+            imdbRating = 8.0f,
+            overview = "A crime is uncovered.",
             durationMinutes = 48,
             releaseDate = LocalDate(2020, 2, 1)
         )
         private val seasonCrime1 = Season(
             id = 21,
             title = "Season 1",
+            overview = "The first season of *City Shadows*.",
             number = 1,
-            episodes = listOf(c1e1)
+            episodesCount = 1      // c1e1
         )
 
-        // Dummy TV-series list returned by the repository
         private val dummySeries = listOf(
             TvSeries(
                 id = 101,
-                posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
                 title = "Future Worlds",
-                description = "High-concept science-fiction drama.",
-                seasons = listOf(season1),
-                actorIds = listOf(17, 19),
+                overview = "High-concept science-fiction drama.",
                 releaseDate = LocalDate(2021, 9, 10),
                 genres = listOf(sciFi),
-                imdbRating = 8.9f
+                imdbRating = 8.9f,
+                posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
+                seasonsCount = 1,                       // season1
+                trailerUrl = "https://youtu.be/future_worlds_trailer"
             ),
             TvSeries(
                 id = 102,
-                posterImageUrl = "https://image.tmdb.org/t/p/w500/series2.jpg",
                 title = "City Shadows",
-                description = "Gritty crime thriller.",
-                seasons = listOf(seasonCrime1),
-                actorIds = listOf(17),
+                overview = "Gritty crime thriller.",
                 releaseDate = LocalDate(2020, 2, 1),
                 genres = listOf(crime),
-                imdbRating = 8.5f
+                imdbRating = 8.5f,
+                posterImageUrl = "https://image.tmdb.org/t/p/w500/series2.jpg",
+                seasonsCount = 1,                       // seasonCrime1
+                trailerUrl = "https://youtu.be/city_shadows_trailer"
             )
         )
     }
