@@ -57,9 +57,8 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                     error = painterResource(placeholderResId),
                     contentDescription = null,
                     placeholderBackgroundColor = Theme.colors.surface,
-                    text = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small.copy(Theme.colors.body),
-                    iconColor = Theme.colors.body,
+                    hintText = stringResource(R.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small,
                     iconSize = 24.dp,
                 )
             }, topLeftContent = {

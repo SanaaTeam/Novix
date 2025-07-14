@@ -43,7 +43,8 @@ import com.skydoves.cloudy.cloudy
 import kotlinx.coroutines.launch
 
 /**
- * A composable that executes an [ImageRequest] asynchronously and renders the result.
+ * A composable build on coil [AsyncImage] that executes an [ImageRequest] asynchronously and
+ * analyse it renders the result then.
  *
  * @param imageUrl path for remote image url.
  * @param contentDescription Text used by accessibility services to describe what this image
@@ -51,6 +52,8 @@ import kotlinx.coroutines.launch
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
  * @param placeholder A [Painter] that is displayed while the image is loading.
+ * @param placeholderBackgroundColor A [Color] that is displayed if the placeholder has transparent
+ * parts.
  * @param error A [Painter] that is displayed when the image request is unsuccessful.
  * @param onLoading Called when the image request begins loading.
  * @param onSuccess Called when the image request completes successfully.
@@ -71,8 +74,11 @@ import kotlinx.coroutines.launch
  * @param blurRadius Radius of the blur along both the x and y axis.
  * @param sfwThreshold If the sfw score for this image is less than the threshold, the blur would be
  * enabled. Range is [0.0f, 1.0f].
- * @param nsfwThreshold If the nsfw score for this image is more than the threshold, the blur would be
- * enabled. Range is [0.0f, 1.0f].
+ * @param nsfwThreshold If the nsfw score for this image is more than the threshold, the blur would
+ * be enabled. Range is [0.0f, 1.0f].
+ * @param hintText text to be displayed on the blur.
+ * @param textStyle style of text, color is not applicable.
+ * @param revealBlurIcon icon that disable the blur when clicked.
  */
 @Composable
 fun RemoteCensoredImageViewer(
@@ -93,18 +99,18 @@ fun RemoteCensoredImageViewer(
     clipToBounds: Boolean = true,
     modelEqualityDelegate: EqualityDelegate = DefaultModelEqualityDelegate,
     blurRadius: Int = 20,
+    isBlurEnabled: Boolean = true,
     @FloatRange(from = 0.0, to = 1.0) sfwThreshold: Float = 0.5f,
     @FloatRange(from = 0.0, to = 1.0) nsfwThreshold: Float = 0.5f,
-    text: String = "Unsuitable image",
-    textStyle: TextStyle = TextStyle.Default.copy(color = Color(0x99FFFFFF)),
-    icon: Painter = painterResource(R.drawable.icon_eye_slash),
-    iconColor: Color = Color(0x99FFFFFF),
+    hintText: String = "Unsuitable image",
+    textStyle: TextStyle = TextStyle.Default,
+    revealBlurIcon: Painter = painterResource(R.drawable.icon_eye_slash),
     iconSize: Dp = 24.dp,
 ) {
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var blurImage by rememberSaveable { mutableStateOf(true) }
+    var blurImage by rememberSaveable { mutableStateOf(isBlurEnabled) }
     var isLoading by rememberSaveable { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -114,15 +120,17 @@ fun RemoteCensoredImageViewer(
                 .data(imageUrl)
                 .allowHardware(false)
                 .build(),
-            modifier = modifier.cloudy(radius = blurRadius, enabled = blurImage),
+            modifier = Modifier.cloudy(radius = blurRadius, enabled = (blurImage && isBlurEnabled)),
             onSuccess = { success ->
                 coroutineScope.launch {
-                    val bitmap = success.result.drawable.toBitmap()
-                    blurImage = classifier.isInappropriateImage(
-                        bitmap = bitmap,
-                        sfwThreshold = sfwThreshold,
-                        nsfwThreshold = nsfwThreshold
-                    )
+                    if (isBlurEnabled) {
+                        val bitmap = success.result.drawable.toBitmap()
+                        blurImage = classifier.isInappropriateImage(
+                            bitmap = bitmap,
+                            sfwThreshold = sfwThreshold,
+                            nsfwThreshold = nsfwThreshold
+                        )
+                    }
                     isLoading = false
                 }
                 if (onSuccess != null) onSuccess(success)
@@ -160,7 +168,7 @@ fun RemoteCensoredImageViewer(
             )
         }
 
-        if (blurImage && !isLoading) {
+        if (blurImage && !isLoading && isBlurEnabled) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -170,17 +178,18 @@ fun RemoteCensoredImageViewer(
                 verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
             ) {
                 Image(
-                    painter = icon,
+                    painter = revealBlurIcon,
                     contentDescription = contentDescription,
-                    modifier = Modifier.size(iconSize)
+                    modifier = Modifier
+                        .size(iconSize)
                         .clickable { blurImage = false },
                     contentScale = ContentScale.Fit,
-                    colorFilter= ColorFilter.tint(iconColor),
+                    colorFilter = ColorFilter.tint(Color(0x99FFFFFF)),
                 )
 
                 Text(
-                    text = text,
-                    style = textStyle,
+                    text = hintText,
+                    style = textStyle.copy(color = Color(0x99FFFFFF)),
                 )
             }
         }

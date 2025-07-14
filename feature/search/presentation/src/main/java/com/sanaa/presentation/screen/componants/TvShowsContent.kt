@@ -54,9 +54,8 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiM
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
                     placeholderBackgroundColor = Theme.colors.surface,
-                    text = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small.copy(color = Theme.colors.body),
-                    iconColor = Theme.colors.body,
+                    hintText = stringResource(R.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small,
                     iconSize = 24.dp,
                 )
             }, topLeftContent = {

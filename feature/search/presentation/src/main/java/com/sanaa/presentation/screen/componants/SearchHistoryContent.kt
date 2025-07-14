@@ -95,9 +95,8 @@ fun SearchHistoryContent(
                                             nsfwThreshold = 0.15f,
                                             contentDescription = null,
                                             placeholderBackgroundColor = Theme.colors.surface,
-                                            text = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
-                                            textStyle = Theme.textStyle.body.small.copy(color = Theme.colors.body),
-                                            iconColor = Theme.colors.body,
+                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small,
                                             iconSize = 24.dp,
                                         )
                                     },
