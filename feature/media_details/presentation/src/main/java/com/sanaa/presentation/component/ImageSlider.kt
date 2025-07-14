@@ -31,9 +31,8 @@ import kotlinx.coroutines.delay
 @Composable
 fun ImageSlider(
     images: List<String>,
-    contentDescription: String,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
-    onDotClick: (Int) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
 
@@ -70,7 +69,6 @@ fun ImageSlider(
             visible = images.size > 1, modifier = Modifier.align(Alignment.TopCenter)
         ) {
             NovixCarouselDots(
-                onDotClick = onDotClick,
                 totalDots = images.size,
                 selectedIndex = pagerState.currentPage,
                 modifier = Modifier
