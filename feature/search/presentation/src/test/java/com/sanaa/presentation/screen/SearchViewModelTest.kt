@@ -519,5 +519,23 @@ class SearchViewModelTest {
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }
+    @Test
+    fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
+        runTest {
+            // Given
+            coEvery { clearSearchHistoryUseCase.execute() } throws Exception()
+
+            // When
+            searchViewModel.onClearRecentSearchClicked()
+
+            // Then
+            searchViewModel.state.test {
+                awaitItem()
+
+                val item = awaitItem()
+                val expected = SearchScreenUiState(isLoading = false, error = "Unknown error")
+                Truth.assertThat(item).isEqualTo(expected)
+            }
+        }
 
 }
