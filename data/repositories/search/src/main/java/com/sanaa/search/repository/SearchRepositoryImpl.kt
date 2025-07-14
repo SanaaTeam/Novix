@@ -15,6 +15,7 @@ import search.usecase.search_param.MediaType
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchMediaOutput
 import java.net.UnknownHostException
+import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,
@@ -54,9 +55,10 @@ class SearchRepositoryImpl(
             } else {
                 searchTvSeries(query, filters)
             }
-        } catch (_: UnknownHostException) {
+        } catch (_: UnresolvedAddressException) {
             throw NoNetworkException()
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.printStackTrace()
             throw RetrievingDataFailureException("Failed to retrieve media for query: $query")
         }
     }

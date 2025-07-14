@@ -8,6 +8,7 @@ import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.just
@@ -498,5 +499,43 @@ class SearchViewModelTest {
             Truth.assertThat(item).isEqualTo(expected)
         }
     }
+
+    @Test
+    fun ` onDeleteRecentSearchItem() should update noInternetConnection = true when call api failed with NoNetworkException`() =
+        runTest {
+            // Given
+            val id = 1
+            coEvery { deleteSearchItemUseCase.execute(id) } throws NoNetworkException()
+
+            // When
+            searchViewModel.onDeleteRecentSearchItem(id)
+
+            // Then
+            searchViewModel.state.test {
+                awaitItem()
+
+                val item = awaitItem()
+                val expected = SearchScreenUiState(isLoading = false, noInternetConnection = true)
+                Truth.assertThat(item).isEqualTo(expected)
+            }
+        }
+    @Test
+    fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
+        runTest {
+            // Given
+            coEvery { clearSearchHistoryUseCase.execute() } throws Exception()
+
+            // When
+            searchViewModel.onClearRecentSearchClicked()
+
+            // Then
+            searchViewModel.state.test {
+                awaitItem()
+
+                val item = awaitItem()
+                val expected = SearchScreenUiState(isLoading = false, error = "Unknown error")
+                Truth.assertThat(item).isEqualTo(expected)
+            }
+        }
 
 }

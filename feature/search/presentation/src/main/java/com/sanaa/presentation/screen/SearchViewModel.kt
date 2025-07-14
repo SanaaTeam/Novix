@@ -8,6 +8,7 @@ import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -66,7 +67,11 @@ class SearchViewModel(
     }
 
     fun observeRecentViewedItems() {
-        updateState { it.copy(isLoading = true, error = null) }
+        updateState {
+            it.copy(
+                isLoading = true, error = null, noInternetConnection = false
+            )
+        }
 
         tryToExecute(
             callee = {
@@ -82,7 +87,11 @@ class SearchViewModel(
                         }
                     }
                     .collectLatest { viewed ->
-                        updateState { it.copy(recentViewedMedia = viewed) }
+                        updateState {
+                            it.copy(
+                                recentViewedMedia = viewed, noInternetConnection = false
+                            )
+                        }
                     }
             },
             onError = ::onDataLoadError
@@ -102,7 +111,12 @@ class SearchViewModel(
                         }
                     }
                     .collectLatest { queries ->
-                        updateState { it.copy(recentSearchQueries = queries) }
+                        updateState {
+                            it.copy(
+                                recentSearchQueries = queries,
+                                noInternetConnection = false
+                            )
+                        }
                     }
             },
             onError = ::onDataLoadError
@@ -131,7 +145,7 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState { it.copy(isLoading = true, error = null) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadMoviesOperation(query) }, ::onLoadMoviesSuccess, ::onDataLoadError)
     }
 
@@ -142,11 +156,11 @@ class SearchViewModel(
     }
 
     private fun onLoadMoviesSuccess(movies: List<MovieUiModel>) {
-        updateState { it.copy(isLoading = false, movies = movies) }
+        updateState { it.copy(isLoading = false, movies = movies, noInternetConnection = false) }
     }
 
     private fun loadTvShows(query: String) {
-        updateState { it.copy(isLoading = true, error = null) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
     }
 
@@ -157,11 +171,11 @@ class SearchViewModel(
     }
 
     private fun onLoadTvShowsSuccess(tvShows: List<TvShowUiModel>) {
-        updateState { it.copy(isLoading = false, tvShows = tvShows) }
+        updateState { it.copy(isLoading = false, tvShows = tvShows, noInternetConnection = false) }
     }
 
     private fun loadActors(query: String) {
-        updateState { it.copy(isLoading = true, error = null) }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
     }
 
@@ -172,11 +186,31 @@ class SearchViewModel(
     }
 
     private fun onLoadActorsSuccess(actors: List<ActorUiModel>) {
-        updateState { it.copy(isLoading = false, actors = actors) }
+        updateState {
+            it.copy(
+                noInternetConnection = false,
+                isLoading = false,
+                actors = actors
+            )
+        }
     }
 
     private fun onDataLoadError(e: Exception) {
-        updateState { it.copy(isLoading = false, error = e.message ?: "Unknown error") }
+        if (e is NoNetworkException)
+            updateState {
+                it.copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                )
+            }
+        else
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    error = e.message ?: "Unknown error",
+                    noInternetConnection = false
+                )
+            }
     }
 
 
@@ -229,7 +263,7 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
-            onSuccess = { updateState { it.copy(isLoading = false) } },
+            onSuccess = { updateState { it.copy(isLoading = false,noInternetConnection = false) } },
             ::onDataLoadError
         )
     }

@@ -38,7 +38,6 @@ dependencies {
     implementation(project(":design_system"))
     implementation(project(":domain:vod"))
     implementation(project(":image_viewer"))
-    implementation(libs.androidx.compose.material3.material3)
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
 

@@ -8,5 +8,4 @@ interface FilterBottomSheetInteractionsListener {
     fun onRatingChanged(newRating: Int)
     fun onGenreSelected(genre: Genre)
     fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>)
-
 }
