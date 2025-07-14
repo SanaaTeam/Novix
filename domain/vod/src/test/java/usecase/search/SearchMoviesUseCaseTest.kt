@@ -1,4 +1,4 @@
-package usecase
+package usecase.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -9,30 +9,31 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
-import repository.SearchRepository
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.SearchMediaOutput
+import search.repository.SearchHistoryRepository
+import search.repository.SearchRepository
+import search.usecase.SearchMoviesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchMediaOutput
 
-class SearchTvSeriesUseCaseTest {
+class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
-    private lateinit var searchTvSeriesUseCase: SearchTvSeriesUseCase
+    private lateinit var searchMoviesUseCase: SearchMoviesUseCase
 
     @BeforeEach
     fun setUp() {
-        searchTvSeriesUseCase = SearchTvSeriesUseCase(searchRepository, searchHistoryRepository)
+        searchMoviesUseCase = SearchMoviesUseCase(searchRepository, searchHistoryRepository)
     }
 
     @Test
-    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
+    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search a movie`() =
         runTest {
             // Given
-            val query = "TvSeries"
+            val query = "Movie"
 
             // When
-            searchTvSeriesUseCase.execute(query, null)
+            searchMoviesUseCase.execute(query, null)
 
             // Then
             coVerify {
@@ -41,54 +42,51 @@ class SearchTvSeriesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return tv series search result when search without filters`() =
+    fun `execute() should return movie search result when search without filters`() =
         runTest {
             // Given
-            val query = "Tv Series"
+            val query = "Movie"
             val filters = null
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
+                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
             } returns searchMediaOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, filters)
 
             // Then
             assertThat(result).isEqualTo(searchMediaOutputList)
-
         }
 
     @Test
-    fun `execute() should return tv series search result when search with filters`() =
+    fun `execute() should return movie search result when search with filters`() =
         runTest {
             // Given
-            val query = "Tv Series"
+            val query = "Movie"
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
+                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
             } returns searchMediaOutputList
 
-
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, filters)
 
             // Then
             assertThat(result).isEqualTo(searchMediaOutputList)
         }
 
-
     @Test
-    fun `execute() should throw RetrievingDataFailureException when try to search an tv series failed`() =
+    fun `execute() should throw RetrievingDataFailureException when try to search a movie failed`() =
         runTest {
             // Given
             val query = "Sam"
             coEvery {
-                searchRepository.searchMedia(query, null, MediaType.TV_SERIES)
+                searchRepository.searchMedia(query, null, MediaType.MOVIE)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchTvSeriesUseCase.execute(query, null)
+                searchMoviesUseCase.execute(query, null)
             }
         }
 

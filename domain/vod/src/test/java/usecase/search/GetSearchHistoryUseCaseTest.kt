@@ -1,4 +1,4 @@
-package usecase
+package usecase.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -12,8 +12,9 @@ import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
-import usecase.search.SearchHistory
+import search.repository.SearchHistoryRepository
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.search_param.SearchHistory
 
 class GetSearchHistoryUseCaseTest {
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
