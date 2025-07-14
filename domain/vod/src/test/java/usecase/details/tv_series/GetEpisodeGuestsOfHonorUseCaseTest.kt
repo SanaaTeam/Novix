@@ -35,17 +35,16 @@ class GetEpisodeGuestsOfHonorUseCaseTest {
         assert(result == expected)
     }
     @Test
-    fun `execute() should throw exception when repository fails to get guests of honor`() =
-        runTest {
-            // Given
-            val exception = IllegalStateException("Guests not available")
-            coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } throws exception
+    fun `execute() should throw exception when repository fails to get guests of honor`() = runTest {
+        // Given
+        val exception = IllegalStateException("Guests not available")
+        coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } throws exception
 
-            // When, Then
-            val result = assertThrows<IllegalStateException> {
-                useCase.execute(1, 1, 1)
-            }
-
-            assert(result.message == "Guests not available")
+        // When, Then
+        val result = assertThrows<IllegalStateException> {
+            useCase.execute(1, 1, 1)
         }
+
+        assert(result.message == "Guests not available")
+    }
 }

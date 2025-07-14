@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+
 class GetEpisodeDetailsUseCaseTest {
 
     private var repository: TvSeriesRepository = mockk(relaxed = true)
@@ -34,6 +35,7 @@ class GetEpisodeDetailsUseCaseTest {
         coVerify { repository.getEpisodeDetails(1, 1, 1) }
         assert(result == expected)
     }
+
     @Test
     fun `execute() should throw exception when repository fails to get episode details`() =
         runTest {
