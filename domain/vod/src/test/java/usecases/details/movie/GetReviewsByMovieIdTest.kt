@@ -4,12 +4,14 @@ import com.google.common.truth.Truth.assertThat
 import details.repository.MovieRepository
 import details.usecase.movie.GetReviewsByMovieId
 import entity.Review
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class GetReviewsByMovieIdTest {
     private lateinit var movieRepository: MovieRepository
@@ -45,6 +47,20 @@ class GetReviewsByMovieIdTest {
 
         // Then
         assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `execute() should throw exception when repository fails`() = runTest {
+        // Given
+        val movieId = 1
+        coEvery {
+            movieRepository.getReviewsByMovieId(movieId)
+        } throws RetrievingDataFailureException("Failed to retrieve reviews")
+
+        // When / Then
+        assertThrows<RetrievingDataFailureException> {
+            getReviewsByMovieId.execute(movieId)
+        }
     }
     companion object {
         private val testReview1 = Review(
