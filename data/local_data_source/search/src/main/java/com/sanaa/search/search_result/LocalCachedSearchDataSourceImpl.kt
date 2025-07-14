@@ -82,11 +82,11 @@ class LocalCachedSearchDataSourceImpl(
 
         if (cachedResults.isNotEmpty()) {
             return cachedResults.mapNotNull { result ->
-                actorDao.getActorByQuery(result.itemId.toString())
+                actorDao.getActorsByQuery(result.itemId.toString()).firstOrNull()
             }
         }
 
-        return listOfNotNull(actorDao.getActorByQuery(query))
+        return actorDao.getActorsByQuery(query)
     }
 
     override suspend fun getMoviesByQuery(query: String): List<MoviesLocalDto> {
