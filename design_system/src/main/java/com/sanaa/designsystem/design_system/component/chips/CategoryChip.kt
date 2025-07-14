@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -34,7 +35,7 @@ fun CategoryChip(
     isSelected: Boolean = false,
 ) {
     val animateBackgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.secondary else Theme.colors.surface,
+        targetValue = if (isSelected) Theme.colors.secondary else Color.Transparent,
         animationSpec = tween(200, delayMillis = 80)
     )
     val animateTextColor by animateColorAsState(
