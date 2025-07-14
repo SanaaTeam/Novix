@@ -1,6 +1,7 @@
 package com.sanaa.series
 
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import com.sanaa.series.mapper.toEntity
 import details.repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
@@ -8,10 +9,17 @@ import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
+import exceptions.NotFoundException
 
-class TvSeriesRepositoryImpl(remoteDataSource: RemoteTvSeriesDataSource): TvSeriesRepository {
+class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSource) :
+    TvSeriesRepository {
     override suspend fun getTvSeriesDetails(id: Int): TvSeries {
-        TODO("Not yet implemented")
+        try {
+            val video = remoteDataSource.getTvSeriesVideos(id)
+            return remoteDataSource.getTvSeries(id).toEntity(video)
+        } catch (_: Exception) {
+            throw NotFoundException("Tv Series not found")
+        }
     }
 
     override suspend fun getTvSeriesReviews(id: Int): List<Review> {

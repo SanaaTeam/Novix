@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -33,6 +34,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.core.ktx)
     implementation(projects.domain.vod)
     implementation(libs.ktor.serialization.kotlinx.json)
