@@ -152,12 +152,12 @@ class LocalSearchDataSourceImplTest {
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", System.currentTimeMillis())
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "actor") } returns cachedResults
-        coEvery { actorDao.getActorByQuery("123") } returns actor
+        coEvery { actorDao.getActorsByQuery("123") } returns listOf(actor)
 
         val result = dataSource.getActorsByQuery(query)
 
         assertEquals(listOf(actor), result)
-        coVerify { actorDao.getActorByQuery("123") }
+        coVerify { actorDao.getActorsByQuery("123") }
     }
 
     @Test
@@ -165,14 +165,14 @@ class LocalSearchDataSourceImplTest {
         val query = "actor query"
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
-        coEvery { actorDao.getActorByQuery(query) } returns ActorsLocalDto(
+        coEvery { actorDao.getActorsByQuery(query) } returns listOf(ActorsLocalDto(
             id = 99, name = "Actor", imagePath = "", language = "en", timestamp = System.currentTimeMillis()
-        )
+        ))
 
         val result = dataSource.getActorsByQuery(query)
 
         assertEquals(1, result.size)
-        coVerify(exactly = 1) { actorDao.getActorByQuery(query) }
+        coVerify(exactly = 1) { actorDao.getActorsByQuery(query) }
     }
 
     @Test

@@ -8,9 +8,9 @@ import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
-import usecase.search.SearchHistory
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
+import search.usecase.search_param.SearchHistory
 
 class MapRecentViewedKtTest {
 

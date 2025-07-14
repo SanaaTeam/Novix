@@ -1,34 +1,27 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
-class FilterViewModel : ViewModel(), FilterBottomSheetInteractionsListener {
+class FilterViewModel(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<FilterUiState>(FilterUiState(), dispatcher),
+    FilterBottomSheetInteractionsListener {
 
     private val _uiState = MutableStateFlow(FilterUiState())
     val uiState = _uiState.asStateFlow()
 
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
-
-    init {
-        fetchGenres()
-    }
-
-    private fun fetchGenres() {
-        viewModelScope.launch {
-            _uiState.update { it.copy(allGenres = Genre.entries, isLoading = false) }
-        }
-    }
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
         _uiState.update { it.copy(yearRange = newRange, isDefaultState = false) }
@@ -54,19 +47,21 @@ class FilterViewModel : ViewModel(), FilterBottomSheetInteractionsListener {
     }
 
     override fun onApplyClicked() {
-        viewModelScope.launch {
-            val currentState = _uiState.value
-            val mediaFilters = if (currentState.isDefaultState) {
-                null
-            } else {
-                MediaFilters(
-                    startYear = currentState.yearRange.start.toInt(),
-                    endYear = currentState.yearRange.endInclusive.toInt(),
-                    genres = currentState.selectedGenres.toList(),
-                    imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
-                )
+        tryToExecute(
+            callee = {
+                val currentState = _uiState.value
+                val mediaFilters = if (currentState.isDefaultState) {
+                    null
+                } else {
+                    MediaFilters(
+                        startYear = currentState.yearRange.start.toInt(),
+                        endYear = currentState.yearRange.endInclusive.toInt(),
+                        genres = currentState.selectedGenres.toList(),
+                        imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
+                    )
+                }
+                _filterResult.emit(mediaFilters)
             }
-            _filterResult.emit(mediaFilters)
-        }
+        )
     }
 }

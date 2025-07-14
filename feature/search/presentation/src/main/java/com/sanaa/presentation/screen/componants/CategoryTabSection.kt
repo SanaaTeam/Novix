@@ -12,8 +12,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
-import com.sanaa.presentation.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState
 
 @Composable
 fun CategoryTabSection(
@@ -40,8 +41,14 @@ fun CategoryTabSection(
             ) {
                 WavyProgressIndicator()
             }
+        } else  if (uiState.noInternetConnection) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                NetworkDisconnectionContact(onRetryClick = {})
+            }
         } else when (selectedTabIndex) {
-
             0 -> {
                 if (uiState.movies.isEmpty()) NoSearchResultState()
                 else MoviesContent(uiState.movies, onMovieClick = {
@@ -49,8 +56,9 @@ fun CategoryTabSection(
                 })
             }
 
+
             1 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.tvShows.isEmpty()) NoSearchResultState()
                 else TvShowsContent(
                     uiState.tvShows, onTvShowClick = {
                         interactionsListener.onSearchResultMediaClicked(it)
@@ -59,7 +67,7 @@ fun CategoryTabSection(
             }
 
             2 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
+                if (uiState.actors.isEmpty()) NoSearchResultState()
                 else ActorsContent(uiState.actors)
             }
         }
