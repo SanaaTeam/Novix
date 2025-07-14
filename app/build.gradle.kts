@@ -114,4 +114,21 @@ dependencies {
 
     // Language Provider
     implementation(projects.envConfig)
+
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.feature.savedContent.api)
+    implementation(projects.feature.savedContent.presentation)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.onboarding.api)
+    implementation(projects.feature.onboarding.presentation)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.userProfile.presentation)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.authentication.presentation)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.mediaDetails.presentation)
+    implementation(projects.feature.playlists.api)
+    implementation(projects.feature.playlists.presentation)
 }

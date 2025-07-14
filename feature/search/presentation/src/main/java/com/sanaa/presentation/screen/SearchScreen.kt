@@ -41,6 +41,8 @@ import search.usecase.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
+    onNavigateBack: () -> Unit,
+    onMediaClicked: (mediaId: String) -> Unit,
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
 ) {
