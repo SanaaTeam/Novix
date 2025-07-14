@@ -6,6 +6,7 @@ import entity.Actor
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -44,9 +45,13 @@ class GetTvSeriesCastUseCaseTest {
         id = 1,
         imageUrl = "Image",
         name = "Tom Holland",
-        age = 21,
         region = "Iraq",
         lastShow = "Spider man",
         gender = Actor.Gender.MALE,
+        department = "CS",
+        birthDate = LocalDate(1980, 1, 1),
+        deathDate = null,
+        placeOfBirth = "Somewhere, USA",
+        biography = "A short bio text."
     )
 }
