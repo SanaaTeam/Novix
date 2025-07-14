@@ -95,6 +95,10 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 coil = { module = "io.coil-kt:coil", version.ref = "coil" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 
+# Gradle Plugins
+kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
