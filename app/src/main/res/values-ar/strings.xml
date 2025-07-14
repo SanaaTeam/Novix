@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">نوفيكس</string>
-    
-    <!-- Tab Labels -->
-    <string name="movies">أفلام</string>
-    <string name="tv_shows">مسلسلات</string>
-    <string name="actors">ممثلين</string>
+    <string name="app_name">Novix</string>
     
     <!-- Genre Categories -->
+    <string name="genres">الفئات</string>
     <string name="genre_drama">دراما</string>
     <string name="genre_comedy">كوميديا</string>
     <string name="genre_adventure">مغامرة</string>

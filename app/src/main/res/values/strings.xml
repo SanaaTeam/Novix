@@ -1,12 +1,8 @@
 <resources>
     <string name="app_name">Novix</string>
     
-    <!-- Tab Labels -->
-    <string name="movies">Movies</string>
-    <string name="tv_shows">TV Shows</string>
-    <string name="actors">Actors</string>
-    
     <!-- Genre Categories -->
+    <string name="genres">Genres</string>
     <string name="genre_drama">Drama</string>
     <string name="genre_comedy">Comedy</string>
     <string name="genre_adventure">Adventure</string>
