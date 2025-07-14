@@ -8,8 +8,8 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
 
 
 class GetEpisodeDetailsUseCaseTest {
@@ -35,17 +35,19 @@ class GetEpisodeDetailsUseCaseTest {
         coVerify { repository.getEpisodeDetails(1, 1, 1) }
         assert(result == expected)
     }
+
     @Test
-    fun `execute() should throw exception when repository fails to get episode details`() = runTest {
-        // Given
-        val exception = IllegalStateException("Episode not found")
-        coEvery { repository.getEpisodeDetails(1, 1, 1) } throws exception
+    fun `execute() should throw exception when repository fails to get episode details`() =
+        runTest {
+            // Given
+            val exception = IllegalStateException("Episode not found")
+            coEvery { repository.getEpisodeDetails(1, 1, 1) } throws exception
 
-        // When, Then
-        val result = assertThrows<IllegalStateException> {
-            useCase.execute(1, 1, 1)
+            // When, Then
+            val result = assertThrows<IllegalStateException> {
+                useCase.execute(1, 1, 1)
+            }
+
+            assert(result.message == "Episode not found")
         }
-
-        assert(result.message == "Episode not found")
-    }
 }

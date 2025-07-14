@@ -13,8 +13,10 @@ interface TvSeriesRepository {
     suspend fun getTvSeriesImages(id: Int): List<String>
     suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries>
     suspend fun getTvSeriesCast(id: Int): List<Actor>
-    suspend fun getTvSeriesSeasons(id: Int, seasonNumber: Int): List<Season>
-    suspend fun getEpisodeDetails(id: Int, seasonNumber: Int, episodeNumber: Int): Episode
-    suspend fun getEpisodeImages(id: Int, seasonNumber: Int, episodeNumber: Int): List<String>
-    suspend fun getEpisodeGuestsOfHonor(id: Int, seasonNumber: Int, episodeNumber: Int): List<Actor>
+    suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): List<Season>
+    suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): Episode
+    suspend fun getEpisodeImages(seriesId: Int, seasonNumber: Int, episodeNumber: Int): List<String>
+    suspend fun getEpisodeGuestsOfHonor(
+        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+    ): List<Actor>
 }

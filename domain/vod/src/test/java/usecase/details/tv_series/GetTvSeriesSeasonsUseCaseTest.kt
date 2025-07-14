@@ -25,20 +25,20 @@ class GetTvSeriesSeasonsUseCaseTest {
     fun `execute() should return list of seasons from TvSeriesRepository`() = runTest {
         // Given
         val expected = listOf(mockk<Season>(), mockk<Season>())
-        coEvery { repository.getTvSeriesSeasons(1, 1) } returns expected
+        coEvery { repository.getTvSeriesSeason(1, 1) } returns expected
 
         // When
         val result = useCase.execute(1, 1)
 
         // Then
-        coVerify { repository.getTvSeriesSeasons(1, 1) }
+        coVerify { repository.getTvSeriesSeason(1, 1) }
         assert(result == expected)
     }
     @Test
     fun `execute() should throw exception when repository fails to get seasons`() = runTest {
         // Given
         val exception = IllegalStateException("Unable to fetch seasons")
-        coEvery { repository.getTvSeriesSeasons(1, 1) } throws exception
+        coEvery { repository.getTvSeriesSeason(1, 1) } throws exception
 
         // When, Then
         val result = assertThrows<IllegalStateException> {

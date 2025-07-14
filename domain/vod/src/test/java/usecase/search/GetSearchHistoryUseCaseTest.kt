@@ -29,7 +29,9 @@ class GetSearchHistoryUseCaseTest {
     fun `execute() should return history list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(SearchHistoryList)
+            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(
+                SearchHistoryList
+            )
 
             // When
             val result = getSearchHistoryUseCase.execute().single()
