@@ -72,7 +72,7 @@ class GetActorDetailsUseCaseTest {
             region = "US",
             lastShow = "Some Movie (2024)",
             gender = Actor.Gender.MALE,
-            department = "Acting",
+            character = "Acting",
             birthDate = LocalDate(1980, 1, 1),
             deathDate = null,
             placeOfBirth = "Somewhere, USA",

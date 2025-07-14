@@ -48,7 +48,7 @@ class GetTvSeriesCastUseCaseTest {
         region = "Iraq",
         lastShow = "Spider man",
         gender = Actor.Gender.MALE,
-        department = "CS",
+        character = "CS",
         birthDate = LocalDate(1980, 1, 1),
         deathDate = null,
         placeOfBirth = "Somewhere, USA",
