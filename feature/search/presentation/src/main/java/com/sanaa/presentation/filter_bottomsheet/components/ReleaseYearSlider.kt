@@ -3,8 +3,8 @@ package com.sanaa.presentation.filter_bottomsheet.components
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun CustomYearRangeSlider(
     title: String,
     value: ClosedFloatingPointRange<Float>,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
+    onDragStateChanged: (isDragging: Boolean) -> Unit,
     valueRange: ClosedFloatingPointRange<Float> = 1980f..2025f,
     steps: Int = (2025 - 1980) - 1,
 ) {
@@ -77,106 +79,110 @@ fun CustomYearRangeSlider(
             )
         }
 
-        val startInteractionSource = remember { MutableInteractionSource() }
-        val endInteractionSource = remember { MutableInteractionSource() }
-
-        RangeSlider(
-            value = value,
-            onValueChange = onValueChange,
-            valueRange = valueRange,
-            steps = steps,
-            colors = customSliderColors,
-            startInteractionSource = startInteractionSource,
-            endInteractionSource = endInteractionSource,
-            startThumb = {
-                CircularThumb(
-                    interactionSource = startInteractionSource
+        Box(
+            modifier = Modifier.pointerInput(Unit) {
+                detectDragGestures(
+                    onDragStart = { _ -> onDragStateChanged(true) },
+                    onDragEnd = { onDragStateChanged(false) },
+                    onDragCancel = { onDragStateChanged(false) },
+                    onDrag = { _, _ -> }
                 )
-            },
-            endThumb = {
-                CircularThumb(
-                    interactionSource = endInteractionSource
-                )
-            },
-            track = { rangeSliderState: RangeSliderState ->
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(8.dp)
-                ) {
-                    val trackStartY = center.y
-                    val trackEndX = size.width
-                    val trackStrokeWidth = 8.dp.toPx()
+            }
+        ) {
+            RangeSlider(
+                value = value,
+                onValueChange = onValueChange,
+                valueRange = valueRange,
+                steps = steps,
+                colors = customSliderColors,
+                startThumb = {
+                    CircularThumb()
+                },
+                endThumb = {
+                    CircularThumb()
+                },
+                track = { rangeSliderState: RangeSliderState ->
+                    Canvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(8.dp)
+                    ) {
+                        val trackStartY = center.y
+                        val trackEndX = size.width
+                        val trackStrokeWidth = 8.dp.toPx()
 
-                    drawLine(
-                        color = inactiveColor,
-                        start = Offset(0f, trackStartY),
-                        end = Offset(trackEndX, trackStartY),
-                        strokeWidth = trackStrokeWidth,
-                        cap = StrokeCap.Round
-                    )
+                        drawLine(
+                            color = inactiveColor,
+                            start = Offset(0f, trackStartY),
+                            end = Offset(trackEndX, trackStartY),
+                            strokeWidth = trackStrokeWidth,
+                            cap = StrokeCap.Round
+                        )
 
-                    val range =
-                        rangeSliderState.valueRange.endInclusive - rangeSliderState.valueRange.start
-                    if (range > 0) {
-                        val activeStartFraction =
-                            (rangeSliderState.activeRangeStart - rangeSliderState.valueRange.start) / range
-                        val activeEndFraction =
-                            (rangeSliderState.activeRangeEnd - rangeSliderState.valueRange.start) / range
+                        val range =
+                            rangeSliderState.valueRange.endInclusive - rangeSliderState.valueRange.start
+                        if (range > 0) {
+                            val activeStartFraction =
+                                (rangeSliderState.activeRangeStart - rangeSliderState.valueRange.start) / range
+                            val activeEndFraction =
+                                (rangeSliderState.activeRangeEnd - rangeSliderState.valueRange.start) / range
 
-                        val activeStartPx = activeStartFraction * trackEndX
-                        val activeEndPx = activeEndFraction * trackEndX
+                            val activeStartPx = activeStartFraction * trackEndX
+                            val activeEndPx = activeEndFraction * trackEndX
 
-                        if (layoutDirection == LayoutDirection.Rtl) {
-                            drawLine(
-                                color = activeColor,
-                                start = Offset(trackEndX - activeEndPx, trackStartY),
-                                end = Offset(trackEndX - activeStartPx, trackStartY),
-                                strokeWidth = trackStrokeWidth,
-                                cap = StrokeCap.Round
-                            )
-                        } else {
-                            drawLine(
-                                color = activeColor,
-                                start = Offset(activeStartPx, trackStartY),
-                                end = Offset(activeEndPx, trackStartY),
-                                strokeWidth = trackStrokeWidth,
-                                cap = StrokeCap.Round
-                            )
+                            if (layoutDirection == LayoutDirection.Rtl) {
+                                drawLine(
+                                    color = activeColor,
+                                    start = Offset(trackEndX - activeEndPx, trackStartY),
+                                    end = Offset(trackEndX - activeStartPx, trackStartY),
+                                    strokeWidth = trackStrokeWidth,
+                                    cap = StrokeCap.Round
+                                )
+                            } else {
+                                drawLine(
+                                    color = activeColor,
+                                    start = Offset(activeStartPx, trackStartY),
+                                    end = Offset(activeEndPx, trackStartY),
+                                    strokeWidth = trackStrokeWidth,
+                                    cap = StrokeCap.Round
+                                )
+                            }
                         }
                     }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
 @Composable
-private fun CircularThumb(
-    interactionSource: MutableInteractionSource
-) {
+private fun CircularThumb() {
     Spacer(
         Modifier
             .size(16.dp)
-            .hoverable(interactionSource = interactionSource)
             .border(1.dp, Theme.colors.stroke, CircleShape)
             .background(Theme.colors.primary, CircleShape)
     )
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF, locale = "ar")
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun CustomYearRangeSliderPreview() {
     var sliderPosition by remember { mutableStateOf(1995f..2012f) }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(
+        modifier = Modifier
+            .background(Theme.colors.surface)
+            .padding(16.dp)
+    ) {
         CustomYearRangeSlider(
             title = "Released year",
             value = sliderPosition,
             onValueChange = { newPosition ->
                 sliderPosition = newPosition
-            }
+            },
+            onDragStateChanged = {}
         )
     }
 }

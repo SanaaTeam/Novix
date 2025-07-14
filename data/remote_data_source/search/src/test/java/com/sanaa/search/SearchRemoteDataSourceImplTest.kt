@@ -5,14 +5,18 @@ import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
 import com.sanaa.search.dataSource.remote.response.SearchResponse
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkObject
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
@@ -26,15 +30,12 @@ class SearchRemoteDataSourceImplTest {
     private lateinit var dataSource: SearchRemoteDataSourceImpl
     private lateinit var languageProvider: LanguageProvider
     private val baseUrl = "https://api.themoviedb.org/3"
-    private val apiKey = "test_api_key"
+    private val apiKey = BuildConfig.TMDB_API_KEY
     private lateinit var mockEngine: MockEngine
     private val logger = LoggerFactory.getLogger(SearchRemoteDataSourceImplTest::class.java)
 
     @BeforeEach
     fun setUp() {
-        mockkObject(TmdbConfig)
-        every { TmdbConfig.apiKey } returns apiKey
-
         mockEngine = MockEngine { request ->
             logger.info("Request URL: ${request.url}")
             logger.info("Request Path: ${request.url.toString().substringBefore("?")}")

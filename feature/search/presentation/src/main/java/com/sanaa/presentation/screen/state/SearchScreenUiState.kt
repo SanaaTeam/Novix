@@ -1,4 +1,4 @@
-package com.sanaa.presentation.state
+package com.sanaa.presentation.screen.state
 
 import usecase.search.MediaFilters
 
@@ -9,6 +9,7 @@ data class SearchScreenUiState(
     val recentViewedMedia: List<RecentViewedUiModel> = emptyList(),
     val recentSearchQueries: List<RecentSearchUiModel> = emptyList(),
     val isLoading: Boolean = false,
+    val noInternetConnection: Boolean = false,
     val movies: List<MovieUiModel> = emptyList(),
     val tvShows: List<TvShowUiModel> = emptyList(),
     val actors: List<ActorUiModel> = emptyList(),

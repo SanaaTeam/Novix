@@ -30,6 +30,8 @@ fun FilterBottomSheetContent(
     uiState: FilterUiState,
     listener: FilterBottomSheetInteractionsListener,
     onDismissRequest: () -> Unit,
+    isSliderDragging: Boolean,
+    onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -40,7 +42,10 @@ fun FilterBottomSheetContent(
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(
+                    state = rememberScrollState(),
+                    enabled = !isSliderDragging
+                ),
         ) {
             BottomSheetHeader(onCancelClicked = onDismissRequest)
 
@@ -53,7 +58,8 @@ fun FilterBottomSheetContent(
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
-                        onValueChange = listener::onYearRangeChanged
+                        onValueChange = listener::onYearRangeChanged,
+                        onDragStateChanged = onSliderDragStateChanged
                     )
                     GenreChips(
                         genres = uiState.allGenres,
@@ -79,6 +85,7 @@ fun FilterBottomSheetContent(
     }
 }
 
+
 @Composable
 private fun FilterActions(
     onApplyClicked: () -> Unit,
@@ -90,12 +97,16 @@ private fun FilterActions(
     ) {
         PrimaryButton(
             onClick = onApplyClicked,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             text = stringResource(R.string.apply)
         )
         OutlinedButton(
             onClick = onClearClicked,
-            modifier = Modifier.fillMaxWidth().height(48.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp),
             text = stringResource(R.string.clear)
         )
     }
