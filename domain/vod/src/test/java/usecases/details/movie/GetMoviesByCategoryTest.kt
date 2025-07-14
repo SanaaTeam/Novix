@@ -5,11 +5,13 @@ import details.repository.MovieRepository
 import details.usecase.movie.GetMoviesByCategory
 import entity.Genre
 import entity.Movie
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
 class GetMoviesByCategoryTest {
@@ -34,7 +36,32 @@ class GetMoviesByCategoryTest {
         // Then
         assertThat(result).isEqualTo(movies)
     }
+    @Test
+    fun `execute() should return empty list when there are no movies in the category`() = runTest {
+        // Given
+        val category = Genre.DRAMA
+        coEvery { movieRepository.getMoviesByCategory(category) } returns emptyList()
 
+        // When
+        val result = getMoviesByCategory.execute(category)
+
+        // Then
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `execute() should throw exception when repository fails`() = runTest {
+        // Given
+        val category = Genre.COMEDY
+        coEvery {
+            movieRepository.getMoviesByCategory(category)
+        } throws RetrievingDataFailureException("Failed to retrieve movies by category")
+
+        // When / Then
+        assertThrows<RetrievingDataFailureException> {
+            getMoviesByCategory.execute(category)
+        }
+    }
     companion object {
         private val testMovie1 = Movie(
             id = 101,
