@@ -3,7 +3,6 @@ package com.sanaa.presentation.filter_bottomsheet.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,12 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import entity.Genre
-import java.util.Locale
-import com.sanaa.designsystem.R as DesignSystemR
 import com.sanaa.presentation.R
+import entity.Genre
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenreChips(
     genres: List<Genre>,
