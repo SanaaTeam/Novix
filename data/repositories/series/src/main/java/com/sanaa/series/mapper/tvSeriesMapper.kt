@@ -31,8 +31,7 @@ fun SeasonDto.toEntity(): Season {
         title = name,
         overview = overview,
         number = seasonNumber,
-        episodes = episodes.map { it.toEntity() }
-    )
+        episodes = episodes.map { it.toEntity() })
 }
 
 
@@ -59,14 +58,56 @@ fun VideoDto.toEntity(): String {
 
 fun GenreDto.toEntity(): Genre {
     return when (id) {
-        10759 -> Genre.WAR_AND_POLITICS
+        10759 -> Genre.ACTION_AND_ADVENTURE
         16 -> Genre.ANIMATION
         35 -> Genre.COMEDY
         80 -> Genre.CRIME
         99 -> Genre.DOCUMENTARY
         18 -> Genre.DRAMA
         10751 -> Genre.FAMILY
-        12 -> Genre.ADVENTURE
-        else -> Genre.SCIENCE_FICTION
+        10762 -> Genre.KIDS
+        9648 -> Genre.MYSTERY
+        10763 -> Genre.NEWS
+        10764 -> Genre.REALITY
+        10765 -> Genre.SCI_FI_AND_FANTASY
+        10766 -> Genre.SOAP
+        10767 -> Genre.TALK
+        10768 -> Genre.WAR_AND_POLITICS
+        37 -> Genre.WESTERN
+        else -> Genre.DRAMA
+    }
+
+
+}
+
+fun Genre.toDtoId(): Int {
+    return when (this) {
+        Genre.ACTION -> 28
+        Genre.ADVENTURE -> 12
+        Genre.COMEDY -> 35
+        Genre.DRAMA -> 18
+        Genre.HORROR -> 27
+        Genre.SCIENCE_FICTION -> 878
+        Genre.FANTASY -> 14
+        Genre.ROMANCE -> 10749
+        Genre.THRILLER -> 53
+        Genre.DOCUMENTARY -> 99
+        Genre.ANIMATION -> 16
+        Genre.CRIME -> 80
+        Genre.FAMILY -> 10751
+        Genre.HISTORY -> 36
+        Genre.KIDS -> 10762
+        Genre.MYSTERY -> 9648
+        Genre.MUSIC -> 10402
+        Genre.NEWS -> 10763
+        Genre.REALITY -> 10764
+        Genre.SOAP -> 10766
+        Genre.TALK -> 10767
+        Genre.WAR -> 10752
+        Genre.WAR_AND_POLITICS -> 10768
+        Genre.WESTERN -> 37
+        Genre.TV_MOVIE -> 10770
+        Genre.ACTION_AND_ADVENTURE -> 10759
+        Genre.SCI_FI_AND_FANTASY -> 10765
     }
 }
