@@ -55,7 +55,7 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                     nsfwThreshold = 0.15f,
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
-                    contentDescription = null,
+                    contentDescription = movie.title,
                     placeholderBackgroundColor = Theme.colors.surface,
                     hintText = stringResource(R.string.unsuitable_image),
                     textStyle = Theme.textStyle.body.small,

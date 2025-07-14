@@ -51,8 +51,7 @@ fun SearchHistoryContent(
             ) {
                 EmptySearchState(
                     icon = painterResource(id = R.drawable.empty_search),
-                    text = stringResource(id = R.string.empty_search_message),
-
+                    text = stringResource(id = R.string.empty_search_message)
                     )
             }
         }

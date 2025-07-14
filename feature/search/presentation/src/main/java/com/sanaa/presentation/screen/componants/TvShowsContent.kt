@@ -41,15 +41,15 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiM
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(tvShows) { movie ->
+        items(tvShows) { tvShow ->
             MovieSeriesPosterCard(boastImage = {
                 RemoteCensoredImageViewer(
-                    imageUrl = movie.imageUrl,
+                    imageUrl = tvShow.imageUrl,
                     modifier = Modifier.fillMaxWidth(),
                     blurRadius = 150,
                     sfwThreshold = 0.75f,
                     nsfwThreshold = 0.15f,
-                    contentDescription = movie.title,
+                    contentDescription = tvShow.title,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
@@ -63,8 +63,8 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiM
             }, onCardClick = {
                 onTvShowClick(
                     RecentViewedUiModel(
-                        id = movie.id,
-                        imageUrl = movie.imageUrl,
+                        id = tvShow.id,
+                        imageUrl = tvShow.imageUrl,
                         mediaType = MediaTypeUi.TV_SERIES.name
                     )
                 )
