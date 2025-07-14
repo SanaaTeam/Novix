@@ -34,7 +34,18 @@ class GetReviewsByMovieIdTest {
         assertThat(result).isEqualTo(reviews)
     }
 
+    @Test
+    fun `execute() should return empty list when there are no reviews`() = runTest {
+        // Given
+        val movieId = 1
+        coEvery { movieRepository.getReviewsByMovieId(movieId) } returns emptyList()
 
+        // When
+        val result = getReviewsByMovieId.execute(movieId)
+
+        // Then
+        assertThat(result).isEmpty()
+    }
     companion object {
         private val testReview1 = Review(
             id = 1,
