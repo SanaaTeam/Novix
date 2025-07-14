@@ -1,15 +1,15 @@
 package com.sanaa.novix.di
 
 import org.koin.dsl.module
-import usecase.AddRecentViewedUseCase
-import usecase.ClearRecentViewedUseCase
-import usecase.ClearSearchHistoryUseCase
-import usecase.GetRecentViewedUseCase
-import usecase.GetSearchHistoryUseCase
-import usecase.RemoveSearchHistoryUseCase
-import usecase.SearchActorsUseCase
-import usecase.SearchMoviesUseCase
-import usecase.SearchTvSeriesUseCase
+import search.usecase.AddRecentViewedUseCase
+import search.usecase.ClearRecentViewedUseCase
+import search.usecase.ClearSearchHistoryUseCase
+import search.usecase.GetRecentViewedUseCase
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.RemoveSearchHistoryUseCase
+import search.usecase.SearchActorsUseCase
+import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
     factory { SearchMoviesUseCase(get(), get()) }

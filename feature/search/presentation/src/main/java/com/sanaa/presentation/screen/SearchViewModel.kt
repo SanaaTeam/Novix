@@ -17,18 +17,18 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import usecase.AddRecentViewedUseCase
-import usecase.ClearRecentViewedUseCase
-import usecase.ClearSearchHistoryUseCase
-import usecase.GetRecentViewedUseCase
-import usecase.GetSearchHistoryUseCase
-import usecase.RemoveSearchHistoryUseCase
-import usecase.SearchActorsUseCase
-import usecase.SearchMoviesUseCase
-import usecase.SearchTvSeriesUseCase
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
+import search.usecase.AddRecentViewedUseCase
+import search.usecase.ClearRecentViewedUseCase
+import search.usecase.ClearSearchHistoryUseCase
+import search.usecase.GetRecentViewedUseCase
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.RemoveSearchHistoryUseCase
+import search.usecase.SearchActorsUseCase
+import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchTvSeriesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
 
 class SearchViewModel(
     private val searchMoviesUseCase: SearchMoviesUseCase,

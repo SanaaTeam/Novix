@@ -2,7 +2,7 @@ package com.sanaa.search.mapper
 
 import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
-import usecase.search.SearchActorOutput
+import search.usecase.search_param.SearchActorOutput
 
 fun ActorsLocalDto.toSearchOutput(): SearchActorOutput {
     return SearchActorOutput(

@@ -28,7 +28,7 @@ val excludedPackages = listOf(
     "com.sanaa.search.dto.*",
     "com.sanaa.search.di.*",
     "entity.**",
-    "usecase.search.**",
+    "search.usecase.search_param.**",
     "**.dao.**",
     "**.dto.**",
     "exceptions.**",

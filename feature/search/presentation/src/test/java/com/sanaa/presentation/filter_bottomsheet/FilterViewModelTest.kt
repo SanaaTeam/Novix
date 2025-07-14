@@ -11,7 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
