@@ -51,8 +51,7 @@ fun SearchHistoryContent(
             ) {
                 EmptySearchState(
                     icon = painterResource(id = R.drawable.empty_search),
-                    text = stringResource(id = R.string.empty_search_message),
-
+                    text = stringResource(id = R.string.empty_search_message)
                     )
             }
         }
@@ -93,6 +92,11 @@ fun SearchHistoryContent(
                                             blurRadius = 150,
                                             sfwThreshold = 0.75f,
                                             nsfwThreshold = 0.15f,
+                                            contentDescription = null,
+                                            placeholderBackgroundColor = Theme.colors.surface,
+                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small,
+                                            iconSize = 24.dp,
                                         )
                                     },
                                     topLeftContent = {

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Novix</string>
+    <string name="unsuitable_image">Unsuitable image</string>
 </resources>
