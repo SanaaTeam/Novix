@@ -38,7 +38,9 @@ android {
             manifestPlaceholders["analytics_debug"] = "true"
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -64,7 +66,6 @@ android {
 
 dependencies {
 
-    implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.data.repositories.search)
@@ -114,4 +115,6 @@ dependencies {
 
     // Language Provider
     implementation(projects.envConfig)
+
+    implementation("org.slf4j:slf4j-nop:1.7.36")
 }
