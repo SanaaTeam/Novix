@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import entity.Genre
-import com.sanaa.novix.R
+import com.sanaa.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
