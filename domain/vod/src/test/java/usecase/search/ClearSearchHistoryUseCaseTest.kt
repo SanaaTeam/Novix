@@ -1,4 +1,4 @@
-package usecase
+package usecase.search
 
 import exceptions.FailedToDeleteException
 import io.mockk.coEvery
