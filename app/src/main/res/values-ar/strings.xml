@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Novix</string>
-    
-    <!-- Genre Categories -->
+    <string name="app_name">نوفيكس</string>
+    <string name="unsuitable_image">صورة غير مناسبة</string>
     <string name="genres">الفئات</string>
     <string name="genre_drama">دراما</string>
     <string name="genre_comedy">كوميديا</string>
@@ -31,4 +30,4 @@
     <string name="genre_war_and_politics">الحروب والسياسة</string>
     <string name="genre_sci_fi_and_fantasy">خيال علمي وفانتازيا</string>
     <string name="genre_action_and_adventure">أكشن ومغامرة</string>
-</resources> 
+</resources>

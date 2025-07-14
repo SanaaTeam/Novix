@@ -24,21 +24,21 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.AddRecentViewedUseCase
-import usecase.ClearRecentViewedUseCase
-import usecase.ClearSearchHistoryUseCase
-import usecase.GetRecentViewedUseCase
-import usecase.GetSearchHistoryUseCase
-import usecase.RemoveSearchHistoryUseCase
-import usecase.SearchActorsUseCase
-import usecase.SearchMoviesUseCase
-import usecase.SearchTvSeriesUseCase
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
-import usecase.search.SearchActorOutput
-import usecase.search.SearchHistory
-import usecase.search.SearchMediaOutput
+import search.usecase.AddRecentViewedUseCase
+import search.usecase.ClearRecentViewedUseCase
+import search.usecase.ClearSearchHistoryUseCase
+import search.usecase.GetRecentViewedUseCase
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.RemoveSearchHistoryUseCase
+import search.usecase.SearchActorsUseCase
+import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchTvSeriesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
+import search.usecase.search_param.SearchActorOutput
+import search.usecase.search_param.SearchHistory
+import search.usecase.search_param.SearchMediaOutput
 
 class SearchViewModelTest {
     private val searchMoviesUseCase: SearchMoviesUseCase = mockk(relaxed = true)
@@ -320,6 +320,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -352,6 +353,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -383,6 +385,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = actorName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
@@ -440,6 +443,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 filters = filters
             )
@@ -519,6 +523,7 @@ class SearchViewModelTest {
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }
+
     @Test
     fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
         runTest {

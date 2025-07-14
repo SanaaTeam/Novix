@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Novix</string>
-    
-    <!-- Genre Categories -->
+    <string name="unsuitable_image">Unsuitable image</string>
     <string name="genres">Genres</string>
     <string name="genre_drama">Drama</string>
     <string name="genre_comedy">Comedy</string>

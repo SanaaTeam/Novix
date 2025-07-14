@@ -5,7 +5,7 @@ import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
 import kotlinx.datetime.LocalDate
-import usecase.search.SearchMediaOutput
+import search.usecase.search_param.SearchMediaOutput
 
 fun MoviesLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(

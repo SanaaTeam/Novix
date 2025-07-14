@@ -14,9 +14,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.state.MediaTypeUi
@@ -26,11 +28,11 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 @Composable
 fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {
     val isDarkTheme = isSystemInDarkTheme()
-        val placeholderResId = if (isDarkTheme) {
-            R.drawable.movie_placeholder_dark
-        } else {
-            R.drawable.movie_placeholder_light
-        }
+    val placeholderResId = if (isDarkTheme) {
+        R.drawable.movie_placeholder_dark
+    } else {
+        R.drawable.movie_placeholder_light
+    }
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
@@ -53,6 +55,11 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                     nsfwThreshold = 0.15f,
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
+                    contentDescription = movie.title,
+                    placeholderBackgroundColor = Theme.colors.surface,
+                    hintText = stringResource(R.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small,
+                    iconSize = 24.dp,
                 )
             }, topLeftContent = {
                 SaveIconChip(onClick = {})
@@ -65,7 +72,6 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                     )
                 )
             }
-
             )
         }
     }

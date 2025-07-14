@@ -1,5 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -19,6 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import entity.Genre
+import java.util.Locale
+import com.sanaa.designsystem.R as DesignSystemR
 import com.sanaa.presentation.R
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -27,7 +30,7 @@ fun GenreChips(
     genres: List<Genre>,
     selectedGenres: Set<Genre>,
     onGenreSelected: (Genre) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -39,6 +42,7 @@ fun GenreChips(
         FlowRow(
             modifier = Modifier
                 .fillMaxWidth()
+                .animateContentSize()
                 .padding(top = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)

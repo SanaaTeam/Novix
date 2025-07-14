@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Genre Categories -->
+    <string name="unsuitable_image">Unsuitable image</string>
     <string name="genres">Genres</string>
     <string name="genre_drama">Drama</string>
     <string name="genre_comedy">Comedy</string>
