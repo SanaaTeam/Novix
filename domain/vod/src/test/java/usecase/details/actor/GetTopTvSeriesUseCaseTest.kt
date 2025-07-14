@@ -3,7 +3,10 @@ package usecase.details.actor
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
 import details.usecase.actor.GetActorTopTvSeriesUseCase
-import entity.*
+import entity.Episode
+import entity.Genre
+import entity.Season
+import entity.TvSeries
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -93,7 +96,7 @@ class GetTopTvSeriesUseCaseTest {
             title = "Season 1",
             overview = "The inaugural season of *Future Worlds*.",
             number = 1,
-            episodesCount = 2      // s1e1 + s1e2
+            episodes = emptyList()      // s1e1 + s1e2
         )
 
         private val c1e1 = Episode(
@@ -111,7 +114,7 @@ class GetTopTvSeriesUseCaseTest {
             title = "Season 1",
             overview = "The first season of *City Shadows*.",
             number = 1,
-            episodesCount = 1      // c1e1
+            episodes = emptyList()     // c1e1
         )
 
         private val dummySeries = listOf(

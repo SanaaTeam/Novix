@@ -34,6 +34,8 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+    implementation(projects.domain.vod)
+    implementation(libs.ktor.serialization.kotlinx.json)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 }

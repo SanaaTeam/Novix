@@ -19,7 +19,7 @@ data class Season(
     val title: String,
     val overview: String,
     val number: Int,
-    val episodesCount: Int,
+    val episodes: List<Episode>,
 )
 
 data class Episode(
