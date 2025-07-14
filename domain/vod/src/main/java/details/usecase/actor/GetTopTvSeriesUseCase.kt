@@ -6,5 +6,5 @@ import entity.TvSeries
 class GetTopTvSeriesUseCase(
     private val actorRepo: ActorRepository
 ) {
-    suspend fun execute(id: Int): List<TvSeries> = actorRepo.getTopTvSeries(id)
+    suspend fun execute(id: Int): List<TvSeries> = actorRepo.getActorTopTvSeries(id)
 }

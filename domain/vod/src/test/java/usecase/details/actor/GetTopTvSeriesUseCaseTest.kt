@@ -33,7 +33,7 @@ class GetTopTvSeriesUseCaseTest {
         getTopTvSeriesUseCase.execute(actorId)
 
         // Then
-        coVerify { actorRepository.getTopTvSeries(actorId) }
+        coVerify { actorRepository.getActorTopTvSeries(actorId) }
     }
 
     @Test
@@ -41,7 +41,7 @@ class GetTopTvSeriesUseCaseTest {
         // Given
         val actorId = 17
         val expected = dummySeries
-        coEvery { actorRepository.getTopTvSeries(actorId) } returns expected
+        coEvery { actorRepository.getActorTopTvSeries(actorId) } returns expected
 
         // When
         val result = getTopTvSeriesUseCase.execute(actorId)
@@ -55,7 +55,7 @@ class GetTopTvSeriesUseCaseTest {
         // Given
         val actorId = 404
         coEvery {
-            actorRepository.getTopTvSeries(actorId)
+            actorRepository.getActorTopTvSeries(actorId)
         } throws RetrievingDataFailureException("Service unavailable")
 
         // When / Then
