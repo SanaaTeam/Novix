@@ -6,7 +6,6 @@ import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
 import search.usecase.search_param.SearchMediaOutput
 
-
 class SearchMoviesUseCase(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
