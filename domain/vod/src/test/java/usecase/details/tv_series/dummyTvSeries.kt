@@ -1,4 +1,4 @@
-package usecase.tv_series
+package usecase.details.tv_series
 
 import entity.Genre
 import entity.TvSeries

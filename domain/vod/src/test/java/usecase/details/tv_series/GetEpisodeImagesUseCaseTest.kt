@@ -1,4 +1,4 @@
-package usecase
+package usecase.details.tv_series
 
 import details.repository.TvSeriesRepository
 import details.usecase.tv_series.GetEpisodeImagesUseCase
@@ -7,8 +7,8 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
 
 class GetEpisodeImagesUseCaseTest {
 

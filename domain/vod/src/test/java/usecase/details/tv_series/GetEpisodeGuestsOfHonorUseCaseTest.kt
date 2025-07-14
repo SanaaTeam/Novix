@@ -1,14 +1,15 @@
-package usecase
+package usecase.details.tv_series
 
 import details.repository.TvSeriesRepository
 import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
+import entity.Actor
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import kotlin.test.Test
 
 class GetEpisodeGuestsOfHonorUseCaseTest {
 
@@ -23,7 +24,7 @@ class GetEpisodeGuestsOfHonorUseCaseTest {
     @Test
     fun `execute() should return list of guests from TvSeriesRepository`() = runTest {
         // Given
-        val expected = listOf(mockk<entity.Actor>(), mockk<entity.Actor>())
+        val expected = listOf(mockk<Actor>(), mockk<Actor>())
         coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } returns expected
 
         // When
@@ -34,16 +35,17 @@ class GetEpisodeGuestsOfHonorUseCaseTest {
         assert(result == expected)
     }
     @Test
-    fun `execute() should throw exception when repository fails to get guests of honor`() = runTest {
-        // Given
-        val exception = IllegalStateException("Guests not available")
-        coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } throws exception
+    fun `execute() should throw exception when repository fails to get guests of honor`() =
+        runTest {
+            // Given
+            val exception = IllegalStateException("Guests not available")
+            coEvery { repository.getEpisodeGuestsOfHonor(1, 1, 1) } throws exception
 
-        // When, Then
-        val result = assertThrows<IllegalStateException> {
-            useCase.execute(1, 1, 1)
+            // When, Then
+            val result = assertThrows<IllegalStateException> {
+                useCase.execute(1, 1, 1)
+            }
+
+            assert(result.message == "Guests not available")
         }
-
-        assert(result.message == "Guests not available")
-    }
 }
