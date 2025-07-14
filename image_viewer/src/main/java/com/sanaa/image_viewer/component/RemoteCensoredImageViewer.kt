@@ -3,7 +3,13 @@ package com.sanaa.image_viewer.component
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +27,10 @@ import androidx.compose.ui.graphics.drawscope.DrawScope.Companion.DefaultFilterQ
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
@@ -28,6 +38,7 @@ import coil.compose.DefaultModelEqualityDelegate
 import coil.compose.EqualityDelegate
 import coil.request.ImageRequest
 import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
+import com.sanaa.inappropriate_image_viewer_library.R
 import com.skydoves.cloudy.cloudy
 import kotlinx.coroutines.launch
 
@@ -66,7 +77,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun RemoteCensoredImageViewer(
     imageUrl: String,
-    contentDescription: String? = null,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
     placeholder: Painter? = null,
     placeholderBackgroundColor: Color = Color(0xFFFFFFFF),
@@ -84,6 +95,11 @@ fun RemoteCensoredImageViewer(
     blurRadius: Int = 20,
     @FloatRange(from = 0.0, to = 1.0) sfwThreshold: Float = 0.5f,
     @FloatRange(from = 0.0, to = 1.0) nsfwThreshold: Float = 0.5f,
+    text: String = "Unsuitable image",
+    textStyle: TextStyle = TextStyle.Default.copy(color = Color(0x99FFFFFF)),
+    icon: Painter = painterResource(R.drawable.icon_eye_slash),
+    iconColor: Color = Color(0x99FFFFFF),
+    iconSize: Dp = 24.dp,
 ) {
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
@@ -142,6 +158,31 @@ fun RemoteCensoredImageViewer(
                 alignment = alignment,
                 alpha = alpha,
             )
+        }
+
+        if (blurImage && !isLoading) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0x52000000)),
+
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically)
+            ) {
+                Image(
+                    painter = icon,
+                    contentDescription = contentDescription,
+                    modifier = Modifier.size(iconSize)
+                        .clickable { blurImage = false },
+                    contentScale = ContentScale.Fit,
+                    colorFilter= ColorFilter.tint(iconColor),
+                )
+
+                Text(
+                    text = text,
+                    style = textStyle,
+                )
+            }
         }
     }
 }
