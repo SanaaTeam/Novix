@@ -320,6 +320,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -352,6 +353,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -383,6 +385,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = actorName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
@@ -440,6 +443,7 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
+                lastTabIndex = index,
                 isLoading = false,
                 filters = filters
             )
@@ -519,6 +523,7 @@ class SearchViewModelTest {
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }
+
     @Test
     fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
         runTest {
