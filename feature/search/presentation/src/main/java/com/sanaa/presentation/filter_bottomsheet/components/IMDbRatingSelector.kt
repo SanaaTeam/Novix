@@ -1,12 +1,9 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -32,7 +28,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import kotlin.math.roundToInt
 
@@ -42,7 +37,7 @@ fun IMDbRatingSelector(
     currentRating: Int,
     onRatingChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    maxRating: Int = 10
+    maxRating: Int = 10,
 ) {
     var rowSize by remember { mutableStateOf(IntSize.Zero) }
 
@@ -60,7 +55,7 @@ fun IMDbRatingSelector(
                 .onSizeChanged { rowSize = it }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(
-                        onDragEnd = {  },
+                        onDragEnd = { },
                         onHorizontalDrag = { change, _ ->
                             change.consume()
                             val newRating = (change.position.x / rowSize.width * maxRating)
@@ -91,16 +86,9 @@ fun IMDbRatingSelector(
 private fun Star(
     rating: Int,
     currentRating: Int,
-    onRatingChanged: (Int) -> Unit
+    onRatingChanged: (Int) -> Unit,
 ) {
     val isSelected = rating <= currentRating
-
-    val filledStarColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.statusColors.yellowAccent else Color.Transparent,
-        label = "starFillColorAnimation",
-        animationSpec = tween(durationMillis = 400)
-    )
-
     Box(
         modifier = Modifier
             .size(28.dp)
@@ -118,12 +106,14 @@ private fun Star(
             colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
         )
 
-        Image(
-            painter = painterResource(id = R.drawable.star),
-            contentDescription = "Rating $rating",
-            modifier = Modifier.size(28.dp),
-            colorFilter = ColorFilter.tint(filledStarColor)
-        )
+        AnimatedVisibility(isSelected) {
+            Image(
+                painter = painterResource(id = R.drawable.star),
+                contentDescription = "Rating $rating",
+                modifier = Modifier.size(28.dp),
+                colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
+            )
+        }
     }
 }
 
@@ -132,13 +122,13 @@ private fun Star(
 @Composable
 fun IMDbRatingSelectorPreview() {
     var currentRating by remember { mutableIntStateOf(0) }
-        Column(modifier = Modifier.padding(16.dp)) {
-            IMDbRatingSelector(
-                title = "IMDb rating",
-                currentRating = currentRating,
-                onRatingChanged = { newRating ->
-                    currentRating = newRating
-                }
-            )
-        }
+    Column(modifier = Modifier.padding(16.dp)) {
+        IMDbRatingSelector(
+            title = "IMDb rating",
+            currentRating = currentRating,
+            onRatingChanged = { newRating ->
+                currentRating = newRating
+            }
+        )
+    }
 }
