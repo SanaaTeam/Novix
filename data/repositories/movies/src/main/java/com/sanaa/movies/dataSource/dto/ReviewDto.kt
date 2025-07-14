@@ -4,6 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 data class ReviewDto(
+    @SerialName("id")
+    val id: String,
+
     @SerialName("author")
     val author: String,
 
