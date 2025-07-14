@@ -31,6 +31,38 @@ import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
 import com.skydoves.cloudy.cloudy
 import kotlinx.coroutines.launch
 
+/**
+ * A composable that executes an [ImageRequest] asynchronously and renders the result.
+ *
+ * @param imageUrl path for remote image url.
+ * @param contentDescription Text used by accessibility services to describe what this image
+ *  represents. This should always be provided unless this image is used for decorative purposes,
+ *  and does not represent a meaningful action that a user can take.
+ * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
+ * @param placeholder A [Painter] that is displayed while the image is loading.
+ * @param error A [Painter] that is displayed when the image request is unsuccessful.
+ * @param onLoading Called when the image request begins loading.
+ * @param onSuccess Called when the image request completes successfully.
+ * @param onError Called when the image request completes unsuccessfully.
+ * @param alignment Optional alignment parameter used to place the [AsyncImagePainter] in the given
+ *  bounds defined by the width and height.
+ * @param contentScale Optional scale parameter used to determine the aspect ratio scaling to be
+ *  used if the bounds are a different size from the intrinsic size of the [AsyncImagePainter].
+ * @param alpha Optional opacity to be applied to the [AsyncImagePainter] when it is rendered
+ *  onscreen.
+ * @param colorFilter Optional [ColorFilter] to apply for the [AsyncImagePainter] when it is
+ *  rendered onscreen.
+ * @param filterQuality Sampling algorithm applied to a bitmap when it is scaled and drawn into the
+ *  destination.
+ * @param clipToBounds If true, clips the content to its bounds. Else, it will not be clipped.
+ * @param modelEqualityDelegate Determines the equality of image. This controls whether this
+ *  composable is redrawn and a new image request is launched when the outer composable recomposes.
+ * @param blurRadius Radius of the blur along both the x and y axis.
+ * @param sfwThreshold If the sfw score for this image is less than the threshold, the blur would be
+ * enabled. Range is [0.0f, 1.0f].
+ * @param nsfwThreshold If the nsfw score for this image is more than the threshold, the blur would be
+ * enabled. Range is [0.0f, 1.0f].
+ */
 @Composable
 fun RemoteCensoredImageViewer(
     imageUrl: String,
