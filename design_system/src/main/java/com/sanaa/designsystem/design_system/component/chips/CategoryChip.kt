@@ -2,6 +2,7 @@ package com.sanaa.designsystem.design_system.component.chips
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -34,13 +34,16 @@ fun CategoryChip(
     isSelected: Boolean = false,
 ) {
     val animateBackgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.secondary else Color.Transparent
+        targetValue = if (isSelected) Theme.colors.secondary else Theme.colors.surface,
+        animationSpec = tween(200, delayMillis = 80)
     )
     val animateTextColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.onPrimary else Theme.colors.body
+        targetValue = if (isSelected) Theme.colors.onPrimary else Theme.colors.body,
+        animationSpec = tween(200, delayMillis = 80)
     )
     val animatedHorizontalPadding by animateDpAsState(
-        targetValue = if (isSelected) 24.dp else 12.dp
+        targetValue = if (isSelected) 24.dp else 12.dp,
+        animationSpec = tween(100)
     )
     Box(
         modifier = modifier
