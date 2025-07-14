@@ -29,14 +29,14 @@ class GetMovieCastUseCaseTest {
         // Given
         val movieId = 1
         val expected = listOf(mockk<Actor>(), mockk<Actor>())
-        coEvery { movieRepository.getCast(movieId) } returns expected
+        coEvery { movieRepository.getMovieCast(movieId) } returns expected
 
         // When
         val result = getMovieCastUseCase.execute(movieId)
 
         // Then
         assertEquals(expected, result)
-        coVerify { movieRepository.getCast(movieId) }
+        coVerify { movieRepository.getMovieCast(movieId) }
     }
 
     @Test
@@ -44,12 +44,12 @@ class GetMovieCastUseCaseTest {
         // Given
         val movieId = 404
         val exception = NotFoundException("Cast")
-        coEvery { movieRepository.getCast(movieId) } throws exception
+        coEvery { movieRepository.getMovieCast(movieId) } throws exception
 
         // When, Then
         assertThrows<NotFoundException> {
             getMovieCastUseCase.execute(movieId)
         }
-        coVerify { movieRepository.getCast(movieId) }
+        coVerify { movieRepository.getMovieCast(movieId) }
     }
 }
