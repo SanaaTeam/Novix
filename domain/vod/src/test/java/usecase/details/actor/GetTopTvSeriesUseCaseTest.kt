@@ -2,7 +2,7 @@ package usecase.details.actor
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
-import details.usecase.actor.GetTopTvSeriesUseCase
+import details.usecase.actor.GetActorTopTvSeriesUseCase
 import entity.*
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -17,11 +17,11 @@ import org.junit.jupiter.api.assertThrows
 class GetTopTvSeriesUseCaseTest {
 
     private val actorRepository: ActorRepository = mockk(relaxed = true)
-    private lateinit var getTopTvSeriesUseCase: GetTopTvSeriesUseCase
+    private lateinit var getTopTvSeriesUseCase: GetActorTopTvSeriesUseCase
 
     @BeforeEach
     fun setUp() {
-        getTopTvSeriesUseCase = GetTopTvSeriesUseCase(actorRepository)
+        getTopTvSeriesUseCase = GetActorTopTvSeriesUseCase(actorRepository)
     }
 
     @Test
