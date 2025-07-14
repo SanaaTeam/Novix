@@ -17,7 +17,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import usecase.search.MediaType
+import search.usecase.search_param.MediaType
 
 class SearchHistoryRepositoryImplTest {
     private lateinit var repository: SearchHistoryRepositoryImpl
