@@ -23,11 +23,21 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
     }
 
     override suspend fun getTvSeriesReviews(id: Int): List<Review> {
-        TODO("Not yet implemented")
+        try {
+            val reviews = remoteDataSource.getTvSeriesReviews(id)
+            return reviews.map { it.toEntity() }
+        } catch (_: Exception) {
+            throw NotFoundException("Reviews not found")
+        }
     }
 
     override suspend fun getTvSeriesImages(id: Int): List<String> {
-        TODO("Not yet implemented")
+        try {
+            val images = remoteDataSource.getTvSeriesImages(id)
+            return images
+        } catch (_: Exception) {
+            throw NotFoundException("Images not found")
+        }
     }
 
     override suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> {
