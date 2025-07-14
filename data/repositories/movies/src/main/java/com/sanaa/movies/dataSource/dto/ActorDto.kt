@@ -3,7 +3,6 @@ package com.sanaa.movies.dataSource.dto
 import entity.Actor.Gender
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDate
 
 @Serializable
 data class ActorDto(
@@ -17,7 +16,7 @@ data class ActorDto(
     val profileImagePath: String?,
 
     @SerialName("gender")
-    val gender: Gender,
+    val gender: Int,
 
     @SerialName("character")
     val character: String?,

@@ -4,13 +4,13 @@ import com.sanaa.movies.dataSource.dto.ActorDto
 import entity.Actor
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
+import entity.Actor.Gender
 fun ActorDto.toDomain(): Actor{
     return Actor(
         id = id,
         name = name ?: "Unknown",
         imageUrl = profileImagePath ?: "",
-        gender = gender,
+        gender = apiGenderMapping(gender),
         character = character,
         biography = biography,
         birthDate = null,
@@ -20,15 +20,10 @@ fun ActorDto.toDomain(): Actor{
         lastShow = null
     )
 }
-
-
-fun Actor.toDto(): ActorDto{
-    return ActorDto(
-        id = id,
-        name = name,
-        profileImagePath = imageUrl,
-        gender = gender,
-        character = character,
-        biography = biography
-    )
+fun apiGenderMapping(id: Int): Gender {
+    return when (id) {
+        0 -> Gender.MALE
+        1 -> Gender.FEMALE
+        else -> Gender.MALE
+    }
 }
