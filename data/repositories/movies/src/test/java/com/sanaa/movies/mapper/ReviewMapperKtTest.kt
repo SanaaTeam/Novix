@@ -2,7 +2,6 @@ package com.sanaa.movies.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class ReviewMapperKtTest{

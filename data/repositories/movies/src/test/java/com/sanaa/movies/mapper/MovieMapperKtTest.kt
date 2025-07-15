@@ -5,7 +5,6 @@ import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import entity.Genre
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
 class MovieMapperKtTest{
