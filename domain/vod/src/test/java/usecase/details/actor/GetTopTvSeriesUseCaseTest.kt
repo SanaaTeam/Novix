@@ -96,7 +96,7 @@ class GetTopTvSeriesUseCaseTest {
             title = "Season 1",
             overview = "The inaugural season of *Future Worlds*.",
             number = 1,
-            episodes = emptyList()      // s1e1 + s1e2
+            episodes = emptyList()
         )
 
         private val c1e1 = Episode(
@@ -114,7 +114,7 @@ class GetTopTvSeriesUseCaseTest {
             title = "Season 1",
             overview = "The first season of *City Shadows*.",
             number = 1,
-            episodes = emptyList()     // c1e1
+            episodes = emptyList()
         )
 
         private val dummySeries = listOf(
@@ -126,7 +126,7 @@ class GetTopTvSeriesUseCaseTest {
                 genres = listOf(sciFi),
                 imdbRating = 8.9f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
-                seasonsCount = 1,                       // season1
+                seasonsCount = 1
             ),
             TvSeries(
                 id = 102,
@@ -136,7 +136,7 @@ class GetTopTvSeriesUseCaseTest {
                 genres = listOf(crime),
                 imdbRating = 8.5f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series2.jpg",
-                seasonsCount = 1,                       // seasonCrime1
+                seasonsCount = 1
             )
         )
     }
