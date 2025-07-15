@@ -17,11 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.model.MediaInfoUiModel
-
 @Composable
 fun MediaInfoBox(
     mediaInfo: MediaInfoUiModel,
@@ -135,12 +136,11 @@ fun MediaInfoBox(
                 }
             }
 
-            Text(
-                text = "View reviews",
-                style = Theme.textStyle.label.medium,
-                color = Theme.colors.primary,
+            TextButton(
+                text = stringResource(com.sanaa.presentation.R.string.view_reviews),
+                onClick = onViewReviews,
+                textColor = Theme.colors.primary,
                 modifier = Modifier
-                    .clickable(onClick = onViewReviews)
             )
         }
     }
