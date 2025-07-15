@@ -3,7 +3,6 @@ package com.sanaa.presentation.filter_bottomsheet.components
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,11 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
 import entity.Genre
-import java.util.Locale
-import com.sanaa.designsystem.R as DesignSystemR
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun GenreChips(
     genres: List<Genre>,
@@ -33,7 +30,7 @@ fun GenreChips(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
-            text = stringResource(DesignSystemR.string.genres),
+            text = stringResource(R.string.genres),
             style = Theme.textStyle.title.small,
             color = Theme.colors.title
         )
@@ -48,7 +45,7 @@ fun GenreChips(
         ) {
             genres.forEach { genre ->
                 CategoryChip(
-                    text = genre.toReadableString(),
+                    text = genre.toLocalizedString(),
                     isSelected = (genre in selectedGenres),
                     onClick = { onGenreSelected(genre) }
                 )
@@ -57,9 +54,37 @@ fun GenreChips(
     }
 }
 
-private fun Genre.toReadableString(): String {
-    return this.name.replace('_', ' ').lowercase(Locale.getDefault())
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+@Composable
+private fun Genre.toLocalizedString(): String {
+    return when (this) {
+        Genre.DRAMA -> stringResource(R.string.genre_drama)
+        Genre.COMEDY -> stringResource(R.string.genre_comedy)
+        Genre.ADVENTURE -> stringResource(R.string.genre_adventure)
+        Genre.ACTION -> stringResource(R.string.genre_action)
+        Genre.ROMANCE -> stringResource(R.string.genre_romance)
+        Genre.FANTASY -> stringResource(R.string.genre_fantasy)
+        Genre.SCIENCE_FICTION -> stringResource(R.string.genre_science_fiction)
+        Genre.HORROR -> stringResource(R.string.genre_horror)
+        Genre.CRIME -> stringResource(R.string.genre_crime)
+        Genre.ANIMATION -> stringResource(R.string.genre_animation)
+        Genre.DOCUMENTARY -> stringResource(R.string.genre_documentary)
+        Genre.THRILLER -> stringResource(R.string.genre_thriller)
+        Genre.MUSIC -> stringResource(R.string.genre_music)
+        Genre.MYSTERY -> stringResource(R.string.genre_mystery)
+        Genre.KIDS -> stringResource(R.string.genre_kids)
+        Genre.HISTORY -> stringResource(R.string.genre_history)
+        Genre.FAMILY -> stringResource(R.string.genre_family)
+        Genre.WAR -> stringResource(R.string.genre_war)
+        Genre.TALK -> stringResource(R.string.genre_talk)
+        Genre.SOAP -> stringResource(R.string.genre_soap)
+        Genre.REALITY -> stringResource(R.string.genre_reality)
+        Genre.NEWS -> stringResource(R.string.genre_news)
+        Genre.TV_MOVIE -> stringResource(R.string.genre_tv_movie)
+        Genre.WESTERN -> stringResource(R.string.genre_western)
+        Genre.WAR_AND_POLITICS -> stringResource(R.string.genre_war_and_politics)
+        Genre.SCI_FI_AND_FANTASY -> stringResource(R.string.genre_sci_fi_and_fantasy)
+        Genre.ACTION_AND_ADVENTURE -> stringResource(R.string.genre_action_and_adventure)
+    }
 }
 
 
