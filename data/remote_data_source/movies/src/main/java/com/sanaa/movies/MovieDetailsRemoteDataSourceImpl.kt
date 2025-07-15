@@ -1,10 +1,12 @@
 package com.sanaa.movies
 
 import com.example.env_config.service.LanguageProvider
-import com.sanaa.movies.dataSource.MovieDetailsRemoteDataSource
-import com.sanaa.movies.dataSource.dto.ActorDto
-import com.sanaa.movies.dataSource.dto.MovieDetailsDto
-import com.sanaa.movies.dataSource.dto.ReviewDto
+import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
+import com.sanaa.movies.dataSource.remote.dto.CastDto
+import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
+import com.sanaa.movies.dataSource.remote.dto.ReviewDto
+import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -17,40 +19,32 @@ class MovieDetailsRemoteDataSourceImpl(
     private val languageProvider: LanguageProvider
 ) : MovieDetailsRemoteDataSource {
 
-    override suspend fun fetchMovieDetails(id: Int): MovieDetailsDto {
-        return client.get("$baseUrl/movie/$id") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    private suspend inline fun <reified T> fetch(
+        path: String,
+        withLang: Boolean = true,
+    ): T = client.get("$baseUrl/$path") {
+        if (withLang) parameter("language", languageProvider.getCurrentLanguage())
+        parameter("api_key", BuildConfig.TMDB_API_KEY)
+    }.body()
 
-    override suspend fun fetchImages(id: Int): List<String> {
-        return client.get("$baseUrl/movie/$id/images") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
 
-    override suspend fun fetchCast(id: Int): List<ActorDto> {
-        return client.get("$baseUrl/movie/$id/credits") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    override suspend fun fetchMovieDetails(id: Int): MovieDetailsDto =
+        fetch("movie/$id")
 
-    override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDetailsDto> {
-        return client.get("$baseUrl/movie/$id/similar") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    override suspend fun fetchImages(id: Int): MovieImagesDto  =
+        fetch("movie/$id/images")
 
-    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> {
-        return client.get("$baseUrl/movie/$id/reviews") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+
+    override suspend fun fetchCast(id: Int): CastDto =
+        fetch("movie/$id/credits")
+
+    override suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto =
+        fetch("movie/$id/similar")
+
+
+    override suspend fun fetchReviewsByMovieId(id: Int): ReviewDto =
+        fetch("movie/$id/reviews")
+
 
     override suspend fun fetchMoviesByCategory(category: Int): List<MovieDetailsDto> {
         return client.get("$baseUrl/movie") {
