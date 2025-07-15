@@ -38,8 +38,7 @@ fun AppTopBar(
         Text(
             text = screenTitle,
             style = Theme.textStyle.title.large,
-            modifier = Modifier
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             color = Theme.colors.title,
         )
         rightContent()
@@ -62,17 +61,13 @@ private fun AppTopBarPreview() {
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back),
-                        onClick = {}
-                    )
+                        icon = painterResource(id = R.drawable.icon_arrow_back), onClick = {})
 
                 },
                 screenTitle = "Title",
                 rightContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_plus),
-                        onClick = {}
-                    )
+                        icon = painterResource(id = R.drawable.icon_plus), onClick = {})
                 },
             )
         }

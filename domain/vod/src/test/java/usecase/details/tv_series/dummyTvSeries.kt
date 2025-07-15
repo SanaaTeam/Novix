@@ -14,5 +14,5 @@ val dummyTvSeries =
         genres = listOf(Genre.WAR_AND_POLITICS),
         imdbRating = 1.2f,
         posterImageUrl = "Image",
-        seasonsCount = 5
+        seasonsCount = 5,
     )

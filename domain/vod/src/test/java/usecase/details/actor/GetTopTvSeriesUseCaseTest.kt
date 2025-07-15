@@ -3,7 +3,10 @@ package usecase.details.actor
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
 import details.usecase.actor.GetActorTopTvSeriesUseCase
-import entity.*
+import entity.Episode
+import entity.Genre
+import entity.Season
+import entity.TvSeries
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -76,7 +79,8 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.1f,
             overview = "The story begins.",
             durationMinutes = 52,
-            releaseDate = LocalDate(2021, 9, 10)
+            releaseDate = LocalDate(2021, 9, 10),
+            stillImagePath = null
         )
         private val s1e2 = Episode(
             id = 2,
@@ -86,14 +90,15 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.4f,
             overview = "Mysteries deepen.",
             durationMinutes = 50,
-            releaseDate = LocalDate(2021, 9, 17)
+            releaseDate = LocalDate(2021, 9, 17),
+            stillImagePath = null
         )
         private val season1 = Season(
             id = 11,
             title = "Season 1",
             overview = "The inaugural season of *Future Worlds*.",
             number = 1,
-            episodesCount = 2      // s1e1 + s1e2
+            episodes = emptyList()
         )
 
         private val c1e1 = Episode(
@@ -104,14 +109,15 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.0f,
             overview = "A crime is uncovered.",
             durationMinutes = 48,
-            releaseDate = LocalDate(2020, 2, 1)
+            releaseDate = LocalDate(2020, 2, 1),
+            stillImagePath = null
         )
         private val seasonCrime1 = Season(
             id = 21,
             title = "Season 1",
             overview = "The first season of *City Shadows*.",
             number = 1,
-            episodesCount = 1      // c1e1
+            episodes = emptyList()
         )
 
         private val dummySeries = listOf(
