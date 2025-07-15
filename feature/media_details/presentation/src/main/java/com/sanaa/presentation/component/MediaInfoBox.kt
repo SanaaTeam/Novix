@@ -16,7 +16,7 @@ import com.sanaa.presentation.model.MediaInfoUiModel
 
 @Composable
 fun MediaInfoBox(
-    mediaInfoUiModel: MediaInfoUiModel,
+    title: String,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -29,7 +29,7 @@ fun MediaInfoBox(
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
 
             Text(
-                text = mediaInfoUiModel.title,
+                text = title,
                 style = Theme.textStyle.title.medium,
                 color = Theme.colors.title,
             )
