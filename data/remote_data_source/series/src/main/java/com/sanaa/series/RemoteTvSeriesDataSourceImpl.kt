@@ -4,11 +4,11 @@ import com.example.env_config.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.EpisodeDto
-import com.sanaa.series.dto.ImageDto
+import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
-import com.sanaa.series.dto.VideoDto
+import com.sanaa.series.dto.TvSeriesVideoDto
 import com.sanaa.series.response.GenreTvSeriesResponse
 import com.sanaa.series.response.ImagesResponse
 import com.sanaa.series.response.TvSeriesCastResponse
@@ -44,7 +44,7 @@ class RemoteTvSeriesDataSourceImpl(
         return fetchTvSeries(path = "tv", id = id)
     }
 
-    override suspend fun getTvSeriesVideos(id: Int): List<VideoDto> {
+    override suspend fun getTvSeriesVideos(id: Int): List<TvSeriesVideoDto> {
         return fetchTvSeries<TvSeriesVideosResponse>(
             path = "tv", id = id, subPath = "videos"
         ).results
@@ -56,7 +56,7 @@ class RemoteTvSeriesDataSourceImpl(
         return fetchTvSeries(path = "tv", id = seriesId, subPath = "season/$seasonNumber")
     }
 
-    override suspend fun getTvSeriesImages(id: Int): List<ImageDto> {
+    override suspend fun getTvSeriesImages(id: Int): List<TvSeriesImageDto> {
         return fetchTvSeries<ImagesResponse>(
             path = "tv", id = id, subPath = "images"
         ).backdrops
@@ -92,7 +92,7 @@ class RemoteTvSeriesDataSourceImpl(
 
     override suspend fun getEpisodeImages(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
-    ): List<ImageDto> {
+    ): List<TvSeriesImageDto> {
         return fetchTvSeries<ImagesResponse>(
             path = "tv",
             id = seriesId,

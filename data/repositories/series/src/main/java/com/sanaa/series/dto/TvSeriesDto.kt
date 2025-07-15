@@ -39,7 +39,7 @@ data class SeasonDto(
 
 
 @Serializable
-data class VideoDto(
+data class TvSeriesVideoDto(
     @SerialName("id") val id: String = "",
     @SerialName("key") val key: String = "",
     @SerialName("name") val name: String = "",
@@ -53,6 +53,6 @@ data class GenreDto(
 )
 
 @Serializable
-class ImageDto(
+class TvSeriesImageDto(
     @SerialName("file_path") val filePath: String,
 )

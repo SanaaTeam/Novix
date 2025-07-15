@@ -4,10 +4,10 @@ import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.AuthorDetailsDto
 import com.sanaa.series.dto.EpisodeDto
-import com.sanaa.series.dto.ImageDto
+import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
-import com.sanaa.series.dto.VideoDto
+import com.sanaa.series.dto.TvSeriesVideoDto
 import details.repository.TvSeriesRepository
 import entity.Genre
 import exceptions.NoNetworkException
@@ -177,7 +177,7 @@ class TvSeriesRepositoryImplTest {
 
     @Test
     fun `getEpisodeImages returns list`() = runTest {
-        coEvery { remote.getEpisodeImages(any(), any(), any()) } returns listOf(ImageDto("2"))
+        coEvery { remote.getEpisodeImages(any(), any(), any()) } returns listOf(TvSeriesImageDto("2"))
         val result = repository.getEpisodeImages(1, 1, 1, 1)
         assertEquals(1, result.size)
     }
@@ -225,7 +225,7 @@ class TvSeriesRepositoryImplTest {
     @Test
     fun `getTvSeriesTrailer return url if there is a video`() = runTest {
         coEvery { remote.getTvSeriesVideos(any()) } returns listOf(
-            VideoDto(
+            TvSeriesVideoDto(
                 id = "1", key = "xyz", site = "YouTube", type = "Trailer"
             )
         )

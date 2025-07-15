@@ -2,10 +2,10 @@ package com.sanaa.series.mapper
 
 import com.sanaa.series.dto.EpisodeDto
 import com.sanaa.series.dto.GenreDto
-import com.sanaa.series.dto.ImageDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
-import com.sanaa.series.dto.VideoDto
+import com.sanaa.series.dto.TvSeriesImageDto
+import com.sanaa.series.dto.TvSeriesVideoDto
 import entity.Episode
 import entity.Genre
 import entity.Season
@@ -119,13 +119,13 @@ fun buildPosterUrl(posterPath: String?): String {
     return "https://image.tmdb.org/t/p/w500$posterPath"
 }
 
-fun VideoDto.toEntity(): String {
+fun TvSeriesVideoDto.toEntity(): String {
     return when (type) {
         "YouTube" -> "https://www.youtube.com/watch?v=$key"
         else -> ""
     }
 }
 
-fun ImageDto.toEntity(): String {
+fun TvSeriesImageDto.toEntity(): String {
     return "https://image.tmdb.org/t/p/w500$filePath"
 }
