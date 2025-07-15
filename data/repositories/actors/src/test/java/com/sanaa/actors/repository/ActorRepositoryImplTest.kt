@@ -108,27 +108,57 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `repository handles network errors for all methods`() = runTest {
+    fun `getGalleryImages throws NoNetworkException when network is down`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getGalleryImages(1) }
 
-        coEvery { remoteDataSource.getActorTopMovies(any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getActorTopMovies(1) }
-
-        coEvery { remoteDataSource.getActorTopTvSeries(any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getActorTopTvSeries(1) }
+        assertThrows<NoNetworkException> {
+            repository.getGalleryImages(1)
+        }
     }
 
     @Test
-    fun `repository handles general exceptions for all methods`() = runTest {
+    fun `getActorTopMovies throws NoNetworkException when network is down`() = runTest {
+        coEvery { remoteDataSource.getActorTopMovies(any()) } throws UnknownHostException()
+
+        assertThrows<NoNetworkException> {
+            repository.getActorTopMovies(1)
+        }
+    }
+
+    @Test
+    fun `getActorTopTvSeries throws NoNetworkException when network is down`() = runTest {
+        coEvery { remoteDataSource.getActorTopTvSeries(any()) } throws UnknownHostException()
+
+        assertThrows<NoNetworkException> {
+            repository.getActorTopTvSeries(1)
+        }
+    }
+
+    @Test
+    fun `getProfileImages throws RetrievingDataFailureException when an unknown error occurs`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getProfileImages(1) }
 
+        assertThrows<RetrievingDataFailureException> {
+            repository.getProfileImages(1)
+        }
+    }
+
+    @Test
+    fun `getActorTopMovies throws RetrievingDataFailureException when an unknown error occurs`() = runTest {
         coEvery { remoteDataSource.getActorTopMovies(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getActorTopMovies(1) }
 
+        assertThrows<RetrievingDataFailureException> {
+            repository.getActorTopMovies(1)
+        }
+    }
+
+    @Test
+    fun `getActorTopTvSeries throws RetrievingDataFailureException when an unknown error occurs`() = runTest {
         coEvery { remoteDataSource.getActorTopTvSeries(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getActorTopTvSeries(1) }
+
+        assertThrows<RetrievingDataFailureException> {
+            repository.getActorTopTvSeries(1)
+        }
     }
 
     @Test
