@@ -1,5 +1,6 @@
 package com.sanaa.novix.di
 
+import com.sanaa.presentation.ActorViewModel
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.screen.SearchViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,4 +23,6 @@ val searchModule = module {
             dispatcher = Dispatchers.IO,
         )
     }
+
+    viewModel { ActorViewModel(get(), get(), get(), get(), get()) }
 }
