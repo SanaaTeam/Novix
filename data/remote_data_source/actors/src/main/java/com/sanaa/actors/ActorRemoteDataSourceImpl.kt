@@ -17,30 +17,25 @@ class ActorRemoteDataSourceImpl(
     private val languageProvider: LanguageProvider
 ) : ActorRemoteDataSource {
 
-    override suspend fun getActorDetails(actorId: Int): ActorDto {
-        return client.get("$baseUrl/person/$actorId") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    private suspend inline fun <reified T> fetch(
+        path: String,
+        withLang: Boolean = true
+    ): T = client.get("$baseUrl/$path") {
+        if (withLang) parameter("language", languageProvider.getCurrentLanguage())
+        parameter("api_key", BuildConfig.TMDB_API_KEY)
+    }.body()
 
-    override suspend fun getActorImages(actorId: Int): ActorImagesDto {
-        return client.get("$baseUrl/person/$actorId/images") {
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
 
-    override suspend fun getActorTopMovies(actorId: Int): ActorMovieCastDto {
-        return client.get("$baseUrl/person/$actorId/movie_credits") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    override suspend fun getActorDetails(actorId: Int): ActorDto =
+        fetch("person/$actorId")
 
-    override suspend fun getActorTopTvSeries(actorId: Int): ActorTvCastDto {
-        return client.get("$baseUrl/person/$actorId/tv_credits") {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body()
-    }
+    override suspend fun getActorImages(actorId: Int): ActorImagesDto =
+        fetch("person/$actorId/images", withLang = false)
+
+    override suspend fun getActorTopMovies(actorId: Int): ActorMovieCastDto =
+        fetch("person/$actorId/movie_credits")
+
+    override suspend fun getActorTopTvSeries(actorId: Int): ActorTvCastDto =
+        fetch("person/$actorId/tv_credits")
 }
+
