@@ -79,7 +79,8 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.1f,
             overview = "The story begins.",
             durationMinutes = 52,
-            releaseDate = LocalDate(2021, 9, 10)
+            releaseDate = LocalDate(2021, 9, 10),
+            stillImagePath = null
         )
         private val s1e2 = Episode(
             id = 2,
@@ -89,7 +90,8 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.4f,
             overview = "Mysteries deepen.",
             durationMinutes = 50,
-            releaseDate = LocalDate(2021, 9, 17)
+            releaseDate = LocalDate(2021, 9, 17),
+            stillImagePath = null
         )
         private val season1 = Season(
             id = 11,
@@ -107,7 +109,8 @@ class GetTopTvSeriesUseCaseTest {
             imdbRating = 8.0f,
             overview = "A crime is uncovered.",
             durationMinutes = 48,
-            releaseDate = LocalDate(2020, 2, 1)
+            releaseDate = LocalDate(2020, 2, 1),
+            stillImagePath = null
         )
         private val seasonCrime1 = Season(
             id = 21,

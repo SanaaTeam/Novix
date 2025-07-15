@@ -45,6 +45,7 @@ fun EpisodeDto.toEntity(): Episode {
         imdbRating = voteAverage,
         durationMinutes = runtime,
         releaseDate = LocalDate.parse(airDate),
+        stillImagePath = stillPath
     )
 }
 

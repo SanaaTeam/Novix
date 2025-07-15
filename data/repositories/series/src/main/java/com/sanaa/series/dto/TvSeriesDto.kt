@@ -26,6 +26,7 @@ data class EpisodeDto(
     @SerialName("vote_average") val voteAverage: Float = 0f,
     @SerialName("air_date") val airDate: String = "",
     @SerialName("runtime") val runtime: Int = 0,
+    @SerialName("still_path") val stillPath: String? = null
 )
 
 @Serializable
