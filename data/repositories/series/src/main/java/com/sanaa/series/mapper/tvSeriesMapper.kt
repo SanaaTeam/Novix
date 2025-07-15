@@ -120,7 +120,7 @@ fun buildPosterUrl(posterPath: String?): String {
 }
 
 fun TvSeriesVideoDto.toEntity(): String {
-    return when (type) {
+    return when (site) {
         "YouTube" -> "https://www.youtube.com/watch?v=$key"
         else -> ""
     }
