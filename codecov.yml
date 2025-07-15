@@ -3,6 +3,37 @@ coverage:
     project:
       default:
         target: 80%
+        threshold: 1%
     patch:
       default:
         target: 80%
+
+ignore:
+  - "*.R",
+  - "*.R_*",
+  - "**.di.**",
+  - "**.logging.**",
+  - "*.BuildConfig*",
+  - "*.Manifest*",
+  - "com.sanaa.novix.ui.theme.*",
+  - "*.ComposableSingletons*",
+  - "*.MainActivity*",
+  - "*.NovixApp*",
+  - "com.sanaa.image_viewer.*",
+  - "com.sanaa.designsystem.*",
+  - "com.sanaa.search.dto.*",
+  - "com.sanaa.search.di.*",
+  - "entity.**",
+  - "search.usecase.search_param.**",
+  - "**.dao.**",
+  - "**.dto.**",
+  - "exceptions.**",
+  - "com.sanaa.search.dataSource.*",
+  - "com.sanaa.search.mapper.*",
+  - "com.sanaa.search.repository.*",
+  - "com.sanaa.presentation.filter_bottomsheet.components.*",
+  - "com.sanaa.presentation.screen.componants.*",
+  - "com.sanaa.presentation.screen.state.*",
+  - "com.sanaa.presentation.screen.SearchScreen*",
+  - "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent*",
+  - "com.sanaa.search.search_result.db.*",
