@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen
 
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
 interface SearchScreenInteractionsListener {
     fun onClearRecentViewClicked()
