@@ -23,9 +23,9 @@ class GetTvSeriesImagesUseCaseTest {
     fun `execute() should return tv series images when id is provided`() = runTest {
         // Given
         val id = 1
-        coEvery { repository.getTvSeriesImages(id) } returns listOf("Images")
+        coEvery { repository.getTvSeriesImages(id,1) } returns listOf("Images")
         // When
-        val result = getTvSeriesImagesUseCase.execute(id)
+        val result = getTvSeriesImagesUseCase.execute(id,1)
         // Then
         assert(result.isNotEmpty())
     }
@@ -35,10 +35,10 @@ class GetTvSeriesImagesUseCaseTest {
         runTest {
             // Given
             val id = 1
-            coEvery { repository.getTvSeriesImages(id) } throws NotFoundException("Message")
+            coEvery { repository.getTvSeriesImages(id,1) } throws NotFoundException("Message")
             // When & Then
             assertThrows<NotFoundException> {
-                getTvSeriesImagesUseCase.execute(id)
+                getTvSeriesImagesUseCase.execute(id,1)
             }
         }
 
@@ -47,9 +47,9 @@ class GetTvSeriesImagesUseCaseTest {
         runTest {
             // Given
             val id = 1
-            coEvery { repository.getTvSeriesImages(id) } returns emptyList()
+            coEvery { repository.getTvSeriesImages(id,1) } returns emptyList()
             // When
-            val result = getTvSeriesImagesUseCase.execute(id)
+            val result = getTvSeriesImagesUseCase.execute(id,1)
             // Then
             assert(result.isEmpty())
         }
