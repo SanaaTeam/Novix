@@ -23,7 +23,11 @@ fun CategoryTabSection(
     interactionsListener: SearchScreenInteractionsListener,
     modifier: Modifier = Modifier,
 ) {
-    val tabs = listOf("Movies", "TV Shows", "Actors")
+    val tabs = listOf(
+        stringResource(R.string.movies),
+        stringResource(R.string.tv_shows),
+        stringResource(R.string.actors)
+    )
 
 
     Column(
