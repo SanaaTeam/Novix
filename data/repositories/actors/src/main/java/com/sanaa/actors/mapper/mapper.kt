@@ -13,11 +13,11 @@ const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 fun String?.fullImageUrlOrEmpty(): String =
     if (this.isNullOrBlank()) "" else "$TMDB_IMAGE_BASE_URL$this"
 
-fun ActorDto.toDomain(language: String): Actor = Actor(
+fun ActorDto.toDomain(): Actor = Actor(
     id = id,
     imageUrl = profileImagePath.fullImageUrlOrEmpty(),
     name = name ?: "Unknown",
-    region = language,
+    region = null,
     department = knownForDepartment,
     lastShow = null,
     gender = when (gender) {

@@ -36,13 +36,13 @@ class ActorMapperTest {
             placeOfBirth = "USA"
         )
 
-        val result = dto.toDomain("en")
+        val result = dto.toDomain()
 
         assertThat(result.id).isEqualTo(1)
         assertThat(result.name).isEqualTo("Tom Hanks")
         assertThat(result.imageUrl).contains("/img.jpg")
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-        assertThat(result.region).isEqualTo("en")
+        assertThat(result.region).isEqualTo(null)
         assertThat(result.biography).isEqualTo("Biography")
         assertThat(result.birthDate).isEqualTo(LocalDate(1956, 7, 9))
         assertThat(result.deathDate).isEqualTo(LocalDate(2020, 1, 1))
@@ -62,14 +62,14 @@ class ActorMapperTest {
             placeOfBirth = null
         )
 
-        val result = dto.toDomain("ar")
+        val result = dto.toDomain()
 
         assertThat(result.name).isEqualTo("Unknown")
         assertThat(result.imageUrl).isEqualTo("")
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
         assertThat(result.birthDate).isNull()
         assertThat(result.deathDate).isNull()
-        assertThat(result.region).isEqualTo("ar")
+        assertThat(result.region).isEqualTo(null)
     }
 
     @Test
@@ -170,10 +170,10 @@ class ActorMapperTest {
             placeOfBirth = null
         )
 
-        val r = dto.toDomain("en")
-        assertThat(r.gender).isEqualTo(Actor.Gender.FEMALE)
-        assertThat(r.birthDate).isNull()
-        assertThat(r.deathDate).isNull()
+        val result = dto.toDomain()
+        assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
+        assertThat(result.birthDate).isNull()
+        assertThat(result.deathDate).isNull()
     }
 
     /* ---------- MovieCastCreditDto ---------- */
@@ -231,7 +231,7 @@ class ActorMapperTest {
             placeOfBirth = null
         )
 
-        val result = dto.toDomain("en")
+        val result = dto.toDomain()
         assertThat(result.imageUrl).isEmpty()
     }
 
