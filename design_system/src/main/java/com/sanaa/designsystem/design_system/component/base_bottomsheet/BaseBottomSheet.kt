@@ -17,19 +17,20 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import androidx.compose.ui.draw.alpha
 
 private val ScrimColor = Color(0x99000000)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseBottomSheet(
     content: @Composable () -> Unit,
+    onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     sheetState: SheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-    onDismiss: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         sheetState.expand()
@@ -61,7 +62,8 @@ fun BaseBottomSheet(
         },
         content = {
             Box(
-                modifier = Modifier.wrapContentHeight()
+                modifier = Modifier
+                    .wrapContentHeight()
                     .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
             )
             {
