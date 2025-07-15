@@ -78,7 +78,7 @@ fun GenreDto.toEntity(): Genre {
         10770 -> Genre.TV_MOVIE
         37 -> Genre.WESTERN
         10759 -> Genre.ACTION_AND_ADVENTURE
-        else -> Genre.DRAMA // fallback default
+        else -> Genre.DRAMA
     }
 }
 

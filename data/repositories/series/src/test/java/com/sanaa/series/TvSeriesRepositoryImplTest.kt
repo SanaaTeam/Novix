@@ -39,7 +39,7 @@ class TvSeriesRepositoryImplTest {
     )
 
     private val dummyReviewDto = ReviewDto(
-        id = 1,
+        id = "1",
         content = "Review",
         authorDetails = AuthorDetailsDto(
             name = "A",
@@ -178,7 +178,13 @@ class TvSeriesRepositoryImplTest {
 
     @Test
     fun `getEpisodeGuestsOfHonor returns list`() = runTest {
-        coEvery { remote.getEpisodeGuestsOfHonor(any(), any(), any()) } returns listOf(dummyActorDto)
+        coEvery {
+            remote.getEpisodeGuestsOfHonor(
+                any(),
+                any(),
+                any()
+            )
+        } returns listOf(dummyActorDto)
         val result = repository.getEpisodeGuestsOfHonor(1, 1, 1)
         assertEquals("Hero", result.first().character)
     }

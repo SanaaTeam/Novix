@@ -55,7 +55,6 @@ junitJupiter = "5.8.1"
 kotlinx-coroutines = "1.6.4"
 workRuntimeKtx = "2.10.2"
 turbine = "1.2.1"
-places = "4.3.1"
 
 
 [libraries]
@@ -147,8 +146,6 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
-places = { group = "com.google.android.libraries.places", name = "places", version.ref = "places" }
-
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
