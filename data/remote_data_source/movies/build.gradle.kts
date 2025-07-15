@@ -51,7 +51,6 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.firebase.crashlytics.buildtools)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
 
