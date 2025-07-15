@@ -10,15 +10,20 @@ import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
+import exceptions.NoNetworkException
 import exceptions.NotFoundException
+import exceptions.RetrievingDataFailureException
+import java.net.UnknownHostException
 
 class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSource) :
     TvSeriesRepository {
     override suspend fun getTvSeriesDetails(id: Int): TvSeries {
         try {
             return remoteDataSource.getTvSeries(id).toEntity()
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Tv Series not found")
+            throw RetrievingDataFailureException("Tv Series not found")
         }
     }
 
@@ -26,16 +31,20 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             val reviews = remoteDataSource.getTvSeriesReviews(id)
             return reviews.map { it.toEntity() }
-        } catch (e: Exception) {
-            throw NotFoundException("Reviews not found")
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
+        } catch (_: Exception) {
+            throw RetrievingDataFailureException("Reviews not found")
         }
     }
 
-    override suspend fun getTvSeriesImages(id: Int): List<String> {
-        try {
-            return remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }
+    override suspend fun getTvSeriesImages(id: Int, count: Int): List<String> {
+        return try {
+            remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }.take(count)
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Images not found")
+            throw RetrievingDataFailureException("Images not found")
         }
     }
 
@@ -43,16 +52,20 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             val tvSeries = remoteDataSource.getTvSeriesByGenre(genre.toDtoId())
             return tvSeries.map { it.toEntity() }
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Tv Series not found")
+            throw RetrievingDataFailureException("Tv Series not found")
         }
     }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> {
         try {
             return remoteDataSource.getTvSeriesCast(id).map { it.toEntity() }
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Cast not found")
+            throw RetrievingDataFailureException("Cast not found")
         }
     }
 
@@ -61,8 +74,10 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
     ): Season {
         try {
             return remoteDataSource.getTvSeriesSeasonDetails(seriesId, seasonNumber).toEntity()
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Season not found")
+            throw RetrievingDataFailureException("Season not found")
         }
     }
 
@@ -72,19 +87,23 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             return remoteDataSource.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
                 .toEntity()
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Episode not found")
+            throw RetrievingDataFailureException("Episode not found")
         }
     }
 
     override suspend fun getEpisodeImages(
-        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+        seriesId: Int, seasonNumber: Int, episodeNumber: Int, count: Int
     ): List<String> {
         try {
             return remoteDataSource.getEpisodeImages(seriesId, seasonNumber, episodeNumber)
-                .map { it.toEntity() }
+                .map { it.toEntity() }.take(count)
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Images not found")
+            throw RetrievingDataFailureException("Images not found")
         }
     }
 
@@ -94,8 +113,10 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             return remoteDataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
                 .map { it.toEntity() }
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
-            throw NotFoundException("Guests not found")
+            throw RetrievingDataFailureException("Guests not found")
         }
     }
 
@@ -103,6 +124,8 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             val videos = remoteDataSource.getTvSeriesVideos(id)
             return videos.firstOrNull()?.toEntity()
+        } catch (_: UnknownHostException) {
+            throw NoNetworkException()
         } catch (_: Exception) {
             throw NotFoundException("Trailer not found")
         }
