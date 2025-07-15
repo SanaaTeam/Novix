@@ -1,5 +1,6 @@
 package com.sanaa.presentation.component
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -18,9 +19,11 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.res.stringResource
 import com.sanaa.presentation.R
+
 @Composable
 fun OverviewSection(
     onReadMore: () -> Unit,
+    @StringRes titleResId: Int,
     overview: String,
     modifier: Modifier = Modifier
 ) {
@@ -36,7 +39,7 @@ fun OverviewSection(
             )
     ) {
         Text(
-            text = stringResource(R.string.overview),
+            text = stringResource(id = titleResId),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title
         )
