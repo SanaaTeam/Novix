@@ -13,6 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 
 @Composable
 fun OverviewSection(
@@ -24,6 +27,12 @@ fun OverviewSection(
 
     Column(
         modifier = modifier
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = FastOutSlowInEasing
+                )
+            )
     ) {
         Text(
             text = "Overview",
@@ -44,12 +53,12 @@ fun OverviewSection(
             text = if (isExpanded) "Read less" else "Read more",
             style = Theme.textStyle.body.medium,
             color = Theme.colors.primary,
-            modifier = Modifier.clickable(
-                onClick = {
-                isExpanded = !isExpanded
-                if (isExpanded) onReadMore()
-            }
-            )
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .clickable {
+                    isExpanded = !isExpanded
+                    if (isExpanded) onReadMore()
+                }
         )
     }
 }
