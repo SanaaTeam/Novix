@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.designsystem.design_system.theme.text_style.LocalNovixTextStyle
 
 @Composable
 fun OverviewSection(
@@ -21,7 +20,6 @@ fun OverviewSection(
     overview: String,
     modifier: Modifier = Modifier
 ) {
-    val textStyle = LocalNovixTextStyle.current
     var isExpanded by rememberSaveable { mutableStateOf(false) }
 
     Column(
@@ -29,13 +27,13 @@ fun OverviewSection(
     ) {
         Text(
             text = "Overview",
-            style = textStyle.title.medium,
+            style = Theme.textStyle.title.medium,
             color = Theme.colors.title
         )
 
         Text(
             text = overview,
-            style = textStyle.body.medium,
+            style = Theme.textStyle.body.medium,
             color = Theme.colors.body,
             maxLines = if (isExpanded) Int.MAX_VALUE else 4,
             overflow = TextOverflow.Ellipsis,
@@ -44,7 +42,7 @@ fun OverviewSection(
 
         Text(
             text = if (isExpanded) "Read less" else "Read more",
-            style = textStyle.body.medium,
+            style = Theme.textStyle.body.medium,
             color = Theme.colors.primary,
             modifier = Modifier.clickable(
                 onClick = {

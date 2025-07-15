@@ -20,15 +20,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.designsystem.design_system.theme.text_style.LocalNovixTextStyle
 import com.sanaa.presentation.model.MediaInfoUiModel
+
 @Composable
 fun MediaInfoBox(
     mediaInfo: MediaInfoUiModel,
     onViewReviews: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val textStyle = LocalNovixTextStyle.current
 
     Box(
         modifier = modifier
@@ -44,7 +43,7 @@ fun MediaInfoBox(
         ) {
             Text(
                 text = mediaInfo.title,
-                style = textStyle.title.medium,
+                style = Theme.textStyle.title.medium,
                 color = Theme.colors.title,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
@@ -55,7 +54,7 @@ fun MediaInfoBox(
                 mediaInfo.genres.forEachIndexed { index, genre ->
                     Text(
                         text = genre,
-                        style = textStyle.label.small,
+                        style = Theme.textStyle.label.small,
                         color = Theme.colors.body
                     )
                     if (index < mediaInfo.genres.lastIndex) {
@@ -84,7 +83,7 @@ fun MediaInfoBox(
                     )
                     Text(
                         text = mediaInfo.rating,
-                        style = textStyle.label.small,
+                        style = Theme.textStyle.label.small,
                         color = Theme.colors.title
                     )
                 }
@@ -107,7 +106,7 @@ fun MediaInfoBox(
                     )
                     Text(
                         text = mediaInfo.duration,
-                        style = textStyle.label.small,
+                        style = Theme.textStyle.label.small,
                         color = Theme.colors.body
                     )
                 }
@@ -130,7 +129,7 @@ fun MediaInfoBox(
                     )
                     Text(
                         text = mediaInfo.releaseDate,
-                        style = textStyle.label.small,
+                        style = Theme.textStyle.label.small,
                         color = Theme.colors.body
                     )
                 }
@@ -138,7 +137,7 @@ fun MediaInfoBox(
 
             Text(
                 text = "View reviews",
-                style = textStyle.label.medium,
+                style = Theme.textStyle.label.medium,
                 color = Theme.colors.primary,
                 modifier = Modifier
                     .clickable(onClick = onViewReviews)
