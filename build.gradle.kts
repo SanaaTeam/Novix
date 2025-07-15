@@ -48,6 +48,7 @@ allprojects {
         reports {
             filters {
                 excludes { classes(excludedPackages) }
+                excludes { classes("*\$*\$inlined$*") }
             }
             total {
                 verify {

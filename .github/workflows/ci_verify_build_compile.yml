@@ -1,4 +1,4 @@
-name: Verify build compile
+name: CI - Verify build compile
 
 on:
   pull_request:
@@ -45,5 +45,5 @@ jobs:
           echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" > keys.properties
           cp keys.properties ./data/remote_data_source/search/keys.properties
 
-      - name: Build
-        run: ./gradlew build
+      - name: Build without tests
+        run: ./gradlew assemble
