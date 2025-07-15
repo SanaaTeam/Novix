@@ -9,6 +9,7 @@ data class Actor(
     val region: String?,
     val lastShow: String?,
     val gender: Gender,
+    val department: String?,
     val character: String?,
     val birthDate: LocalDate?,
     val deathDate: LocalDate?,
