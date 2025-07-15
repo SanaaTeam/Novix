@@ -22,7 +22,7 @@ class ActorRepositoryImplTest {
 
     @BeforeEach
     fun setUp() {
-        repository = ActorRepositoryImpl(remoteDataSource, languageProvider)
+        repository = ActorRepositoryImpl(remoteDataSource)
     }
 
     @Test
@@ -33,7 +33,7 @@ class ActorRepositoryImplTest {
         val result = repository.getActorDetails(1)
 
         assertThat(result.name).isEqualTo("Tom Hanks")
-        assertThat(result.region).isEqualTo("en")
+        assertThat(result.region).isEqualTo(null)
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.sanaa.actors.repository
 
-import com.example.env_config.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.actors.mapper.fullImageUrlOrEmpty
 import com.sanaa.actors.mapper.toDomain
@@ -14,12 +13,11 @@ import java.net.UnknownHostException
 
 class ActorRepositoryImpl(
     private val remoteDataSource: ActorRemoteDataSource,
-    private val languageProvider: LanguageProvider
 ) : ActorRepository {
 
     override suspend fun getActorDetails(id: Int): Actor {
         return try {
-            remoteDataSource.getActorDetails(id).toDomain(languageProvider.getCurrentLanguage())
+            remoteDataSource.getActorDetails(id).toDomain()
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {

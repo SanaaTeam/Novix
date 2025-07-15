@@ -17,6 +17,6 @@ val repositoryModule = module {
     single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get()) }
     single<LocalSearchHistoryDataSource> { LocalSearchHistoryDataSourceImpl(get(), get()) }
 
-    single<ActorRepository> { ActorRepositoryImpl(get(), get()) }
+    single<ActorRepository> { ActorRepositoryImpl(get()) }
     single { ActorRemoteDataSourceImpl(get(), get(), get()) }
 }
