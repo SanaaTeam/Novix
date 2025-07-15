@@ -1,10 +1,10 @@
 package com.sanaa.movies.di
 
 import com.sanaa.movies.MovieDetailsRemoteDataSourceImpl
-import com.sanaa.movies.dataSource.MovieDetailsRemoteDataSource
+import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import org.koin.dsl.module
 
 
-val remoteDataSource = module {
+val remoteMovieDetailsDataSource = module {
     single<MovieDetailsRemoteDataSource> { MovieDetailsRemoteDataSourceImpl(get(), get(),get()) }
 }
