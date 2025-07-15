@@ -16,7 +16,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-
+import androidx.compose.ui.res.stringResource
+import com.sanaa.presentation.R
 @Composable
 fun OverviewSection(
     onReadMore: () -> Unit,
@@ -35,7 +36,7 @@ fun OverviewSection(
             )
     ) {
         Text(
-            text = "Overview",
+            text = stringResource(R.string.overview),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title
         )
@@ -50,7 +51,7 @@ fun OverviewSection(
         )
 
         Text(
-            text = if (isExpanded) "Read less" else "Read more",
+            text = stringResource(if (isExpanded) R.string.read_less else R.string.read_more),
             style = Theme.textStyle.body.medium,
             color = Theme.colors.primary,
             modifier = Modifier

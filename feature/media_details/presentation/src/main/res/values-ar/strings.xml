@@ -2,4 +2,7 @@
 <resources>
     "<string name="view_reviews">عرض التقييمات</string>
     <string name="seasons_count">%d مواسم</string>
+    <string name="overview">نظرة عامة</string>
+    <string name="read_more">اقرأ المزيد</string>
+    <string name="read_less">اقرأ أقل</string>
 </resources>

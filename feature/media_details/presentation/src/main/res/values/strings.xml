@@ -2,4 +2,7 @@
 <resources>
     <string name="view_reviews">View reviews</string>
     <string name="seasons_count">%d Seasons</string>
+    <string name="overview">Overview</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Read less</string>
 </resources>
