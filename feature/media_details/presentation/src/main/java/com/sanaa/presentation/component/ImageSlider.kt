@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -27,6 +30,10 @@ import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import kotlinx.coroutines.delay
+
+val boxContainerGradient = Brush.linearGradient(
+    colors = listOf(Color(0x00000000), Color(0xFF000000))
+)
 
 @Composable
 fun ImageSlider(
@@ -50,21 +57,32 @@ fun ImageSlider(
         }
     }
 
-    Box(modifier = modifier.height(252.dp)) {
+    Box(
+        modifier = modifier
+            .height(252.dp).clip(
+                shape = RoundedCornerShape(
+                    bottomStart = 12.dp, bottomEnd = 12.dp
+                )
+            )
+
+    ) {
         HorizontalPager(
             state = pagerState, modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) { page ->
             AsyncImage(
-                model = images[page],
-                contentDescription = contentDescription,
+                model = images[page], contentDescription = contentDescription,
 //                placeholder = TODO,
 //                error = TODO,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
+                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
             )
         }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(boxContainerGradient)
+        )
         AnimatedVisibility(
             visible = images.size > 1, modifier = Modifier.align(Alignment.TopCenter)
         ) {
@@ -94,8 +112,7 @@ fun ImageSliderPreview() {
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEkpuNPSGlz986aRRvgDTy3QWCzIqwYv7lA8Yf7WXZn4MDkHUfnXMjXkrPtAjWsBaGl3I&usqp=CAU",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEkpuNPSGlz986aRRvgDTy3QWCzIqwYv7lA8Yf7WXZn4MDkHUfnXMjXkrPtAjWsBaGl3I&usqp=CAU",
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEkpuNPSGlz986aRRvgDTy3QWCzIqwYv7lA8Yf7WXZn4MDkHUfnXMjXkrPtAjWsBaGl3I&usqp=CAU",
-            ),
-            contentDescription = "Squid game"
+            ), contentDescription = "Squid game"
         )
     }
 }
