@@ -2,9 +2,8 @@ package com.sanaa.movies.mapper
 
 import com.sanaa.movies.dataSource.dto.ActorDto
 import entity.Actor
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import entity.Actor.Gender
+
 fun ActorDto.toDomain(): Actor{
     return Actor(
         id = id,

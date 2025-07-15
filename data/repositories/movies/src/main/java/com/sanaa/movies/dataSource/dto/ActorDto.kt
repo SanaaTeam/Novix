@@ -1,6 +1,5 @@
 package com.sanaa.movies.dataSource.dto
 
-import entity.Actor.Gender
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
