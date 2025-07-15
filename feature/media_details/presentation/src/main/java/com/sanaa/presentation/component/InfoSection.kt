@@ -12,10 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.model.MediaInfoUiModel
 
 @Composable
-fun MediaInfoBox(
+fun InfoSection(
     title: String,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
@@ -27,7 +26,6 @@ fun MediaInfoBox(
             .padding(12.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-
             Text(
                 text = title,
                 style = Theme.textStyle.title.medium,
@@ -35,7 +33,6 @@ fun MediaInfoBox(
             )
 
             content()
-
         }
     }
 }
