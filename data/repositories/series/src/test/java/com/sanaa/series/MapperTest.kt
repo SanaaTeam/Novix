@@ -1,5 +1,6 @@
 package com.sanaa.series
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.AuthorDetailsDto
 import com.sanaa.series.dto.EpisodeDto
@@ -203,5 +204,86 @@ class MapperTest {
     fun `getProfileImageUrl formats URL correctly`() {
         val url = getProfileImageUrl("/path.jpg")
         assertEquals("https://image.tmdb.org/t/p/w185/path.jpg", url)
+    }
+
+    @Test
+    fun `toEntity maps known ids to genres`() {
+        val mappings = mapOf(
+            28 to Genre.ACTION,
+            12 to Genre.ADVENTURE,
+            16 to Genre.ANIMATION,
+            35 to Genre.COMEDY,
+            80 to Genre.CRIME,
+            99 to Genre.DOCUMENTARY,
+            18 to Genre.DRAMA,
+            10751 to Genre.FAMILY,
+            14 to Genre.FANTASY,
+            36 to Genre.HISTORY,
+            27 to Genre.HORROR,
+            10402 to Genre.MUSIC,
+            9648 to Genre.MYSTERY,
+            10763 to Genre.NEWS,
+            10764 to Genre.REALITY,
+            10749 to Genre.ROMANCE,
+            878 to Genre.SCIENCE_FICTION,
+            10765 to Genre.SCI_FI_AND_FANTASY,
+            10766 to Genre.SOAP,
+            10762 to Genre.KIDS,
+            10767 to Genre.TALK,
+            53 to Genre.THRILLER,
+            10768 to Genre.WAR_AND_POLITICS,
+            10752 to Genre.WAR,
+            10770 to Genre.TV_MOVIE,
+            37 to Genre.WESTERN,
+            10759 to Genre.ACTION_AND_ADVENTURE
+        )
+
+        mappings.forEach { (id, expectedGenre) ->
+            val dto = GenreDto(id)
+            assertThat(dto.toEntity()).isEqualTo(expectedGenre)
+        }
+    }
+
+    @Test
+    fun `toEntity maps unknown id to DRAMA`() {
+        val dto = GenreDto(99999)
+        assertThat(dto.toEntity()).isEqualTo(Genre.DRAMA)
+    }
+
+    @Test
+    fun `toDtoId maps genres to correct ids`() {
+        val reverseMappings = mapOf(
+            Genre.ACTION to 28,
+            Genre.ADVENTURE to 12,
+            Genre.ANIMATION to 16,
+            Genre.COMEDY to 35,
+            Genre.CRIME to 80,
+            Genre.DOCUMENTARY to 99,
+            Genre.DRAMA to 18,
+            Genre.FAMILY to 10751,
+            Genre.FANTASY to 14,
+            Genre.HISTORY to 36,
+            Genre.HORROR to 27,
+            Genre.MUSIC to 10402,
+            Genre.MYSTERY to 9648,
+            Genre.NEWS to 10763,
+            Genre.REALITY to 10764,
+            Genre.ROMANCE to 10749,
+            Genre.SCIENCE_FICTION to 878,
+            Genre.SCI_FI_AND_FANTASY to 10765,
+            Genre.SOAP to 10766,
+            Genre.KIDS to 10762,
+            Genre.TALK to 10767,
+            Genre.THRILLER to 53,
+            Genre.WAR_AND_POLITICS to 10768,
+            Genre.WAR to 10752,
+            Genre.TV_MOVIE to 10770,
+            Genre.WESTERN to 37,
+            Genre.ACTION_AND_ADVENTURE to 10759
+        )
+
+        reverseMappings.forEach { (genre, expectedId) ->
+            assertThat(genre.toDtoId()).isEqualTo(expectedId)
+        }
     }
 }
