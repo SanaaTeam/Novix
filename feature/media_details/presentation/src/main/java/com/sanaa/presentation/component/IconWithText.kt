@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun IconWithText(
     iconRes: Int,
-    contentDescription: String,
+    contentDescription: String?,
     text: String,
     tint: androidx.compose.ui.graphics.Color
 ) {
