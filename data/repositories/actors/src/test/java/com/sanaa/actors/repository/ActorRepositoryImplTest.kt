@@ -131,31 +131,6 @@ class ActorRepositoryImplTest {
         assertThrows<RetrievingDataFailureException> { repository.getActorTopTvSeries(1) }
     }
 
-    companion object {
-        private val sampleActorDto = ActorDto(
-            id = 1,
-            name = "Tom Hanks",
-            profileImagePath = "/img.jpg",
-            knownForDepartment = "Acting",
-            biography = "Biography",
-            birthDay = "1956-07-09",
-            deathDay = null,
-            gender = 2,
-            placeOfBirth = "USA",
-            alsoKnownAs = listOf("Thomas Hanks")
-        )
-
-        private val sampleImagesDto = ActorImagesDto(
-            id = 1,
-            profiles = listOf(
-                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img1.jpg", 8.0, 100),
-                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img2.jpg", 7.0, 80),
-                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img3.jpg", 6.0, 60),
-                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img4.jpg", 5.0, 40),
-            )
-        )
-    }
-
     @Test
     fun `getProfileImages propagates NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
@@ -194,5 +169,30 @@ class ActorRepositoryImplTest {
         val series = repository.getActorTopTvSeries(99)
 
         assertThat(series.map { it.title }).containsExactly("S-A", "S-B")
+    }
+
+    companion object {
+        private val sampleActorDto = ActorDto(
+            id = 1,
+            name = "Tom Hanks",
+            profileImagePath = "/img.jpg",
+            knownForDepartment = "Acting",
+            biography = "Biography",
+            birthDay = "1956-07-09",
+            deathDay = null,
+            gender = 2,
+            placeOfBirth = "USA",
+            alsoKnownAs = listOf("Thomas Hanks")
+        )
+
+        private val sampleImagesDto = ActorImagesDto(
+            id = 1,
+            profiles = listOf(
+                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img1.jpg", 8.0, 100),
+                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img2.jpg", 7.0, 80),
+                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img3.jpg", 6.0, 60),
+                ActorImagesDto.ProfileImageDto(1.0, 500, 500, null, "/img4.jpg", 5.0, 40),
+            )
+        )
     }
 }
