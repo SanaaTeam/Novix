@@ -123,8 +123,7 @@ class GetTopTvSeriesUseCaseTest {
                 genres = listOf(sciFi),
                 imdbRating = 8.9f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
-                seasonsCount = 1,                       // season1
-                trailerUrl = "https://youtu.be/future_worlds_trailer"
+                seasonsCount = 1
             ),
             TvSeries(
                 id = 102,
@@ -134,8 +133,7 @@ class GetTopTvSeriesUseCaseTest {
                 genres = listOf(crime),
                 imdbRating = 8.5f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series2.jpg",
-                seasonsCount = 1,                       // seasonCrime1
-                trailerUrl = "https://youtu.be/city_shadows_trailer"
+                seasonsCount = 1
             )
         )
     }
