@@ -11,64 +11,100 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
+import com.sanaa.presentation.screen.SearchViewModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 
 @Composable
 fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
+    searchViewModel: SearchViewModel,
     interactionsListener: SearchScreenInteractionsListener,
     modifier: Modifier = Modifier,
 ) {
     val tabs = listOf("Movies", "TV Shows", "Actors")
 
+    val moviesPagingItems = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
+    val tvShowsPagingItems = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
+    val actorsPagingItems = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier.padding(top = 12.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier.padding(top = 12.dp)
     ) {
         CategoryTab(
             categories = tabs,
             selectedIndex = selectedTabIndex,
             onCategorySelected = interactionsListener::onTabSelected,
         )
-        if (uiState.isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                WavyProgressIndicator()
-            }
-        } else  if (uiState.noInternetConnection) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                NetworkDisconnectionContact(onRetryClick = {})
-            }
-        } else when (selectedTabIndex) {
-            0 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
-                else MoviesContent(uiState.movies, onMovieClick = {
-                    interactionsListener.onSearchResultMediaClicked(it)
-                })
+
+        when {
+            uiState.isLoading -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    WavyProgressIndicator()
+                }
             }
 
-
-            1 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
-                else TvShowsContent(
-                    uiState.tvShows, onTvShowClick = {
-                        interactionsListener.onSearchResultMediaClicked(it)
-                    })
-
+            uiState.noInternetConnection -> {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    NetworkDisconnectionContact(onRetryClick = {})
+                }
             }
 
-            2 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
-                else ActorsContent(uiState.actors)
+            else -> {
+                val isMovieEmpty = moviesPagingItems.itemCount == 0 &&
+                        moviesPagingItems.loadState.refresh !is androidx.paging.LoadState.Loading &&
+                        moviesPagingItems.loadState.refresh !is androidx.paging.LoadState.Error
+
+                val isTvEmpty = tvShowsPagingItems.itemCount == 0 &&
+                        tvShowsPagingItems.loadState.refresh !is androidx.paging.LoadState.Loading &&
+                        tvShowsPagingItems.loadState.refresh !is androidx.paging.LoadState.Error
+
+                val isActorEmpty = actorsPagingItems.itemCount == 0 &&
+                        actorsPagingItems.loadState.refresh !is androidx.paging.LoadState.Loading &&
+                        actorsPagingItems.loadState.refresh !is androidx.paging.LoadState.Error
+
+                when (selectedTabIndex) {
+                    0 -> {
+                        if (isMovieEmpty) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NoSearchResultState()
+                            }
+                        } else {
+                            MoviesContent(
+                                moviesPagingData = searchViewModel.moviesPagingData,
+                                onMovieClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                            )
+                        }
+                    }
+
+                    1 -> {
+                        if (isTvEmpty) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NoSearchResultState()
+                            }
+                        } else {
+                            TvShowsContent(
+                                tvShowsPagingData = searchViewModel.tvShowsPagingData,
+                                onTvShowClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                            )
+                        }
+                    }
+
+                    2 -> {
+                        if (isActorEmpty) {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NoSearchResultState()
+                            }
+                        } else {
+                            ActorsContent(actorsPagingData = searchViewModel.actorsPagingData)
+                        }
+                    }
+                }
             }
         }
     }

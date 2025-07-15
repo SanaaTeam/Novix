@@ -34,6 +34,7 @@ import usecase.SearchTvShowsPagingUseCase
 import usecase.search.MediaFilters
 import usecase.search.MediaType
 import usecase.search.RecentViewedMedia
+import repository.SearchHistoryRepository
 
 class SearchViewModel(
     private val searchMoviesPagingUseCase: SearchMoviesPagingUseCase,
@@ -45,11 +46,11 @@ class SearchViewModel(
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase,
+    private val searchHistoryRepository: SearchHistoryRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
 
-    // Paging State Flows
     private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
     val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
 
@@ -152,6 +153,11 @@ class SearchViewModel(
 
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
+        
+        viewModelScope.launch {
+                searchHistoryRepository.addSearchHistory(query)
+        }
+        
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)

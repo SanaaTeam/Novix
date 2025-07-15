@@ -7,14 +7,23 @@ import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
 import usecase.RemoveSearchHistoryUseCase
+import usecase.SearchActorsPagingUseCase
 import usecase.SearchActorsUseCase
+import usecase.SearchMoviesPagingUseCase
 import usecase.SearchMoviesUseCase
+import usecase.SearchTvShowsPagingUseCase
 import usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
     factory { SearchMoviesUseCase(get(), get()) }
     factory { SearchTvSeriesUseCase(get(), get()) }
     factory { SearchActorsUseCase(get(), get()) }
+    
+    // Paging Use Cases
+    factory { SearchMoviesPagingUseCase(get()) }
+    factory { SearchTvShowsPagingUseCase(get()) }
+    factory { SearchActorsPagingUseCase(get()) }
+    
     factory { GetRecentViewedUseCase(get()) }
     factory { GetSearchHistoryUseCase(get()) }
     factory { ClearRecentViewedUseCase(get()) }

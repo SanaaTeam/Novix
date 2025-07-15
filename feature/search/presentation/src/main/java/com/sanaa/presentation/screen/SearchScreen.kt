@@ -60,6 +60,7 @@ fun SearchScreen(
             filterUiState = filterUiState,
             searchListener = searchViewModel,
             filterListener = filterViewModel,
+            searchViewModel = searchViewModel,
         )
     }
 }
@@ -71,6 +72,7 @@ fun SearchScreenContent(
     filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
     filterListener: FilterBottomSheetInteractionsListener,
+    searchViewModel: SearchViewModel,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -122,6 +124,7 @@ fun SearchScreenContent(
                 CategoryTabSection(
                     selectedTabIndex = uiState.selectedTabIndex,
                     uiState = uiState,
+                    searchViewModel = searchViewModel,
                     interactionsListener = searchListener,
                     modifier = Modifier.align(Alignment.Start)
                 )

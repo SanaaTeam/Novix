@@ -115,6 +115,7 @@ androidx-room-testing = { group = "androidx.room", name = "room-testing", versio
 # Paging
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
 
 # ktor
