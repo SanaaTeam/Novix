@@ -9,7 +9,7 @@ data class TvSeriesDto(
     @SerialName("id") val id: Int = 0,
     @SerialName("name") val name: String = "",
     @SerialName("overview") val overview: String = "",
-    @SerialName("poster_path") val posterPath: String = "",
+    @SerialName("poster_path") val posterPath: String? = null,
     @SerialName("vote_average") val voteAverage: Float = 0f,
     @SerialName("number_of_seasons") val seasonsCount: Int = 0,
     @SerialName("genres") val genres: List<GenreDto> = emptyList(),

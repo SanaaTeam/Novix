@@ -45,7 +45,7 @@ fun EpisodeDto.toEntity(): Episode {
         imdbRating = voteAverage,
         durationMinutes = runtime,
         releaseDate = LocalDate.parse(airDate),
-        stillImagePath = stillPath
+        stillImagePath = buildPosterUrl(stillPath),
     )
 }
 
@@ -116,8 +116,9 @@ fun Genre.toDtoId(): Int {
 }
 
 
-fun buildPosterUrl(posterPath: String?): String {
-    return "https://image.tmdb.org/t/p/w500$posterPath"
+fun buildPosterUrl(posterPath: String?): String? {
+    return posterPath?.takeIf { it.isNotBlank() }
+        ?.let { "https://image.tmdb.org/t/p/w500$it" }
 }
 
 fun TvSeriesVideoDto.toEntity(): String {
