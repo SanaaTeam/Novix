@@ -195,8 +195,6 @@ class ActorMapperTest {
             .isEqualTo("Le Fabuleux Destin d'Amélie Poulain")
     }
 
-    /* ---------- TvCastCreditDto ---------- */
-
     @Test
     fun `TvCastCreditDto uses originalName when name is null`() {
         val dto = TvCastCreditDto(

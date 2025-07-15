@@ -2,13 +2,18 @@ package com.sanaa.actors
 
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
-import com.sanaa.actors.dataSource.remote.dto.*
-import io.ktor.client.*
-import io.ktor.client.engine.mock.*
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockRequestHandleScope
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.ContentType
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.utils.io.ByteReadChannel
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -16,8 +21,6 @@ import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import io.ktor.utils.io.ByteReadChannel
-import io.ktor.client.engine.mock.MockRequestHandleScope
 
 class ActorRemoteDataSourceImplTest {
 
@@ -38,33 +41,41 @@ class ActorRemoteDataSourceImplTest {
             val url = request.url.toString().substringBefore("?")
 
             when {
-                url.endsWith("/person/1") -> respondJson("""{
+                url.endsWith("/person/1") -> respondJson(
+                    """{
                     "id": 1,
                     "name": "Tom Hanks",
                     "profile_path": "/img.jpg",
                     "gender": 2
-                }""")
+                }"""
+                )
 
-                url.endsWith("/person/1/images") -> respondJson("""{
+                url.endsWith("/person/1/images") -> respondJson(
+                    """{
                     "id": 1,
                     "profiles": [
                         {"aspect_ratio": 1.0, "height": 1000, "width": 800, "file_path": "/img1.jpg", "vote_average": 5.0, "vote_count": 10}
                     ]
-                }""")
+                }"""
+                )
 
-                url.endsWith("/person/1/movie_credits") -> respondJson("""{
+                url.endsWith("/person/1/movie_credits") -> respondJson(
+                    """{
                     "id": 1,
                     "cast": [
                         {"id": 100, "title": "Inception", "vote_average": 8.8}
                     ]
-                }""")
+                }"""
+                )
 
-                url.endsWith("/person/1/tv_credits") -> respondJson("""{
+                url.endsWith("/person/1/tv_credits") -> respondJson(
+                    """{
                     "id": 1,
                     "cast": [
                         {"id": 200, "name": "Breaking Bad", "vote_average": 9.5}
                     ]
-                }""")
+                }"""
+                )
 
                 else -> respondError(HttpStatusCode.NotFound)
             }
