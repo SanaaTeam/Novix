@@ -67,6 +67,9 @@ dependencies {
     implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.mediaDetails.presentation)
+    implementation(projects.feature.mediaDetails.api)
     implementation(projects.data.repositories.search)
     implementation(projects.data.remoteDataSource.search)
 

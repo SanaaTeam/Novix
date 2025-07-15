@@ -6,6 +6,7 @@ import com.sanaa.novix.di.appModule
 import com.sanaa.novix.di.domainModule
 import com.sanaa.novix.di.firebaseModule
 import com.sanaa.novix.di.loggingModule
+import com.sanaa.novix.di.navigationModule
 import com.sanaa.novix.di.searchModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
@@ -20,7 +21,10 @@ class NovixApp : Application(), KoinComponent {
 
         startKoin {
             androidContext(this@NovixApp)
-            modules(appModule, searchModule, firebaseModule, domainModule, loggingModule)
+            modules(
+                appModule, searchModule, firebaseModule, domainModule, loggingModule,
+                navigationModule
+            )
         }
 
         val crashlytics: FirebaseCrashlytics = get()

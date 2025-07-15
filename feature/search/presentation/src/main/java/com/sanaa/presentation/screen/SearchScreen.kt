@@ -41,6 +41,7 @@ import search.usecase.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
+    onMediaClick: (Int) -> Unit,
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
 ) {
@@ -60,6 +61,7 @@ fun SearchScreen(
             filterUiState = filterUiState,
             searchListener = searchViewModel,
             filterListener = filterViewModel,
+            onMediaClick = onMediaClick
         )
     }
 }
@@ -71,6 +73,7 @@ fun SearchScreenContent(
     filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
     filterListener: FilterBottomSheetInteractionsListener,
+    onMediaClick: (Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -103,7 +106,7 @@ fun SearchScreenContent(
                     NovixNavBarItem(
                         modifier = Modifier.weight(1f),
                         isSelected = index == 1,
-                        onClick = { /* TODO: Handle app-wide navigation */ },
+                        onClick = { onMediaClick(1) },
                         iconRes = icon,
                         selectedIconRes = selectedIcon,
                     )
@@ -143,7 +146,7 @@ fun SearchScreenContent(
                 if (!isSliderDragging) {
                     dismissSheet()
                 }
-            },            sheetState = sheetState,
+            }, sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(
