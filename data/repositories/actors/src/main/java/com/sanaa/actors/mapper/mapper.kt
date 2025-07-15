@@ -51,6 +51,5 @@ fun TvCastCreditDto.toDomain(): TvSeries = TvSeries(
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     posterImageUrl = posterPath.fullImageUrlOrEmpty(),
-    seasonsCount = 0,
-    trailerUrl = ""
+    seasonsCount = 0
 )
