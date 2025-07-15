@@ -4,14 +4,14 @@ import com.sanaa.series.dto.ReviewDto
 import entity.Review
 import kotlinx.datetime.LocalDate
 
-fun ReviewDto.toEntity(): Review{
+fun ReviewDto.toEntity(): Review {
     return Review(
-        id = id,
+        id = 0,
         content = content,
-        authorName =authorDetails.name,
+        authorName = authorDetails.name,
         userHandle = authorDetails.username,
         avatarUrl = authorDetails.avatarPath,
         rating = authorDetails.rating,
-        createdDate = LocalDate.parse(createdAt)
+        createdDate = LocalDate.parse(createdAt.substring(0, 10))
     )
 }

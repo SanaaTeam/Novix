@@ -17,7 +17,7 @@ fun TvSeriesDto.toEntity(): TvSeries {
         id = id,
         title = name,
         overview = overview,
-        posterImageUrl = posterPath,
+        posterImageUrl = buildPosterUrl(posterPath),
         imdbRating = voteAverage,
         releaseDate = LocalDate.parse(firstAirDate),
         genres = genres.map { it.toEntity() },
@@ -49,39 +49,37 @@ fun EpisodeDto.toEntity(): Episode {
 }
 
 
-fun VideoDto.toEntity(): String {
-    return when (site) {
-        "YouTube" -> "https://www.youtube.com/watch?v=$key"
-        else -> ""
-    }
-}
-
-fun ImageDto.toEntity(): String {
-    return "https://image.tmdb.org/t/p/w500$filePath"
-}
-
 fun GenreDto.toEntity(): Genre {
     return when (id) {
-        10759 -> Genre.ACTION_AND_ADVENTURE
+        28 -> Genre.ACTION
+        12 -> Genre.ADVENTURE
         16 -> Genre.ANIMATION
         35 -> Genre.COMEDY
         80 -> Genre.CRIME
         99 -> Genre.DOCUMENTARY
         18 -> Genre.DRAMA
         10751 -> Genre.FAMILY
-        10762 -> Genre.KIDS
+        14 -> Genre.FANTASY
+        36 -> Genre.HISTORY
+        27 -> Genre.HORROR
+        10402 -> Genre.MUSIC
         9648 -> Genre.MYSTERY
         10763 -> Genre.NEWS
         10764 -> Genre.REALITY
+        10749 -> Genre.ROMANCE
+        878 -> Genre.SCIENCE_FICTION
         10765 -> Genre.SCI_FI_AND_FANTASY
         10766 -> Genre.SOAP
+        10762 -> Genre.KIDS
         10767 -> Genre.TALK
+        53 -> Genre.THRILLER
         10768 -> Genre.WAR_AND_POLITICS
+        10752 -> Genre.WAR
+        10770 -> Genre.TV_MOVIE
         37 -> Genre.WESTERN
-        else -> Genre.DRAMA
+        10759 -> Genre.ACTION_AND_ADVENTURE
+        else -> Genre.DRAMA // fallback default
     }
-
-
 }
 
 fun Genre.toDtoId(): Int {
@@ -114,4 +112,20 @@ fun Genre.toDtoId(): Int {
         Genre.ACTION_AND_ADVENTURE -> 10759
         Genre.SCI_FI_AND_FANTASY -> 10765
     }
+}
+
+
+fun buildPosterUrl(posterPath: String?): String {
+    return "https://image.tmdb.org/t/p/w500$posterPath"
+}
+
+fun VideoDto.toEntity(): String {
+    return when (type) {
+        "YouTube" -> "https://www.youtube.com/watch?v=$key"
+        else -> ""
+    }
+}
+
+fun ImageDto.toEntity(): String {
+    return "https://image.tmdb.org/t/p/w500$filePath"
 }

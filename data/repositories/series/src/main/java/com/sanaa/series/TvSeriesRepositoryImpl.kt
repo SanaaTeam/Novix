@@ -26,7 +26,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             val reviews = remoteDataSource.getTvSeriesReviews(id)
             return reviews.map { it.toEntity() }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
             throw NotFoundException("Reviews not found")
         }
     }
@@ -84,7 +84,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
             return remoteDataSource.getEpisodeImages(seriesId, seasonNumber, episodeNumber)
                 .map { it.toEntity() }
         } catch (_: Exception) {
-            throw NotFoundException("Tv series not found")
+            throw NotFoundException("Images not found")
         }
     }
 
@@ -95,7 +95,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
             return remoteDataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
                 .map { it.toEntity() }
         } catch (_: Exception) {
-            throw NotFoundException("Tv series not found")
+            throw NotFoundException("Guests not found")
         }
     }
 
@@ -104,7 +104,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
             val videos = remoteDataSource.getTvSeriesVideos(id)
             return videos.firstOrNull()?.toEntity()
         } catch (_: Exception) {
-            throw NotFoundException("Tv Series not found")
+            throw NotFoundException("Trailer not found")
         }
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class TvSeriesReviewsResponse(
-    @SerialName("id") val id: String,
+    @SerialName("id") val id: Int,
     @SerialName("page") val page: Int,
     @SerialName("results") val results: List<ReviewDto>,
 )

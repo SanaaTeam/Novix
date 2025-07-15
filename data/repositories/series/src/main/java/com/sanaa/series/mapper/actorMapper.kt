@@ -10,7 +10,7 @@ fun ActorDto.toEntity(): Actor {
         id = id,
         name = name,
         character = character,
-        imageUrl = profilePath,
+        imageUrl = getProfileImageUrl(profilePath),
         gender = apiGenderMapping(gender),
         region = null,
         lastShow = null,
@@ -26,5 +26,11 @@ fun apiGenderMapping(id: Int): Gender {
         0 -> Gender.MALE
         1 -> Gender.FEMALE
         else -> Gender.MALE
+    }
+}
+
+fun getProfileImageUrl(profilePath: String?): String {
+    return profilePath.let {
+        "https://image.tmdb.org/t/p/w185$it"
     }
 }

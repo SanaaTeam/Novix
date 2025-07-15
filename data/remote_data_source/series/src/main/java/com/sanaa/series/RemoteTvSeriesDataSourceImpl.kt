@@ -14,6 +14,7 @@ import com.sanaa.series.response.ImagesResponse
 import com.sanaa.series.response.TvSeriesCastResponse
 import com.sanaa.series.response.TvSeriesGuestOfStarsResponse
 import com.sanaa.series.response.TvSeriesReviewsResponse
+import com.sanaa.series.response.TvSeriesVideosResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -44,7 +45,9 @@ class RemoteTvSeriesDataSourceImpl(
     }
 
     override suspend fun getTvSeriesVideos(id: Int): List<VideoDto> {
-        return fetchTvSeries(path = "tv", id = id, subPath = "videos")
+        return fetchTvSeries<TvSeriesVideosResponse>(
+            path = "tv", id = id, subPath = "videos"
+        ).results
     }
 
     override suspend fun getTvSeriesSeasonDetails(
