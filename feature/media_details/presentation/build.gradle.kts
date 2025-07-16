@@ -35,14 +35,48 @@ android {
 }
 
 dependencies {
+    // Modules
+    implementation(project(":domain:vod"))
+    implementation(project(":image_viewer"))
     implementation(projects.designSystem)
+
+    // AndroidX & Material
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.material3)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+
+    // Compose
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(libs.androidx.ui.compose.graphics)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+
+    // Coil
     implementation(libs.coil.compose)
+
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
+
+    // Kotlin datetime
+    implementation(libs.kotlinx.datetime)
+
+    // Testing
+    testImplementation(libs.junit)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.truth)
+    testImplementation(kotlin("test"))
+    testImplementation(libs.turbine)
+    androidTestImplementation(libs.androidx.junit)
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
