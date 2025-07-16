@@ -35,14 +35,17 @@ android {
 }
 
 dependencies {
+    implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.material3)
+    implementation(libs.kotlinx.datetime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.coil.compose)
+    implementation(libs.bundles.koin)
 }
