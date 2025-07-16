@@ -45,6 +45,13 @@ class GenreMapperKtTest{
             assertThat(reversedGenre).isEqualTo(genre)
         }
     }
-    
+    @Test
+    fun `Invalid ID returns null genre`() {
+        val invalidIds = listOf(-1, 0, 999, 1234)
+        for (id in invalidIds) {
+            val genre = id.toGenre()
+            assertThat(genre).isNull()
+        }
+    }
 
 }
