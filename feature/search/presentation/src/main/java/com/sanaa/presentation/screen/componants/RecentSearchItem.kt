@@ -24,13 +24,11 @@ fun RecentSearchItem(
     modifier: Modifier = Modifier,
     onDeleteClicked: () -> Unit = {},
     onRecentSearchItemClicked: () -> Unit = {},
-
-    ) {
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -1,8 +1,9 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -43,119 +44,137 @@ fun SearchHistoryContent(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        AnimatedVisibility(
-            recentSearches.isEmpty() && recentViewed.isEmpty(), enter = fadeIn(), exit = fadeOut()
+        AnimatedContent(
+            recentSearches.isEmpty() && recentViewed.isEmpty(),
+            transitionSpec = { fadeIn() togetherWith fadeOut() }
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                EmptySearchState(
-                    icon = painterResource(id = R.drawable.empty_search),
-                    text = stringResource(id = R.string.empty_search_message)
-                    )
-            }
-        }
-        AnimatedVisibility(
-            recentSearches.isNotEmpty() || recentViewed.isNotEmpty(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            LazyColumn(
-                modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
-            ) {
-                if (recentViewed.isNotEmpty()) {
-                    item {
-                        SectionHeader(
-                            title = stringResource(R.string.recent_viewed),
-                            actionText = stringResource(R.string.clear_all),
-                            onActionClick = interactionsListener::onClearRecentViewClicked
-                        )
-                    }
-
-                    item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 24.dp
-                            )
-                        ) {
-                            itemsIndexed(recentViewed) { _, item ->
-                                MovieSeriesPosterCard(
-                                    modifier = Modifier
-                                        .width(158.dp)
-                                        .height(210.dp),
-                                    boastImage = {
-                                        RemoteCensoredImageViewer(
-                                            imageUrl = item.imageUrl,
-                                            modifier = Modifier,
-                                            contentScale = ContentScale.Crop,
-                                            blurRadius = 150,
-                                            sfwThreshold = 0.75f,
-                                            nsfwThreshold = 0.15f,
-                                            contentDescription = null,
-                                            placeholderBackgroundColor = Theme.colors.surface,
-                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
-                                            textStyle = Theme.textStyle.body.small,
-                                            iconSize = 24.dp,
-                                        )
-                                    },
-                                    topLeftContent = {
-                                        SaveIconChip(
-                                            onClick = interactionsListener::onSaveIconClicked
-                                        )
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-
-                if (recentSearches.isNotEmpty()) {
-                    item {
-                        SectionHeader(
-                            title = stringResource(R.string.recent_search),
-                            actionText = stringResource(R.string.clear_all),
-                            onActionClick = interactionsListener::onClearRecentSearchClicked,
-                        )
-                    }
-
-                    itemsIndexed(
-                        recentSearches, key = { _, item -> item.id }) { index, item ->
-                        RecentSearchItem(
-                            text = item.title,
-                            onDeleteClicked = {
-                                interactionsListener.onDeleteRecentSearchItem(item.id)
-                            },
-                            onRecentSearchItemClicked = {
-                                interactionsListener.onRecentSearchItemClicked(item.title)
-                            },
-                            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
-                        )
-                        if (index != recentSearches.lastIndex) {
-                            Box(
-                                modifier = Modifier
-                                    .animateItem(
-                                        fadeInSpec = null,
-                                        fadeOutSpec = null
-                                    )
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .height(1.dp)
-                                    .background(color = Theme.colors.stroke)
-                            )
-                        }
-                    }
-                }
-
+            when (it) {
+                true -> EmptyState()
+                false -> ContentState(recentViewed, interactionsListener, recentSearches)
             }
         }
     }
 }
 
+@Composable
+private fun EmptyState() {
+    Box(
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+    ) {
+        EmptySearchState(
+            icon = painterResource(id = R.drawable.empty_search),
+            text = stringResource(id = R.string.empty_search_message)
+        )
+    }
+}
+
+@Composable
+private fun ContentState(
+    recentViewed: List<RecentViewedUiModel>,
+    interactionsListener: SearchScreenInteractionsListener,
+    recentSearches: List<RecentSearchUiModel>,
+) {
+    LazyColumn(
+        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
+    ) {
+        if (recentViewed.isNotEmpty()) {
+            item {
+                SectionHeader(
+                    title = stringResource(R.string.recent_viewed),
+                    actionText = stringResource(R.string.clear_all),
+                    onActionClick = interactionsListener::onClearRecentViewClicked
+                )
+            }
+
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp, end = 16.dp, bottom = 24.dp
+                    )
+                ) {
+                    itemsIndexed(recentViewed) { _, item ->
+                        MediaPoster(item, interactionsListener)
+                    }
+                }
+            }
+        }
+
+        if (recentSearches.isNotEmpty()) {
+            item {
+                SectionHeader(
+                    title = stringResource(R.string.recent_search),
+                    actionText = stringResource(R.string.clear_all),
+                    onActionClick = interactionsListener::onClearRecentSearchClicked,
+                )
+            }
+
+            itemsIndexed(
+                recentSearches, key = { _, item -> item.id }) { index, item ->
+                RecentSearchItem(
+                    text = item.title,
+                    onDeleteClicked = {
+                        interactionsListener.onDeleteRecentSearchItem(item.id)
+                    },
+                    onRecentSearchItemClicked = {
+                        interactionsListener.onRecentSearchItemClicked(item.title)
+                    },
+                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
+                )
+                if (index != recentSearches.lastIndex) {
+                    Divider()
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MediaPoster(
+    item: RecentViewedUiModel,
+    interactionsListener: SearchScreenInteractionsListener,
+) {
+    MovieSeriesPosterCard(
+        modifier = Modifier
+            .width(158.dp)
+            .height(210.dp),
+        boastImage = {
+            RemoteCensoredImageViewer(
+                imageUrl = item.imageUrl,
+                modifier = Modifier,
+                contentScale = ContentScale.Crop,
+                blurRadius = 150,
+                sfwThreshold = 0.75f,
+                nsfwThreshold = 0.15f,
+                contentDescription = null,
+                placeholderBackgroundColor = Theme.colors.surface,
+                hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                textStyle = Theme.textStyle.body.small,
+                iconSize = 24.dp,
+            )
+        },
+        topLeftContent = {
+            SaveIconChip(
+                onClick = interactionsListener::onSaveIconClicked
+            )
+        },
+    )
+}
+
+@Composable
+private fun Divider() {
+    Box(
+        modifier = Modifier.Companion
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(1.dp)
+            .background(color = Theme.colors.stroke)
+    )
+}
 
 @Composable
 fun SectionHeader(
-    title: String, actionText: String, onActionClick: () -> Unit, modifier: Modifier = Modifier
+    title: String, actionText: String, onActionClick: () -> Unit, modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
