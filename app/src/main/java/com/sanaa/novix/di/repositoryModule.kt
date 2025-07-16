@@ -9,8 +9,8 @@ import com.sanaa.search.repository.SearchRepositoryImpl
 import com.sanaa.search.search_history.LocalSearchHistoryDataSourceImpl
 import details.repository.ActorRepository
 import org.koin.dsl.module
-import repository.SearchHistoryRepository
-import repository.SearchPagingRepository
+import search.repository.SearchHistoryRepository
+import search.repository.SearchPagingRepository
 import search.repository.SearchRepository
 
 val repositoryModule = module {

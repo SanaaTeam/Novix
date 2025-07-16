@@ -1,9 +1,9 @@
-package repository
+package search.repository
 
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.SearchActorOutput
-import usecase.search.SearchMediaOutput
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchActorOutput
+import search.usecase.search_param.SearchMediaOutput
 
 interface SearchPagingRepository {
     suspend fun searchMovies(

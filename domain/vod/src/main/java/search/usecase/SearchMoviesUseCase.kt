@@ -1,9 +1,7 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
-import repository.SearchPagingRepository
 import search.repository.SearchHistoryRepository
-import search.repository.SearchRepository
+import search.repository.SearchPagingRepository
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
 import search.usecase.search_param.SearchMediaOutput

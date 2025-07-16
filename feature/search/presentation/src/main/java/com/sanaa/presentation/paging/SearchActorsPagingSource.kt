@@ -2,8 +2,8 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import usecase.SearchActorsUseCase
-import usecase.search.SearchActorOutput
+import search.usecase.SearchActorsUseCase
+import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsPagingSource(
     private val searchActorsPagingUseCase: SearchActorsUseCase,

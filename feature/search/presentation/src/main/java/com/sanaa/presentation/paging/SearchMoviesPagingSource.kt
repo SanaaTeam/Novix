@@ -2,13 +2,14 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import usecase.SearchMoviesUseCase
-import usecase.search.SearchMediaOutput
+import search.usecase.SearchMoviesUseCase
+import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.MediaFilters
 
 class SearchMoviesPagingSource(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val query: String,
-    private val filters: usecase.search.MediaFilters?
+    private val filters: MediaFilters?
 ) : PagingSource<Int, SearchMediaOutput>() {
 
     override fun getRefreshKey(state: PagingState<Int, SearchMediaOutput>): Int? {

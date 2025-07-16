@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -28,19 +27,19 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import repository.SearchHistoryRepository
-import usecase.AddRecentViewedUseCase
-import usecase.ClearRecentViewedUseCase
-import usecase.ClearSearchHistoryUseCase
-import usecase.GetRecentViewedUseCase
-import usecase.GetSearchHistoryUseCase
-import usecase.RemoveSearchHistoryUseCase
-import usecase.SearchActorsUseCase
-import usecase.SearchMoviesUseCase
-import usecase.SearchTvSeriesUseCase
-import usecase.search.MediaFilters
-import usecase.search.MediaType
-import usecase.search.RecentViewedMedia
+import search.repository.SearchHistoryRepository
+import search.usecase.AddRecentViewedUseCase
+import search.usecase.ClearRecentViewedUseCase
+import search.usecase.ClearSearchHistoryUseCase
+import search.usecase.GetRecentViewedUseCase
+import search.usecase.GetSearchHistoryUseCase
+import search.usecase.RemoveSearchHistoryUseCase
+import search.usecase.SearchActorsUseCase
+import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchTvSeriesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
+import search.usecase.search_param.RecentViewedMedia
 
 class SearchViewModel(
     private val searchMoviesPagingUseCase: SearchMoviesUseCase,
@@ -173,10 +172,8 @@ class SearchViewModel(
         }
     }
 
-
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-    }
 
         val newFlow = Pager(
             config = PagingConfig(
@@ -217,8 +214,6 @@ class SearchViewModel(
 
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
-    }
 
         val newFlow = Pager(
             config = PagingConfig(
@@ -259,13 +254,11 @@ class SearchViewModel(
 
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
-    }
 
         val newFlow = Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
-                enablePlaceholders = false,
+                enablePlaceholders = false
             ),
             pagingSourceFactory = {
                 SearchActorsPagingSource(
@@ -297,7 +290,6 @@ class SearchViewModel(
         }
     }
 
-
     private fun onDataLoadError(e: Exception) {
         if (e is NoNetworkException)
             updateState {
@@ -316,7 +308,6 @@ class SearchViewModel(
             }
     }
 
-
     override fun onSearchQueryChanged(query: String) {
         updateState { it.copy(searchQuery = query) }
     }
@@ -329,7 +320,6 @@ class SearchViewModel(
 
     override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
-
         val currentQuery = state.value.searchQuery
         loadMediaByTab(currentQuery)
     }
@@ -378,19 +368,21 @@ class SearchViewModel(
                     )
                 }
             },
-            ::onDataLoadError
+            onError = ::onDataLoadError
         )
+    }
+
+    override fun onSaveIconClicked() {
+        // Implementation for save icon clicked
     }
 
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
-    }
-
-    override fun onSaveIconClicked() {
-
+        loadMediaByTab(query)
     }
 
     companion object {
+        private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
         const val ACTOR_INDEX = 2

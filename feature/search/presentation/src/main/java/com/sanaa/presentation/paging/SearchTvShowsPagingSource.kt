@@ -2,9 +2,9 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import usecase.SearchTvSeriesUseCase
-import usecase.search.MediaFilters
-import usecase.search.SearchMediaOutput
+import search.usecase.SearchTvSeriesUseCase
+import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.SearchMediaOutput
 
 class SearchTvShowsPagingSource(
     private val searchTvShowsUseCase: SearchTvSeriesUseCase,

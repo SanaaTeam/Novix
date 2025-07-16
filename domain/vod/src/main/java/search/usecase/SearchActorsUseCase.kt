@@ -1,8 +1,8 @@
 package search.usecase
 
-import repository.SearchHistoryRepository
-import repository.SearchPagingRepository
-import usecase.search.SearchActorOutput
+import search.repository.SearchHistoryRepository
+import search.repository.SearchPagingRepository
+import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsUseCase(
     private val searchRepository: SearchPagingRepository,
