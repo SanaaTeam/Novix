@@ -5,4 +5,6 @@
     <string name="overview">نظرة عامة</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">اقرأ أقل</string>
+    <string name="unsuitable_image">صورة غير مناسبة</string>
+
 </resources>

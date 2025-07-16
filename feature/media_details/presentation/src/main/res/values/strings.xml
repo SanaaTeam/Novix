@@ -5,4 +5,5 @@
     <string name="overview">Overview</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
+    <string name="unsuitable_image">Unsuitable image</string>
 </resources>
