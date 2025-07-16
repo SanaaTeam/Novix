@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +26,6 @@ import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -46,7 +46,7 @@ fun MoviesContent(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 32.dp),
+            .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)

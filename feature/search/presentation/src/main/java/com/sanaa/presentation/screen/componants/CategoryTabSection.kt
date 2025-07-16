@@ -71,7 +71,10 @@ fun CategoryTabSection(
                 when (selectedTabIndex) {
                     0 -> {
                         if (isMovieEmpty) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NoSearchResultState()
                             }
                         } else {
@@ -84,7 +87,10 @@ fun CategoryTabSection(
 
                     1 -> {
                         if (isTvEmpty) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NoSearchResultState()
                             }
                         } else {
@@ -97,11 +103,17 @@ fun CategoryTabSection(
 
                     2 -> {
                         if (isActorEmpty) {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NoSearchResultState()
                             }
                         } else {
-                            ActorsContent(actorsPagingData = searchViewModel.actorsPagingData)
+                            val lazyPagingItems =
+                                searchViewModel.actorsPagingData.collectAsLazyPagingItems()
+
+                            ActorsContent(lazyPagingItems)
                         }
                     }
                 }
