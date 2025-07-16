@@ -1,8 +1,7 @@
 package com.sanaa.api
 
-import androidx.compose.runtime.Composable
+import android.content.Context
 
 interface MediaDetailsApi {
-    @Composable
-    fun MediaDetailsScreen(mediaId: Int, onBackClick: () -> Unit)
+    fun launch(context: Context, mediaId: Int)
 }

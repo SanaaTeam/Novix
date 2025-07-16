@@ -1,11 +1,11 @@
 package com.sanaa.novix
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.sanaa.novix.navigation.AppNavigation
+import com.sanaa.presentation.navigation.SearchActivity
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
@@ -21,8 +21,8 @@ class MainActivity : ComponentActivity() {
 
         Timber.d("MainActivity created")
 
-        setContent {
-            AppNavigation()
-        }
+        val intent = Intent(this, SearchActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 }

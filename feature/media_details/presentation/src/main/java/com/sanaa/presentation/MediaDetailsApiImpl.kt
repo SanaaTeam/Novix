@@ -1,28 +1,46 @@
 package com.sanaa.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import com.sanaa.api.MediaDetailsApi
+import com.sanaa.presentation.screen.MediaDetailsScreen
 
 class MediaDetailsApiImpl : MediaDetailsApi {
-    @Composable
-    override fun MediaDetailsScreen(mediaId: Int, onBackClick: () -> Unit) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(text = "Media Details for ID: $mediaId", fontSize = 24.sp)
-            Button(onClick = onBackClick) {
-                Text("Go Back")
-            }
+    override fun launch(context: Context, mediaId: Int) {
+        val intent = Intent(context, MediaDetailsActivity::class.java).apply {
+            putExtra(MediaDetailsActivity.EXTRA_MEDIA_ID, mediaId)
+        }
+        context.startActivity(intent)
+    }
+}
+
+class MediaDetailsActivity : ComponentActivity() {
+
+    companion object {
+        const val EXTRA_MEDIA_ID = "extra_media_id"
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+
+        val mediaId = intent.getIntExtra(EXTRA_MEDIA_ID, -1)
+        if (mediaId == -1) {
+            finish()
+            return
+        }
+
+        setContent {
+
+            MediaDetailsScreen(
+                mediaId = mediaId,
+                onBackClick = { finish() }
+            )
         }
     }
 }
