@@ -4,10 +4,10 @@ import com.example.env_config.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.EpisodeDto
-import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
+import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.TvSeriesVideoDto
 import com.sanaa.series.response.GenreTvSeriesResponse
 import com.sanaa.series.response.ImagesResponse
@@ -26,27 +26,13 @@ class RemoteTvSeriesDataSourceImpl(
     private val languageProvider: LanguageProvider
 ) : RemoteTvSeriesDataSource {
 
-    private suspend inline fun <reified T> fetchTvSeries(
-        path: String, id: Int, subPath: String? = null
-    ): T {
-        val fullPath = buildString {
-            append("$baseUrl/$path/$id")
-            if (!subPath.isNullOrBlank()) append("/$subPath")
-        }
-
-        return client.get(fullPath) {
-            parameter("language", languageProvider.getCurrentLanguage())
-            parameter("api_key", BuildConfig.TMDB_API_KEY)
-        }.body<T>()
-    }
-
     override suspend fun getTvSeries(id: Int): TvSeriesDto {
         return fetchTvSeries(path = "tv", id = id)
     }
 
     override suspend fun getTvSeriesVideos(id: Int): List<TvSeriesVideoDto> {
         return fetchTvSeries<TvSeriesVideosResponse>(
-            path = "tv", id = id, subPath = "videos"
+            path = "tv", id = id, subPath = "videos", language = "en"
         ).results
     }
 
@@ -58,7 +44,7 @@ class RemoteTvSeriesDataSourceImpl(
 
     override suspend fun getTvSeriesImages(id: Int): List<TvSeriesImageDto> {
         return fetchTvSeries<ImagesResponse>(
-            path = "tv", id = id, subPath = "images"
+            path = "tv", id = id, subPath = "images", language = "en"
         ).backdrops
     }
 
@@ -108,5 +94,22 @@ class RemoteTvSeriesDataSourceImpl(
             id = seriesId,
             subPath = "season/$seasonNumber/episode/$episodeNumber/credits"
         ).guestStars
+    }
+
+    private suspend inline fun <reified T> fetchTvSeries(
+        path: String,
+        id: Int,
+        subPath: String? = null,
+        language: String? = languageProvider.getCurrentLanguage()
+    ): T {
+        val fullPath = buildString {
+            append("$baseUrl/$path/$id")
+            if (!subPath.isNullOrBlank()) append("/$subPath")
+        }
+
+        return client.get(fullPath) {
+            parameter("api_key", BuildConfig.TMDB_API_KEY)
+            language?.let { parameter("language", it) }
+        }.body()
     }
 }
