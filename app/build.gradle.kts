@@ -65,6 +65,13 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        viewBinding = false
+        dataBinding = false
+        mlModelBinding = true
+        aidl = false
+        prefab = false
+        renderScript = false
+        shaders = false
     }
 }
 
@@ -73,7 +80,6 @@ dependencies {
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
 
-    implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.data.repositories.search)
@@ -114,8 +120,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.cloudy)
-    implementation(libs.material)
-    implementation(libs.androidx.appcompat)
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)
