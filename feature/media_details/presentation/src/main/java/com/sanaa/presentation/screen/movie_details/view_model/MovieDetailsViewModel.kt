@@ -19,7 +19,7 @@ class MovieDetailsViewModel(
     private val getMovieImagesUseCase: GetMovieImagesUseCase,
     private val getSimilarMoviesByMovieId: GetSimilarMoviesByMovieId,
     defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MovieDetailsUiState>(MovieDetailsUiState(), defaultDispatcher),
+) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(MovieDetailsUiState(), defaultDispatcher),
     MovieDetailsScreenInteractionListener {
 
     override fun onLoadMovieDetails(movieId: Int) {
@@ -35,7 +35,6 @@ class MovieDetailsViewModel(
                 movie.toUiModel(
                     cast = cast.map { it.toCastUiModel() },
                     similarMovies = similar.map { it.toSimilarUiModel(isBookmarked = false) },
-                    isBookmarked = movie.isBookmarked,
                     posterUrls = posterUrls
                 )
             },
