@@ -34,12 +34,11 @@ import kotlin.collections.isNotEmpty
 @Composable
 fun ReviewCard(
     review: Review,
-    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .background(color = Theme.colors.surface, shape = RoundedCornerShape(12.dp))
             .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
