@@ -1,17 +1,17 @@
 package usecase
 
 import repository.SearchHistoryRepository
-import repository.SearchRepository
+import repository.SearchPagingRepository
 import usecase.search.MediaFilters
 import usecase.search.MediaType
 import usecase.search.SearchMediaOutput
 
 class SearchMoviesUseCase(
-    private val searchRepository: SearchRepository,
+    private val searchRepository: SearchPagingRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {
-    suspend fun execute(query: String, filters: MediaFilters?): List<SearchMediaOutput> {
+    suspend fun execute(query: String, page: Int, filters: MediaFilters?): List<SearchMediaOutput> {
         searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchMedia(query, filters, MediaType.MOVIE)
+        return searchRepository.searchMovies(query, page, filters, MediaType.MOVIE)
     }
 }
