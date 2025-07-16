@@ -64,6 +64,9 @@ android {
 
 dependencies {
 
+    implementation(projects.data.remoteDataSource.series)
+    implementation(projects.data.repositories.series)
+
     implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
@@ -71,7 +74,9 @@ dependencies {
     implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.data.repositories.search)
+    implementation(projects.data.repositories.actors)
     implementation(projects.data.remoteDataSource.search)
+    implementation(projects.data.remoteDataSource.actors)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

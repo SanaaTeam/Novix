@@ -9,9 +9,8 @@ data class TvSeries(
     val releaseDate: LocalDate,
     val genres: List<Genre>,
     val imdbRating: Float,
-    val posterImageUrl: String,
+    val posterImageUrl: String?,
     val seasonsCount: Int,
-    val trailerUrl: String
 )
 
 data class Season(
@@ -19,7 +18,7 @@ data class Season(
     val title: String,
     val overview: String,
     val number: Int,
-    val episodesCount: Int,
+    val episodes: List<Episode>,
 )
 
 data class Episode(
@@ -30,5 +29,6 @@ data class Episode(
     val imdbRating: Float,
     val overview: String,
     val durationMinutes: Int,
-    val releaseDate: LocalDate
+    val releaseDate: LocalDate,
+    val stillImagePath: String?
 )

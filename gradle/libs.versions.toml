@@ -147,7 +147,6 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
-
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
