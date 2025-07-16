@@ -100,8 +100,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
 koin-core = { group = "io.insert-koin", name = "koin-core" }
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose" }
-
+koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinBom" }
 
 #room
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
