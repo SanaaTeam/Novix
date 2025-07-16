@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    "<string name="view_reviews">عرض التقييمات</string>
+    "
+    <string name="view_reviews">عرض التقييمات</string>
     <string name="seasons_count">%d مواسم</string>
     <string name="overview">نظرة عامة</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">اقرأ أقل</string>
+    <string name="play_trailer"> مشاهدة الاعلان</string>
+    <string name="episodes_count">%d حلقات</string>
+    <string name="episode_number">الحلقة %d</string>
+    <string name="season_number">م%d</string>
+    <string name="cast">الطاقم</string>
+    <string name="m">%d د</string>
+    <string name="season">الموسم</string>
 </resources>

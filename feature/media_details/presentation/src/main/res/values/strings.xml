@@ -5,4 +5,11 @@
     <string name="overview">Overview</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
+    <string name="play_trailer">Play Trailer</string>
+    <string name="episodes_count">%d Episodes</string>
+    <string name="episode_number">Episode %d</string>
+    <string name="season_number">S%d</string>
+    <string name="cast">Cast</string>
+    <string name="m">%d m</string>
+    <string name="season">Season</string>
 </resources>
