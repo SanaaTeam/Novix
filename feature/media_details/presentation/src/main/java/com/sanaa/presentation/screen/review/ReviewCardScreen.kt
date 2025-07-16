@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,7 @@ fun ReviewCard(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.star),
-                    contentDescription = "rating",
+                    contentDescription = stringResource(id = R.string.rating),
                     modifier = Modifier.size(14.dp)
                 )
                 Text(
@@ -101,7 +102,7 @@ fun ReviewCard(
         if (review.content.length > 150 && !expanded) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "Read more",
+                text = stringResource(id = R.string.read_more),
                 style = Theme.textStyle.label.medium,
                 color = Theme.colors.primary,
                 modifier = Modifier.clickable { expanded = true }
@@ -111,7 +112,7 @@ fun ReviewCard(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = R.drawable.date_icon),
-                contentDescription = "date icon",
+                contentDescription = stringResource(id = R.string.date),
                 tint = Theme.colors.body,
                 modifier = Modifier.size(14.dp)
             )
@@ -136,7 +137,7 @@ fun ReviewScreen(
             .padding(vertical = 24.dp)
     ) {
         AppTopBar(
-            screenTitle = "Reviews",
+            screenTitle = stringResource(id = R.string.reviews),
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(R.drawable.arrow_left),
@@ -161,6 +162,7 @@ fun ReviewScreen(
         }
     }
 }
+
 @Composable
 fun EmptyReviewsState(
     onBackClicked: () -> Unit = {}
@@ -171,7 +173,7 @@ fun EmptyReviewsState(
             .padding(vertical = 24.dp)
     ) {
         AppTopBar(
-            screenTitle = "Reviews",
+            screenTitle = stringResource(id = R.string.reviews),
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(R.drawable.arrow_left),
@@ -179,13 +181,15 @@ fun EmptyReviewsState(
                 )
             }
         )
-
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(horizontal = 16.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.chat),
@@ -194,7 +198,7 @@ fun EmptyReviewsState(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "There is no review!",
+                    text = stringResource(id = R.string.no_review),
                     style = Theme.textStyle.body.small,
                     color = Theme.colors.body
                 )
@@ -202,7 +206,6 @@ fun EmptyReviewsState(
         }
     }
 }
-
 
 @PreviewLightDark
 @Composable
@@ -251,7 +254,6 @@ data class Review(
     val createdDate: LocalDate,
     val avatarUrl: String?
 )
-
 
 @PreviewLightDark
 @Composable
