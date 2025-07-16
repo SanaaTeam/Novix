@@ -12,14 +12,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -46,21 +46,25 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
         items(movies) { movie ->
             Log.d("MoviesContent", "Movie: $movie")
             MovieSeriesPosterCard(boastImage = {
-                RemoteCensoredImageViewer(
+                RemoteBlurredHaramImageViewer(
                     imageUrl = movie.imageUrl,
                     modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop,
                     blurRadius = 150,
-                    sfwThreshold = 0.75f,
-                    nsfwThreshold = 0.15f,
+                    haramThreshold = 0.2f,
+                    nonHaramThreshold = 0.7f,
                     placeholder = painterResource(placeholderResId),
                     error = painterResource(placeholderResId),
                     contentDescription = movie.title,
-                    placeholderBackgroundColor = Theme.colors.surface,
-                    hintText = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small,
-                    iconSize = 24.dp,
-                )
+                ) {
+                    OnBlurContent(
+                        hintText = stringResource(R.string.unsuitable_image),
+                        textStyle = Theme.textStyle.body.small.copy(
+                            color = Color(0x99FFFFFF)
+                        ),
+                        iconSize = 24.dp,
+                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                    )
+                }
             }, topLeftContent = {
                 SaveIconChip(onClick = {})
             }, onCardClick = {
