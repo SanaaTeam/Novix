@@ -25,6 +25,10 @@ android {
 
         versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
         versionName = ciName ?: libs.versions.versionName.get()
+
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
     }
 
     buildTypes {
@@ -66,10 +70,16 @@ android {
 
 dependencies {
 
+    implementation(projects.data.remoteDataSource.series)
+    implementation(projects.data.repositories.series)
+
+    implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.data.repositories.search)
+    implementation(projects.data.repositories.actors)
     implementation(projects.data.remoteDataSource.search)
+    implementation(projects.data.remoteDataSource.actors)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -115,6 +125,4 @@ dependencies {
 
     // Language Provider
     implementation(projects.envConfig)
-
-    implementation("org.slf4j:slf4j-nop:1.7.36")
 }
