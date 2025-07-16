@@ -1,10 +1,16 @@
 package com.sanaa.presentation.screen
 
+import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.paging.SearchActorsPagingSource
+import com.sanaa.presentation.paging.SearchMoviesPagingSource
+import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
@@ -22,24 +28,24 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import repository.SearchHistoryRepository
 import usecase.AddRecentViewedUseCase
 import usecase.ClearRecentViewedUseCase
 import usecase.ClearSearchHistoryUseCase
 import usecase.GetRecentViewedUseCase
 import usecase.GetSearchHistoryUseCase
 import usecase.RemoveSearchHistoryUseCase
-import usecase.SearchActorsPagingUseCase
-import usecase.SearchMoviesPagingUseCase
-import usecase.SearchTvShowsPagingUseCase
+import usecase.SearchActorsUseCase
+import usecase.SearchMoviesUseCase
+import usecase.SearchTvSeriesUseCase
 import usecase.search.MediaFilters
 import usecase.search.MediaType
 import usecase.search.RecentViewedMedia
-import repository.SearchHistoryRepository
 
 class SearchViewModel(
-    private val searchMoviesPagingUseCase: SearchMoviesPagingUseCase,
-    private val searchTvShowsPagingUseCase: SearchTvShowsPagingUseCase,
-    private val searchActorsPagingUseCase: SearchActorsPagingUseCase,
+    private val searchMoviesPagingUseCase: SearchMoviesUseCase,
+    private val searchTvShowsPagingUseCase: SearchTvSeriesUseCase,
+    private val searchActorsPagingUseCase: SearchActorsUseCase,
     private val addRecentViewedUseCase: AddRecentViewedUseCase,
     private val getRecentViewedUseCase: GetRecentViewedUseCase,
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
@@ -153,11 +159,11 @@ class SearchViewModel(
 
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
-        
+
         viewModelScope.launch {
-                searchHistoryRepository.addSearchHistory(query)
+            searchHistoryRepository.addSearchHistory(query)
         }
-        
+
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
@@ -165,85 +171,127 @@ class SearchViewModel(
         }
     }
 
+
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        
+
+        val newFlow = Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchMoviesPagingSource(
+                    searchMoviesPagingUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            }
+        ).flow
+            .map { pagingData ->
+                pagingData.map { item ->
+                    MovieUiModel(
+                        id = item.id,
+                        title = item.title,
+                        imageUrl = item.posterImageUrl,
+                        rating = ""
+                    )
+                }
+            }
+            .cachedIn(viewModelScope)
+
         viewModelScope.launch {
             try {
-                searchMoviesPagingUseCase(query, state.value.filters)
-                    .map { pagingData ->
-                        pagingData.map { searchMediaOutput ->
-                            MovieUiModel(
-                                id = searchMediaOutput.id,
-                                title = searchMediaOutput.title,
-                                imageUrl = searchMediaOutput.posterImageUrl,
-                                rating = ""
-                            )
-                        }
-                    }
-                    .cachedIn(viewModelScope)
-                    .collectLatest { pagingData ->
-                        _moviesPagingData.value = pagingData
-                        updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                    }
+                newFlow.collectLatest { pagingData ->
+                    _moviesPagingData.value = pagingData
+                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
+                }
             } catch (e: Exception) {
                 onDataLoadError(e)
             }
         }
     }
+
 
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        
+
+        val newFlow = Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchTvShowsPagingSource(
+                    searchTvShowsPagingUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            }
+        ).flow
+            .map { pagingData ->
+                pagingData.map { item ->
+                    TvShowUiModel(
+                        id = item.id,
+                        title = item.title,
+                        imageUrl = item.posterImageUrl,
+                        rating = ""
+                    )
+                }
+            }
+            .cachedIn(viewModelScope)
+
         viewModelScope.launch {
             try {
-                searchTvShowsPagingUseCase(query, state.value.filters)
-                    .map { pagingData ->
-                        pagingData.map { searchMediaOutput ->
-                            TvShowUiModel(
-                                id = searchMediaOutput.id,
-                                title = searchMediaOutput.title,
-                                imageUrl = searchMediaOutput.posterImageUrl,
-                                rating = ""
-                            )
-                        }
-                    }
-                    .cachedIn(viewModelScope)
-                    .collectLatest { pagingData ->
-                        _tvShowsPagingData.value = pagingData
-                        updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                    }
+                newFlow.collectLatest { pagingData ->
+                    _tvShowsPagingData.value = pagingData
+                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
+                }
             } catch (e: Exception) {
                 onDataLoadError(e)
             }
         }
     }
 
+
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        
+
+        val newFlow = Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            pagingSourceFactory = {
+                SearchActorsPagingSource(
+                    searchActorsPagingUseCase,
+                    query = query
+                )
+            }
+        ).flow
+            .map { pagingData ->
+                pagingData.map { searchActorOutput ->
+                    ActorUiModel(
+                        id = searchActorOutput.id,
+                        name = searchActorOutput.name,
+                        imageUrl = searchActorOutput.profileImageUrl
+                    )
+                }
+            }
+            .cachedIn(viewModelScope)
+
         viewModelScope.launch {
             try {
-                searchActorsPagingUseCase(query)
-                    .map { pagingData ->
-                        pagingData.map { searchActorOutput ->
-                            ActorUiModel(
-                                id = searchActorOutput.id,
-                                name = searchActorOutput.name,
-                                imageUrl = searchActorOutput.profileImageUrl
-                            )
-                        }
-                    }
-                    .cachedIn(viewModelScope)
-                    .collectLatest { pagingData ->
-                        _actorsPagingData.value = pagingData
-                        updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                    }
+                newFlow.collectLatest { pagingData ->
+                    _actorsPagingData.value = pagingData
+                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
+                }
             } catch (e: Exception) {
                 onDataLoadError(e)
             }
         }
     }
+
 
     private fun onDataLoadError(e: Exception) {
         if (e is NoNetworkException)
@@ -312,7 +360,14 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
-            onSuccess = { updateState { it.copy(isLoading = false,noInternetConnection = false) } },
+            onSuccess = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        noInternetConnection = false
+                    )
+                }
+            },
             ::onDataLoadError
         )
     }
