@@ -55,7 +55,7 @@ class MovieDetailsRemoteDataSourceImplTest {
                        "total_pages":1,"total_results":1}"""
                 )
                 url.endsWith("/movie/1/reviews") -> respondJson(
-                    """{"id":1,"results":[{"author_details":{"name":"John","username":"j",
+                    """{"id":1,"results":[{"id": "rev123","author_details":{"name":"John","username":"j",
                         "avatar_path":"/av.jpg","rating":5.0},"content":"Fine","created_at":"2022-01-01"}],
                       "page":1,"total_pages":1,"total_results":1}"""
                 )

@@ -10,6 +10,7 @@ import com.sanaa.search.repository.SearchHistoryRepositoryImpl
 import com.sanaa.search.repository.SearchRepositoryImpl
 import com.sanaa.search.search_history.LocalSearchHistoryDataSourceImpl
 import details.repository.ActorRepository
+import details.repository.MovieRepository
 import org.koin.dsl.module
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
@@ -21,7 +22,7 @@ val repositoryModule = module {
     single<LocalSearchHistoryDataSource> { LocalSearchHistoryDataSourceImpl(get(), get()) }
 
     single<ActorRepository> { ActorRepositoryImpl(get()) }
-    single<MovieRepositoryImpl> { MovieRepositoryImpl(get()) }
+    single<MovieRepository> { MovieRepositoryImpl(get()) }
     single { ActorRemoteDataSourceImpl(get(), get(), get()) }
     single { MovieDetailsRemoteDataSourceImpl(get(), get(), get()) }
 }

@@ -108,8 +108,8 @@ class MovieRepositoryImplTest {
         private val sampleCastDto = CastDto(
             id = 1,
             cast = arrayListOf(
-                CastDto.Cast(name = "Actor A"),
-                CastDto.Cast(name = "Actor B")
+                CastDto.Cast(name = "Actor A", id = 1),
+                CastDto.Cast(name = "Actor B", id = 2)
             ),
             crew = arrayListOf()
         )
@@ -117,8 +117,8 @@ class MovieRepositoryImplTest {
         private val sampleSimilarDto = SimilarMoviesDto(
             page = 1,
             results = arrayListOf(
-                SimilarMoviesDto.Results(title = "Similar A"),
-                SimilarMoviesDto.Results(title = "Similar B")
+                SimilarMoviesDto.Results(title = "Similar A", id = 1),
+                SimilarMoviesDto.Results(title = "Similar B", id = 2)
             ),
             totalPages = 1,
             totalResults = 2
@@ -130,8 +130,8 @@ class MovieRepositoryImplTest {
             totalPages = 1,
             totalResults = 2,
             results = arrayListOf(
-                ReviewDto.Results(author = "Critic A", content = "Nice"),
-                ReviewDto.Results(author = "Critic B", content = "Meh")
+                ReviewDto.Results(author = "Critic A", content = "Nice", id = "1"),
+                ReviewDto.Results(author = "Critic B", content = "Meh", id = "2")
             )
         )
     }

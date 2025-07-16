@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonNull.content
 
 fun ReviewDto.Results.toDomain(): Review {
     return Review(
-        id = id?.toInt() ?: 0,
+        id = id.toInt(),
         authorName = authorDetails?.name ?: "Unknown",
         userHandle = authorDetails?.username,
         avatarUrl = authorDetails?.avatarPath?.let { avatarPath ->

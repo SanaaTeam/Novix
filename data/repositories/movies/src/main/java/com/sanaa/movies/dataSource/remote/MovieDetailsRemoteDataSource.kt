@@ -3,6 +3,7 @@ package com.sanaa.movies.dataSource.remote
 import com.sanaa.movies.dataSource.remote.dto.CastDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 
@@ -12,5 +13,5 @@ interface MovieDetailsRemoteDataSource {
     suspend fun fetchCast(id: Int): CastDto
     suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto
     suspend fun fetchReviewsByMovieId(id: Int): ReviewDto
-    suspend fun fetchMoviesByCategory(category: Int): List<MovieDetailsDto>
+    suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryDto
 }

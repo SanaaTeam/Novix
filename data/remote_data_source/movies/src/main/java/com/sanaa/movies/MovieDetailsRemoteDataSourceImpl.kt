@@ -31,7 +31,7 @@ class MovieDetailsRemoteDataSourceImpl(
     override suspend fun fetchReviewsByMovieId(id: Int): ReviewDto =
         fetch("movie/$id/reviews")
 
-    override suspend fun fetchMoviesByCategory(category: Int): List<MovieDetailsDto> =
+    override suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryDto =
         fetch("movie?with_genres=$category")
 
     private suspend inline fun <reified T> fetch(

@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 
 data class CastDto(
 
-    @SerialName("id") var id: Int? = null,
+    @SerialName("id") var id: Int,
     @SerialName("cast") var cast: ArrayList<Cast> = arrayListOf(),
     @SerialName("crew") var crew: ArrayList<Crew> = arrayListOf()
 
@@ -18,7 +18,7 @@ data class CastDto(
 
         @SerialName("adult") var adult: Boolean? = null,
         @SerialName("gender") var gender: Int? = null,
-        @SerialName("id") var id: Int? = null,
+        @SerialName("id") var id: Int,
         @SerialName("known_for_department") var knownForDepartment: String? = null,
         @SerialName("name") var name: String? = null,
         @SerialName("original_name") var originalName: String? = null,

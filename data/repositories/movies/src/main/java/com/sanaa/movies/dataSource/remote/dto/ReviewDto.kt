@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ReviewDto(
-    @SerialName("id") var id: Int? = null,
+    @SerialName("id") var id: Int,
     @SerialName("page") var page: Int? = null,
     @SerialName("results") var results: ArrayList<Results> = arrayListOf(),
     @SerialName("total_pages") var totalPages: Int? = null,
@@ -17,7 +17,7 @@ data class ReviewDto(
         @SerialName("author_details") var authorDetails: AuthorDetailsDto? = AuthorDetailsDto(),
         @SerialName("content") var content: String? = null,
         @SerialName("created_at") var createdAt: String? = null,
-        @SerialName("id") var id: String? = null,
+        @SerialName("id") var id: String,
         @SerialName("updated_at") var updatedAt: String? = null,
         @SerialName("url") var url: String? = null
 

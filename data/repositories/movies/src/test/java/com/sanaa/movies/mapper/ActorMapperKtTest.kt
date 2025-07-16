@@ -32,7 +32,7 @@ class ActorMapperTest {
     @Test
     fun `CastDto toDomain uses fallback values`() {
         val dto = CastDto.Cast(
-            id = null,
+            id = 0,
             name = null,
             profilePath = null,
             gender = 1,

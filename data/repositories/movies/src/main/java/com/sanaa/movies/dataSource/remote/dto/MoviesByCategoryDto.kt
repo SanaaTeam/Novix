@@ -3,8 +3,10 @@ package com.sanaa.movies.dataSource.remote.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 @Serializable
-data class SimilarMoviesDto(
+
+data class MoviesByCategoryDto(
 
     @SerialName("page") var page: Int? = null,
     @SerialName("results") var results: ArrayList<Results> = arrayListOf(),
@@ -14,7 +16,6 @@ data class SimilarMoviesDto(
 ) {
     @Serializable
     data class Results(
-
         @SerialName("adult") var adult: Boolean? = null,
         @SerialName("backdrop_path") var backdropPath: String? = null,
         @SerialName("genre_ids") var genreIds: ArrayList<Int> = arrayListOf(),
@@ -29,6 +30,5 @@ data class SimilarMoviesDto(
         @SerialName("video") var video: Boolean? = null,
         @SerialName("vote_average") var voteAverage: Double? = null,
         @SerialName("vote_count") var voteCount: Int? = null
-
     )
 }
