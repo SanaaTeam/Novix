@@ -43,7 +43,7 @@ fun ImageSlider(
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
 
-    LaunchedEffect(pagerState) {
+    LaunchedEffect(images) {
         while (images.size > 1) {
             delay(4000)
             val nextPage = if (pagerState.currentPage < images.size - 1) {
