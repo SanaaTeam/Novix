@@ -65,6 +65,7 @@ dependencies {
     testImplementation(kotlin("test"))
 
     implementation(libs.bundles.room)
+    testImplementation(libs.bundles.room.testing)
 }
 tasks.withType<Test> {
     useJUnitPlatform()
