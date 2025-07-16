@@ -14,24 +14,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
-import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.TvShowUiModel
-import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun TvShowsContent(
-    tvShowsPagingData: Flow<PagingData<TvShowUiModel>>,
+    tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     onTvShowClick: (RecentViewedUiModel) -> Unit
 ) {
     val isDarkTheme = isSystemInDarkTheme()
@@ -41,7 +37,6 @@ fun TvShowsContent(
         R.drawable.movie_placeholder_light
     }
 
-    val lazyPagingItems = tvShowsPagingData.collectAsLazyPagingItems()
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
@@ -52,11 +47,8 @@ fun TvShowsContent(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(
-            count = lazyPagingItems.itemCount,
-            key = { index -> lazyPagingItems[index]?.id ?: index }
-        ) { index ->
-            val tvShow = lazyPagingItems[index]
+        items(count = tvShowsPagingData.itemCount) { index ->
+            val tvShow = tvShowsPagingData[index]
             if (tvShow != null) {
                 MovieSeriesPosterCard(
                     boastImage = {
@@ -88,7 +80,7 @@ fun TvShowsContent(
             }
         }
 
-        if (lazyPagingItems.loadState.append is LoadState.Loading) {
+        if (tvShowsPagingData.loadState.append is LoadState.Loading) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Box(
                     modifier = Modifier

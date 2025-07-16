@@ -82,8 +82,11 @@ fun CategoryTabSection(
                                 NoSearchResultState()
                             }
                         } else {
+                            val lazyPagingItems =
+                                searchViewModel.moviesPagingData.collectAsLazyPagingItems()
+
                             MoviesContent(
-                                moviesPagingData = searchViewModel.moviesPagingData,
+                                moviesPagingData = lazyPagingItems,
                                 onMovieClick = { interactionsListener.onSearchResultMediaClicked(it) }
                             )
                         }
@@ -99,7 +102,7 @@ fun CategoryTabSection(
                             }
                         } else {
                             TvShowsContent(
-                                tvShowsPagingData = searchViewModel.tvShowsPagingData,
+                                tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems(),
                                 onTvShowClick = { interactionsListener.onSearchResultMediaClicked(it) }
                             )
                         }
