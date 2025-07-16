@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.state
 
-data class MovieCategoriesUiModel(
+data class MovieCategoriesScreenUiState(
     val title: String = "",
     val movies: List<MovieCardUiModel> = emptyList()
 )

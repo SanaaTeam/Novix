@@ -16,7 +16,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.R
+import com.sanaa.presentation.R
+
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
@@ -25,11 +26,11 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.screen.state.MovieCardUiModel
-import com.sanaa.presentation.screen.state.MovieCategoriesUiModel
+import com.sanaa.presentation.screen.state.MovieCategoriesScreenUiState
 
 @Composable
 fun MovieCategoriesScreen(
-    state: MovieCategoriesUiModel,
+    state: MovieCategoriesScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onSaveIconClick: () -> Unit = {}
@@ -125,7 +126,7 @@ private fun MovieCategoriesScreenPreview() {
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         MovieCategoriesScreen(
-            MovieCategoriesUiModel(
+            MovieCategoriesScreenUiState(
                 title = "Crime",
                 movies = sampleMovieCards
             ),
