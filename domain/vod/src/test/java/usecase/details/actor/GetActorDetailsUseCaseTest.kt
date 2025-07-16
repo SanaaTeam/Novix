@@ -76,7 +76,8 @@ class GetActorDetailsUseCaseTest {
             birthDate = LocalDate(1980, 1, 1),
             deathDate = null,
             placeOfBirth = "Somewhere, USA",
-            biography = "A short bio text."
+            biography = "A short bio text.",
+            department = "Acting"
         )
     }
 }
