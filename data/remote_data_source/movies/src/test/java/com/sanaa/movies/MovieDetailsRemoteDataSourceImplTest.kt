@@ -35,7 +35,6 @@ class MovieDetailsRemoteDataSourceImplTest {
         languageProvider = mockk()
         every { languageProvider.getCurrentLanguage() } returns "en"
 
-
         engine = MockEngine { request ->
             val url = request.url.toString().substringBefore("?")
             when {
@@ -74,45 +73,105 @@ class MovieDetailsRemoteDataSourceImplTest {
         dataSource = MovieDetailsRemoteDataSourceImpl(client, baseUrl, languageProvider)
     }
 
+    @Test
+    fun `should return correct id when fetching movie details`() = runTest {
+        val dto = dataSource.fetchMovieDetails(1)
+        assertEquals(1, dto.id)
+    }
+
+    @Test
+    fun `should return correct posterImagePath when fetching movie details`() = runTest {
+        val dto = dataSource.fetchMovieDetails(1)
+        assertEquals("/p.jpg", dto.posterImagePath)
+    }
+
+    @Test
+    fun `should return correct title when fetching movie details`() = runTest {
+        val dto = dataSource.fetchMovieDetails(1)
+        assertEquals("A", dto.title)
+    }
+
+    @Test
+    fun `should return correct duration when fetching movie details`() = runTest {
+        val dto = dataSource.fetchMovieDetails(1)
+        assertEquals(100, dto.duration)
+    }
+
+    @Test
+    fun `should return correct id when fetching movie images`() = runTest {
+        val dto = dataSource.fetchImages(1)
+        assertEquals(1, dto.id)
+    }
+
+    @Test
+    fun `should return correct number of posters when fetching movie images`() = runTest {
+        val dto = dataSource.fetchImages(1)
+        assertEquals(1, dto.posters.size)
+    }
+
+    @Test
+    fun `should return correct poster path when fetching movie images`() = runTest {
+        val dto = dataSource.fetchImages(1)
+        assertEquals("/img.jpg", dto.posters.first().filePath)
+    }
+
+    @Test
+    fun `should return correct id when fetching movie cast`() = runTest {
+        val dto = dataSource.fetchCast(1)
+        assertEquals(1, dto.id)
+    }
+
+    @Test
+    fun `should return correct cast size when fetching movie cast`() = runTest {
+        val dto = dataSource.fetchCast(1)
+        assertEquals(1, dto.cast.size)
+    }
+
+    @Test
+    fun `should return correct cast name when fetching movie cast`() = runTest {
+        val dto = dataSource.fetchCast(1)
+        assertEquals("Actor", dto.cast.first().name)
+    }
+
+    @Test
+    fun `should return correct page when fetching similar movies`() = runTest {
+        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
+        assertEquals(1, dto.page)
+    }
+
+    @Test
+    fun `should return correct number of results when fetching similar movies`() = runTest {
+        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
+        assertEquals(1, dto.results.size)
+    }
+
+    @Test
+    fun `should return correct movie id in similar movies when fetching similar movies`() = runTest {
+        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
+        assertEquals(2, dto.results.first().id)
+    }
+
+    @Test
+    fun `should return correct id when fetching movie reviews`() = runTest {
+        val dto = dataSource.fetchReviewsByMovieId(1)
+        assertEquals(1, dto.id)
+    }
+
+    @Test
+    fun `should return correct number of results when fetching movie reviews`() = runTest {
+        val dto = dataSource.fetchReviewsByMovieId(1)
+        assertEquals(1, dto.results.size)
+    }
+
+    @Test
+    fun `should return correct review content when fetching movie reviews`() = runTest {
+        val dto = dataSource.fetchReviewsByMovieId(1)
+        assertEquals("Fine", dto.results.first().content)
+    }
+
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
         ByteReadChannel(content),
         HttpStatusCode.OK,
         headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
     )
-
-    @Test fun `fetchMovieDetails returns correct DTO`() = runTest {
-        val dto = dataSource.fetchMovieDetails(1)
-        assertEquals(1, dto.id)
-        assertEquals("/p.jpg", dto.posterImagePath)
-        assertEquals("A", dto.title)
-        assertEquals(100, dto.duration)
-    }
-
-    @Test fun `fetchImages returns correct MovieImagesDto`() = runTest {
-        val dto = dataSource.fetchImages(1)
-        assertEquals(1, dto.id)
-        assertEquals(1, dto.posters.size)
-        assertEquals("/img.jpg", dto.posters.first().filePath)
-    }
-
-    @Test fun `fetchCast returns correct CastDto`() = runTest {
-        val dto = dataSource.fetchCast(1)
-        assertEquals(1, dto.id)
-        assertEquals(1, dto.cast.size)
-        assertEquals("Actor", dto.cast.first().name)
-    }
-
-    @Test fun `fetchSimilarMoviesByMovieId returns correct SimilarMoviesDto`() = runTest {
-        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
-        assertEquals(1, dto.page)
-        assertEquals(1, dto.results.size)
-        assertEquals(2, dto.results.first().id)
-    }
-
-    @Test fun `fetchReviewsByMovieId returns correct ReviewDto`() = runTest {
-        val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals(1, dto.id)
-        assertEquals(1, dto.results.size)
-        assertEquals("Fine", dto.results.first().content)
-    }
 }
