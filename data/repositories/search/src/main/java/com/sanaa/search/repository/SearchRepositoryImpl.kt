@@ -1,5 +1,6 @@
 package com.sanaa.search.repository
 
+import android.util.Log
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
@@ -22,9 +23,15 @@ class SearchRepositoryImpl(
     private val localDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
+
     override suspend fun searchActors(query: String, page: Int): List<SearchActorOutput> {
         try {
-            val cachedActors = localDataSource.getActorsByQuery(query)
+            val pageSize = 20
+            val offset = (page - 1) * pageSize
+            Log.d("SearchRepo", "Page: $page, PageSize: $pageSize, Offset: $offset")
+
+            val cachedActors = localDataSource.getPagedActorsByQuery(query, pageSize, offset)
+
             if (cachedActors.isNotEmpty()) {
                 return cachedActors.map { it.toSearchOutput() }
             } else {
@@ -67,9 +74,15 @@ class SearchRepositoryImpl(
     private suspend fun searchMovies(
         query: String,
         filters: MediaFilters?,
-        page: Int = 1
+        page: Int
     ): List<SearchMediaOutput> {
-        val cachedMedia = localDataSource.getMoviesByQuery(query)
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        Log.d("SearchRepo", "Movies -> Page: $page, PageSize: $pageSize, Offset: $offset")
+
+        val cachedMedia = localDataSource.getMoviesByQuery(query, limit = pageSize, offset = offset)
+
+        // val cachedMedia = localDataSource.getMoviesByQuery(query)
         if (cachedMedia.isNotEmpty()) {
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
@@ -135,9 +148,14 @@ class SearchRepositoryImpl(
     private suspend fun searchTvSeries(
         query: String,
         filters: MediaFilters?,
-        page: Int = 1
+        page: Int
     ): List<SearchMediaOutput> {
-        val cachedTvSeries = localDataSource.getTvSeriesByQuery(query)
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        Log.d("SearchRepo", "TvSeries -> Page: $page, PageSize: $pageSize, Offset: $offset")
+
+        val cachedTvSeries =
+            localDataSource.getTvSeriesByQuery(query, limit = pageSize, offset = offset)
         if (cachedTvSeries.isNotEmpty()) {
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
