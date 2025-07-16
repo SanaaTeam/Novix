@@ -12,6 +12,7 @@ data class SeriesScreenUiState(
     val cast: List<CastUiModel> = emptyList(),
     val images: List<String> = emptyList(),
     val error: String? = null,
+    val selectedSeason: Int = 1,
 )
 
 data class SeriesUiModel(
@@ -21,6 +22,8 @@ data class SeriesUiModel(
     val rating: String = "",
     val overview: String = "",
     val genres: List<String> = emptyList(),
+    val seasonsCount: Int = 0,
+    val trailerUrl: String? = null,
 )
 
 data class SeasonUiModel(
@@ -45,12 +48,14 @@ data class CastUiModel(
     val profilePath: String? = null,
 )
 
-fun TvSeries.toSeriesUiModel() = SeriesUiModel(
+fun TvSeries.toSeriesUiModel(trailerUrl: String?) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
     overview = overview,
     rating = imdbRating.toString(),
+    seasonsCount = seasonsCount,
+    trailerUrl = trailerUrl,
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(
@@ -63,8 +68,8 @@ fun Season.toSeasonUiModel() = SeasonUiModel(
 fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     episodeNumber = number,
     title = title,
-    rating = imdbRating.toString(),
-    airDate = "Date",
+    rating = imdbRating.toInt().toString(),
+    airDate = "3 oct 2011",
     stillPath = stillImagePath,
     duration = durationMinutes,
 )

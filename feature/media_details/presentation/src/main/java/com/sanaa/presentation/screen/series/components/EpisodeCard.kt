@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -45,7 +46,7 @@ fun EpisodeCard(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = "Episode ${episode.episodeNumber}",
+                text = stringResource(R.string.episode_number, episode.episodeNumber),
                 style = Theme.textStyle.label.large,
                 color = Theme.colors.title
             )
@@ -67,7 +68,7 @@ fun EpisodeCard(
                 DotSeparator()
                 IconWithText(
                     iconRes = R.drawable.icon_duration,
-                    text = "${episode.duration} m",
+                    text = stringResource(R.string.m, episode.duration),
                     contentDescription = episode.duration.toString(),
                     tint = Theme.colors.hint
                 )
