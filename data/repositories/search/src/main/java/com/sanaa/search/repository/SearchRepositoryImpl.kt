@@ -22,13 +22,13 @@ class SearchRepositoryImpl(
     private val localDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
-    override suspend fun searchActors(query: String): List<SearchActorOutput> {
+    override suspend fun searchActors(query: String, page: Int): List<SearchActorOutput> {
         try {
             val cachedActors = localDataSource.getActorsByQuery(query)
             if (cachedActors.isNotEmpty()) {
                 return cachedActors.map { it.toSearchOutput() }
             } else {
-                val actors = remoteDataSource.searchActors(query).results.also {
+                val actors = remoteDataSource.searchActors(query, page).results.also {
                     it.forEach {
                         localDataSource.cacheActor(
                             it.toLocalDto(languageProvider.getCurrentLanguage())
@@ -46,14 +46,15 @@ class SearchRepositoryImpl(
 
     override suspend fun searchMedia(
         query: String,
+        page: Int,
         filters: MediaFilters?,
         mediaType: MediaType
     ): List<SearchMediaOutput> {
         return try {
             if (mediaType == MediaType.MOVIE) {
-                searchMovies(query, filters)
+                searchMovies(query, filters, page)
             } else {
-                searchTvSeries(query, filters)
+                searchTvSeries(query, filters, page)
             }
         } catch (_: UnresolvedAddressException) {
             throw NoNetworkException()
@@ -65,7 +66,8 @@ class SearchRepositoryImpl(
 
     private suspend fun searchMovies(
         query: String,
-        filters: MediaFilters?
+        filters: MediaFilters?,
+        page: Int = 1
     ): List<SearchMediaOutput> {
         val cachedMedia = localDataSource.getMoviesByQuery(query)
         if (cachedMedia.isNotEmpty()) {
@@ -96,7 +98,7 @@ class SearchRepositoryImpl(
 
 
         } else {
-            val movies = remoteDataSource.searchMovies(query).results.also {
+            val movies = remoteDataSource.searchMovies(query, page).results.also {
                 it.forEach {
                     localDataSource.cacheMovie(
                         it.toLocalDto(languageProvider.getCurrentLanguage())
@@ -132,7 +134,8 @@ class SearchRepositoryImpl(
 
     private suspend fun searchTvSeries(
         query: String,
-        filters: MediaFilters?
+        filters: MediaFilters?,
+        page: Int = 1
     ): List<SearchMediaOutput> {
         val cachedTvSeries = localDataSource.getTvSeriesByQuery(query)
         if (cachedTvSeries.isNotEmpty()) {
@@ -162,7 +165,7 @@ class SearchRepositoryImpl(
             } ?: return cachedTvSeries.map { it.toSearchOutput(false) }
 
         } else {
-            val tvSeries = remoteDataSource.searchTv(query).results.also {
+            val tvSeries = remoteDataSource.searchTv(query, page).results.also {
                 it.forEach {
                     localDataSource.cacheTvSeries(
                         it.toLocalDto(languageProvider.getCurrentLanguage())
