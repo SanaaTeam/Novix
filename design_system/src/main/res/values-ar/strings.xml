@@ -14,11 +14,15 @@
     <string name="clear_all">حذف الكل</string>
     <string name="recent_search">تم بحثها سابقا</string>
     <string name="released_year">سنة الإصدار</string>
-    <string name="genres">الفئات</string>
     <string name="imdb_rating">تقييم IMDb</string>
     <string name="clear">مسح</string>
     <string name="filter">تصفية</string>
     <string name="apply">تطبيق</string>
     <string name="cancel">إلغاء</string>
     <string name="search_hint">بحث…</string>
+    
+    <!-- Tab Labels -->
+    <string name="movies">أفلام</string>
+    <string name="tv_shows">مسلسلات</string>
+    <string name="actors">ممثلين</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.state
 
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
 
 data class SearchScreenUiState(
@@ -15,6 +15,7 @@ data class SearchScreenUiState(
     val actors: List<ActorUiModel> = emptyList(),
     val error: String? = null,
     val filters: MediaFilters? = null,
+    val lastTabIndex: Int = -1
 )
 
 data class MovieUiModel(

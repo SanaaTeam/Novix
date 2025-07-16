@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import usecase.search.MediaFilters
+import search.usecase.search_param.MediaFilters
 
 class FilterViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,

@@ -28,15 +28,19 @@ val excludedPackages = listOf(
     "com.sanaa.search.dto.*",
     "com.sanaa.search.di.*",
     "entity.**",
-    "usecase.search.**",
+    "search.usecase.search_param.**",
     "**.dao.**",
     "**.dto.**",
+    "**.response.**",
     "exceptions.**",
     "com.sanaa.search.dataSource.*",
     "com.sanaa.search.mapper.*",
     "com.sanaa.search.repository.*",
-    "com.sanaa.presentation.filter_bottomsheet.components.*",
+    "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
+    "com.sanaa.presentation.component.**",
+    "com.sanaa.presentation.model.*",
+    "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
     "com.sanaa.presentation.screen.SearchScreen*",
     "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent*",
@@ -48,6 +52,7 @@ allprojects {
         reports {
             filters {
                 excludes { classes(excludedPackages) }
+                excludes { classes("*\$*\$inlined$*") }
             }
             total {
                 verify {

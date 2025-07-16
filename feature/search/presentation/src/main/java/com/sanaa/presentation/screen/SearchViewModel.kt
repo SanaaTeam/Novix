@@ -164,6 +164,8 @@ class SearchViewModel(
             searchHistoryRepository.addSearchHistory(query)
         }
 
+        if (state.value.selectedTabIndex == state.value.lastTabIndex) return
+        updateState { it.copy(lastTabIndex = state.value.selectedTabIndex) }
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
@@ -174,6 +176,7 @@ class SearchViewModel(
 
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+    }
 
         val newFlow = Pager(
             config = PagingConfig(
@@ -212,9 +215,10 @@ class SearchViewModel(
         }
     }
 
-
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
+    }
 
         val newFlow = Pager(
             config = PagingConfig(
@@ -253,9 +257,10 @@ class SearchViewModel(
         }
     }
 
-
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
+    }
 
         val newFlow = Pager(
             config = PagingConfig(
@@ -311,6 +316,7 @@ class SearchViewModel(
             }
     }
 
+
     override fun onSearchQueryChanged(query: String) {
         updateState { it.copy(searchQuery = query) }
     }
@@ -345,7 +351,11 @@ class SearchViewModel(
     }
 
     override fun onClearRecentViewClicked() {
-        tryToExecute(clearRecentViewedUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
+        tryToExecute(
+            callee = clearRecentViewedUseCase::execute,
+            onSuccess = {},
+            onError = ::onDataLoadError
+        )
     }
 
     override fun onClearRecentSearchClicked() {

@@ -15,12 +15,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.state.MediaTypeUi
@@ -69,6 +71,11 @@ fun MoviesContent(
                             nsfwThreshold = 0.15f,
                             placeholder = painterResource(placeholderResId),
                             error = painterResource(placeholderResId),
+                            contentDescription = movie.title,
+                            placeholderBackgroundColor = Theme.colors.surface,
+                            hintText = stringResource(R.string.unsuitable_image),
+                            textStyle = Theme.textStyle.body.small,
+                            iconSize = 24.dp
                         )
                     },
                     topLeftContent = {
@@ -99,6 +106,5 @@ fun MoviesContent(
                 }
             }
         }
-
     }
 }

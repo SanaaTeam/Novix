@@ -16,6 +16,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.paging.common)
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -8,9 +8,9 @@ import exceptions.FailedToDeleteException
 import exceptions.RetrievingDataFailureException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import repository.SearchHistoryRepository
-import usecase.search.RecentViewedMedia
-import usecase.search.SearchHistory
+import search.repository.SearchHistoryRepository
+import search.usecase.search_param.RecentViewedMedia
+import search.usecase.search_param.SearchHistory
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
