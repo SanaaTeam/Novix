@@ -23,7 +23,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getImages(id: Int): List<String> =
         safeCall("Failed to fetch images") {
-        remote.fetchImages(id).posters.take(3).map { it.filePath.fullImageUrlOrEmpty() }
+        remote.fetchImagesUrl(id).posters.take(3).map { it.filePath.fullImageUrlOrEmpty() }
     }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =

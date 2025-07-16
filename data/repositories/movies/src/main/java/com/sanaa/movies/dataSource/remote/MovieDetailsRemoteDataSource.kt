@@ -9,7 +9,7 @@ import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 
 interface MovieDetailsRemoteDataSource {
     suspend fun fetchMovieDetails(id: Int): MovieDetailsDto
-    suspend fun fetchImages(id: Int): MovieImagesDto
+    suspend fun fetchImagesUrl(id: Int): MovieImagesDto
     suspend fun fetchCast(id: Int): CastDto
     suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto
     suspend fun fetchReviewsByMovieId(id: Int): ReviewDto

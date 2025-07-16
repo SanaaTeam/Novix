@@ -19,7 +19,7 @@ class MovieDetailsRemoteDataSourceImpl(
     override suspend fun fetchMovieDetails(id: Int): MovieDetailsDto =
         fetch("movie/$id")
 
-    override suspend fun fetchImages(id: Int): MovieImagesDto =
+    override suspend fun fetchImagesUrl(id: Int): MovieImagesDto =
         fetch("movie/$id/images", withLang = false)
 
     override suspend fun fetchCast(id: Int): CastDto =

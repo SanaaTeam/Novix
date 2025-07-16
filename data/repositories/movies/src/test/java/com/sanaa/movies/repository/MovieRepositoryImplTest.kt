@@ -38,7 +38,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getImages returns top 3 poster urls`() = runTest {
-        coEvery { remote.fetchImages(1) } returns sampleImagesDto
+        coEvery { remote.fetchImagesUrl(1) } returns sampleImagesDto
 
         val result = repository.getImages(1)
 
@@ -82,7 +82,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
-        coEvery { remote.fetchImages(any()) } throws RuntimeException()
+        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException()
 
         assertThrows<RetrievingDataFailureException> { repository.getImages(1) }
     }

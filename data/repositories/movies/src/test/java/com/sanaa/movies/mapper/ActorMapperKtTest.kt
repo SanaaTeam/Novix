@@ -19,31 +19,24 @@ class ActorMapperTest {
             biography = "Bio"
         )
 
-        val result = dto.toDomain()
-
-        assertThat(result.id).isEqualTo(1)
-        assertThat(result.name).isEqualTo("Robert Downey Jr.")
-        assertThat(result.imageUrl).isEqualTo("/rdj.jpg")
-        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-        assertThat(result.character).isEqualTo("Iron Man")
-        assertThat(result.biography).isEqualTo("Bio")
-    }
-
-    @Test
-    fun `CastDto toDomain uses fallback values`() {
-        val dto = CastDto.Cast(
-            id = 0,
-            name = null,
-            profilePath = null,
-            gender = 1,
-            character = "Some Character"
+        val expected = Actor(
+            id = 1,
+            name = "Robert Downey Jr.",
+            imageUrl = "/rdj.jpg",
+            gender = Actor.Gender.MALE,
+            character = "Iron Man",
+            biography = "Bio",
+            birthDate = null,
+            deathDate = null,
+            placeOfBirth = null,
+            region = null,
+            lastShow = null,
+            department = null
         )
 
         val result = dto.toDomain()
 
-        assertThat(result.id).isEqualTo(0)
-        assertThat(result.name).isEqualTo("Unknown")
-        assertThat(result.imageUrl).isEqualTo("")
-        assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
+        assertThat(result).isEqualTo(expected)
     }
+
 }

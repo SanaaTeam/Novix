@@ -99,19 +99,19 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `should return correct id when fetching movie images`() = runTest {
-        val dto = dataSource.fetchImages(1)
+        val dto = dataSource.fetchImagesUrl(1)
         assertEquals(1, dto.id)
     }
 
     @Test
     fun `should return correct number of posters when fetching movie images`() = runTest {
-        val dto = dataSource.fetchImages(1)
+        val dto = dataSource.fetchImagesUrl(1)
         assertEquals(1, dto.posters.size)
     }
 
     @Test
     fun `should return correct poster path when fetching movie images`() = runTest {
-        val dto = dataSource.fetchImages(1)
+        val dto = dataSource.fetchImagesUrl(1)
         assertEquals("/img.jpg", dto.posters.first().filePath)
     }
 
