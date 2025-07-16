@@ -12,9 +12,9 @@ import org.junit.jupiter.api.assertThrows
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchTvSeriesUseCase
-import search.usecase.search_param.MediaType
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvSeriesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -48,8 +48,8 @@ class SearchTvSeriesUseCaseTest {
             val query = "Tv Series"
             val filters = null
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
-            } returns searchMediaOutputList
+                searchRepository.searchTvShows(query, filters)
+            } returns searchTvShowsOutputList
 
             // When
             val result = searchTvSeriesUseCase.execute(query, filters)
@@ -66,8 +66,8 @@ class SearchTvSeriesUseCaseTest {
             val query = "Tv Series"
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
-            } returns searchMediaOutputList
+                searchRepository.searchTvShows(query, filters)
+            } returns searchTvShowsOutputList
 
 
             // When
@@ -84,7 +84,7 @@ class SearchTvSeriesUseCaseTest {
             // Given
             val query = "Sam"
             coEvery {
-                searchRepository.searchMedia(query, null, MediaType.TV_SERIES)
+                searchRepository.searchTvShows(query, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
@@ -95,11 +95,18 @@ class SearchTvSeriesUseCaseTest {
 
     companion object {
         private val searchMediaOutputList = listOf(
-            SearchMediaOutput(
+            SearchMovieOutput(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
-                isSaved = true
+            )
+        )
+
+        private val searchTvShowsOutputList = listOf(
+            SearchTvSeriesOutput(
+                id = 1,
+                title = "title",
+                posterImageUrl = "imageUrl",
             )
         )
     }
