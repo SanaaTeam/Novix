@@ -157,25 +157,42 @@ fun ReviewScreen(
                 }
             }
         } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 24.dp)
-            ) {
-                AppTopBar(
-                    screenTitle = "Reviews",
-                    leftContent = {
-                        TopBarClickableIcon(
-                            icon = painterResource(R.drawable.arrow_left),
-                            onClick = onBackClicked
-                        )
-                    }
+            EmptyReviewsState(onBackClicked)
+        }
+    }
+}
+@Composable
+fun EmptyReviewsState(
+    onBackClicked: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 24.dp)
+    ) {
+        AppTopBar(
+            screenTitle = "Reviews",
+            leftContent = {
+                TopBarClickableIcon(
+                    icon = painterResource(R.drawable.arrow_left),
+                    onClick = onBackClicked
                 )
+            }
+        )
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.chat),
                     contentDescription = "chat",
                     modifier = Modifier.size(128.dp)
                 )
+                Spacer(modifier = Modifier.height(12.dp))
                 Text(
                     text = "There is no review!",
                     style = Theme.textStyle.body.small,
@@ -185,6 +202,7 @@ fun ReviewScreen(
         }
     }
 }
+
 
 @PreviewLightDark
 @Composable
@@ -233,3 +251,12 @@ data class Review(
     val createdDate: LocalDate,
     val avatarUrl: String?
 )
+
+
+@PreviewLightDark
+@Composable
+fun EmptyReviewsStatePreview() {
+    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
+        EmptyReviewsState()
+    }
+}
