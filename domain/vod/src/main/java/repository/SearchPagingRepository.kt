@@ -1,23 +1,25 @@
 package repository
 
-import androidx.paging.PagingData
-import kotlinx.coroutines.flow.Flow
 import usecase.search.MediaFilters
+import usecase.search.MediaType
 import usecase.search.SearchActorOutput
 import usecase.search.SearchMediaOutput
 
 interface SearchPagingRepository {
-    fun searchMovies(
+    suspend fun searchMovies(
         query: String,
-        filters: MediaFilters?
-    ): Flow<PagingData<SearchMediaOutput>>
+        page: Int,
+        filters: MediaFilters?,
+        mediaType: MediaType
+    ): List<SearchMediaOutput>
 
-    fun searchTvShows(
+    suspend fun searchTvShows(
         query: String,
-        filters: MediaFilters?
-    ): Flow<PagingData<SearchMediaOutput>>
+        page: Int,
+        filters: MediaFilters?,
+        mediaType: MediaType
+    ): List<SearchMediaOutput>
 
-    fun searchActors(
-        query: String
-    ): Flow<PagingData<SearchActorOutput>>
+    suspend fun searchActors(query: String, page: Int): List<SearchActorOutput>
+
 }
