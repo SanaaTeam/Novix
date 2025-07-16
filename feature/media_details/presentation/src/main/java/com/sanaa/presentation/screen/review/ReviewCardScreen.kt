@@ -6,28 +6,29 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import java.time.LocalDate
-
 import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import kotlin.collections.isNotEmpty
 
 @Composable
 fun ReviewCard(
@@ -35,22 +36,21 @@ fun ReviewCard(
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
-
-    val contentPreview = if (review.content.length > 150 && !expanded)
-        review.content.take(150) + "..."
-    else review.content
-
+    val context = LocalContext.current
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(color = Theme.colors.surface, shape = RoundedCornerShape(12.dp))
-            .border(0.5.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
+            .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
             .padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = painterResource(id = review.avatarResId),
-                contentDescription = "avatar",
+            AsyncImage(
+                model = ImageRequest
+                    .Builder(context)
+                    .data(review.avatarUrl)
+                    .build(),
+                contentDescription = review.authorName,
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(8.dp))
@@ -60,28 +60,30 @@ fun ReviewCard(
             Column {
                 Text(
                     text = review.authorName,
-                    style = MaterialTheme.typography.titleMedium,
+                    style = Theme.textStyle.title.medium,
                     color = Theme.colors.title
                 )
-                review.userHandle?.let {
+                review.username?.let {
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Theme.colors.body
+                        style = Theme.textStyle.label.small,
+                        color = Theme.colors.hint
                     )
                 }
             }
             Spacer(modifier = Modifier.weight(1f))
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
                 Image(
                     painter = painterResource(id = R.drawable.star),
                     contentDescription = "rating",
                     modifier = Modifier.size(14.dp)
                 )
-                Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = review.rating?.toString() ?: "-",
-                    style = MaterialTheme.typography.labelSmall,
+                    style = Theme.textStyle.label.small,
                     color = Theme.colors.title
                 )
             }
@@ -90,36 +92,33 @@ fun ReviewCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = contentPreview,
-            fontSize = 14.sp,
-            color = Color(0xFF49454F),
-            lineHeight = 20.sp,
+            text = review.content,
+            style = Theme.textStyle.body.small,
+            color = Theme.colors.body,
             maxLines = if (expanded) Int.MAX_VALUE else 4,
             overflow = TextOverflow.Ellipsis
         )
-
         if (review.content.length > 150 && !expanded) {
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = "Read more",
-                style = MaterialTheme.typography.labelMedium,
+                style = Theme.textStyle.label.medium,
                 color = Theme.colors.primary,
                 modifier = Modifier.clickable { expanded = true }
             )
         }
-
         Spacer(modifier = Modifier.height(12.dp))
-
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
+            Icon(
                 painter = painterResource(id = R.drawable.date_icon),
-                contentDescription = "date",
+                contentDescription = "date icon",
+                tint = Theme.colors.body,
                 modifier = Modifier.size(14.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = review.createdDate.toString(),
-                style = MaterialTheme.typography.labelSmall,
+                style = Theme.textStyle.label.small,
                 color = Theme.colors.body
             )
         }
@@ -128,42 +127,12 @@ fun ReviewCard(
 
 @Composable
 fun ReviewScreen(
+    reviews: List<Review>,
     onBackClicked: () -> Unit = {}
 ) {
-    val reviews = listOf(
-        Review(
-            id = 1,
-            authorName = "CinephileHub",
-            userHandle = "MovieBuff1967",
-            content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses experiences her first period.",
-            rating = 9.8f,
-            createdDate = LocalDate.of(2001, 12, 3),
-            avatarResId = R.drawable.cinephile1
-        ),
-        Review(
-            id = 2,
-            authorName = "CinephileHub",
-            userHandle = "MovieBuff1967",
-            content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket.",
-            rating = 9.8f,
-            createdDate = LocalDate.of(2001, 12, 3),
-            avatarResId = R.drawable.cinephile2
-        ),
-        Review(
-            id = 3,
-            authorName = "CinephileHub",
-            userHandle = "MovieBuff1967",
-            content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses Anne's journey into womanhood.",
-            rating = 9.8f,
-            createdDate = LocalDate.of(2001, 12, 3),
-            avatarResId = R.drawable.user_img
-        )
-    )
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
             .padding(vertical = 24.dp)
     ) {
         AppTopBar(
@@ -175,12 +144,44 @@ fun ReviewScreen(
                 )
             }
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        reviews.forEach {
-            ReviewCard(review = it, modifier = Modifier.padding(horizontal = 16.dp))
-            Spacer(modifier = Modifier.height(12.dp))
+        if (reviews.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                contentPadding = PaddingValues(vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(
+                    reviews
+                ) { review ->
+                    ReviewCard(review = review)
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 24.dp)
+            ) {
+                AppTopBar(
+                    screenTitle = "Reviews",
+                    leftContent = {
+                        TopBarClickableIcon(
+                            icon = painterResource(R.drawable.arrow_left),
+                            onClick = onBackClicked
+                        )
+                    }
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.chat),
+                    contentDescription = "chat",
+                    modifier = Modifier.size(128.dp)
+                )
+                Text(
+                    text = "There is no review!",
+                    style = Theme.textStyle.body.small,
+                    color = Theme.colors.body
+                )
+            }
         }
     }
 }
@@ -189,16 +190,46 @@ fun ReviewScreen(
 @Composable
 fun PreviewReviewScreen() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        ReviewScreen()
+        val reviews = listOf(
+            Review(
+                id = 1,
+                authorName = "CinephileHub",
+                username = "MovieBuff1967",
+                content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses experiences her first period.",
+                rating = 9.8f,
+                createdDate = LocalDate.of(2001, 12, 3),
+                avatarUrl = ""
+            ),
+            Review(
+                id = 2,
+                authorName = "CinephileHub",
+                username = "MovieBuff1967",
+                content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket.",
+                rating = 9.8f,
+                createdDate = LocalDate.of(2001, 12, 3),
+                avatarUrl = ""
+            ),
+            Review(
+                id = 3,
+                authorName = "CinephileHub",
+                username = "MovieBuff1967",
+                content = "The show explores life's complexities through a whimsical metaphor involving a mouse in a man's pocket, which might perplex younger audiences. One episode poignantly addresses Anne's journey into womanhood.",
+                rating = 9.8f,
+                createdDate = LocalDate.of(2001, 12, 3),
+                avatarUrl = ""
+            )
+        )
+        ReviewScreen(reviews = reviews)
     }
 }
 
 data class Review(
+
     val id: Int,
     val authorName: String,
-    val userHandle: String?,
+    val username: String?,
     val content: String,
     val rating: Float?,
     val createdDate: LocalDate,
-    val avatarResId: Int
+    val avatarUrl: String?
 )
