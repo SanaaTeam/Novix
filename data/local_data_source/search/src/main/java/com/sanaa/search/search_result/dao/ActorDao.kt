@@ -13,4 +13,17 @@ interface ActorDao {
 
     @Query("SELECT * FROM actor WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%'")
     suspend fun getActorsByQuery(query: String): List<ActorsLocalDto>
+
+    @Query(
+        "SELECT * FROM actor " +
+                "WHERE LOWER(name) LIKE '%' || LOWER(:query) || '%' " +
+                "ORDER BY id ASC " +
+                "LIMIT :limit OFFSET :offset"
+    )
+    suspend fun getPagedActorsByQuery(
+        query: String,
+        limit: Int,
+        offset: Int
+    ): List<ActorsLocalDto>
+
 }
