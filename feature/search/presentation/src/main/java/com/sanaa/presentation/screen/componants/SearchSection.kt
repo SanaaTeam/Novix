@@ -14,6 +14,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
@@ -27,6 +29,15 @@ fun SearchSection(
     onFilterClicked: () -> Unit = {},
     onTextChange: (String) -> Unit = {}
 ) {
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = text)) }
+    
+    if (textFieldValue.text != text) {
+        textFieldValue = TextFieldValue(
+            text = text,
+            selection = TextRange(text.length) 
+        )
+    }
+    
     Row(
         modifier = Modifier
             .height(48.dp)
@@ -36,8 +47,11 @@ fun SearchSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         NovixTextField(
-            value = text,
-            onValueChange = onTextChange,
+            value = textFieldValue,
+            onValueChange = { newValue ->
+                textFieldValue = newValue
+                onTextChange(newValue.text)
+            },
             hint = stringResource(R.string.search_hint),
             icon = painterResource(R.drawable.icon_search),
             modifier = Modifier
