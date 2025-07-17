@@ -1,13 +1,14 @@
-package com.sanaa.presentation.screen.movie_details.view_model
+package com.sanaa.presentation.screen.movie_details
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.mapper.toCastUiModel
 import com.sanaa.presentation.mapper.toSimilarUiModel
 import com.sanaa.presentation.mapper.toUiModel
-import com.sanaa.presentation.screen.movie_details.MovieDetailsUiEffect
-import com.sanaa.presentation.screen.movie_details.interaction_listener.MovieDetailsScreenInteractionListener
-import com.sanaa.presentation.screen.movie_details.state.MovieDetailsUiState
-import details.usecase.movie.*
+import details.usecase.movie.GetMovieCastUseCase
+import details.usecase.movie.GetMovieDetailsUseCase
+import details.usecase.movie.GetMovieImagesUseCase
+import details.usecase.movie.GetMovieTrailerUseCase
+import details.usecase.movie.GetSimilarMoviesByMovieId
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -67,6 +68,5 @@ class MovieDetailsViewModel(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        // Implement bookmark logic if needed
     }
 }

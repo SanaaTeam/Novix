@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details.interaction_listener
+package com.sanaa.presentation.screen.movie_details
 
 interface MovieDetailsScreenInteractionListener {
     fun onLoadMovieDetails(movieId: Int)

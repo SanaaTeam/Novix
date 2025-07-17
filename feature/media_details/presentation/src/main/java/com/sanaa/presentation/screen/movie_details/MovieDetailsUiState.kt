@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details.state
+package com.sanaa.presentation.screen.movie_details
 
 import com.sanaa.presentation.model.MovieDetailsUiModel
 
