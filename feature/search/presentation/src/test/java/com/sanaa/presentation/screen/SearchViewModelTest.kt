@@ -297,15 +297,15 @@ class SearchViewModelTest {
     fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
         // Given
         val initialState = searchViewModel.state.value
-        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchViewModel.TV_SHOW_INDEX)
+        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
 
         // When
-        searchViewModel.onTabSelected(SearchViewModel.TV_SHOW_INDEX)
+        searchViewModel.onTabSelected(SearchScreenUiState.TV_SHOW_INDEX)
 
         // Then
         searchViewModel.state.test {
             val item = awaitItem()
-            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchViewModel.TV_SHOW_INDEX)
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
             Truth.assertThat(item.isLoading).isTrue()
             cancelAndIgnoreRemainingEvents()
         }
@@ -377,7 +377,7 @@ class SearchViewModelTest {
 
     @Test
     fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
-        val index = SearchViewModel.TV_SHOW_INDEX
+        val index = SearchScreenUiState.TV_SHOW_INDEX
 
         // When
         searchViewModel.onTabSelected(index)
