@@ -20,8 +20,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SearchRemoteDataSourceImplTest {
@@ -38,7 +38,6 @@ class SearchRemoteDataSourceImplTest {
     fun setUp() {
         mockEngine = MockEngine { request ->
             logger.info("Request URL: ${request.url}")
-            logger.info("Request Path: ${request.url.toString().substringBefore("?")}")
             val queryParams = request.url.parameters
             val query = queryParams["query"]
             val page = queryParams["page"]
@@ -102,35 +101,33 @@ class SearchRemoteDataSourceImplTest {
         }
 
         languageProvider = mockk()
-
         dataSource = SearchRemoteDataSourceImpl(client, baseUrl, languageProvider)
     }
 
     @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid actor query`() = runTest {
+    fun searchActors_shouldReturnValidResponse_whenQueryIsValid() = runTest {
         // Given
         val query = "Tom Hanks"
-        val expectedResponse = SearchResponse<ActorSearchDto>(
+        val expectedResponse = SearchResponse(
             page = 1,
             results = listOf(
                 ActorSearchDto(
                     id = 1,
                     name = "Tom Hanks",
-                    profileImagePath = "/path",
+                    profileImagePath = "/path"
                 )
             ),
             totalPages = 1,
             totalResults = 1
         )
-
         every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
         val result = dataSource.searchActors(query)
 
         // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
+        assertEquals(expectedResponse, result, "Expected actor search result to match mock response")
+        val request = mockEngine.requestHistory.last()
         assertEquals("$baseUrl/search/person", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
@@ -139,10 +136,10 @@ class SearchRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid tv query`() = runTest {
+    fun searchTvShows_shouldReturnValidResponse_whenQueryIsValid() = runTest {
         // Given
         val query = "Breaking Bad"
-        val expectedResponse = SearchResponse<TvShowSearchDto>(
+        val expectedResponse = SearchResponse(
             page = 1,
             results = listOf(
                 TvShowSearchDto(
@@ -163,8 +160,8 @@ class SearchRemoteDataSourceImplTest {
         val result = dataSource.searchTv(query)
 
         // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
+        assertEquals(expectedResponse, result, "Expected TV show search result to match mock response")
+        val request = mockEngine.requestHistory.last()
         assertEquals("$baseUrl/search/tv", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
@@ -173,10 +170,10 @@ class SearchRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid movie query`() = runTest {
+    fun searchMovies_shouldReturnValidResponse_whenQueryIsValid() = runTest {
         // Given
         val query = "Inception"
-        val expectedResponse = SearchResponse<MovieSearchDto>(
+        val expectedResponse = SearchResponse(
             page = 1,
             results = listOf(
                 MovieSearchDto(
@@ -197,8 +194,8 @@ class SearchRemoteDataSourceImplTest {
         val result = dataSource.searchMovies(query)
 
         // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
+        assertEquals(expectedResponse, result, "Expected movie search result to match mock response")
+        val request = mockEngine.requestHistory.last()
         assertEquals("$baseUrl/search/movie", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
