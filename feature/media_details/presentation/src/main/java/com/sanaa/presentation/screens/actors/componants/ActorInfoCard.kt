@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.InfoSection
@@ -36,29 +36,24 @@ fun ActorInfoCard(
             }
 
             actor.placeOfBirth?.let {
-                AttributeWithDot(text = it)
+                AttributeWithDot(text = it, iconRes = R.drawable.location)
             }
 
-            actor.birthDate?.let {
-                AttributeWithDot(text = it)
-            }
-
-            actor.deathDate?.let {
-                AttributeWithDot(text = it)
-            }
+            actor.lifeSpan?.let { AttributeWithDot(it, R.drawable.birthday_cake) }
         }
     }
 }
 
 @Composable
-private fun AttributeWithDot(text: String) {
+private fun AttributeWithDot(text: String, iconRes: Int, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
         DotSeparator()
         IconWithText(
-            iconRes = R.drawable.cancel,
+            iconRes = iconRes,
             text = text,
             contentDescription = "",
             tint = Theme.colors.body
