@@ -6,8 +6,8 @@ import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
-import com.sanaa.search.mapper.toSearchOutput
 import com.sanaa.search.dataSource.remote.response.SearchResponse
+import com.sanaa.search.mapper.toSearchOutput
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.Runs
