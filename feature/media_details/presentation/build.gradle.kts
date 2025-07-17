@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.imageViewer)
     implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(libs.androidx.core.ktx)
