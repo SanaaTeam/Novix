@@ -38,7 +38,8 @@ import search.usecase.search_param.MediaType
 import search.usecase.search_param.RecentViewedMedia
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchHistory
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchViewModelTest {
     private val searchMoviesUseCase: SearchMoviesUseCase = mockk(relaxed = true)
@@ -296,12 +297,30 @@ class SearchViewModelTest {
     }
 
     @Test
+    fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
+        // Given
+        val initialState = searchViewModel.state.value
+        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchViewModel.TV_SHOW_INDEX)
+
+        // When
+        searchViewModel.onTabSelected(SearchViewModel.TV_SHOW_INDEX)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchViewModel.TV_SHOW_INDEX)
+            Truth.assertThat(item.isLoading).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `onTabSelected() should load movies when movie tap selected`() = runTest {
         // Given
         val index = SearchViewModel.MOVIE_INDEX
         val uiState = searchViewModel.state
         val movieName = "Movie"
-        val movies = listOf(SearchMediaOutput(1, movieName, "https://image.com", false))
+        val movies = listOf(SearchMovieOutput(1, movieName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(movieName)
         coEvery {
             searchMoviesUseCase.execute(
@@ -333,7 +352,7 @@ class SearchViewModelTest {
         val index = SearchViewModel.TV_SHOW_INDEX
         val uiState = searchViewModel.state
         val tvShowName = "TvShow"
-        val tvShows = listOf(SearchMediaOutput(1, tvShowName, "https://image.com", false))
+        val tvShows = listOf(SearchTvSeriesOutput(1, tvShowName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(tvShowName)
         coEvery {
             searchTvSeriesUseCase.execute(
@@ -356,6 +375,20 @@ class SearchViewModelTest {
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
             Truth.assertThat(item).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
+        val index = SearchViewModel.TV_SHOW_INDEX
+
+        // When
+        searchViewModel.onTabSelected(index)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
         }
     }
 
@@ -519,6 +552,7 @@ class SearchViewModelTest {
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }
+
     @Test
     fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
         runTest {

@@ -146,7 +146,11 @@ class SearchViewModel(
 
     private fun loadMovies(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute({ loadMoviesOperation(query) }, ::onLoadMoviesSuccess, ::onDataLoadError)
+        tryToExecute(
+            callee = { loadMoviesOperation(query) },
+            onSuccess = ::onLoadMoviesSuccess,
+            onError = ::onDataLoadError
+        )
     }
 
     private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
@@ -161,7 +165,11 @@ class SearchViewModel(
 
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute({ loadTvShowsOperation(query) }, ::onLoadTvShowsSuccess, ::onDataLoadError)
+        tryToExecute(
+            callee = { loadTvShowsOperation(query) },
+            onSuccess = ::onLoadTvShowsSuccess,
+            onError = ::onDataLoadError
+        )
     }
 
     private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
@@ -176,7 +184,11 @@ class SearchViewModel(
 
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute({ loadActorsOperation(query) }, ::onLoadActorsSuccess, ::onDataLoadError)
+        tryToExecute(
+            callee = { loadActorsOperation(query) },
+            onSuccess = ::onLoadActorsSuccess,
+            onError = ::onDataLoadError
+        )
     }
 
     private suspend fun loadActorsOperation(query: String): List<ActorUiModel> {
@@ -219,6 +231,7 @@ class SearchViewModel(
     }
 
     override fun onTabSelected(index: Int) {
+        if (index == state.value.selectedTabIndex) return
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
@@ -248,7 +261,11 @@ class SearchViewModel(
     }
 
     override fun onClearRecentViewClicked() {
-        tryToExecute(clearRecentViewedUseCase::execute, onSuccess = {}, onError = ::onDataLoadError)
+        tryToExecute(
+            callee = clearRecentViewedUseCase::execute,
+            onSuccess = {},
+            onError = ::onDataLoadError
+        )
     }
 
     override fun onClearRecentSearchClicked() {
@@ -263,7 +280,14 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
-            onSuccess = { updateState { it.copy(isLoading = false,noInternetConnection = false) } },
+            onSuccess = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        noInternetConnection = false
+                    )
+                }
+            },
             ::onDataLoadError
         )
     }

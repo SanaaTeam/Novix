@@ -24,24 +24,24 @@ class GetEpisodeImagesUseCaseTest {
     fun `execute() should return list of image URLs from TvSeriesRepository`() = runTest {
         // Given
         val expected = listOf("image1.jpg", "image2.jpg")
-        coEvery { repository.getEpisodeImages(1, 1, 1) } returns expected
+        coEvery { repository.getEpisodeImages(1, 1, 1,1) } returns expected
 
         // When
-        val result = useCase.execute(1, 1, 1)
+        val result = useCase.execute(1, 1, 1,1)
 
         // Then
-        coVerify { repository.getEpisodeImages(1, 1, 1) }
+        coVerify { repository.getEpisodeImages(1, 1, 1,1) }
         assert(result == expected)
     }
     @Test
     fun `execute() should throw exception when repository fails to get episode images`() = runTest {
         // Given
         val exception = IllegalStateException("Image loading failed")
-        coEvery { repository.getEpisodeImages(1, 1, 1) } throws exception
+        coEvery { repository.getEpisodeImages(1, 1, 1,1) } throws exception
 
         // When, Then
         val result = assertThrows<IllegalStateException> {
-            useCase.execute(1, 1, 1)
+            useCase.execute(1, 1, 1,1)
         }
 
         assert(result.message == "Image loading failed")

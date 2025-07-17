@@ -147,7 +147,6 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
-
 # Gradle Plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -172,6 +171,9 @@ novix-android-compose = { id = "novix.android.library.compose" }
 room = [
     "androidx-room-runtime",
     "androidx-room-ktx",
+]
+
+room-testing = [
     "androidx-room-testing"
 ]
 
