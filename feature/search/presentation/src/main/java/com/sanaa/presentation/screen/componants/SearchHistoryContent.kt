@@ -114,9 +114,7 @@ fun SearchHistoryContent(
                                         }
                                     },
                                     topLeftContent = {
-                                        SaveIconChip(
-                                            onClick = interactionsListener::onSaveIconClicked
-                                        )
+                                        SaveIconChip(onClick = {})
                                     },
                                 )
                             }

@@ -296,10 +296,6 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
-    override fun onSaveIconClicked() {
-
-    }
-
     companion object {
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
