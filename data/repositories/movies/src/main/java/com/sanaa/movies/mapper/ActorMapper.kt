@@ -1,0 +1,51 @@
+package com.sanaa.movies.mapper
+
+import com.sanaa.movies.dataSource.remote.dto.ActorDto
+import com.sanaa.movies.dataSource.remote.dto.CastDto
+import entity.Actor
+import entity.Actor.Gender
+
+fun ActorDto.toDomain(): Actor {
+    return Actor(
+        id = id,
+        name = name ?: "Unknown",
+        imageUrl = profileImagePath ?: "",
+        gender = apiGenderMapping(gender),
+        character = character,
+        biography = biography ?: "",
+        birthDate = null,
+        deathDate = null,
+        placeOfBirth = null,
+        region = null,
+        lastShow = null,
+        department = null
+    )
+}
+
+fun CastDto.Cast.toDomain(): Actor {
+
+    return Actor(
+        id = id,
+        name = name ?: "Unknown",
+        imageUrl = profilePath ?: "",
+        gender = apiGenderMapping(gender),
+        character = character,
+        biography = "",
+        birthDate = null,
+        deathDate = null,
+        placeOfBirth = null,
+        region = null,
+        lastShow = null,
+        department = null
+    )
+}
+
+fun apiGenderMapping(id: Int?): Gender {
+    return when (id) {
+        0 -> Gender.MALE
+        1 -> Gender.FEMALE
+        else -> Gender.MALE
+    }
+}
+
+
