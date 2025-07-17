@@ -181,7 +181,7 @@ class SearchRepositoryImpl(
         } catch (_: UnresolvedAddressException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve media for query: $query")
+            throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
         }
     }
 }
