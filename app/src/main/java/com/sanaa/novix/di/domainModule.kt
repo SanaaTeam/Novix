@@ -8,6 +8,7 @@ import details.usecase.actor.GetProfileImagesUseCase
 import details.usecase.movie.GetMovieCastUseCase
 import details.usecase.movie.GetMovieDetailsUseCase
 import details.usecase.movie.GetMovieImagesUseCase
+import details.usecase.movie.GetMovieTrailerUseCase
 import details.usecase.movie.GetMoviesByCategory
 import details.usecase.movie.GetReviewsByMovieId
 import details.usecase.movie.GetSimilarMoviesByMovieId
@@ -46,4 +47,5 @@ val domainModule = module {
     single { GetMoviesByCategory(get()) }
     single { GetReviewsByMovieId(get()) }
     single { GetSimilarMoviesByMovieId(get()) }
+    single { GetMovieTrailerUseCase(get()) }
 }
