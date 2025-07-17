@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.kotlinx.serialization.json)
     implementation(projects.designSystem)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
