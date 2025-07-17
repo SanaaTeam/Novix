@@ -1,17 +1,22 @@
 package com.sanaa.novix
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.sanaa.presentation.navigation.SearchActivity
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.SearchFeatureApi
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
+
+    private val searchFeatureApi: SearchFeatureApi by inject()
+    private val mediaDetailsFeatureApi: MediaDetailsApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,8 +26,12 @@ class MainActivity : ComponentActivity() {
 
         Timber.d("MainActivity created")
 
-        val intent = Intent(this, SearchActivity::class.java)
-        startActivity(intent)
-        finish()
+        setContent {
+            searchFeatureApi.SearchScreen(
+                NavigateToMediaScreen = { mediaId ->
+                    mediaDetailsFeatureApi.launch(this, mediaId)
+                }
+            )
+        }
     }
 }

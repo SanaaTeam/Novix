@@ -4,5 +4,5 @@ import androidx.compose.runtime.Composable
 
 interface SearchFeatureApi {
     @Composable
-    fun SearchFeature()
+    fun SearchScreen(NavigateToMediaScreen: (Int) -> Unit)
 }
