@@ -6,8 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.sanaa.presentation.screen.SearchScreen
-import com.sanaa.presentation.screen.movie_details.screen.MovieDetailsScreen
+import com.sanaa.presentation.screen.movie_details.MovieDetailsScreen
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
