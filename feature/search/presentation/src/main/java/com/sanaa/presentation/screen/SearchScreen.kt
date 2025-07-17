@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -26,8 +24,7 @@ import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent
+import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
@@ -74,7 +71,6 @@ fun SearchScreenContent(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
-    var isSliderDragging by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
@@ -137,22 +133,6 @@ fun SearchScreenContent(
     }
 
     if (showBottomSheet) {
-        ModalBottomSheet(
-            modifier = Modifier.statusBarsPadding(),
-            onDismissRequest = {
-                if (!isSliderDragging) {
-                    dismissSheet()
-                }
-            },            sheetState = sheetState,
-            containerColor = Theme.colors.surface
-        ) {
-            FilterBottomSheetContent(
-                uiState = filterUiState,
-                listener = filterListener,
-                onDismissRequest = dismissSheet,
-                isSliderDragging = isSliderDragging,
-                onSliderDragStateChanged = { isSliderDragging = it }
-            )
-        }
+        FilterBottomSheet(dismissSheet, sheetState, filterUiState, filterListener)
     }
 }
