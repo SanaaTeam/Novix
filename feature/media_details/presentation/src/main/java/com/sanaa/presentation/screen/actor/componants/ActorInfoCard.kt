@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screens.actors.componants
+package com.sanaa.presentation.screen.actor.componants
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
@@ -13,7 +13,7 @@ import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.InfoSection
-import com.sanaa.presentation.screens.actors.ActorUiModel
+import com.sanaa.presentation.screen.actor.ActorUiModel
 
 @Composable
 fun ActorInfoCard(

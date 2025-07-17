@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screens.actors.componants
+package com.sanaa.presentation.screen.actor.componants
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

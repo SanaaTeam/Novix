@@ -7,10 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.sanaa.presentation.screens.actors.screen.ActorGalleryScreen
-import com.sanaa.presentation.screens.actors.screen.ActorScreen
-import com.sanaa.presentation.screens.actors.screen.TopMoviesScreen
-import com.sanaa.presentation.screens.actors.screen.TopSeriesScreen
+import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
+import com.sanaa.presentation.screen.actor.screen.ActorScreen
+import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
+import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
 
 @Composable
 fun DetailsNavHost(startRoute: StartRoute, id: Int) {

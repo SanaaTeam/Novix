@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screens.actors.screen
+package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,8 +37,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
-import com.sanaa.presentation.screens.actors.ActorScreenUiState
-import com.sanaa.presentation.screens.actors.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenUiState
+import com.sanaa.presentation.screen.actor.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -113,10 +114,10 @@ private fun TopSeriesContent(
                             contentPadding = PaddingValues(
                                 start = 16.dp, end = 16.dp, bottom = 16.dp
                             ),
-                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                            verticalArrangement = Arrangement.spacedBy(
                                 12.dp
                             ),
-                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                            horizontalArrangement = Arrangement.spacedBy(
                                 12.dp
                             )
                         ) {

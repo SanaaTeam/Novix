@@ -1,6 +1,6 @@
 package com.sanaa.novix.di
 
-import com.sanaa.presentation.screens.actors.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorViewModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase

@@ -31,7 +31,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
-import com.sanaa.presentation.screen.LocalNavigationProvider
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
@@ -47,7 +46,6 @@ fun SeriesScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val navController = LocalNavigationProvider.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
@@ -57,9 +55,7 @@ fun SeriesScreen(
                 }
 
                 is SeriesScreenEffects.NavigateToEpisodeDetailsScreen -> {
-                    navController.navigate(
-                        "episode/${it.seriesId}/${it.seasonNumber}/${it.episodeNumber}"
-                    )
+                    TODO()
                 }
 
                 is SeriesScreenEffects.NavigateToReviewsScreen -> {
@@ -67,7 +63,7 @@ fun SeriesScreen(
                 }
 
                 is SeriesScreenEffects.NavigateBack -> {
-                    navController.popBackStack()
+                    TODO()
                 }
 
                 is SeriesScreenEffects.PlayTrailer -> {
@@ -96,17 +92,17 @@ fun SeriesScreenContent(
             ) {
                 AppTopBar(
                     leftContent = {
-                        TopBarClickableIcon(
-                            icon = painterResource(R.drawable.icon_back),
-                            onClick = interactionListener::onBackClicked
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = interactionListener::onBackClicked
 
-                        )
-                    }, rightContent = {
-                        TopBarClickableIcon(
-                            icon = painterResource(R.drawable.icon_save),
-                            onClick = interactionListener::onBackClicked
-                        )
-                    }, modifier = Modifier
+                    )
+                }, rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_save),
+                        onClick = interactionListener::onBackClicked
+                    )
+                }, modifier = Modifier
                         .systemBarsPadding()
                         .zIndex(10f)
                 )
@@ -121,61 +117,56 @@ fun SeriesScreenContent(
                         NovixLoadingIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
-                    } else
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(
-                                    state = rememberScrollState()
-                                )
+                    } else Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(
+                                state = rememberScrollState()
+                            )
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(bottom = 112.dp)
                         ) {
-                            Column(
-                                modifier = Modifier.padding(bottom = 112.dp)
-                            ) {
-                                SeriesHeaderSection(
-                                    title = state.series.title,
-                                    rating = state.series.rating,
-                                    season = stringResource(
-                                        R.string.seasons_count,
-                                        state.series.seasonsCount
-                                    ),
-                                    airDate = state.series.releaseDate,
-                                    imagesUrl = state.images,
-                                    genres = state.series.genres,
-                                    onReviewClicked = {
-                                        interactionListener.onViewReviewsClicked(
-                                            state.series.id
-                                        )
-                                    }
-                                )
-                                OverviewSection(
-                                    onReadMore = {},
-                                    titleResId = R.string.overview,
-                                    overview = state.series.overview,
-                                    modifier = Modifier.padding(
-                                        start = 16.dp,
-                                        end = 16.dp,
-                                        top = 16.dp
+                            SeriesHeaderSection(
+                                title = state.series.title,
+                                rating = state.series.rating,
+                                season = stringResource(
+                                    R.string.seasons_count, state.series.seasonsCount
+                                ),
+                                airDate = state.series.releaseDate,
+                                imagesUrl = state.images,
+                                genres = state.series.genres,
+                                onReviewClicked = {
+                                    interactionListener.onViewReviewsClicked(
+                                        state.series.id
                                     )
+                                })
+                            OverviewSection(
+                                onReadMore = {},
+                                titleResId = R.string.overview,
+                                overview = state.series.overview,
+                                modifier = Modifier.padding(
+                                    start = 16.dp, end = 16.dp, top = 16.dp
                                 )
-                                CastComponent(
-                                    cast = state.cast,
-                                    onActorClicked = interactionListener::onActorClicked,
-                                )
-                                SeasonTap(
-                                    onClick = interactionListener::onSeasonNumberClicked,
-                                    seasonCounts = state.series.seasonsCount,
-                                    currentSeason = state.selectedSeason,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
-                                EpisodesContent(
-                                    episodes = state.season.episodes,
-                                    seriesId = state.series.id,
-                                    onEpisodeClick = interactionListener::onEpisodeClicked
-                                )
-                            }
-
+                            )
+                            CastComponent(
+                                cast = state.cast,
+                                onActorClicked = interactionListener::onActorClicked,
+                            )
+                            SeasonTap(
+                                onClick = interactionListener::onSeasonNumberClicked,
+                                seasonCounts = state.series.seasonsCount,
+                                currentSeason = state.selectedSeason,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            EpisodesContent(
+                                episodes = state.season.episodes,
+                                seriesId = state.series.id,
+                                onEpisodeClick = interactionListener::onEpisodeClicked
+                            )
                         }
+
+                    }
                 }
                 BottomContainer(
                     modifier = Modifier.align(Alignment.BottomCenter),
@@ -187,8 +178,7 @@ fun SeriesScreenContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .background(Color.Black.copy(alpha = 0.3f))
-                            .zIndex(100f),
-                        contentAlignment = Alignment.Center
+                            .zIndex(100f), contentAlignment = Alignment.Center
                     ) {
                         NovixLoadingIndicator()
                     }

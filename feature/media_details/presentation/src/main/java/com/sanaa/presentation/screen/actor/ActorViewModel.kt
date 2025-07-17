@@ -1,6 +1,5 @@
-package com.sanaa.presentation.screens.actors
+package com.sanaa.presentation.screen.actor
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase

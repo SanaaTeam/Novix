@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.domain.vod)
     implementation(libs.kotlinx.serialization.json)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)

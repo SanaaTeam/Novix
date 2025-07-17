@@ -2,9 +2,6 @@ package com.sanaa.presentation.screen.episode_details
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +30,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
-import com.sanaa.presentation.screen.LocalNavigationProvider
 import com.sanaa.presentation.screen.episode_details.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
@@ -54,13 +50,11 @@ fun EpisodeDetailsScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val navController = LocalNavigationProvider.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             when (it) {
                 is EpisodeDetailsEffects.NavigateBackToSeries -> {
-                    navController.popBackStack()
 
                 }
 

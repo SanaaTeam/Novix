@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screens.actors.componants
+package com.sanaa.presentation.screen.actor.componants
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

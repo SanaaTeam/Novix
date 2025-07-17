@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screens.actors.screen
+package com.sanaa.presentation.screen.actor.screen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -37,14 +37,14 @@ import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopSeriesScreenRoute
-import com.sanaa.presentation.screens.actors.ActorScreenEffects
-import com.sanaa.presentation.screens.actors.ActorScreenUiState
-import com.sanaa.presentation.screens.actors.ActorViewModel
-import com.sanaa.presentation.screens.actors.ActorsScreenInteractionListener
-import com.sanaa.presentation.screens.actors.componants.ActorInfoCard
-import com.sanaa.presentation.screens.actors.componants.GalleryCard
-import com.sanaa.presentation.screens.actors.componants.MediaSection
-import com.sanaa.presentation.screens.actors.componants.PosterCard
+import com.sanaa.presentation.screen.actor.ActorScreenEffects
+import com.sanaa.presentation.screen.actor.ActorScreenUiState
+import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
+import com.sanaa.presentation.screen.actor.componants.ActorInfoCard
+import com.sanaa.presentation.screen.actor.componants.GalleryCard
+import com.sanaa.presentation.screen.actor.componants.MediaSection
+import com.sanaa.presentation.screen.actor.componants.PosterCard
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
