@@ -30,7 +30,7 @@ class MovieDetailsViewModel(
                 val cast = getMovieCastUseCase.execute(movieId)
                 val posterUrls = getMovieImagesUseCase.execute(movieId)
                 val similar = getSimilarMoviesByMovieId.execute(movieId)
-                val trailerUrl = getMovieTrailerUseCase.execute(movieId) 
+                val trailerUrl = getMovieTrailerUseCase.execute(movieId)
 
                 movie.toUiModel(
                     cast = cast.map { it.toCastUiModel() },
