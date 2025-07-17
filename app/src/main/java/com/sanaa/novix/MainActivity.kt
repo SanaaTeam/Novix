@@ -5,8 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.sanaa.presentation.navigation.DetailsNavHost
+import com.sanaa.presentation.navigation.StartRoute
 import com.sanaa.presentation.screen.ActorScreen
-import com.sanaa.presentation.screen.SearchScreen
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
@@ -23,8 +24,10 @@ class MainActivity : ComponentActivity() {
         Timber.d("MainActivity created")
 
         setContent {
-//            SearchScreen()
-            ActorScreen(actorId = 10)
+            DetailsNavHost(
+                startRoute = StartRoute.ACTOR,
+                id = 5
+            )
         }
     }
 }
