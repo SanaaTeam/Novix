@@ -20,13 +20,13 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `insertQuery should call upsertQueryWithTimestamp on queryDao`() = runTest {
+    fun `insertQuery should call upsertQuery on queryDao`() = runTest {
         // Given
         val query = "test query"
         // When
         dataSource.insertQuery(query)
         // Then
-        coVerify { queryDao.insertQuery(query)}
+        coVerify { queryDao.upsertQuery(query, any()) }
     }
 
     @Test
