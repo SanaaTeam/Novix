@@ -29,4 +29,9 @@
     <string name="genre_war_and_politics">War&amp;Politics</string>
     <string name="genre_sci_fi_and_fantasy">Sci-Fi&amp;Fantasy</string>
     <string name="genre_action_and_adventure">Action&amp;Adventure</string>
+    <string name="view_reviews">View reviews</string>
+    <string name="seasons_count">%d Seasons</string>
+    <string name="overview">Overview</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Read less</string>
 </resources>
