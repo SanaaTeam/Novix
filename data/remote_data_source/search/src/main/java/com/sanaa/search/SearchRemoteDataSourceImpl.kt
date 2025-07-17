@@ -14,7 +14,6 @@ import io.ktor.client.request.parameter
 
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ): SearchRemoteDataSource {
 
@@ -22,7 +21,7 @@ class SearchRemoteDataSourceImpl(
         path: String,
         query: String,
     ): SearchResponse<T> {
-        return client.get("$baseUrl/search/$path") {
+        return client.get("${BuildConfig.TMDB_URL}/search/$path") {
             parameter("query", query)
             parameter("page", PAGE_NUMBER)
             parameter("language", languageProvider.getCurrentLanguage())

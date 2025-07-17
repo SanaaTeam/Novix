@@ -29,7 +29,6 @@ class SearchRemoteDataSourceImplTest {
     private lateinit var client: HttpClient
     private lateinit var dataSource: SearchRemoteDataSourceImpl
     private lateinit var languageProvider: LanguageProvider
-    private val baseUrl = "https://api.themoviedb.org/3"
     private val apiKey = BuildConfig.TMDB_API_KEY
     private lateinit var mockEngine: MockEngine
     private val logger = LoggerFactory.getLogger(SearchRemoteDataSourceImplTest::class.java)
@@ -48,7 +47,7 @@ class SearchRemoteDataSourceImplTest {
 
             if (query != null && page == "1" && language == "en" && apiKeyParam == apiKey) {
                 when (fullPath) {
-                    "$baseUrl/search/person" -> respond(
+                    "${BuildConfig.TMDB_URL}/search/person" -> respond(
                         content = """{
                             "page": 1,
                             "results": [{"id": 1, "name": "Tom Hanks", "profile_path": "/path", "gender": 2}],
@@ -58,7 +57,7 @@ class SearchRemoteDataSourceImplTest {
                         status = HttpStatusCode.OK,
                         headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     )
-                    "$baseUrl/search/tv" -> respond(
+                    "${BuildConfig.TMDB_URL}/search/tv" -> respond(
                         content = """{
                             "page": 1,
                             "results": [{"id": 1, "name": "Breaking Bad", "poster_path": "/path", "first_air_date": null, "vote_average": null, "genre_ids": null}],
@@ -68,7 +67,7 @@ class SearchRemoteDataSourceImplTest {
                         status = HttpStatusCode.OK,
                         headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
                     )
-                    "$baseUrl/search/movie" -> respond(
+                    "${BuildConfig.TMDB_URL}/search/movie" -> respond(
                         content = """{
                             "page": 1,
                             "results": [{"id": 1, "title": "Inception", "poster_path": "/path", "release_date": null, "vote_average": null, "genre_ids": null}],
@@ -103,7 +102,7 @@ class SearchRemoteDataSourceImplTest {
 
         languageProvider = mockk()
 
-        dataSource = SearchRemoteDataSourceImpl(client, baseUrl, languageProvider)
+        dataSource = SearchRemoteDataSourceImpl(client, languageProvider)
     }
 
     @Test
@@ -131,7 +130,7 @@ class SearchRemoteDataSourceImplTest {
         // Then
         assertEquals(expectedResponse, result)
         val request = mockEngine.requestHistory.first()
-        assertEquals("$baseUrl/search/person", request.url.toString().substringBefore("?"))
+        assertEquals("${BuildConfig.TMDB_URL}/search/person", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
         assertEquals("en", request.url.parameters["language"])
@@ -165,7 +164,7 @@ class SearchRemoteDataSourceImplTest {
         // Then
         assertEquals(expectedResponse, result)
         val request = mockEngine.requestHistory.first()
-        assertEquals("$baseUrl/search/tv", request.url.toString().substringBefore("?"))
+        assertEquals("${BuildConfig.TMDB_URL}/search/tv", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
         assertEquals("en", request.url.parameters["language"])
@@ -199,7 +198,7 @@ class SearchRemoteDataSourceImplTest {
         // Then
         assertEquals(expectedResponse, result)
         val request = mockEngine.requestHistory.first()
-        assertEquals("$baseUrl/search/movie", request.url.toString().substringBefore("?"))
+        assertEquals("${BuildConfig.TMDB_URL}/search/movie", request.url.toString().substringBefore("?"))
         assertEquals(query, request.url.parameters["query"])
         assertEquals("1", request.url.parameters["page"])
         assertEquals("en", request.url.parameters["language"])
