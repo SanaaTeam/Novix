@@ -6,3 +6,12 @@ dependencies {
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.android.gradle.plugin)
 }
+
+gradlePlugin {
+    plugins {
+        register("androidComposeLibraryConvention") {
+            id = libs.plugins.novix.android.compose.get().pluginId
+            implementationClass = "AndroidComposeLibraryConventionPlugin"
+        }
+    }
+}
