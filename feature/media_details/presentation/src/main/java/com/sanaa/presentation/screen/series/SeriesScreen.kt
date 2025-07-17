@@ -2,9 +2,6 @@ package com.sanaa.presentation.screen.series
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -155,7 +152,11 @@ fun SeriesScreenContent(
                                     onReadMore = {},
                                     titleResId = R.string.overview,
                                     overview = state.series.overview,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                    modifier = Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        top = 16.dp
+                                    )
                                 )
                                 CastComponent(
                                     cast = state.cast,
