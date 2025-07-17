@@ -7,4 +7,6 @@ interface SeriesScreenInteractionListener {
     fun onSeasonNumberClicked(seasonNumber: Int)
     fun onEpisodeClicked(seriesId: Int, seasonNumber: Int, episodeNumber: Int)
     fun onPlayTrailerClicked()
+    fun onRateClicked()
+    fun onDismissRateBottomSheet()
 }

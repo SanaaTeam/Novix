@@ -15,6 +15,9 @@
     <string name="reviews">Reviews</string>"
     <string name="rating">Rating</string>
     <string name="anonymous">Anonymous</string>
+    <string name="request_login">Please login to save to list</string>
+    <string name="add_to_list">Add to list</string>"
+    <string name="login">Login</string>
 
 
     <string name="genres">Genres</string>

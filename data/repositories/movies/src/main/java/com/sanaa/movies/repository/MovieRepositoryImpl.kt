@@ -21,10 +21,9 @@ class MovieRepositoryImpl(
             remote.fetchMovieDetails(id).toDomain()
         }
 
-    override suspend fun getImages(id: Int): List<String> =
-        safeCall("Failed to fetch images") {
-            remote.fetchImagesUrl(id).posters.take(3).map { it.filePath.fullImageUrlOrEmpty() }
-        }
+    override suspend fun getImages(id: Int): List<String> = safeCall("Failed to fetch images") {
+        remote.fetchImagesUrl(id).posters.take(3).map { it.filePath.fullImageUrlOrEmpty() }
+    }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =
         safeCall("Failed to fetch movie cast") {
@@ -48,8 +47,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieTrailer(id: Int): String? =
         safeCall("Failed to fetch movie trailer") {
-            remote.fetchMovieTrailerUrl(id).results
-                .firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
+            remote.fetchMovieTrailerUrl(id).results.firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
                 ?.let { "https://www.youtube.com/watch?v=${it.key}" }
         }
 

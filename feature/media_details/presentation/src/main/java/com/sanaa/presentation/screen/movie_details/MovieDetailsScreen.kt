@@ -106,18 +106,6 @@ fun MovieDetailsContent(
                     .systemBarsPadding()
                     .zIndex(10f)
             )
-            AnimatedContent(
-                targetState = state.isLoading,
-                contentAlignment = Alignment.Center
-            ) { isLoading ->
-                if (isLoading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        NovixLoadingIndicator()
-                    }
-                } else {
                     LazyColumn(
                         modifier = Modifier
                             .padding(bottom = 112.dp)
@@ -212,8 +200,8 @@ fun MovieDetailsContent(
                             )
                         }
                     }
-                }
-            }
+
+
 
             BottomContainer(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },

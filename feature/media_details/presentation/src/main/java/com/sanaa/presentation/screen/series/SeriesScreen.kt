@@ -30,6 +30,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -198,9 +199,12 @@ fun SeriesScreenContent(
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.series.trailerUrl,
-                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked
+                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
+                onSetRateClicked = interactionListener::onRateClicked
             )
         }
-
+        if (state.showRateBottomSheet) {
+            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet)
+        }
     }
 }

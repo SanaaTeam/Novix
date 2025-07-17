@@ -104,4 +104,15 @@ class SeriesViewModel(
         )
     }
 
+    override fun onRateClicked() {
+        updateState {
+            it.copy(showRateBottomSheet = true)
+        }
+    }
+
+    override fun onDismissRateBottomSheet() {
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
+    }
 }

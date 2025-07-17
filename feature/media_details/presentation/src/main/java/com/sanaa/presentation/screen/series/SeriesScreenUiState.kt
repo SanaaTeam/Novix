@@ -10,6 +10,7 @@ data class SeriesScreenUiState(
     val season: SeasonUiModel = SeasonUiModel(),
     val cast: List<ActorUiModel> = emptyList(),
     val images: List<String> = emptyList(),
+    val showRateBottomSheet: Boolean = false,
     val isLoadingEpisodes: Boolean = false,
     val error: String? = null,
     val selectedSeason: Int = 1,

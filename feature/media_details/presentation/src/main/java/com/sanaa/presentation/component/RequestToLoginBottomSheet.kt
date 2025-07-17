@@ -15,8 +15,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
@@ -32,11 +32,10 @@ fun RequestToLoginBottomSheet(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
     onLoginButtonClick: () -> Unit = {},
-    text: String = "Please login to save to list",
-    title: String = "Add to list"
+    text: String = stringResource(R.string.request_login),
+    title: String = stringResource(R.string.add_to_list)
 
 ) {
-    val showSheet = remember { mutableStateOf(false) }
     val isDarkTheme = isSystemInDarkTheme()
     val loginImageId = if (isDarkTheme) {
         R.drawable.user_person_profile_dark
@@ -62,7 +61,8 @@ fun RequestToLoginBottomSheet(
                 Image(
                     painter = painterResource
                         (id = loginImageId),
-                    contentDescription = "pleas login light"
+                    contentDescription = "pleas login light",
+                    modifier = Modifier.size(100.dp)
                 )
                 Text(
                     text = text,
@@ -74,12 +74,10 @@ fun RequestToLoginBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
-                    text = "Login",
+                    text = stringResource(R.string.login),
                     onClick = onLoginButtonClick
                 )
-
             }
-
         }
     )
 }

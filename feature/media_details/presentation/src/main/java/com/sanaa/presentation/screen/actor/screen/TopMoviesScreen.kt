@@ -68,9 +68,9 @@ private fun TopMoviesContent(
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
-        com.sanaa.presentation.R.drawable.movie_placeholder_dark
+        R.drawable.movie_placeholder_dark
     } else {
-        com.sanaa.presentation.R.drawable.movie_placeholder_light
+        R.drawable.movie_placeholder_light
     }
 
     NovixScaffold(

@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
@@ -40,16 +40,15 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun MovieCategoriesScreen(
     categoryId: String,
-    viewModel:
-    MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) })
+    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) })
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         MovieCategoriesScreenContent(
-            state = state.value,
-            interactionListener = viewModel
-        )    }
+            state = state.value, interactionListener = viewModel
+        )
+    }
 
 }
 
@@ -75,11 +74,8 @@ fun MovieCategoriesScreenContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_arrow_back),
-                        onClick = {interactionListener.onBackClick()}
-                    )
-                },
-                screenTitle = state.title,
-                modifier = Modifier
+                        onClick = { interactionListener.onBackClick() })
+                }, screenTitle = state.title, modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
@@ -87,17 +83,13 @@ fun MovieCategoriesScreenContent(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-
                 AnimatedContent(
                     targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { loading ->
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
                     if (loading) {
-                       // NovixLoadingIndicator()
-                        CircularProgressIndicator()
+                        NovixLoadingIndicator()
                     } else {
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),
@@ -105,18 +97,14 @@ fun MovieCategoriesScreenContent(
                             contentPadding = PaddingValues(
                                 start = 16.dp, end = 16.dp, bottom = 16.dp
                             ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            )
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(state.movies) { movie ->
                                 MovieSeriesPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.imageUrl ,
+                                            imageUrl = movie.imageUrl,
                                             modifier = Modifier.fillMaxSize(),
                                             blurRadius = 150,
                                             haramThreshold = 0.2f,
@@ -127,16 +115,14 @@ fun MovieCategoriesScreenContent(
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
-                                    onCardClick = { interactionListener.openMovie() }
-                                )
+                                    onCardClick = { interactionListener.onMovieClick() })
                             }
                         }
                     }
                     if (state.showBottomSheet) {
                         RequestToLoginBottomSheet(
-                            onDismiss = { interactionListener.hideBottomSheet() },
-                            onLoginButtonClick = {/* navigate to login screen */}
-                        )
+                            onDismiss = { interactionListener.onBottomSheetDismiss() },
+                            onLoginButtonClick = {/* navigate to login screen */ })
                     }
                 }
             }

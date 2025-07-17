@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.movie_categories
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import details.usecase.movie.GetMoviesByCategory
 import entity.Genre
@@ -8,10 +7,9 @@ import entity.Genre
 class MovieCategoriesViewModel(
     private val categoryId: String,
     private val getMoviesByCategoryUseCase: GetMoviesByCategory,
-) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>
-    (MovieCategoriesScreenUiState()), MovieCategoriesScreenInteractionListener {
-    private val TAG = "MovieCategoriesViewMode"
-
+) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>(
+    MovieCategoriesScreenUiState()
+), MovieCategoriesScreenInteractionListener {
     init {
         getListOfMoviesByCategory(categoryId)
     }
@@ -24,7 +22,7 @@ class MovieCategoriesViewModel(
         }
     }
 
-    override fun hideBottomSheet() {
+    override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
     }
 
@@ -32,7 +30,7 @@ class MovieCategoriesViewModel(
         emitEffect(MovieCategoriesScreenEffects.NavigateBack)
     }
 
-    override fun openMovie() {
+    override fun onMovieClick() {
         TODO("Not yet implemented")
     }
 
@@ -45,11 +43,9 @@ class MovieCategoriesViewModel(
                 val genre = Genre.fromValue(categoryId)
                     ?: throw IllegalArgumentException("Unknown genre: $categoryId")
                 val movies = getMoviesByCategoryUseCase.execute(genre)
-                Log.i(TAG, "getListOfMoviesByCategory: $movies")
                 updateState {
                     it.copy(
-                        title = categoryId,
-                        movies = movies.map { it ->
+                        title = categoryId, movies = movies.map { it ->
                             MovieCardUiModel(
                                 id = it.id,
                                 title = it.title,
@@ -64,10 +60,7 @@ class MovieCategoriesViewModel(
                 updateState {
                     it.copy(isLoading = false)
                 }
-
-                Log.i(TAG, "state: ${state.value}")
             },
-
             onError = {
                 updateState {
                     it.copy(error = it.error, isLoading = false)
