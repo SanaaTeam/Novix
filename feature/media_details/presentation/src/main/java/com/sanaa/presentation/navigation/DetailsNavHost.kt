@@ -38,7 +38,7 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
             ) { entry ->
                 val actorId = entry.arguments!!.getInt(ActorDetailsScreenRoute.ARG_ACTOR_ID)
 
-                ActorScreen(actorId = actorId)            // no nav lambda needed
+                ActorScreen(actorId = actorId)
             }
 
             /* ── top movies ── */
