@@ -15,11 +15,11 @@ import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
-import com.sanaa.presentation.screen.series.CastUiModel
+import com.sanaa.presentation.module.ActorUiModel
 
 @Composable
 fun GuestsOfHonorComponent(
-    guests: List<CastUiModel>,
+    guests: List<ActorUiModel>,
     onActorClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -39,7 +39,7 @@ fun GuestsOfHonorComponent(
             ActorCard(
                 playedCharacter = it.character,
                 actorName = it.name, actorImage = rememberAsyncImagePainter(
-                    model = it.profilePath,
+                    model = it.imageUrl,
                 ),
                 modifier = Modifier
                     .fillMaxWidth(

@@ -1,6 +1,9 @@
 package com.sanaa.presentation.screen.series
 
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.module.toActorUiModel
+import com.sanaa.presentation.module.toSeasonUiModel
+import com.sanaa.presentation.module.toSeriesUiModel
 import details.usecase.tv_series.GetTvSeriesCastUseCase
 import details.usecase.tv_series.GetTvSeriesDetailsUseCase
 import details.usecase.tv_series.GetTvSeriesImagesUseCase
@@ -34,7 +37,7 @@ class SeriesViewModel(
             updateState {
                 it.copy(
                     series = series.toSeriesUiModel(trailerUrl),
-                    cast = cast.map { it.toCastUiModel() },
+                    cast = cast.map { it.toActorUiModel() },
                     season = season.toSeasonUiModel(),
                     images = images,
                 )

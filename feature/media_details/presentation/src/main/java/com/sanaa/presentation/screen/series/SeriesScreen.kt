@@ -2,11 +2,12 @@ package com.sanaa.presentation.screen.series
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -15,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,9 +28,12 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgr
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
@@ -46,24 +49,32 @@ fun SeriesScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
+    val navController = LocalNavControllerProvider.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
                 is SeriesScreenEffects.NavigateToActorScreen -> {
-                    TODO()
+                    navController.navigate(
+                        ActorDetailsScreenRoute(it.actorId).route()
+                    )
                 }
 
                 is SeriesScreenEffects.NavigateToEpisodeDetailsScreen -> {
-                    TODO()
+                    navController.navigate(
+                        EpisodeDetailsScreenRoute(
+                            it.seriesId, it.seasonNumber, it.episodeNumber
+                        ).route()
+                    )
                 }
 
                 is SeriesScreenEffects.NavigateToReviewsScreen -> {
-                    TODO()
+                    navController.navigate(
+                        ReviewsScreenRoute(it.seriesId).route()
+                    )
                 }
 
                 is SeriesScreenEffects.NavigateBack -> {
-                    TODO()
+                    navController.popBackStack()
                 }
 
                 is SeriesScreenEffects.PlayTrailer -> {
@@ -83,15 +94,14 @@ fun SeriesScreen(
 fun SeriesScreenContent(
     interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
 ) {
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        NovixScaffold(
-            backgroundShapes = { NovixBackgroundShapes() },
+    NovixScaffold(
+        backgroundShapes = { NovixBackgroundShapes() },
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                AppTopBar(
-                    leftContent = {
+            AppTopBar(
+                leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
                         onClick = interactionListener::onBackClicked
@@ -103,88 +113,94 @@ fun SeriesScreenContent(
                         onClick = interactionListener::onBackClicked
                     )
                 }, modifier = Modifier
-                        .systemBarsPadding()
-                        .zIndex(10f)
-                )
+                    .systemBarsPadding()
+                    .zIndex(10f)
+            )
 
-                AnimatedContent(
-                    state.isLoading,
-                    modifier = Modifier.align(Alignment.Center),
-                    contentAlignment = Alignment.Center
+            AnimatedContent(
+                state.isLoading,
+                modifier = Modifier.align(Alignment.Center),
+                contentAlignment = Alignment.Center
 
-                ) {
-                    if (it) {
-                        NovixLoadingIndicator(
-                            modifier = Modifier.align(Alignment.Center)
+            ) {
+                if (it) {
+                    NovixLoadingIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                } else Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(
+                            state = rememberScrollState()
                         )
-                    } else Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(
-                                state = rememberScrollState()
-                            )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 112.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(bottom = 112.dp)
-                        ) {
-                            SeriesHeaderSection(
-                                title = state.series.title,
-                                rating = state.series.rating,
-                                season = stringResource(
-                                    R.string.seasons_count, state.series.seasonsCount
-                                ),
-                                airDate = state.series.releaseDate,
-                                imagesUrl = state.images,
-                                genres = state.series.genres,
-                                onReviewClicked = {
-                                    interactionListener.onViewReviewsClicked(
-                                        state.series.id
-                                    )
-                                })
+                        SeriesHeaderSection(
+                            title = state.series.title,
+                            rating = state.series.rating,
+                            season = stringResource(
+                                R.string.seasons_count, state.series.seasonsCount
+                            ),
+                            airDate = state.series.releaseDate,
+                            imagesUrl = state.images,
+                            genres = state.series.genres,
+                            onReviewClicked = {
+                                interactionListener.onViewReviewsClicked(
+                                    state.series.id
+                                )
+                            })
+                        state.series.overview?.let {
                             OverviewSection(
                                 onReadMore = {},
                                 titleResId = R.string.overview,
-                                overview = state.series.overview,
+                                overview = it,
                                 modifier = Modifier.padding(
                                     start = 16.dp, end = 16.dp, top = 16.dp
                                 )
                             )
-                            CastComponent(
-                                cast = state.cast,
-                                onActorClicked = interactionListener::onActorClicked,
-                            )
-                            SeasonTap(
-                                onClick = interactionListener::onSeasonNumberClicked,
-                                seasonCounts = state.series.seasonsCount,
-                                currentSeason = state.selectedSeason,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-                            EpisodesContent(
-                                episodes = state.season.episodes,
-                                seriesId = state.series.id,
-                                onEpisodeClick = interactionListener::onEpisodeClicked
-                            )
                         }
+                        CastComponent(
+                            cast = state.cast,
+                            onActorClicked = interactionListener::onActorClicked,
+                        )
+                        SeasonTap(
+                            onClick = interactionListener::onSeasonNumberClicked,
+                            seasonCounts = state.series.seasonsCount,
+                            currentSeason = state.selectedSeason,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                        AnimatedContent(state.isLoadingEpisodes) {
+                            if (it) {
+                                Column(
+                                    modifier = Modifier
+                                        .heightIn(min = 300.dp)
+                                        .fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
 
+                                ) {
+                                    NovixLoadingIndicator()
+                                }
+                            } else {
+                                EpisodesContent(
+                                    episodes = state.season.episodes,
+                                    seriesId = state.series.id,
+                                    onEpisodeClick = interactionListener::onEpisodeClicked
+                                )
+                            }
+                        }
                     }
-                }
-                BottomContainer(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    trailerUrl = state.series.trailerUrl,
-                    onPlayTrailerClicked = interactionListener::onPlayTrailerClicked
-                )
-                if (state.isLoadingEpisodes) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.3f))
-                            .zIndex(100f), contentAlignment = Alignment.Center
-                    ) {
-                        NovixLoadingIndicator()
-                    }
+
                 }
             }
-
+            BottomContainer(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                trailerUrl = state.series.trailerUrl,
+                onPlayTrailerClicked = interactionListener::onPlayTrailerClicked
+            )
         }
+
     }
 }

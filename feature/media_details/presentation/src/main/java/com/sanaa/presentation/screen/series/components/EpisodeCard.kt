@@ -20,7 +20,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.screen.series.EpisodeUiModel
+import com.sanaa.presentation.module.EpisodeUiModel
 
 @Composable
 fun EpisodeCard(

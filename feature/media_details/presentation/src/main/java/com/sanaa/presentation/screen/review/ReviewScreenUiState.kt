@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.review
 
-import java.time.LocalDate
+import com.sanaa.presentation.module.ReviewUiModule
 
 
 data class ReviewScreenUiState(
@@ -9,12 +9,3 @@ data class ReviewScreenUiState(
     val error: String? = null,
 )
 
-data class ReviewUiModule(
-    val id: Int,
-    val authorName: String,
-    val username: String?,
-    val content: String,
-    val rating: Float?,
-    val createdDate: LocalDate,
-    val avatarUrl: String?,
-)

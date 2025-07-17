@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.episode_details
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.screen.series.toCastUiModel
-import com.sanaa.presentation.screen.series.toEpisodeUiModel
+import com.sanaa.presentation.module.toActorUiModel
+import com.sanaa.presentation.module.toEpisodeUiModel
 import details.usecase.tv_series.GetEpisodeDetailsUseCase
 import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
 import details.usecase.tv_series.GetTvSeriesImagesUseCase
@@ -34,7 +34,7 @@ class EpisodeDetailsScreenViewModel(
             updateState {
                 it.copy(
                     episode = episode.toEpisodeUiModel(),
-                    guestOfHonor = cast.map { it.toCastUiModel() },
+                    guestOfHonor = cast.map { it.toActorUiModel() },
                     seriesId = seriesId,
                     imagesUrl = images,
                     trailerUrl = trailer
@@ -54,7 +54,7 @@ class EpisodeDetailsScreenViewModel(
     }
 
     override fun onBackClick() {
-        emitEffect(EpisodeDetailsEffects.NavigateBackToSeries)
+        emitEffect(EpisodeDetailsEffects.NavigateBack)
     }
 
     override fun onPlayTrailerClick() {
