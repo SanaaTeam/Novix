@@ -143,7 +143,7 @@ fun SearchScreenContent(
                 if (!isSliderDragging) {
                     dismissSheet()
                 }
-            },            sheetState = sheetState,
+            }, sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(

@@ -1,10 +1,8 @@
 name: Build & upload to Firebase App Distribution
 
 on:
-  workflow_run:
-    workflows: [ "Verify build compile" ]
-    types:
-      - completed
+  push:
+    branches: [ main, development ]
   workflow_dispatch:
 
 jobs:

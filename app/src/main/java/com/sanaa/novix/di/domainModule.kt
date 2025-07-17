@@ -1,5 +1,16 @@
 package com.sanaa.novix.di
 
+import details.usecase.actor.GetActorDetailsUseCase
+import details.usecase.actor.GetActorTopMoviesUseCase
+import details.usecase.actor.GetActorTopTvSeriesUseCase
+import details.usecase.actor.GetGalleryImagesUseCase
+import details.usecase.actor.GetProfileImagesUseCase
+import details.usecase.movie.GetMovieCastUseCase
+import details.usecase.movie.GetMovieDetailsUseCase
+import details.usecase.movie.GetMovieImagesUseCase
+import details.usecase.movie.GetMoviesByCategory
+import details.usecase.movie.GetReviewsByMovieId
+import details.usecase.movie.GetSimilarMoviesByMovieId
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -12,14 +23,27 @@ import search.usecase.SearchMoviesUseCase
 import search.usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
-    factory { SearchMoviesUseCase(get(), get()) }
-    factory { SearchTvSeriesUseCase(get(), get()) }
-    factory { SearchActorsUseCase(get(), get()) }
-    factory { GetRecentViewedUseCase(get()) }
-    factory { GetSearchHistoryUseCase(get()) }
-    factory { ClearRecentViewedUseCase(get()) }
-    factory { ClearSearchHistoryUseCase(get()) }
-    factory { RemoveSearchHistoryUseCase(get()) }
-    factory { AddRecentViewedUseCase(get()) }
-    factory { RemoveSearchHistoryUseCase(get()) }
+    single { SearchMoviesUseCase(get(), get()) }
+    single { SearchTvSeriesUseCase(get(), get()) }
+    single { SearchActorsUseCase(get(), get()) }
+    single { GetRecentViewedUseCase(get()) }
+    single { GetSearchHistoryUseCase(get()) }
+    single { ClearRecentViewedUseCase(get()) }
+    single { ClearSearchHistoryUseCase(get()) }
+    single { RemoveSearchHistoryUseCase(get()) }
+    single { AddRecentViewedUseCase(get()) }
+    single { RemoveSearchHistoryUseCase(get()) }
+
+    single { GetActorDetailsUseCase(get()) }
+    single { GetActorTopMoviesUseCase(get()) }
+    single { GetActorTopTvSeriesUseCase(get()) }
+    single { GetGalleryImagesUseCase(get()) }
+    single { GetProfileImagesUseCase(get()) }
+
+    single { GetMovieCastUseCase(get()) }
+    single { GetMovieDetailsUseCase(get()) }
+    single { GetMovieImagesUseCase(get()) }
+    single { GetMoviesByCategory(get()) }
+    single { GetReviewsByMovieId(get()) }
+    single { GetSimilarMoviesByMovieId(get()) }
 }

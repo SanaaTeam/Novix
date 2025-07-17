@@ -148,7 +148,6 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
-
 # Gradle Plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -167,6 +166,7 @@ google-services = { id = "com.google.gms.google-services", version = "4.4.3" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.4" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+novix-android-compose = { id = "novix.android.library.compose" }
 
 # Custom plugins
 novix-kotlin = { id = "novix.kotlin.library" }
@@ -175,6 +175,9 @@ novix-kotlin = { id = "novix.kotlin.library" }
 room = [
     "androidx-room-runtime",
     "androidx-room-ktx",
+]
+
+room-testing = [
     "androidx-room-testing"
 ]
 

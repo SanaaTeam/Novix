@@ -28,10 +28,7 @@ fun RecentSearchItem(
     ) {
     Row(
         modifier = modifier
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 12.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
 
     ) {
@@ -39,10 +36,11 @@ fun RecentSearchItem(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .weight(1f)
                 .clickable(
                     onClick = onRecentSearchItemClicked
                 )
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .weight(1f)
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.icon_clock),
@@ -61,8 +59,9 @@ fun RecentSearchItem(
             contentDescription = null,
             tint = Theme.colors.hint,
             modifier = Modifier
-                .size(16.dp)
                 .clickable(onClick = onDeleteClicked)
+                .padding(16.dp)
+                .size(16.dp)
         )
     }
 

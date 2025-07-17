@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,7 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,7 +30,7 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
@@ -51,10 +52,15 @@ fun SearchHistoryContent(
             ) {
                 EmptySearchState(
                     icon = painterResource(id = R.drawable.empty_search),
-                    text = stringResource(id = R.string.empty_search_message),
-
-                    )
+                    text = stringResource(id = R.string.empty_search_message)
+                )
             }
+        }
+        val isDarkTheme = isSystemInDarkTheme()
+        val placeholderResId = if (isDarkTheme) {
+            com.sanaa.presentation.R.drawable.movie_placeholder_dark
+        } else {
+            com.sanaa.presentation.R.drawable.movie_placeholder_light
         }
         AnimatedVisibility(
             recentSearches.isNotEmpty() || recentViewed.isNotEmpty(),
@@ -86,14 +92,26 @@ fun SearchHistoryContent(
                                         .width(158.dp)
                                         .height(210.dp),
                                     boastImage = {
-                                        RemoteCensoredImageViewer(
+                                        RemoteBlurredHaramImageViewer(
                                             imageUrl = item.imageUrl,
-                                            modifier = Modifier,
-                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier.fillMaxWidth(),
                                             blurRadius = 150,
-                                            sfwThreshold = 0.75f,
-                                            nsfwThreshold = 0.15f,
-                                        )
+                                            haramThreshold = 0.2f,
+                                            nonHaramThreshold = 0.7f,
+                                            placeholder = painterResource(placeholderResId),
+                                            error = painterResource(placeholderResId),
+
+                                            contentDescription = null,
+                                        ) {
+                                            OnBlurContent(
+                                                hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                                                textStyle = Theme.textStyle.body.small.copy(
+                                                    color = Color(0x99FFFFFF)
+                                                ),
+                                                iconSize = 24.dp,
+                                                icon = painterResource(R.drawable.icon_eye_slash),
+                                            )
+                                        }
                                     },
                                     topLeftContent = {
                                         SaveIconChip(
@@ -136,14 +154,12 @@ fun SearchHistoryContent(
                                     )
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp)
-                                    .padding(bottom = 12.dp)
                                     .height(1.dp)
                                     .background(color = Theme.colors.stroke)
                             )
                         }
                     }
                 }
-
             }
         }
     }
