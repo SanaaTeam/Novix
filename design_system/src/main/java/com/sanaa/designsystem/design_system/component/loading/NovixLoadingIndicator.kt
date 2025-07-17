@@ -14,9 +14,11 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NovixLoadingIndicator() {
+fun NovixLoadingIndicator(
+    modifier: Modifier = Modifier,
+) {
     CircularWavyProgressIndicator(
-        modifier = Modifier.size(64.dp),
+        modifier = modifier.size(64.dp),
         color = Theme.colors.primary,
         trackColor = Theme.colors.stroke,
     )
