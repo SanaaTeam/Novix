@@ -59,16 +59,16 @@ class SearchViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
-            searchMoviesUseCase,
-            searchTvSeriesUseCase,
-            searchActorsUseCase,
-            addRecentViewedUseCase,
-            getRecentViewedUseCase,
-            getSearchHistoryUseCase,
-            clearRecentViewedUseCase,
-            clearSearchHistoryUseCase,
-            deleteSearchItemUseCase,
-            testDispatcher,
+            searchMoviesUseCase = searchMoviesUseCase,
+            searchTvSeriesUseCase = searchTvSeriesUseCase,
+            searchActorsUseCase = searchActorsUseCase,
+            addRecentViewedUseCase = addRecentViewedUseCase,
+            getRecentViewedUseCase = getRecentViewedUseCase,
+            getSearchHistoryUseCase = getSearchHistoryUseCase,
+            clearRecentViewedUseCase = clearRecentViewedUseCase,
+            clearSearchHistoryUseCase = clearSearchHistoryUseCase,
+            deleteSearchItemUseCase = deleteSearchItemUseCase,
+            dispatcher = testDispatcher,
         )
     }
 

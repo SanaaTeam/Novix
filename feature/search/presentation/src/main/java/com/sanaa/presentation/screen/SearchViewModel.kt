@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import search.repository.SearchHistoryRepository
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
 import search.usecase.ClearSearchHistoryUseCase
@@ -51,7 +50,6 @@ class SearchViewModel(
     private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
     private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
     private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase,
-    private val searchHistoryRepository: SearchHistoryRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
@@ -163,9 +161,6 @@ class SearchViewModel(
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
 
-        viewModelScope.launch {
-            searchHistoryRepository.addSearchHistory(query)
-        }
 
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
