@@ -45,7 +45,7 @@ jobs:
           cp keys.properties ./data/remote_data_source/search/keys.properties
 
       - name: Run unit tests + Kover
-        run: ./gradlew test koverXmlReport koverHtmlReport
+        run: ./gradlew test koverVerify koverXmlReport koverHtmlReport
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
