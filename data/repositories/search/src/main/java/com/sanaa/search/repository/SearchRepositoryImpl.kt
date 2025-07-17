@@ -3,19 +3,21 @@ package com.sanaa.search.repository
 import android.util.Log
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
+import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
-import com.sanaa.search.mapper.toDtoId
 import com.sanaa.search.mapper.toLocalDto
 import com.sanaa.search.mapper.toSearchOutput
+import com.sanaa.search.repository.util.filterCashedMovies
+import com.sanaa.search.repository.util.filterCashedTvShows
+import com.sanaa.search.repository.util.filterMovies
+import com.sanaa.search.repository.util.filterTvShows
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
-import kotlinx.datetime.LocalDate
 import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
-import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
@@ -23,30 +25,19 @@ class SearchRepositoryImpl(
     private val localDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
-    override suspend fun searchActors(query: String, page: Int): List<SearchActorOutput> {
-        try {
-            val pageSize = 20
-            val offset = (page - 1) * pageSize
-            Log.d("SearchRepo", "Page: $page, PageSize: $pageSize, Offset: $offset")
+    override suspend fun searchActors(query: String, page: Int) = searchOrThrow(query) {
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        Log.d("SearchRepo", "Page: $page, PageSize: $pageSize, Offset: $offset")
 
-            val cachedActors = localDataSource.getPagedActorsByQuery(query, pageSize, offset)
-
-            if (cachedActors.isNotEmpty()) {
-                return cachedActors.map { it.toSearchOutput() }
-            } else {
-                val actors = remoteDataSource.searchActors(query, page).results.also {
-                    it.forEach {
-                        localDataSource.cacheActor(
-                            it.toLocalDto(languageProvider.getCurrentLanguage())
-                        )
-                    }
-                }
-                return actors.map { it.toSearchOutput() }
-            }
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (_: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve actors for query: $query")
+        val cachedActors = localDataSource.getPagedActorsByQuery(query, pageSize, offset)
+        if (cachedActors.isNotEmpty()) {
+            cachedActors.map { it.toSearchOutput() }
+        } else {
+            remoteDataSource.searchActors(query, page).results.onEach {
+                val language = languageProvider.getCurrentLanguage()
+                localDataSource.cacheActor(it.toLocalDto(language))
+            }.map { it.toSearchOutput() }
         }
     }
 
@@ -62,66 +53,10 @@ class SearchRepositoryImpl(
         val cachedMedia = localDataSource.getMoviesByQuery(
             query, limit = pageSize, offset = offset
         )
-        if (cachedMedia.isNotEmpty()) {
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    cachedMedia.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
-                    }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
-
-                filteredMedia.map { it.toSearchOutput() }
-
-            } ?: cachedMedia.map { it.toSearchOutput() }
-
-
-        } else {
-            val movies = remoteDataSource.searchMovies(query, page).results.also {
-                it.forEach {
-                    localDataSource.cacheMovie(
-                        it.toLocalDto(languageProvider.getCurrentLanguage())
-                    )
-                }
-            }
-
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    movies.filter { it.genreIds?.any { it in filterGenreIds } == true }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-
-                filteredMedia.map {
-                    it.toSearchOutput()
-                }
-            } ?: movies.map { it.toSearchOutput() }
-
-        }
+        if (cachedMedia.isNotEmpty())
+            getMoviesFromCache(filters,page, cachedMedia)
+        else
+            getMoviesFromRemote(query, page, filters)
     }
 
     override suspend fun searchTvShows(
@@ -136,66 +71,63 @@ class SearchRepositoryImpl(
         val cachedTvSeries = localDataSource.getTvSeriesByQuery(
             query, limit = pageSize, offset = offset
         )
-        if (cachedTvSeries.isNotEmpty()) {
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    cachedTvSeries.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
-                    }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
-
-                filteredMedia.map { it.toSearchOutput() }
-
-            } ?: cachedTvSeries.map { it.toSearchOutput() }
-
-        } else {
-            val tvSeries = remoteDataSource.searchTv(query, page).results.also {
-                it.forEach {
-                    localDataSource.cacheTvSeries(
-                        it.toLocalDto(languageProvider.getCurrentLanguage())
-                    )
-                }
-            }
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    tvSeries.filter { it.genreIds?.any { it in filterGenreIds } == true }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-
-                filteredMedia.map {
-                    it.toSearchOutput()
-                }
-            } ?: tvSeries.map { it.toSearchOutput() }
-        }
+        if (cachedTvSeries.isNotEmpty())
+            getTvSeriesFromCache(filters, cachedTvSeries)
+        else
+            getTvSeriesFromRemote(query, page, filters)
     }
 
-    private suspend fun <T> searchOrThrow(query: String, callee: suspend () -> T): T {
+    private suspend fun getMoviesFromRemote(
+        query: String,
+        page: Int,
+        filters: MediaFilters?,
+    ): List<SearchMovieOutput> {
+        val movies = remoteDataSource.searchMovies(query, page).results.onEach {
+            localDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
+        }
+        return filters
+            ?.filterMovies(movies)
+            ?: movies.map { it.toSearchOutput() }
+    }
+
+    private fun getMoviesFromCache(
+        filters: MediaFilters?,
+        page: Int,
+        cachedMedia: List<MoviesLocalDto>,
+    ): List<SearchMovieOutput> {
+        return filters
+            ?.filterCashedMovies(cachedMedia)
+            ?: cachedMedia.map { it.toSearchOutput() }
+    }
+
+    private suspend fun getTvSeriesFromRemote(
+        query: String,
+        page: Int,
+        filters: MediaFilters?,
+    ): List<SearchTvSeriesOutput> {
+        val tvSeries = remoteDataSource.searchTvShows(query, page).results.onEach {
+            localDataSource.cacheTvSeries(
+                it.toLocalDto(languageProvider.getCurrentLanguage())
+            )
+        }
+        return filters
+            ?.filterTvShows(tvSeries)
+            ?: return tvSeries.map { it.toSearchOutput() }
+    }
+
+    private fun getTvSeriesFromCache(
+        filters: MediaFilters?,
+        cachedTvSeries: List<TvSeriesLocalDto>,
+    ): List<SearchTvSeriesOutput> {
+        return filters
+            ?.filterCashedTvShows(cachedTvSeries)
+            ?: return cachedTvSeries.map { it.toSearchOutput() }
+    }
+
+    private suspend fun <T> searchOrThrow(
+        query: String,
+        callee: suspend () -> T,
+    ): T {
         try {
             return callee()
         } catch (_: UnresolvedAddressException) {

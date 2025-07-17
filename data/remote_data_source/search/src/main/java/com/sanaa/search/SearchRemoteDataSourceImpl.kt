@@ -15,13 +15,13 @@ import io.ktor.client.request.parameter
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
     private val baseUrl: String,
-    private val languageProvider: LanguageProvider
-): SearchRemoteDataSource {
+    private val languageProvider: LanguageProvider,
+) : SearchRemoteDataSource {
 
     override suspend fun searchActors(query: String, page: Int): SearchResponse<ActorSearchDto> =
         search(path = "person", query, page)
 
-    override suspend fun searchTv(query: String, page: Int): SearchResponse<TvShowSearchDto> =
+    override suspend fun searchTvShows(query: String, page: Int): SearchResponse<TvShowSearchDto> =
         search(path = "tv", query, page)
 
     override suspend fun searchMovies(query: String, page: Int): SearchResponse<MovieSearchDto> =
@@ -31,7 +31,7 @@ class SearchRemoteDataSourceImpl(
     private suspend inline fun <reified T> search(
         path: String,
         query: String,
-        page: Int = 1
+        page: Int = 1,
     ): SearchResponse<T> {
         return client.get("$baseUrl/search/$path") {
             parameter("query", query)
@@ -41,5 +41,3 @@ class SearchRemoteDataSourceImpl(
         }.body()
     }
 }
-
-

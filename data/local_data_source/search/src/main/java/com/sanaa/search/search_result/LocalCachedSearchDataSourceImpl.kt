@@ -113,7 +113,6 @@ class LocalCachedSearchDataSourceImpl(
         return movieDao.getFilteredMovies(query = query, limit = limit, offset = offset)
     }
 
-
     override suspend fun getTvSeriesByQuery(
         query: String,
         limit: Int,
@@ -134,7 +133,7 @@ class LocalCachedSearchDataSourceImpl(
         searchResultDao.deleteOldResults(expirationTime)
     }
 
-    fun isExpired(timestamp: Long): Boolean {
+    private fun isExpired(timestamp: Long): Boolean {
         return System.currentTimeMillis() - timestamp > CACHE_EXPIRATION_TIME
     }
 

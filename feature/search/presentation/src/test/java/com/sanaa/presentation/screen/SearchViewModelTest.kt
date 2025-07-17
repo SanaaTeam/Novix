@@ -76,7 +76,7 @@ class SearchViewModelTest {
     fun `observeRecentViewedItems() should first stop loading when start clear recent viewed item`() =
         runTest {
             // When
-            searchViewModel.observeRecentViewedItems()
+            searchViewModel
 
             // Then
             searchViewModel.state.test {
@@ -123,10 +123,7 @@ class SearchViewModelTest {
     @Test
     fun `observeRecentSearchHistory() should first stop loading when start clear recent viewed item`() =
         runTest {
-            // When
-            searchViewModel.observeRecentSearchHistory()
-
-            // Then
+            // init Then
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
@@ -279,7 +276,7 @@ class SearchViewModelTest {
     @Test
     fun `onTabSelected() should set the selected tab index`() = runTest {
         // Given
-        val index = SearchViewModel.TV_SHOW_INDEX
+        val index = SearchScreenUiState.TV_SHOW_INDEX
 
         // When
         searchViewModel.onTabSelected(index)
@@ -300,15 +297,15 @@ class SearchViewModelTest {
     fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
         // Given
         val initialState = searchViewModel.state.value
-        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchViewModel.TV_SHOW_INDEX)
+        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
 
         // When
-        searchViewModel.onTabSelected(SearchViewModel.TV_SHOW_INDEX)
+        searchViewModel.onTabSelected(SearchScreenUiState.TV_SHOW_INDEX)
 
         // Then
         searchViewModel.state.test {
             val item = awaitItem()
-            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchViewModel.TV_SHOW_INDEX)
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
             Truth.assertThat(item.isLoading).isTrue()
             cancelAndIgnoreRemainingEvents()
         }
@@ -317,7 +314,7 @@ class SearchViewModelTest {
     @Test
     fun `onTabSelected() should load movies when movie tap selected`() = runTest {
         // Given
-        val index = SearchViewModel.MOVIE_INDEX
+        val index = SearchScreenUiState.MOVIE_INDEX
         val uiState = searchViewModel.state
         val movieName = "Movie"
         val page = 1
@@ -351,7 +348,7 @@ class SearchViewModelTest {
     @Test
     fun `onTabSelected() should load tv shows when tv show tap selected`() = runTest {
         // Given
-        val index = SearchViewModel.TV_SHOW_INDEX
+        val index = SearchScreenUiState.TV_SHOW_INDEX
         val uiState = searchViewModel.state
         val tvShowName = "TvShow"
         val page = 1
@@ -384,7 +381,7 @@ class SearchViewModelTest {
 
     @Test
     fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
-        val index = SearchViewModel.TV_SHOW_INDEX
+        val index = SearchScreenUiState.TV_SHOW_INDEX
 
         // When
         searchViewModel.onTabSelected(index)
@@ -399,7 +396,7 @@ class SearchViewModelTest {
     @Test
     fun `onTabSelected() should load actors when actor tap selected`() = runTest {
         // Given
-        val index = SearchViewModel.ACTOR_INDEX
+        val index = SearchScreenUiState.ACTOR_INDEX
         val uiState = searchViewModel.state
         val actorName = "TvShow"
         val page = 1
@@ -464,7 +461,7 @@ class SearchViewModelTest {
     fun `onFilterApplied() should search movie when apply filters`() = runTest {
         // Given
         val filters = MediaFilters()
-        val index = SearchViewModel.MOVIE_INDEX
+        val index = SearchScreenUiState.MOVIE_INDEX
         val movieName = "Movie"
         searchViewModel.onSearchQueryChanged(movieName)
 

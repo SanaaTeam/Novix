@@ -24,18 +24,16 @@ import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
-
 @Composable
 fun MoviesContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     onMovieClick: (RecentViewedUiModel) -> Unit,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
+    val placeholderResId = if (isDarkTheme)
         R.drawable.movie_placeholder_dark
-    } else {
+    else
         R.drawable.movie_placeholder_light
-    }
 
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),

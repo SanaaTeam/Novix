@@ -9,17 +9,17 @@ interface SearchRemoteDataSource {
 
     suspend fun searchActors(
         query: String,
-        page: Int = 1
+        page: Int = 1,
     ): SearchResponse<ActorSearchDto>
 
-    suspend fun searchTv(
+    suspend fun searchTvShows(
         query: String,
-        page: Int = 1
+        page: Int = 1,
     ): SearchResponse<TvShowSearchDto>
 
     suspend fun searchMovies(
         query: String,
-        page: Int = 1
+        page: Int = 1,
     ): SearchResponse<MovieSearchDto>
 
 }
