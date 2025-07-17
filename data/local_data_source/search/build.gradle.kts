@@ -37,7 +37,7 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.search)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(projects.domain.vod)
     implementation(libs.androidx.core.ktx)
 

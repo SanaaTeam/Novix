@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 
     implementation(projects.data.repositories.movies)
     implementation(libs.bundles.ktor)

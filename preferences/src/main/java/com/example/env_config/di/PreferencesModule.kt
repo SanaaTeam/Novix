@@ -4,6 +4,6 @@ import com.example.env_config.DeviceLanguageProvider
 import com.example.env_config.service.LanguageProvider
 import org.koin.dsl.module
 
-val configModule = module {
+val preferencesModule = module {
     single<LanguageProvider> { DeviceLanguageProvider() }
 }
