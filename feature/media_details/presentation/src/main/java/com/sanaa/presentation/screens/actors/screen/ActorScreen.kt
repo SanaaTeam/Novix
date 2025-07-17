@@ -41,7 +41,6 @@ import com.sanaa.presentation.screens.actors.ActorsScreenInteractionListener
 import com.sanaa.presentation.screens.actors.componants.ActorInfoCard
 import com.sanaa.presentation.screens.actors.componants.MediaSection
 import com.sanaa.presentation.screens.actors.componants.PosterCard
-import com.sanaa.presentation.screens.actors.componants.WavyProgressIndicator
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -54,7 +53,6 @@ fun ActorScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
 
-    /* ─── one-shot side-effects ─── */
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -69,7 +67,6 @@ fun ActorScreen(
         }
     }
 
-    /* ─── theme wrapper ─── */
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         ActorScreenContent(
             state = uiState,
@@ -86,17 +83,11 @@ private fun ActorScreenContent(
     listener: ActorsScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    /**
-     * ──────────────────────────────────────────────────────────────
-     *  Scaffold & background identical to SeriesScreen
-     * ──────────────────────────────────────────────────────────────
-     */
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Box(modifier = modifier) {
 
-            /* ───── Top bar (always visible) ───── */
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
@@ -109,7 +100,6 @@ private fun ActorScreenContent(
                     .zIndex(10f)
             )
 
-            /* ───── Animated switch between loading and content ───── */
             AnimatedContent(
                 targetState = state.isLoading,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
@@ -119,17 +109,14 @@ private fun ActorScreenContent(
                 contentAlignment = Alignment.Center
             ) { loading ->
                 if (loading) {
-                    /** full-screen centered indicator */
                     NovixLoadingIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else {
-                    /** main scrollable body */
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 24.dp)
                     ) {
-                        /* ───── Header images ───── */
                         item {
                             Box {
                                 ImageSlider(
@@ -139,7 +126,6 @@ private fun ActorScreenContent(
                             }
                         }
 
-                        /* ───── Actor info card ───── */
                         item {
                             ActorInfoCard(
                                 actor = state.actor,
@@ -149,7 +135,6 @@ private fun ActorScreenContent(
                             )
                         }
 
-                        /* ───── Biography ───── */
                         state.actor.biography?.let { bio ->
                             item {
                                 OverviewSection(
@@ -163,7 +148,6 @@ private fun ActorScreenContent(
                             }
                         }
 
-                        /* ───── Top-movie picks ───── */
                         item {
                             MediaSection(
                                 title = "Top movie picks",
@@ -174,7 +158,6 @@ private fun ActorScreenContent(
                             }
                         }
 
-                        /* ───── Top-series picks ───── */
                         item {
                             MediaSection(
                                 title = "Top series picks",
