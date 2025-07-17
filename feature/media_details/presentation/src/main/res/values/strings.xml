@@ -14,6 +14,9 @@
     <string name="m">%d m</string>
     <string name="season">Season</string>
     <string name="guest_of_honor">Guest of Honor</string>
+    <string name="reviews">Reviews</string>"
+    <string name="rating">Rating</string>
+    <string name="anonymous">Anonymous</string>
 
 
     <string name="unsuitable_image">Unsuitable image</string>
