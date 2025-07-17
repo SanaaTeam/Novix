@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.review
+package com.sanaa.presentation.screen.review.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

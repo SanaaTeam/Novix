@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.review
+package com.sanaa.presentation.screen.review.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,10 +33,11 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.review.ReviewUiModule
 
 @Composable
 fun ReviewCard(
-    review: ReviewUiState,
+    review: ReviewUiModule,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
