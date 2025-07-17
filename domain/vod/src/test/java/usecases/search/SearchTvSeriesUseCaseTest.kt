@@ -12,8 +12,8 @@ import org.junit.jupiter.api.assertThrows
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchTvSeriesUseCase
-import search.usecase.search_param.MediaType
 import search.usecase.search_param.MediaFilters
+import search.usecase.search_param.MediaType
 import search.usecase.search_param.SearchMediaOutput
 
 class SearchTvSeriesUseCaseTest {
@@ -64,7 +64,7 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
-            val filters = MediaFilters()
+            val filters = mediaFilters
             coEvery {
                 searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
             } returns searchMediaOutputList
@@ -93,8 +93,8 @@ class SearchTvSeriesUseCaseTest {
             }
         }
 
-    companion object {
-        private val searchMediaOutputList = listOf(
+    private companion object {
+        val searchMediaOutputList = listOf(
             SearchMediaOutput(
                 id = 1,
                 title = "title",
@@ -102,5 +102,11 @@ class SearchTvSeriesUseCaseTest {
                 isSaved = true
             )
         )
+        val mediaFilters = MediaFilters(
+            startYear = 1980,
+            endYear = 2025,
+            imdbRating = 5f
+        )
     }
+
 }

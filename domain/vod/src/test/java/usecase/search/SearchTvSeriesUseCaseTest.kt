@@ -64,7 +64,7 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
-            val filters = MediaFilters()
+            val filters = mediaFilters
             coEvery {
                 searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
             } returns searchMediaOutputList
@@ -93,14 +93,19 @@ class SearchTvSeriesUseCaseTest {
             }
         }
 
-    companion object {
-        private val searchMediaOutputList = listOf(
+    private companion object {
+        val searchMediaOutputList = listOf(
             SearchMediaOutput(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
                 isSaved = true
             )
+        )
+        val mediaFilters = MediaFilters(
+            startYear = 1980,
+            endYear = 2025,
+            imdbRating = 5f
         )
     }
 }
