@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,13 +33,16 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
+import com.sanaa.presentation.navigation.TopSeriesScreenRoute
 import com.sanaa.presentation.screens.actors.ActorScreenEffects
 import com.sanaa.presentation.screens.actors.ActorScreenUiState
 import com.sanaa.presentation.screens.actors.ActorViewModel
 import com.sanaa.presentation.screens.actors.ActorsScreenInteractionListener
 import com.sanaa.presentation.screens.actors.componants.ActorInfoCard
+import com.sanaa.presentation.screens.actors.componants.GalleryCard
 import com.sanaa.presentation.screens.actors.componants.MediaSection
 import com.sanaa.presentation.screens.actors.componants.PosterCard
 import org.koin.androidx.compose.koinViewModel
@@ -63,6 +67,16 @@ fun ActorScreen(
                     navController.navigate(
                         TopMoviesScreenRoute(effect.actorId).route()
                     )
+
+                is ActorScreenEffects.NavigateToTopSeries ->
+                    navController.navigate(
+                        TopSeriesScreenRoute(effect.actorId).route()
+                    )
+
+                is ActorScreenEffects.NavigateToGallery ->
+                    navController.navigate(
+                        ActorGalleryScreenRoute(effect.actorId).route()
+                    )
             }
         }
     }
@@ -83,6 +97,12 @@ private fun ActorScreenContent(
     listener: ActorsScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val placeholderResId = if (isDarkTheme) {
+        com.sanaa.presentation.R.drawable.movie_placeholder_dark
+    } else {
+        com.sanaa.presentation.R.drawable.movie_placeholder_light
+    }
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
@@ -121,7 +141,7 @@ private fun ActorScreenContent(
                             Box {
                                 ImageSlider(
                                     images = state.profileImages,
-                                    contentDescription = "Actor photos"
+                                    contentDescription = stringResource(com.sanaa.presentation.R.string.actor_photos),
                                 )
                             }
                         }
@@ -138,7 +158,7 @@ private fun ActorScreenContent(
                         state.actor.biography?.let { bio ->
                             item {
                                 OverviewSection(
-                                    titleResId = R.string.clear,
+                                    titleResId = com.sanaa.presentation.R.string.overview,
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier
@@ -150,8 +170,18 @@ private fun ActorScreenContent(
 
                         item {
                             MediaSection(
-                                title = "Top movie picks",
-                                items = state.topMovies,
+                                title = stringResource(com.sanaa.presentation.R.string.gallery),
+                                items = state.galleryImages.take(10),
+                                onActionClick = listener::onViewAllGalleryClicked
+                            ) { image ->
+                                GalleryCard(image)
+                            }
+                        }
+
+                        item {
+                            MediaSection(
+                                title = stringResource(com.sanaa.presentation.R.string.top_movie_picks),
+                                items = state.topMovies.take(10),
                                 onActionClick = listener::onTopMoviesClicked
                             ) { movie ->
                                 PosterCard(movie.imageUrl)
@@ -160,9 +190,9 @@ private fun ActorScreenContent(
 
                         item {
                             MediaSection(
-                                title = "Top series picks",
-                                items = state.topTvSeries,
-                                onActionClick = { /* see all series */ }
+                                title = stringResource(com.sanaa.presentation.R.string.top_series_picks),
+                                items = state.topTvSeries.take(10),
+                                onActionClick = listener::onTopSeriesClicked
                             ) { series ->
                                 PosterCard(series.imageUrl)
                             }

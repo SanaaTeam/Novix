@@ -23,20 +23,13 @@ class ActorViewModel(
     }
 
     private fun getActorDetails(actorId: Int) {
-        Log.d("ActorVM", "fetching details for id=$actorId")
         updateState { it.copy(isLoading = true) }
         tryToExecute(callee = {
-            Log.d("ActorVM", "fetching details for id=$actorId")
             val series = getActorDetails.execute(actorId)
             val topMovies = getActorTopMovies.execute(actorId)
             val topSeries = getActorTopTvSeries.execute(actorId)
             val profileImages = getProfileImages.execute(actorId)
             val galleryImages = getGalleryImages.execute(actorId)
-            Log.d("ActorViewModel", "galleryImages: $galleryImages")
-            Log.d("ActorViewModel", "profileImages: $profileImages")
-            Log.d("ActorViewModel", "topSeries: $topSeries")
-            Log.d("ActorViewModel", "topMovies: $topMovies")
-            Log.d("ActorViewModel", "series: $series")
             updateState {
                 it.copy(
                     actor = series.toActorUiModel(),
@@ -52,7 +45,6 @@ class ActorViewModel(
             }
         }, onError = { e ->
             updateState {
-                Log.e("ActorVM", "getActorDetails failed: ${e.toString()}")  // ② prints on error
                 it.copy(error = it.error, isLoading = false)
             }
         })
@@ -75,10 +67,14 @@ class ActorViewModel(
     }
 
     override fun onTopSeriesClicked() {
-        TODO("Not yet implemented")
+        emitEffect(
+            ActorScreenEffects.NavigateToTopSeries(actorId)
+        )
     }
 
     override fun onViewAllGalleryClicked() {
-        TODO("Not yet implemented")
+        emitEffect(
+            ActorScreenEffects.NavigateToGallery(actorId)
+        )
     }
 }
