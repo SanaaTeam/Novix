@@ -1,7 +1,7 @@
 package com.sanaa.movies.mapper
 
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
-import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import entity.Movie
 import kotlinx.datetime.LocalDate
@@ -38,7 +38,7 @@ fun SimilarMoviesDto.Results.toDomain(): Movie {
 
 }
 
-fun MoviesByCategoryDto.Results.toDomain(): Movie {
+fun MoviesByCategoryResponse.MoviesByCategoryDto.toDomain(): Movie {
     return Movie(
         id = id ,
         title = title.orEmpty(),
@@ -47,7 +47,7 @@ fun MoviesByCategoryDto.Results.toDomain(): Movie {
         genres = genreIds.mapNotNull { it.toGenre() },
         overview = overview.orEmpty(),
         duration = 0,
-        imdbRating = 0f,
+        imdbRating = voteAverage?.toFloat()?: 0.0f,
     )
 }
 
