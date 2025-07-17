@@ -13,8 +13,7 @@ import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchMoviesUseCase
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
 
 class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -48,7 +47,7 @@ class SearchMoviesUseCaseTest {
             val query = "Movie"
             val filters = null
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
+                searchRepository.searchMovies(query, filters)
             } returns searchMediaOutputList
 
             // When
@@ -65,7 +64,7 @@ class SearchMoviesUseCaseTest {
             val query = "Movie"
             val filters = mediaFilters
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
+                searchRepository.searchMovies(query, filters)
             } returns searchMediaOutputList
 
             // When
@@ -81,7 +80,7 @@ class SearchMoviesUseCaseTest {
             // Given
             val query = "Sam"
             coEvery {
-                searchRepository.searchMedia(query, null, MediaType.MOVIE)
+                searchRepository.searchMovies(query, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
@@ -91,12 +90,11 @@ class SearchMoviesUseCaseTest {
         }
 
     private companion object {
-        val searchMediaOutputList = listOf(
-            SearchMediaOutput(
+        private val searchMediaOutputList = listOf(
+            SearchMovieOutput(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
-                isSaved = true
             )
         )
         val mediaFilters = MediaFilters(
