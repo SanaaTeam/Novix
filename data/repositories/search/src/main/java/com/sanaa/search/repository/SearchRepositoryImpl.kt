@@ -11,9 +11,9 @@ import exceptions.RetrievingDataFailureException
 import kotlinx.datetime.LocalDate
 import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
 import search.usecase.search_param.SearchActorOutput
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 
@@ -44,29 +44,10 @@ class SearchRepositoryImpl(
         }
     }
 
-    override suspend fun searchMedia(
+    override suspend fun searchMovies(
         query: String,
         filters: MediaFilters?,
-        mediaType: MediaType
-    ): List<SearchMediaOutput> {
-        return try {
-            if (mediaType == MediaType.MOVIE) {
-                searchMovies(query, filters)
-            } else {
-                searchTvSeries(query, filters)
-            }
-        } catch (_: UnresolvedAddressException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw RetrievingDataFailureException("Failed to retrieve media for query: $query")
-        }
-    }
-
-    private suspend fun searchMovies(
-        query: String,
-        filters: MediaFilters?
-    ): List<SearchMediaOutput> {
+    ): List<SearchMovieOutput> = searchOrThrow(query) {
         val cachedMedia = localDataSource.getMoviesByQuery(query)
         if (cachedMedia.isNotEmpty()) {
             filters?.let {
@@ -90,9 +71,9 @@ class SearchRepositoryImpl(
                         filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
                 }
 
-                return filteredMedia.map { it.toSearchOutput(false) }
+                filteredMedia.map { it.toSearchOutput() }
 
-            } ?: return cachedMedia.map { it.toSearchOutput(false) }
+            } ?: cachedMedia.map { it.toSearchOutput() }
 
 
         } else {
@@ -122,18 +103,18 @@ class SearchRepositoryImpl(
                         filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
                 }
 
-                return filteredMedia.map {
-                    it.toSearchOutput(false)
+                filteredMedia.map {
+                    it.toSearchOutput()
                 }
-            } ?: return movies.map { it.toSearchOutput(false) }
+            } ?: movies.map { it.toSearchOutput() }
 
         }
     }
 
-    private suspend fun searchTvSeries(
+   override suspend fun searchTvShows(
         query: String,
-        filters: MediaFilters?
-    ): List<SearchMediaOutput> {
+        filters: MediaFilters?,
+    ): List<SearchTvSeriesOutput> = searchOrThrow(query) {
         val cachedTvSeries = localDataSource.getTvSeriesByQuery(query)
         if (cachedTvSeries.isNotEmpty()) {
             filters?.let {
@@ -157,9 +138,9 @@ class SearchRepositoryImpl(
                         filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
                 }
 
-                return filteredMedia.map { it.toSearchOutput(false) }
+                filteredMedia.map { it.toSearchOutput() }
 
-            } ?: return cachedTvSeries.map { it.toSearchOutput(false) }
+            } ?: cachedTvSeries.map { it.toSearchOutput() }
 
         } else {
             val tvSeries = remoteDataSource.searchTv(query).results.also {
@@ -187,10 +168,20 @@ class SearchRepositoryImpl(
                         filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
                 }
 
-                return filteredMedia.map {
-                    it.toSearchOutput(false)
+                filteredMedia.map {
+                    it.toSearchOutput()
                 }
-            } ?: return tvSeries.map { it.toSearchOutput(false) }
+            } ?: tvSeries.map { it.toSearchOutput() }
+        }
+    }
+
+    private suspend fun <T> searchOrThrow(query: String, callee: suspend () -> T): T {
+        try {
+            return callee()
+        } catch (_: UnresolvedAddressException) {
+            throw NoNetworkException()
+        } catch (e: Exception) {
+            throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
         }
     }
 }
