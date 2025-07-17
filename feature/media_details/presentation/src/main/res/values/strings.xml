@@ -34,4 +34,9 @@
     <string name="overview">Overview</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
+    <string name="gallery">Gallery</string>
+    <string name="actor_photos">Actor photos</string>
+    <string name="top_movie_picks">Top movie picks</string>
+    <string name="top_series_picks">Top series picks</string>
+    <string name="show">show</string>
 </resources>

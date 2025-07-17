@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.section_header.ViewAllComponent
 
 @Composable
 fun <T> MediaSection(
@@ -26,10 +28,15 @@ fun <T> MediaSection(
             .fillMaxWidth()
             .padding(bottom = 24.dp)
     ) {
-        SectionHeader(
+
+        NovixSectionHeader(
             title = title,
-            actionText = "All →",
-            onActionClick = onActionClick
+            modifier = Modifier.padding(bottom = 12.dp),
+            rightContent = {
+                ViewAllComponent(
+                    onClick = onActionClick
+                )
+            }
         )
 
         LazyRow(

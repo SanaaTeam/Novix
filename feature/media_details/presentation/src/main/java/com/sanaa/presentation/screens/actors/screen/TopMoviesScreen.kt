@@ -1,18 +1,24 @@
 package com.sanaa.presentation.screens.actors.screen
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -22,6 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -39,39 +48,38 @@ fun TopMoviesScreen(
 ) {
     BackHandler(onBack = navigateBack)
 
-    val viewModel: ActorViewModel =
-        koinViewModel { parametersOf(actorId) }
+    val viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    NovixTheme(isSystemInDarkTheme()) {
-
+    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         TopMoviesContent(
             state = uiState,
-//            listener = viewModel,
-            modifier = Modifier.fillMaxSize(),
-            onBackClick = navigateBack
+            onBackClick = navigateBack,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopMoviesContent(
+private fun TopMoviesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val placeholderResId = if (isDarkTheme) {
+        com.sanaa.presentation.R.drawable.movie_placeholder_dark
+    } else {
+        com.sanaa.presentation.R.drawable.movie_placeholder_light
+    }
 
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 140.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 16.dp),
-        contentPadding = PaddingValues(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    NovixScaffold(
+        backgroundShapes = { NovixBackgroundShapes() },
     ) {
-
-        item {
+        Column(
+            modifier = modifier
+        ) {
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
@@ -79,48 +87,64 @@ fun TopMoviesContent(
                         onClick = onBackClick
                     )
                 },
-                modifier = Modifier.padding(top = 52.dp)
+                screenTitle = stringResource(com.sanaa.presentation.R.string.top_movie_picks),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .systemBarsPadding()
             )
-        }
 
-        items(state.topMovies) { movie ->
-            Log.d("MoviesContent", "Movie: $movie")
-            MovieSeriesPosterCard(boastImage = {
-                RemoteCensoredImageViewer(
-                    imageUrl = movie.imageUrl ?: "",
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.Crop,
-                    blurRadius = 150,
-                    sfwThreshold = 0.75f,
-                    nsfwThreshold = 0.15f,
-                    //                    placeholder = painterResource(placeholderResId),
-                    //                    error = painterResource(placeholderResId),
-                    contentDescription = movie.title,
-                    placeholderBackgroundColor = Theme.colors.surface,
-                    hintText = stringResource(R.string.clear),
-                    textStyle = Theme.textStyle.body.small,
-                    iconSize = 24.dp,
-                )
-            }, topLeftContent = {
-                SaveIconChip(onClick = {})
-            }, onCardClick = {}
-            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+
+                AnimatedContent(
+                    targetState = state.isLoading,
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }
+                ) { loading ->
+                    if (loading) {
+                        NovixLoadingIndicator()
+                    } else {
+                        LazyVerticalGrid(
+                            modifier = Modifier.fillMaxSize(),
+                            columns = GridCells.Adaptive(minSize = 140.dp),
+                            contentPadding = PaddingValues(
+                                start = 16.dp, end = 16.dp, bottom = 16.dp
+                            ),
+                            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                                12.dp
+                            ),
+                            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(
+                                12.dp
+                            )
+                        ) {
+                            items(state.topMovies) { movie ->
+                                MovieSeriesPosterCard(
+                                    boastImage = {
+                                        RemoteCensoredImageViewer(
+                                            imageUrl = movie.imageUrl ?: "",
+                                            modifier = Modifier.fillMaxSize(),
+                                            contentScale = ContentScale.Crop,
+                                            blurRadius = 150,
+                                            sfwThreshold = 0.75f,
+                                            nsfwThreshold = 0.15f,
+                                            contentDescription = movie.title,
+                                            placeholder = painterResource(placeholderResId),
+                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small,
+                                            iconSize = 24.dp,
+                                        )
+                                    },
+                                    topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
+                                    onCardClick = { /* open movie */ }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-
-//    if (state.isLoading) {
-//        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-//            WavyProgressIndicator()
-//        }
-//    } else {
-//        Column(
-//            modifier = modifier.padding(16.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text("Top-movie screen")
-//            Button(onClick = onBackClick) {             // ← already fine
-//                Text("Back")
-//            }
-//        }
-//    }
 }

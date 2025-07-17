@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 
@@ -41,15 +40,5 @@ fun InfoSection(
 
             content()
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun InfoPrev() {
-    InfoSection(
-        "title"
-    ) {
-        Text("conent")
     }
 }

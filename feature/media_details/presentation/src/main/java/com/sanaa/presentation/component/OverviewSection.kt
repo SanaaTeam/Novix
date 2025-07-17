@@ -57,7 +57,7 @@ fun OverviewSection(
         )
 
         Text(
-            text = stringResource(if (isExpanded) com.sanaa.designsystem.R.string.clear else com.sanaa.designsystem.R.string.cancel),
+            text = stringResource(if (isExpanded) R.string.read_less else R.string.read_more),
             style = Theme.textStyle.body.medium,
             color = Theme.colors.primary,
             modifier = Modifier
