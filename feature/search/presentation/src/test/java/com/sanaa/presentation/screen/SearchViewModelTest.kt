@@ -320,7 +320,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -353,7 +352,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -385,7 +383,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = actorName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
@@ -412,7 +409,7 @@ class SearchViewModelTest {
     @Test
     fun `onFilterApplied() should set state filters`() = runTest {
         // Given
-        val filters = MediaFilters()
+        val filters = mediaFilters
 
         // When
         searchViewModel.onFilterApplied(filters)
@@ -428,7 +425,7 @@ class SearchViewModelTest {
     @Test
     fun `onFilterApplied() should search movie when apply filters`() = runTest {
         // Given
-        val filters = MediaFilters()
+        val filters = mediaFilters
         val index = SearchViewModel.MOVIE_INDEX
         val movieName = "Movie"
         searchViewModel.onSearchQueryChanged(movieName)
@@ -443,7 +440,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 filters = filters
             )
@@ -543,4 +539,11 @@ class SearchViewModelTest {
             }
         }
 
+    companion object {
+        val mediaFilters = MediaFilters(
+            startYear = 1980,
+            endYear = 2025,
+            imdbRating = 5f
+        )
+    }
 }
