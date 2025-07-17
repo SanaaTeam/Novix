@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
-    id("plugins.android.Compose.library.convention")
+    alias(libs.plugins.novix.android.compose)
 }
 
 dependencies {

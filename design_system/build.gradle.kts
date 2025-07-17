@@ -1,5 +1,5 @@
 plugins {
-    id("plugins.android.Compose.library.convention")
+    alias(libs.plugins.novix.android.compose)
 }
 
 android {
