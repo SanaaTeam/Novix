@@ -21,12 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -35,8 +33,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -84,7 +82,7 @@ private fun TopMoviesContent(
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back),
+                        icon = painterResource(id = R.drawable.icon_back),
                         onClick = onBackClick
                     )
                 },
@@ -124,18 +122,12 @@ private fun TopMoviesContent(
                             items(state.topMovies) { movie ->
                                 MovieSeriesPosterCard(
                                     boastImage = {
-                                        RemoteCensoredImageViewer(
+                                        RemoteBlurredHaramImageViewer(
                                             imageUrl = movie.imageUrl ?: "",
                                             modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop,
                                             blurRadius = 150,
-                                            sfwThreshold = 0.75f,
-                                            nsfwThreshold = 0.15f,
                                             contentDescription = movie.title,
                                             placeholder = painterResource(placeholderResId),
-                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
-                                            textStyle = Theme.textStyle.body.small,
-                                            iconSize = 24.dp,
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },

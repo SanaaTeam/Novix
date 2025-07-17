@@ -1,6 +1,9 @@
 package com.sanaa.presentation.screen.actor
 
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.module.toActorUiModel
+import com.sanaa.presentation.module.toMovieUiModel
+import com.sanaa.presentation.module.toSeriesUiModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
@@ -75,5 +78,12 @@ class ActorViewModel(
         emitEffect(
             ActorScreenEffects.NavigateToGallery(actorId)
         )
+    }
+
+    override fun onSeriesClicked(id: Int) {
+        emitEffect(
+            ActorScreenEffects.NavigateToSeriesDetails(id)
+        )
+
     }
 }

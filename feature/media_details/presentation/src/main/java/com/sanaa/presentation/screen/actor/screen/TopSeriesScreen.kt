@@ -21,12 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -35,8 +33,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -54,9 +52,7 @@ fun TopSeriesScreen(
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         TopSeriesContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize()
+            state = uiState, onBackClick = navigateBack, modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -64,15 +60,13 @@ fun TopSeriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopSeriesContent(
-    state: ActorScreenUiState,
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit
+    state: ActorScreenUiState, modifier: Modifier = Modifier, onBackClick: () -> Unit
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
-        com.sanaa.presentation.R.drawable.movie_placeholder_dark
+        R.drawable.movie_placeholder_dark
     } else {
-        com.sanaa.presentation.R.drawable.movie_placeholder_light
+        R.drawable.movie_placeholder_light
     }
 
     NovixScaffold(
@@ -84,8 +78,7 @@ private fun TopSeriesContent(
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back),
-                        onClick = onBackClick
+                        icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(com.sanaa.presentation.R.string.top_series_picks),
@@ -97,14 +90,12 @@ private fun TopSeriesContent(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
 
                 AnimatedContent(
                     targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { loading ->
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -124,23 +115,16 @@ private fun TopSeriesContent(
                             items(state.topTvSeries) { series ->
                                 MovieSeriesPosterCard(
                                     boastImage = {
-                                        RemoteCensoredImageViewer(
-                                            imageUrl = series.imageUrl ?: "",
+                                        RemoteBlurredHaramImageViewer(
+                                            imageUrl = series.posterPath ?: "",
                                             modifier = Modifier.fillMaxSize(),
-                                            contentScale = ContentScale.Crop,
                                             blurRadius = 150,
-                                            sfwThreshold = 0.75f,
-                                            nsfwThreshold = 0.15f,
                                             contentDescription = series.title,
                                             placeholder = painterResource(placeholderResId),
-                                            hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
-                                            textStyle = Theme.textStyle.body.small,
-                                            iconSize = 24.dp,
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
-                                    onCardClick = { /* open movie */ }
-                                )
+                                    onCardClick = { /* open movie */ })
                             }
                         }
                     }

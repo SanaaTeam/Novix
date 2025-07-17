@@ -10,18 +10,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 
 @Composable
 fun GalleryCard(
     imageUrl: String?,
-    modifier: Modifier = Modifier.size(88.dp)
+    modifier: Modifier = Modifier
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
@@ -32,6 +31,7 @@ fun GalleryCard(
 
     Box(
         modifier = modifier
+            .size(88.dp)
             .border(
                 BorderStroke(1.dp, Theme.colors.stroke),
                 RoundedCornerShape(12.dp)
@@ -39,20 +39,14 @@ fun GalleryCard(
             .clip(RoundedCornerShape(12.dp))
     ) {
 
-        RemoteCensoredImageViewer(
+        RemoteBlurredHaramImageViewer(
             imageUrl = imageUrl ?: "",
             modifier = Modifier.fillMaxWidth(),
-            contentScale = ContentScale.Crop,
             blurRadius = 150,
-            sfwThreshold = 0.75f,
-            nsfwThreshold = 0.15f,
             placeholder = painterResource(placeholderResId),
             error = painterResource(placeholderResId),
             contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
-            placeholderBackgroundColor = Theme.colors.surface,
-            hintText = stringResource(R.string.show),
-            textStyle = Theme.textStyle.body.small,
-            iconSize = 24.dp,
+            haramThreshold = 0.7f,
         )
     }
 }

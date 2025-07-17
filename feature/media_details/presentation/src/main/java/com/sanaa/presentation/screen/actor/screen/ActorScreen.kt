@@ -24,17 +24,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.R
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopSeriesScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
@@ -52,42 +52,46 @@ import org.koin.core.parameter.parametersOf
 fun ActorScreen(
     actorId: Int,
 ) {
-    val viewModel: ActorViewModel =
-        koinViewModel(parameters = { parametersOf(actorId) })
+    val viewModel: ActorViewModel = koinViewModel(parameters = { parametersOf(actorId) })
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                ActorScreenEffects.NavigateBack ->
-                    navController.popBackStack()
+                ActorScreenEffects.NavigateBack -> navController.popBackStack()
 
-                is ActorScreenEffects.NavigateToTopMovies ->
-                    navController.navigate(
-                        TopMoviesScreenRoute(effect.actorId).route()
-                    )
+                is ActorScreenEffects.NavigateToTopMovies -> navController.navigate(
+                    TopMoviesScreenRoute(effect.actorId).route()
+                )
 
-                is ActorScreenEffects.NavigateToTopSeries ->
-                    navController.navigate(
-                        TopSeriesScreenRoute(effect.actorId).route()
-                    )
+                is ActorScreenEffects.NavigateToTopSeries -> navController.navigate(
+                    TopSeriesScreenRoute(effect.actorId).route()
+                )
 
-                is ActorScreenEffects.NavigateToGallery ->
+                is ActorScreenEffects.NavigateToGallery -> navController.navigate(
+                    ActorGalleryScreenRoute(effect.actorId).route()
+                )
+
+                is ActorScreenEffects.NavigateToMovieDetails -> {
+                    // TODO: Navigate to movie details
+                }
+
+                is ActorScreenEffects.NavigateToSeriesDetails -> {
                     navController.navigate(
-                        ActorGalleryScreenRoute(effect.actorId).route()
+                        SeriesDetailsScreenRoute(effect.seriesId).route()
                     )
+                }
             }
         }
     }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        ActorScreenContent(
-            state = uiState,
-            listener = viewModel,
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
+    ActorScreenContent(
+        state = uiState,
+        listener = viewModel,
+        modifier = Modifier.fillMaxSize(),
+    )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,9 +103,9 @@ private fun ActorScreenContent(
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
-        com.sanaa.presentation.R.drawable.movie_placeholder_dark
+        R.drawable.movie_placeholder_dark
     } else {
-        com.sanaa.presentation.R.drawable.movie_placeholder_light
+        R.drawable.movie_placeholder_light
     }
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
@@ -111,11 +115,10 @@ private fun ActorScreenContent(
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back),
+                        icon = painterResource(id = R.drawable.icon_back),
                         onClick = listener::onBackClicked
                     )
-                },
-                modifier = Modifier
+                }, modifier = Modifier
                     .systemBarsPadding()
                     .zIndex(10f)
             )
@@ -123,9 +126,7 @@ private fun ActorScreenContent(
             AnimatedContent(
                 targetState = state.isLoading,
                 transitionSpec = { fadeIn() togetherWith fadeOut() },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .align(Alignment.Center),
+                modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) { loading ->
                 if (loading) {
@@ -194,7 +195,9 @@ private fun ActorScreenContent(
                                 items = state.topTvSeries.take(10),
                                 onActionClick = listener::onTopSeriesClicked
                             ) { series ->
-                                PosterCard(series.imageUrl)
+                                PosterCard(series.posterPath, onClick = {
+                                    listener.onSeriesClicked(series.id)
+                                })
                             }
                         }
                     }
