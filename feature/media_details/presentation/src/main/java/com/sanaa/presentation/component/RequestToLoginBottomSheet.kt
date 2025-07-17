@@ -36,11 +36,12 @@ fun RequestToLoginBottomSheet(
     title: String = "Add to list"
 
 ) {
+    val showSheet = remember { mutableStateOf(false) }
     val isDarkTheme = isSystemInDarkTheme()
     val loginImageId = if (isDarkTheme) {
-        R.drawable.please_login_dark
+        R.drawable.user_person_profile_dark
     } else {
-        R.drawable.pleas_login_light
+        R.drawable.user_person_profile_light
     }
     BaseBottomSheet(
         onDismiss = onDismiss,
@@ -54,25 +55,25 @@ fun RequestToLoginBottomSheet(
                     rightContent = {
                         TopBarClickableIcon(
                             icon = painterResource(id = R.drawable.icon_cancel),
-                            onClick = onDismiss)
+                            onClick = onDismiss
+                        )
                     }
                 )
                 Image(
                     painter = painterResource
                         (id = loginImageId),
-                    contentDescription = "pleas login light",
-                    modifier = Modifier.size(100.dp)
+                    contentDescription = "pleas login light"
                 )
                 Text(
                     text = text,
                     style = Theme.textStyle.body.small,
                     color = Theme.colors.body,
-                    modifier = Modifier.padding(bottom = 24.dp)
+                    modifier = Modifier.padding(bottom = 24.dp, top = 12.dp)
                 )
                 OutlinedButton(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                    ,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
                     text = "Login",
                     onClick = onLoginButtonClick
                 )
