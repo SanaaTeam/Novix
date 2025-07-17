@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.actors
+package com.sanaa.presentation.screens.actors
 
 interface ActorsScreenInteractionListener {
     fun onBackClicked()

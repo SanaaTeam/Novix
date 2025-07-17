@@ -26,8 +26,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
-import com.sanaa.presentation.actors.screen.ActorViewModel
-import com.sanaa.presentation.screen.actors.ActorScreenUiState
+import com.sanaa.presentation.actors.ActorViewModel
+import com.sanaa.presentation.screens.actors.ActorScreenUiState
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 

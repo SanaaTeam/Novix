@@ -1,6 +1,5 @@
-package com.sanaa.presentation.screen
+package com.sanaa.presentation.screens.actors.screen
 
-//import com.sanaa.presentation.screen.co
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
@@ -38,7 +38,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteCensoredImageViewer
-import com.sanaa.presentation.actors.screen.ActorViewModel
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
@@ -46,11 +45,12 @@ import com.sanaa.presentation.component.InfoSection
 import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
-import com.sanaa.presentation.screen.actors.ActorScreenEffects
-import com.sanaa.presentation.screen.actors.ActorScreenUiState
-import com.sanaa.presentation.screen.actors.ActorUiModel
-import com.sanaa.presentation.screen.actors.ActorsScreenInteractionListener
-import com.sanaa.presentation.screen.actors.screen.componants.WavyProgressIndicator
+import com.sanaa.presentation.screens.actors.ActorScreenEffects
+import com.sanaa.presentation.screens.actors.ActorScreenUiState
+import com.sanaa.presentation.screens.actors.ActorUiModel
+import com.sanaa.presentation.screens.actors.ActorsScreenInteractionListener
+import com.sanaa.presentation.screens.actors.componants.WavyProgressIndicator
+import com.sanaa.presentation.screens.actors.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -120,7 +120,7 @@ fun ActorScreenContent(
                     AppTopBar(
                         leftContent = {
                             TopBarClickableIcon(
-                                icon = painterResource(id = com.sanaa.designsystem.R.drawable.icon_arrow_back),
+                                icon = painterResource(id = R.drawable.icon_arrow_back),
                                 onClick = listener::onBackClicked
                             )
                         },
@@ -141,7 +141,7 @@ fun ActorScreenContent(
             state.actor.biography?.let {
                 item {
                     OverviewSection(
-                        titleResId = com.sanaa.designsystem.R.string.clear,
+                        titleResId = R.string.clear,
                         overview = state.actor.biography.orEmpty(),
                         onReadMore = { /* expand */ },
                         modifier = Modifier
@@ -189,7 +189,7 @@ private fun PosterCard(imageUrl: String?) {
                 nsfwThreshold = 0.15f,
                 contentDescription = null,
                 placeholderBackgroundColor = Theme.colors.surface,
-                hintText = stringResource(com.sanaa.designsystem.R.string.clear),
+                hintText = stringResource(R.string.clear),
                 textStyle = Theme.textStyle.body.small,
                 iconSize = 24.dp,
             )
@@ -242,7 +242,7 @@ private fun AttributeWithDot(text: String) {
     ) {
         DotSeparator()
         IconWithText(
-            iconRes = com.sanaa.designsystem.R.drawable.cancel,
+            iconRes = R.drawable.cancel,
             text = text,
             contentDescription = "",
             tint = Theme.colors.body

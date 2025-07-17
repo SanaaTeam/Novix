@@ -7,7 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.presentation.navigation.DetailsNavHost
 import com.sanaa.presentation.navigation.StartRoute
-import com.sanaa.presentation.screen.ActorScreen
 import org.koin.android.ext.android.getKoin
 import timber.log.Timber
 
