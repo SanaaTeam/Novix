@@ -14,7 +14,7 @@ import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
-import java.nio.channels.UnresolvedAddressException
+import java.net.UnknownHostException
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,
@@ -165,7 +165,7 @@ class SearchRepositoryImpl(
     private suspend fun <T> searchOrThrow(query: String, callee: suspend () -> T): T {
         try {
             return callee()
-        } catch (_: UnresolvedAddressException) {
+        } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (_: Exception) {
             throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
