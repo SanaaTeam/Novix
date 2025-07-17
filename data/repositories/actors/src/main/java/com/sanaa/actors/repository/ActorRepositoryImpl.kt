@@ -15,58 +15,58 @@ class ActorRepositoryImpl(
     private val remoteDataSource: ActorRemoteDataSource,
 ) : ActorRepository {
 
-    override suspend fun getActorDetails(id: Int): Actor {
+    override suspend fun getActorDetails(actorId: Int): Actor {
         return try {
-            remoteDataSource.getActorDetails(id).toDomain()
+            remoteDataSource.getActorDetails(actorId).toDomain()
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve actor details for ID: $id")
+            throw RetrievingDataFailureException("Failed to retrieve actor details for ID: $actorId")
         }
     }
 
-    override suspend fun getProfileImages(id: Int): List<String> {
+    override suspend fun getProfileImages(actorId: Int): List<String> {
         return try {
-            remoteDataSource.getActorImages(id).profiles.take(3)
+            remoteDataSource.getActorImages(actorId).profiles.take(3)
                 .map { it.path.fullImageUrlOrEmpty() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve profile images for actor ID: $id")
+            throw RetrievingDataFailureException("Failed to retrieve profile images for actor ID: $actorId")
         }
     }
 
-    override suspend fun getGalleryImages(id: Int): List<String> {
+    override suspend fun getGalleryImages(actorId: Int): List<String> {
         return try {
-            remoteDataSource.getActorImages(id).profiles.drop(1)
+            remoteDataSource.getActorImages(actorId).profiles.drop(1)
                 .map { it.path.fullImageUrlOrEmpty() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve gallery images for actor ID: $id")
+            throw RetrievingDataFailureException("Failed to retrieve gallery images for actor ID: $actorId")
         }
     }
 
-    override suspend fun getActorTopMovies(id: Int): List<Movie> {
+    override suspend fun getActorTopMovies(actorId: Int): List<Movie> {
         return try {
-            remoteDataSource.getActorTopMovies(id).cast.sortedByDescending { it.voteAverage ?: 0.0 }
+            remoteDataSource.getActorTopMovies(actorId).cast.sortedByDescending { it.voteAverage ?: 0.0 }
                 .take(20).map { it.toDomain() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $id")
+            throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $actorId")
         }
     }
 
-    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
+    override suspend fun getActorTopTvSeries(actorId: Int): List<TvSeries> {
         return try {
-            remoteDataSource.getActorTopTvSeries(id).cast.sortedByDescending {
+            remoteDataSource.getActorTopTvSeries(actorId).cast.sortedByDescending {
                     it.voteAverage ?: 0.0
                 }.take(20).map { it.toDomain() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve top TV series for actor ID: $id")
+            throw RetrievingDataFailureException("Failed to retrieve top TV series for actor ID: $actorId")
         }
     }
 }
