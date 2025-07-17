@@ -1,5 +1,9 @@
 plugins {
-    id("plugins.android.library.convention")
+    id("plugins.android.Compose.library.convention")
+}
+
+android {
+    namespace = "com.sanaa.designsystem"
 }
 
 dependencies {

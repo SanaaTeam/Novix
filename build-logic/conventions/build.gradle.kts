@@ -9,9 +9,9 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        register("androidLibraryConvention") {
-            id = "plugins.android.library.convention"
-            implementationClass = "AndroidLibraryConventionPlugin"
+        register("androidComposeLibraryConvention") {
+            id = "plugins.android.Compose.library.convention"
+            implementationClass = "AndroidComposeLibraryConventionPlugin"
         }
     }
 }

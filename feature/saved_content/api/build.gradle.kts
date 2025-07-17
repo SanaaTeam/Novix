@@ -1,5 +1,5 @@
 plugins {
-    id("plugins.android.library.convention")
+    id("plugins.android.Compose.library.convention")
 }
 
 dependencies {
