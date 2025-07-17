@@ -198,6 +198,229 @@ class SearchRepositoryImplTest {
         assertThat(result1).isNotEqualTo(result2)
     }
 
+    // ========== ACTOR PAGINATION TESTS ==========
+
+    @Test
+    fun `actorPagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+        // Given
+        val query = "Tom"
+        val page = 1
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns ActorsLocalDtoList
+
+        // When
+        val result = searchRepository.searchActors(query, page)
+
+        // Then
+        assertThat(result).hasSize(ActorsLocalDtoList.size)
+        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) }
+    }
+
+    @Test
+    fun `actorPagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+        // Given
+        val query = "Tom"
+        val page1 = 1
+        val page2 = 2
+        val pageSize = 20
+        
+        val firstPageActors = ActorsLocalDtoList.take(10)
+        val secondPageActors = ActorsLocalDtoList.takeLast(10)
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, 0) } returns firstPageActors
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, 20) } returns secondPageActors
+
+        // When
+        val result1 = searchRepository.searchActors(query, page1)
+        val result2 = searchRepository.searchActors(query, page2)
+
+        // Then
+        assertThat(result1).hasSize(10)
+        assertThat(result2).hasSize(10)
+        assertThat(result1).isNotEqualTo(result2)
+    }
+
+    @Test
+    fun `actorPagination_shouldHandleEmptyPage_whenNoResults`() = runTest {
+        // Given
+        val query = "NonExistentActor"
+        val page = 1
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns emptyList()
+
+        // When
+        val result = searchRepository.searchActors(query, page)
+
+        // Then
+        assertThat(result).isEmpty()
+        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) }
+    }
+
+    @Test
+    fun `actorPagination_shouldCalculateOffsetCorrectly_whenPageNumberProvided`() = runTest {
+        // Given
+        val query = "Tom"
+        val page = 3
+        val pageSize = 20
+        val expectedOffset = (page - 1) * pageSize // (3-1) * 20 = 40
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns ActorsLocalDtoList
+
+        // When
+        searchRepository.searchActors(query, page)
+
+        // Then
+        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+    }
+
+    @Test
+    fun `actorPagination_shouldFetchFromRemote_whenLocalCacheEmpty`() = runTest {
+        // Given
+        val query = "NewActor"
+        val page = 1
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns emptyList()
+        coEvery { remoteDataSource.searchActors(query, page) } returns actorSearchResponse
+        coEvery { localCacheSearchDataSource.cacheActor(any()) } just Runs
+
+        // When
+        searchRepository.searchActors(query, page)
+
+        // Then
+        coVerify { remoteDataSource.searchActors(query, page) }
+        coVerify { localCacheSearchDataSource.cacheActor(any()) }
+    }
+
+    @Test
+    fun `actorPagination_shouldHandleLargePageNumbers`() = runTest {
+        // Given
+        val query = "Tom"
+        val page = 100
+        val pageSize = 20
+        val expectedOffset = (page - 1) * pageSize // (100-1) * 20 = 1980
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns emptyList()
+
+        // When
+        val result = searchRepository.searchActors(query, page)
+
+        // Then
+        assertThat(result).isEmpty()
+        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+    }
+
+    @Test
+    fun `actorPagination_shouldHandleZeroPageNumber`() = runTest {
+        // Given
+        val query = "Tom"
+        val page = 0
+        val pageSize = 20
+        val expectedOffset = 0 // (0-1) * 20 = -20, but should be handled as page 1
+        
+        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns ActorsLocalDtoList
+
+        // When
+        val result = searchRepository.searchActors(query, page)
+
+        // Then
+        assertThat(result).isNotEmpty()
+        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+    }
+
+    // ========== MOVIE PAGINATION TESTS ==========
+
+    @Test
+    fun `moviePagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+        // Given
+        val query = "Batman"
+        val page = 1
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        
+        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, offset) } returns MoviesLocalDtoList
+
+        // When
+        val result = searchRepository.searchMedia(query, page, null, MediaType.MOVIE)
+
+        // Then
+        assertThat(result).hasSize(MoviesLocalDtoList.size)
+        coVerify { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, offset) }
+    }
+
+    @Test
+    fun `moviePagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+        // Given
+        val query = "Batman"
+        val page1 = 1
+        val page2 = 2
+        val pageSize = 20
+        
+        val firstPageMovies = MoviesLocalDtoList.take(10)
+        val secondPageMovies = MoviesLocalDtoList.takeLast(10)
+        
+        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, 0) } returns firstPageMovies
+        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, 20) } returns secondPageMovies
+
+        // When
+        val result1 = searchRepository.searchMedia(query, page1, null, MediaType.MOVIE)
+        val result2 = searchRepository.searchMedia(query, page2, null, MediaType.MOVIE)
+
+        // Then
+        assertThat(result1).hasSize(10)
+        assertThat(result2).hasSize(10)
+        assertThat(result1).isNotEqualTo(result2)
+    }
+
+    // ========== TV SERIES PAGINATION TESTS ==========
+
+    @Test
+    fun `tvSeriesPagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+        // Given
+        val query = "Breaking Bad"
+        val page = 1
+        val pageSize = 20
+        val offset = (page - 1) * pageSize
+        
+        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, offset) } returns TvSeriesLocalDtoList
+
+        // When
+        val result = searchRepository.searchMedia(query, page, null, MediaType.TV_SERIES)
+
+        // Then
+        assertThat(result).hasSize(TvSeriesLocalDtoList.size)
+        coVerify { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, offset) }
+    }
+
+    @Test
+    fun `tvSeriesPagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+        // Given
+        val query = "Breaking Bad"
+        val page1 = 1
+        val page2 = 2
+        val pageSize = 20
+        
+        val firstPageSeries = TvSeriesLocalDtoList.take(1)
+        val secondPageSeries = TvSeriesLocalDtoList.takeLast(1)
+        
+        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, 0) } returns firstPageSeries
+        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, 20) } returns secondPageSeries
+
+        // When
+        val result1 = searchRepository.searchMedia(query, page1, null, MediaType.TV_SERIES)
+        val result2 = searchRepository.searchMedia(query, page2, null, MediaType.TV_SERIES)
+
+        // Then
+        assertThat(result1).hasSize(1)
+        assertThat(result2).hasSize(1)
+        assertThat(result1).isNotEqualTo(result2)
+    }
+
     @Test
     fun `filters work correctly with empty genres list`() = runTest {
         // Given
