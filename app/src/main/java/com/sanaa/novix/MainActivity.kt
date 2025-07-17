@@ -24,8 +24,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DetailsNavHost(
-                startRoute = StartRoute.ACTOR,
-                id = 5
+                startRoute = StartRoute.SERIES,
+                id = 66732
             )
         }
     }

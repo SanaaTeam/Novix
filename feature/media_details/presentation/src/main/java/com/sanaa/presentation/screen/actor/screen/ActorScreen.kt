@@ -34,6 +34,7 @@ import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopSeriesScreenRoute
@@ -74,7 +75,9 @@ fun ActorScreen(
                 )
 
                 is ActorScreenEffects.NavigateToMovieDetails -> {
-                    // TODO: Navigate to movie details
+                    navController.navigate(
+                        MovieDetailsScreenRoute(effect.movieId).route()
+                    )
                 }
 
                 is ActorScreenEffects.NavigateToSeriesDetails -> {
@@ -185,7 +188,9 @@ private fun ActorScreenContent(
                                 items = state.topMovies.take(10),
                                 onActionClick = listener::onTopMoviesClicked
                             ) { movie ->
-                                PosterCard(movie.imageUrl)
+                                PosterCard(movie.posterUrl, onClick = {
+                                    listener.onMovieClicked(movie.id)
+                                })
                             }
                         }
 

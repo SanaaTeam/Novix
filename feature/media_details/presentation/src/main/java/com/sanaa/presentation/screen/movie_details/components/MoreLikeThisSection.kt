@@ -13,13 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.model.SimilarMovieUiModel
+import com.sanaa.presentation.module.MovieUiModel
 import com.sanaa.presentation.R as presentationR
 
 @Composable
 fun MoreLikeThisSection(
-    similarMovies: List<SimilarMovieUiModel>,
-    onBookmarkClick: (SimilarMovieUiModel) -> Unit,
+    similarMovies: List<MovieUiModel>,
+    onBookmarkClick: (Int) -> Unit,
+    onSimilarMovieClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -45,7 +46,8 @@ fun MoreLikeThisSection(
                 val movie = similarMovies[index]
                 MoreLikeThisCard(
                     movie = movie,
-                    onBookmarkClick = { onBookmarkClick(movie) }
+                    onBookmarkClick = { onBookmarkClick(movie.id) },
+                    onMovieClick = { onSimilarMovieClick(movie.id) }
                 )
             }
         }

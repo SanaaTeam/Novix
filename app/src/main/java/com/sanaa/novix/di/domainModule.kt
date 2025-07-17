@@ -1,19 +1,25 @@
 package com.sanaa.novix.di
 
-import com.sanaa.presentation.screen.actor.ActorViewModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
 import details.usecase.actor.GetGalleryImagesUseCase
 import details.usecase.actor.GetProfileImagesUseCase
-import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
 import details.usecase.movie.GetMovieCastUseCase
 import details.usecase.movie.GetMovieDetailsUseCase
 import details.usecase.movie.GetMovieImagesUseCase
+import details.usecase.movie.GetMovieTrailerUseCase
 import details.usecase.movie.GetMoviesByCategory
 import details.usecase.movie.GetReviewsByMovieId
 import details.usecase.movie.GetSimilarMoviesByMovieId
+import details.usecase.tv_series.GetEpisodeDetailsUseCase
+import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
+import details.usecase.tv_series.GetTvSeriesCastUseCase
+import details.usecase.tv_series.GetTvSeriesDetailsUseCase
+import details.usecase.tv_series.GetTvSeriesImagesUseCase
+import details.usecase.tv_series.GetTvSeriesReviewsUseCase
+import details.usecase.tv_series.GetTvSeriesSeasonDetailsUseCase
+import details.usecase.tv_series.GetTvSeriesTrailerUseCase
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -37,22 +43,29 @@ val domainModule = module {
     single { AddRecentViewedUseCase(get()) }
     single { RemoveSearchHistoryUseCase(get()) }
 
+    // Actor
     single { GetActorDetailsUseCase(get()) }
     single { GetActorTopMoviesUseCase(get()) }
     single { GetActorTopTvSeriesUseCase(get()) }
     single { GetGalleryImagesUseCase(get()) }
     single { GetProfileImagesUseCase(get()) }
 
+    // Movie
     single { GetMovieCastUseCase(get()) }
     single { GetMovieDetailsUseCase(get()) }
     single { GetMovieImagesUseCase(get()) }
     single { GetMoviesByCategory(get()) }
     single { GetReviewsByMovieId(get()) }
+    single { GetMovieTrailerUseCase(get()) }
     single { GetSimilarMoviesByMovieId(get()) }
 
-    viewModelOf( ::ActorViewModel )
-    viewModel { (actorId: Int) ->
-        ActorViewModel(actorId = actorId, get(), get(), get(), get(), get())
-    }
-    single { GetMovieTrailerUseCase(get()) }
+    // Series
+    single { GetTvSeriesDetailsUseCase(get()) }
+    single { GetTvSeriesImagesUseCase(get()) }
+    single { GetTvSeriesTrailerUseCase(get()) }
+    single { GetTvSeriesCastUseCase(get()) }
+    single { GetTvSeriesSeasonDetailsUseCase(get()) }
+    single { GetEpisodeDetailsUseCase(get()) }
+    single { GetEpisodeGuestsOfHonorUseCase(get()) }
+    single { GetTvSeriesReviewsUseCase(get()) }
 }

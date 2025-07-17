@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,9 +24,9 @@ import com.sanaa.presentation.component.InfoSection
 @Composable
 fun SeriesHeaderSection(
     title: String,
-    rating: String,
+    rating: String?,
     season: String,
-    airDate: String,
+    airDate: String?,
     imagesUrl: List<String>,
     genres: List<String>,
     modifier: Modifier = Modifier,
@@ -76,19 +75,25 @@ fun SeriesHeaderSection(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(bottom = 8.dp)
                 ) {
-                    IconWithText(
-                        iconRes = R.drawable.icon_star,
-                        text = rating,
-                        contentDescription = rating,
-                        tint = Theme.colors.statusColors.yellowAccent
-                    )
-                    DotSeparator()
-                    Text(
-                        text = airDate,
-                        style = Theme.textStyle.label.small,
-                        color = Theme.colors.hint
-                    )
-                    DotSeparator()
+                    rating?.let {
+                        IconWithText(
+                            iconRes = R.drawable.icon_star,
+                            text = rating,
+                            contentDescription = rating,
+                            tint = Theme.colors.statusColors.yellowAccent
+                        )
+
+                        DotSeparator()
+                    }
+                    airDate?.let {
+                        Text(
+                            text = airDate,
+                            style = Theme.textStyle.label.small,
+                            color = Theme.colors.hint
+                        )
+
+                        DotSeparator()
+                    }
                     IconWithText(
                         text = season,
                         iconRes = R.drawable.icon_seasons,

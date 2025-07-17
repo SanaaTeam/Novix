@@ -15,6 +15,7 @@ data class ActorUiModel(
     val placeOfBirth: String? = null,
     val biography: String? = null,
 )
+
 fun Actor.toActorUiModel() = ActorUiModel(
     id = id,
     imageUrl = imageUrl,

@@ -7,4 +7,5 @@ interface ActorsScreenInteractionListener {
     fun onTopSeriesClicked()
     fun onViewAllGalleryClicked()
     fun onSeriesClicked(id: Int)
+    fun onMovieClicked(id: Int)
 }

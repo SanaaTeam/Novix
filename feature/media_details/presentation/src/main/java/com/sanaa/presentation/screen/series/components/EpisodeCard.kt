@@ -59,25 +59,30 @@ fun EpisodeCard(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconWithText(
-                    iconRes = R.drawable.icon_star,
-                    text = episode.rating,
-                    contentDescription = episode.rating,
-                    tint = Theme.colors.statusColors.yellowAccent
-                )
-                DotSeparator()
+                episode.rating?.let {
+                    IconWithText(
+                        iconRes = R.drawable.icon_star,
+                        text = episode.rating,
+                        contentDescription = episode.rating,
+                        tint = Theme.colors.statusColors.yellowAccent
+                    )
+
+                    DotSeparator()
+                }
                 IconWithText(
                     iconRes = R.drawable.icon_duration,
                     text = stringResource(R.string.m, episode.duration),
                     contentDescription = episode.duration.toString(),
                     tint = Theme.colors.hint
                 )
-                DotSeparator()
-                Text(
-                    text = episode.airDate,
-                    style = Theme.textStyle.label.small,
-                    color = Theme.colors.hint
-                )
+                episode.airDate?.let {
+                    DotSeparator()
+                    Text(
+                        text = episode.airDate,
+                        style = Theme.textStyle.label.small,
+                        color = Theme.colors.hint
+                    )
+                }
             }
         }
 

@@ -1,6 +1,5 @@
 package com.sanaa.presentation.module
 
-import android.annotation.SuppressLint
 import entity.Episode
 import entity.Season
 import entity.TvSeries
@@ -27,25 +26,26 @@ data class SeasonUiModel(
 data class EpisodeUiModel(
     val number: Int = 0,
     val title: String = "",
-    val rating: String = "",
-    val airDate: String = "",
+    val rating: String? = null,
+    val airDate: String? = null,
     val stillPath: String? = null,
     val duration: Int = 0,
     val overview: String? = null,
     val seasonNumber: Int = 0,
 )
 
-@SuppressLint("DefaultLocale")
 fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
     overview = overview,
-    rating = String.format("%.1f", imdbRating),
+    rating = "%.1f".format(imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
     genres = genres.map { it.name },
-    releaseDate = releaseDate.toString(),
+    releaseDate = "${releaseDate.year}-${
+        releaseDate.monthNumber.toString().padStart(2, '0')
+    }-${releaseDate.dayOfMonth.toString().padStart(2, '0')}",
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(

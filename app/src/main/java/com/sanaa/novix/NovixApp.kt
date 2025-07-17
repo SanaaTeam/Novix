@@ -6,6 +6,7 @@ import com.sanaa.novix.di.appModule
 import com.sanaa.novix.di.domainModule
 import com.sanaa.novix.di.firebaseModule
 import com.sanaa.novix.di.loggingModule
+import com.sanaa.novix.di.viewModelModule
 //import com.sanaa.novix.di.searchModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent

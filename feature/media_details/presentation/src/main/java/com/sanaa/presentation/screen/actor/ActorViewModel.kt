@@ -2,8 +2,8 @@ package com.sanaa.presentation.screen.actor
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.module.toActorUiModel
-import com.sanaa.presentation.module.toMovieUiModel
 import com.sanaa.presentation.module.toSeriesUiModel
+import com.sanaa.presentation.module.toUiModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
@@ -35,7 +35,7 @@ class ActorViewModel(
             updateState {
                 it.copy(
                     actor = series.toActorUiModel(),
-                    topMovies = topMovies.map { it.toMovieUiModel() },
+                    topMovies = topMovies.map { it.toUiModel() },
                     topTvSeries = topSeries.map { it.toSeriesUiModel() },
                     profileImages = profileImages,
                     galleryImages = galleryImages
@@ -85,5 +85,11 @@ class ActorViewModel(
             ActorScreenEffects.NavigateToSeriesDetails(id)
         )
 
+    }
+
+    override fun onMovieClicked(id: Int) {
+        emitEffect(
+            ActorScreenEffects.NavigateToMovieDetails(id)
+        )
     }
 }

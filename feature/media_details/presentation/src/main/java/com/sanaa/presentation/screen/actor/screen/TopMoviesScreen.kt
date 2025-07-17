@@ -123,7 +123,7 @@ private fun TopMoviesContent(
                                 MovieSeriesPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.imageUrl ?: "",
+                                            imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             blurRadius = 150,
                                             contentDescription = movie.title,
