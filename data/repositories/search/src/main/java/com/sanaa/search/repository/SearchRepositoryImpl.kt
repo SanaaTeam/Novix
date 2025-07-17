@@ -71,24 +71,22 @@ class SearchRepositoryImpl(
         if (cachedMedia.isNotEmpty()) {
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    cachedMedia.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
+                var filteredMedia = cachedMedia.filter { media ->
+                    val mediaGenreIds = media.genres
+                        ?.split(", ")
+                        ?.mapNotNull { it.toIntOrNull() }
+                        ?.toSet() ?: emptySet()
+
+                    filterGenreIds.all { it in mediaGenreIds }
+                }
+
+                filteredMedia =
+                    filteredMedia.filter {
+                        (it.imdbRating ?: 0f) >= filters.imdbRating
+                                && it.releaseYear != null
+                                && it.releaseYear >= filters.startYear
+                                && it.releaseYear <= filters.endYear
                     }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
 
                 return filteredMedia.map { it.toSearchOutput(false) }
 
@@ -107,20 +105,18 @@ class SearchRepositoryImpl(
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
                 var filteredMedia =
-                    movies.filter { it.genreIds?.any { it in filterGenreIds } == true }
+                    movies.filter { series ->
+                        val genreIds = series.genreIds?.toSet() ?: emptySet()
+                        filterGenreIds.all { it in genreIds }
+                    }
 
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
+                filteredMedia = filteredMedia.filter {
+                    (it.voteAverage ?: 0f) >= filters.imdbRating
+                            && it.releaseDate != null &&
+                            LocalDate.parse(it.releaseDate).year >= filters.startYear
+                            && LocalDate.parse(it.releaseDate).year <= filters.endYear
                 }
 
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
 
                 return filteredMedia.map {
                     it.toSearchOutput(false)
@@ -139,23 +135,23 @@ class SearchRepositoryImpl(
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
                 var filteredMedia =
-                    cachedTvSeries.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
+                    cachedTvSeries.filter { media ->
+                        val mediaGenreIds = media.genres
+                            ?.split(", ")
+                            ?.mapNotNull { it.toIntOrNull() }
+                            ?.toSet() ?: emptySet()
+
+                        filterGenreIds.all { it in mediaGenreIds }
                     }
 
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
+                filteredMedia =
+                    filteredMedia.filter {
+                        (it.imdbRating ?: 0f) >= filters.imdbRating
+                                && it.releaseYear != null
+                                && it.releaseYear >= filters.startYear
+                                && it.releaseYear <= filters.endYear
+                    }
 
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
 
                 return filteredMedia.map { it.toSearchOutput(false) }
 
@@ -172,19 +168,16 @@ class SearchRepositoryImpl(
             filters?.let {
                 val filterGenreIds = filters.genres.map { it.toDtoId() }
                 var filteredMedia =
-                    tvSeries.filter { it.genreIds?.any { it in filterGenreIds } == true }
+                    tvSeries.filter { series ->
+                        val genreIds = series.genreIds?.toSet() ?: emptySet()
+                        filterGenreIds.all { it in genreIds }
+                    }
 
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
+                filteredMedia = filteredMedia.filter {
+                    (it.voteAverage ?: 0f) >= filters.imdbRating
+                            && it.releaseDate != null &&
+                            LocalDate.parse(it.releaseDate).year >= filters.startYear
+                            && LocalDate.parse(it.releaseDate).year <= filters.endYear
                 }
 
                 return filteredMedia.map {
