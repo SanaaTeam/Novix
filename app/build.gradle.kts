@@ -79,7 +79,7 @@ dependencies {
 
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
-
+implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.data.repositories.search)
