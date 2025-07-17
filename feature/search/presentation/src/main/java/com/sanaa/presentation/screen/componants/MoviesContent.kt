@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
@@ -74,8 +76,20 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
                         mediaType = MediaTypeUi.MOVIE.name
                     )
                 )
-            }
-            )
+            })
         }
+    }
+}
+
+@PreviewLightDark
+@Composable
+private fun PreviewMoviesContent() {
+    val movies = listOf(
+        MovieUiModel(1, "Movie1", "https://image.com", "1"),
+        MovieUiModel(1, "Movie2", "https://image.com", "1"),
+        MovieUiModel(1, "Movie3", "https://image.com", "1")
+    )
+    NovixTheme(isSystemInDarkTheme()) {
+        MoviesContent(movies) {}
     }
 }
