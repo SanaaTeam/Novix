@@ -39,7 +39,7 @@ fun MovieCastCreditDto.toDomain(): Movie = Movie(
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = 0,
-    releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
+    releaseDate = releaseDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
     overview = overview ?: ""
 )
 
@@ -47,9 +47,14 @@ fun TvCastCreditDto.toDomain(): TvSeries = TvSeries(
     id = tvId,
     title = name ?: originalName ?: "Unknown",
     overview = overview ?: "",
-    releaseDate = firstAirDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
+    releaseDate = firstAirDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     posterImageUrl = posterPath.fullImageUrlOrEmpty(),
     seasonsCount = 0
 )
+
+private fun String?.toLocalDateOrNull(): LocalDate? =
+    this
+        ?.takeIf(String::isNotBlank)
+        ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }

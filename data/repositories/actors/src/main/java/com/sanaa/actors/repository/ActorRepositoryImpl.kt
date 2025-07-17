@@ -1,5 +1,6 @@
 package com.sanaa.actors.repository
 
+import android.util.Log
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.actors.mapper.fullImageUrlOrEmpty
 import com.sanaa.actors.mapper.toDomain
@@ -47,16 +48,19 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getActorTopMovies(id: Int): List<Movie> {
-        return try {
-            remoteDataSource.getActorTopMovies(id).cast.sortedByDescending { it.voteAverage ?: 0.0 }
-                .take(20).map { it.toDomain() }
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $id")
-        }
+    override suspend fun getActorTopMovies(id: Int): List<Movie> = try {
+        remoteDataSource
+            .getActorTopMovies(id)
+            .cast.orEmpty()
+            .sortedByDescending { it.voteAverage ?: 0.0 }
+            .take(20)
+            .map { it.toDomain() }
+    } catch (_: UnknownHostException) {
+        throw NoNetworkException()
+    } catch (e: Exception) {
+        throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $id")
     }
+
 
     override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
         return try {

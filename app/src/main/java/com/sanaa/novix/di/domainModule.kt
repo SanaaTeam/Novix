@@ -1,10 +1,13 @@
 package com.sanaa.novix.di
 
+import com.sanaa.presentation.screens.actors.ActorViewModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
 import details.usecase.actor.GetGalleryImagesUseCase
 import details.usecase.actor.GetProfileImagesUseCase
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import details.usecase.movie.GetMovieCastUseCase
 import details.usecase.movie.GetMovieDetailsUseCase
 import details.usecase.movie.GetMovieImagesUseCase
@@ -46,4 +49,9 @@ val domainModule = module {
     single { GetMoviesByCategory(get()) }
     single { GetReviewsByMovieId(get()) }
     single { GetSimilarMoviesByMovieId(get()) }
+
+    viewModelOf( ::ActorViewModel )
+    viewModel { (actorId: Int) ->
+        ActorViewModel(actorId = actorId, get(), get(), get(), get(), get())
+    }
 }

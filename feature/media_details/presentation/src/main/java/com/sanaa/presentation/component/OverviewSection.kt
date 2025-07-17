@@ -1,6 +1,9 @@
 package com.sanaa.presentation.component
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,13 +14,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.ui.res.stringResource
 import com.sanaa.presentation.R
 
 @Composable
@@ -38,11 +39,13 @@ fun OverviewSection(
                 )
             )
     ) {
+
         Text(
             text = stringResource(id = titleResId),
             style = Theme.textStyle.title.medium,
-            color = Theme.colors.title
+            color = Theme.colors.title,
         )
+
 
         Text(
             text = overview,

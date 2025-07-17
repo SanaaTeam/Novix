@@ -10,6 +10,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import com.sanaa.presentation.R
 
 @Composable
 fun IconWithText(
@@ -34,4 +36,15 @@ fun IconWithText(
             color = Theme.colors.body
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun IconWithTextPrev() {
+    IconWithText(
+        iconRes = com.sanaa.designsystem.R.drawable.cancel,
+        contentDescription = "test",
+        text = "test",
+        tint = Theme.colors.hint
+    )
 }

@@ -23,12 +23,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
 import kotlinx.coroutines.delay
 
 val boxContainerGradient = Brush.linearGradient(
@@ -41,6 +43,12 @@ fun ImageSlider(
     contentDescription: String?,
     modifier: Modifier = Modifier,
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val placeholderResId = if (isDarkTheme) {
+        R.drawable.movie_placeholder_dark
+    } else {
+        R.drawable.movie_placeholder_light
+    }
     val pagerState = rememberPagerState(pageCount = { images.size })
 
     LaunchedEffect(images) {
@@ -73,7 +81,7 @@ fun ImageSlider(
         ) { page ->
             AsyncImage(
                 model = images[page], contentDescription = contentDescription,
-//                placeholder = TODO,
+                placeholder = painterResource(placeholderResId),
 //                error = TODO,
                 modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
             )
