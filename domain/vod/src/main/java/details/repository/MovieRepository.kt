@@ -12,4 +12,5 @@ interface MovieRepository {
     suspend fun getSimilarMoviesByMovieId(id: Int): List<Movie>
     suspend fun getReviewsByMovieId(id: Int): List<Review>
     suspend fun getMoviesByCategory(category: Genre): List<Movie>
+    suspend fun getMovieTrailer(id: Int): String?
 }
