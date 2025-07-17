@@ -5,4 +5,8 @@
     <string name="overview">نظرة عامة</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">اقرأ أقل</string>
+    <string name="cast">الممثلون</string>
+    <string name="more_like_this">المزيد مثل هذا</string>
+    <string name="unsuitable_image">هذه الصورة غير مناسبة</string>
+    <string name="play_trailer">تشغيل الاعلان</string>
 </resources>
