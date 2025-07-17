@@ -14,10 +14,17 @@ interface SeriesDao {
 
     @Query(
         """
-    SELECT * FROM tv_series 
-    WHERE LOWER(title) LIKE '%' || LOWER(:query) || '%'
-    LIMIT :limit OFFSET :offset
-"""
+        SELECT * FROM tv_series 
+        WHERE LOWER(title) LIKE '%' || LOWER(:query) || '%'
+        ORDER BY 
+            CASE 
+                WHEN LOWER(title) = LOWER(:query) THEN 1
+                WHEN LOWER(title) LIKE LOWER(:query) || '%' THEN 2
+                ELSE 3
+            END,
+            title ASC
+        LIMIT :limit OFFSET :offset
+        """
     )
     suspend fun getFilteredSeries(query: String, limit: Int, offset: Int): List<TvSeriesLocalDto>
 

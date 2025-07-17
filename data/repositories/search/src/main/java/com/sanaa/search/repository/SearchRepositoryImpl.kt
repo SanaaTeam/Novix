@@ -3,6 +3,8 @@ package com.sanaa.search.repository
 import android.util.Log
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
+import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.mapper.toDtoId
 import com.sanaa.search.mapper.toLocalDto
@@ -82,34 +84,8 @@ class SearchRepositoryImpl(
 
         val cachedMedia = localDataSource.getMoviesByQuery(query, limit = pageSize, offset = offset)
 
-        // val cachedMedia = localDataSource.getMoviesByQuery(query)
         if (cachedMedia.isNotEmpty()) {
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    cachedMedia.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
-                    }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
-
-                return filteredMedia.map { it.toSearchOutput(false) }
-
-            } ?: return cachedMedia.map { it.toSearchOutput(false) }
-
-
+            return applyFiltersToLocalMovies(cachedMedia, filters)
         } else {
             val movies = remoteDataSource.searchMovies(query, page).results.also {
                 it.forEach {
@@ -118,30 +94,7 @@ class SearchRepositoryImpl(
                     )
                 }
             }
-
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    movies.filter { it.genreIds?.any { it in filterGenreIds } == true }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-
-                return filteredMedia.map {
-                    it.toSearchOutput(false)
-                }
-            } ?: return movies.map { it.toSearchOutput(false) }
-
+            return applyFiltersToRemoteMovies(movies, filters)
         }
     }
 
@@ -154,34 +107,10 @@ class SearchRepositoryImpl(
         val offset = (page - 1) * pageSize
         Log.d("SearchRepo", "TvSeries -> Page: $page, PageSize: $pageSize, Offset: $offset")
 
-        val cachedTvSeries =
-            localDataSource.getTvSeriesByQuery(query, limit = pageSize, offset = offset)
+        val cachedTvSeries = localDataSource.getTvSeriesByQuery(query, limit = pageSize, offset = offset)
+        
         if (cachedTvSeries.isNotEmpty()) {
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    cachedTvSeries.filter {
-                        it.genres?.split(", ")
-                            ?.any { it.toIntOrNull() in filterGenreIds } == true
-                    }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.imdbRating ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseYear != null && it.releaseYear <= year }
-                }
-
-                return filteredMedia.map { it.toSearchOutput(false) }
-
-            } ?: return cachedTvSeries.map { it.toSearchOutput(false) }
-
+            return applyFiltersToLocalTvSeries(cachedTvSeries, filters)
         } else {
             val tvSeries = remoteDataSource.searchTv(query, page).results.also {
                 it.forEach {
@@ -190,28 +119,197 @@ class SearchRepositoryImpl(
                     )
                 }
             }
-            filters?.let {
-                val filterGenreIds = filters.genres.map { it.toDtoId() }
-                var filteredMedia =
-                    tvSeries.filter { it.genreIds?.any { it in filterGenreIds } == true }
-
-                filters.imdbRating?.let { rating ->
-                    filteredMedia = filteredMedia.filter { (it.voteAverage ?: 0f) >= rating }
-                }
-
-                filters.startYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-                filters.endYear?.let { year ->
-                    filteredMedia =
-                        filteredMedia.filter { it.releaseDate != null && LocalDate.parse(it.releaseDate).year >= year }
-                }
-
-                return filteredMedia.map {
-                    it.toSearchOutput(false)
-                }
-            } ?: return tvSeries.map { it.toSearchOutput(false) }
+            return applyFiltersToRemoteTvSeries(tvSeries, filters)
         }
+    }
+
+    private fun applyFiltersToLocalMovies(
+        movies: List<MoviesLocalDto>,
+        filters: MediaFilters?
+    ): List<SearchMediaOutput> {
+        if (filters == null) {
+            return movies.map { it.toSearchOutput(false) }
+        }
+
+        return movies.asSequence()
+            .filter { movie ->
+                val hasMatchingGenre = filters.genres.isEmpty() || 
+                    movie.genres?.split(", ")?.any { genreId ->
+                        genreId.toIntOrNull()?.let { it in filters.genres.map { it.toDtoId() } } ?: false
+                    } == true
+
+                val meetsRatingCriteria = filters.imdbRating?.let { rating ->
+                    (movie.imdbRating ?: 0f) >= rating
+                } ?: true
+
+                val meetsYearCriteria = when {
+                    filters.startYear != null && filters.endYear != null -> {
+                        movie.releaseYear?.let { year ->
+                            year in filters.startYear!!..filters.endYear!!
+                        } ?: false
+                    }
+                    filters.startYear != null -> {
+                        movie.releaseYear?.let { it >= filters.startYear!! } ?: false
+                    }
+                    filters.endYear != null -> {
+                        movie.releaseYear?.let { it <= filters.endYear!! } ?: false
+                    }
+                    else -> true
+                }
+
+                hasMatchingGenre && meetsRatingCriteria && meetsYearCriteria
+            }
+            .map { it.toSearchOutput(false) }
+            .toList()
+    }
+
+    private fun applyFiltersToLocalTvSeries(
+        tvSeries: List<TvSeriesLocalDto>,
+        filters: MediaFilters?
+    ): List<SearchMediaOutput> {
+        if (filters == null) {
+            return tvSeries.map { it.toSearchOutput(false) }
+        }
+
+        return tvSeries.asSequence()
+            .filter { series ->
+                val hasMatchingGenre = filters.genres.isEmpty() || 
+                    series.genres?.split(", ")?.any { genreId ->
+                        genreId.toIntOrNull()?.let { it in filters.genres.map { it.toDtoId() } } ?: false
+                    } == true
+
+                val meetsRatingCriteria = filters.imdbRating?.let { rating ->
+                    (series.imdbRating ?: 0f) >= rating
+                } ?: true
+
+                val meetsYearCriteria = when {
+                    filters.startYear != null && filters.endYear != null -> {
+                        series.releaseYear?.let { year ->
+                            year in filters.startYear!!..filters.endYear!!
+                        } ?: false
+                    }
+                    filters.startYear != null -> {
+                        series.releaseYear?.let { it >= filters.startYear!! } ?: false
+                    }
+                    filters.endYear != null -> {
+                        series.releaseYear?.let { it <= filters.endYear!! } ?: false
+                    }
+                    else -> true
+                }
+
+                hasMatchingGenre && meetsRatingCriteria && meetsYearCriteria
+            }
+            .map { it.toSearchOutput(false) }
+            .toList()
+    }
+
+    private fun applyFiltersToRemoteMovies(
+        movies: List<com.sanaa.search.dataSource.remote.dto.MovieSearchDto>,
+        filters: MediaFilters?
+    ): List<SearchMediaOutput> {
+        if (filters == null) {
+            return movies.map { it.toSearchOutput(false) }
+        }
+
+        return movies.asSequence()
+            .filter { movie ->
+                val hasMatchingGenre = filters.genres.isEmpty() || 
+                    movie.genreIds?.any { it in filters.genres.map { it.toDtoId() } } == true
+
+                val meetsRatingCriteria = filters.imdbRating?.let { rating ->
+                    (movie.voteAverage ?: 0f) >= rating
+                } ?: true
+
+                val meetsYearCriteria = when {
+                    filters.startYear != null && filters.endYear != null -> {
+                        movie.releaseDate?.let { date ->
+                            try {
+                                val year = LocalDate.parse(date).year
+                                year in filters.startYear!!..filters.endYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    filters.startYear != null -> {
+                        movie.releaseDate?.let { date ->
+                            try {
+                                LocalDate.parse(date).year >= filters.startYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    filters.endYear != null -> {
+                        movie.releaseDate?.let { date ->
+                            try {
+                                LocalDate.parse(date).year <= filters.endYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    else -> true
+                }
+
+                hasMatchingGenre && meetsRatingCriteria && meetsYearCriteria
+            }
+            .map { it.toSearchOutput(false) }
+            .toList()
+    }
+
+    private fun applyFiltersToRemoteTvSeries(
+        tvSeries: List<com.sanaa.search.dataSource.remote.dto.TvShowSearchDto>,
+        filters: MediaFilters?
+    ): List<SearchMediaOutput> {
+        if (filters == null) {
+            return tvSeries.map { it.toSearchOutput(false) }
+        }
+
+        return tvSeries.asSequence()
+            .filter { series ->
+                val hasMatchingGenre = filters.genres.isEmpty() || 
+                    series.genreIds?.any { it in filters.genres.map { it.toDtoId() } } == true
+
+                val meetsRatingCriteria = filters.imdbRating?.let { rating ->
+                    (series.voteAverage ?: 0f) >= rating
+                } ?: true
+
+                val meetsYearCriteria = when {
+                    filters.startYear != null && filters.endYear != null -> {
+                        series.releaseDate?.let { date ->
+                            try {
+                                val year = LocalDate.parse(date).year
+                                year in filters.startYear!!..filters.endYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    filters.startYear != null -> {
+                        series.releaseDate?.let { date ->
+                            try {
+                                LocalDate.parse(date).year >= filters.startYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    filters.endYear != null -> {
+                        series.releaseDate?.let { date ->
+                            try {
+                                LocalDate.parse(date).year <= filters.endYear!!
+                            } catch (e: Exception) {
+                                false
+                            }
+                        } ?: false
+                    }
+                    else -> true
+                }
+
+                hasMatchingGenre && meetsRatingCriteria && meetsYearCriteria
+            }
+            .map { it.toSearchOutput(false) }
+            .toList()
     }
 }
