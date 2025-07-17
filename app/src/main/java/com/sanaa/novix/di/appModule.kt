@@ -9,7 +9,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     includes(
-        firebaseModule, loggingModule, configModule, repositoryModule, localDatabaseModule,
+        firebaseModule, searchModule, loggingModule, configModule, repositoryModule, localDatabaseModule,
         networkModule, remoteDataSource, remoteDetailsDataSource
     )
 }
