@@ -10,13 +10,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun IconWithText(
     iconRes: Int,
     contentDescription: String?,
     text: String,
-    tint: androidx.compose.ui.graphics.Color
+    textColor:Color = Theme.colors.body,
+    tint: Color
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -31,7 +33,7 @@ fun IconWithText(
         Text(
             text = text,
             style = Theme.textStyle.label.small,
-            color = Theme.colors.body
+            color = textColor
         )
     }
 }
