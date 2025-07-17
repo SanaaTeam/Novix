@@ -52,43 +52,53 @@ class SeriesViewModel(
     }
 
     override fun onBackClicked() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onReadMoreClicked() {
-        TODO("Not yet implemented")
+        emitEffect(SeriesScreenEffects.NavigateBack)
     }
 
     override fun onViewReviewsClicked(seriesId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(SeriesScreenEffects.NavigateToReviewsScreen(seriesId))
     }
 
     override fun onActorClicked(actorId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(SeriesScreenEffects.NavigateToActorScreen(actorId))
     }
 
     override fun onSeasonNumberClicked(seasonNumber: Int) {
-        tryToExecute(callee = {
-            updateState {
-                it.copy(selectedSeason = seasonNumber)
-            }
-            val season = getSeriesSeasonDetailsUseCase.execute(seriesId, seasonNumber)
-            updateState {
-                it.copy(season = season.toSeasonUiModel())
-            }
-        }, onSuccess = {
-
-        })
+        if (state.value.selectedSeason == seasonNumber) return
+        tryToExecute(
+            callee = {
+                updateState {
+                    it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true)
+                }
+                val season = getSeriesSeasonDetailsUseCase.execute(seriesId, seasonNumber)
+                updateState {
+                    it.copy(season = season.toSeasonUiModel())
+                }
+            },
+            onSuccess = {
+                updateState {
+                    it.copy(isLoadingEpisodes = false)
+                }
+            },
+        )
     }
 
     override fun onEpisodeClicked(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ) {
-        TODO("Not yet implemented")
+        emitEffect(
+            SeriesScreenEffects.NavigateToEpisodeDetailsScreen(
+                seriesId, seasonNumber, episodeNumber
+            )
+        )
     }
 
     override fun onPlayTrailerClicked() {
-        TODO("Not yet implemented")
+        emitEffect(
+            SeriesScreenEffects.PlayTrailer(
+                trailerUrl = state.value.series.trailerUrl
+            )
+        )
     }
 
 }

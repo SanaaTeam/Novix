@@ -46,7 +46,7 @@ fun EpisodeCard(
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
             Text(
-                text = stringResource(R.string.episode_number, episode.episodeNumber),
+                text = stringResource(R.string.episode_number, episode.number),
                 style = Theme.textStyle.label.large,
                 color = Theme.colors.title
             )

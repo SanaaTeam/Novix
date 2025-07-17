@@ -1,9 +1,11 @@
 package com.sanaa.presentation.screen.series
 
+import android.annotation.SuppressLint
 import entity.Actor
 import entity.Episode
 import entity.Season
 import entity.TvSeries
+import kotlin.math.roundToInt
 
 data class SeriesScreenUiState(
     val isLoading: Boolean = false,
@@ -11,6 +13,7 @@ data class SeriesScreenUiState(
     val season: SeasonUiModel = SeasonUiModel(),
     val cast: List<CastUiModel> = emptyList(),
     val images: List<String> = emptyList(),
+    val isLoadingEpisodes: Boolean = false,
     val error: String? = null,
     val selectedSeason: Int = 1,
 )
@@ -24,6 +27,7 @@ data class SeriesUiModel(
     val genres: List<String> = emptyList(),
     val seasonsCount: Int = 0,
     val trailerUrl: String? = null,
+    val releaseDate: String = "",
 )
 
 data class SeasonUiModel(
@@ -33,12 +37,14 @@ data class SeasonUiModel(
 )
 
 data class EpisodeUiModel(
-    val episodeNumber: Int = 0,
+    val number: Int = 0,
     val title: String = "",
     val rating: String = "",
     val airDate: String = "",
     val stillPath: String? = null,
     val duration: Int = 0,
+    val overview: String = "",
+    val seasonNumber: Int = 0,
 )
 
 data class CastUiModel(
@@ -48,14 +54,17 @@ data class CastUiModel(
     val profilePath: String? = null,
 )
 
+@SuppressLint("DefaultLocale")
 fun TvSeries.toSeriesUiModel(trailerUrl: String?) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
     overview = overview,
-    rating = imdbRating.toString(),
+    rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
+    genres = genres.map { it.name },
+    releaseDate = releaseDate.toString(),
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(
@@ -66,12 +75,14 @@ fun Season.toSeasonUiModel() = SeasonUiModel(
     )
 
 fun Episode.toEpisodeUiModel() = EpisodeUiModel(
-    episodeNumber = number,
+    number = this@toEpisodeUiModel.number,
     title = title,
-    rating = imdbRating.toInt().toString(),
+    rating = imdbRating.roundToInt().toString(),
     airDate = "3 oct 2011",
     stillPath = stillImagePath,
     duration = durationMinutes,
+    overview = overview,
+    seasonNumber = seasonNumber,
 )
 
 fun Actor.toCastUiModel() = CastUiModel(
