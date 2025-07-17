@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sanaa.presentation.screens.actors.screen.ActorScreen
-import com.sanaa.presentation.screen.TopMoviesScreen
+import com.sanaa.presentation.screens.actors.screen.TopMoviesScreen
 
 @Composable
 fun DetailsNavHost(startRoute: StartRoute, id: Int) {
