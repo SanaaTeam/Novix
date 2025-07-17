@@ -136,13 +136,10 @@ class SearchViewModel(
     }
 
     private fun loadMediaByTab(query: String) {
-        if (state.value.selectedTabIndex == -1) {
-            updateState { it.copy(selectedTabIndex = MOVIE_INDEX) }
-        }
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
-            ACTOR_INDEX -> loadActors(query)
+            else -> loadActors(query)
         }
     }
 
