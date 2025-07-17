@@ -29,9 +29,4 @@
     <string name="genre_war_and_politics">الحروب والسياسة</string>
     <string name="genre_sci_fi_and_fantasy">خيال علمي وفانتازيا</string>
     <string name="genre_action_and_adventure">أكشن ومغامرة</string>
-    "<string name="view_reviews">عرض التقييمات</string>
-    <string name="seasons_count">%d مواسم</string>
-    <string name="overview">نظرة عامة</string>
-    <string name="read_more">اقرأ المزيد</string>
-    <string name="read_less">اقرأ أقل</string>
 </resources>
