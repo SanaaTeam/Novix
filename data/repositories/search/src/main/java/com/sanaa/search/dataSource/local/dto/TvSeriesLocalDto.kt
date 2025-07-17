@@ -2,7 +2,7 @@ package com.sanaa.search.dataSource.local.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.sanaa.search.util.TimeUtils
 
 @Entity(
     tableName = "tv_series", primaryKeys = ["id", "language"],
@@ -23,5 +23,5 @@ data class TvSeriesLocalDto(
     @ColumnInfo(name = "language")
     val language: String,
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = TimeUtils.getCurrentTimeStamp()
 )

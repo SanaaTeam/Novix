@@ -12,6 +12,7 @@ import com.sanaa.search.search_result.dao.MovieDao
 import com.sanaa.search.search_result.dao.SearchDao
 import com.sanaa.search.search_result.dao.SearchResultDao
 import com.sanaa.search.search_result.dao.SeriesDao
+import com.sanaa.search.util.TimeUtils
 
 class LocalCachedSearchDataSourceImpl(
     private val searchDao: SearchDao,
@@ -19,7 +20,7 @@ class LocalCachedSearchDataSourceImpl(
     private val actorDao: ActorDao,
     private val movieDao: MovieDao,
     private val seriesDao: SeriesDao,
-    private val languageProvider: LanguageProvider
+    private val languageProvider: LanguageProvider,
 ) : LocalCacheSearchDataSource {
 
     private val currentLanguage: String
@@ -27,9 +28,10 @@ class LocalCachedSearchDataSourceImpl(
 
     override suspend fun cacheSearchResult(query: String, itemId: Int, itemType: String) {
         val existingSearch = searchDao.getSearchByQueryAndLanguage(query, currentLanguage)
+        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
 
         val searchId = if (existingSearch != null) {
-            searchDao.updateTimestamp(query, currentLanguage, System.currentTimeMillis())
+            searchDao.updateTimestamp(query, currentLanguage, inWholeMilliseconds)
             existingSearch.id
         } else {
             searchDao.insertSearch(
@@ -40,7 +42,7 @@ class LocalCachedSearchDataSourceImpl(
             )
         }
 
-        clearExpiredCache(System.currentTimeMillis() - CACHE_EXPIRATION_TIME)
+        clearExpiredCache(inWholeMilliseconds - CACHE_EXPIRATION_TIME)
         searchResultDao.insert(
             SearchResultLocalDto(
                 id = searchId.toInt(),
@@ -51,7 +53,8 @@ class LocalCachedSearchDataSourceImpl(
     }
 
     override suspend fun getCachedResults(query: String, type: String): List<SearchResultLocalDto> {
-        clearExpiredCache(System.currentTimeMillis() - CACHE_EXPIRATION_TIME)
+        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        clearExpiredCache(inWholeMilliseconds - CACHE_EXPIRATION_TIME)
 
         val search = searchDao.getSearchByQueryAndLanguage(query, currentLanguage)
 
@@ -59,7 +62,7 @@ class LocalCachedSearchDataSourceImpl(
             return emptyList()
         }
 
-        searchDao.updateTimestamp(query, currentLanguage, System.currentTimeMillis())
+        searchDao.updateTimestamp(query, currentLanguage, inWholeMilliseconds)
 
         return searchResultDao.getByQueryAndLanguage(query, currentLanguage, type)
     }
@@ -117,8 +120,9 @@ class LocalCachedSearchDataSourceImpl(
         searchResultDao.deleteOldResults(expirationTime)
     }
 
-    fun isExpired(timestamp: Long): Boolean {
-        return System.currentTimeMillis() - timestamp > CACHE_EXPIRATION_TIME
+    private fun isExpired(timestamp: Long): Boolean {
+        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        return inWholeMilliseconds - timestamp > CACHE_EXPIRATION_TIME
     }
 
     companion object {
