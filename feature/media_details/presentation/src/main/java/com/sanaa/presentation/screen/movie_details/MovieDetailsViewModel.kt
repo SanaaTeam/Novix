@@ -60,7 +60,7 @@ class MovieDetailsViewModel(
     }
 
     override fun onWatchTrailerClick() {
-        state.value.movieDetails?.trailerUrl?.let { url ->
+        state.value.movieDetails.trailerUrl?.let { url ->
             emitEffect(MovieDetailsUiEffect.OpenTrailer(url))
         }
     }
