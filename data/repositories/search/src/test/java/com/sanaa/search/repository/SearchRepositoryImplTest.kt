@@ -116,7 +116,7 @@ class SearchRepositoryImplTest {
         val query = "Batman"
         val page = 1
         val filters = MediaFilters(
-            genres = listOf(createGenre(28)), // Action
+            genres = listOf(createGenre()), // Action
             imdbRating = 7.0f,
             startYear = 2020,
             endYear = 2024
@@ -182,7 +182,7 @@ class SearchRepositoryImplTest {
         val query = "Breaking Bad"
         val page = 1
         val filters = MediaFilters(
-            genres = listOf(createGenre(18)), // Drama
+            genres = listOf(createGenre()), // Drama
             imdbRating = 8.0f,
             startYear = 2008,
             endYear = 2013
@@ -255,7 +255,7 @@ class SearchRepositoryImplTest {
     // ========== ACTOR PAGINATION TESTS ==========
 
     @Test
-    fun `actorPagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+    fun `actorPagination shouldReturnCorrectPageSize whenValidPage`() = runTest {
         // Given
         val query = "Tom"
         val page = 1
@@ -279,7 +279,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+    fun `actorPagination shouldReturnDifferentResults whenDifferentPages`() = runTest {
         // Given
         val query = "Tom"
         val page1 = 1
@@ -315,7 +315,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldHandleEmptyPage_whenNoResults`() = runTest {
+    fun `actorPagination shouldHandleEmptyPage whenNoResults`() = runTest {
         // Given
         val query = "NonExistentActor"
         val page = 1
@@ -339,7 +339,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldCalculateOffsetCorrectly_whenPageNumberProvided`() = runTest {
+    fun `actorPagination shouldCalculateOffsetCorrectly whenPageNumberProvided`() = runTest {
         // Given
         val query = "Tom"
         val page = 3
@@ -368,7 +368,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldFetchFromRemote_whenLocalCacheEmpty`() = runTest {
+    fun `actorPagination shouldFetchFromRemote whenLocalCacheEmpty`() = runTest {
         // Given
         val query = "NewActor"
         val page = 1
@@ -394,7 +394,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldHandleLargePageNumbers`() = runTest {
+    fun `actorPagination shouldHandleLargePageNumbers`() = runTest {
         // Given
         val query = "Tom"
         val page = 100
@@ -424,7 +424,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `actorPagination_shouldHandleZeroPageNumber`() = runTest {
+    fun `actorPagination shouldHandleZeroPageNumber`() = runTest {
         // Given
         val query = "Tom"
         val page = 0
@@ -456,7 +456,7 @@ class SearchRepositoryImplTest {
     // ========== MOVIE PAGINATION TESTS ==========
 
     @Test
-    fun `moviePagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+    fun `moviePagination shouldReturnCorrectPageSize whenValidPage`() = runTest {
         // Given
         val query = "Batman"
         val page = 1
@@ -480,7 +480,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `moviePagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+    fun `moviePagination shouldReturnDifferentResults whenDifferentPages`() = runTest {
         // Given
         val query = "Batman"
         val page1 = 1
@@ -518,7 +518,7 @@ class SearchRepositoryImplTest {
     // ========== TV SERIES PAGINATION TESTS ==========
 
     @Test
-    fun `tvSeriesPagination_shouldReturnCorrectPageSize_whenValidPage`() = runTest {
+    fun `tvSeriesPagination shouldReturnCorrectPageSize whenValidPage`() = runTest {
         // Given
         val query = "Breaking Bad"
         val page = 1
@@ -542,7 +542,7 @@ class SearchRepositoryImplTest {
     }
 
     @Test
-    fun `tvSeriesPagination_shouldReturnDifferentResults_whenDifferentPages`() = runTest {
+    fun `tvSeriesPagination shouldReturnDifferentResults whenDifferentPages`() = runTest {
         // Given
         val query = "Breaking Bad"
         val page1 = 1
@@ -629,12 +629,12 @@ class SearchRepositoryImplTest {
         // Should only include movies from 2020-2024
     }
 
-    private fun createGenre(id: Int) = Genre.WAR
+    private fun createGenre() = Genre.WAR
 
     companion object {
         private val ActorsLocalDtoList = listOf(
             ActorsLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
-            ActorsLocalDto(id = 2, name = "Leonardo DiCaprio", imagePath = "img", language = "en")
+            ActorsLocalDto(id = 2, name = "John Leonardo", imagePath = "img", language = "en")
         )
 
         private val MoviesLocalDtoList = listOf(

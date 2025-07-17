@@ -3,6 +3,7 @@
 # Project Config
 compileSdk = "35"
 minSdk = "26"
+slf4jApi = "2.0.17"
 targetSdk = "35"
 truth = "1.4.4"
 versionCode = "1"
@@ -137,6 +138,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 # Test
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 # junit
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }

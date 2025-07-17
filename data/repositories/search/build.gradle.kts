@@ -52,6 +52,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
@@ -60,6 +61,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
+    implementation(libs.slf4j.api)
 
 }
 tasks.withType<Test> {
