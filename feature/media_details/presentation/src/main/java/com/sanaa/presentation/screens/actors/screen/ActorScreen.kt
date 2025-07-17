@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -20,8 +21,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
@@ -102,8 +105,8 @@ private fun ActorScreenContent(
                     )
                 },
                 modifier = Modifier
-                    .padding(top = 52.dp)
-                    .align(Alignment.TopCenter)
+                    .systemBarsPadding()
+                    .zIndex(10f)
             )
 
             /* ───── Animated switch between loading and content ───── */
@@ -117,7 +120,9 @@ private fun ActorScreenContent(
             ) { loading ->
                 if (loading) {
                     /** full-screen centered indicator */
-                    WavyProgressIndicator()
+                    NovixLoadingIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 } else {
                     /** main scrollable body */
                     LazyColumn(

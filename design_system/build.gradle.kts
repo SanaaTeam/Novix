@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.material3.jvmstubs)
 
     debugImplementation(libs.androidx.ui.compose.tooling)
 }
