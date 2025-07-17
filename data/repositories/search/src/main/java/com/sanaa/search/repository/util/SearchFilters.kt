@@ -12,7 +12,7 @@ import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
 
 internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<SearchMovieOutput> {
-    val filterGenreIds = genres.map { it.toDtoId() }
+    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
     return movies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
@@ -25,7 +25,7 @@ internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Searc
 internal fun MediaFilters.filterCashedMovies(
     cachedMovies: List<MoviesLocalDto>,
 ): List<SearchMovieOutput> {
-    val filterGenreIds = genres.map { it.toDtoId() }
+    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
     return cachedMovies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }
@@ -38,7 +38,7 @@ internal fun MediaFilters.filterTvShows(
     tvSeries: List<TvShowSearchDto>,
 ): List<SearchTvSeriesOutput> {
     let {
-        val filterGenreIds = genres.map { it.toDtoId() }
+        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
         return tvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
             .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
@@ -52,7 +52,7 @@ internal fun MediaFilters.filterCashedTvShows(
     cachedTvSeries: List<TvSeriesLocalDto>,
 ): List<SearchTvSeriesOutput> {
     let {
-        val filterGenreIds = genres.map { it.toDtoId() }
+        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
         return cachedTvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
             .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }

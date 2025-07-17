@@ -83,7 +83,7 @@ class SearchRepositoryImpl(
         query: String,
         filters: MediaFilters?,
     ): List<SearchTvSeriesOutput> {
-        val tvSeries = remoteDataSource.searchTv(query).results.onEach {
+        val tvSeries = remoteDataSource.searchTvShows(query).results.onEach {
             localDataSource.cacheTvSeries(
                 it.toLocalDto(languageProvider.getCurrentLanguage())
             )
