@@ -26,7 +26,7 @@ class LocalSearchHistoryDataSourceImplTest {
         // When
         dataSource.insertQuery(query)
         // Then
-        coVerify { queryDao.upsertQueryWithTimestamp(query, any()) }
+        coVerify { queryDao.insertQuery(query)}
     }
 
     @Test

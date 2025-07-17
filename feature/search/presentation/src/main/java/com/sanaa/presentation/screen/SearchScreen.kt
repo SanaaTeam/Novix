@@ -126,7 +126,14 @@ fun SearchScreenContent(
                     modifier = Modifier.align(Alignment.Start)
                 )
             }
-            AnimatedVisibility(uiState.searchQuery.isBlank()) {
+            AnimatedVisibility(
+                uiState.searchQuery.isBlank() ||
+                (uiState.searchQuery.isNotBlank() &&
+                 uiState.movies.isEmpty() &&
+                 uiState.tvShows.isEmpty() &&
+                 uiState.actors.isEmpty() &&
+                 !uiState.isLoading)
+            ) {
                 SearchHistoryContent(
                     recentSearches = uiState.recentSearchQueries,
                     recentViewed = uiState.recentViewedMedia,
