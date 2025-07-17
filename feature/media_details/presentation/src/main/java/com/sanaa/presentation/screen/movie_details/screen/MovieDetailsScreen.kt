@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.movie_details.screen
 
 import android.content.Intent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +38,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
@@ -47,11 +50,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.InfoSection
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.boxContainerGradient
 import com.sanaa.presentation.model.CastMemberUiModel
 import com.sanaa.presentation.model.MovieDetailsUiModel
 import com.sanaa.presentation.model.SimilarMovieUiModel
@@ -113,7 +118,7 @@ fun MovieDetailsContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(designR.drawable.icon_arrow_back),
-                        onClick = { interactionListener.onBackClick() } // استخدام interactionListener مباشرة
+                        onClick = { interactionListener.onBackClick() }
                     )
                 },
                 rightContent = {
@@ -169,6 +174,7 @@ fun MovieDetailsContent(
                                 iconRes = designR.drawable.star,
                                 contentDescription = null,
                                 text = movieDetails.rating,
+                                textColor = Theme.colors.title,
                                 tint = Theme.colors.statusColors.yellowAccent
                             )
                             DotSeparator()
@@ -213,7 +219,7 @@ fun MovieDetailsContent(
 
             if (movieDetails.trailerUrl != null) {
                 BottomActionButtons(
-                    onWatchTrailer = { interactionListener.onWatchTrailerClick() }, // استخدام interactionListener مباشرة
+                    onWatchTrailer = { interactionListener.onWatchTrailerClick() },
                     movieDetails = movieDetails,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
@@ -298,17 +304,37 @@ fun MoreLikeThisCard(
     onBookmarkClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
+    val placeholderResId = if (isDarkTheme) {
+        designR.drawable.movie_placeholder_dark
+    } else {
+        designR.drawable.movie_placeholder_light
+    }
+
     MovieSeriesPosterCard(
         modifier = modifier,
         poster = rememberAsyncImagePainter(model = movie.posterUrl),
         onCardClick = {  },
         boastImage = {
-            AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = movie.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
+            RemoteBlurredHaramImageViewer(
+                imageUrl = movie.posterUrl,
+                modifier = Modifier.fillMaxSize(),
+                blurRadius = 150,
+                haramThreshold = 0.2f,
+                nonHaramThreshold = 0.7f,
+                placeholder = painterResource(placeholderResId),
+                error = painterResource(placeholderResId),
+                contentDescription = movie.title
+            ) {
+                OnBlurContent(
+                    hintText = stringResource(designR.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small.copy(
+                        color = Color(0x99FFFFFF)
+                    ),
+                    iconSize = 24.dp,
+                    icon = painterResource(designR.drawable.icon_eye_slash)
+                )
+            }
         },
         topLeftContent = {
             SaveIconChip(
@@ -318,8 +344,6 @@ fun MoreLikeThisCard(
         }
     )
 }
-
-
 @Composable
 fun BottomActionButtons(
     onWatchTrailer: () -> Unit,
@@ -332,7 +356,9 @@ fun BottomActionButtons(
     ) {
         Box(
             Modifier
-                .fillMaxWidth()
+                .fillMaxWidth().background(
+                    brush = boxContainerGradient
+                    )
 
         )
         Row(
