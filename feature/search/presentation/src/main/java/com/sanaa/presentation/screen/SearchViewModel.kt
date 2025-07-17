@@ -231,8 +231,8 @@ class SearchViewModel(
     }
 
     override fun onTabSelected(index: Int) {
-        updateState { it.copy(selectedTabIndex = index) }
         if (index == state.value.selectedTabIndex) return
+        updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
     }

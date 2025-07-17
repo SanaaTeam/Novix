@@ -378,6 +378,20 @@ class SearchViewModelTest {
     }
 
     @Test
+    fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
+        val index = SearchViewModel.TV_SHOW_INDEX
+
+        // When
+        searchViewModel.onTabSelected(index)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
+        }
+    }
+
+    @Test
     fun `onTabSelected() should load actors when actor tap selected`() = runTest {
         // Given
         val index = SearchViewModel.ACTOR_INDEX
