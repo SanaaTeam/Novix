@@ -4,22 +4,22 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import search.usecase.SearchMoviesUseCase
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSource(
     private val searchMoviesUseCase: SearchMoviesUseCase,
     private val query: String,
     private val filters: MediaFilters?
-) : PagingSource<Int, SearchMediaOutput>() {
+) : PagingSource<Int, SearchMovieOutput>() {
 
-    override fun getRefreshKey(state: PagingState<Int, SearchMediaOutput>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, SearchMovieOutput>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchMediaOutput> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchMovieOutput> {
         val page = params.key ?: STARTING_PAGE_INDEX
         return try {
             val results = searchMoviesUseCase.execute(query = query, page = page, filters = filters)

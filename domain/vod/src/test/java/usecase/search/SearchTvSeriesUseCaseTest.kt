@@ -13,8 +13,7 @@ import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchTvSeriesUseCase
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvSeriesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -31,9 +30,10 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "TvSeries"
+            val page = 1
 
             // When
-            searchTvSeriesUseCase.execute(query, null)
+            searchTvSeriesUseCase.execute(query, page, null)
 
             // Then
             coVerify {
@@ -46,16 +46,17 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
+            val page = 1
             val filters = null
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
-            } returns searchMediaOutputList
+                searchRepository.searchTvShows(query, page, filters)
+            } returns searchTvShowsOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchTvSeriesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchTvShowsOutputList)
 
         }
 
@@ -64,17 +65,18 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
+            val page = 1
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.TV_SERIES)
-            } returns searchMediaOutputList
+                searchRepository.searchTvShows(query, page, filters)
+            } returns searchTvShowsOutputList
 
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchTvSeriesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchTvShowsOutputList)
         }
 
 
@@ -83,23 +85,23 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Sam"
+            val page = 1
             coEvery {
-                searchRepository.searchMedia(query, null, MediaType.TV_SERIES)
+                searchRepository.searchTvShows(query, page, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchTvSeriesUseCase.execute(query, null)
+                searchTvSeriesUseCase.execute(query, page, null)
             }
         }
 
     companion object {
-        private val searchMediaOutputList = listOf(
-            SearchMediaOutput(
+        private val searchTvShowsOutputList = listOf(
+            SearchTvSeriesOutput(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
-                isSaved = true
             )
         )
     }

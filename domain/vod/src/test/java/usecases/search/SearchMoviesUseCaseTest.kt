@@ -13,8 +13,7 @@ import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchMoviesUseCase
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchMovieOutput
 
 class SearchMoviesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -31,9 +30,10 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Movie"
+            val page = 1
 
             // When
-            searchMoviesUseCase.execute(query, null)
+            searchMoviesUseCase.execute(query, page, null)
 
             // Then
             coVerify {
@@ -47,15 +47,16 @@ class SearchMoviesUseCaseTest {
             // Given
             val query = "Movie"
             val filters = null
+            val page = 1
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
-            } returns searchMediaOutputList
+                searchRepository.searchMovies(query, page, filters)
+            } returns searchMovieOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
@@ -63,16 +64,17 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Movie"
+            val page = 1
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMedia(query, filters, MediaType.MOVIE)
-            } returns searchMediaOutputList
+                searchRepository.searchMovies(query, page, filters)
+            } returns searchMovieOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
@@ -80,23 +82,23 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Sam"
+            val page = 1
             coEvery {
-                searchRepository.searchMedia(query, null, MediaType.MOVIE)
+                searchRepository.searchMovies(query, page, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchMoviesUseCase.execute(query, null)
+                searchMoviesUseCase.execute(query, page, null)
             }
         }
 
     companion object {
-        private val searchMediaOutputList = listOf(
-            SearchMediaOutput(
+        private val searchMovieOutputList = listOf(
+            SearchMovieOutput(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
-                isSaved = true
             )
         )
     }

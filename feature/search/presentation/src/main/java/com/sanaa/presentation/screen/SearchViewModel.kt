@@ -42,9 +42,9 @@ import search.usecase.search_param.MediaType
 import search.usecase.search_param.RecentViewedMedia
 
 class SearchViewModel(
-    private val searchMoviesPagingUseCase: SearchMoviesUseCase,
-    private val searchTvShowsPagingUseCase: SearchTvSeriesUseCase,
-    private val searchActorsPagingUseCase: SearchActorsUseCase,
+    private val searchMoviesUseCase: SearchMoviesUseCase,
+    private val searchTvSeriesUseCase: SearchTvSeriesUseCase,
+    private val searchActorsUseCase: SearchActorsUseCase,
     private val addRecentViewedUseCase: AddRecentViewedUseCase,
     private val getRecentViewedUseCase: GetRecentViewedUseCase,
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
@@ -115,6 +115,7 @@ class SearchViewModel(
                         }
                     }
             },
+
             onError = ::onDataLoadError
         )
     }
@@ -150,6 +151,9 @@ class SearchViewModel(
         _actorsPagingData.value = PagingData.empty()
         updateState {
             it.copy(
+                movies = emptyList(),
+                tvShows = emptyList(),
+                actors = emptyList(),
                 isLoading = false,
                 error = null
             )
@@ -163,8 +167,6 @@ class SearchViewModel(
             searchHistoryRepository.addSearchHistory(query)
         }
 
-        if (state.value.selectedTabIndex == state.value.lastTabIndex) return
-        updateState { it.copy(lastTabIndex = state.value.selectedTabIndex) }
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
@@ -182,7 +184,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchMoviesPagingSource(
-                    searchMoviesPagingUseCase,
+                    searchMoviesUseCase,
                     query = query,
                     filters = state.value.filters
                 )
@@ -222,7 +224,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchTvShowsPagingSource(
-                    searchTvShowsPagingUseCase,
+                    searchTvSeriesUseCase,
                     query = query,
                     filters = state.value.filters
                 )
@@ -262,7 +264,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchActorsPagingSource(
-                    searchActorsPagingUseCase,
+                    searchActorsUseCase,
                     query = query
                 )
             }
@@ -313,6 +315,7 @@ class SearchViewModel(
     }
 
     override fun onTabSelected(index: Int) {
+        if (index == state.value.selectedTabIndex) return
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)

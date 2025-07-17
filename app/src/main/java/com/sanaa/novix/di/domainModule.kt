@@ -5,6 +5,12 @@ import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
 import details.usecase.actor.GetGalleryImagesUseCase
 import details.usecase.actor.GetProfileImagesUseCase
+import details.usecase.movie.GetMovieCastUseCase
+import details.usecase.movie.GetMovieDetailsUseCase
+import details.usecase.movie.GetMovieImagesUseCase
+import details.usecase.movie.GetMoviesByCategory
+import details.usecase.movie.GetReviewsByMovieId
+import details.usecase.movie.GetSimilarMoviesByMovieId
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -33,4 +39,11 @@ val domainModule = module {
     single { GetActorTopTvSeriesUseCase(get()) }
     single { GetGalleryImagesUseCase(get()) }
     single { GetProfileImagesUseCase(get()) }
+
+    single { GetMovieCastUseCase(get()) }
+    single { GetMovieDetailsUseCase(get()) }
+    single { GetMovieImagesUseCase(get()) }
+    single { GetMoviesByCategory(get()) }
+    single { GetReviewsByMovieId(get()) }
+    single { GetSimilarMoviesByMovieId(get()) }
 }

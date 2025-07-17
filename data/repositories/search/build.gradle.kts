@@ -54,6 +54,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.bundles.room)
+    testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)
     testImplementation(libs.mockk)
     testImplementation(libs.kotlinx.coroutines.test)

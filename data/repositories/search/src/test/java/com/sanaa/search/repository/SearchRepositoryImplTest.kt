@@ -10,8 +10,9 @@ import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
-import com.sanaa.search.mapper.toSearchOutput
 import com.sanaa.search.dataSource.remote.response.SearchResponse
+import com.sanaa.search.mapper.toSearchOutput
+import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.Runs
@@ -24,7 +25,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
 import java.net.UnknownHostException
 
 class SearchRepositoryImplTest {
@@ -46,7 +46,13 @@ class SearchRepositoryImplTest {
         // Given
         val query = "Tom"
         val page = 1
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, 20, 0) } returns ActorsLocalDtoList
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                20,
+                0
+            )
+        } returns ActorsLocalDtoList
 
         // When
         val expected = ActorsLocalDtoList.map { it.toSearchOutput() }
@@ -60,7 +66,13 @@ class SearchRepositoryImplTest {
     fun `searchActors fetches remote and caches when no local`() = runTest {
         val query = "Jane"
         val page = 1
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, 20, 0) } returns emptyList()
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                20,
+                0
+            )
+        } returns emptyList()
         coEvery { remoteDataSource.searchActors(query, page) } returns actorSearchResponse
         coEvery { localCacheSearchDataSource.cacheActor(any()) } just Runs
 
@@ -72,7 +84,13 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `searchActors throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(any(), any(), any()) } throws UnknownHostException()
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                any(),
+                any(),
+                any()
+            )
+        } throws UnknownHostException()
         assertThrows<NoNetworkException> {
             searchRepository.searchActors("x", 1)
         }
@@ -80,7 +98,13 @@ class SearchRepositoryImplTest {
 
     @Test
     fun `searchActors transforms other exceptions`() = runTest {
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(any(), any(), any()) } throws Exception("oops")
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                any(),
+                any(),
+                any()
+            )
+        } throws Exception("oops")
         assertThrows<RetrievingDataFailureException> {
             searchRepository.searchActors("x", 1)
         }
@@ -97,11 +121,17 @@ class SearchRepositoryImplTest {
             startYear = 2020,
             endYear = 2024
         )
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 0) } returns MoviesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns MoviesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, filters, MediaType.MOVIE)
+        val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
         assertThat(result).isNotEmpty()
@@ -114,10 +144,16 @@ class SearchRepositoryImplTest {
         // Given
         val query = "Batman"
         val page = 1
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 0) } returns MoviesLocalDtoList
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns MoviesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, null, MediaType.MOVIE)
+        val result = searchRepository.searchMovies(query, page, null)
 
         // Then
         assertThat(result).hasSize(MoviesLocalDtoList.size)
@@ -133,7 +169,7 @@ class SearchRepositoryImplTest {
         coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
         // When
-        searchRepository.searchMedia(query, page, null, MediaType.MOVIE)
+        searchRepository.searchMovies(query, page, null)
 
         // Then
         coVerify { remoteDataSource.searchMovies(query, page) }
@@ -151,11 +187,17 @@ class SearchRepositoryImplTest {
             startYear = 2008,
             endYear = 2013
         )
-        
-        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, 20, 0) } returns TvSeriesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getTvSeriesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns TvSeriesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, filters, MediaType.TV_SERIES)
+        val result = searchRepository.searchTvShows(query, page, filters)
 
         // Then
         assertThat(result).isNotEmpty()
@@ -171,7 +213,7 @@ class SearchRepositoryImplTest {
         coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
         // When
-        searchRepository.searchMedia(query, page, null, MediaType.TV_SERIES)
+        searchRepository.searchTvShows(query, page, null)
 
         // Then
         coVerify { remoteDataSource.searchTv(query, page) }
@@ -184,13 +226,25 @@ class SearchRepositoryImplTest {
         val query = "Batman"
         val page1 = 1
         val page2 = 2
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 0) } returns MoviesLocalDtoList.take(10)
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 20) } returns MoviesLocalDtoList.takeLast(10)
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns MoviesLocalDtoList.take(10)
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                20
+            )
+        } returns MoviesLocalDtoList.takeLast(10)
 
         // When
-        val result1 = searchRepository.searchMedia(query, page1, null, MediaType.MOVIE)
-        val result2 = searchRepository.searchMedia(query, page2, null, MediaType.MOVIE)
+        val result1 = searchRepository.searchMovies(query, page1, null)
+        val result2 = searchRepository.searchMovies(query, page2, null)
 
         // Then
         assertThat(result1).hasSize(10)
@@ -207,8 +261,14 @@ class SearchRepositoryImplTest {
         val page = 1
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns ActorsLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                offset
+            )
+        } returns ActorsLocalDtoList
 
         // When
         val result = searchRepository.searchActors(query, page)
@@ -225,12 +285,24 @@ class SearchRepositoryImplTest {
         val page1 = 1
         val page2 = 2
         val pageSize = 20
-        
+
         val firstPageActors = ActorsLocalDtoList.take(10)
         val secondPageActors = ActorsLocalDtoList.takeLast(10)
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, 0) } returns firstPageActors
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, 20) } returns secondPageActors
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                0
+            )
+        } returns firstPageActors
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                20
+            )
+        } returns secondPageActors
 
         // When
         val result1 = searchRepository.searchActors(query, page1)
@@ -249,8 +321,14 @@ class SearchRepositoryImplTest {
         val page = 1
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns emptyList()
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                offset
+            )
+        } returns emptyList()
 
         // When
         val result = searchRepository.searchActors(query, page)
@@ -267,14 +345,26 @@ class SearchRepositoryImplTest {
         val page = 3
         val pageSize = 20
         val expectedOffset = (page - 1) * pageSize // (3-1) * 20 = 40
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns ActorsLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        } returns ActorsLocalDtoList
 
         // When
         searchRepository.searchActors(query, page)
 
         // Then
-        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+        coVerify {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        }
     }
 
     @Test
@@ -284,8 +374,14 @@ class SearchRepositoryImplTest {
         val page = 1
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset) } returns emptyList()
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                offset
+            )
+        } returns emptyList()
         coEvery { remoteDataSource.searchActors(query, page) } returns actorSearchResponse
         coEvery { localCacheSearchDataSource.cacheActor(any()) } just Runs
 
@@ -304,15 +400,27 @@ class SearchRepositoryImplTest {
         val page = 100
         val pageSize = 20
         val expectedOffset = (page - 1) * pageSize // (100-1) * 20 = 1980
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns emptyList()
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        } returns emptyList()
 
         // When
         val result = searchRepository.searchActors(query, page)
 
         // Then
         assertThat(result).isEmpty()
-        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+        coVerify {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        }
     }
 
     @Test
@@ -322,15 +430,27 @@ class SearchRepositoryImplTest {
         val page = 0
         val pageSize = 20
         val expectedOffset = 0 // (0-1) * 20 = -20, but should be handled as page 1
-        
-        coEvery { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) } returns ActorsLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        } returns ActorsLocalDtoList
 
         // When
         val result = searchRepository.searchActors(query, page)
 
         // Then
         assertThat(result).isNotEmpty()
-        coVerify { localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, expectedOffset) }
+        coVerify {
+            localCacheSearchDataSource.getPagedActorsByQuery(
+                query,
+                pageSize,
+                expectedOffset
+            )
+        }
     }
 
     // ========== MOVIE PAGINATION TESTS ==========
@@ -342,11 +462,17 @@ class SearchRepositoryImplTest {
         val page = 1
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, offset) } returns MoviesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                pageSize,
+                offset
+            )
+        } returns MoviesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, null, MediaType.MOVIE)
+        val result = searchRepository.searchMovies(query, page, null)
 
         // Then
         assertThat(result).hasSize(MoviesLocalDtoList.size)
@@ -360,16 +486,28 @@ class SearchRepositoryImplTest {
         val page1 = 1
         val page2 = 2
         val pageSize = 20
-        
+
         val firstPageMovies = MoviesLocalDtoList.take(10)
         val secondPageMovies = MoviesLocalDtoList.takeLast(10)
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, 0) } returns firstPageMovies
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, pageSize, 20) } returns secondPageMovies
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                pageSize,
+                0
+            )
+        } returns firstPageMovies
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                pageSize,
+                20
+            )
+        } returns secondPageMovies
 
         // When
-        val result1 = searchRepository.searchMedia(query, page1, null, MediaType.MOVIE)
-        val result2 = searchRepository.searchMedia(query, page2, null, MediaType.MOVIE)
+        val result1 = searchRepository.searchMovies(query, page1, null)
+        val result2 = searchRepository.searchMovies(query, page2, null)
 
         // Then
         assertThat(result1).hasSize(10)
@@ -386,11 +524,17 @@ class SearchRepositoryImplTest {
         val page = 1
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        
-        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, offset) } returns TvSeriesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getTvSeriesByQuery(
+                query,
+                pageSize,
+                offset
+            )
+        } returns TvSeriesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, null, MediaType.TV_SERIES)
+        val result = searchRepository.searchTvShows(query, page, null)
 
         // Then
         assertThat(result).hasSize(TvSeriesLocalDtoList.size)
@@ -404,16 +548,28 @@ class SearchRepositoryImplTest {
         val page1 = 1
         val page2 = 2
         val pageSize = 20
-        
+
         val firstPageSeries = TvSeriesLocalDtoList.take(1)
         val secondPageSeries = TvSeriesLocalDtoList.takeLast(1)
-        
-        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, 0) } returns firstPageSeries
-        coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query, pageSize, 20) } returns secondPageSeries
+
+        coEvery {
+            localCacheSearchDataSource.getTvSeriesByQuery(
+                query,
+                pageSize,
+                0
+            )
+        } returns firstPageSeries
+        coEvery {
+            localCacheSearchDataSource.getTvSeriesByQuery(
+                query,
+                pageSize,
+                20
+            )
+        } returns secondPageSeries
 
         // When
-        val result1 = searchRepository.searchMedia(query, page1, null, MediaType.TV_SERIES)
-        val result2 = searchRepository.searchMedia(query, page2, null, MediaType.TV_SERIES)
+        val result1 = searchRepository.searchTvShows(query, page1, null)
+        val result2 = searchRepository.searchTvShows(query, page2, null)
 
         // Then
         assertThat(result1).hasSize(1)
@@ -430,11 +586,17 @@ class SearchRepositoryImplTest {
             genres = emptyList(),
             imdbRating = 7.0f
         )
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 0) } returns MoviesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns MoviesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, filters, MediaType.MOVIE)
+        val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
         assertThat(result).isNotEmpty()
@@ -450,76 +612,82 @@ class SearchRepositoryImplTest {
             startYear = 2020,
             endYear = 2024
         )
-        
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query, 20, 0) } returns MoviesLocalDtoList
+
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(
+                query,
+                20,
+                0
+            )
+        } returns MoviesLocalDtoList
 
         // When
-        val result = searchRepository.searchMedia(query, page, filters, MediaType.MOVIE)
+        val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
         assertThat(result).isNotEmpty()
         // Should only include movies from 2020-2024
     }
 
-    private fun createGenre(id: Int) = search.usecase.search_param.Genre(id, "Test Genre")
+    private fun createGenre(id: Int) = Genre.WAR
 
     companion object {
         private val ActorsLocalDtoList = listOf(
             ActorsLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
             ActorsLocalDto(id = 2, name = "Leonardo DiCaprio", imagePath = "img", language = "en")
         )
-        
+
         private val MoviesLocalDtoList = listOf(
             MoviesLocalDto(
-                id = 1, 
-                title = "Batman Begins", 
-                imagePath = "img", 
-                releaseYear = 2005, 
-                genres = "28, 80", 
-                imdbRating = 8.2f, 
+                id = 1,
+                title = "Batman Begins",
+                imagePath = "img",
+                releaseYear = 2005,
+                genres = "28, 80",
+                imdbRating = 8.2f,
                 language = "en"
             ),
             MoviesLocalDto(
-                id = 2, 
-                title = "The Dark Knight", 
-                imagePath = "img", 
-                releaseYear = 2008, 
-                genres = "28, 80, 53", 
-                imdbRating = 9.0f, 
+                id = 2,
+                title = "The Dark Knight",
+                imagePath = "img",
+                releaseYear = 2008,
+                genres = "28, 80, 53",
+                imdbRating = 9.0f,
                 language = "en"
             ),
             MoviesLocalDto(
-                id = 3, 
-                title = "Batman v Superman", 
-                imagePath = "img", 
-                releaseYear = 2016, 
-                genres = "28, 12", 
-                imdbRating = 6.4f, 
+                id = 3,
+                title = "Batman v Superman",
+                imagePath = "img",
+                releaseYear = 2016,
+                genres = "28, 12",
+                imdbRating = 6.4f,
                 language = "en"
             )
         )
-        
+
         private val TvSeriesLocalDtoList = listOf(
             TvSeriesLocalDto(
-                id = 1, 
-                title = "Breaking Bad", 
-                imagePath = "img", 
-                releaseYear = 2008, 
-                genres = "18, 80", 
-                imdbRating = 9.5f, 
+                id = 1,
+                title = "Breaking Bad",
+                imagePath = "img",
+                releaseYear = 2008,
+                genres = "18, 80",
+                imdbRating = 9.5f,
                 language = "en"
             ),
             TvSeriesLocalDto(
-                id = 2, 
-                title = "Better Call Saul", 
-                imagePath = "img", 
-                releaseYear = 2015, 
-                genres = "18, 80", 
-                imdbRating = 8.9f, 
+                id = 2,
+                title = "Better Call Saul",
+                imagePath = "img",
+                releaseYear = 2015,
+                genres = "18, 80",
+                imdbRating = 8.9f,
                 language = "en"
             )
         )
-        
+
         private val ActorsRemoteDtoList = listOf(
             ActorSearchDto(
                 id = 1,
@@ -532,12 +700,12 @@ class SearchRepositoryImplTest {
                 profileImagePath = "/path/to/image"
             ),
         )
-        
+
         private val MoviesRemoteDtoList = listOf(
             MovieSearchDto(
                 id = 1,
                 title = "Batman Begins",
-                posterPath = "/path/to/image",
+                posterImagePath = "/path/to/image",
                 releaseDate = "2005-06-15",
                 genreIds = listOf(28, 80),
                 voteAverage = 8.2f
@@ -545,46 +713,46 @@ class SearchRepositoryImplTest {
             MovieSearchDto(
                 id = 2,
                 title = "The Dark Knight",
-                posterPath = "/path/to/image",
+                posterImagePath = "/path/to/image",
                 releaseDate = "2008-07-18",
                 genreIds = listOf(28, 80, 53),
                 voteAverage = 9.0f
             )
         )
-        
+
         private val TvSeriesRemoteDtoList = listOf(
             TvShowSearchDto(
                 id = 1,
                 name = "Breaking Bad",
-                posterPath = "/path/to/image",
-                firstAirDate = "2008-01-20",
+                posterImagePath = "/path/to/image",
+                releaseDate = "2008-01-20",
                 genreIds = listOf(18, 80),
                 voteAverage = 9.5f
             ),
             TvShowSearchDto(
                 id = 2,
                 name = "Better Call Saul",
-                posterPath = "/path/to/image",
-                firstAirDate = "2015-02-08",
+                posterImagePath = "/path/to/image",
+                releaseDate = "2015-02-08",
                 genreIds = listOf(18, 80),
                 voteAverage = 8.9f
             )
         )
-        
+
         private val actorSearchResponse = SearchResponse(
             page = 1,
             results = ActorsRemoteDtoList,
             totalPages = 1,
             totalResults = ActorsRemoteDtoList.size
         )
-        
+
         private val movieSearchResponse = SearchResponse(
             page = 1,
             results = MoviesRemoteDtoList,
             totalPages = 1,
             totalResults = MoviesRemoteDtoList.size
         )
-        
+
         private val tvSeriesSearchResponse = SearchResponse(
             page = 1,
             results = TvSeriesRemoteDtoList,

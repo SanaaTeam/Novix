@@ -4,22 +4,22 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import search.usecase.SearchTvSeriesUseCase
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvShowsPagingSource(
     private val searchTvShowsUseCase: SearchTvSeriesUseCase,
     private val query: String,
     private val filters: MediaFilters?
-) : PagingSource<Int, SearchMediaOutput>() {
+) : PagingSource<Int, SearchTvSeriesOutput>() {
 
-    override fun getRefreshKey(state: PagingState<Int, SearchMediaOutput>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, SearchTvSeriesOutput>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchMediaOutput> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchTvSeriesOutput> {
         val page = params.key ?: STARTING_PAGE_INDEX
 
         return try {

@@ -3,20 +3,18 @@ package search.usecase
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchMediaOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvSeriesUseCase(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {
-    suspend fun execute(query: String, page: Int, filters: MediaFilters?): List<SearchMediaOutput> {
+    suspend fun execute(
+        query: String,
+        page: Int,
+        filters: MediaFilters?,
+    ): List<SearchTvSeriesOutput> {
         searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchMedia(
-            query = query,
-            page = page,
-            filters = filters,
-            mediaType = MediaType.TV_SERIES
-        )
+        return searchRepository.searchTvShows(query, page, filters)
     }
 }

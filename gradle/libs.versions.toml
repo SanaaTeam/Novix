@@ -175,6 +175,9 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 room = [
     "androidx-room-runtime",
     "androidx-room-ktx",
+]
+
+room-testing = [
     "androidx-room-testing"
 ]
 
