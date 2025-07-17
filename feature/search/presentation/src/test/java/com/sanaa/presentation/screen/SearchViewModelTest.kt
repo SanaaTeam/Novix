@@ -297,6 +297,24 @@ class SearchViewModelTest {
     }
 
     @Test
+    fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
+        // Given
+        val initialState = searchViewModel.state.value
+        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchViewModel.TV_SHOW_INDEX)
+
+        // When
+        searchViewModel.onTabSelected(SearchViewModel.TV_SHOW_INDEX)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchViewModel.TV_SHOW_INDEX)
+            Truth.assertThat(item.isLoading).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `onTabSelected() should load movies when movie tap selected`() = runTest {
         // Given
         val index = SearchViewModel.MOVIE_INDEX
@@ -321,7 +339,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
@@ -354,11 +371,24 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
             Truth.assertThat(item).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
+        val index = SearchViewModel.TV_SHOW_INDEX
+
+        // When
+        searchViewModel.onTabSelected(index)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
         }
     }
 
@@ -386,7 +416,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = actorName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
@@ -444,7 +473,6 @@ class SearchViewModelTest {
             val expected = SearchScreenUiState(
                 searchQuery = movieName,
                 selectedTabIndex = index,
-                lastTabIndex = index,
                 isLoading = false,
                 filters = filters
             )
