@@ -3,7 +3,6 @@ package com.sanaa.movies.dataSource.remote
 import com.sanaa.movies.dataSource.remote.dto.CastDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
-import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
