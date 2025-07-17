@@ -14,7 +14,6 @@ import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
-import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
@@ -22,11 +21,11 @@ class SearchRepositoryImpl(
     private val localDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
-    override suspend fun searchActors(query: String): List<SearchActorOutput> {
-        try {
+    override suspend fun searchActors(query: String): List<SearchActorOutput> =
+        searchOrThrow(query) {
             val cachedActors = localDataSource.getActorsByQuery(query)
             if (cachedActors.isNotEmpty()) {
-                return cachedActors.map { it.toSearchOutput() }
+                cachedActors.map { it.toSearchOutput() }
             } else {
                 val actors = remoteDataSource.searchActors(query).results.also {
                     it.forEach {
@@ -35,14 +34,9 @@ class SearchRepositoryImpl(
                         )
                     }
                 }
-                return actors.map { it.toSearchOutput() }
+                actors.map { it.toSearchOutput() }
             }
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (_: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve actors for query: $query")
         }
-    }
 
     override suspend fun searchMovies(
         query: String,
@@ -107,7 +101,7 @@ class SearchRepositoryImpl(
         }
     }
 
-   override suspend fun searchTvShows(
+    override suspend fun searchTvShows(
         query: String,
         filters: MediaFilters?,
     ): List<SearchTvSeriesOutput> = searchOrThrow(query) {
@@ -173,7 +167,7 @@ class SearchRepositoryImpl(
             return callee()
         } catch (_: UnresolvedAddressException) {
             throw NoNetworkException()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
         }
     }
