@@ -1,13 +1,13 @@
 package com.sanaa.search.mapper
 
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
 import kotlinx.datetime.LocalDate
 import search.usecase.search_param.SearchMediaOutput
 
-fun MoviesLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
+fun MovieLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     return SearchMediaOutput(
         id = id,
         title = title,
@@ -16,8 +16,8 @@ fun MoviesLocalDto.toSearchOutput(isSaved: Boolean): SearchMediaOutput {
     )
 }
 
-fun MovieSearchDto.toLocalDto(language: String): MoviesLocalDto {
-    return MoviesLocalDto(
+fun MovieSearchDto.toLocalDto(language: String): MovieLocalDto {
+    return MovieLocalDto(
         id = id,
         title = title ?: "",
         imagePath = imageUrl + posterImagePath,

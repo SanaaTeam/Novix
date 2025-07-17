@@ -2,12 +2,11 @@ package com.sanaa.search.dataSource.local.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "movie", primaryKeys = ["id", "language"],
 )
-data class MoviesLocalDto(
+data class MovieLocalDto(
     @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "title")

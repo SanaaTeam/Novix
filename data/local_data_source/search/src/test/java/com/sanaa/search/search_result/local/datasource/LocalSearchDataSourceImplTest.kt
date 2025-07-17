@@ -1,7 +1,11 @@
 package com.sanaa.search.search_result.local.datasource
 
 import com.example.env_config.service.LanguageProvider
-import com.sanaa.search.dataSource.local.dto.*
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
+import com.sanaa.search.dataSource.local.dto.SearchLocalDto
+import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
+import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.search_result.LocalCachedSearchDataSourceImpl
 import com.sanaa.search.search_result.dao.ActorDao
 import com.sanaa.search.search_result.dao.MovieDao
@@ -148,7 +152,7 @@ class LocalSearchDataSourceImplTest {
     fun `getActorsByQuery returns cached results`() = runTest {
         val query = "actor query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "actor"))
-        val actor = ActorsLocalDto(123, "Actor Name", "", "en", System.currentTimeMillis())
+        val actor = ActorLocalDto(123, "Actor Name", "", "en", System.currentTimeMillis())
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", System.currentTimeMillis())
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "actor") } returns cachedResults
@@ -165,7 +169,7 @@ class LocalSearchDataSourceImplTest {
         val query = "actor query"
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
-        coEvery { actorDao.getActorsByQuery(query) } returns listOf(ActorsLocalDto(
+        coEvery { actorDao.getActorsByQuery(query) } returns listOf(ActorLocalDto(
             id = 99, name = "Actor", imagePath = "", language = "en", timestamp = System.currentTimeMillis()
         ))
 
@@ -179,7 +183,7 @@ class LocalSearchDataSourceImplTest {
     fun `getMoviesByQuery returns cached results`() = runTest {
         val query = "movie query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "movie"))
-        val movies = listOf(MoviesLocalDto(123, "Movie1", "", 2020, null, 7.5f, "en", System.currentTimeMillis()))
+        val movies = listOf(MovieLocalDto(123, "Movie1", "", 2020, null, 7.5f, "en", System.currentTimeMillis()))
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", System.currentTimeMillis())
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "movie") } returns cachedResults
@@ -194,7 +198,7 @@ class LocalSearchDataSourceImplTest {
     fun `getMoviesByQuery returns direct movieDao results if no cached results`() = runTest {
         val query = "movie query"
         val movieList = listOf(
-            MoviesLocalDto(1, "Movie1", "", 2020, null, 7.5f, "en", System.currentTimeMillis())
+            MovieLocalDto(1, "Movie1", "", 2020, null, 7.5f, "en", System.currentTimeMillis())
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
@@ -234,7 +238,7 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `insertMovie should call insertMovie from movieDao`() = runTest {
-        val movie = MoviesLocalDto(
+        val movie = MovieLocalDto(
             id = 1,
             title = "title",
             imagePath = "",
@@ -253,7 +257,7 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `insertActor should call insertActor from actorDao`() = runTest {
-        val actor = ActorsLocalDto(
+        val actor = ActorLocalDto(
             id = 1,
             name = "name",
             imagePath = "",

@@ -2,8 +2,8 @@ package com.sanaa.search.search_result
 
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
-import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
@@ -64,12 +64,12 @@ class LocalCachedSearchDataSourceImpl(
         return searchResultDao.getByQueryAndLanguage(query, currentLanguage, type)
     }
 
-    override suspend fun cacheActor(actorsLocalDto: ActorsLocalDto) {
-        actorDao.insertActor(actorsLocalDto)
+    override suspend fun cacheActor(actorLocalDto: ActorLocalDto) {
+        actorDao.insertActor(actorLocalDto)
     }
 
-    override suspend fun cacheMovie(moviesLocalDto: MoviesLocalDto) {
-        movieDao.insertMovie(moviesLocalDto)
+    override suspend fun cacheMovie(movieLocalDto: MovieLocalDto) {
+        movieDao.insertMovie(movieLocalDto)
     }
 
     override suspend fun cacheTvSeries(tvSeriesLocalDto: TvSeriesLocalDto) {
@@ -77,7 +77,7 @@ class LocalCachedSearchDataSourceImpl(
     }
 
 
-    override suspend fun getActorsByQuery(query: String): List<ActorsLocalDto> {
+    override suspend fun getActorsByQuery(query: String): List<ActorLocalDto> {
         val cachedResults = getCachedResults(query, "actor")
 
         if (cachedResults.isNotEmpty()) {
@@ -89,7 +89,7 @@ class LocalCachedSearchDataSourceImpl(
         return actorDao.getActorsByQuery(query)
     }
 
-    override suspend fun getMoviesByQuery(query: String): List<MoviesLocalDto> {
+    override suspend fun getMoviesByQuery(query: String): List<MovieLocalDto> {
         val cachedResults = getCachedResults(query, "movie")
 
         if (cachedResults.isNotEmpty()) {

@@ -6,7 +6,7 @@ import androidx.room.Entity
 @Entity(
     tableName = "actor", primaryKeys = ["id", "language"],
 )
-data class ActorsLocalDto(
+data class ActorLocalDto(
     @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "name")

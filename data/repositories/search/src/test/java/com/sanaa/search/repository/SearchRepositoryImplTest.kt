@@ -3,11 +3,11 @@ package com.sanaa.search.repository
 import com.example.env_config.service.LanguageProvider
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
-import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
-import com.sanaa.search.mapper.toSearchOutput
 import com.sanaa.search.dataSource.remote.response.SearchResponse
+import com.sanaa.search.mapper.toSearchOutput
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.Runs
@@ -38,10 +38,10 @@ class SearchRepositoryImplTest {
     fun `searchActors returns cached actors when available`() = runTest {
         // Given
         val query = "Tom"
-        coEvery { localCacheSearchDataSource.getActorsByQuery(query) } returns ActorsLocalDtoList
+        coEvery { localCacheSearchDataSource.getActorsByQuery(query) } returns ActorLocalDtoLists
 
         // When
-        val expected = ActorsLocalDtoList.map { it.toSearchOutput() }
+        val expected = ActorLocalDtoLists.map { it.toSearchOutput() }
         val result = searchRepository.searchActors(query)
 
         // Then
@@ -79,9 +79,9 @@ class SearchRepositoryImplTest {
     }
 
     companion object {
-        private val ActorsLocalDtoList = listOf(
-            ActorsLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
-            ActorsLocalDto(id = 2, name = "Leonardo DiCaprio", imagePath = "img", language = "en")
+        private val ActorLocalDtoLists = listOf(
+            ActorLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
+            ActorLocalDto(id = 2, name = "Leonardo DiCaprio", imagePath = "img", language = "en")
         )
         private val ActorsRemoteDtoList = listOf(
             ActorSearchDto(
