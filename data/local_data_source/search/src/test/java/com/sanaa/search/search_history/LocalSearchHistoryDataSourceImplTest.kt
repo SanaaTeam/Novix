@@ -34,9 +34,9 @@ class LocalSearchHistoryDataSourceImplTest {
         // Given
         val limit = 10
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test

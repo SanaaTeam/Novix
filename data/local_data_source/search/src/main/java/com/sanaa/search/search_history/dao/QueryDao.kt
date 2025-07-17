@@ -13,7 +13,7 @@ interface QueryDao {
     suspend fun insertQuery(query: QueryLocalDto)
 
     @Query("SELECT * FROM queries ORDER BY timestamp DESC LIMIT :limit")
-    fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>>
+    fun getQueries(limit: Int): Flow<List<QueryLocalDto>>
 
     @Query("DELETE FROM queries WHERE id = :id")
     suspend fun deleteQueryById(id: Int)
