@@ -34,6 +34,9 @@ class MovieDetailsRemoteDataSourceImpl(
     override suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryDto =
         fetch("movie?with_genres=$category")
 
+    override suspend fun fetchMovieTrailerUrl(id: Int): VideoResponseDto =
+        fetch("movie/$id/videos")
+
     private suspend inline fun <reified T> fetch(
         path: String,
         withLang: Boolean = true

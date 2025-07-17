@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.componants
+package com.sanaa.designsystem.design_system.component.blur
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

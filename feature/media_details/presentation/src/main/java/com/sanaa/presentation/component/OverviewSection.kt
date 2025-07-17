@@ -5,6 +5,9 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -17,8 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.ui.res.stringResource
 import com.sanaa.presentation.R
 
 @Composable
@@ -56,16 +65,15 @@ fun OverviewSection(
             modifier = Modifier.padding(top = 8.dp)
         )
 
-        Text(
+        TextButton(
             text = stringResource(if (isExpanded) R.string.read_less else R.string.read_more),
-            style = Theme.textStyle.body.medium,
-            color = Theme.colors.primary,
-            modifier = Modifier
-                .padding(top = 4.dp)
-                .clickable {
-                    isExpanded = !isExpanded
-                    if (isExpanded) onReadMore()
-                }
+            onClick = {
+                isExpanded = !isExpanded
+                if (isExpanded) onReadMore()
+            },
+            textColor = Theme.colors.primary,
+            isEnabled = true,
+
         )
     }
 }

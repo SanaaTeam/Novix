@@ -54,4 +54,5 @@ val domainModule = module {
     viewModel { (actorId: Int) ->
         ActorViewModel(actorId = actorId, get(), get(), get(), get(), get())
     }
+    single { GetMovieTrailerUseCase(get()) }
 }

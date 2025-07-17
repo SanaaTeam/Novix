@@ -6,7 +6,6 @@
     <string name="overview">Overview</string>
     <string name="read_more">Read more</string>
     <string name="read_less">Read less</string>
-    <string name="play_trailer">Play Trailer</string>
     <string name="episodes_count">%d Episodes</string>
     <string name="episode_number">Episode %d</string>
     <string name="season_number">S%d</string>
@@ -19,7 +18,6 @@
     <string name="anonymous">Anonymous</string>
 
 
-    <string name="unsuitable_image">Unsuitable image</string>
     <string name="genres">Genres</string>
     <string name="genre_drama">Drama</string>
     <string name="genre_comedy">Comedy</string>
@@ -53,4 +51,7 @@
     <string name="top_movie_picks">Top movie picks</string>
     <string name="top_series_picks">Top series picks</string>
     <string name="show">show</string>
+    <string name="more_like_this">More like this</string>
+    <string name="unsuitable_image">This image is not suitable</string>
+    <string name="play_trailer">Play trailer</string>
 </resources>

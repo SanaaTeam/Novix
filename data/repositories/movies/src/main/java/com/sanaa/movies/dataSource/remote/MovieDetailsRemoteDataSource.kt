@@ -6,6 +6,7 @@ import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
 import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
+import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
 
 interface MovieDetailsRemoteDataSource {
     suspend fun fetchMovieDetails(id: Int): MovieDetailsDto
@@ -14,4 +15,5 @@ interface MovieDetailsRemoteDataSource {
     suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto
     suspend fun fetchReviewsByMovieId(id: Int): ReviewDto
     suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryDto
+    suspend fun fetchMovieTrailerUrl(id: Int): VideoResponseDto
 }

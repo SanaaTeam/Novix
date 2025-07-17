@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    "
-    <string name="view_reviews">عرض التقييمات</string>
+    "<string name="view_reviews">عرض التقييمات</string>
     <string name="seasons_count">%d مواسم</string>
     <string name="overview">نظرة عامة</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="read_less">اقرأ أقل</string>
+    <string name="cast">الممثلون</string>
+    <string name="more_like_this">المزيد مثل هذا</string>
+    <string name="unsuitable_image">هذه الصورة غير مناسبة</string>
     <string name="play_trailer"> مشاهدة الاعلان</string>
     <string name="episodes_count">%d حلقات</string>
     <string name="episode_number">الحلقة %d</string>
     <string name="season_number">م%d</string>
-    <string name="cast">الطاقم</string>
     <string name="m">%d د</string>
     <string name="season">الموسم</string>
     <string name="guest_of_honor">ضيوف الحلقة</string>
 
     // Genre
-    <string name="unsuitable_image">صورة غير مناسبة</string>
     <string name="genres">الفئات</string>
     <string name="genre_drama">دراما</string>
     <string name="genre_comedy">كوميديا</string>
