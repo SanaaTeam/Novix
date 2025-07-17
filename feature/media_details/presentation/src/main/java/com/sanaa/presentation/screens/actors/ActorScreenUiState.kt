@@ -23,8 +23,7 @@ data class ActorUiModel(
     val gender: String = "",
     val department: String? = null,
     val character: String? = null,
-    val birthDate: String? = null,
-    val deathDate: String? = null,
+    val lifeSpan: String? = null,
     val placeOfBirth: String? = null,
     val biography: String? = null,
 )
@@ -52,8 +51,8 @@ fun Actor.toActorUiModel() = ActorUiModel(
     gender = if (gender == Actor.Gender.MALE) "male" else "female",
     department = department?.toString(),
     character = character,
-    birthDate = birthDate?.toString(),
-    deathDate = deathDate?.toString(),
+    lifeSpan = birthDate?.let { birth -> deathDate?.let { death -> "$birth - $death" } ?: birth }
+        .toString(),
     placeOfBirth = placeOfBirth?.toString(),
     biography = biography?.takeIf(String::isNotBlank),
 )
