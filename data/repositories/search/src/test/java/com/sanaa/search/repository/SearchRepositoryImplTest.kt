@@ -1,6 +1,6 @@
 package com.sanaa.search.repository
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.dataSource.local.dto.ActorsLocalDto

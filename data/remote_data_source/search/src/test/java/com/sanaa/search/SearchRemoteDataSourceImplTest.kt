@@ -1,6 +1,6 @@
 package com.sanaa.search
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto

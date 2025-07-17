@@ -1,6 +1,6 @@
 package com.sanaa.novix.di
 
-import com.example.env_config.di.preferencesModule
+import com.example.preferences.di.preferencesModule
 import com.sanaa.actors.di.remoteDetailsDataSource
 import com.sanaa.movies.di.remoteMovieDetailsDataSource
 import com.sanaa.search.di.networkModule
@@ -10,7 +10,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     includes(
-        firebaseModule, loggingModule, preferencesModule, repositoryModule, localDatabaseModule,
+        firebaseModule, loggingModule, repositoryModule, localDatabaseModule,
         networkModule, remoteDataSource, remoteDetailsDataSource,remoteMovieDetailsDataSource
     )
 }
