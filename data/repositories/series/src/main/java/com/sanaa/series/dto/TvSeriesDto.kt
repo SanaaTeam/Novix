@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class TvSeriesDto(
     @SerialName("id") val id: Int = 0,
     @SerialName("name") val name: String = "",
-    @SerialName("overview") val overview: String = "",
+    @SerialName("overview") val overview: String? = null,
     @SerialName("poster_path") val posterPath: String? = null,
     @SerialName("vote_average") val voteAverage: Float = 0f,
     @SerialName("number_of_seasons") val seasonsCount: Int = 0,
@@ -20,7 +20,7 @@ data class TvSeriesDto(
 data class EpisodeDto(
     @SerialName("id") val id: Int = 0,
     @SerialName("name") val name: String = "",
-    @SerialName("overview") val overview: String = "",
+    @SerialName("overview") val overview: String? = null,
     @SerialName("season_number") val seasonNumber: Int = 0,
     @SerialName("episode_number") val episodeNumber: Int = 0,
     @SerialName("vote_average") val voteAverage: Float = 0f,
