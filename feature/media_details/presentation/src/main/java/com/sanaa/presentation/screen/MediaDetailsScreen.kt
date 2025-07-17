@@ -9,17 +9,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 
 @Composable
 fun MediaDetailsScreen(mediaId: Int, onBackClick: () -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = "Media Details for ID: $mediaId", fontSize = 24.sp)
-        Button(onClick = onBackClick) {
-            Text("Go Back")
+    NovixTheme(isDarkMode = true) {
+        NovixScaffold {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Media Details for ID: $mediaId", fontSize = 24.sp)
+                Button(onClick = onBackClick) {
+                    Text("Go Back")
+                }
+            }
         }
     }
 }
