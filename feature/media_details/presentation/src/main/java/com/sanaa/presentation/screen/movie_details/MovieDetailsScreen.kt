@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.movie_details
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -89,6 +89,7 @@ fun MovieDetailsContent(
         backgroundShapes = { NovixBackgroundShapes() }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
+
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
@@ -106,32 +107,39 @@ fun MovieDetailsContent(
                     .systemBarsPadding()
                     .zIndex(10f)
             )
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(bottom = 112.dp)
-                            .fillMaxSize()
-                    ) {
-                        item {
-                            Box(modifier = Modifier.fillMaxWidth()) {
-                                ImageSlider(
-                                    images = state.imagesUrls,
-                                    contentDescription = state.movieDetails.title,
-                                    modifier = Modifier.fillMaxWidth()
-                                )
+            if (state.isLoading) {
+                NovixLoadingIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(bottom = 112.dp)
+                        .fillMaxSize()
+                ) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth()) {
+                            ImageSlider(
+                                images = state.imagesUrls,
+                                contentDescription = state.movieDetails.title,
+                                modifier = Modifier.fillMaxWidth()
+                            )
 
-                                InfoSection(
-                                    title = state.movieDetails.title,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 220.dp)
-                                        .padding(horizontal = 16.dp)
+                            InfoSection(
+                                title = state.movieDetails.title,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 220.dp)
+                                    .padding(horizontal = 16.dp)
+                            ) {
+                                FlowRow(
+                                    modifier = Modifier.padding(top = 16.dp),
                                 ) {
-                                    Row(
-                                        modifier = Modifier.padding(top = 16.dp),
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        state.movieDetails.genres.forEachIndexed { index, genre ->
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        ) {
+                                            state.movieDetails.genres.forEachIndexed { index, genre ->
                                             Text(
                                                 text = genre,
                                                 style = Theme.textStyle.label.small,
@@ -142,73 +150,76 @@ fun MovieDetailsContent(
                                             }
                                         }
                                     }
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        IconWithText(
-                                            iconRes = designR.drawable.star,
-                                            contentDescription = null,
-                                            text = state.movieDetails.rating,
-                                            tint = Theme.colors.statusColors.yellowAccent
-                                        )
-                                        DotSeparator()
-                                        IconWithText(
-                                            iconRes = presentationR.drawable.icon_duration,
-                                            contentDescription = null,
-                                            text = state.movieDetails.duration,
-                                            tint = Theme.colors.body
-                                        )
-                                        DotSeparator()
-                                        IconWithText(
-                                            iconRes = presentationR.drawable.icon_calender,
-                                            contentDescription = null,
-                                            text = state.movieDetails.releaseDate,
-                                            tint = Theme.colors.body
-                                        )
-                                    }
-                                    TextButton(
-                                        text = stringResource(id = presentationR.string.view_reviews),
-                                        textColor = Theme.colors.primary,
-                                        onClick = {}
+                                }
+
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    IconWithText(
+                                        iconRes = designR.drawable.star,
+                                        contentDescription = null,
+                                        text = state.movieDetails.rating,
+                                        textColor = Theme.colors.title,
+                                        tint = Theme.colors.statusColors.yellowAccent
+                                    )
+                                    DotSeparator()
+                                    IconWithText(
+                                        iconRes = presentationR.drawable.icon_duration,
+                                        contentDescription = null,
+                                        text = state.movieDetails.duration,
+                                        tint = Theme.colors.body
+                                    )
+                                    DotSeparator()
+                                    IconWithText(
+                                        iconRes = presentationR.drawable.icon_calender,
+                                        contentDescription = null,
+                                        text = state.movieDetails.releaseDate,
+                                        tint = Theme.colors.body
                                     )
                                 }
+                                TextButton(
+                                    text = stringResource(id = presentationR.string.view_reviews),
+                                    textColor = Theme.colors.primary,
+                                    onClick = {}
+                                )
                             }
-                        }
-
-                        item {
-                            OverviewSection(
-                                overview = state.movieDetails.overview,
-                                onReadMore = { interactionListener.onReadMoreClick() },
-                                modifier = Modifier.padding(16.dp),
-                                titleResId = presentationR.string.overview
-                            )
-                        }
-
-                        item {
-                            CastComponent(
-                                cast = state.cast,
-                                onActorClicked = {}
-                            )
-                        }
-                        item {
-                            MoreLikeThisSection(
-                                similarMovies = state.similarMovies,
-                                onBookmarkClick = interactionListener::onBookmarkClick,
-                                onSimilarMovieClick = interactionListener::onSimilarMovieClick,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
                         }
                     }
 
+                    item {
+                        OverviewSection(
+                            overview = state.movieDetails.overview,
+                            onReadMore = { interactionListener.onReadMoreClick() },
+                            modifier = Modifier.padding(16.dp),
+                            titleResId = presentationR.string.overview
+                        )
+                    }
+
+                    item {
+                        CastComponent(
+                            cast = state.cast,
+                            onActorClicked = {}
+                        )
+                    }
+                    item {
+                        MoreLikeThisSection(
+                            similarMovies = state.similarMovies,
+                            onBookmarkClick = interactionListener::onBookmarkClick,
+                            onSimilarMovieClick = interactionListener::onSimilarMovieClick,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
+                }
 
 
-            BottomContainer(
-                onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
-                trailerUrl = state.movieDetails.trailerUrl,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+
+                BottomContainer(
+                    onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
+                    trailerUrl = state.movieDetails.trailerUrl,
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
+            }
         }
     }
 }
-
