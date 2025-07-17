@@ -297,6 +297,24 @@ class SearchViewModelTest {
     }
 
     @Test
+    fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
+        // Given
+        val initialState = searchViewModel.state.value
+        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchViewModel.TV_SHOW_INDEX)
+
+        // When
+        searchViewModel.onTabSelected(SearchViewModel.TV_SHOW_INDEX)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchViewModel.TV_SHOW_INDEX)
+            Truth.assertThat(item.isLoading).isTrue()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     fun `onTabSelected() should load movies when movie tap selected`() = runTest {
         // Given
         val index = SearchViewModel.MOVIE_INDEX
@@ -357,6 +375,20 @@ class SearchViewModelTest {
                 tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
             Truth.assertThat(item).isEqualTo(expected)
+        }
+    }
+
+    @Test
+    fun `onTabSelected() should update tab and load media if new tab is selected`() = runTest {
+        val index = SearchViewModel.TV_SHOW_INDEX
+
+        // When
+        searchViewModel.onTabSelected(index)
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
         }
     }
 

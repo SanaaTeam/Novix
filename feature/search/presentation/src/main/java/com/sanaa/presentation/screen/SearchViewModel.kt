@@ -136,6 +136,7 @@ class SearchViewModel(
     }
 
     private fun loadMediaByTab(query: String) {
+        if (query.isBlank()) return
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
@@ -230,10 +231,9 @@ class SearchViewModel(
     }
 
     override fun onTabSelected(index: Int) {
-        if (state.value.selectedTabIndex == index) return
+        if (index == state.value.selectedTabIndex) return
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
-        if (searchQuery.isBlank()) return
         loadMediaByTab(searchQuery)
     }
 
@@ -241,7 +241,6 @@ class SearchViewModel(
         updateState { it.copy(filters = filters) }
 
         val currentQuery = state.value.searchQuery
-        if (currentQuery.isBlank()) return
         loadMediaByTab(currentQuery)
     }
 
