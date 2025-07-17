@@ -9,5 +9,6 @@ data class Movie(
     val imdbRating: Float,
     val duration: Int,
     val releaseDate: LocalDate,
-    val overview: String
+    val overview: String,
+    val trailerUrl: String? = null
 )

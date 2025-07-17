@@ -12,5 +12,6 @@ data class MovieDetailsUiModel(
     val genres: List<String>,
     val cast: List<CastMemberUiModel>,
     val similarMovies: List<SimilarMovieUiModel>,
-    val isBookmarked: Boolean
+    val isBookmarked: Boolean,
+    val trailerUrl: String? = null
 )
