@@ -43,7 +43,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.toDtoId()).results.map { it.toDomain() }
+            remote.fetchMoviesByCategory(category.toDtoId()).moviesByCategoryDto.map { it.toDomain() }
         }
 
 
