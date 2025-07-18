@@ -1,5 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet
 
+import com.example.preferences.service.GenreLocalizer
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
@@ -14,10 +15,16 @@ import search.usecase.search_param.MediaFilters
 
 class FilterViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<FilterUiState>(FilterUiState(), dispatcher),
+    private val genreLocalizer: GenreLocalizer,
+) : BaseViewModel<FilterUiState>(
+    initialState = FilterUiState(),
+    defaultDispatcher = dispatcher),
     FilterBottomSheetInteractionsListener {
 
-    private val _uiState = MutableStateFlow(FilterUiState())
+
+    private val _uiState = MutableStateFlow(FilterUiState(allGenres = Genre.entries.map {
+        genreLocalizer.getLocalizedName(it.name)
+    }))
     val uiState = _uiState.asStateFlow()
 
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
@@ -27,7 +34,7 @@ class FilterViewModel(
         _uiState.update { it.copy(yearRange = newRange, isDefaultState = false) }
     }
 
-    override fun onGenreSelected(genre: Genre) {
+    override fun onGenreSelected(genre: String) {
         _uiState.update { currentState ->
             val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
                 if (contains(genre)) remove(genre) else add(genre)
@@ -56,7 +63,9 @@ class FilterViewModel(
                     MediaFilters(
                         startYear = currentState.yearRange.start.toInt(),
                         endYear = currentState.yearRange.endInclusive.toInt(),
-                        genres = currentState.selectedGenres.toList(),
+                        genres = currentState.selectedGenres.toList().mapNotNull {genreName->
+                            Genre.entries.find { it.name == genreName }
+                        },
                         imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
                     )
                 }

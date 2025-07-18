@@ -1,6 +1,6 @@
 package com.sanaa.actors
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.actors.dataSource.remote.dto.*
 import io.ktor.client.HttpClient

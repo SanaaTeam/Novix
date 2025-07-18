@@ -85,13 +85,12 @@ fun SearchScreenContent(
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     var isSliderDragging by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) showBottomSheet = false
+            if (!sheetState.isVisible) searchListener.onBottomSheetDragged()
         }
     }
 
@@ -127,7 +126,7 @@ fun SearchScreenContent(
             SearchSection(
                 text = uiState.searchQuery,
                 onTextChange = searchListener::onSearchQueryChanged,
-                onFilterClicked = { showBottomSheet = true }
+                onFilterClicked = { searchListener.onFilterClicked() }
             )
 
             AnimatedContent(uiState.searchQuery.isNotBlank()) {
@@ -152,7 +151,7 @@ fun SearchScreenContent(
         }
     }
 
-    if (showBottomSheet) {
+    if (uiState.showBottomSheet) {
         ModalBottomSheet(
             modifier = Modifier.statusBarsPadding(),
             onDismissRequest = {

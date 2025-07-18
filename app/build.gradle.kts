@@ -130,5 +130,5 @@ dependencies {
     implementation(projects.data.localDataSource.search)
 
     // Language Provider
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 }

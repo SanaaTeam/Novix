@@ -1,4 +1,4 @@
-package com.example.env_config.service
+package com.example.preferences.service
 
 interface LanguageProvider {
     fun getCurrentLanguage(): String

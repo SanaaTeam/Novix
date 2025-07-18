@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 
     implementation(projects.data.repositories.search)
     implementation(libs.bundles.ktor)
