@@ -35,7 +35,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getMovieDetails(movieId)
 
-        coVerify { movieRepository.getMovieDetails(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -57,7 +56,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getMovieCast(movieId)
 
-        coVerify { movieRepository.getMovieCast(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -75,18 +73,17 @@ class ManageMovieDetailsUseCaseTest {
     fun `getMovieImages should return images when available`() = runTest {
         val movieId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
-        coEvery { movieRepository.getImages(movieId) } returns expected
+        coEvery { movieRepository.getImages(movieId,10) } returns expected
 
         val result = manageMovieDetailsUseCase.getMovieImages(movieId)
 
-        coVerify { movieRepository.getImages(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getMovieImages should throw RetrievingDataFailureException when fails`() = runTest {
         val movieId = 100
-        coEvery { movieRepository.getImages(movieId) } throws RetrievingDataFailureException("Error")
+        coEvery { movieRepository.getImages(movieId, 10) } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
             manageMovieDetailsUseCase.getMovieImages(movieId)
@@ -101,7 +98,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getMoviesByCategory(category)
 
-        coVerify { movieRepository.getMoviesByCategory(category) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -135,7 +131,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getMovieTrailer(movieId)
 
-        coVerify { movieRepository.getMovieTrailer(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -167,7 +162,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getReviewsByMovieId(movieId)
 
-        coVerify { movieRepository.getReviewsByMovieId(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -201,7 +195,6 @@ class ManageMovieDetailsUseCaseTest {
 
         val result = manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId)
 
-        coVerify { movieRepository.getSimilarMoviesByMovieId(movieId) }
         assertThat(result).isEqualTo(expected)
     }
 

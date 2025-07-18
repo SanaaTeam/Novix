@@ -11,7 +11,7 @@ interface SearchRemoteDataSource {
         query: String
     ): SearchResponse<ActorSearchDto>
 
-    suspend fun searchTv(
+    suspend fun searchTvShows(
         query: String
     ): SearchResponse<TvShowSearchDto>
 

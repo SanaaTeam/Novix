@@ -37,10 +37,10 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getImages returns top 3 poster urls`() = runTest {
+    fun `getImages returns top images poster urls`() = runTest {
         coEvery { remote.fetchImagesUrl(1) } returns sampleImagesDto
 
-        val result = repository.getImages(1)
+        val result = repository.getImages(1, 3)
 
         assertThat(result.size).isEqualTo(3)
     }
@@ -84,7 +84,7 @@ class MovieRepositoryImplTest {
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
         coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException()
 
-        assertThrows<RetrievingDataFailureException> { repository.getImages(1) }
+        assertThrows<RetrievingDataFailureException> { repository.getImages(1, 1) }
     }
 
     companion object {

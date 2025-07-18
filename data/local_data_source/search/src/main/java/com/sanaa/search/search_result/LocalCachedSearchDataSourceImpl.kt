@@ -76,7 +76,6 @@ class LocalCachedSearchDataSourceImpl(
         seriesDao.insertSeries(tvSeriesLocalDto)
     }
 
-
     override suspend fun getActorsByQuery(query: String): List<ActorsLocalDto> {
         val cachedResults = getCachedResults(query, "actor")
 
@@ -117,7 +116,7 @@ class LocalCachedSearchDataSourceImpl(
         searchResultDao.deleteOldResults(expirationTime)
     }
 
-    fun isExpired(timestamp: Long): Boolean {
+    private fun isExpired(timestamp: Long): Boolean {
         return System.currentTimeMillis() - timestamp > CACHE_EXPIRATION_TIME
     }
 

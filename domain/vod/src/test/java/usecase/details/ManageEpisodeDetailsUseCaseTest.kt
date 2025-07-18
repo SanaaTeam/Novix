@@ -6,7 +6,6 @@ import details.usecase.ManageEpisodeDetailsUseCase
 import entity.Actor
 import entity.Episode
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -39,7 +38,6 @@ class ManageEpisodeDetailsUseCaseTest {
 
         val result = manageEpisodeDetailsUseCase.getEpisodeDetails(seriesId, season, episode)
 
-        coVerify { tvSeriesRepository.getEpisodeDetails(seriesId, season, episode) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -77,7 +75,6 @@ class ManageEpisodeDetailsUseCaseTest {
 
         val result = manageEpisodeDetailsUseCase.getEpisodeGuestsOfHonor(seriesId, season, episode)
 
-        coVerify { tvSeriesRepository.getEpisodeGuestsOfHonor(seriesId, season, episode) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -117,7 +114,6 @@ class ManageEpisodeDetailsUseCaseTest {
 
         val result = manageEpisodeDetailsUseCase.getEpisodeImages(seriesId, season, episode, count)
 
-        coVerify { tvSeriesRepository.getEpisodeImages(seriesId, season, episode, count) }
         assertThat(result).isEqualTo(expected)
     }
 

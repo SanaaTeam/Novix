@@ -30,8 +30,8 @@ class ActorViewModel(
                         actor = actor.toActorUiModel(),
                         topMovies = topMovies.map { m -> m.toUiModel() },
                         topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
-                        profileImages = profiles,
-                        galleryImages = gallery
+                        profileImageUrls = profiles,
+                        galleryImageUrls = gallery
                     )
                 }
             },

@@ -34,13 +34,8 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
-import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
-import com.sanaa.presentation.navigation.TopMoviesScreenRoute
-import com.sanaa.presentation.navigation.TopSeriesScreenRoute
-import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import entity.Genre
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -59,9 +54,12 @@ fun MovieCategoriesScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 MovieCategoriesScreenEffects.NavigateBack -> navController.popBackStack()
-                }
+                is MovieCategoriesScreenEffects.NavigateToMovieDetails -> navController.navigate(
+                    MovieDetailsScreenRoute(effect.id).route()
+                )
             }
         }
+    }
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         MovieCategoriesScreenContent(
@@ -106,6 +104,7 @@ fun MovieCategoriesScreenContent(
             ) {
                 AnimatedContent(
                     targetState = state.isLoading,
+                    contentAlignment = Alignment.Center,
                     transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
@@ -123,7 +122,7 @@ fun MovieCategoriesScreenContent(
                                 MovieSeriesPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.imageUrl,
+                                            imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             blurRadius = 150,
                                             haramThreshold = 0.2f,
@@ -134,7 +133,7 @@ fun MovieCategoriesScreenContent(
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
-                                    onCardClick = { interactionListener.onMovieClick() })
+                                    onCardClick = { interactionListener.onMovieClick(movie.id) })
                             }
                         }
                     }

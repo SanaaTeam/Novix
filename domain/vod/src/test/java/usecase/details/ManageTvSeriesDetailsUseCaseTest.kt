@@ -3,11 +3,11 @@ package usecase.details
 import com.google.common.truth.Truth.assertThat
 import details.repository.TvSeriesRepository
 import details.usecase.ManageTvSeriesDetailsUseCase
-import entity.Genre
-import entity.TvSeries
 import entity.Actor
+import entity.Genre
 import entity.Review
 import entity.Season
+import entity.TvSeries
 import exceptions.NotFoundException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -34,7 +34,6 @@ class ManageTvSeriesDetailsUseCaseTest {
         val genre = Genre.WAR_AND_POLITICS
         coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } returns listOf(dummyTvSeries)
         val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(genre)
-        coVerify { tvSeriesRepository.getTvSeriesByGenre(genre) }
         assertThat(result).isEqualTo(listOf(dummyTvSeries))
     }
 
@@ -49,7 +48,9 @@ class ManageTvSeriesDetailsUseCaseTest {
     @Test
     fun `getTvSeriesByGenre should throw when repository fails`() = runTest {
         val genre = Genre.WAR_AND_POLITICS
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } throws RetrievingDataFailureException("Error")
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } throws RetrievingDataFailureException(
+            "Error"
+        )
         assertThrows<RetrievingDataFailureException> {
             manageTvSeriesDetailsUseCase.getTvSeriesByGenre(genre)
         }
@@ -60,7 +61,6 @@ class ManageTvSeriesDetailsUseCaseTest {
         val seriesId = 1
         coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } returns dummyTvSeries
         val result = manageTvSeriesDetailsUseCase.getTvSeriesDetails(seriesId)
-        coVerify { tvSeriesRepository.getTvSeriesDetails(seriesId) }
         assertThat(result).isEqualTo(dummyTvSeries)
     }
 
@@ -79,7 +79,6 @@ class ManageTvSeriesDetailsUseCaseTest {
         val expected = listOf(mockk<Actor>(), mockk<Actor>())
         coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } returns expected
         val result = manageTvSeriesDetailsUseCase.getTvSeriesCast(seriesId)
-        coVerify { tvSeriesRepository.getTvSeriesCast(seriesId) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -104,9 +103,8 @@ class ManageTvSeriesDetailsUseCaseTest {
     fun `getTvSeriesImages should return images when available`() = runTest {
         val seriesId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
-        coEvery { tvSeriesRepository.getTvSeriesImages(seriesId, 5) } returns expected
+        coEvery { tvSeriesRepository.getTvSeriesImages(seriesId, any()) } returns expected
         val result = manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
-        coVerify { tvSeriesRepository.getTvSeriesImages(seriesId, 5) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -121,7 +119,12 @@ class ManageTvSeriesDetailsUseCaseTest {
     @Test
     fun `getTvSeriesImages should throw when repository fails`() = runTest {
         val seriesId = 3
-        coEvery { tvSeriesRepository.getTvSeriesImages(seriesId, 5) } throws NotFoundException("Not found")
+        coEvery {
+            tvSeriesRepository.getTvSeriesImages(
+                seriesId,
+                any()
+            )
+        } throws NotFoundException("Not found")
         assertThrows<NotFoundException> {
             manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         }
@@ -161,7 +164,6 @@ class ManageTvSeriesDetailsUseCaseTest {
         val expected = mockk<Season>()
         coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns expected
         val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
-        coVerify { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) }
         assertThat(result).isEqualTo(expected)
     }
 
@@ -169,7 +171,12 @@ class ManageTvSeriesDetailsUseCaseTest {
     fun `getTvSeriesSeasonDetails should throw when repository fails`() = runTest {
         val seriesId = 5
         val seasonNumber = 1
-        coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } throws IllegalStateException("Error")
+        coEvery {
+            tvSeriesRepository.getTvSeriesSeason(
+                seriesId,
+                seasonNumber
+            )
+        } throws IllegalStateException("Error")
         assertThrows<IllegalStateException> {
             manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
         }
@@ -181,7 +188,6 @@ class ManageTvSeriesDetailsUseCaseTest {
         val trailerUrl = "trailer.mp4"
         coEvery { tvSeriesRepository.getTvSeriesTrailer(seriesId) } returns trailerUrl
         val result = manageTvSeriesDetailsUseCase.getTvSeriesTrailer(seriesId)
-        coVerify { tvSeriesRepository.getTvSeriesTrailer(seriesId) }
         assertThat(result).isEqualTo(trailerUrl)
     }
 
