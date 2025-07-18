@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -147,5 +148,11 @@ private fun NoSearchResultState() {
     EmptySearchState(
         icon = painterResource(id = R.drawable.empty_search),
         text = stringResource(id = R.string.no_search_result_message)
-    )
+    ) {
+        Image(
+            modifier = Modifier.padding(start = 8.dp, top = 16.dp),
+            painter = painterResource(R.drawable.alert_circle),
+            contentDescription = null
+        )
+    }
 }
