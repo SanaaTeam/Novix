@@ -1,12 +1,7 @@
-package com.sanaa.presentation.screens.movie_details
+package com.sanaa.presentation.screen.movie_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toUiModel
-import com.sanaa.presentation.screen.movie_details.MovieDetailsUiEffect
-import com.sanaa.presentation.screen.movie_details.MovieDetailsUiState
-import com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
 import details.usecase.ManageMovieDetailsUseCase
 import entity.Actor
 import entity.Actor.Gender

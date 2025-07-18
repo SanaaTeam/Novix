@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -38,13 +39,11 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
-import entity.Genre
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -80,7 +79,9 @@ fun SeriesScreen(
                 }
 
                 is SeriesScreenEffects.NavigateBack -> {
-                    // TODO
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
                 }
 
                 is SeriesScreenEffects.PlayTrailer -> {
@@ -165,7 +166,7 @@ fun SeriesScreenContent(
                                 )
                             },
                             onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) }
-                            )
+                        )
                         state.series.overview?.let {
                             OverviewSection(
                                 onReadMore = {},

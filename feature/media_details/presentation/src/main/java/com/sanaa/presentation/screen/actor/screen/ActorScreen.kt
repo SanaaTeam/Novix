@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.actor.screen
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -61,7 +62,11 @@ fun ActorScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                ActorScreenEffects.NavigateBack -> navController.popBackStack()
+                ActorScreenEffects.NavigateBack -> {
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
+                }
 
                 is ActorScreenEffects.NavigateToTopMovies -> navController.navigate(
                     TopMoviesScreenRoute(effect.actorId).route()

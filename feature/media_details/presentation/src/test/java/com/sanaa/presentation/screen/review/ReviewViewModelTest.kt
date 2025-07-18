@@ -1,11 +1,8 @@
-package com.sanaa.presentation.screens.review
+package com.sanaa.presentation.screen.review
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.screen.review.ReviewScreenEffects
-import com.sanaa.presentation.screen.review.ReviewScreenInteractionListener
-import com.sanaa.presentation.screen.review.ReviewViewModel
 import details.usecase.ManageMovieDetailsUseCase
 import details.usecase.ManageTvSeriesDetailsUseCase
 import entity.Review

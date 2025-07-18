@@ -1,12 +1,9 @@
-package com.sanaa.presentation.screens.episode_details
+package com.sanaa.presentation.screen.episode_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsEffects
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenUiState
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
 import details.usecase.ManageEpisodeDetailsUseCase
 import details.usecase.ManageTvSeriesDetailsUseCase
 import entity.Actor
