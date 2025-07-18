@@ -129,10 +129,11 @@ fun MovieDetailsContent(
                     .zIndex(10f)
             )
             AnimatedContent(
-                targetState = state.isLoading,
+                state.isLoading,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
+
+            )  {
                 if (it) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         NovixLoadingIndicator()

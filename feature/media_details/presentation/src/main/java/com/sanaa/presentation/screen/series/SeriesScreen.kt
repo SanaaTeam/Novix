@@ -165,8 +165,7 @@ fun SeriesScreenContent(
                                     state.series.id
                                 )
                             },
-                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) }
-                        )
+                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
                         state.series.overview?.let {
                             OverviewSection(
                                 onReadMore = {},
@@ -177,6 +176,7 @@ fun SeriesScreenContent(
                                 )
                             )
                         }
+
                         if (state.cast.isNotEmpty())
                             CastComponent(
                                 cast = state.cast,

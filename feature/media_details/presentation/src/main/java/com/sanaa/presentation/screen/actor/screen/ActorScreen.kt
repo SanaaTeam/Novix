@@ -133,11 +133,11 @@ private fun ActorScreenContent(
             )
 
             AnimatedContent(
-                targetState = state.isLoading,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                state.isLoading,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { loading ->
+
+            )  { loading ->
                 if (loading) {
                     NovixLoadingIndicator(
                         modifier = Modifier.align(Alignment.Center)

@@ -2,9 +2,6 @@ package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +43,7 @@ import org.koin.core.parameter.parametersOf
 fun TopMoviesScreen(
     actorId: Int,
     navigateBack: () -> Unit,
-     viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
+    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
 ) {
     BackHandler(onBack = navigateBack)
 
@@ -97,8 +94,11 @@ private fun TopMoviesContent(
             ) {
 
                 AnimatedContent(
-                    targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
+                    state.isLoading,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+
+                ) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {

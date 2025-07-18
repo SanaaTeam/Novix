@@ -101,8 +101,11 @@ private fun TopSeriesContent(
             ) {
 
                 AnimatedContent(
-                    targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
+                    state.isLoading,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+
+                )  { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {

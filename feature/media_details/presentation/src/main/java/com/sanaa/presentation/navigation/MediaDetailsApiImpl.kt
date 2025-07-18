@@ -1,5 +1,6 @@
 package com.sanaa.presentation.ui
 
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +14,10 @@ import com.sanaa.presentation.navigation.DetailsNavHost
 class MediaDetailsApiImpl : MediaDetailsApi {
     override fun launch(context: Context, startRoute: StartRoute, id: Int) {
         val intent = MediaDetailsActivity.createIntent(context, startRoute, id)
-        context.startActivity(intent)
+        context.startActivity(
+            intent,
+            ActivityOptions.makeSceneTransitionAnimation(context as? ComponentActivity).toBundle()
+        )
     }
 }
 
