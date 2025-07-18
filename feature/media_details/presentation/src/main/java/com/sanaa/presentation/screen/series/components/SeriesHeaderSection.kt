@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.series.components
 
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +23,8 @@ import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.InfoSection
+import com.sanaa.presentation.screen.movie_categories.toLocalizedString
+import entity.Genre
 
 @Composable
 fun SeriesHeaderSection(
@@ -29,10 +33,11 @@ fun SeriesHeaderSection(
     season: String,
     airDate: String?,
     imagesUrl: List<String>,
-    genres: List<String>,
+    genres: List<Genre>,
     modifier: Modifier = Modifier,
     onReviewClicked: () -> Unit = {},
-    showReviews: Boolean = true
+    showReviews: Boolean = true,
+    onGenreClicked: (Genre) -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -60,11 +65,14 @@ fun SeriesHeaderSection(
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         genres.forEachIndexed { index, genre ->
+                            Log.d("TAG", "Component: ${genres}")
+
                             Text(
-                                text = genre,
+                                text = genre.toLocalizedString(),
                                 style = Theme.textStyle.label.small,
                                 color = Theme.colors.body,
                                 modifier = Modifier.padding(end = 8.dp)
+                                    .clickable { onGenreClicked(genre) }
                             )
                             if (index != genres.lastIndex) {
                                 DotSeparator()
