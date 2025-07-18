@@ -17,7 +17,7 @@ class SearchHistoryRepositoryImpl(
 ) : SearchHistoryRepository {
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> {
         try {
-            return local.getAllQueries(sizeLimit).map {
+            return local.getQueries(sizeLimit).map {
                 it.map { query -> query.toEntity() }
             }
         } catch (_: Exception) {
