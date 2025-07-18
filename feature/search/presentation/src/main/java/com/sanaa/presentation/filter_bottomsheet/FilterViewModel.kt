@@ -67,7 +67,7 @@ class FilterViewModel(
                         genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
                             Genre.entries.find { it.name == genreName }
                         },
-                        imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null
+                        imdbRating =currentState.imdbRating.toFloat()
                     )
                 }
                 _filterResult.emit(mediaFilters)

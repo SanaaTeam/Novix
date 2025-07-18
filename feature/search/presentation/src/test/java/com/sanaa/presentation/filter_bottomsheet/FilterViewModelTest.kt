@@ -153,28 +153,4 @@ class FilterViewModelTest {
                 )
             }
         }
-
-    @Test
-    fun `onApplyClicked() should change the media filter without rating when rate sent are 0`() =
-        runTest {
-            // Given
-            val rate = 0f
-
-            // When
-            filterViewModel.onRatingChanged(rate.toInt())
-            filterViewModel.onApplyClicked()
-
-            // Then
-            filterViewModel.filterResult.test {
-                val item = awaitItem()
-                Truth.assertThat(item).isEqualTo(
-                    MediaFilters(
-                        startYear = 1980,
-                        endYear = 2025,
-                        imdbRating = null
-                    )
-                )
-            }
-        }
-
 }
