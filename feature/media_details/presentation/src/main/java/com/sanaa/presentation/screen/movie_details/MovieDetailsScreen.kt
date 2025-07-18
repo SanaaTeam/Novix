@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.movie_details
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,8 +42,11 @@ import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
+import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreen
+import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
@@ -85,6 +89,10 @@ fun MovieDetailsScreen(
 
             is MovieDetailsUiEffect.NavigateToActorScreen -> {
                 navController.navigate(ActorDetailsScreenRoute(e.actorId).route())
+            }
+
+            is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
+                navController.navigate(MovieCategoriesScreenRoute(e.categoryId).route())
             }
 
             else -> Unit
@@ -154,9 +162,13 @@ fun MovieDetailsContent(
                                     ) {
                                         state.movieDetails.genres.forEachIndexed { index, genre ->
                                             Text(
-                                                text = genre,
+                                                text = genre.toLocalizedString(),
                                                 style = Theme.textStyle.label.small,
-                                                color = Theme.colors.body
+                                                color = Theme.colors.body,
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        interactionListener.onGenreClicked(genre)
+                                                    }
                                             )
                                             if (index < state.movieDetails.genres.lastIndex) {
                                                 DotSeparator()
