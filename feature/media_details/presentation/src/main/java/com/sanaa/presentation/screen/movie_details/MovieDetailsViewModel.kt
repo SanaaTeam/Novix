@@ -3,7 +3,9 @@ package com.sanaa.presentation.screen.movie_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.screen.series.SeriesScreenEffects
 import details.usecase.ManageMovieDetailsUseCase
+import entity.Genre
 
 class MovieDetailsViewModel(
     private val movieId: Int,
@@ -78,5 +80,9 @@ class MovieDetailsViewModel(
 
     override fun onShowReviewsClick(movieId: Int) {
         emitEffect(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
+    }
+
+    override fun onGenreClicked(genre: Genre) {
+        emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.name))
     }
 }
