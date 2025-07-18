@@ -21,5 +21,9 @@ class ManageActorDetailsUseCase(
         actorRepo.getGalleryImages(id)
 
     suspend fun getProfileImages(id: Int): List<String> =
-        actorRepo.getProfileImages(id)
+        actorRepo.getProfileImages(id, IMAGE_COUNT)
+
+    private companion object {
+        const val IMAGE_COUNT = 10
+    }
 }

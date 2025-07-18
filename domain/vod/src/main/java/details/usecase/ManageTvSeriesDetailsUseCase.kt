@@ -32,6 +32,6 @@ class ManageTvSeriesDetailsUseCase(
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
     private companion object {
-        const val IMAGE_COUNT = 5
+        const val IMAGE_COUNT = 10
     }
 }

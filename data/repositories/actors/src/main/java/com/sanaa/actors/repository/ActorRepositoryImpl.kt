@@ -1,6 +1,5 @@
 package com.sanaa.actors.repository
 
-import android.util.Log
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.actors.mapper.fullImageUrlOrEmpty
 import com.sanaa.actors.mapper.toDomain
@@ -26,9 +25,9 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getProfileImages(id: Int): List<String> {
+    override suspend fun getProfileImages(id: Int, count: Int): List<String> {
         return try {
-            remoteDataSource.getActorImages(id).profiles.take(3)
+            remoteDataSource.getActorImages(id).profiles.take(count)
                 .map { it.path.fullImageUrlOrEmpty() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
@@ -65,8 +64,8 @@ class ActorRepositoryImpl(
     override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
         return try {
             remoteDataSource.getActorTopTvSeries(id).cast.sortedByDescending {
-                    it.voteAverage ?: 0.0
-                }.take(20).map { it.toDomain() }
+                it.voteAverage ?: 0.0
+            }.take(20).map { it.toDomain() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
