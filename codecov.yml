@@ -11,29 +11,58 @@ coverage:
 ignore:
   - "**/R"
   - "**/R_*"
-  - "**/di/**"
-  - "**/logging/**"
   - "**/BuildConfig*"
   - "**/Manifest*"
-  - "com/sanaa/novix/ui/theme/**"
+
+  - "**/logging/**"
+  - "**/di/**"
+
   - "**/ComposableSingletons*"
   - "**/MainActivity*"
   - "**/NovixApp*"
-  - "com/sanaa/image_viewer/**"
+
+  - "com/sanaa/novix/ui/theme/**"
   - "com/sanaa/designsystem/**"
+
+  - "com/sanaa/image_viewer/**"
+
   - "com/sanaa/search/dto/**"
   - "com/sanaa/search/di/**"
-  - "**/entity/**"
-  - "search/usecase/search_param/**"
-  - "**/dao/**"
-  - "**/dto/**"
-  - "**/exceptions/**"
   - "com/sanaa/search/dataSource/**"
   - "com/sanaa/search/mapper/**"
   - "com/sanaa/search/repository/**"
+  - "com/sanaa/search/search_result/db/**"
+  - "search/usecase/search_param/**"
+
+  - "**/entity/**"
+  - "**/dto/**"
+  - "**/dao/**"
+  - "**/exceptions/**"
+  - "**/response/**"
+
   - "com/sanaa/presentation/filter_bottomsheet/components/**"
+  - "com/sanaa/presentation/filter_bottomsheet/FilterBottomSheetContent*"
+
+  - "com/sanaa/presentation/component/**"
+  - "com/sanaa/presentation/model/**"
+  - "com/sanaa/presentation/details_base/**"
+  - "com/sanaa/presentation/navigation/**"
   - "com/sanaa/presentation/screen/componants/**"
   - "com/sanaa/presentation/screen/state/**"
   - "com/sanaa/presentation/screen/SearchScreen*"
-  - "com/sanaa/presentation/filter_bottomsheet/FilterBottomSheetContent*"
-  - "com/sanaa/search/search_result/db/**"
+
+  - "com/sanaa/presentation/screen/actor/componants/**"
+  - "com/sanaa/presentation/screen/actor/screen/**"
+
+  - "com/sanaa/presentation/screen/episode_details/components/**"
+  - "com/sanaa/presentation/screen/episode_details/EpisodeDetailsScreen*"
+
+  - "com/sanaa/presentation/screen/movie_details/components/**"
+  - "com/sanaa/presentation/screen/movie_details/MovieDetailsScreen*"
+  - "com/sanaa/presentation/screen/movie_categories/MovieCategoriesScreen*"
+
+  - "com/sanaa/presentation/screen/review/components/**"
+  - "com/sanaa/presentation/screen/review/ReviewsScreen*"
+
+  - "com/sanaa/presentation/screen/series/components/**"
+  - "com/sanaa/presentation/screen/series/SeriesScreen*"
