@@ -160,7 +160,7 @@ class SearchRemoteDataSourceImplTest {
         every { languageProvider.getCurrentLanguage() } returns "en"
 
         // When
-        val result = dataSource.searchTv(query)
+        val result = dataSource.searchTvShows(query)
 
         // Then
         assertEquals(expectedResponse, result)

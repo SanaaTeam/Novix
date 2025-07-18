@@ -33,7 +33,7 @@ class SearchRemoteDataSourceImpl(
     override suspend fun searchActors(query: String): SearchResponse<ActorSearchDto> =
         search(path = "person", query)
 
-    override suspend fun searchTv(query: String): SearchResponse<TvShowSearchDto> =
+    override suspend fun searchTvShows(query: String): SearchResponse<TvShowSearchDto> =
         search(path = "tv", query)
 
     override suspend fun searchMovies(query: String): SearchResponse<MovieSearchDto> =

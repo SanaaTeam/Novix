@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -54,7 +54,6 @@ fun SearchScreen(
     }
 
     NovixTheme(isSystemInDarkTheme()) {
-
         SearchScreenContent(
             uiState = uiState,
             filterUiState = filterUiState,
@@ -117,20 +116,21 @@ fun SearchScreenContent(
                 onFilterClicked = { searchListener.onFilterClicked() }
             )
 
-            AnimatedVisibility(uiState.searchQuery.isNotBlank()) {
-                CategoryTabSection(
-                    selectedTabIndex = uiState.selectedTabIndex,
-                    uiState = uiState,
-                    interactionsListener = searchListener,
-                    modifier = Modifier.align(Alignment.Start)
-                )
-            }
-            AnimatedVisibility(uiState.searchQuery.isBlank()) {
-                SearchHistoryContent(
-                    recentSearches = uiState.recentSearchQueries,
-                    recentViewed = uiState.recentViewedMedia,
-                    interactionsListener = searchListener,
-                )
+            AnimatedContent(uiState.searchQuery.isNotBlank()) {
+                when (it) {
+                    true -> CategoryTabSection(
+                        selectedTabIndex = uiState.selectedTabIndex,
+                        uiState = uiState,
+                        interactionsListener = searchListener,
+                        modifier = Modifier.align(Alignment.Start)
+                    )
+
+                    false -> SearchHistoryContent(
+                        recentSearches = uiState.recentSearchQueries,
+                        recentViewed = uiState.recentViewedMedia,
+                        interactionsListener = searchListener,
+                    )
+                }
             }
         }
     }
@@ -142,7 +142,8 @@ fun SearchScreenContent(
                 if (!isSliderDragging) {
                     dismissSheet()
                 }
-            }, sheetState = sheetState,
+            },
+            sheetState = sheetState,
             containerColor = Theme.colors.surface
         ) {
             FilterBottomSheetContent(

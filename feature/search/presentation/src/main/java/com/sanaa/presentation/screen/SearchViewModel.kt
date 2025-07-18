@@ -1,22 +1,24 @@
 package com.sanaa.presentation.screen
 
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.ACTOR_INDEX
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.MOVIE_INDEX
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.mapper.toUiState
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
 import search.usecase.ClearSearchHistoryUseCase
@@ -45,82 +47,52 @@ class SearchViewModel(
     SearchScreenInteractionsListener {
 
     init {
+        observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
-        observeSearchQueryChanges()
     }
 
     @OptIn(FlowPreview::class)
-    private fun observeSearchQueryChanges() {
-        viewModelScope.launch {
-            state.map { it.searchQuery }
-                .distinctUntilChanged()
-                .debounce(500L)
-                .collectLatest { query ->
-                    if (query.isBlank()) {
-                        clearSearchResults()
-                    } else {
-                        loadMediaByTab(query)
-                    }
-                }
-        }
+    fun observeSearchQueryChanges() {
+        tryToCollect(
+            callee = { state.map { it.searchQuery }.distinctUntilChanged().debounce(500L) },
+            onCollect = { if (it.isBlank()) clearSearchResults() else loadMediaByTab(it) },
+            onError = ::onDataLoadError,
+        )
     }
 
     fun observeRecentViewedItems() {
-        updateState {
-            it.copy(
-                isLoading = true, error = null, noInternetConnection = false
-            )
-        }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
 
-        tryToExecute(
-            callee = {
-                getRecentViewedUseCase.execute()
-                    .map { items ->
-                        items.map {
-                            RecentViewedUiModel(
-                                id = it.id,
-                                imageUrl = it.posterImageUrl,
-                                mediaType = it.mediaType.name,
-                                isSaved = it.isSaved
-                            )
-                        }
-                    }
-                    .collectLatest { viewed ->
-                        updateState {
-                            it.copy(
-                                recentViewedMedia = viewed, noInternetConnection = false
-                            )
-                        }
-                    }
-            },
+        tryToCollect(
+            callee = ::onGetRecentViewedItems,
+            onCollect = ::onCollectRecentViewedItems,
             onError = ::onDataLoadError
         )
     }
 
+    private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedUiModel>> {
+        return getRecentViewedUseCase.execute().toUiState()
+    }
+
+    private fun onCollectRecentViewedItems(viewed: List<RecentViewedUiModel>) {
+        updateState { it.copy(recentViewedMedia = viewed, noInternetConnection = false) }
+    }
+
     fun observeRecentSearchHistory() {
-        tryToExecute(
-            callee = {
-                getSearchHistoryUseCase.execute()
-                    .map { items ->
-                        items.map {
-                            RecentSearchUiModel(
-                                id = it.id,
-                                title = it.query
-                            )
-                        }
-                    }
-                    .collectLatest { queries ->
-                        updateState {
-                            it.copy(
-                                recentSearchQueries = queries,
-                                noInternetConnection = false
-                            )
-                        }
-                    }
-            },
+        tryToCollect(
+            callee = ::getRecentSearchHistory,
+            onCollect = ::onCollectRecentSearchHistory,
             onError = ::onDataLoadError
         )
+    }
+
+    suspend fun getRecentSearchHistory(): Flow<List<RecentSearchUiModel>> {
+        return getSearchHistoryUseCase.execute().toUiState()
+    }
+
+    fun onCollectRecentSearchHistory(queries: List<RecentSearchUiModel>) {
+        updateState { it.copy(recentSearchQueries = queries, noInternetConnection = false) }
     }
 
     private fun clearSearchResults() {
@@ -145,7 +117,13 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
         tryToExecute(
             callee = { loadMoviesOperation(query) },
             onSuccess = ::onLoadMoviesSuccess,
@@ -154,17 +132,27 @@ class SearchViewModel(
     }
 
     private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
-        return searchMoviesUseCase.execute(query, filters = state.value.filters).map {
-            MovieUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
-        }
+        return searchMoviesUseCase.execute(query, filters = state.value.filters).toUiState()
     }
 
     private fun onLoadMoviesSuccess(movies: List<MovieUiModel>) {
-        updateState { it.copy(isLoading = false, movies = movies, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = false,
+                movies = movies,
+                noInternetConnection = false
+            )
+        }
     }
 
     private fun loadTvShows(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
         tryToExecute(
             callee = { loadTvShowsOperation(query) },
             onSuccess = ::onLoadTvShowsSuccess,
@@ -174,16 +162,33 @@ class SearchViewModel(
 
     private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
         return searchTvSeriesUseCase.execute(query, filters = state.value.filters).map {
-            TvShowUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
+            TvShowUiModel(
+                id = it.id,
+                title = it.title,
+                imageUrl = it.posterImageUrl,
+                rating = ""
+            )
         }
     }
 
     private fun onLoadTvShowsSuccess(tvShows: List<TvShowUiModel>) {
-        updateState { it.copy(isLoading = false, tvShows = tvShows, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = false,
+                tvShows = tvShows,
+                noInternetConnection = false
+            )
+        }
     }
 
     private fun loadActors(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
         tryToExecute(
             callee = { loadActorsOperation(query) },
             onSuccess = ::onLoadActorsSuccess,
@@ -207,7 +212,7 @@ class SearchViewModel(
         }
     }
 
-    private fun onDataLoadError(e: Exception) {
+    private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException)
             updateState {
                 it.copy(
@@ -246,24 +251,25 @@ class SearchViewModel(
 
     override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
         tryToExecute(
-            callee = {
-                addRecentViewedUseCase.execute(
-                    RecentViewedMedia(
-                        id = viewed.id,
-                        posterImageUrl = viewed.imageUrl,
-                        mediaType = MediaType.valueOf(viewed.mediaType),
-                        isSaved = viewed.isSaved
-                    )
-                )
-            },
+            callee = { addRecentViewedMedia(viewed) },
             onError = ::onDataLoadError
+        )
+    }
+
+    private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
+        addRecentViewedUseCase.execute(
+            RecentViewedMedia(
+                id = viewed.id,
+                posterImageUrl = viewed.imageUrl,
+                mediaType = MediaType.valueOf(viewed.mediaType),
+                isSaved = viewed.isSaved
+            )
         )
     }
 
     override fun onClearRecentViewClicked() {
         tryToExecute(
             callee = clearRecentViewedUseCase::execute,
-            onSuccess = {},
             onError = ::onDataLoadError
         )
     }
@@ -271,7 +277,6 @@ class SearchViewModel(
     override fun onClearRecentSearchClicked() {
         tryToExecute(
             clearSearchHistoryUseCase::execute,
-            onSuccess = {},
             onError = ::onDataLoadError
         )
     }
@@ -281,14 +286,9 @@ class SearchViewModel(
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
             onSuccess = {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        noInternetConnection = false
-                    )
-                }
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
             },
-            ::onDataLoadError
+            onError = ::onDataLoadError
         )
     }
 
