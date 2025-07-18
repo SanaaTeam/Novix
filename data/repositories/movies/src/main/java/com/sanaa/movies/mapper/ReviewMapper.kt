@@ -7,7 +7,7 @@ import kotlinx.serialization.json.JsonNull.content
 
 fun ReviewDto.toEntity(): Review {
     return Review(
-        id = 0,
+        id = id.toInt(),
         content = content,
         authorName = authorDetails.name,
         userHandle = authorDetails.username,
