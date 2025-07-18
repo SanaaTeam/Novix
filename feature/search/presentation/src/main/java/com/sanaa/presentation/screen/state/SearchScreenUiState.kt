@@ -15,7 +15,7 @@ data class SearchScreenUiState(
     val actors: List<ActorUiModel> = emptyList(),
     val error: String? = null,
     val filters: MediaFilters? = null,
-    val lastTabIndex: Int = -1,
+    val isFilterButtonVisible: Boolean = true,
 ){
     companion object {
         const val MOVIE_INDEX = 0

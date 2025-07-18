@@ -6,6 +6,7 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.ACTOR_INDEX
 import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.MOVIE_INDEX
 import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.TvShowUiModel
@@ -236,6 +237,11 @@ class SearchViewModel(
 
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
+        if (index == ACTOR_INDEX) {
+            updateState { it.copy(isFilterButtonVisible = false) }
+        } else {
+            updateState { it.copy(isFilterButtonVisible = true) }
+        }
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)

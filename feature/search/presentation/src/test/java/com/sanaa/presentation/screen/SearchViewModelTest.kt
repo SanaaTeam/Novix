@@ -312,7 +312,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onTabSelected() should load movies when movie tap selected`() = runTest {
+    fun `onTabSelected() should load movies when movie tap selected and show filter button`() = runTest {
         // Given
         val index = SearchScreenUiState.MOVIE_INDEX
         val uiState = searchViewModel.state
@@ -337,14 +337,15 @@ class SearchViewModelTest {
                 searchQuery = movieName,
                 selectedTabIndex = index,
                 isLoading = false,
-                movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
+                movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") },
+                isFilterButtonVisible = true
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
     }
 
     @Test
-    fun `onTabSelected() should load tv shows when tv show tap selected`() = runTest {
+    fun `onTabSelected() should load tv shows when tv show tap selected and show filter button`() = runTest {
         // Given
         val index = SearchScreenUiState.TV_SHOW_INDEX
         val uiState = searchViewModel.state
@@ -354,7 +355,7 @@ class SearchViewModelTest {
         coEvery {
             searchTvSeriesUseCase.execute(
                 uiState.value.searchQuery,
-                filters = uiState.value.filters
+                filters = uiState.value.filters,
             )
         } returns tvShows
 
@@ -369,7 +370,8 @@ class SearchViewModelTest {
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
                 isLoading = false,
-                tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
+                tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") },
+                isFilterButtonVisible = true
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
@@ -390,7 +392,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onTabSelected() should load actors when actor tap selected`() = runTest {
+    fun `onTabSelected() should load actors when actor tap selected and hide filter button`() = runTest {
         // Given
         val index = SearchScreenUiState.ACTOR_INDEX
         val uiState = searchViewModel.state
@@ -414,6 +416,7 @@ class SearchViewModelTest {
                 searchQuery = actorName,
                 selectedTabIndex = index,
                 isLoading = false,
+                isFilterButtonVisible = false,
                 actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
             Truth.assertThat(item).isEqualTo(expected)

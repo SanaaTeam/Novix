@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ fun SearchSection(
     text: String,
     onFilterClicked: () -> Unit = {},
     onTextChange: (String) -> Unit = {},
+    isFilterButtonVisible: Boolean = true
 ) {
     Row(
         modifier = Modifier
@@ -46,13 +48,16 @@ fun SearchSection(
                 .weight(1f)
 
         )
-        PrimaryButton(
-            text = null,
-            onClick = onFilterClicked,
-            icon = painterResource(R.drawable.icon_filter)
-        )
+        AnimatedVisibility(
+            visible = isFilterButtonVisible,
+        ) {
+            PrimaryButton(
+                text = null,
+                onClick = onFilterClicked,
+                icon = painterResource(R.drawable.icon_filter)
+            )
+        }
     }
-
 }
 
 @PreviewLightDark
