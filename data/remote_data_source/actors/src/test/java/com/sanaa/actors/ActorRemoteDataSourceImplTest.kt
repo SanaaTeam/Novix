@@ -1,4 +1,3 @@
-
 package com.sanaa.actors
 
 import com.example.preferences.service.LanguageProvider
@@ -88,7 +87,7 @@ class ActorRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
-        dataSource = ActorRemoteDataSourceImpl(client, baseUrl, languageProvider)
+        dataSource = ActorRemoteDataSourceImpl(client, languageProvider)
     }
 
     @Test
