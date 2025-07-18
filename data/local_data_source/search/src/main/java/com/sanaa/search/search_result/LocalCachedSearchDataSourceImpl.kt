@@ -19,7 +19,7 @@ class LocalCachedSearchDataSourceImpl(
     private val actorDao: ActorDao,
     private val movieDao: MovieDao,
     private val seriesDao: SeriesDao,
-    private val languageProvider: LanguageProvider
+    private val languageProvider: LanguageProvider,
 ) : LocalCacheSearchDataSource {
 
     private val currentLanguage: String
@@ -79,7 +79,7 @@ class LocalCachedSearchDataSourceImpl(
     override suspend fun getPagedActorsByQuery(
         query: String,
         limit: Int,
-        offset: Int
+        offset: Int,
     ): List<ActorsLocalDto> {
         return actorDao.getPagedActorsByQuery(query, limit, offset)
     }
@@ -99,7 +99,7 @@ class LocalCachedSearchDataSourceImpl(
     override suspend fun getMoviesByQuery(
         query: String,
         limit: Int,
-        offset: Int
+        offset: Int,
     ): List<MoviesLocalDto> {
         val cachedResults = getCachedResults(query, "movie")
 
@@ -116,7 +116,7 @@ class LocalCachedSearchDataSourceImpl(
     override suspend fun getTvSeriesByQuery(
         query: String,
         limit: Int,
-        offset: Int
+        offset: Int,
     ): List<TvSeriesLocalDto> {
         val cachedResults = getCachedResults(query, "tv_series")
 

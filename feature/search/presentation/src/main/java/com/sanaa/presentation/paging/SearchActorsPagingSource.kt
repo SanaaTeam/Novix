@@ -7,7 +7,7 @@ import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsPagingSource(
     private val searchActorsPagingUseCase: SearchActorsUseCase,
-    private val query: String
+    private val query: String,
 ) : PagingSource<Int, SearchActorOutput>() {
 
     override fun getRefreshKey(state: PagingState<Int, SearchActorOutput>): Int? {

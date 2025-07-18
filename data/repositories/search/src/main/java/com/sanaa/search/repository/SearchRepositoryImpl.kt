@@ -51,7 +51,7 @@ class SearchRepositoryImpl(
             query, limit = pageSize, offset = offset
         )
         if (cachedMedia.isNotEmpty())
-            getMoviesFromCache(filters,page, cachedMedia)
+            getMoviesFromCache(filters, cachedMedia)
         else
             getMoviesFromRemote(query, page, filters)
     }
@@ -88,7 +88,6 @@ class SearchRepositoryImpl(
 
     private fun getMoviesFromCache(
         filters: MediaFilters?,
-        page: Int,
         cachedMedia: List<MoviesLocalDto>,
     ): List<SearchMovieOutput> {
         return filters

@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class GetTvSeriesTrailerUseCaseTest {
-    private lateinit var useCase: GetTvSeriesTrailerUseCase
-    private val repository: TvSeriesRepository = mockk()
+    private lateinit var getTvSeriesTrailerUseCase: GetTvSeriesTrailerUseCase
+    private val tvSeriesRepository: TvSeriesRepository = mockk()
 
     @BeforeEach
     fun setUp() {
-        useCase = GetTvSeriesTrailerUseCase(repository)
+        getTvSeriesTrailerUseCase = GetTvSeriesTrailerUseCase(tvSeriesRepository)
     }
 
     @Test
@@ -23,9 +23,9 @@ class GetTvSeriesTrailerUseCaseTest {
         // Given
         val seriesId = 1
         val trailerUrl = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-        coEvery { repository.getTvSeriesTrailer(seriesId) } returns trailerUrl
+        coEvery { tvSeriesRepository.getTvSeriesTrailer(seriesId) } returns trailerUrl
         // When
-        val result = useCase.execute(seriesId)
+        val result = getTvSeriesTrailerUseCase.execute(seriesId)
         // Then
         assert(result == trailerUrl)
     }
@@ -34,9 +34,9 @@ class GetTvSeriesTrailerUseCaseTest {
     fun `should return null if no trailer found`() = runTest {
         // Given
         val seriesId = 1
-        coEvery { repository.getTvSeriesTrailer(seriesId) } returns null
+        coEvery { tvSeriesRepository.getTvSeriesTrailer(seriesId) } returns null
         // When
-        val result = useCase.execute(seriesId)
+        val result = getTvSeriesTrailerUseCase.execute(seriesId)
         // Then
         assert(result == null)
     }
@@ -46,10 +46,10 @@ class GetTvSeriesTrailerUseCaseTest {
         // Given
         val seriesId = 1
         val exception = IllegalStateException("Error getting trailer")
-        coEvery { repository.getTvSeriesTrailer(seriesId) } throws exception
+        coEvery { tvSeriesRepository.getTvSeriesTrailer(seriesId) } throws exception
         // When & Then
         assertThrows<IllegalStateException> {
-            useCase.execute(seriesId)
+            getTvSeriesTrailerUseCase.execute(seriesId)
         }
 
     }
