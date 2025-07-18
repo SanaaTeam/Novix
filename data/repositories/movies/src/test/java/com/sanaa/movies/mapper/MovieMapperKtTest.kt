@@ -55,13 +55,13 @@ class MovieMapperKtTest{
     @Test
     fun `toDomain returns default title when null`() {
         val dto = MovieDetailsDto(id = 1, title = null)
-        assertThat(dto.toDomain().title).isEqualTo("Unknown Title")
+        assertThat(dto.toDomain().title).isEqualTo("")
     }
 
     @Test
     fun `toDomain returns default overview when null`() {
         val dto = MovieDetailsDto(id = 1, overview = null)
-        assertThat(dto.toDomain().overview).isEqualTo("No overview available")
+        assertThat(dto.toDomain().overview).isEqualTo(null)
     }
 
     @Test
@@ -73,13 +73,13 @@ class MovieMapperKtTest{
     @Test
     fun `toDomain returns default voteAverage when null`() {
         val dto = MovieDetailsDto(id = 1, voteAverage = null)
-        assertThat(dto.toDomain().imdbRating).isEqualTo(0.0f)
+        assertThat(dto.toDomain().imdbRating).isEqualTo(null)
     }
 
     @Test
     fun `toDomain returns default duration when null`() {
         val dto = MovieDetailsDto(id = 1, duration = null)
-        assertThat(dto.toDomain().duration).isEqualTo(0)
+        assertThat(dto.toDomain().duration).isEqualTo(null)
     }
 
     @Test
@@ -173,7 +173,7 @@ class MovieMapperKtTest{
     fun `should fallback to empty overview when overview is null in MoviesByCategoryDto`() {
         val dto = createCategoryMovieDto(overview = null)
         val result = dto.toDomain()
-        assertThat(result.overview).isEqualTo("")
+        assertThat(result.overview).isEqualTo(null)
     }
 
     @Test
@@ -194,7 +194,7 @@ class MovieMapperKtTest{
     fun `should fallback to 0 rating when voteAverage is null in MoviesByCategoryDto`() {
         val dto = createCategoryMovieDto(voteAverage = null)
         val result = dto.toDomain()
-        assertThat(result.imdbRating).isEqualTo(0.0f)
+        assertThat(result.imdbRating).isEqualTo(null)
     }
 
     // --- fullImageUrlOrEmpty helper --- //
