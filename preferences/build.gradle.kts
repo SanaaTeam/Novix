@@ -46,4 +46,6 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter)
 }
