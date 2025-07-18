@@ -44,113 +44,118 @@ class RemoteTvSeriesDataSourceImplTest {
             when {
                 url.endsWith("/tv/100") -> respondJson(
                     """{
-                    "id": 100,
-                    "name": "Stranger Things",
-                    "overview": "A show about mysterious events.",
-                    "first_air_date": "2016-07-15",
-                    "vote_average": 8.7,
-                    "poster_path": "/poster.jpg",
-                    "number_of_seasons": 4,
-                    "genres": [
-                        {"id": 18, "name": "Drama"},
-                        {"id": 9648, "name": "Mystery"}
-                    ]
-                }"""
+                        "id": 100,
+                        "name": "Stranger Things",
+                        "overview": "A show about mysterious events.",
+                        "first_air_date": "2016-07-15",
+                        "vote_average": 8.7,
+                        "poster_path": "/poster.jpg",
+                        "number_of_seasons": 4,
+                        "genres": [
+                            {"id": 18, "name": "Drama"},
+                            {"id": 9648, "name": "Mystery"}
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/tv/100/videos") -> respondJson(
                     """{
-                    "id": 100,
-                    "results": [
-                        {"id": "abc123", "key": "xyz", "site": "YouTube", "type": "Trailer"}
-                    ]
-                }"""
+                        "id": 100,
+                        "results": [
+                            {"id": "abc123", "key": "xyz", "site": "YouTube", "type": "Trailer"}
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/tv/100/season/1") -> respondJson(
                     """{
-                    "id": 100,
-                    "name": "Season 1"
-                }"""
+                        "id": 100,
+                        "name": "Season 1"
+                    }"""
                 )
 
                 url.endsWith("/tv/100/images") -> respondJson(
                     """{
-                    "id": 100,
-                    "backdrops": [
-                        {"file_path": "/image.jpg"}
-                    ]
-                }"""
+                        "id": 100,
+                        "backdrops": [
+                            {"file_path": "/image.jpg"}
+                        ]
+                    }"""
                 )
 
                 url.contains("/discover/tv") -> respondJson(
                     """{
-  "page": 1,
-  "results": [
-    {
-      "id": 123,
-      "name": "Breaking Bad",
-      "overview": "A high school chemistry teacher...",
-      "poster_path": "/somepath.jpg",
-      "vote_average": 9.5
-    }
-  ],
-  "total_pages": 10,
-  "total_results": 200
-}"""
+                        "page": 1,
+                        "results": [
+                            {
+                                "id": 123,
+                                "name": "Breaking Bad",
+                                "overview": "A high school chemistry teacher...",
+                                "poster_path": "/somepath.jpg",
+                                "vote_average": 9.5
+                            }
+                        ],
+                        "total_pages": 10,
+                        "total_results": 200
+                    }"""
                 )
 
                 url.endsWith("/tv/100/reviews") -> respondJson(
-                    """
-    {
-      "id": 100,
-      "page": 1,
-      "results": [
-        {
-          "id": "r1",
-          "author": "Haider",
-          "content": "This show is amazing!",
-          "created_at": "2024-01-01T12:00:00.000Z"
-        }
-      ]
-    }
-    """.trimIndent()
+                    """{
+                        "id": 100,
+                        "page": 1,
+                        "results": [
+                            {
+                                "id": "r1",
+                                "author": "Haider",
+                                "content": "This show is amazing!",
+                                "created_at": "2024-01-01T12:00:00.000Z"
+                            }
+                        ]
+                    }"""
                 )
 
-                url.endsWith("/tv/100/credits")
-
-                    -> respondJson(
+                url.endsWith("/tv/100/credits") -> respondJson(
                     """{
-                    "id": 100,
-                    "cast": [
-                        {"id": 1, "name": "Actor Name", "character": "Main Character"}
-                    ]
-                }"""
+                        "id": 100,
+                        "cast": [
+                            {
+                                "id": 1,
+                                "name": "Actor Name",
+                                "character": "Main Character",
+                                "profile_path": "/actor.jpg"
+                            }
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/tv/100/season/1/episode/1") -> respondJson(
                     """{
-                    "id": 1,
-                    "name": "Pilot"
-                }"""
+                        "id": 1,
+                        "name": "Pilot"
+                    }"""
                 )
 
                 url.endsWith("/tv/100/season/1/episode/1/images") -> respondJson(
                     """{
-                    "id": 1,
-                    "backdrops": [
-                        {"file_path": "/image1.jpg"}
-                    ]
-                }"""
+                        "id": 1,
+                        "backdrops": [
+                            {"file_path": "/image1.jpg"}
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/tv/100/season/1/episode/1/credits") -> respondJson(
                     """{
-                    "id": 1,
-                    "guest_stars": [
-                        {"id": 2, "name": "Guest Star"}
-                    ]
-                }"""
+                        "id": 1,
+                        "guest_stars": [
+                            {
+                                "id": 2,
+                                "name": "Guest Star",
+                                "profile_path": "/guest.jpg"
+                            }
+                        ]
+                    }"""
                 )
 
                 else -> respondError(HttpStatusCode.NotFound)
@@ -169,7 +174,9 @@ class RemoteTvSeriesDataSourceImplTest {
         }
 
         dataSource = RemoteTvSeriesDataSourceImpl(
-            client = client, baseUrl = baseUrl, languageProvider = languageProvider
+            client = client,
+            baseUrl = baseUrl,
+            languageProvider = languageProvider
         )
     }
 
@@ -235,8 +242,8 @@ class RemoteTvSeriesDataSourceImplTest {
     }
 
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
-        content = ByteReadChannel(content), status = HttpStatusCode.OK, headers = headersOf(
-            HttpHeaders.ContentType, listOf(ContentType.Application.Json.toString())
-        )
+        content = ByteReadChannel(content),
+        status = HttpStatusCode.OK,
+        headers = headersOf(HttpHeaders.ContentType, listOf(ContentType.Application.Json.toString()))
     )
 }
