@@ -15,12 +15,12 @@ fun MovieDetailsDto.toDomain(): Movie {
     return Movie(
         id = id,
         posterImageUrl = posterImagePath.fullImageUrlOrEmpty(),
-        title = title.orEmpty(),
+        title = title ?: "Unknown Title",
         genres = genres.mapNotNull { it.id?.toGenre() },
-        imdbRating = voteAverage,
-        duration = duration,
+        imdbRating = voteAverage ?: 0.0f,
+        duration = duration ?: 0,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview
+        overview = overview ?: "No overview available"
     )
 }
 
@@ -41,13 +41,14 @@ fun SimilarMoviesDto.Results.toDomain(): Movie {
 fun MoviesByCategoryResponse.MoviesByCategoryDto.toDomain(): Movie {
     return Movie(
         id = id,
-        title = title.orEmpty(),
+        title = title ?: "Unknown Title",
         posterImageUrl = posterPath.fullImageUrlOrEmpty(),
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
         genres = genreIds.mapNotNull { it.toGenre() },
-        overview = overview,
+        overview = overview ?: "",
         duration = 0,
-        imdbRating = voteAverage?.toFloat(),
+        imdbRating = voteAverage?.toFloat() ?: 0.0f,
     )
 }
+
 

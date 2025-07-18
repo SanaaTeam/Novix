@@ -55,13 +55,13 @@ class MovieMapperKtTest{
     @Test
     fun `toDomain returns default title when null`() {
         val dto = MovieDetailsDto(id = 1, title = null)
-        assertThat(dto.toDomain().title).isEqualTo("")
+        assertThat(dto.toDomain().title).isEqualTo("Unknown Title")
     }
 
     @Test
     fun `toDomain returns default overview when null`() {
         val dto = MovieDetailsDto(id = 1, overview = null)
-        assertThat(dto.toDomain().overview).isEqualTo(null)
+        assertThat(dto.toDomain().overview).isEqualTo("No overview available")
     }
 
     @Test
@@ -73,13 +73,13 @@ class MovieMapperKtTest{
     @Test
     fun `toDomain returns default voteAverage when null`() {
         val dto = MovieDetailsDto(id = 1, voteAverage = null)
-        assertThat(dto.toDomain().imdbRating).isEqualTo(null)
+        assertThat(dto.toDomain().imdbRating).isEqualTo(0.0f)
     }
 
     @Test
     fun `toDomain returns default duration when null`() {
         val dto = MovieDetailsDto(id = 1, duration = null)
-        assertThat(dto.toDomain().duration).isEqualTo(null)
+        assertThat(dto.toDomain().duration).isEqualTo(0)
     }
 
     @Test
@@ -124,7 +124,7 @@ class MovieMapperKtTest{
     fun `should fallback to empty title when mapping MoviesByCategoryDto with null title`() {
         val dto = createCategoryMovieDto(title = null)
         val result = dto.toDomain()
-        assertThat(result.title).isEqualTo("")
+        assertThat(result.title).isEqualTo("Unknown Title")
     }
 
     @Test
@@ -173,7 +173,7 @@ class MovieMapperKtTest{
     fun `should fallback to empty overview when overview is null in MoviesByCategoryDto`() {
         val dto = createCategoryMovieDto(overview = null)
         val result = dto.toDomain()
-        assertThat(result.overview).isEqualTo(null)
+        assertThat(result.overview).isEqualTo("")
     }
 
     @Test
@@ -194,10 +194,9 @@ class MovieMapperKtTest{
     fun `should fallback to 0 rating when voteAverage is null in MoviesByCategoryDto`() {
         val dto = createCategoryMovieDto(voteAverage = null)
         val result = dto.toDomain()
-        assertThat(result.imdbRating).isEqualTo(null)
+        assertThat(result.imdbRating).isEqualTo(0.0f)
     }
 
-    // --- fullImageUrlOrEmpty helper --- //
 
     @Test
     fun `should return full image url when path is valid`() {
