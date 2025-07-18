@@ -63,7 +63,7 @@ allprojects {
 }
 
 dependencies {
-    kover(projects.envConfig)
+    kover(projects.preferences)
     kover(projects.app)
     kover(projects.domain.authentication)
     kover(projects.domain.savedContent)

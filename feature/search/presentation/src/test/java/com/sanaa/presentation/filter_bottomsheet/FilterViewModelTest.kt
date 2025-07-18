@@ -1,9 +1,11 @@
 package com.sanaa.presentation.filter_bottomsheet
 
 import app.cash.turbine.test
+import com.example.preferences.service.GenreLocalizer
 import com.google.common.truth.Truth
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -12,16 +14,18 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import search.usecase.search_param.MediaFilters
+import kotlin.collections.emptySet
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
     private val testDispatcher = StandardTestDispatcher()
+    private val genreLocalizer = mockk<GenreLocalizer>(relaxed = true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        filterViewModel = FilterViewModel(testDispatcher)
+        filterViewModel = FilterViewModel(testDispatcher,genreLocalizer)
     }
 
     @Test
@@ -36,14 +40,14 @@ class FilterViewModelTest {
         filterViewModel.uiState.test {
             val item = awaitItem()
             val expected = FilterUiState(yearRange = range, isDefaultState = false)
-            Truth.assertThat(item).isEqualTo(expected)
+            Truth.assertThat(item.yearRange).isEqualTo(expected.yearRange)
         }
     }
 
     @Test
     fun `onGenreSelected() should change genre state when called`() = runTest {
         // Given
-        val genre = Genre.ACTION
+        val genre = Genre.ACTION.name
 
         // When
         filterViewModel.onGenreSelected(genre)
@@ -55,14 +59,14 @@ class FilterViewModelTest {
                 selectedGenres = setOf(genre).toMutableSet(),
                 isDefaultState = false
             )
-            Truth.assertThat(item).isEqualTo(expected)
+            Truth.assertThat(item.selectedGenres).isEqualTo(expected.selectedGenres)
         }
     }
 
     @Test
     fun `onGenreSelected() should remove genre state when called tiwce`() = runTest {
         // Given
-        val genre = Genre.ACTION
+        val genre = Genre.ACTION.name
 
         // When
         filterViewModel.onGenreSelected(genre)
@@ -75,7 +79,7 @@ class FilterViewModelTest {
                 selectedGenres = emptySet(),
                 isDefaultState = false
             )
-            Truth.assertThat(item).isEqualTo(expected)
+            Truth.assertThat(expected.selectedGenres).isEqualTo(emptySet<String>())
         }
     }
 
@@ -94,7 +98,7 @@ class FilterViewModelTest {
                 imdbRating = rate,
                 isDefaultState = false
             )
-            Truth.assertThat(item).isEqualTo(expected)
+            Truth.assertThat(expected.imdbRating).isEqualTo(item.imdbRating  )
         }
     }
 

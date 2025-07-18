@@ -345,6 +345,26 @@ class SearchViewModel(
         loadMediaByTab(query)
     }
 
+    override fun onSaveIconClicked() {
+
+    }
+
+    override fun onFilterClicked() {
+        updateState {
+            it.copy(showBottomSheet = true)
+        }
+    }
+
+    override fun onBottomSheetDragged() {
+        updateState {
+            it.copy(
+                showBottomSheet = false
+            )
+        }
+    }
+
+
+
     companion object {
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0

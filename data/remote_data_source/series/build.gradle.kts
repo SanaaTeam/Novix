@@ -43,7 +43,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)

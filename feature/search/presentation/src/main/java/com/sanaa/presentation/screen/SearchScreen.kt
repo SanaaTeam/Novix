@@ -10,10 +10,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -82,12 +79,11 @@ fun SearchScreenContent(
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var showBottomSheet by rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
         scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) showBottomSheet = false
+            if (!sheetState.isVisible) searchListener.onBottomSheetDragged()
         }
     }
 
@@ -123,7 +119,7 @@ fun SearchScreenContent(
             SearchSection(
                 text = uiState.searchQuery,
                 onTextChange = searchListener::onSearchQueryChanged,
-                onFilterClicked = { showBottomSheet = true },
+                onFilterClicked = { searchListener.onFilterClicked() },
                 isFilterButtonVisible = uiState.isFilterButtonVisible,
             )
 
@@ -149,7 +145,7 @@ fun SearchScreenContent(
         }
     }
 
-    if (showBottomSheet) {
+    if (uiState.showBottomSheet) {
         FilterBottomSheet(dismissSheet, sheetState, filterUiState, filterListener)
     }
 }
