@@ -16,7 +16,7 @@ class ManageMovieDetailsUseCase(
         movieRepo.getMovieCast(id)
 
     suspend fun getMovieImages(id: Int): List<String> =
-        movieRepo.getImages(id)
+        movieRepo.getImages(id, IMAGE_COUNT)
 
     suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         movieRepo.getMoviesByCategory(category)
@@ -29,4 +29,7 @@ class ManageMovieDetailsUseCase(
 
     suspend fun getSimilarMoviesByMovieId(movieId: Int): List<Movie> =
         movieRepo.getSimilarMoviesByMovieId(movieId)
+    private companion object {
+        const val IMAGE_COUNT = 10
+    }
 }

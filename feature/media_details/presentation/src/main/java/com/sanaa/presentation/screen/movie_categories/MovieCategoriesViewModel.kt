@@ -31,8 +31,8 @@ class MovieCategoriesViewModel(
         emitEffect(MovieCategoriesScreenEffects.NavigateBack)
     }
 
-    override fun onMovieClick() {
-        TODO("Not yet implemented")
+    override fun onMovieClick(id:Int) {
+        emitEffect(MovieCategoriesScreenEffects.NavigateToMovieDetails(id))
     }
 
     private fun getListOfMoviesByCategory(categoryId: Genre) {
