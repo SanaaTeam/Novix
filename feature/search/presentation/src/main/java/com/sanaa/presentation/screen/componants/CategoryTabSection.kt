@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
@@ -23,6 +25,7 @@ import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.ACTOR_I
 import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.MOVIE_INDEX
 import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import exceptions.NoNetworkException
 
 @Composable
 fun CategoryTabSection(
@@ -83,27 +86,25 @@ fun CategoryTabContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
+    val movieState = moviesPagingData.loadState.refresh
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
-            moviesPagingData.loadState.refresh !is androidx.paging.LoadState.Loading &&
-            moviesPagingData.loadState.refresh !is androidx.paging.LoadState.Error
+            movieState !is LoadState.Loading &&
+            movieState !is LoadState.Error
 
     val isTvEmpty = tvShowsPagingData.itemCount == 0 &&
-            tvShowsPagingData.loadState.refresh !is androidx.paging.LoadState.Loading &&
-            tvShowsPagingData.loadState.refresh !is androidx.paging.LoadState.Error
+            tvShowsPagingData.loadState.refresh !is LoadState.Loading &&
+            tvShowsPagingData.loadState.refresh !is LoadState.Error
 
     val isActorEmpty = actorsPagingData.itemCount == 0 &&
-            actorsPagingData.loadState.refresh !is androidx.paging.LoadState.Loading &&
-            actorsPagingData.loadState.refresh !is androidx.paging.LoadState.Error
+            actorsPagingData.loadState.refresh !is LoadState.Loading &&
+            actorsPagingData.loadState.refresh !is LoadState.Error
 
     when (selectedTabIndex) {
         MOVIE_INDEX -> {
-            if (isMovieEmpty) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    NoSearchResultState()
-                }
+            if (movieState is LoadState.Error) {
+                ErrorState(movieState) {interactionsListener.retrySearch()}
+            } else if (isMovieEmpty) {
+                NoSearchResultState()
             } else {
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
@@ -114,12 +115,7 @@ fun CategoryTabContent(
 
         TV_SHOW_INDEX -> {
             if (isTvEmpty) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    NoSearchResultState()
-                }
+                NoSearchResultState()
             } else {
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
@@ -130,12 +126,7 @@ fun CategoryTabContent(
 
         ACTOR_INDEX -> {
             if (isActorEmpty) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    NoSearchResultState()
-                }
+                NoSearchResultState()
             } else {
                 ActorsContent(actorsPagingData)
             }
@@ -144,15 +135,34 @@ fun CategoryTabContent(
 }
 
 @Composable
+private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        if (movieState.error is NoNetworkException)
+            NetworkDisconnectionContact(onRetryClick = onRetryClick)
+        else
+            ErrorStateContent(
+                onRetryClick = onRetryClick,
+                errorTitle = stringResource(R.string.error_general_title),
+                errorMessage = stringResource(R.string.error_general_message)
+            )
+    }
+}
+
+@Composable
 private fun NoSearchResultState() {
-    EmptySearchState(
-        icon = painterResource(id = R.drawable.empty_search),
-        text = stringResource(id = R.string.no_search_result_message)
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-        Image(
-            modifier = Modifier.padding(start = 8.dp, top = 16.dp),
-            painter = painterResource(R.drawable.alert_circle),
-            contentDescription = null
-        )
+        EmptySearchState(
+            icon = painterResource(id = R.drawable.empty_search),
+            text = stringResource(id = R.string.no_search_result_message)
+        ) {
+            Image(
+                modifier = Modifier.padding(start = 8.dp, top = 16.dp),
+                painter = painterResource(R.drawable.alert_circle),
+                contentDescription = null
+            )
+        }
     }
 }

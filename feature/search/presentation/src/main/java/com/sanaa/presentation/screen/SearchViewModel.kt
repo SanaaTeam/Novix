@@ -278,6 +278,10 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
+    override fun retrySearch() {
+        loadMediaByTab(state.value.searchQuery)
+    }
+
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
         updateState { it.copy(selectedTabIndex = index) }
@@ -357,8 +361,6 @@ class SearchViewModel(
             )
         }
     }
-
-
 
     companion object {
         private const val PAGE_SIZE = 20

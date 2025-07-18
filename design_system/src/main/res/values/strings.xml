@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <string name="novix"  translatable="false">Novix</string>
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
@@ -25,4 +25,7 @@
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
+    <string name="error_general_title">Oops! Something went wrong.</string>
+    <string name="error_general_message">Please try again later, we’ll be waiting with your movies and popcorn</string>
+
 </resources>
