@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
@@ -41,6 +42,7 @@ import search.usecase.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
 ) {
@@ -60,6 +62,7 @@ fun SearchScreen(
             filterUiState = filterUiState,
             searchListener = searchViewModel,
             filterListener = filterViewModel,
+            onMediaClick = onMediaClick
         )
     }
 }
@@ -71,6 +74,7 @@ fun SearchScreenContent(
     filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
     filterListener: FilterBottomSheetInteractionsListener,
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -123,7 +127,16 @@ fun SearchScreenContent(
                     selectedTabIndex = uiState.selectedTabIndex,
                     uiState = uiState,
                     interactionsListener = searchListener,
-                    modifier = Modifier.align(Alignment.Start)
+                    modifier = Modifier.align(Alignment.Start),
+                    onMovieClick = { movie ->
+                        onMediaClick(StartRoute.MOVIE, movie.id)
+                    },
+                    onTvShowClick = { tvShow ->
+                        onMediaClick(StartRoute.SERIES, tvShow.id)
+                    },
+                    onActorClick = { actor ->
+                        onMediaClick(StartRoute.ACTOR, actor.id)
+                    }
                 )
             }
             AnimatedVisibility(uiState.searchQuery.isBlank()) {

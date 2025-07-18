@@ -14,13 +14,19 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
+import com.sanaa.presentation.screen.state.ActorUiModel
+import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.TvShowUiModel
 
 @Composable
 fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
     interactionsListener: SearchScreenInteractionsListener,
+    onMovieClick: (MovieUiModel) -> Unit,
+    onTvShowClick: (TvShowUiModel) -> Unit,
+    onActorClick: (ActorUiModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val tabs = listOf(
@@ -45,7 +51,7 @@ fun CategoryTabSection(
             ) {
                 WavyProgressIndicator()
             }
-        } else  if (uiState.noInternetConnection) {
+        } else if (uiState.noInternetConnection) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
@@ -55,8 +61,9 @@ fun CategoryTabSection(
         } else when (selectedTabIndex) {
             0 -> {
                 if (uiState.movies.isEmpty()) NoSearchResultState()
-                else MoviesContent(uiState.movies, onMovieClick = {
-                    interactionsListener.onSearchResultMediaClicked(it)
+                else MoviesContent(uiState.movies, onMovieClick = { recent, movie ->
+                    onMovieClick(movie)
+                    interactionsListener.onSearchResultMediaClicked(recent)
                 })
             }
 
@@ -64,15 +71,18 @@ fun CategoryTabSection(
             1 -> {
                 if (uiState.tvShows.isEmpty()) NoSearchResultState()
                 else TvShowsContent(
-                    uiState.tvShows, onTvShowClick = {
-                        interactionsListener.onSearchResultMediaClicked(it)
+                    uiState.tvShows, onTvShowClick = { recent, tvShow ->
+                        onTvShowClick(tvShow)
+                        interactionsListener.onSearchResultMediaClicked(recent)
                     })
 
             }
 
             2 -> {
                 if (uiState.actors.isEmpty()) NoSearchResultState()
-                else ActorsContent(uiState.actors)
+                else ActorsContent(uiState.actors, onActorClick = {
+                    onActorClick(it)
+                })
             }
         }
     }

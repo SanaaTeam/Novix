@@ -26,7 +26,10 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.TvShowUiModel
 
 @Composable
-fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiModel) -> Unit) {
+fun TvShowsContent(
+    tvShows: List<TvShowUiModel>,
+    onTvShowClick: (RecentViewedUiModel, TvShowUiModel) -> Unit
+) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
         R.drawable.movie_placeholder_dark
@@ -71,6 +74,12 @@ fun TvShowsContent(tvShows: List<TvShowUiModel>, onTvShowClick: (RecentViewedUiM
                         id = tvShow.id,
                         imageUrl = tvShow.imageUrl,
                         mediaType = MediaTypeUi.TV_SERIES.name
+                    ),
+                    TvShowUiModel(
+                        id = tvShow.id,
+                        imageUrl = tvShow.imageUrl,
+                        title = tvShow.title,
+                        rating = tvShow.rating,
                     )
                 )
             })

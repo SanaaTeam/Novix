@@ -27,7 +27,7 @@ android {
         versionName = ciName ?: libs.versions.versionName.get()
 
         ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
         }
     }
 
@@ -79,6 +79,8 @@ dependencies {
 
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.search.api)
 
     implementation(projects.envConfig)
     implementation(projects.domain.vod)

@@ -3,6 +3,7 @@ package com.sanaa.designsystem.design_system.component.cards
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun ActorCard(
     actorName: String,
     actorImage: Painter,
+    onCardClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     playedCharacter: String? = null,
 ) {
@@ -44,6 +46,7 @@ fun ActorCard(
         modifier = modifier
             .height(78.dp)
             .fillMaxWidth()
+            .clickable(onClick = onCardClick)
     ) {
         Box(
             modifier = Modifier
