@@ -1,4 +1,4 @@
-package com.sanaa.presentation.module
+package com.sanaa.presentation.model
 
 import entity.Movie
 

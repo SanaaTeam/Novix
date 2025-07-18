@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.actor
 
-import com.sanaa.presentation.module.ActorUiModel
-import com.sanaa.presentation.module.MovieUiModel
-import com.sanaa.presentation.module.SeriesUiModel
+import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.model.SeriesUiModel
 
 data class ActorScreenUiState(
     val actor: ActorUiModel = ActorUiModel(),
@@ -12,6 +12,7 @@ data class ActorScreenUiState(
     val galleryImages: List<String> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
+    val showLoginBottomSheet: Boolean = false,
 )
 
 

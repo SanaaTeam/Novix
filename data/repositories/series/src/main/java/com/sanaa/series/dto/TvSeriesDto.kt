@@ -23,9 +23,9 @@ data class EpisodeDto(
     @SerialName("overview") val overview: String? = null,
     @SerialName("season_number") val seasonNumber: Int = 0,
     @SerialName("episode_number") val episodeNumber: Int = 0,
-    @SerialName("vote_average") val voteAverage: Float = 0f,
-    @SerialName("air_date") val airDate: String = "",
-    @SerialName("runtime") val runtime: Int = 0,
+    @SerialName("vote_average") val voteAverage: Float? = null,
+    @SerialName("air_date") val airDate: String? = null,
+    @SerialName("runtime") val runtime: Int? = null,
     @SerialName("still_path") val stillPath: String? = null
 )
 

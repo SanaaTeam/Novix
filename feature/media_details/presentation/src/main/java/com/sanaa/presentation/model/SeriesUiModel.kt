@@ -1,4 +1,4 @@
-package com.sanaa.presentation.module
+package com.sanaa.presentation.model
 
 import entity.Episode
 import entity.Season
@@ -29,7 +29,7 @@ data class EpisodeUiModel(
     val rating: String? = null,
     val airDate: String? = null,
     val stillPath: String? = null,
-    val duration: Int = 0,
+    val duration: Int? = null,
     val overview: String? = null,
     val seasonNumber: Int = 0,
 )
@@ -58,7 +58,7 @@ fun Season.toSeasonUiModel() = SeasonUiModel(
 fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     number = number,
     title = title,
-    rating = imdbRating.roundToInt().toString(),
+    rating = imdbRating?.roundToInt()?.toString(),
     airDate = "3 oct 2011",
     stillPath = stillImagePath,
     duration = durationMinutes,

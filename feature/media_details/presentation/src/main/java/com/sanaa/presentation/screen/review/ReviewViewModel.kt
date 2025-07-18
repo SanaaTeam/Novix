@@ -2,27 +2,35 @@ package com.sanaa.presentation.screen.review
 
 import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.module.toReviewUiModule
+import com.sanaa.presentation.model.MediaTypeUiModel
+import com.sanaa.presentation.model.toReviewUiModel
+import details.usecase.movie.GetReviewsByMovieId
 import details.usecase.tv_series.GetTvSeriesReviewsUseCase
 
 class ReviewViewModel(
-    private val seriesId: Int,
+    private val mediaId: Int,
+    private val mediaType: MediaTypeUiModel,
     private val getTvSeriesReviewsUseCase: GetTvSeriesReviewsUseCase,
+    private val getMovieReviewsUseCase: GetReviewsByMovieId,
 
     ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(ReviewScreenUiState()),
     ReviewScreenInteractionListener {
     init {
-        fetchTvSeriesReviews(seriesId)
+        Log.d("TAG", "MovieDetailsScreen: ${mediaType}${mediaId}")
+        fetchTvSeriesReviews(mediaId, mediaType)
     }
 
-    private fun fetchTvSeriesReviews(id: Int) {
+    private fun fetchTvSeriesReviews(id: Int, mediaType: MediaTypeUiModel) {
         tryToExecute(callee = {
             updateState { it.copy(isLoading = true) }
-            val reviews = getTvSeriesReviewsUseCase.execute(id)
+            val reviews = if (mediaType == MediaTypeUiModel.MOVIE) {
+                getMovieReviewsUseCase.execute(id)
+            } else {
+                getTvSeriesReviewsUseCase.execute(id)
+            }
             updateState {
-                Log.d("reviews", reviews.toString())
                 it.copy(reviews = reviews.map {
-                    it.toReviewUiModule()
+                    it.toReviewUiModel()
                 })
             }
         }, onSuccess = {

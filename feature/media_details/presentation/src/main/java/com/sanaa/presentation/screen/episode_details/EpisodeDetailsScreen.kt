@@ -28,6 +28,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episode_details.components.GuestsOfHonorComponent
@@ -134,6 +135,7 @@ private fun EpisodeDetailsScreenContent(
                                 airDate = state.episode.airDate,
                                 imagesUrl = state.imagesUrl,
                                 genres = emptyList(),
+                                showReviews = false
                             )
 
                             state.episode.overview?.let {
@@ -158,8 +160,15 @@ private fun EpisodeDetailsScreenContent(
             BottomContainer(
                 trailerUrl = state.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                onPlayTrailerClicked = interactionListener::onPlayTrailerClick
+                onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
+                onSetRateClicked = interactionListener::onRateClicked
             )
+            // TODO USE REAL RATE BOTTOM SHEET AFTER LOGIN FEATURE DONE
+            if (state.showLoginBottomSheet) {
+                RequestToLoginBottomSheet(
+                    onDismiss = interactionListener::onDismissBottomSheet,
+                )
+            }
         }
     }
 }

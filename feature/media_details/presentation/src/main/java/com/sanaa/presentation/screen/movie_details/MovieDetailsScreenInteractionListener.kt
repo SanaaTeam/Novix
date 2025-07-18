@@ -6,4 +6,8 @@ interface MovieDetailsScreenInteractionListener {
     fun onReadMoreClick()
     fun onBookmarkClick(movieId: Int)
     fun onSimilarMovieClick(movieId: Int)
+    fun onRateMovieClick()
+    fun onDismissLoginBottomSheet()
+    fun onActorCardClick(actorId: Int)
+    fun onShowReviewsClick(movieId: Int)
 }

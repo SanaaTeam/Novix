@@ -4,6 +4,7 @@ import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.mapper.fullImageUrlOrEmpty
 import com.sanaa.movies.mapper.toDomain
 import com.sanaa.movies.mapper.toDtoId
+import com.sanaa.movies.mapper.toEntity
 import details.repository.MovieRepository
 import entity.Actor
 import entity.Genre
@@ -37,7 +38,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getReviewsByMovieId(id: Int): List<Review> =
         safeCall("Failed to fetch reviews") {
-            remote.fetchReviewsByMovieId(id).results.map { it.toDomain() }
+            remote.fetchReviewsByMovieId(id).map { it.toEntity() }
         }
 
     override suspend fun getMoviesByCategory(category: Genre): List<Movie> =

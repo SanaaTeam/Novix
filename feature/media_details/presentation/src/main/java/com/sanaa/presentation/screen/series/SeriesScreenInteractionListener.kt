@@ -9,4 +9,5 @@ interface SeriesScreenInteractionListener {
     fun onPlayTrailerClicked()
     fun onRateClicked()
     fun onDismissRateBottomSheet()
+    fun onSaveSeriesClicked()
 }

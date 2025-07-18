@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.actor.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -33,6 +32,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
@@ -189,9 +189,9 @@ private fun ActorScreenContent(
                                 items = state.topMovies.take(10),
                                 onActionClick = listener::onTopMoviesClicked
                             ) { movie ->
-                                PosterCard(movie.posterUrl, onClick = {
+                                PosterCard(movie.posterUrl, onCardClick = {
                                     listener.onMovieClicked(movie.id)
-                                })
+                                }, onSaveClick = listener::onSaveClicked)
                             }
                         }
 
@@ -201,14 +201,20 @@ private fun ActorScreenContent(
                                 items = state.topTvSeries.take(10),
                                 onActionClick = listener::onTopSeriesClicked
                             ) { series ->
-                                PosterCard(series.posterPath, onClick = {
+                                PosterCard(series.posterPath, onCardClick = {
                                     listener.onSeriesClicked(series.id)
-                                })
+                                }, onSaveClick = listener::onSaveClicked)
                             }
                         }
                     }
                 }
             }
         }
+        if (state.showLoginBottomSheet) {
+            RequestToLoginBottomSheet(
+                onDismiss = listener::onDismissBottomSheet,
+            )
+        }
+
     }
 }

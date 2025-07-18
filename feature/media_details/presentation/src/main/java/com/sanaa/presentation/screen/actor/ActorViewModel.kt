@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.actor
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.module.toActorUiModel
-import com.sanaa.presentation.module.toSeriesUiModel
-import com.sanaa.presentation.module.toUiModel
+import com.sanaa.presentation.model.toActorUiModel
+import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.model.toUiModel
 import details.usecase.actor.GetActorDetailsUseCase
 import details.usecase.actor.GetActorTopMoviesUseCase
 import details.usecase.actor.GetActorTopTvSeriesUseCase
@@ -58,10 +58,6 @@ class ActorViewModel(
         )
     }
 
-    override fun onReadMoreClicked() {
-        TODO("Not yet implemented")
-    }
-
     override fun onTopMoviesClicked() {
         emitEffect(
             ActorScreenEffects.NavigateToTopMovies(actorId)
@@ -91,5 +87,17 @@ class ActorViewModel(
         emitEffect(
             ActorScreenEffects.NavigateToMovieDetails(id)
         )
+    }
+
+    override fun onDismissBottomSheet() {
+        updateState {
+            it.copy(showLoginBottomSheet = false)
+        }
+    }
+
+    override fun onSaveClicked() {
+        updateState {
+            it.copy(showLoginBottomSheet = true)
+        }
     }
 }

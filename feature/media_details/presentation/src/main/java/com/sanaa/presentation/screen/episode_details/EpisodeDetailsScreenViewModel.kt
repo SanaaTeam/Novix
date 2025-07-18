@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.episode_details
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.module.toActorUiModel
-import com.sanaa.presentation.module.toEpisodeUiModel
+import com.sanaa.presentation.model.toActorUiModel
+import com.sanaa.presentation.model.toEpisodeUiModel
 import details.usecase.tv_series.GetEpisodeDetailsUseCase
 import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
 import details.usecase.tv_series.GetTvSeriesImagesUseCase
@@ -71,13 +71,19 @@ class EpisodeDetailsScreenViewModel(
 
     override fun onSavedClick(seriesId: Int) {
         updateState {
-            it.copy(showSaveBottomSheet = true)
+            it.copy(showLoginBottomSheet = true)
         }
     }
 
     override fun onDismissBottomSheet() {
         updateState {
-            it.copy(showSaveBottomSheet = false)
+            it.copy(showLoginBottomSheet = false)
+        }
+    }
+
+    override fun onRateClicked() {
+        updateState {
+            it.copy(showLoginBottomSheet = true)
         }
     }
 }

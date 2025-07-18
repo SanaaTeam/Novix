@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,9 +38,9 @@ fun RequestToLoginBottomSheet(
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val loginImageId = if (isDarkTheme) {
-        R.drawable.user_person_profile_dark
+        R.drawable.icon_users_dark
     } else {
-        R.drawable.user_person_profile_light
+        R.drawable.icon_users_dark
     }
     BaseBottomSheet(
         onDismiss = onDismiss,
@@ -62,7 +62,7 @@ fun RequestToLoginBottomSheet(
                     painter = painterResource
                         (id = loginImageId),
                     contentDescription = "pleas login light",
-                    modifier = Modifier.size(100.dp)
+                    modifier = Modifier.height(100.dp),
                 )
                 Text(
                     text = text,

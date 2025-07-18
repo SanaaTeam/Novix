@@ -1,9 +1,9 @@
-package com.sanaa.presentation.module
+package com.sanaa.presentation.model
 
 import entity.Review
 import kotlin.math.roundToInt
 
-data class ReviewUiModule(
+data class ReviewUiModel(
     val id: Int,
     val authorName: String? = null,
     val username: String? = null,
@@ -13,7 +13,7 @@ data class ReviewUiModule(
     val avatarUrl: String? = null,
 )
 
-fun Review.toReviewUiModule() = ReviewUiModule(
+fun Review.toReviewUiModel() = ReviewUiModel(
     id = id,
     authorName = authorName?.toString(),
     username = userHandle,

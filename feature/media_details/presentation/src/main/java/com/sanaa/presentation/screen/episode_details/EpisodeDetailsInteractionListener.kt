@@ -7,4 +7,5 @@ interface EpisodeDetailsInteractionListener {
     fun onCastClick(actorId: Int)
     fun onSavedClick(seriesId: Int)
     fun onDismissBottomSheet()
+    fun onRateClicked()
 }

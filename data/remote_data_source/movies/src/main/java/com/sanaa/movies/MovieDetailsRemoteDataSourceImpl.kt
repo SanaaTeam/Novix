@@ -9,6 +9,7 @@ import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
+import com.sanaa.movies.response.MovieReviewsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -34,8 +35,8 @@ class MovieDetailsRemoteDataSourceImpl(
     override suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto =
         fetch("movie/$id/similar")
 
-    override suspend fun fetchReviewsByMovieId(id: Int): ReviewDto =
-        fetch("movie/$id/reviews")
+    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> =
+        fetch<MovieReviewsResponse>("movie/$id/reviews").results
 
     override suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryResponse =
         fetch("discover/movie?with_genres=$category")

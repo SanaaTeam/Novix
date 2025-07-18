@@ -34,6 +34,7 @@ import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
@@ -70,12 +71,12 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToReviewsScreen -> {
                     navController.navigate(
-                        ReviewsScreenRoute(it.seriesId).route()
+                        ReviewsScreenRoute(it.seriesId, MediaTypeParam.SERIES).route()
                     )
                 }
 
                 is SeriesScreenEffects.NavigateBack -> {
-                    navController.popBackStack()
+                    // TODO
                 }
 
                 is SeriesScreenEffects.PlayTrailer -> {
@@ -111,7 +112,7 @@ fun SeriesScreenContent(
                 }, rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_save),
-                        onClick = interactionListener::onBackClicked
+                        onClick = interactionListener::onSaveSeriesClicked
                     )
                 }, modifier = Modifier
                     .systemBarsPadding()
@@ -203,7 +204,7 @@ fun SeriesScreenContent(
                 onSetRateClicked = interactionListener::onRateClicked
             )
         }
-        if (state.showRateBottomSheet) {
+        if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet)
         }
     }

@@ -31,6 +31,7 @@ fun SeriesHeaderSection(
     genres: List<String>,
     modifier: Modifier = Modifier,
     onReviewClicked: () -> Unit = {},
+    showReviews: Boolean = true
 ) {
     Box(
         modifier = modifier
@@ -86,10 +87,11 @@ fun SeriesHeaderSection(
                         DotSeparator()
                     }
                     airDate?.let {
-                        Text(
+                        IconWithText(
                             text = airDate,
-                            style = Theme.textStyle.label.small,
-                            color = Theme.colors.hint
+                            iconRes = R.drawable.icon_calender,
+                            contentDescription = airDate,
+                            tint = Theme.colors.hint
                         )
 
                         DotSeparator()
@@ -101,10 +103,12 @@ fun SeriesHeaderSection(
                         tint = Theme.colors.hint
                     )
                 }
-                TextButton(
-                    text = stringResource(R.string.view_reviews),
-                    onClick = onReviewClicked
-                )
+                if (showReviews) {
+                    TextButton(
+                        text = stringResource(R.string.view_reviews),
+                        onClick = onReviewClicked
+                    )
+                }
             }
         }
     }

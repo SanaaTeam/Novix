@@ -130,8 +130,10 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                     })
                 ) { entry ->
                     val seriesId = entry.arguments!!.getInt(ReviewsScreenRoute.ARG_SERIES_ID)
+                    val mediaType = entry.arguments!!.getString(ReviewsScreenRoute.ARG_MEDIA_TYPE)
                     ReviewsScreen(
-                        seriesId = seriesId
+                        seriesId = seriesId,
+                        mediaType = mediaType
                     )
                 }
 

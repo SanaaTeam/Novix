@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.episode_details
 
-import com.sanaa.presentation.module.ActorUiModel
-import com.sanaa.presentation.module.EpisodeUiModel
+import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.model.EpisodeUiModel
 
 
 data class EpisodeDetailsScreenUiState(
@@ -12,5 +12,5 @@ data class EpisodeDetailsScreenUiState(
     val error: String? = null,
     val seriesId: Int = 0,
     val trailerUrl: String? = null,
-    val showSaveBottomSheet: Boolean = false,
+    val showLoginBottomSheet: Boolean = false,
 )

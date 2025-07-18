@@ -12,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
-import com.sanaa.presentation.module.EpisodeUiModel
+import com.sanaa.presentation.model.EpisodeUiModel
 
 @Composable
 fun EpisodesContent(

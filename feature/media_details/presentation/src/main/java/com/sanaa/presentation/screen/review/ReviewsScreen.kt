@@ -21,6 +21,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.R
+import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent
 import com.sanaa.presentation.screen.review.components.ReviewCard
@@ -31,7 +32,10 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun ReviewsScreen(
     seriesId: Int,
-    viewModel: ReviewViewModel = koinViewModel(parameters = { parametersOf(seriesId) })
+    mediaType: String?,
+    viewModel: ReviewViewModel = koinViewModel(parameters = {
+        parametersOf(seriesId, MediaTypeUiModel.valueOf(mediaType.orEmpty()))
+    })
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -44,8 +48,6 @@ fun ReviewsScreen(
             }
         }
     }
-
-
     ReviewsScreenContent(
         state = state.value, interactionListener = viewModel
     )
@@ -80,7 +82,9 @@ fun ReviewsScreenContent(
                 } else {
                     if (state.reviews.isNotEmpty()) {
                         LazyColumn(
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .align(Alignment.TopCenter),
                             contentPadding = PaddingValues(vertical = 12.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {

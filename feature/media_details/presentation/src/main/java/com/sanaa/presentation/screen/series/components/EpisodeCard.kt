@@ -20,7 +20,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.module.EpisodeUiModel
+import com.sanaa.presentation.model.EpisodeUiModel
 
 @Composable
 fun EpisodeCard(
@@ -66,17 +66,19 @@ fun EpisodeCard(
                         contentDescription = episode.rating,
                         tint = Theme.colors.statusColors.yellowAccent
                     )
-
                     DotSeparator()
                 }
-                IconWithText(
-                    iconRes = R.drawable.icon_duration,
-                    text = stringResource(R.string.m, episode.duration),
-                    contentDescription = episode.duration.toString(),
-                    tint = Theme.colors.hint
-                )
-                episode.airDate?.let {
+                episode.duration?.let {
+
+                    IconWithText(
+                        iconRes = R.drawable.icon_duration,
+                        text = stringResource(R.string.m, episode.duration),
+                        contentDescription = episode.duration.toString(),
+                        tint = Theme.colors.hint
+                    )
                     DotSeparator()
+                }
+                episode.airDate?.let {
                     Text(
                         text = episode.airDate,
                         style = Theme.textStyle.label.small,

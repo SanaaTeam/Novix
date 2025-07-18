@@ -13,7 +13,7 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.module.MovieUiModel
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.designsystem.R as designR
 import com.sanaa.presentation.R as presentationR
 

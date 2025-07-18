@@ -13,7 +13,7 @@ import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.InfoSection
-import com.sanaa.presentation.module.ActorUiModel
+import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
 fun ActorInfoCard(

@@ -18,7 +18,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.component.cards.ActorCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
-import com.sanaa.presentation.module.ActorUiModel
+import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
 fun CastComponent(

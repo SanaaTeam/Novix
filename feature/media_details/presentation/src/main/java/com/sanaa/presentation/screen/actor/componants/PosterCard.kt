@@ -17,7 +17,9 @@ import com.sanaa.presentation.R
 @Composable
 fun PosterCard(
     imageUrl: String?,
-    onClick: () -> Unit = {}
+    onCardClick: () -> Unit = {},
+    onSaveClick: () -> Unit = {}
+
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
@@ -27,7 +29,7 @@ fun PosterCard(
     }
 
     MovieSeriesPosterCard(
-        onCardClick = onClick,
+        onCardClick = onCardClick,
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
@@ -41,6 +43,6 @@ fun PosterCard(
                 contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
             )
         },
-        topLeftContent = { SaveIconChip(onClick = { TODO() }) }
+        topLeftContent = { SaveIconChip(onClick = onSaveClick) }
     )
 }

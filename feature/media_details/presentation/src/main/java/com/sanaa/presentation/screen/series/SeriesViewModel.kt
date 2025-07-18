@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.series
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.module.toActorUiModel
-import com.sanaa.presentation.module.toSeasonUiModel
-import com.sanaa.presentation.module.toSeriesUiModel
+import com.sanaa.presentation.model.toActorUiModel
+import com.sanaa.presentation.model.toSeasonUiModel
+import com.sanaa.presentation.model.toSeriesUiModel
 import details.usecase.tv_series.GetTvSeriesCastUseCase
 import details.usecase.tv_series.GetTvSeriesDetailsUseCase
 import details.usecase.tv_series.GetTvSeriesImagesUseCase
@@ -106,13 +106,19 @@ class SeriesViewModel(
 
     override fun onRateClicked() {
         updateState {
-            it.copy(showRateBottomSheet = true)
+            it.copy(showLoginBottomSheet = true)
         }
     }
 
     override fun onDismissRateBottomSheet() {
         updateState {
-            it.copy(showRateBottomSheet = false)
+            it.copy(showLoginBottomSheet = false)
+        }
+    }
+
+    override fun onSaveSeriesClicked() {
+        updateState {
+            it.copy(showLoginBottomSheet = true)
         }
     }
 }

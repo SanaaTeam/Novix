@@ -42,35 +42,15 @@ data class MovieDetailsScreenRoute(val movieId: Int) : Destination {
 }
 
 @Serializable
-data class ReviewsScreenRoute(val seriesId: Int) : Destination {
-    override fun route(): String = "reviews/$seriesId"
+data class ReviewsScreenRoute(
+    val seriesId: Int,
+    val mediaType: MediaTypeParam
+) : Destination {
+    override fun route(): String = "reviews/$seriesId/${mediaType.name}"
 
     companion object {
-        const val PATTERN = "reviews/{seriesId}"
+        const val PATTERN = "reviews/{seriesId}/{mediaType}"
         const val ARG_SERIES_ID = "seriesId"
-    }
-}
-
-@Serializable
-data class TopMediaActorPicksScreenRoute(val mediaId: Int, val mediaType: MediaTypeParam) :
-    Destination {
-    override fun route(): String = "top_media_actor_picks/$mediaId/$mediaType"
-
-    companion object {
-        const val PATTERN = "top_media_actor_picks/{mediaId}/{mediaType}"
-        const val ARG_MEDIA_ID = "mediaId"
-        const val ARG_MEDIA_TYPE = "mediaType"
-    }
-}
-
-@Serializable
-data class SimilarGenreMediaScreenRoute(val genreId: Int, val mediaType: MediaTypeParam) :
-    Destination {
-    override fun route(): String = "similar_genre_media/$genreId/$mediaType"
-
-    companion object {
-        const val PATTERN = "similar_genre_media/{genreId}/{mediaType}"
-        const val ARG_GENRE_ID = "genreId"
         const val ARG_MEDIA_TYPE = "mediaType"
     }
 }
@@ -80,8 +60,8 @@ enum class MediaTypeParam {
     @SerialName("movie")
     MOVIE,
 
-    @SerialName("tv")
-    TV
+    @SerialName("series")
+    SERIES
 }
 
 @Serializable

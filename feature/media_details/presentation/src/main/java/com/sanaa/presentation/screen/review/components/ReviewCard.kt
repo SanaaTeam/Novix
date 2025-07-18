@@ -35,11 +35,11 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.module.ReviewUiModule
+import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable
 fun ReviewCard(
-    review: ReviewUiModule,
+    review: ReviewUiModel,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     Column(

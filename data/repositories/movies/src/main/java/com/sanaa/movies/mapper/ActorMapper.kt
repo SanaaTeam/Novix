@@ -27,7 +27,7 @@ fun CastDto.Cast.toDomain(): Actor {
     return Actor(
         id = id,
         name = name ?: "Unknown",
-        imageUrl = profilePath ?: "",
+        imageUrl = getProfileImageUrl(profilePath),
         gender = apiGenderMapping(gender),
         character = character,
         biography = "",

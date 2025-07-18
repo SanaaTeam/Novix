@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.movie_details
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,20 +24,24 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.button.TextButton
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.InfoSection
 import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
@@ -66,16 +71,26 @@ fun MovieDetailsScreen(
                 navController.popBackStack()
             }
 
+            is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
+                Log.d("TAG", "MovieDetailsScreen: ${e.movieId}")
+                navController.navigate(
+                    ReviewsScreenRoute(e.movieId, MediaTypeParam.MOVIE).route()
+                )
+            }
+
             is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
                 navController.navigate(MovieDetailsScreenRoute(e.movieId).route())
+            }
+
+            is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                navController.navigate(ActorDetailsScreenRoute(e.actorId).route())
             }
 
             else -> Unit
         }
     }
     MovieDetailsContent(
-        state = state,
-        interactionListener = viewModel
+        state = state, interactionListener = viewModel
     )
 
 }
@@ -86,26 +101,32 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }
-    ) {
+        backgroundShapes = { NovixBackgroundShapes() }) {
         Box(modifier = Modifier.fillMaxSize()) {
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(designR.drawable.icon_arrow_back),
-                        onClick = { interactionListener.onBackClick() }
-                    )
-                },
-                rightContent = {
-                    SaveIconChip(
-                        isSaved = state.movieDetails.isBookmarked,
-                        onClick = { interactionListener.onBookmarkClick(state.movieDetails.id) }
-                    )
-                },
-                modifier = Modifier
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = { interactionListener.onBackClick() })
+                }, rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_save), onClick = {
+                            interactionListener.onBookmarkClick(state.movieDetails.id)
+                        })
+                }, modifier = Modifier
                     .systemBarsPadding()
                     .zIndex(10f)
             )
+            AnimatedContent(
+                targetState = state.isLoading,
+                modifier = Modifier.align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                if (it) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        NovixLoadingIndicator()
+                    }
+                } else {
                     LazyColumn(
                         modifier = Modifier
                             .padding(bottom = 112.dp)
@@ -170,8 +191,7 @@ fun MovieDetailsContent(
                                     TextButton(
                                         text = stringResource(id = presentationR.string.view_reviews),
                                         textColor = Theme.colors.primary,
-                                        onClick = {}
-                                    )
+                                        onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })
                                 }
                             }
                         }
@@ -188,7 +208,7 @@ fun MovieDetailsContent(
                         item {
                             CastComponent(
                                 cast = state.cast,
-                                onActorClicked = {}
+                                onActorClicked = interactionListener::onActorCardClick
                             )
                         }
                         item {
@@ -201,13 +221,19 @@ fun MovieDetailsContent(
                         }
                     }
 
-
+                }
+            }
 
             BottomContainer(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onSetRateClicked = { interactionListener.onRateMovieClick() })
+            if (state.showLoginBottomSheet) {
+                RequestToLoginBottomSheet(
+                    onDismiss = { interactionListener.onDismissLoginBottomSheet() })
+            }
+
         }
     }
 }

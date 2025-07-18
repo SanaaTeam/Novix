@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.movie_details
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.module.toActorUiModel
-import com.sanaa.presentation.module.toUiModel
+import com.sanaa.presentation.model.toActorUiModel
+import com.sanaa.presentation.model.toUiModel
 import details.usecase.movie.GetMovieCastUseCase
 import details.usecase.movie.GetMovieDetailsUseCase
 import details.usecase.movie.GetMovieImagesUseCase
@@ -69,9 +69,28 @@ class MovieDetailsViewModel(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
+        updateState {
+            it.copy(showLoginBottomSheet = true)
+        }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
         emitEffect(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(movieId))
+    }
+
+    override fun onRateMovieClick() {
+        updateState { it.copy(showLoginBottomSheet = true) }
+    }
+
+    override fun onDismissLoginBottomSheet() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+    }
+
+    override fun onActorCardClick(actorId: Int) {
+        emitEffect(MovieDetailsUiEffect.NavigateToActorScreen(actorId))
+    }
+
+    override fun onShowReviewsClick(movieId: Int) {
+        emitEffect(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
     }
 }

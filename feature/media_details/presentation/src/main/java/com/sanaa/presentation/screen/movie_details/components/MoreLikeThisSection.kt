@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.module.MovieUiModel
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.R as presentationR
 
 @Composable

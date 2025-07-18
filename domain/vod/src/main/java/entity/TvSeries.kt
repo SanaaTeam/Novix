@@ -26,9 +26,9 @@ data class Episode(
     val title: String,
     val number: Int,
     val seasonNumber: Int,
-    val imdbRating: Float,
+    val imdbRating: Float?,
     val overview: String?,
-    val durationMinutes: Int,
-    val releaseDate: LocalDate,
+    val durationMinutes: Int?,
+    val releaseDate: LocalDate?,
     val stillImagePath: String?
 )
