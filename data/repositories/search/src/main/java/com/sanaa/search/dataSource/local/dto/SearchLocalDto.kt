@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.sanaa.search.util.TimeUtils
 
 @Entity(
     tableName = "searches",
@@ -26,5 +27,5 @@ data class SearchLocalDto(
     @ColumnInfo(name = "language")
     val language: String,
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = TimeUtils.getCurrentTimeStamp()
 )

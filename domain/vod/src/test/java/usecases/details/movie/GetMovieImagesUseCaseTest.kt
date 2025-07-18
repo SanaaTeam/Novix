@@ -28,14 +28,14 @@ class GetMovieImagesUseCaseTest {
         // Given
         val movieId = 1
         val expected = listOf("image1.jpg", "image2.jpg")
-        coEvery { movieRepository.getImages(movieId) } returns expected
+        coEvery { movieRepository.getImagesUrls(movieId) } returns expected
 
         // When
         val result = getMovieImagesUseCase.execute(movieId)
 
         // Then
         assertEquals(expected, result)
-        coVerify { movieRepository.getImages(movieId) }
+        coVerify { movieRepository.getImagesUrls(movieId) }
     }
 
     @Test
@@ -43,12 +43,12 @@ class GetMovieImagesUseCaseTest {
         // Given
         val movieId = 100
         val exception = RetrievingDataFailureException("Failed to get images")
-        coEvery { movieRepository.getImages(movieId) } throws exception
+        coEvery { movieRepository.getImagesUrls(movieId) } throws exception
 
         // When, Then
         assertThrows<RetrievingDataFailureException> {
             getMovieImagesUseCase.execute(movieId)
         }
-        coVerify { movieRepository.getImages(movieId) }
+        coVerify { movieRepository.getImagesUrls(movieId) }
     }
 }

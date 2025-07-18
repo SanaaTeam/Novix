@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -22,6 +23,33 @@ import com.sanaa.designsystem.design_system.theme.Theme
 internal fun NovixBasicTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isEnable: Boolean = true,
+    maxLines: Int = 1,
+    singleLine: Boolean = true,
+    readOnly: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    content: @Composable (innerTextField: @Composable () -> Unit, hintColor: Color) -> Unit,
+) {
+    NovixBasicTextField(
+        value = TextFieldValue(text = value),
+        onValueChange = { onValueChange(it.text) },
+        modifier = modifier,
+        isEnable = isEnable,
+        maxLines = maxLines,
+        singleLine = singleLine,
+        readOnly = readOnly,
+        visualTransformation = visualTransformation,
+        interactionSource = interactionSource,
+        content = content
+    )
+}
+
+@Composable
+internal fun NovixBasicTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     isEnable: Boolean = true,
     maxLines: Int = 1,

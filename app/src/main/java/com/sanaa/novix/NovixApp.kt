@@ -8,6 +8,7 @@ import com.sanaa.novix.di.domainModule
 import com.sanaa.novix.di.firebaseModule
 import com.sanaa.novix.di.loggingModule
 import com.sanaa.novix.di.searchModule
+import com.sanaa.search.util.TimeUtils
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -21,11 +22,19 @@ class NovixApp : Application(), KoinComponent {
 
         startKoin {
             androidContext(this@NovixApp)
-            modules( preferencesModule,appModule, searchModule, firebaseModule, domainModule, loggingModule)
+            modules(
+                preferencesModule,
+                appModule,
+                searchModule,
+                firebaseModule,
+                domainModule,
+                loggingModule
+            )
         }
 
         val crashlytics: FirebaseCrashlytics = get()
         val tree: Timber.Tree = get()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
 
         if (BuildConfig.DEBUG) {
             Timber.plant(tree, Timber.DebugTree())
@@ -35,9 +44,9 @@ class NovixApp : Application(), KoinComponent {
 
         crashlytics.apply {
             isCrashlyticsCollectionEnabled = true
-            setUserId("user_${System.currentTimeMillis()}")
+            setUserId("user_$currentTimestamp")
             log("App started")
-            setCustomKey("app_start_time", System.currentTimeMillis())
+            setCustomKey("app_start_time", currentTimestamp)
         }
     }
 }

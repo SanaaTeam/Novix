@@ -7,7 +7,7 @@ import entity.Review
 
 interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Movie
-    suspend fun getImages(id: Int): List<String>
+    suspend fun getImagesUrls(id: Int): List<String>
     suspend fun getMovieCast(id: Int): List<Actor>
     suspend fun getSimilarMoviesByMovieId(id: Int): List<Movie>
     suspend fun getReviewsByMovieId(id: Int): List<Review>
