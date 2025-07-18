@@ -3,54 +3,52 @@ package com.sanaa.presentation.screen.episode_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import details.usecase.tv_series.GetEpisodeDetailsUseCase
-import details.usecase.tv_series.GetEpisodeGuestsOfHonorUseCase
-import details.usecase.tv_series.GetTvSeriesImagesUseCase
-import details.usecase.tv_series.GetTvSeriesTrailerUseCase
+import details.usecase.ManageEpisodeDetailsUseCase
+import details.usecase.ManageTvSeriesDetailsUseCase
 
 class EpisodeDetailsScreenViewModel(
     seriesId: Int,
     seasonNumber: Int,
     episodeNumber: Int,
-    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
-    private val getTvSeriesImagesUseCase: GetTvSeriesImagesUseCase,
-    private val getEpisodeGuestsOfHonorUseCase: GetEpisodeGuestsOfHonorUseCase,
-    private val getTvSeriesVideosUseCase: GetTvSeriesTrailerUseCase,
+    private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
+    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase
 ) : EpisodeDetailsInteractionListener,
-    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(initialState = EpisodeDetailsScreenUiState()) {
+    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState()) {
+
     init {
-        getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
+        loadEpisode(seriesId, seasonNumber, episodeNumber)
     }
 
-    private fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
-        tryToExecute(callee = {
-            updateState {
-                it.copy(isLoading = true)
-            }
-            val episode = getEpisodeDetailsUseCase.execute(seriesId, seasonNumber, episodeNumber)
-            val cast = getEpisodeGuestsOfHonorUseCase.execute(seriesId, seasonNumber, episodeNumber)
-            val images = getTvSeriesImagesUseCase.execute(seriesId)
-            val trailer = getTvSeriesVideosUseCase.execute(seriesId)
-            updateState {
-                it.copy(
-                    episode = episode.toEpisodeUiModel(),
-                    guestOfHonor = cast.map { it.toActorUiModel() },
-                    seriesId = seriesId,
-                    imagesUrl = images,
-                    trailerUrl = trailer
+    private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+        tryToExecute(
+            callee = {
+                updateState { it.copy(isLoading = true) }
+                val episode =
+                    manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
+                val guests = manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                    seriesId,
+                    seasonNumber,
+                    episodeNumber
                 )
-
+                val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
+                val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+                updateState {
+                    it.copy(
+                        episode = episode.toEpisodeUiModel(),
+                        guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
+                        seriesId = seriesId,
+                        imagesUrl = images,
+                        trailerUrl = trailerUrl
+                    )
+                }
+            },
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+            },
+            onError = {
+                updateState { it.copy(error = it.error, isLoading = false) }
             }
-        }, onSuccess = {
-            updateState {
-                it.copy(isLoading = false)
-            }
-        }, onError = {
-            updateState {
-                it.copy(error = it.error, isLoading = false)
-            }
-        })
-
+        )
     }
 
     override fun onBackClick() {
@@ -70,20 +68,14 @@ class EpisodeDetailsScreenViewModel(
     }
 
     override fun onSavedClick(seriesId: Int) {
-        updateState {
-            it.copy(showLoginBottomSheet = true)
-        }
+        updateState { it.copy(showLoginBottomSheet = true) }
     }
 
     override fun onDismissBottomSheet() {
-        updateState {
-            it.copy(showLoginBottomSheet = false)
-        }
+        updateState { it.copy(showLoginBottomSheet = false) }
     }
 
     override fun onRateClicked() {
-        updateState {
-            it.copy(showLoginBottomSheet = true)
-        }
+        updateState { it.copy(showLoginBottomSheet = true) }
     }
 }
