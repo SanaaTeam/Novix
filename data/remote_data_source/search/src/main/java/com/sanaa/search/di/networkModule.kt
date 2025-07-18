@@ -21,7 +21,7 @@ val networkModule = module {
                     prettyPrint = true
                 })
             }
-                install(Logging) {
+            install(Logging) {
                 logger = Logger.SIMPLE
                 level = LogLevel.ALL
             }

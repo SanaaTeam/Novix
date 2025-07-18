@@ -8,11 +8,11 @@ import kotlinx.datetime.LocalDate
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
 
-fun MoviesLocalDto.toSearchOutput(): SearchMovieOutput {
+fun MovieLocalDto.toSearchOutput(): SearchMovieOutput {
     return SearchMovieOutput(
         id = id,
         title = title,
-        posterImageUrl = (imageUrl + imagePath),
+        posterImageUrl = (IMAGE_URL + imagePath),
     )
 }
 
@@ -20,7 +20,7 @@ fun MovieSearchDto.toLocalDto(language: String): MovieLocalDto {
     return MovieLocalDto(
         id = id,
         title = title ?: "",
-        imagePath = imageUrl + posterImagePath,
+        imagePath = IMAGE_URL + posterImagePath,
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -32,7 +32,7 @@ fun MovieSearchDto.toSearchOutput(): SearchMovieOutput {
     return SearchMovieOutput(
         id = id,
         title = title ?: "",
-        posterImageUrl = imageUrl + posterImagePath ?: "",
+        posterImageUrl = (IMAGE_URL + posterImagePath),
     )
 }
 
@@ -40,7 +40,7 @@ fun TvSeriesLocalDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
         title = title,
-        posterImageUrl = (imageUrl + imagePath) ?: "",
+        posterImageUrl = (IMAGE_URL + imagePath) ?: "",
     )
 }
 
@@ -48,7 +48,7 @@ fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
     return TvSeriesLocalDto(
         id = id,
         title = name ?: "",
-        imagePath = imageUrl + posterImagePath,
+        imagePath = IMAGE_URL + posterImagePath,
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -60,8 +60,8 @@ fun TvShowSearchDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
         title = name ?: "",
-        posterImageUrl = imageUrl + posterImagePath ?: "",
+        posterImageUrl = (IMAGE_URL + posterImagePath),
     )
 }
 
-val imageUrl = "https://image.tmdb.org/t/p/original"
+const val IMAGE_URL = "https://image.tmdb.org/t/p/original"

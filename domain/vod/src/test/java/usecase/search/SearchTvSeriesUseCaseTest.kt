@@ -30,9 +30,10 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "TvSeries"
+            val page = 1
 
             // When
-            searchTvSeriesUseCase.execute(query, null)
+            searchTvSeriesUseCase.execute(query, page, null)
 
             // Then
             coVerify {
@@ -45,13 +46,14 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
+            val page = 1
             val filters = null
             coEvery {
-                searchRepository.searchTvShows(query, filters)
+                searchRepository.searchTvShows(query, page, filters)
             } returns searchTvShowsOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchTvSeriesUseCase.execute(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchTvShowsOutputList)
@@ -63,14 +65,15 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
+            val page = 1
             val filters = MediaFilters()
             coEvery {
-                searchRepository.searchTvShows(query, filters)
+                searchRepository.searchTvShows(query, page, filters)
             } returns searchTvShowsOutputList
 
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, filters)
+            val result = searchTvSeriesUseCase.execute(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchTvShowsOutputList)
@@ -82,13 +85,14 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Sam"
+            val page = 1
             coEvery {
-                searchRepository.searchTvShows(query, null)
+                searchRepository.searchTvShows(query, page, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchTvSeriesUseCase.execute(query, null)
+                searchTvSeriesUseCase.execute(query, page, null)
             }
         }
 

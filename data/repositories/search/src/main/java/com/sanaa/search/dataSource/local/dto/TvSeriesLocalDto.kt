@@ -23,5 +23,5 @@ data class TvSeriesLocalDto(
     @ColumnInfo(name = "language")
     val language: String,
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long = TimeUtils.getCurrentTimeStamp()
+    val timestamp: Long = TimeUtils.getCurrentTimeStamp(),
 )
