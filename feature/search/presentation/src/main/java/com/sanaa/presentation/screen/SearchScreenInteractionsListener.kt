@@ -13,5 +13,5 @@ interface SearchScreenInteractionsListener {
     fun onSearchQueryChanged(title: String)
     fun onFilterApplied(filters: MediaFilters?)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
-
+    fun onRetryClicked()
 }

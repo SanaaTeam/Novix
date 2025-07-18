@@ -296,6 +296,13 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
+    override fun onRetryClicked() {
+        val currentQuery = state.value.searchQuery
+        if (currentQuery.isNotBlank()) {
+            loadMediaByTab(currentQuery)
+        }
+    }
+
     override fun onSaveIconClicked() {
 
     }

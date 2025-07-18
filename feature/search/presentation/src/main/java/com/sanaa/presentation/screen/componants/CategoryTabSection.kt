@@ -50,7 +50,7 @@ fun CategoryTabSection(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                NetworkDisconnectionContact(onRetryClick = {})
+                NetworkDisconnectionContact(onRetryClick = interactionsListener::onRetryClicked)
             }
         } else when (selectedTabIndex) {
             0 -> {
