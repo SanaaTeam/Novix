@@ -24,11 +24,9 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
 import search.usecase.ClearSearchHistoryUseCase
@@ -63,7 +61,7 @@ class SearchViewModel(
     val tvShowsPagingData: StateFlow<PagingData<TvShowUiModel>> = _tvShowsPagingData
 
     private val _actorsPagingData = MutableStateFlow<PagingData<ActorUiModel>>(PagingData.empty())
-        val actorsPagingData: StateFlow<PagingData<ActorUiModel>> = _actorsPagingData
+    val actorsPagingData: StateFlow<PagingData<ActorUiModel>> = _actorsPagingData
 
     init {
         observeSearchQueryChanges()
@@ -131,8 +129,6 @@ class SearchViewModel(
 
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
-
-
         when (state.value.selectedTabIndex) {
             MOVIE_INDEX -> loadMovies(query)
             TV_SHOW_INDEX -> loadTvShows(query)
@@ -141,9 +137,22 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
+        tryToCollect(
+            callee = { loadMoviesOperation(query) },
+            onCollect = ::onCollectMoviesSuccess,
+            onError = ::onDataLoadError
+        )
+    }
 
-        val newFlow = Pager(
+    private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
+        return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
@@ -155,35 +164,37 @@ class SearchViewModel(
                     filters = state.value.filters
                 )
             }
-        ).flow
-            .map { pagingData ->
-                pagingData.map { item ->
-                    MovieUiModel(
-                        id = item.id,
-                        title = item.title,
-                        imageUrl = item.posterImageUrl,
-                        rating = ""
-                    )
-                }
+        ).flow.map { pagingData ->
+            pagingData.map { item ->
+                MovieUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
             }
-            .cachedIn(viewModelScope)
+        }.cachedIn(viewModelScope)
+    }
 
-        viewModelScope.launch {
-            try {
-                newFlow.collectLatest { pagingData ->
-                    _moviesPagingData.value = pagingData
-                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                }
-            } catch (e: Exception) {
-                onDataLoadError(e)
-            }
-        }
+    private fun onCollectMoviesSuccess(pagingData: PagingData<MovieUiModel>) {
+        _moviesPagingData.value = pagingData
+        updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        tryToCollect(
+            callee = { loadTvShowsOperation(query) },
+            onCollect = { pagingData ->
+                _tvShowsPagingData.value = pagingData
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
+            },
+            onError = ::onDataLoadError
+        )
+    }
 
-        val newFlow = Pager(
+    private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
+        return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
@@ -195,35 +206,34 @@ class SearchViewModel(
                     filters = state.value.filters
                 )
             }
-        ).flow
-            .map { pagingData ->
-                pagingData.map { item ->
-                    TvShowUiModel(
-                        id = item.id,
-                        title = item.title,
-                        imageUrl = item.posterImageUrl,
-                        rating = ""
-                    )
-                }
+        ).flow.map { pagingData ->
+            pagingData.map { item ->
+                TvShowUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
             }
-            .cachedIn(viewModelScope)
-
-        viewModelScope.launch {
-            try {
-                newFlow.collectLatest { pagingData ->
-                    _tvShowsPagingData.value = pagingData
-                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                }
-            } catch (e: Exception) {
-                onDataLoadError(e)
-            }
-        }
+        }.cachedIn(viewModelScope)
     }
+
 
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
 
-        val newFlow = Pager(
+        tryToCollect(
+            callee = { onLoadActors(query) },
+            onCollect = { pagingData ->
+                _actorsPagingData.value = pagingData
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
+            },
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun onLoadActors(query: String): Flow<PagingData<ActorUiModel>> {
+        return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
                 enablePlaceholders = false
@@ -234,28 +244,15 @@ class SearchViewModel(
                     query = query
                 )
             }
-        ).flow
-            .map { pagingData ->
-                pagingData.map { searchActorOutput ->
-                    ActorUiModel(
-                        id = searchActorOutput.id,
-                        name = searchActorOutput.name,
-                        imageUrl = searchActorOutput.profileImageUrl
-                    )
-                }
+        ).flow.map { pagingData ->
+            pagingData.map { searchActorOutput ->
+                ActorUiModel(
+                    id = searchActorOutput.id,
+                    name = searchActorOutput.name,
+                    imageUrl = searchActorOutput.profileImageUrl
+                )
             }
-            .cachedIn(viewModelScope)
-
-        viewModelScope.launch {
-            try {
-                newFlow.collectLatest { pagingData ->
-                    _actorsPagingData.value = pagingData
-                    updateState { it.copy(isLoading = false, noInternetConnection = false) }
-                }
-            } catch (e: Exception) {
-                onDataLoadError(e)
-            }
-        }
+        }.cachedIn(viewModelScope)
     }
 
     private fun onDataLoadError(e: Throwable) {
@@ -276,6 +273,7 @@ class SearchViewModel(
             }
     }
 
+
     override fun onSearchQueryChanged(query: String) {
         updateState { it.copy(searchQuery = query) }
     }
@@ -289,6 +287,7 @@ class SearchViewModel(
 
     override fun onFilterApplied(filters: MediaFilters?) {
         updateState { it.copy(filters = filters) }
+
         val currentQuery = state.value.searchQuery
         loadMediaByTab(currentQuery)
     }
@@ -336,13 +335,13 @@ class SearchViewModel(
         )
     }
 
-    override fun onSaveIconClicked() {
-        // Implementation for save icon clicked
-    }
-
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
+    }
+
+    override fun onSaveIconClicked() {
+
     }
 
     companion object {
