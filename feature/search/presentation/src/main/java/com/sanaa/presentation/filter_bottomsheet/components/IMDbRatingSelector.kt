@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,10 +25,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import kotlin.math.roundToInt
 
@@ -118,17 +120,19 @@ private fun Star(
 }
 
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@PreviewLightDark
 @Composable
 fun IMDbRatingSelectorPreview() {
-    var currentRating by remember { mutableIntStateOf(0) }
-    Column(modifier = Modifier.padding(16.dp)) {
-        IMDbRatingSelector(
-            title = "IMDb rating",
-            currentRating = currentRating,
-            onRatingChanged = { newRating ->
-                currentRating = newRating
-            }
-        )
+    NovixTheme(isSystemInDarkTheme()) {
+        var currentRating by remember { mutableIntStateOf(0) }
+        Column(modifier = Modifier.padding(16.dp)) {
+            IMDbRatingSelector(
+                title = "IMDb rating",
+                currentRating = currentRating,
+                onRatingChanged = { newRating ->
+                    currentRating = newRating
+                }
+            )
+        }
     }
 }

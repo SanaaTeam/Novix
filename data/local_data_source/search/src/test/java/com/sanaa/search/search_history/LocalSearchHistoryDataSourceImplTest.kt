@@ -20,23 +20,23 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `insertQuery should call insertQuery on queryDao`() = runTest {
+    fun `insertQuery should call upsertQuery on queryDao`() = runTest {
         // Given
         val query = "test query"
         // When
         dataSource.insertQuery(query)
         // Then
-        coVerify { queryDao.insertQuery(match { it.query == query }) }
+        coVerify { queryDao.upsertQuery(query, any()) }
     }
 
     @Test
-    fun `getAllQueries should call getAllQueries on queryDao`() = runTest {
+    fun `getQueries should call getQueries on queryDao`() = runTest {
         // Given
         val limit = 10
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test
@@ -88,5 +88,150 @@ class LocalSearchHistoryDataSourceImplTest {
         dataSource.deleteAllQueries()
         // Then
         coVerify { queryDao.deleteAllQueries() }
+    }
+
+    // ========== PAGINATION TESTS ==========
+
+    @Test
+    fun `getAllQueries_shouldHandleZeroLimit`() = runTest {
+        // Given
+        val limit = 0
+        
+        // When
+        dataSource.getQueries(limit)
+        
+        // Then
+        coVerify { queryDao.getQueries(limit) }
+    }
+
+    @Test
+    fun `getAllQueries_shouldHandleLargeLimit`() = runTest {
+        // Given
+        val limit = 1000
+        
+        // When
+        dataSource.getQueries(limit)
+        
+        // Then
+        coVerify { queryDao.getQueries(limit) }
+    }
+
+    @Test
+    fun `getAllQueries_shouldHandleNegativeLimit`() = runTest {
+        // Given
+        val limit = -10
+        
+        // When
+        dataSource.getQueries(limit)
+        
+        // Then
+        coVerify { queryDao.getQueries(limit) }
+    }
+
+    @Test
+    fun `getAllRecentViewed_shouldHandleZeroLimit`() = runTest {
+        // Given
+        val limit = 0
+        
+        // When
+        dataSource.getAllRecentViewed(limit)
+        
+        // Then
+        coVerify { recentViewedDao.getAllRecentViewed(limit) }
+    }
+
+    @Test
+    fun getAllRecentViewed_shouldHandleLargeLimit() = runTest {
+        // Given
+        val limit = 500
+        
+        // When
+        dataSource.getAllRecentViewed(limit)
+        
+        // Then
+        coVerify { recentViewedDao.getAllRecentViewed(limit) }
+    }
+
+    @Test
+    fun `getAllRecentViewed_shouldHandleNegativeLimit`() = runTest {
+        // Given
+        val limit = -5
+        
+        // When
+        dataSource.getAllRecentViewed(limit)
+        
+        // Then
+        coVerify { recentViewedDao.getAllRecentViewed(limit) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleDifferentLimitValues`() = runTest {
+        // Given
+        val limits = listOf(1, 5, 10, 20, 50, 100)
+        
+        // When & Then
+        limits.forEach { limit ->
+            dataSource.getQueries(limit)
+            coVerify { queryDao.getQueries(limit) }
+        }
+    }
+
+    @Test
+    fun `pagination_shouldHandleConsecutiveCalls`() = runTest {
+        // Given
+        val limit1 = 10
+        val limit2 = 20
+        
+        // When
+        dataSource.getQueries(limit1)
+        dataSource.getQueries(limit2)
+        
+        // Then
+        coVerify { queryDao.getQueries(limit1) }
+        coVerify { queryDao.getQueries(limit2) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleRecentViewedConsecutiveCalls`() = runTest {
+        // Given
+        val limit1 = 5
+        val limit2 = 15
+        
+        // When
+        dataSource.getAllRecentViewed(limit1)
+        dataSource.getAllRecentViewed(limit2)
+        
+        // Then
+        coVerify { recentViewedDao.getAllRecentViewed(limit1) }
+        coVerify { recentViewedDao.getAllRecentViewed(limit2) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleMixedOperations`() = runTest {
+        // Given
+        val queryLimit = 25
+        val recentLimit = 30
+        
+        // When
+        dataSource.getQueries(queryLimit)
+        dataSource.getAllRecentViewed(recentLimit)
+        
+        // Then
+        coVerify { queryDao.getQueries(queryLimit) }
+        coVerify { recentViewedDao.getAllRecentViewed(recentLimit) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleVeryLargeLimits`() = runTest {
+        // Given
+        val veryLargeLimit = 10000
+        
+        // When
+        dataSource.getQueries(veryLargeLimit)
+        dataSource.getAllRecentViewed(veryLargeLimit)
+        
+        // Then
+        coVerify { queryDao.getQueries(veryLargeLimit) }
+        coVerify { recentViewedDao.getAllRecentViewed(veryLargeLimit) }
     }
 }
