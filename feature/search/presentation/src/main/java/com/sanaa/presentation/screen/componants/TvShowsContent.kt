@@ -31,7 +31,7 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 @Composable
 fun TvShowsContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
-    onTvShowClick: (RecentViewedUiModel) -> Unit,
+    onTvShowClick: (RecentViewedUiModel, TvShowUiModel) -> Unit,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
@@ -83,6 +83,12 @@ fun TvShowsContent(
                                 id = tvShow.id,
                                 imageUrl = tvShow.imageUrl,
                                 mediaType = MediaTypeUi.TV_SERIES.name
+                            ),
+                            TvShowUiModel(
+                                id = tvShow.id,
+                                title = tvShow.title,
+                                imageUrl = tvShow.imageUrl,
+                                rating = tvShow.rating,
                             )
                         )
                     }

@@ -71,6 +71,9 @@ fun CategoryTabSection(
                     moviesPagingData = moviesPagingData,
                     tvShowsPagingData = tvShowsPagingData,
                     actorsPagingData = actorsPagingData,
+                    onMovieClick = onMovieClick,
+                    onTvShowClick = onTvShowClick,
+                    onActorClick = onActorClick
                 )
             }
         }
@@ -84,6 +87,9 @@ fun CategoryTabContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onMovieClick: (MovieUiModel) -> Unit,
+    onTvShowClick: (TvShowUiModel) -> Unit,
+    onActorClick: (ActorUiModel) -> Unit,
 ) {
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
             moviesPagingData.loadState.refresh !is androidx.paging.LoadState.Loading &&
@@ -109,7 +115,10 @@ fun CategoryTabContent(
             } else {
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
-                    onMovieClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                    onMovieClick = { recent, movie ->
+                        onMovieClick(movie)
+                        interactionsListener.onSearchResultMediaClicked(recent)
+                    }
                 )
             }
         }
@@ -125,8 +134,12 @@ fun CategoryTabContent(
             } else {
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
-                    onTvShowClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                    onTvShowClick = { recent, tvShow ->
+                        onTvShowClick(tvShow)
+                        interactionsListener.onSearchResultMediaClicked(recent)
+                    }
                 )
+
             }
         }
 
@@ -139,7 +152,9 @@ fun CategoryTabContent(
                     NoSearchResultState()
                 }
             } else {
-                ActorsContent(actorsPagingData)
+                ActorsContent(actorsPagingData, onActorClick = {
+                    onActorClick(it)
+                })
             }
         }
     }

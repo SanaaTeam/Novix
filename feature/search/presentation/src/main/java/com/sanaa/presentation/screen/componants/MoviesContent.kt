@@ -28,7 +28,7 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 @Composable
 fun MoviesContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
-    onMovieClick: (RecentViewedUiModel) -> Unit,
+    onMovieClick: (RecentViewedUiModel, MovieUiModel) -> Unit,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme)
@@ -80,6 +80,12 @@ fun MoviesContent(
                                 id = movie.id,
                                 imageUrl = movie.imageUrl,
                                 mediaType = MediaTypeUi.MOVIE.name
+                            ),
+                            MovieUiModel(
+                                id = movie.id,
+                                title = movie.title,
+                                imageUrl = movie.imageUrl,
+                                rating = movie.rating,
                             )
                         )
                     }
