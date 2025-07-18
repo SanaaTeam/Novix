@@ -20,7 +20,11 @@
     <string name="apply">تطبيق</string>
     <string name="cancel">إلغاء</string>
     <string name="search_hint">بحث…</string>
-    
+    <string name="read_more">اقرأ المزيد</string>
+    <string name="no_review">لا توجد مراجعات!</string>
+    <string name="reviews">المراجعات</string>
+    <string name="rating">التقييم</string>
+    <string name="date">التاريخ</string>
     <!-- Tab Labels -->
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>

@@ -4,6 +4,7 @@ import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.mapper.fullImageUrlOrEmpty
 import com.sanaa.movies.mapper.toDomain
 import com.sanaa.movies.mapper.toDtoId
+import com.sanaa.movies.mapper.toEntity
 import details.repository.MovieRepository
 import entity.Actor
 import entity.Genre
@@ -21,10 +22,10 @@ class MovieRepositoryImpl(
             remote.fetchMovieDetails(id).toDomain()
         }
 
-    override suspend fun getImagesUrls(id: Int): List<String> =
+    override suspend fun getImages(id: Int, count: Int): List<String> =
         safeCall("Failed to fetch images") {
-        remote.fetchImagesUrl(id).posters.take(3).map { it.filePath.fullImageUrlOrEmpty() }
-    }
+            remote.fetchImagesUrl(id).posters.take(count).map { it.filePath.fullImageUrlOrEmpty() }
+        }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =
         safeCall("Failed to fetch movie cast") {
@@ -38,14 +39,19 @@ class MovieRepositoryImpl(
 
     override suspend fun getReviewsByMovieId(id: Int): List<Review> =
         safeCall("Failed to fetch reviews") {
-            remote.fetchReviewsByMovieId(id).results.map { it.toDomain() }
+            remote.fetchReviewsByMovieId(id).map { it.toEntity() }
         }
 
     override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.toDtoId()).results.map { it.toDomain() }
+            remote.fetchMoviesByCategory(category.toDtoId()).moviesByCategoryDto.map { it.toDomain() }
         }
 
+    override suspend fun getMovieTrailer(id: Int): String? =
+        safeCall("Failed to fetch movie trailer") {
+            remote.fetchMovieTrailerUrl(id).results.firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
+                ?.let { "https://www.youtube.com/watch?v=${it.key}" }
+        }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {

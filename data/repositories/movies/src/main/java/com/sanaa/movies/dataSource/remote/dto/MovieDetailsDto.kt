@@ -25,8 +25,6 @@ data class MovieDetailsDto(
     var adult: Boolean? = null,
     @SerialName("backdrop_path")
     var backdropPath: String? = null,
-    @SerialName("belongs_to_collection")
-    var belongsToCollection: String? = null,
     @SerialName("budget")
     var budget: Int? = null,
     @SerialName("genres")

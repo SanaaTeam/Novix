@@ -59,16 +59,11 @@ private fun AppTopBarPreview() {
                 .fillMaxWidth()
         ) {
             AppTopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back), onClick = {})
-
-                },
                 screenTitle = "Title",
                 rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_plus), onClick = {})
-                },
+                }
             )
         }
     }

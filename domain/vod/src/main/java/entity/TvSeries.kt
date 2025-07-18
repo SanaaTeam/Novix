@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDate
 data class TvSeries(
     val id: Int,
     val title: String,
-    val overview: String,
+    val overview: String?,
     val releaseDate: LocalDate,
     val genres: List<Genre>,
     val imdbRating: Float,
@@ -26,9 +26,9 @@ data class Episode(
     val title: String,
     val number: Int,
     val seasonNumber: Int,
-    val imdbRating: Float,
-    val overview: String,
-    val durationMinutes: Int,
-    val releaseDate: LocalDate,
+    val imdbRating: Float?,
+    val overview: String?,
+    val durationMinutes: Int?,
+    val releaseDate: LocalDate?,
     val stillImagePath: String?
 )

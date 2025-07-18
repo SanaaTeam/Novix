@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 data class ReviewDto(
     @SerialName("id") val id: String = "",
 
-    @SerialName("author") val author: String = "",
+    @SerialName("author") val author: String? = null,
 
     @SerialName("author_details") val authorDetails: AuthorDetailsDto = AuthorDetailsDto(),
 
@@ -19,7 +19,7 @@ data class ReviewDto(
 
 @Serializable
 data class AuthorDetailsDto(
-    @SerialName("name") val name: String = "",
+    @SerialName("name") val name: String? = null,
 
     @SerialName("username") val username: String? = null,
 
