@@ -2,7 +2,6 @@ package com.sanaa.series
 
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
-import com.sanaa.series.dto.ReviewDto
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
@@ -12,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.fullPath
 import io.ktor.http.headersOf
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.utils.io.ByteReadChannel
@@ -197,6 +197,372 @@ class RemoteTvSeriesDataSourceImplTest {
         assertEquals("review2", result[1].id)
     }
 
+
+    @Test
+    fun `getTvSeriesCast_shouldReturnCastList_whenValidResponse`() = runTest {
+        // Given
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/123/credits") -> respondJson(
+                    """{
+                    "id": 123,
+                    "cast": [
+                        {
+                            "id": 1,
+                            "name": "John Smith",
+                            "profile_path": "/john.jpg",
+                            "character": "Hero"
+                        },
+                        {
+                            "id": 2,
+                            "name": "Jane Doe",
+                            "profile_path": "/jane.jpg",
+                            "character": "Villain"
+                        }
+                    ]
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val result = dataSource.getTvSeriesCast(123)
+
+        // Then
+        assertEquals(2, result.size)
+        assertEquals("John Smith", result[0].name)
+        assertEquals("Jane Doe", result[1].name)
+    }
+
+
+    @Test
+    fun `getEpisodeDetails_shouldReturnEpisodeDetails_whenValidResponse`() = runTest {
+        // Given
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/100/season/1/episode/5") -> respondJson(
+                    """{
+                    "id": 505,
+                    "name": "Episode Title",
+                    "overview": "This is a sample episode overview.",
+                    "season_number": 1,
+                    "episode_number": 5,
+                    "air_date": "2024-05-01",
+                    "still_path": "/sample.jpg"
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val result = dataSource.getEpisodeDetails(
+            seriesId = 100,
+            seasonNumber = 1,
+            episodeNumber = 5
+        )
+
+        // Then
+        assertEquals(505, result.id)
+        assertEquals("Episode Title", result.name)
+        assertEquals(1, result.seasonNumber)
+        assertEquals(5, result.episodeNumber)
+    }
+
+
+    @Test
+    fun `getTvSeriesImages_shouldReturnListOfImages_whenValidResponse`() = runTest {
+        // Given -
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/123/images") -> respondJson(
+                    """{
+                    "id": 123,
+                    "backdrops": [
+                        {
+                            "aspect_ratio": 1.78,
+                            "file_path": "/image1.jpg",
+                            "height": 1080,
+                            "width": 1920
+                        },
+                        {
+                            "aspect_ratio": 1.78,
+                            "file_path": "/image2.jpg",
+                            "height": 720,
+                            "width": 1280
+                        }
+                    ]
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val result = dataSource.getTvSeriesImages(123)
+
+        // Then
+        assertEquals(2, result.size)
+        assertEquals("/image1.jpg", result[0].filePath)
+        assertEquals("/image2.jpg", result[1].filePath)
+    }
+
+    @Test
+    fun `getTvSeriesSeasonDetails_shouldReturnSeasonDto_whenValidResponse`() = runTest {
+        // Given - mock response with season details
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/1/season/2") -> respondJson(
+                    """{
+                    "id": 1002,
+                    "season_number": 2,
+                    "name": "Season 2",
+                    "overview": "This is season 2",
+                    "episodes": [
+                        {
+                            "id": 2001,
+                            "episode_number": 1,
+                            "name": "Episode 1",
+                            "overview": "First episode"
+                        }
+                    ]
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val result = dataSource.getTvSeriesSeasonDetails(seriesId = 1, seasonNumber = 2)
+
+        // Then
+        assertEquals(2, result.seasonNumber)
+        assertEquals("Season 2", result.name)
+        assertEquals(1, result.episodes.size)
+        assertEquals("Episode 1", result.episodes[0].name)
+    }
+
+    @Test
+    fun `getTvSeries should return TvSeriesDto when response is valid`() = runTest {
+        // Given
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString()
+            if (url.contains("/tv/1")) {
+                respondJson(
+                    """{
+                    "id": 1,
+                    "name": "Breaking Bad",
+                    "overview": "A high school chemistry teacher...",
+                    "poster_path": "/poster.jpg"
+                }"""
+                )
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val result = dataSource.getTvSeries(1)
+
+        // Then
+        assertEquals(1, result.id)
+        assertEquals("Breaking Bad", result.name)
+        assertEquals("/poster.jpg", result.posterPath)
+    }
+
+    @Test
+    fun `getTvSeriesVideos should return list of videos when response is valid`() = runTest {
+        // Given
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString()
+            if (url.contains("/tv/1/videos")) {
+                respondJson(
+                    """{
+                    "id": 1,
+                    "results": [
+                        {
+                            "id": "abc123",
+                            "key": "video_key_1",
+                            "name": "Trailer 1",
+                            "site": "YouTube",
+                            "type": "Trailer"
+                        }
+                    ]
+                }"""
+                )
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        // When
+        val videos = dataSource.getTvSeriesVideos(1)
+
+        // Then
+        assertEquals(1, videos.size)
+        assertEquals("Trailer 1", videos[0].name)
+        assertEquals("YouTube", videos[0].site)
+    }
+
+    @Test
+    fun `getEpisodeImages_shouldReturnListOfImages_whenValidResponse`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 1
+        val episodeNumber = 3
+
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/images") -> respondJson(
+                    """{
+                    "id": $seriesId,
+                    "backdrops": [
+                        {
+                            "aspect_ratio": 1.78,
+                            "file_path": "/episode_image1.jpg",
+                            "height": 1080,
+                            "width": 1920
+                        },
+                        {
+                            "aspect_ratio": 1.78,
+                            "file_path": "/episode_image2.jpg",
+                            "height": 720,
+                            "width": 1280
+                        }
+                    ]
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        val result = dataSource.getEpisodeImages(seriesId, seasonNumber, episodeNumber)
+
+        assertEquals(2, result.size)
+        assertEquals("/episode_image1.jpg", result[0].filePath)
+        assertEquals("/episode_image2.jpg", result[1].filePath)
+    }
+
+    @Test
+    fun `getEpisodeGuestsOfHonor_shouldReturnGuestStarsList_whenValidResponse`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 1
+        val episodeNumber = 3
+
+        val mockEngine = MockEngine { request ->
+            val url = request.url.toString().substringBefore("?")
+            when {
+                url.endsWith("/tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/credits") -> respondJson(
+                    """{
+                    "id": $seriesId,
+                    "guestStars": [
+                        {
+                            "id": 100,
+                            "name": "Guest Star 1",
+                            "profile_path": "/guest1.jpg",
+                            "character": "Guest Role 1"
+                        },
+                        {
+                            "id": 101,
+                            "name": "Guest Star 2",
+                            "profile_path": "/guest2.jpg",
+                            "character": "Guest Role 2"
+                        }
+                    ]
+                }"""
+                )
+
+                else -> respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val client = HttpClient(mockEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
+
+        val result = dataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
+
+        assertEquals(2, result.size)
+        assertEquals("Guest Star 1", result[0].name)
+        assertEquals("Guest Star 2", result[1].name)
+    }
+
     @Test
     fun `getTvSeriesReviews_shouldReturnEmptyList_whenNoReviews`() = runTest {
         // Given - Mock empty reviews response
@@ -212,17 +578,18 @@ class RemoteTvSeriesDataSourceImplTest {
                         "total_results": 0
                     }"""
                 )
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
-        
+
         val emptyClient = HttpClient(emptyReviewsEngine) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             expectSuccess = false
         }
-        
+
         val emptyDataSource = RemoteTvSeriesDataSourceImpl(emptyClient, baseUrl, languageProvider)
 
         // When
@@ -265,17 +632,18 @@ class RemoteTvSeriesDataSourceImplTest {
                         }"""
                     )
                 }
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
-        
+
         val largeClient = HttpClient(largeReviewsEngine) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             expectSuccess = false
         }
-        
+
         val largeDataSource = RemoteTvSeriesDataSourceImpl(largeClient, baseUrl, languageProvider)
 
         // When
@@ -319,17 +687,18 @@ class RemoteTvSeriesDataSourceImplTest {
                         "total_results": 1
                     }"""
                 )
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
-        
+
         val nullClient = HttpClient(nullValuesEngine) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             expectSuccess = false
         }
-        
+
         val nullDataSource = RemoteTvSeriesDataSourceImpl(nullClient, baseUrl, languageProvider)
 
         // When
@@ -402,18 +771,20 @@ class RemoteTvSeriesDataSourceImplTest {
                         "total_results": 3
                     }"""
                 )
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
-        
+
         val ratingsClient = HttpClient(ratingsEngine) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             expectSuccess = false
         }
-        
-        val ratingsDataSource = RemoteTvSeriesDataSourceImpl(ratingsClient, baseUrl, languageProvider)
+
+        val ratingsDataSource =
+            RemoteTvSeriesDataSourceImpl(ratingsClient, baseUrl, languageProvider)
 
         // When
         val result = ratingsDataSource.getTvSeriesReviews(5)
@@ -462,17 +833,18 @@ class RemoteTvSeriesDataSourceImplTest {
                         "total_results": 30
                     }"""
                 )
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
-        
+
         val page1Client = HttpClient(page1Engine) {
             install(ContentNegotiation) {
                 json(Json { ignoreUnknownKeys = true })
             }
             expectSuccess = false
         }
-        
+
         val page1DataSource = RemoteTvSeriesDataSourceImpl(page1Client, baseUrl, languageProvider)
 
         // When
@@ -483,6 +855,61 @@ class RemoteTvSeriesDataSourceImplTest {
         assertEquals("Page 1 Reviewer", result[0].author)
         assertEquals("Page 1 content", result[0].content)
     }
+
+    @Test
+    fun `getTvSeriesByGenre should return tv series list for given genre`() = runTest {
+        // Given
+        val genreEngine = MockEngine { request ->
+            val url = request.url.fullPath
+            if (url.startsWith("/3/discover/tv") && request.url.parameters["with_genres"] == "18") {
+                respondJson(
+                    """
+                {
+                  "page": 1,
+                  "results": [
+                    {
+                      "id": 101,
+                      "name": "Genre Series 1",
+                      "overview": "Test overview",
+                      "poster_path": "/genre1.jpg",
+                      "backdrop_path": "/bg.jpg",
+                      "first_air_date": "2022-01-01",
+                      "vote_average": 8.5,
+                      "vote_count": 200,
+                      "popularity": 150.0,
+                      "genres": [],
+                      "number_of_seasons": 2,
+                      "number_of_episodes": 20
+                    }
+                  ],
+                  "total_pages": 1,
+                  "total_results": 1
+                }
+                """.trimIndent()
+                )
+            } else {
+                respondError(HttpStatusCode.NotFound)
+            }
+        }
+
+        val genreClient = HttpClient(genreEngine) {
+            install(ContentNegotiation) {
+                json(Json { ignoreUnknownKeys = true })
+            }
+            expectSuccess = false
+        }
+
+        val genreDataSource = RemoteTvSeriesDataSourceImpl(genreClient, baseUrl, languageProvider)
+
+        // When
+        val result = genreDataSource.getTvSeriesByGenre(18)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals(101, result[0].id)
+        assertEquals("Genre Series 1", result[0].name)
+    }
+
 
     // Must be an extension on MockRequestHandleScope and return HttpResponseData
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
