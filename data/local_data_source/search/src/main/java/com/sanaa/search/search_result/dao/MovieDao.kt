@@ -15,10 +15,18 @@ interface MovieDao {
     @Query(
         """
         SELECT * FROM movie 
-        WHERE (:query IS NULL OR LOWER(title) LIKE '%' || LOWER(:query) || '%')
-    """
+        WHERE (:query IS NULL OR LOWER(title) LIKE '%' || LOWER(:query) || '%') 
+        ORDER BY 
+            CASE 
+                WHEN LOWER(title) = LOWER(:query) THEN 1
+                WHEN LOWER(title) LIKE LOWER(:query) || '%' THEN 2
+                ELSE 3
+            END,
+            title ASC
+        LIMIT :limit OFFSET :offset
+        """
     )
     suspend fun getFilteredMovies(
-        query: String
+        query: String, limit: Int, offset: Int,
     ): List<MovieLocalDto>
 }

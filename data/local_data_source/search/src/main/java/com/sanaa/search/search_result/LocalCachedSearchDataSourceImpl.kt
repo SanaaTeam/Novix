@@ -79,6 +79,13 @@ class LocalCachedSearchDataSourceImpl(
         seriesDao.insertSeries(tvSeriesLocalDto)
     }
 
+    override suspend fun getPagedActorsByQuery(
+        query: String,
+        limit: Int,
+        offset: Int,
+    ): List<ActorsLocalDto> {
+        return actorDao.getPagedActorsByQuery(query, limit, offset)
+    }
 
     override suspend fun getActorsByQuery(query: String): List<ActorLocalDto> {
         val cachedResults = getCachedResults(query, "actor")
@@ -92,28 +99,37 @@ class LocalCachedSearchDataSourceImpl(
         return actorDao.getActorsByQuery(query)
     }
 
-    override suspend fun getMoviesByQuery(query: String): List<MovieLocalDto> {
+    override suspend fun getMoviesByQuery(
+        query: String,
+        limit: Int,
+        offset: Int,
+    ): List<MovieLocalDto> {
         val cachedResults = getCachedResults(query, "movie")
 
         if (cachedResults.isNotEmpty()) {
             return cachedResults.mapNotNull { result ->
-                movieDao.getFilteredMovies(query = result.itemId.toString()).firstOrNull()
+                movieDao.getFilteredMovies(query = result.itemId.toString(), limit, offset)
+                    .firstOrNull()
             }
         }
 
-        return movieDao.getFilteredMovies(query = query)
+        return movieDao.getFilteredMovies(query = query, limit = limit, offset = offset)
     }
 
-    override suspend fun getTvSeriesByQuery(query: String): List<TvSeriesLocalDto> {
+    override suspend fun getTvSeriesByQuery(
+        query: String,
+        limit: Int,
+        offset: Int,
+    ): List<TvSeriesLocalDto> {
         val cachedResults = getCachedResults(query, "tv_series")
 
         if (cachedResults.isNotEmpty()) {
             return cachedResults.mapNotNull { result ->
-                seriesDao.getFilteredSeries(result.itemId.toString()).firstOrNull()
+                seriesDao.getFilteredSeries(query = result.itemId.toString(), limit, offset)
+                    .firstOrNull()
             }
         }
-
-        return emptyList()
+        return seriesDao.getFilteredSeries(query = query, limit = limit, offset = offset)
     }
 
     override suspend fun clearExpiredCache(expirationTime: Long) {
