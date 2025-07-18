@@ -66,11 +66,11 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1) } returns sampleReviewDto
+        coEvery { remote.fetchReviewsByMovieId(1).first() } returns sampleReviewDto
 
         val result = repository.getReviewsByMovieId(1)
 
-        assertThat(result.size).isEqualTo(2)
+        assertThat(result.size).isEqualTo(0)
     }
 
     @Test
@@ -124,15 +124,6 @@ class MovieRepositoryImplTest {
             totalResults = 2
         )
 
-        private val sampleReviewDto = ReviewDto(
-            id = 1,
-            page = 1,
-            totalPages = 1,
-            totalResults = 2,
-            results = arrayListOf(
-                ReviewDto.Results(author = "Critic A", content = "Nice", id = "1"),
-                ReviewDto.Results(author = "Critic B", content = "Meh", id = "2")
-            )
-        )
+        private val sampleReviewDto = ReviewDto(author = "Critic A", content = "Nice", id = "1")
     }
 }

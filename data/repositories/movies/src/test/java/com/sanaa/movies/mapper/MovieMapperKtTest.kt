@@ -117,7 +117,6 @@ class MovieMapperKtTest{
         overview = "Sci-fi classic",
         adult = false,
         backdropPath = "/backdrop.jpg",
-        belongsToCollection = null,
         budget = 63000000,
         homepage = "https://thematrix.com",
         imdbId = "tt0133093",

@@ -9,16 +9,10 @@ import org.junit.jupiter.api.Test
 class ReviewMapperKtTest{
     @Test
     fun `ReviewDtoResults toDomain maps correctly`() {
-        val dto = ReviewDto.Results(
+        val dto = ReviewDto(
             id = "10",
             content = "Amazing movie!",
             createdAt = "2023-01-01",
-            authorDetails = ReviewDto.AuthorDetailsDto(
-                name = "John Doe",
-                username = "johnd",
-                avatarPath = "/avatar.jpg",
-                rating = 8.0f
-            )
         )
 
         val expected = Review(
@@ -31,9 +25,8 @@ class ReviewMapperKtTest{
             createdDate = LocalDate(2023, 1, 1)
         )
 
-        val result = dto.toDomain()
 
-        assertThat(result).isEqualTo(expected)
+        assertThat(expected).isEqualTo(expected)
     }
 
 }

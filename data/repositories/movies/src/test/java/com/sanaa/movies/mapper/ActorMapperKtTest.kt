@@ -22,7 +22,7 @@ class ActorMapperTest {
         val expected = Actor(
             id = 1,
             name = "Robert Downey Jr.",
-            imageUrl = "/rdj.jpg",
+            imageUrl = "https://image.tmdb.org/t/p/w185/rdj.jpg",
             gender = Actor.Gender.MALE,
             character = "Iron Man",
             biography = "Bio",
