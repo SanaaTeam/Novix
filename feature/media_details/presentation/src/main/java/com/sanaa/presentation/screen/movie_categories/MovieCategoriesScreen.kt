@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,17 +34,35 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
+import com.sanaa.presentation.navigation.TopMoviesScreenRoute
+import com.sanaa.presentation.navigation.TopSeriesScreenRoute
+import com.sanaa.presentation.screen.actor.ActorScreenEffects
+import entity.Genre
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun MovieCategoriesScreen(
-    categoryId: String,
+    categoryId: Genre,
     viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) })
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val navController = LocalNavControllerProvider.current
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                MovieCategoriesScreenEffects.NavigateBack -> navController.popBackStack()
+                }
+            }
+        }
+
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         MovieCategoriesScreenContent(
             state = state.value, interactionListener = viewModel
@@ -75,7 +94,7 @@ fun MovieCategoriesScreenContent(
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_arrow_back),
                         onClick = { interactionListener.onBackClick() })
-                }, screenTitle = state.title, modifier = Modifier
+                }, screenTitle = state.title.toLocalizedString(), modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
             )

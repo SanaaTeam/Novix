@@ -1,12 +1,13 @@
 package com.sanaa.presentation.screen.movie_categories
 
+import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
-import details.usecase.movie.GetMoviesByCategory
+import details.usecase.ManageMovieDetailsUseCase
 import entity.Genre
 
 class MovieCategoriesViewModel(
-    private val categoryId: String,
-    private val getMoviesByCategoryUseCase: GetMoviesByCategory,
+    private val categoryId: Genre,
+    private val manageMoviesDetailsUseCase: ManageMovieDetailsUseCase,
 ) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>(
     MovieCategoriesScreenUiState()
 ), MovieCategoriesScreenInteractionListener {
@@ -34,15 +35,15 @@ class MovieCategoriesViewModel(
         TODO("Not yet implemented")
     }
 
-    private fun getListOfMoviesByCategory(categoryId: String) {
+    private fun getListOfMoviesByCategory(categoryId: Genre) {
         tryToExecute(
             callee = {
                 updateState {
                     it.copy(isLoading = true)
                 }
-                val genre = Genre.fromValue(categoryId)
-                    ?: throw IllegalArgumentException("Unknown genre: $categoryId")
-                val movies = getMoviesByCategoryUseCase.execute(genre)
+                val movies = manageMoviesDetailsUseCase.getMoviesByCategory(categoryId)
+                Log.i("view_model", "genre: ${categoryId}")
+                Log.i("view_model", "movies: ${movies}")
                 updateState {
                     it.copy(
                         title = categoryId, movies = movies.map { it ->
