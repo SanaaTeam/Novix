@@ -9,8 +9,12 @@ class SearchTvSeriesUseCase(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {
-    suspend fun execute(query: String, filters: MediaFilters?): List<SearchTvSeriesOutput> {
+    suspend fun execute(
+        query: String,
+        page: Int,
+        filters: MediaFilters?,
+    ): List<SearchTvSeriesOutput> {
         searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchTvShows(query, filters)
+        return searchRepository.searchTvShows(query, page, filters)
     }
 }
