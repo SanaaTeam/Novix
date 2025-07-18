@@ -1,6 +1,6 @@
 package com.sanaa.series
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
@@ -244,6 +244,9 @@ class RemoteTvSeriesDataSourceImplTest {
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
         content = ByteReadChannel(content),
         status = HttpStatusCode.OK,
-        headers = headersOf(HttpHeaders.ContentType, listOf(ContentType.Application.Json.toString()))
+        headers = headersOf(
+            HttpHeaders.ContentType,
+            listOf(ContentType.Application.Json.toString())
+        )
     )
 }
