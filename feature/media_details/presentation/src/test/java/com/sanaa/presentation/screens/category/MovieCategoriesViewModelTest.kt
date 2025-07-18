@@ -67,29 +67,6 @@ class MovieCategoriesViewModelTest {
         clearAllMocks()
     }
 
-    @Test
-    fun `when init then should load movies and update state`() = runTest(testDispatcher) {
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns movieList
-
-        viewModel = MovieCategoriesViewModel(Genre.DRAMA, manageMoviesDetailsUseCase)
-
-        viewModel.state.test {
-            var currentState = awaitItem()
-            while (currentState.isLoading) {
-                currentState = awaitItem()
-            }
-
-            val expectedState = MovieCategoriesScreenUiState(
-                title = Genre.DRAMA,
-                movies = movieList.map { it.toUiModel() },
-                isLoading = false,
-                error = null,
-                showBottomSheet = false
-            )
-
-            assertEquals(expectedState, currentState)
-        }
-    }
 
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {

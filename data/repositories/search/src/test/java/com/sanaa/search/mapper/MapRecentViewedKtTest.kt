@@ -2,6 +2,7 @@ package com.sanaa.search.mapper
 
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
+import com.sanaa.search.util.TimeUtils
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -85,7 +86,7 @@ class MapRecentViewedKtTest {
         assertEquals("imageUrl", result.imageUrl)
         assertEquals(true, result.isSaved)
         assertEquals("MOVIE", result.mediaType)
-        assertTrue(System.currentTimeMillis() - result.timestamp < 1000)
+        assertTrue(TimeUtils.getCurrentTimeStamp() - result.timestamp < 1000)
     }
 
 }

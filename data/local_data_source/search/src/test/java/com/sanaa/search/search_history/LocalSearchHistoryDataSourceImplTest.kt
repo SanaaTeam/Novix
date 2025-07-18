@@ -30,13 +30,13 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `getAllQueries should call getAllQueries on queryDao`() = runTest {
+    fun `getQueries should call getQueries on queryDao`() = runTest {
         // Given
         val limit = 10
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test
@@ -98,10 +98,10 @@ class LocalSearchHistoryDataSourceImplTest {
         val limit = 0
         
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test
@@ -110,10 +110,10 @@ class LocalSearchHistoryDataSourceImplTest {
         val limit = 1000
         
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test
@@ -122,10 +122,10 @@ class LocalSearchHistoryDataSourceImplTest {
         val limit = -10
         
         // When
-        dataSource.getAllQueries(limit)
+        dataSource.getQueries(limit)
         
         // Then
-        coVerify { queryDao.getAllQueries(limit) }
+        coVerify { queryDao.getQueries(limit) }
     }
 
     @Test
@@ -171,8 +171,8 @@ class LocalSearchHistoryDataSourceImplTest {
         
         // When & Then
         limits.forEach { limit ->
-            dataSource.getAllQueries(limit)
-            coVerify { queryDao.getAllQueries(limit) }
+            dataSource.getQueries(limit)
+            coVerify { queryDao.getQueries(limit) }
         }
     }
 
@@ -183,12 +183,12 @@ class LocalSearchHistoryDataSourceImplTest {
         val limit2 = 20
         
         // When
-        dataSource.getAllQueries(limit1)
-        dataSource.getAllQueries(limit2)
+        dataSource.getQueries(limit1)
+        dataSource.getQueries(limit2)
         
         // Then
-        coVerify { queryDao.getAllQueries(limit1) }
-        coVerify { queryDao.getAllQueries(limit2) }
+        coVerify { queryDao.getQueries(limit1) }
+        coVerify { queryDao.getQueries(limit2) }
     }
 
     @Test
@@ -213,11 +213,11 @@ class LocalSearchHistoryDataSourceImplTest {
         val recentLimit = 30
         
         // When
-        dataSource.getAllQueries(queryLimit)
+        dataSource.getQueries(queryLimit)
         dataSource.getAllRecentViewed(recentLimit)
         
         // Then
-        coVerify { queryDao.getAllQueries(queryLimit) }
+        coVerify { queryDao.getQueries(queryLimit) }
         coVerify { recentViewedDao.getAllRecentViewed(recentLimit) }
     }
 
@@ -227,11 +227,11 @@ class LocalSearchHistoryDataSourceImplTest {
         val veryLargeLimit = 10000
         
         // When
-        dataSource.getAllQueries(veryLargeLimit)
+        dataSource.getQueries(veryLargeLimit)
         dataSource.getAllRecentViewed(veryLargeLimit)
         
         // Then
-        coVerify { queryDao.getAllQueries(veryLargeLimit) }
+        coVerify { queryDao.getQueries(veryLargeLimit) }
         coVerify { recentViewedDao.getAllRecentViewed(veryLargeLimit) }
     }
 }
