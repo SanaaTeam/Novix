@@ -1,24 +1,17 @@
 package com.sanaa.presentation.screen.movie_categories
 
-import androidx.compose.material3.BottomAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.sanaa.presentation.R
+import com.sanaa.presentation.model.MovieUiModel
 import entity.Genre
 
 data class MovieCategoriesScreenUiState(
-    val title: Genre = Genre.DRAMA,
-    val movies: List<MovieCardUiModel> = emptyList(),
+    val title: Genre? = null,
+    val movies: List<MovieUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
     val showBottomSheet: Boolean = false
-    )
-
-data class MovieCardUiModel(
-    val id: Int = 0,
-    val title: String = "",
-    val imageUrl: String = "",
-    val rating: Float = 0.0f,
 )
 
 @Composable

@@ -54,7 +54,7 @@ fun TvCastCreditDto.toDomain(): TvSeries = TvSeries(
     seasonsCount = 0
 )
 
-private fun String?.toLocalDateOrNull(): LocalDate? =
+internal  fun String?.toLocalDateOrNull(): LocalDate? =
     this
         ?.takeIf(String::isNotBlank)
         ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }

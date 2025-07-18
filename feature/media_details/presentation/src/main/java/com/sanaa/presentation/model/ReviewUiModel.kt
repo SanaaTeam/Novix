@@ -20,7 +20,7 @@ fun Review.toReviewUiModel() = ReviewUiModel(
     authorName = authorName?.toString(),
     username = userHandle,
     content = content,
-    rating = String.format("%.1f", rating),
+    rating = rating?.let { String.format("%.1f", rating) },
     createdDate = createdDate.formatDateLocalizedDigits().toString(),
     avatarUrl = avatarUrl
 )

@@ -8,8 +8,8 @@ import entity.Movie
 data class MovieUiModel(
     val id: Int = 0,
     val title: String = "",
-    val overview: String = "",
-    val rating: String = "",
+    val overview: String? = null,
+    val rating: String ?= null,
     val releaseDate: String = "",
     val duration: Int? = null,
     val posterUrls: List<String> = emptyList(),

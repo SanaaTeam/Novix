@@ -145,7 +145,7 @@ private fun ActorScreenContent(
                         item {
                             Box {
                                 ImageSlider(
-                                    images = state.profileImages,
+                                    images = state.profileImageUrls,
                                     contentDescription = stringResource(com.sanaa.presentation.R.string.actor_photos),
                                 )
                             }
@@ -176,7 +176,7 @@ private fun ActorScreenContent(
                         item {
                             MediaSection(
                                 title = stringResource(com.sanaa.presentation.R.string.gallery),
-                                items = state.galleryImages.take(10),
+                                items = state.galleryImageUrls.take(10),
                                 onActionClick = listener::onViewAllGalleryClicked
                             ) { image ->
                                 GalleryCard(image)

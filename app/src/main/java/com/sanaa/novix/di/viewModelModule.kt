@@ -33,7 +33,6 @@ val viewModelModule = module {
     viewModelOf(::SeriesViewModel)
     viewModelOf(::EpisodeDetailsScreenViewModel)
     viewModelOf(::ActorViewModel)
-    viewModelOf(::SeriesViewModel)
     viewModelOf(::ReviewViewModel)
     viewModelOf(::MovieCategoriesViewModel)
 

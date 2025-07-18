@@ -1,4 +1,5 @@
 package entity
+
 import kotlinx.datetime.LocalDate
 
 data class Movie(
@@ -6,9 +7,9 @@ data class Movie(
     val posterImageUrl: String,
     val title: String,
     val genres: List<Genre>,
-    val imdbRating: Float,
-    val duration: Int,
+    val imdbRating: Float?,
+    val duration: Int?,
     val releaseDate: LocalDate,
-    val overview: String,
+    val overview: String?,
     val trailerUrl: String? = null
 )

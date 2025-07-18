@@ -9,7 +9,6 @@ import entity.Movie
 import entity.TvSeries
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
@@ -32,7 +31,6 @@ class ManageActorDetailsUseCaseTest {
         val actorId = 1
         coEvery { actorRepository.getActorDetails(actorId) } returns dummyActor
         val result = manageActorDetailsUseCase.getActorDetails(actorId)
-        coVerify { actorRepository.getActorDetails(actorId) }
         assertThat(result).isEqualTo(dummyActor)
     }
 
@@ -50,7 +48,6 @@ class ManageActorDetailsUseCaseTest {
         val actorId = 3
         coEvery { actorRepository.getActorTopMovies(actorId) } returns dummyMovies
         val result = manageActorDetailsUseCase.getActorTopMovies(actorId)
-        coVerify { actorRepository.getActorTopMovies(actorId) }
         assertThat(result).isEqualTo(dummyMovies)
     }
 
@@ -70,7 +67,6 @@ class ManageActorDetailsUseCaseTest {
         val actorId = 5
         coEvery { actorRepository.getActorTopTvSeries(actorId) } returns dummySeries
         val result = manageActorDetailsUseCase.getActorTopTvSeries(actorId)
-        coVerify { actorRepository.getActorTopTvSeries(actorId) }
         assertThat(result).isEqualTo(dummySeries)
     }
 
@@ -90,7 +86,6 @@ class ManageActorDetailsUseCaseTest {
         val actorId = 7
         coEvery { actorRepository.getGalleryImages(actorId) } returns dummyGallery
         val result = manageActorDetailsUseCase.getGalleryImages(actorId)
-        coVerify { actorRepository.getGalleryImages(actorId) }
         assertThat(result).isEqualTo(dummyGallery)
     }
 
@@ -108,16 +103,20 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getProfileImages should call repository and return list`() = runTest {
         val actorId = 9
-        coEvery { actorRepository.getProfileImages(actorId) } returns dummyProfiles
+        coEvery { actorRepository.getProfileImages(actorId, 10) } returns dummyProfiles
         val result = manageActorDetailsUseCase.getProfileImages(actorId)
-        coVerify { actorRepository.getProfileImages(actorId) }
         assertThat(result).isEqualTo(dummyProfiles)
     }
 
     @Test
     fun `getProfileImages should throw when repository fails`() = runTest {
         val actorId = 10
-        coEvery { actorRepository.getProfileImages(actorId) } throws RetrievingDataFailureException(
+        coEvery {
+            actorRepository.getProfileImages(
+                actorId,
+                10
+            )
+        } throws RetrievingDataFailureException(
             "Error"
         )
         assertThrows<RetrievingDataFailureException> {

@@ -82,7 +82,8 @@ fun ReviewsScreenContent(
                 } else {
                     if (state.reviews.isNotEmpty()) {
                         LazyColumn(
-                            modifier = Modifier.align(Alignment.TopCenter)
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .padding(horizontal = 16.dp),
                             contentPadding = PaddingValues(vertical = 12.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),

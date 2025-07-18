@@ -2,6 +2,7 @@ package com.sanaa.movies.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import entity.Genre
 import kotlinx.datetime.LocalDate
@@ -105,6 +106,117 @@ class MovieMapperKtTest{
         assertThat(dto.toDomain().posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/poster.jpg")
     }
 
+    @Test
+    fun `should map id correctly when mapping MoviesByCategoryDto to domain`() {
+        val dto = createCategoryMovieDto(id = 99)
+        val result = dto.toDomain()
+        assertThat(result.id).isEqualTo(99)
+    }
+
+    @Test
+    fun `should map title correctly when mapping MoviesByCategoryDto to domain`() {
+        val dto = createCategoryMovieDto(title = "Category Movie")
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Category Movie")
+    }
+
+    @Test
+    fun `should fallback to empty title when mapping MoviesByCategoryDto with null title`() {
+        val dto = createCategoryMovieDto(title = null)
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Unknown Title")
+    }
+
+    @Test
+    fun `should map poster url correctly when mapping MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(posterPath = "/cat.jpg")
+        val result = dto.toDomain()
+        assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/cat.jpg")
+    }
+
+    @Test
+    fun `should return empty poster url when MoviesByCategoryDto poster path is null`() {
+        val dto = createCategoryMovieDto(posterPath = null)
+        val result = dto.toDomain()
+        assertThat(result.posterImageUrl).isEmpty()
+    }
+
+    @Test
+    fun `should map release date correctly when provided in MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(releaseDate = "2024-02-10")
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(2024, 2, 10))
+    }
+
+    @Test
+    fun `should fallback to default date when release date is null in MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(releaseDate = null)
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(1900, 1, 1))
+    }
+
+    @Test
+    fun `should map genres correctly when mapping MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(genreIds = listOf(28, 12))
+        val result = dto.toDomain()
+        assertThat(result.genres).containsExactly(Genre.ACTION, Genre.ADVENTURE)
+    }
+
+    @Test
+    fun `should ignore invalid genre ids when mapping MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(genreIds = listOf(999))
+        val result = dto.toDomain()
+        assertThat(result.genres).isEmpty()
+    }
+
+    @Test
+    fun `should fallback to empty overview when overview is null in MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(overview = null)
+        val result = dto.toDomain()
+        assertThat(result.overview).isEqualTo("")
+    }
+
+    @Test
+    fun `should map overview correctly when mapping MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(overview = "A great movie")
+        val result = dto.toDomain()
+        assertThat(result.overview).isEqualTo("A great movie")
+    }
+
+    @Test
+    fun `should map voteAverage correctly when mapping MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(voteAverage = 6.9)
+        val result = dto.toDomain()
+        assertThat(result.imdbRating).isEqualTo(6.9f)
+    }
+
+    @Test
+    fun `should fallback to 0 rating when voteAverage is null in MoviesByCategoryDto`() {
+        val dto = createCategoryMovieDto(voteAverage = null)
+        val result = dto.toDomain()
+        assertThat(result.imdbRating).isEqualTo(0.0f)
+    }
+
+
+    @Test
+    fun `should return full image url when path is valid`() {
+        val result = "/path.jpg".fullImageUrlOrEmpty()
+        assertThat(result).isEqualTo("https://image.tmdb.org/t/p/w500/path.jpg")
+    }
+
+    @Test
+    fun `should return empty string when path is null`() {
+        val path: String? = null
+        val result = path.fullImageUrlOrEmpty()
+        assertThat(result).isEqualTo("")
+    }
+
+    @Test
+    fun `should return empty string when path is blank`() {
+        val result = "   ".fullImageUrlOrEmpty()
+        assertThat(result).isEqualTo("")
+    }
+
 
     private fun createSampleMovieDetailsDto() = MovieDetailsDto(
         id = 42,
@@ -146,4 +258,23 @@ class MovieMapperKtTest{
         video = false,
         voteCount = 1000
     )
+    private fun createCategoryMovieDto(
+        id: Int = 10,
+        title: String? = "Default Title",
+        posterPath: String? = "/default.jpg",
+        releaseDate: String? = "2023-01-01",
+        genreIds: List<Int> = listOf(28),
+        overview: String? = "Default overview",
+        voteAverage: Double? = 5.5
+    ) = MoviesByCategoryResponse.MoviesByCategoryDto(
+        id = id,
+        title = title,
+        posterPath = posterPath,
+        releaseDate = releaseDate,
+        genreIds = ArrayList(genreIds),
+        overview = overview,
+        voteAverage = voteAverage,
+    )
+
+
 }

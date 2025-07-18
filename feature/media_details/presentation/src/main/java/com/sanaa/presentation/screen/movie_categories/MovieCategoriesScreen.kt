@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,7 +46,6 @@ fun MovieCategoriesScreen(
     viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) })
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
 
     LaunchedEffect(Unit) {
@@ -90,9 +88,9 @@ fun MovieCategoriesScreenContent(
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_arrow_back),
+                        icon = painterResource(id = R.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
-                }, screenTitle = state.title.toLocalizedString(), modifier = Modifier
+                }, screenTitle = state.title?.toLocalizedString().orEmpty(), modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
@@ -122,7 +120,7 @@ fun MovieCategoriesScreenContent(
                                 MovieSeriesPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.imageUrl,
+                                            imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             blurRadius = 150,
                                             haramThreshold = 0.2f,

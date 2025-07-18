@@ -15,6 +15,9 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.ACTOR_INDEX
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.MOVIE_INDEX
+import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.TV_SHOW_INDEX
 
 @Composable
 fun CategoryTabSection(
@@ -28,7 +31,6 @@ fun CategoryTabSection(
         stringResource(R.string.tv_shows),
         stringResource(R.string.actors)
     )
-
 
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier.padding(top = 12.dp)
@@ -45,35 +47,55 @@ fun CategoryTabSection(
             ) {
                 WavyProgressIndicator()
             }
-        } else  if (uiState.noInternetConnection) {
+        } else if (uiState.noInternetConnection) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 NetworkDisconnectionContact(onRetryClick = {})
             }
-        } else when (selectedTabIndex) {
-            0 -> {
-                if (uiState.movies.isEmpty()) NoSearchResultState()
-                else MoviesContent(uiState.movies, onMovieClick = {
-                    interactionsListener.onSearchResultMediaClicked(it)
-                })
+        } else {
+            CategoryTabContent(selectedTabIndex, uiState, interactionsListener)
+        }
+    }
+}
+
+@Composable
+fun CategoryTabContent(
+    selectedTabIndex: Int,
+    uiState: SearchScreenUiState,
+    interactionsListener: SearchScreenInteractionsListener,
+) {
+    when (selectedTabIndex) {
+        MOVIE_INDEX -> {
+            if (uiState.movies.isEmpty()) {
+                NoSearchResultState()
+                return
             }
 
+            MoviesContent(uiState.movies, onMovieClick = {
+                interactionsListener.onSearchResultMediaClicked(it)
+            })
+        }
 
-            1 -> {
-                if (uiState.tvShows.isEmpty()) NoSearchResultState()
-                else TvShowsContent(
-                    uiState.tvShows, onTvShowClick = {
-                        interactionsListener.onSearchResultMediaClicked(it)
-                    })
-
+        TV_SHOW_INDEX -> {
+            if (uiState.tvShows.isEmpty()) {
+                NoSearchResultState()
+                return
             }
 
-            2 -> {
-                if (uiState.actors.isEmpty()) NoSearchResultState()
-                else ActorsContent(uiState.actors)
+            TvShowsContent(uiState.tvShows, onTvShowClick = {
+                interactionsListener.onSearchResultMediaClicked(it)
+            })
+        }
+
+        ACTOR_INDEX -> {
+            if (uiState.actors.isEmpty()) {
+                NoSearchResultState()
+                return
             }
+
+            ActorsContent(uiState.actors)
         }
     }
 }
