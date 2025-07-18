@@ -1,6 +1,6 @@
-package com.example.env_config
+package com.example.preferences
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import java.util.Locale
 
 class DeviceLanguageProvider(

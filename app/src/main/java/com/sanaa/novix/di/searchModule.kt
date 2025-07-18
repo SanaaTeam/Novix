@@ -7,7 +7,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val searchModule = module {
-    viewModel { FilterViewModel(dispatcher = Dispatchers.IO) }
+    viewModel { FilterViewModel(dispatcher = Dispatchers.IO, genreLocalizer = get()) }
     viewModel {
         SearchViewModel(
             get(),

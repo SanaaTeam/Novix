@@ -6,6 +6,6 @@ interface FilterBottomSheetInteractionsListener {
     fun onApplyClicked()
     fun onClearFilters()
     fun onRatingChanged(newRating: Int)
-    fun onGenreSelected(genre: Genre)
+    fun onGenreSelected(genre: String)
     fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>)
 }

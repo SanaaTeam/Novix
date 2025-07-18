@@ -1,6 +1,6 @@
 package com.sanaa.search.search_result.local.datasource
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.local.dto.*
 import com.sanaa.search.search_result.LocalCachedSearchDataSourceImpl
 import com.sanaa.search.search_result.dao.ActorDao
