@@ -57,7 +57,7 @@ fun CategoryTabSection(
 
             uiState.noInternetConnection -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NetworkDisconnectionContact(RetryClick = interactionsListener::onRetryClicked)
+                    NetworkDisconnectionContact(onRetryClick = interactionsListener::onRetryClicked)
                 }
             }
 
