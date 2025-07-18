@@ -26,5 +26,7 @@ interface MovieDao {
         LIMIT :limit OFFSET :offset
         """
     )
-    suspend fun getFilteredMovies(query: String, limit: Int, offset: Int): List<MovieLocalDto>
+    suspend fun getFilteredMovies(
+        query: String, limit: Int, offset: Int,
+    ): List<MovieLocalDto>
 }

@@ -3,6 +3,7 @@ package com.sanaa.search.repository
 import com.example.env_config.service.LanguageProvider
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.fake.FakeData.ActorsLocalDtoList
 import com.sanaa.search.fake.FakeData.MovieSearchResponse
@@ -45,10 +46,10 @@ class SearchRepositoryImplTest {
         val query = "Tom"
         coEvery {
             localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
-        } returns ActorsLocalDtoList
+        } returns ActorLocalDtoLists
 
         // When
-        val expected = ActorsLocalDtoList.map { it.toSearchOutput() }
+        val expected = ActorLocalDtoLists.map { it.toSearchOutput() }
         val result = searchRepository.searchActors(query, page)
 
         // Then
