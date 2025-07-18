@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.preferences"
+    namespace = "com.sanaa.preferences"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
