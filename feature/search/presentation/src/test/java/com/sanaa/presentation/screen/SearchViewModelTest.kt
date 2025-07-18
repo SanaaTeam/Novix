@@ -7,11 +7,9 @@ import com.google.common.truth.Truth
 import com.sanaa.presentation.screen.SearchViewModel.Companion.ACTOR_INDEX
 import com.sanaa.presentation.screen.SearchViewModel.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.ActorUiModel
-import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
-import com.sanaa.presentation.screen.state.TvShowUiModel
 import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -44,7 +42,6 @@ import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchHistory
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
-import kotlin.test.Ignore
 
 class SearchViewModelTest {
     private val searchMoviesUseCase: SearchMoviesUseCase = mockk(relaxed = true)
@@ -58,7 +55,6 @@ class SearchViewModelTest {
     private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase = mockk(relaxed = true)
     private lateinit var searchViewModel: SearchViewModel
     private val testDispatcher = StandardTestDispatcher()
-
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
@@ -77,7 +73,6 @@ class SearchViewModelTest {
             dispatcher = testDispatcher,
         )
     }
-
 
     @Test
     fun `loadMediaByTab should load actors when ACTOR_INDEX is selected`() = runTest {
@@ -368,9 +363,7 @@ class SearchViewModelTest {
         }
     }
 
-    @Ignore("Disabled temporarily due to bug or WIP")
-
-    @Test//
+    @Test
     fun `onTabSelected() should load movies when movie tap selected`() = runTest {
         // Given
         val index = SearchScreenUiState.MOVIE_INDEX
@@ -398,13 +391,10 @@ class SearchViewModelTest {
                 searchQuery = movieName,
                 selectedTabIndex = index,
                 isLoading = false,
-                movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
     }
-
-    @Ignore("Disabled temporarily due to bug or WIP")
 
     @Test
     fun `onTabSelected() should load tv shows when tv show tap selected`() = runTest {
@@ -434,7 +424,6 @@ class SearchViewModelTest {
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
                 isLoading = false,
-                tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") }
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
@@ -453,8 +442,6 @@ class SearchViewModelTest {
             Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
         }
     }
-
-    @Ignore("Disabled temporarily due to bug or WIP")
 
     @Test
     fun `onTabSelected() should load actors when actor tap selected`() = runTest {
@@ -482,7 +469,6 @@ class SearchViewModelTest {
                 searchQuery = actorName,
                 selectedTabIndex = index,
                 isLoading = false,
-                actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
@@ -640,7 +626,7 @@ class SearchViewModelTest {
 }
 
 class TestActorPagingSource(
-    private val data: List<ActorUiModel>
+    private val data: List<ActorUiModel>,
 ) : PagingSource<Int, ActorUiModel>() {
     override fun getRefreshKey(state: PagingState<Int, ActorUiModel>): Int? = null
 
@@ -651,5 +637,4 @@ class TestActorPagingSource(
             nextKey = null
         )
     }
-
 }

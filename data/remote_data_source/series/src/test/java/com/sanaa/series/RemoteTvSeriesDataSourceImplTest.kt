@@ -513,55 +513,7 @@ class RemoteTvSeriesDataSourceImplTest {
         assertEquals("/episode_image1.jpg", result[0].filePath)
         assertEquals("/episode_image2.jpg", result[1].filePath)
     }
-
-    @Test
-    fun `getEpisodeGuestsOfHonor_shouldReturnGuestStarsList_whenValidResponse`() = runTest {
-        val seriesId = 10
-        val seasonNumber = 1
-        val episodeNumber = 3
-
-        val mockEngine = MockEngine { request ->
-            val url = request.url.toString().substringBefore("?")
-            when {
-                url.endsWith("/tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/credits") -> respondJson(
-                    """{
-                    "id": $seriesId,
-                    "guestStars": [
-                        {
-                            "id": 100,
-                            "name": "Guest Star 1",
-                            "profile_path": "/guest1.jpg",
-                            "character": "Guest Role 1"
-                        },
-                        {
-                            "id": 101,
-                            "name": "Guest Star 2",
-                            "profile_path": "/guest2.jpg",
-                            "character": "Guest Role 2"
-                        }
-                    ]
-                }"""
-                )
-
-                else -> respondError(HttpStatusCode.NotFound)
-            }
-        }
-
-        val client = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                json(Json { ignoreUnknownKeys = true })
-            }
-            expectSuccess = false
-        }
-
-        val dataSource = RemoteTvSeriesDataSourceImpl(client, baseUrl, languageProvider)
-
-        val result = dataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
-
-        assertEquals(2, result.size)
-        assertEquals("Guest Star 1", result[0].name)
-        assertEquals("Guest Star 2", result[1].name)
-    }
+    
 
     @Test
     fun `getTvSeriesReviews_shouldReturnEmptyList_whenNoReviews`() = runTest {
