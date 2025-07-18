@@ -1,6 +1,5 @@
 package com.sanaa.search.repository
 
-import android.util.Log
 import com.example.env_config.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
@@ -22,21 +21,20 @@ import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,
-    private val localDataSource: LocalCacheSearchDataSource,
+    private val localCacheSearchDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
     override suspend fun searchActors(query: String, page: Int) = searchOrThrow(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        Log.d("SearchRepo", "Page: $page, PageSize: $pageSize, Offset: $offset")
 
-        val cachedActors = localDataSource.getPagedActorsByQuery(query, pageSize, offset)
+        val cachedActors = localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset)
         if (cachedActors.isNotEmpty()) {
             cachedActors.map { it.toSearchOutput() }
         } else {
             remoteDataSource.searchActors(query, page).results.onEach {
                 val language = languageProvider.getCurrentLanguage()
-                localDataSource.cacheActor(it.toLocalDto(language))
+                localCacheSearchDataSource.cacheActor(it.toLocalDto(language))
             }.map { it.toSearchOutput() }
         }
     }
@@ -48,9 +46,8 @@ class SearchRepositoryImpl(
     ): List<SearchMovieOutput> = searchOrThrow(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        Log.d("SearchRepo", "Movies -> Page: $page, PageSize: $pageSize, Offset: $offset")
 
-        val cachedMedia = localDataSource.getMoviesByQuery(
+        val cachedMedia = localCacheSearchDataSource.getMoviesByQuery(
             query, limit = pageSize, offset = offset
         )
         if (cachedMedia.isNotEmpty())
@@ -66,9 +63,8 @@ class SearchRepositoryImpl(
     ): List<SearchTvSeriesOutput> = searchOrThrow(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
-        Log.d("SearchRepo", "TvSeries -> Page: $page, PageSize: $pageSize, Offset: $offset")
 
-        val cachedTvSeries = localDataSource.getTvSeriesByQuery(
+        val cachedTvSeries = localCacheSearchDataSource.getTvSeriesByQuery(
             query, limit = pageSize, offset = offset
         )
         if (cachedTvSeries.isNotEmpty())
@@ -83,7 +79,7 @@ class SearchRepositoryImpl(
         filters: MediaFilters?,
     ): List<SearchMovieOutput> {
         val movies = remoteDataSource.searchMovies(query, page).results.onEach {
-            localDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
+            localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
         }
         return filters
             ?.filterMovies(movies)
@@ -106,7 +102,7 @@ class SearchRepositoryImpl(
         filters: MediaFilters?,
     ): List<SearchTvSeriesOutput> {
         val tvSeries = remoteDataSource.searchTvShows(query, page).results.onEach {
-            localDataSource.cacheTvSeries(
+            localCacheSearchDataSource.cacheTvSeries(
                 it.toLocalDto(languageProvider.getCurrentLanguage())
             )
         }
@@ -133,6 +129,7 @@ class SearchRepositoryImpl(
         } catch (_: UnresolvedAddressException) {
             throw NoNetworkException()
         } catch (e: Exception) {
+            e.printStackTrace()
             throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
         }
     }

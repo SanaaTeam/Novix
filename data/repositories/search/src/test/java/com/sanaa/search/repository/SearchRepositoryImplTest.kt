@@ -33,8 +33,9 @@ class SearchRepositoryImplTest {
 
     @BeforeEach
     fun setUp() {
-        searchRepository =
-            SearchRepositoryImpl(remoteDataSource, localCacheSearchDataSource, languageProvider)
+        searchRepository = SearchRepositoryImpl(
+            remoteDataSource, localCacheSearchDataSource, languageProvider
+        )
     }
 
     @Test
@@ -43,9 +44,7 @@ class SearchRepositoryImplTest {
         val page = 1
         val query = "Tom"
         coEvery {
-            localCacheSearchDataSource.getActorsByQuery(
-                query,
-            )
+            localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
         } returns ActorsLocalDtoList
 
         // When
@@ -61,7 +60,9 @@ class SearchRepositoryImplTest {
         runTest {
             val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(query) } returns emptyList()
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } returns emptyList()
             coEvery { remoteDataSource.searchActors(query, page) } returns actorSearchResponse
             coEvery { localCacheSearchDataSource.cacheActor(any()) } just Runs
 
@@ -75,7 +76,9 @@ class SearchRepositoryImplTest {
         runTest {
             val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(any()) } throws UnresolvedAddressException()
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } throws UnresolvedAddressException()
             assertThrows<NoNetworkException> {
                 searchRepository.searchActors(query, page)
             }
@@ -86,7 +89,9 @@ class SearchRepositoryImplTest {
         runTest {
             val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(any()) } throws Exception()
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } throws Exception()
             assertThrows<RetrievingDataFailureException> {
                 searchRepository.searchActors(query, page)
             }
@@ -99,7 +104,7 @@ class SearchRepositoryImplTest {
         val query = "Tom"
         val filters = MediaFilters(startYear = 2025, endYear = 2025)
         coEvery {
-            localCacheSearchDataSource.getMoviesByQuery(query, page, 20)
+            localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
         } returns MoviesLocalDtoList
 
         // When
@@ -118,7 +123,7 @@ class SearchRepositoryImplTest {
             val page = 1
             val query = "Tom"
             coEvery {
-                localCacheSearchDataSource.getMoviesByQuery(query, page, 20)
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
             } returns MoviesLocalDtoList
 
             // When
@@ -136,11 +141,7 @@ class SearchRepositoryImplTest {
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
             coEvery {
-                localCacheSearchDataSource.getMoviesByQuery(
-                    query,
-                    page,
-                    20
-                )
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
@@ -157,11 +158,7 @@ class SearchRepositoryImplTest {
             val page = 1
             val query = "Tom"
             coEvery {
-                localCacheSearchDataSource.getMoviesByQuery(
-                    query,
-                    page,
-                    20
-                )
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
@@ -177,7 +174,7 @@ class SearchRepositoryImplTest {
             val page = 1
             val query = "Tom"
             coEvery {
-                localCacheSearchDataSource.getMoviesByQuery(query, page, 20)
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
@@ -208,12 +205,9 @@ class SearchRepositoryImplTest {
             val query = "Tom"
             val filters = MediaFilters()
             coEvery {
-                localCacheSearchDataSource.getMoviesByQuery(
-                    query,
-                    page,
-                    20
-                )
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
             } throws Exception()
+
             assertThrows<RetrievingDataFailureException> {
                 searchRepository.searchMovies(query, page, filters)
             }
@@ -227,7 +221,7 @@ class SearchRepositoryImplTest {
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } returns TvSeriesLocalDtoList
 
             // When
@@ -247,7 +241,7 @@ class SearchRepositoryImplTest {
             val page = 1
             val query = "Tom"
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } returns TvSeriesLocalDtoList
 
             // When
@@ -266,7 +260,7 @@ class SearchRepositoryImplTest {
             val query = "Jane"
             val filters = MediaFilters()
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
@@ -284,7 +278,7 @@ class SearchRepositoryImplTest {
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
@@ -301,7 +295,7 @@ class SearchRepositoryImplTest {
             val page = 1
             val query = "Tom"
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } returns emptyList()
             coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
@@ -318,7 +312,7 @@ class SearchRepositoryImplTest {
             val query = "Jane"
             val filters = MediaFilters()
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } throws UnresolvedAddressException()
             assertThrows<NoNetworkException> {
                 searchRepository.searchTvShows(query, page, filters)
@@ -332,7 +326,7 @@ class SearchRepositoryImplTest {
             val query = "Jane"
             val filters = MediaFilters()
             coEvery {
-                localCacheSearchDataSource.getTvSeriesByQuery(query, page, 20)
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
             } throws Exception()
             assertThrows<RetrievingDataFailureException> {
                 searchRepository.searchTvShows(query, page, filters)
