@@ -154,19 +154,19 @@ class MovieDetailsRemoteDataSourceImplTest {
     @Test
     fun `should return correct id when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals(1, dto.id)
+        assertEquals("rev123", dto.first().id)
     }
 
     @Test
     fun `should return correct number of results when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals(1, dto.results.size)
+        assertEquals(1, dto.size)
     }
 
     @Test
     fun `should return correct review content when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals("Fine", dto.results.first().content)
+        assertEquals("Fine", dto.first().content)
     }
 
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
