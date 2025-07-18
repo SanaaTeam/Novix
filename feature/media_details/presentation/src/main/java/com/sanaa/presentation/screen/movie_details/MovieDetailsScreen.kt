@@ -90,7 +90,8 @@ fun MovieDetailsScreen(
         }
     }
     MovieDetailsContent(
-        state = state, interactionListener = viewModel
+        state = state,
+        interactionListener = viewModel
     )
 
 }
@@ -101,7 +102,8 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }) {
+        backgroundShapes = { NovixBackgroundShapes() }
+    ) {
         Box(modifier = Modifier.fillMaxSize()) {
             AppTopBar(
                 leftContent = {

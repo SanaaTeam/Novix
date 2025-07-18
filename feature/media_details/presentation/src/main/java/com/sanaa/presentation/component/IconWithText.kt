@@ -19,6 +19,7 @@ fun IconWithText(
     iconRes: Int,
     contentDescription: String?,
     text: String,
+    textColor: Color=Theme.colors.body,
     tint: Color
 ) {
     Row(
@@ -34,7 +35,7 @@ fun IconWithText(
         Text(
             text = text,
             style = Theme.textStyle.label.small,
-            color = Theme.colors.body
+            color = textColor
         )
     }
 }

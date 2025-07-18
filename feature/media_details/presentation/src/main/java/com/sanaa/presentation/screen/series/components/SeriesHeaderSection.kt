@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.series.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,25 +53,25 @@ fun SeriesHeaderSection(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom,
             ) {
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    genres.forEachIndexed { index, genre ->
-                        Text(
-                            text = genre,
-                            style = Theme.textStyle.label.small,
-                            color = Theme.colors.body,
-                            modifier = Modifier.padding(end = 8.dp)
-                        )
-                        if (index != genres.lastIndex) {
-                            DotSeparator()
+                FlowRow {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    ) {
+                        genres.forEachIndexed { index, genre ->
+                            Text(
+                                text = genre,
+                                style = Theme.textStyle.label.small,
+                                color = Theme.colors.body,
+                                modifier = Modifier.padding(end = 8.dp)
+                            )
+                            if (index != genres.lastIndex) {
+                                DotSeparator()
+                            }
                         }
                     }
                 }
-
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
