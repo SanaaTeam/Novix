@@ -17,8 +17,8 @@ class LocalSearchHistoryDataSourceImpl(
         queryDao.upsertQuery(normalizedQuery, System.currentTimeMillis())
     }
 
-    override fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>> {
-        return queryDao.getAllQueries(limit)
+    override fun getQueries(limit: Int): Flow<List<QueryLocalDto>> {
+        return queryDao.getQueries(limit)
     }
 
     override suspend fun deleteQueryById(id: Int) {

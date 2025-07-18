@@ -2,24 +2,14 @@ package com.sanaa.novix.di
 
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.screen.SearchViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val searchModule = module {
-    viewModel { FilterViewModel(dispatcher = Dispatchers.IO, genreLocalizer = get()) }
-    viewModel {
-        SearchViewModel(
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            get(),
-            dispatcher = Dispatchers.IO,
-        )
-    }
+    single<CoroutineDispatcher> { Dispatchers.IO }
+    viewModelOf(::FilterViewModel)
+    viewModelOf(::SearchViewModel)
 }

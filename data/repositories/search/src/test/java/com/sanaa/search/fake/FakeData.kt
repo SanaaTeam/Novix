@@ -1,7 +1,7 @@
 package com.sanaa.search.fake
 
-import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
@@ -10,8 +10,8 @@ import com.sanaa.search.dataSource.remote.response.SearchResponse
 
 object FakeData {
     val ActorsLocalDtoList = listOf(
-        ActorsLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
-        ActorsLocalDto(id = 2, name = "Leonardo Leonardo", imagePath = "img", language = "en")
+        ActorLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
+        ActorLocalDto(id = 2, name = "Leonardo Leonardo", imagePath = "img", language = "en")
     )
     val ActorsRemoteDtoList = listOf(
         ActorSearchDto(
@@ -33,11 +33,11 @@ object FakeData {
     )
 
     val MoviesLocalDtoList = listOf(
-        MoviesLocalDto(
+        MovieLocalDto(
             id = 1, "Movie", "2024", null,
             null, null, "en", System.currentTimeMillis()
         ),
-        MoviesLocalDto(
+        MovieLocalDto(
             id = 1, "Movie2", "2025", null,
             null, null, "en", System.currentTimeMillis()
         ),
