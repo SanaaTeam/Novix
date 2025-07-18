@@ -130,9 +130,9 @@ class SearchViewModel(
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
         when (state.value.selectedTabIndex) {
-            MOVIE_INDEX -> loadMovies(query)
-            TV_SHOW_INDEX -> loadTvShows(query)
-            ACTOR_INDEX -> loadActors(query)
+            MOVIE_INDEX -> loadMovies(query.trim())
+            TV_SHOW_INDEX -> loadTvShows(query.trim())
+            ACTOR_INDEX -> loadActors(query.trim())
         }
     }
 
