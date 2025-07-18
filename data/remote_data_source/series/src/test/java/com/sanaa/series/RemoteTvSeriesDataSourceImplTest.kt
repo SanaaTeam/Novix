@@ -1,6 +1,6 @@
 package com.sanaa.series
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
@@ -513,7 +513,7 @@ class RemoteTvSeriesDataSourceImplTest {
         assertEquals("/episode_image1.jpg", result[0].filePath)
         assertEquals("/episode_image2.jpg", result[1].filePath)
     }
-    
+
 
     @Test
     fun `getTvSeriesReviews_shouldReturnEmptyList_whenNoReviews`() = runTest {

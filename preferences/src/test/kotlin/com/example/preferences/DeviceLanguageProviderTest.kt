@@ -1,8 +1,9 @@
-package com.example.env_config
+package com.example.preferences
 
-import org.junit.jupiter.api.Assertions.*
+import org.junit.Test
 import java.util.Locale
-import org.junit.jupiter.api.Test
+import kotlin.test.assertEquals
+
 
 class DeviceLanguageProviderTest {
 

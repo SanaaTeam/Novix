@@ -1,7 +1,7 @@
 
 package com.sanaa.actors
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
