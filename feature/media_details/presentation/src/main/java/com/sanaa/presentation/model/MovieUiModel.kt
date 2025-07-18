@@ -1,5 +1,7 @@
 package com.sanaa.presentation.model
 
+import android.annotation.SuppressLint
+import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Movie
 
 data class MovieUiModel(
@@ -8,7 +10,7 @@ data class MovieUiModel(
     val overview: String = "",
     val rating: String = "",
     val releaseDate: String = "",
-    val duration: String = "",
+    val duration: Int? = null,
     val posterUrls: List<String> = emptyList(),
     val genres: List<String> = emptyList(),
     val isBookmarked: Boolean = false,
@@ -17,6 +19,7 @@ data class MovieUiModel(
 )
 
 
+@SuppressLint("DefaultLocale")
 fun Movie.toUiModel(
     isBookmarked: Boolean = false,
     trailerUrl: String? = null
@@ -25,11 +28,9 @@ fun Movie.toUiModel(
         id = id,
         title = title,
         overview = overview,
-        rating = "%.1f".format(imdbRating),
-        releaseDate = "${releaseDate.year}-${
-            releaseDate.monthNumber.toString().padStart(2, '0')
-        }-${releaseDate.dayOfMonth.toString().padStart(2, '0')}",
-        duration = duration.toString(),
+        rating = String.format("%.1f", imdbRating),
+        releaseDate = releaseDate.formatDateLocalizedDigits(),
+        duration = duration,
         genres = genres.map { it.name },
         isBookmarked = isBookmarked,
         trailerUrl = trailerUrl,

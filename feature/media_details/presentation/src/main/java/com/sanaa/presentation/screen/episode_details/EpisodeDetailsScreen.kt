@@ -105,7 +105,8 @@ private fun EpisodeDetailsScreenContent(
             )
 
             AnimatedContent(
-                state.isLoading, modifier = Modifier.align(Alignment.Center),
+                state.isLoading,
+                modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
                 if (it) {
@@ -148,11 +149,12 @@ private fun EpisodeDetailsScreenContent(
                                     )
                                 )
                             }
-                            GuestsOfHonorComponent(
-                                guests = state.guestOfHonor,
-                                onActorClick = interactionListener::onCastClick,
-                                modifier = Modifier.padding(top = 16.dp)
-                            )
+                            if (state.guestOfHonor.isNotEmpty())
+                                GuestsOfHonorComponent(
+                                    guests = state.guestOfHonor,
+                                    onActorClick = interactionListener::onCastClick,
+                                    modifier = Modifier.padding(top = 16.dp)
+                                )
                         }
                     }
                 }

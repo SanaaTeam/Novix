@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -90,8 +91,7 @@ fun MovieDetailsScreen(
         }
     }
     MovieDetailsContent(
-        state = state,
-        interactionListener = viewModel
+        state = state, interactionListener = viewModel
     )
 
 }
@@ -102,8 +102,7 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }
-    ) {
+        backgroundShapes = { NovixBackgroundShapes() }) {
         Box(modifier = Modifier.fillMaxSize()) {
             AppTopBar(
                 leftContent = {
@@ -130,9 +129,8 @@ fun MovieDetailsContent(
                     }
                 } else {
                     LazyColumn(
-                        modifier = Modifier
-                            .padding(bottom = 112.dp)
-                            .fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 112.dp)
                     ) {
                         item {
                             Box(modifier = Modifier.fillMaxWidth()) {
@@ -176,13 +174,18 @@ fun MovieDetailsContent(
                                             tint = Theme.colors.statusColors.yellowAccent
                                         )
                                         DotSeparator()
-                                        IconWithText(
-                                            iconRes = presentationR.drawable.icon_duration,
-                                            contentDescription = null,
-                                            text = state.movieDetails.duration,
-                                            tint = Theme.colors.body
-                                        )
-                                        DotSeparator()
+                                        state.movieDetails.duration?.let {
+                                            IconWithText(
+                                                iconRes = presentationR.drawable.icon_duration,
+                                                contentDescription = null,
+                                                text = stringResource(
+                                                    R.string.m,
+                                                    state.movieDetails.duration
+                                                ),
+                                                tint = Theme.colors.body
+                                            )
+                                            DotSeparator()
+                                        }
                                         IconWithText(
                                             iconRes = presentationR.drawable.icon_calender,
                                             contentDescription = null,
@@ -225,18 +228,20 @@ fun MovieDetailsContent(
 
                 }
             }
-
             BottomContainer(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSetRateClicked = { interactionListener.onRateMovieClick() })
+
+
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() })
             }
 
         }
+
     }
 }
 

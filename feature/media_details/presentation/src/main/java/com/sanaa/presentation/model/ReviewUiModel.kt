@@ -1,7 +1,8 @@
 package com.sanaa.presentation.model
 
+import android.annotation.SuppressLint
+import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Review
-import kotlin.math.roundToInt
 
 data class ReviewUiModel(
     val id: Int,
@@ -13,12 +14,13 @@ data class ReviewUiModel(
     val avatarUrl: String? = null,
 )
 
+@SuppressLint("DefaultLocale")
 fun Review.toReviewUiModel() = ReviewUiModel(
     id = id,
     authorName = authorName?.toString(),
     username = userHandle,
     content = content,
-    rating =  rating?.roundToInt()?.toString(),
-    createdDate = createdDate.toString(),
+    rating = String.format("%.1f", rating),
+    createdDate = createdDate.formatDateLocalizedDigits().toString(),
     avatarUrl = avatarUrl
 )

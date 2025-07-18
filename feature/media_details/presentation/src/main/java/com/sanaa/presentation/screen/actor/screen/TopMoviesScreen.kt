@@ -35,6 +35,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -52,9 +54,7 @@ fun TopMoviesScreen(
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         TopMoviesContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize()
+            state = uiState, onBackClick = navigateBack, modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -62,9 +62,7 @@ fun TopMoviesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopMoviesContent(
-    state: ActorScreenUiState,
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit
+    state: ActorScreenUiState, modifier: Modifier = Modifier, onBackClick: () -> Unit
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
@@ -72,6 +70,7 @@ private fun TopMoviesContent(
     } else {
         R.drawable.movie_placeholder_light
     }
+    val navController = LocalNavControllerProvider.current
 
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
@@ -82,8 +81,7 @@ private fun TopMoviesContent(
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
-                        onClick = onBackClick
+                        icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(com.sanaa.presentation.R.string.top_movie_picks),
@@ -95,14 +93,12 @@ private fun TopMoviesContent(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
 
                 AnimatedContent(
                     targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { loading ->
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -131,8 +127,9 @@ private fun TopMoviesContent(
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
-                                    onCardClick = { /* open movie */ }
-                                )
+                                    onCardClick = {
+                                        navController.navigate(MovieDetailsScreenRoute(movie.id).route())
+                                    })
                             }
                         }
                     }

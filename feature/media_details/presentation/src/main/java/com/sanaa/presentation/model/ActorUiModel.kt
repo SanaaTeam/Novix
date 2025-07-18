@@ -1,5 +1,6 @@
 package com.sanaa.presentation.model
 
+import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Actor
 
 data class ActorUiModel(
@@ -25,7 +26,7 @@ fun Actor.toActorUiModel() = ActorUiModel(
     gender = if (gender == Actor.Gender.MALE) "male" else "female",
     department = department?.toString(),
     character = character,
-    lifeSpan = birthDate?.let { birth -> deathDate?.let { death -> "$birth - $death" } ?: birth }
+    lifeSpan = birthDate?.let { birth -> deathDate?.let { death -> "$birth - $death" } ?: birth.formatDateLocalizedDigits() }
         .toString(),
     placeOfBirth = placeOfBirth?.toString(),
     biography = biography?.takeIf(String::isNotBlank),

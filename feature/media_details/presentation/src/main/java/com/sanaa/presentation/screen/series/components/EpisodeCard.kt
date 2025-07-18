@@ -1,9 +1,11 @@
 package com.sanaa.presentation.screen.series.components
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -31,16 +34,34 @@ fun EpisodeCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        AsyncImage(
-            model = episode.stillPath, contentDescription = null, modifier = Modifier
+        Box(
+            modifier = Modifier
                 .clip(
                     RoundedCornerShape(12.dp)
                 )
-                .fillMaxHeight()
                 .width(116.dp)
-                .height(78.dp),
-            contentScale = ContentScale.Crop
-        )
+                .height(78.dp)
+                .border(
+                    width = 1.dp,
+                    color = Theme.colors.stroke,
+                    shape = RoundedCornerShape(12.dp)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            episode.stillPath?.takeIf { it.isNotEmpty() }?.let { imageUrl ->
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            } ?: run {
+                Image(
+                    painter = painterResource(R.drawable.movie_placeholder_light),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        }
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.align(Alignment.CenterVertically)

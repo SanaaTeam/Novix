@@ -1,9 +1,11 @@
 package com.sanaa.presentation.model
 
+import android.annotation.SuppressLint
+import com.sanaa.presentation.util.formatDateLocalizedDigits
+import com.sanaa.presentation.util.formatLocalizedDate
 import entity.Episode
 import entity.Season
 import entity.TvSeries
-import kotlin.math.roundToInt
 
 data class SeriesUiModel(
     val id: Int = 0,
@@ -34,18 +36,17 @@ data class EpisodeUiModel(
     val seasonNumber: Int = 0,
 )
 
+@SuppressLint("DefaultLocale")
 fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
     overview = overview,
-    rating = "%.1f".format(imdbRating),
+    rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
     genres = genres.map { it.name },
-    releaseDate = "${releaseDate.year}-${
-        releaseDate.monthNumber.toString().padStart(2, '0')
-    }-${releaseDate.dayOfMonth.toString().padStart(2, '0')}",
+    releaseDate = releaseDate.formatDateLocalizedDigits().toString(),
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(
@@ -55,11 +56,12 @@ fun Season.toSeasonUiModel() = SeasonUiModel(
 
     )
 
+@SuppressLint("DefaultLocale")
 fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     number = number,
     title = title,
-    rating = imdbRating?.roundToInt()?.toString(),
-    airDate = "3 oct 2011",
+    rating = String.format("%.1f", imdbRating),
+    airDate = releaseDate?.let { formatLocalizedDate(it) },
     stillPath = stillImagePath,
     duration = durationMinutes,
     overview = overview,

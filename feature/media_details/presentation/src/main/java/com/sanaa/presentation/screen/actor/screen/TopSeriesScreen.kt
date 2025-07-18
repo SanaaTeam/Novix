@@ -35,6 +35,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -52,7 +54,9 @@ fun TopSeriesScreen(
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         TopSeriesContent(
-            state = uiState, onBackClick = navigateBack, modifier = Modifier.fillMaxSize()
+            state = uiState,
+            onBackClick = navigateBack,
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -60,8 +64,11 @@ fun TopSeriesScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopSeriesContent(
-    state: ActorScreenUiState, modifier: Modifier = Modifier, onBackClick: () -> Unit
+    state: ActorScreenUiState,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
 ) {
+    val navController = LocalNavControllerProvider.current
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme) {
         R.drawable.movie_placeholder_dark
@@ -86,7 +93,6 @@ private fun TopSeriesContent(
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
-
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -124,7 +130,12 @@ private fun TopSeriesContent(
                                         )
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
-                                    onCardClick = { /* open movie */ })
+                                    onCardClick = {
+                                        navController.navigate(
+                                            SeriesDetailsScreenRoute(series.id).route()
+                                        )
+                                    }
+                                )
                             }
                         }
                     }

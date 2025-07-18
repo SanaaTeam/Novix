@@ -83,10 +83,9 @@ fun ReviewsScreenContent(
                     if (state.reviews.isNotEmpty()) {
                         LazyColumn(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp)
-                                .align(Alignment.TopCenter),
+                                .padding(horizontal = 16.dp),
                             contentPadding = PaddingValues(vertical = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             items(state.reviews.size, key = { it }) { review ->
                                 ReviewCard(review = state.reviews[review])

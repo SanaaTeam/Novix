@@ -148,9 +148,7 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                 {
                     val movieId = it.arguments!!.getInt(MovieDetailsScreenRoute.ARG_MOVIE_ID)
                     MovieDetailsScreen(movieId = movieId)
-
                 }
-
             }
         }
     }
