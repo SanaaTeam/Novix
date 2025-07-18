@@ -4,6 +4,7 @@ import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 import com.sanaa.presentation.screen.SearchViewModel
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
+import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
 import com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
 import com.sanaa.presentation.screen.review.ReviewViewModel
 import com.sanaa.presentation.screen.series.SeriesViewModel
@@ -34,5 +35,6 @@ val viewModelModule = module {
     viewModelOf(::ActorViewModel)
     viewModelOf(::SeriesViewModel)
     viewModelOf(::ReviewViewModel)
+    viewModelOf(::MovieCategoriesViewModel)
 
 }
