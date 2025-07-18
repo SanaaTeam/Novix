@@ -29,9 +29,10 @@ class SearchActorsUseCaseTest {
         runTest {
             // Given
             val query = "Actor"
+            val page = 1
 
             // When
-            searchActorsUseCase.execute(query)
+            searchActorsUseCase.execute(query, page)
 
             // Then
             coVerify {
@@ -45,10 +46,11 @@ class SearchActorsUseCaseTest {
         runTest {
             // Given
             val query = "Actor"
-            coEvery { searchRepository.searchActors(query) } returns searchActorOutputList
+            val page = 1
+            coEvery { searchRepository.searchActors(query, page) } returns searchActorOutputList
 
             // When
-            val result = searchActorsUseCase.execute(query)
+            val result = searchActorsUseCase.execute(query, page)
 
             // Then
             assertThat(result).isEqualTo(searchActorOutputList)
@@ -60,13 +62,14 @@ class SearchActorsUseCaseTest {
         runTest {
             // Given
             val query = "Sam"
+            val page = 1
             coEvery {
-                searchRepository.searchActors(query)
+                searchRepository.searchActors(query, page)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchActorsUseCase.execute(query)
+                searchActorsUseCase.execute(query, page)
             }
         }
 

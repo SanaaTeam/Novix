@@ -1,22 +1,32 @@
 package com.sanaa.presentation.screen
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.paging.SearchActorsPagingSource
+import com.sanaa.presentation.paging.SearchMoviesPagingSource
+import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import com.sanaa.presentation.screen.state.mapper.toUiState
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
 import search.usecase.ClearSearchHistoryUseCase
@@ -44,86 +54,68 @@ class SearchViewModel(
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
 
+    private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
+    val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
+
+    private val _tvShowsPagingData = MutableStateFlow<PagingData<TvShowUiModel>>(PagingData.empty())
+    val tvShowsPagingData: StateFlow<PagingData<TvShowUiModel>> = _tvShowsPagingData
+
+    private val _actorsPagingData = MutableStateFlow<PagingData<ActorUiModel>>(PagingData.empty())
+    val actorsPagingData: StateFlow<PagingData<ActorUiModel>> = _actorsPagingData
+
     init {
+        observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
-        observeSearchQueryChanges()
     }
 
     @OptIn(FlowPreview::class)
-    private fun observeSearchQueryChanges() {
-        viewModelScope.launch {
-            state.map { it.searchQuery }
-                .distinctUntilChanged()
-                .debounce(500L)
-                .collectLatest { query ->
-                    if (query.isBlank()) {
-                        clearSearchResults()
-                    } else {
-                        loadMediaByTab(query)
-                    }
-                }
-        }
+    fun observeSearchQueryChanges() {
+        tryToCollect(
+            callee = { state.map { it.searchQuery }.distinctUntilChanged().debounce(500L) },
+            onCollect = { if (it.isBlank()) clearSearchResults() else loadMediaByTab(it) },
+            onError = ::onDataLoadError,
+        )
     }
 
     fun observeRecentViewedItems() {
-        updateState {
-            it.copy(
-                isLoading = true, error = null, noInternetConnection = false
-            )
-        }
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
 
-        tryToExecute(
-            callee = {
-                getRecentViewedUseCase.execute()
-                    .map { items ->
-                        items.map {
-                            RecentViewedUiModel(
-                                id = it.id,
-                                imageUrl = it.posterImageUrl,
-                                mediaType = it.mediaType.name,
-                                isSaved = it.isSaved
-                            )
-                        }
-                    }
-                    .collectLatest { viewed ->
-                        updateState {
-                            it.copy(
-                                recentViewedMedia = viewed, noInternetConnection = false
-                            )
-                        }
-                    }
-            },
+        tryToCollect(
+            callee = ::onGetRecentViewedItems,
+            onCollect = ::onCollectRecentViewedItems,
             onError = ::onDataLoadError
         )
+    }
+
+    private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedUiModel>> {
+        return getRecentViewedUseCase.execute().toUiState()
+    }
+
+    private fun onCollectRecentViewedItems(viewed: List<RecentViewedUiModel>) {
+        updateState { it.copy(recentViewedMedia = viewed, noInternetConnection = false) }
     }
 
     fun observeRecentSearchHistory() {
-        tryToExecute(
-            callee = {
-                getSearchHistoryUseCase.execute()
-                    .map { items ->
-                        items.map {
-                            RecentSearchUiModel(
-                                id = it.id,
-                                title = it.query
-                            )
-                        }
-                    }
-                    .collectLatest { queries ->
-                        updateState {
-                            it.copy(
-                                recentSearchQueries = queries,
-                                noInternetConnection = false
-                            )
-                        }
-                    }
-            },
+        tryToCollect(
+            callee = ::getRecentSearchHistory,
+            onCollect = ::onCollectRecentSearchHistory,
             onError = ::onDataLoadError
         )
     }
 
+    suspend fun getRecentSearchHistory(): Flow<List<RecentSearchUiModel>> {
+        return getSearchHistoryUseCase.execute().toUiState()
+    }
+
+    fun onCollectRecentSearchHistory(queries: List<RecentSearchUiModel>) {
+        updateState { it.copy(recentSearchQueries = queries, noInternetConnection = false) }
+    }
+
     private fun clearSearchResults() {
+        _moviesPagingData.value = PagingData.empty()
+        _tvShowsPagingData.value = PagingData.empty()
+        _actorsPagingData.value = PagingData.empty()
         updateState {
             it.copy(
                 movies = emptyList(),
@@ -145,69 +137,125 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute(
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
+        tryToCollect(
             callee = { loadMoviesOperation(query) },
-            onSuccess = ::onLoadMoviesSuccess,
+            onCollect = ::onCollectMoviesSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun loadMoviesOperation(query: String): List<MovieUiModel> {
-        return searchMoviesUseCase.execute(query, filters = state.value.filters).map {
-            MovieUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
-        }
+    private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchMoviesPagingSource(
+                    searchMoviesUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            }
+        ).flow.map { pagingData ->
+            pagingData.map { item ->
+                MovieUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
+            }
+        }.cachedIn(viewModelScope)
     }
 
-    private fun onLoadMoviesSuccess(movies: List<MovieUiModel>) {
-        updateState { it.copy(isLoading = false, movies = movies, noInternetConnection = false) }
+    private fun onCollectMoviesSuccess(pagingData: PagingData<MovieUiModel>) {
+        _moviesPagingData.value = pagingData
+        updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute(
+        tryToCollect(
             callee = { loadTvShowsOperation(query) },
-            onSuccess = ::onLoadTvShowsSuccess,
+            onCollect = { pagingData ->
+                _tvShowsPagingData.value = pagingData
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
+            },
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun loadTvShowsOperation(query: String): List<TvShowUiModel> {
-        return searchTvSeriesUseCase.execute(query, filters = state.value.filters).map {
-            TvShowUiModel(id = it.id, title = it.title, imageUrl = it.posterImageUrl, rating = "")
-        }
+    private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchTvShowsPagingSource(
+                    searchTvSeriesUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            }
+        ).flow.map { pagingData ->
+            pagingData.map { item ->
+                TvShowUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
+            }
+        }.cachedIn(viewModelScope)
     }
 
-    private fun onLoadTvShowsSuccess(tvShows: List<TvShowUiModel>) {
-        updateState { it.copy(isLoading = false, tvShows = tvShows, noInternetConnection = false) }
-    }
 
     private fun loadActors(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-        tryToExecute(
-            callee = { loadActorsOperation(query) },
-            onSuccess = ::onLoadActorsSuccess,
+
+        tryToCollect(
+            callee = { onLoadActors(query) },
+            onCollect = { pagingData ->
+                _actorsPagingData.value = pagingData
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
+            },
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun loadActorsOperation(query: String): List<ActorUiModel> {
-        return searchActorsUseCase.execute(query).map {
-            ActorUiModel(id = it.id, name = it.name, imageUrl = it.profileImageUrl)
-        }
+    private fun onLoadActors(query: String): Flow<PagingData<ActorUiModel>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = {
+                SearchActorsPagingSource(
+                    searchActorsUseCase,
+                    query = query
+                )
+            }
+        ).flow.map { pagingData ->
+            pagingData.map { searchActorOutput ->
+                ActorUiModel(
+                    id = searchActorOutput.id,
+                    name = searchActorOutput.name,
+                    imageUrl = searchActorOutput.profileImageUrl
+                )
+            }
+        }.cachedIn(viewModelScope)
     }
 
-    private fun onLoadActorsSuccess(actors: List<ActorUiModel>) {
-        updateState {
-            it.copy(
-                noInternetConnection = false,
-                isLoading = false,
-                actors = actors
-            )
-        }
-    }
-
-    private fun onDataLoadError(e: Exception) {
+    private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException)
             updateState {
                 it.copy(
@@ -246,24 +294,25 @@ class SearchViewModel(
 
     override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
         tryToExecute(
-            callee = {
-                addRecentViewedUseCase.execute(
-                    RecentViewedMedia(
-                        id = viewed.id,
-                        posterImageUrl = viewed.imageUrl,
-                        mediaType = MediaType.valueOf(viewed.mediaType),
-                        isSaved = viewed.isSaved
-                    )
-                )
-            },
+            callee = { addRecentViewedMedia(viewed) },
             onError = ::onDataLoadError
+        )
+    }
+
+    private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
+        addRecentViewedUseCase.execute(
+            RecentViewedMedia(
+                id = viewed.id,
+                posterImageUrl = viewed.imageUrl,
+                mediaType = MediaType.valueOf(viewed.mediaType),
+                isSaved = viewed.isSaved
+            )
         )
     }
 
     override fun onClearRecentViewClicked() {
         tryToExecute(
             callee = clearRecentViewedUseCase::execute,
-            onSuccess = {},
             onError = ::onDataLoadError
         )
     }
@@ -271,7 +320,6 @@ class SearchViewModel(
     override fun onClearRecentSearchClicked() {
         tryToExecute(
             clearSearchHistoryUseCase::execute,
-            onSuccess = {},
             onError = ::onDataLoadError
         )
     }
@@ -281,19 +329,15 @@ class SearchViewModel(
         tryToExecute(
             callee = { deleteSearchItemUseCase.execute(id) },
             onSuccess = {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        noInternetConnection = false
-                    )
-                }
+                updateState { it.copy(isLoading = false, noInternetConnection = false) }
             },
-            ::onDataLoadError
+            onError = ::onDataLoadError
         )
     }
 
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
+        loadMediaByTab(query)
     }
 
     override fun onSaveIconClicked() {
@@ -301,6 +345,7 @@ class SearchViewModel(
     }
 
     companion object {
+        private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
         const val ACTOR_INDEX = 2

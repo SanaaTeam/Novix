@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ScrollableTabRow
@@ -7,14 +8,16 @@ import androidx.compose.material3.Tab
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 
 @Composable
 fun CategoryTab(
     categories: List<String>,
     selectedIndex: Int,
-    onCategorySelected: (Int) -> Unit
+    onCategorySelected: (Int) -> Unit,
 ) {
 
     Column {
@@ -46,3 +49,11 @@ fun CategoryTab(
     }
 }
 
+@PreviewLightDark
+@Composable
+fun PreviewCategoryTab() {
+    val categories = listOf("Category1", "Category2", "Category3")
+    NovixTheme(isSystemInDarkTheme()) {
+        CategoryTab(categories, 1, {})
+    }
+}
