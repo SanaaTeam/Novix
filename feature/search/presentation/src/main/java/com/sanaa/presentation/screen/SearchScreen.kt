@@ -159,6 +159,7 @@ fun SearchScreenContent(
                         recentSearches = uiState.recentSearchQueries,
                         recentViewed = uiState.recentViewedMedia,
                         interactionsListener = searchListener,
+                        onMediaClick = onMediaClick
                     )
                 }
             }
