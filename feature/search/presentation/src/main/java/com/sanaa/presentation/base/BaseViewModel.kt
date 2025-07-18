@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -32,6 +35,24 @@ abstract class BaseViewModel<T>(
             try {
                 val result = callee()
                 onSuccess(result)
+            } catch (exception: Exception) {
+                onError(exception)
+            }
+        }
+    }
+
+    protected fun <T> tryToCollect(
+        callee: suspend () -> Flow<T>,
+        onCollect: suspend (T) -> Unit,
+        onError: (exception: Throwable) -> Unit = {},
+        dispatcher: CoroutineDispatcher = defaultDispatcher,
+    ) {
+        viewModelScope.launch(dispatcher) {
+            try {
+                callee().catch { onError(it) }
+                    .collectLatest { result ->
+                        onCollect(result)
+                    }
             } catch (exception: Exception) {
                 onError(exception)
             }

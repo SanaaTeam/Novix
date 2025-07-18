@@ -1,6 +1,7 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -15,8 +16,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import entity.Genre
@@ -109,12 +112,14 @@ fun GenreChipsPreview() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
+@PreviewLightDark
 @Composable
 fun GenreChipsPreviewNoGenresSelected() {
-    val genres = Genre.entries
-    Column(modifier = Modifier.padding(16.dp)) {
-        GenreChips(genres = genres, selectedGenres = emptySet(), onGenreSelected = {})
+    NovixTheme(isSystemInDarkTheme()) {
+        val genres = Genre.entries
+        Column(modifier = Modifier.padding(16.dp)) {
+            GenreChips(genres = genres, selectedGenres = emptySet(), onGenreSelected = {})
+        }
     }
 }
 

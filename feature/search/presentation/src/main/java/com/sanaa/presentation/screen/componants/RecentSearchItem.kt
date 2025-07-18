@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -24,13 +25,11 @@ fun RecentSearchItem(
     modifier: Modifier = Modifier,
     onDeleteClicked: () -> Unit = {},
     onRecentSearchItemClicked: () -> Unit = {},
-
-    ) {
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
-
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -68,18 +67,10 @@ fun RecentSearchItem(
 
 }
 
-@Preview(showBackground = true, locale = "en")
-@Composable
-private fun RecentSearchItemPreviewLight() {
-    NovixTheme(false) {
-        RecentSearchItem("Shutter island")
-    }
-}
-
-@Preview(showBackground = true, locale = "en")
+@PreviewLightDark
 @Composable
 private fun RecentSearchItemPreviewDark() {
-    NovixTheme(true) {
+    NovixTheme(isSystemInDarkTheme()) {
         RecentSearchItem("Shutter island")
     }
 }
