@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.series
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,12 +36,15 @@ import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
+import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import entity.Genre
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -82,6 +86,12 @@ fun SeriesScreen(
                 is SeriesScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
+                }
+
+                is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
+                    navController.navigate(
+                        MovieCategoriesScreenRoute(it.categoryId).route()
+                    )
                 }
             }
         }
@@ -139,6 +149,7 @@ fun SeriesScreenContent(
                     Column(
                         modifier = Modifier.padding(bottom = 112.dp)
                     ) {
+                        Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
                         SeriesHeaderSection(
                             title = state.series.title,
                             rating = state.series.rating,
@@ -152,7 +163,9 @@ fun SeriesScreenContent(
                                 interactionListener.onViewReviewsClicked(
                                     state.series.id
                                 )
-                            })
+                            },
+                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) }
+                            )
                         state.series.overview?.let {
                             OverviewSection(
                                 onReadMore = {},
