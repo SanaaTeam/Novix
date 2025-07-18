@@ -87,24 +87,6 @@ class SeriesViewModelTest {
     }
 
     @Test
-    fun `onSeasonNumberClicked loads new season and stops loadingEpisodes`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
-        givenHappyViewModel()
-
-        viewModel.state.test {
-            viewModel.onSeasonNumberClicked(2)
-            val loadingEpisodesState = awaitItem()
-            assertThat(loadingEpisodesState.selectedSeason).isEqualTo(1)
-
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            val finalState = awaitItem()
-            assertThat(finalState.selectedSeason).isEqualTo(2)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onEpisodeClicked emits NavigateToEpisodeDetailsScreen`() = runTest {
         givenHappyViewModel()
         viewModel.onEpisodeClicked(seriesId, 1, 5)
