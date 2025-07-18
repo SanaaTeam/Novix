@@ -63,7 +63,8 @@ fun FilterBottomSheetContent(
                     GenreChips(
                         genres = uiState.allGenres,
                         selectedGenres = uiState.selectedGenres,
-                        onGenreSelected = listener::onGenreSelected
+                        onGenreSelected = listener::onGenreSelected,
+                        animateWidth = false,
                     )
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
@@ -87,7 +88,7 @@ fun FilterBottomSheetContent(
 @Composable
 private fun FilterActions(
     onApplyClicked: () -> Unit,
-    onClearClicked: () -> Unit
+    onClearClicked: () -> Unit,
 ) {
     Column(
         modifier = Modifier.padding(top = 24.dp),
