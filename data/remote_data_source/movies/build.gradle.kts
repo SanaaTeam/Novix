@@ -60,6 +60,7 @@ dependencies {
     testImplementation(libs.ktor.client.mock)
     testImplementation(kotlin("test"))
 }
-tasks.withType<Test> {
+
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }

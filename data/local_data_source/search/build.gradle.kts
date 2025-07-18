@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
+
+tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
 }

@@ -22,6 +22,6 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
 }
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }

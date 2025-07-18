@@ -15,3 +15,7 @@ dependencies {
     implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.coil.compose)
 }
+
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}

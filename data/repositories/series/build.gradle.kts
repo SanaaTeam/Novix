@@ -46,6 +46,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
