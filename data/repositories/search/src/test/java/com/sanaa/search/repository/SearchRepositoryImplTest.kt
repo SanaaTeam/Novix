@@ -33,19 +33,23 @@ class SearchRepositoryImplTest {
 
     @BeforeEach
     fun setUp() {
-        searchRepository =
-            SearchRepositoryImpl(remoteDataSource, localCacheSearchDataSource, languageProvider)
+        searchRepository = SearchRepositoryImpl(
+            remoteDataSource, localCacheSearchDataSource, languageProvider
+        )
     }
 
     @Test
     fun `searchActors() should returns cached actors when cashed data available`() = runTest {
         // Given
+        val page = 1
         val query = "Tom"
-        coEvery { localCacheSearchDataSource.getActorsByQuery(query) } returns ActorsLocalDtoList
+        coEvery {
+            localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+        } returns ActorsLocalDtoList
 
         // When
         val expected = ActorsLocalDtoList.map { it.toSearchOutput() }
-        val result = searchRepository.searchActors(query)
+        val result = searchRepository.searchActors(query, page)
 
         // Then
         assertThat(result).isEqualTo(expected)
@@ -54,47 +58,59 @@ class SearchRepositoryImplTest {
     @Test
     fun `searchActors() should fetches remote and caches when there is there is no cached data`() =
         runTest {
+            val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchActors(query) } returns actorSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchActors(query, page) } returns actorSearchResponse
             coEvery { localCacheSearchDataSource.cacheActor(any()) } just Runs
 
-            searchRepository.searchActors(query)
+            searchRepository.searchActors(query, page)
 
-            coVerify { remoteDataSource.searchActors(query) }
+            coVerify { remoteDataSource.searchActors(query, page) }
         }
 
     @Test
     fun `searchActors() throws NoNetworkException when throw UnresolvedAddressException`() =
         runTest {
+            val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(any()) } throws UnresolvedAddressException()
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } throws UnresolvedAddressException()
             assertThrows<NoNetworkException> {
-                searchRepository.searchActors(query)
+                searchRepository.searchActors(query, page)
             }
         }
 
     @Test
     fun `searchActors() should throw RetrievingDataFailureException when throw an exception`() =
         runTest {
+            val page = 1
             val query = "Jane"
-            coEvery { localCacheSearchDataSource.getActorsByQuery(any()) } throws Exception()
+            coEvery {
+                localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
+            } throws Exception()
             assertThrows<RetrievingDataFailureException> {
-                searchRepository.searchActors(query)
+                searchRepository.searchActors(query, page)
             }
         }
 
     @Test
     fun `searchMovies() should returns cached movies when cashed data available`() = runTest {
         // Given
+        val page = 1
         val query = "Tom"
         val filters = MediaFilters(startYear = 2025, endYear = 2025)
-        coEvery { localCacheSearchDataSource.getMoviesByQuery(query) } returns MoviesLocalDtoList
+        coEvery {
+            localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+        } returns MoviesLocalDtoList
 
         // When
         val expected =
             MoviesLocalDtoList.filter { it.releaseYear == 2025 }.map { it.toSearchOutput() }
-        val result = searchRepository.searchMovies(query, filters)
+        val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
         assertThat(result).isEqualTo(expected)
@@ -104,12 +120,15 @@ class SearchRepositoryImplTest {
     fun `searchMovies() should fetches remote and caches movies when there is no cached data`() =
         runTest {
             // Given
+            val page = 1
             val query = "Tom"
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(query) } returns MoviesLocalDtoList
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+            } returns MoviesLocalDtoList
 
             // When
             val expected = MoviesLocalDtoList.map { it.toSearchOutput() }
-            val result = searchRepository.searchMovies(query, null)
+            val result = searchRepository.searchMovies(query, page, null)
 
             // Then
             assertThat(result).isEqualTo(expected)
@@ -118,63 +137,79 @@ class SearchRepositoryImplTest {
     @Test
     fun `searchMovies() should returns filtered cached movies when cashed data available and chose passing filters`() =
         runTest {
+            val page = 1
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchMovies(query) } returns MovieSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
             val expected = MoviesLocalDtoList
                 .filter { it.releaseYear == 2025 }.map { it.toSearchOutput() }
-            val result = searchRepository.searchMovies(query, filters)
+            val result = searchRepository.searchMovies(query, page, filters)
             assertThat(result).isEqualTo(expected)
         }
 
     @Test
     fun `searchMovies() should fetches remote and cache filtered movies when there is no cached data and choose filters`() =
         runTest {
+            val page = 1
             val query = "Tom"
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchMovies(query) } returns MovieSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
             val expected = MoviesLocalDtoList.map { it.toSearchOutput() }
-            val result = searchRepository.searchMovies(query, null)
+            val result = searchRepository.searchMovies(query, page, null)
             assertThat(result).isEqualTo(expected)
         }
 
     @Test
     fun `searchMovies() should fetches remote and caches movies without filtration when there is no cached data and not choose filters`() =
         runTest {
+            val page = 1
             val query = "Tom"
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchMovies(query) } returns MovieSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
-            searchRepository.searchMovies(query, null)
+            searchRepository.searchMovies(query, page, null)
 
-            coVerify { remoteDataSource.searchMovies(query) }
+            coVerify { remoteDataSource.searchMovies(query, page) }
         }
 
     @Test
     fun `searchMovies() should throws NoNetworkException when throw UnresolvedAddressException`() =
         runTest {
+            val page = 1
             val query = "Tom"
             val filters = MediaFilters()
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(any()) } throws UnresolvedAddressException()
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(any(), any(), any())
+            } throws UnresolvedAddressException()
             assertThrows<NoNetworkException> {
-                searchRepository.searchMovies(query, filters)
+                searchRepository.searchMovies(query, page, filters)
             }
         }
 
     @Test
     fun `searchMovies() should throw RetrievingDataFailureException when throw an exception`() =
         runTest {
+            val page = 1
             val query = "Tom"
             val filters = MediaFilters()
-            coEvery { localCacheSearchDataSource.getMoviesByQuery(any()) } throws Exception()
+            coEvery {
+                localCacheSearchDataSource.getMoviesByQuery(query, any(), any())
+            } throws Exception()
+
             assertThrows<RetrievingDataFailureException> {
-                searchRepository.searchMovies(query, filters)
+                searchRepository.searchMovies(query, page, filters)
             }
         }
 
@@ -182,14 +217,17 @@ class SearchRepositoryImplTest {
     fun `searchTvShows() should returns cached filtered tv shows when cashed data available and choose filters`() =
         runTest {
             // Given
+            val page = 1
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query) } returns TvSeriesLocalDtoList
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } returns TvSeriesLocalDtoList
 
             // When
             val expected =
                 TvSeriesLocalDtoList.filter { it.releaseYear == 2025 }.map { it.toSearchOutput() }
-            val result = searchRepository.searchTvShows(query, filters)
+            val result = searchRepository.searchTvShows(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(expected)
@@ -200,12 +238,15 @@ class SearchRepositoryImplTest {
     fun `searchTvShows() should returns cached tv shows without filtration when cashed data available and not choose filters`() =
         runTest {
             // Given
+            val page = 1
             val query = "Tom"
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query) } returns TvSeriesLocalDtoList
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } returns TvSeriesLocalDtoList
 
             // When
             val expected = TvSeriesLocalDtoList.map { it.toSearchOutput() }
-            val result = searchRepository.searchTvShows(query, null)
+            val result = searchRepository.searchTvShows(query, page, null)
 
             // Then
             assertThat(result).isEqualTo(expected)
@@ -215,65 +256,80 @@ class SearchRepositoryImplTest {
     @Test
     fun `searchTvShows() should fetches remote and caches tv shows when there is no cached data`() =
         runTest {
+            val page = 1
             val query = "Jane"
             val filters = MediaFilters()
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchTvShows(query) } returns TvSeriesSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
-            searchRepository.searchTvShows(query, filters)
+            searchRepository.searchTvShows(query, page, filters)
 
-            coVerify { remoteDataSource.searchTvShows(query) }
+            coVerify { remoteDataSource.searchTvShows(query, page) }
         }
 
 
     @Test
     fun `searchTvShows() should returns filtered cached tv shows when cashed data available and chose passing filters`() =
         runTest {
+            val page = 1
             val query = "Tom"
             val filters = MediaFilters(startYear = 2025, endYear = 2025)
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchTvShows(query) } returns TvSeriesSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
             val expected =
                 MoviesLocalDtoList.filter { it.releaseYear == 2025 }.map { it.toSearchOutput() }
-            val result = searchRepository.searchTvShows(query, filters)
+            val result = searchRepository.searchTvShows(query, page, filters)
             assertThat(result).isEqualTo(expected)
         }
 
     @Test
     fun `searchTvShows() should fetches remote and caches tv shows without filtration when there is no cached data and not choose filters`() =
         runTest {
+            val page = 1
             val query = "Tom"
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(query) } returns emptyList()
-            coEvery { remoteDataSource.searchTvShows(query) } returns TvSeriesSearchResponse
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } returns emptyList()
+            coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
             val expected = TvSeriesLocalDtoList.map { it.toSearchOutput() }
-            val result = searchRepository.searchTvShows(query, null)
+            val result = searchRepository.searchTvShows(query, page, null)
             assertThat(result).isEqualTo(expected)
         }
 
     @Test
     fun `searchTvShows() should throws NoNetworkException when throw UnresolvedAddressException`() =
         runTest {
+            val page = 1
             val query = "Jane"
             val filters = MediaFilters()
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(any()) } throws UnresolvedAddressException()
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } throws UnresolvedAddressException()
             assertThrows<NoNetworkException> {
-                searchRepository.searchTvShows(query, filters)
+                searchRepository.searchTvShows(query, page, filters)
             }
         }
 
     @Test
     fun `searchTvShows should throw RetrievingDataFailureException when throw an exception`() =
         runTest {
+            val page = 1
             val query = "Jane"
             val filters = MediaFilters()
-            coEvery { localCacheSearchDataSource.getTvSeriesByQuery(any()) } throws Exception()
+            coEvery {
+                localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
+            } throws Exception()
             assertThrows<RetrievingDataFailureException> {
-                searchRepository.searchTvShows(query, filters)
+                searchRepository.searchTvShows(query, page, filters)
             }
         }
 }

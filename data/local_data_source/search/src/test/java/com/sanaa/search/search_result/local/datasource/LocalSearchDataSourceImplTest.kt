@@ -15,6 +15,8 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+import kotlin.test.assertNotEquals
 
 class LocalSearchDataSourceImplTest {
     private lateinit var dataSource: LocalCachedSearchDataSourceImpl
@@ -44,10 +46,10 @@ class LocalSearchDataSourceImplTest {
         val query = "test query"
         val itemId = 123
         val itemType = "movie"
-        val insertedId = 1L
+        val insertedId = 1
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, any()) } returns null
-        coEvery { searchDao.insertSearch(any()) } returns insertedId
+        coEvery { searchDao.insertSearch(any()) } returns insertedId.toLong()
         coEvery { searchDao.updateTimestamp(any(), any(), any()) } returns Unit
         coEvery { searchResultDao.insert(any()) } returns Unit
 
@@ -55,7 +57,7 @@ class LocalSearchDataSourceImplTest {
 
         coVerify(exactly = 1) { searchDao.getSearchByQueryAndLanguage(query, "en") }
         coVerify(exactly = 1) { searchDao.insertSearch(match { it.query == query && it.language == "en" }) }
-        coVerify(exactly = 1) { searchResultDao.insert(match { it.id == insertedId.toInt() && it.itemId == itemId && it.itemType == itemType }) }
+        coVerify(exactly = 1) { searchResultDao.insert(match { it.id == insertedId && it.itemId == itemId && it.itemType == itemType }) }
     }
 
     @Test
@@ -183,9 +185,9 @@ class LocalSearchDataSourceImplTest {
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", System.currentTimeMillis())
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "movie") } returns cachedResults
-        coEvery { movieDao.getFilteredMovies("123") } returns movies
+        coEvery { movieDao.getFilteredMovies("123", 20, 0) } returns movies
 
-        val result = dataSource.getMoviesByQuery(query)
+        val result = dataSource.getMoviesByQuery(query, 20, 0)
 
         assertEquals(movies, result)
     }
@@ -198,12 +200,12 @@ class LocalSearchDataSourceImplTest {
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
-        coEvery { movieDao.getFilteredMovies(query) } returns movieList
+        coEvery { movieDao.getFilteredMovies(query, 20, 0) } returns movieList
 
-        val result = dataSource.getMoviesByQuery(query)
+        val result = dataSource.getMoviesByQuery(query, 20, 0)
 
         assertEquals(movieList, result)
-        coVerify(exactly = 1) { movieDao.getFilteredMovies(query) }
+        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, 20, 0) }
     }
 
     @Test
@@ -214,9 +216,9 @@ class LocalSearchDataSourceImplTest {
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", System.currentTimeMillis())
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "tv_series") } returns cachedResults
-        coEvery { seriesDao.getFilteredSeries("123") } returns series
+        coEvery { seriesDao.getFilteredSeries("123", 20, 0) } returns series
 
-        val result = dataSource.getTvSeriesByQuery(query)
+        val result = dataSource.getTvSeriesByQuery(query, 20, 0)
 
         assertEquals(series, result)
     }
@@ -227,7 +229,7 @@ class LocalSearchDataSourceImplTest {
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
 
-        val result = dataSource.getTvSeriesByQuery(query)
+        val result = dataSource.getTvSeriesByQuery(query, 20, 0)
 
         assertEquals(emptyList<TvSeriesLocalDto>(), result)
     }
@@ -284,5 +286,225 @@ class LocalSearchDataSourceImplTest {
         dataSource.cacheTvSeries(series)
 
         coVerify { seriesDao.insertSeries(series) }
+    }
+
+    // ========== PAGINATION TESTS ==========
+
+    @Test
+    fun `getPagedActorsByQuery_shouldCallActorDaoWithCorrectParameters`() = runTest {
+        // Given
+        val query = "Tom"
+        val limit = 20
+        val offset = 40
+        val expectedActors = listOf(
+            ActorsLocalDto(1, "Tom Hanks", "img1", "en", System.currentTimeMillis()),
+            ActorsLocalDto(2, "Tom Cruise", "img2", "en", System.currentTimeMillis())
+        )
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns expectedActors
+
+        // When
+        val result = dataSource.getPagedActorsByQuery(query, limit, offset)
+
+        // Then
+        assertEquals(expectedActors, result)
+        coVerify { actorDao.getPagedActorsByQuery(query, limit, offset) }
+    }
+
+    @Test
+    fun `getPagedActorsByQuery_shouldReturnEmptyList_whenNoResults`() = runTest {
+        // Given
+        val query = "NonExistentActor"
+        val limit = 20
+        val offset = 0
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns emptyList()
+
+        // When
+        val result = dataSource.getPagedActorsByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(result.isEmpty())
+        coVerify { actorDao.getPagedActorsByQuery(query, limit, offset) }
+    }
+
+    @Test
+    fun `getPagedActorsByQuery_shouldHandleLargeOffset`() = runTest {
+        // Given
+        val query = "Tom"
+        val limit = 20
+        val offset = 1000
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns emptyList()
+
+        // When
+        val result = dataSource.getPagedActorsByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(result.isEmpty())
+        coVerify { actorDao.getPagedActorsByQuery(query, limit, offset) }
+    }
+
+    @Test
+    fun `getMoviesByQuery_shouldCallMovieDaoWithCorrectPaginationParameters`() = runTest {
+        // Given
+        val query = "Batman"
+        val limit = 20
+        val offset = 20
+        val expectedMovies = listOf(
+            MoviesLocalDto(1, "Batman Begins", "img1", 2005, "28,80", 8.2f, "en", System.currentTimeMillis()),
+            MoviesLocalDto(2, "The Dark Knight", "img2", 2008, "28,80,53", 9.0f, "en", System.currentTimeMillis())
+        )
+        
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns expectedMovies
+
+        // When
+        val result = dataSource.getMoviesByQuery(query, limit, offset)
+
+        // Then
+        assertEquals(expectedMovies, result)
+        coVerify { movieDao.getFilteredMovies(query, limit, offset) }
+    }
+
+    @Test
+    fun `getMoviesByQuery_shouldReturnEmptyList_whenNoResults`() = runTest {
+        // Given
+        val query = "NonExistentMovie"
+        val limit = 20
+        val offset = 0
+        
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns emptyList()
+
+        // When
+        val result = dataSource.getMoviesByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(result.isEmpty())
+        coVerify { movieDao.getFilteredMovies(query, limit, offset) }
+    }
+
+    @Test
+    fun `getTvSeriesByQuery_shouldCallSeriesDaoWithCorrectPaginationParameters`() = runTest {
+        // Given
+        val query = "Breaking Bad"
+        val limit = 20
+        val offset = 40
+        val expectedSeries = listOf(
+            TvSeriesLocalDto(1, "Breaking Bad", "img1", 2008, "18,80", 9.5f, "en", System.currentTimeMillis()),
+            TvSeriesLocalDto(2, "Better Call Saul", "img2", 2015, "18,80", 8.9f, "en", System.currentTimeMillis())
+        )
+        
+        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns expectedSeries
+
+        // When
+        val result = dataSource.getTvSeriesByQuery(query, limit, offset)
+
+        // Then
+        assertEquals(expectedSeries, result)
+        coVerify { seriesDao.getFilteredSeries(query, limit, offset) }
+    }
+
+    @Test
+    fun `getTvSeriesByQuery_shouldReturnEmptyList_whenNoResults`() = runTest {
+        // Given
+        val query = "NonExistentSeries"
+        val limit = 20
+        val offset = 0
+        
+        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns emptyList()
+
+        // When
+        val result = dataSource.getTvSeriesByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(result.isEmpty())
+        coVerify { seriesDao.getFilteredSeries(query, limit, offset) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleZeroLimit`() = runTest {
+        // Given
+        val query = "Test"
+        val limit = 0
+        val offset = 0
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns emptyList()
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns emptyList()
+        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns emptyList()
+
+        // When
+        val actorsResult = dataSource.getPagedActorsByQuery(query, limit, offset)
+        val moviesResult = dataSource.getMoviesByQuery(query, limit, offset)
+        val seriesResult = dataSource.getTvSeriesByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(actorsResult.isEmpty())
+        assertTrue(moviesResult.isEmpty())
+        assertTrue(seriesResult.isEmpty())
+    }
+
+    @Test
+    fun `pagination_shouldHandleNegativeOffset`() = runTest {
+        // Given
+        val query = "Test"
+        val limit = 20
+        val offset = -10
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns emptyList()
+
+        // When
+        val result = dataSource.getPagedActorsByQuery(query, limit, offset)
+
+        // Then
+        assertTrue(result.isEmpty())
+        coVerify { actorDao.getPagedActorsByQuery(query, limit, offset) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleVeryLargeLimit`() = runTest {
+        // Given
+        val query = "Test"
+        val limit = 1000
+        val offset = 0
+        val largeResult = List(1000) { index ->
+            ActorsLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis())
+        }
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns largeResult
+
+        // When
+        val result = dataSource.getPagedActorsByQuery(query, limit, offset)
+
+        // Then
+        assertEquals(1000, result.size)
+        coVerify { actorDao.getPagedActorsByQuery(query, limit, offset) }
+    }
+
+    @Test
+    fun `pagination_shouldHandleConsecutivePages`() = runTest {
+        // Given
+        val query = "Test"
+        val pageSize = 10
+        
+        val page1Actors = List(10) { index ->
+            ActorsLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis())
+        }
+        val page2Actors = List(10) { index ->
+            ActorsLocalDto(index + 10, "Actor ${index + 10}", "img${index + 10}", "en", System.currentTimeMillis())
+        }
+        
+        coEvery { actorDao.getPagedActorsByQuery(query, pageSize, 0) } returns page1Actors
+        coEvery { actorDao.getPagedActorsByQuery(query, pageSize, 10) } returns page2Actors
+
+        // When
+        val result1 = dataSource.getPagedActorsByQuery(query, pageSize, 0)
+        val result2 = dataSource.getPagedActorsByQuery(query, pageSize, 10)
+
+        // Then
+        assertEquals(10, result1.size)
+        assertEquals(10, result2.size)
+        assertNotEquals(result1, result2)
+        assertTrue(result1.all { it.id < 10 })
+        assertTrue(result2.all { it.id >= 10 })
     }
 }

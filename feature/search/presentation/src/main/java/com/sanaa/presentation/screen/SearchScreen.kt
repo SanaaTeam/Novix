@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
@@ -34,7 +36,10 @@ import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
+import com.sanaa.presentation.screen.state.ActorUiModel
+import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
+import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import search.usecase.search_param.MediaFilters
@@ -46,7 +51,9 @@ fun SearchScreen(
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
     val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
-
+    val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
+    val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
+    val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters: MediaFilters? ->
             searchViewModel.onFilterApplied(filters)
@@ -59,6 +66,9 @@ fun SearchScreen(
             filterUiState = filterUiState,
             searchListener = searchViewModel,
             filterListener = filterViewModel,
+            moviesPagingData = moviesPagingData,
+            tvShowsPagingData = tvShowsPagingData,
+            actorsPagingData = actorsPagingData,
         )
     }
 }
@@ -70,6 +80,9 @@ fun SearchScreenContent(
     filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
     filterListener: FilterBottomSheetInteractionsListener,
+    moviesPagingData: LazyPagingItems<MovieUiModel>,
+    tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
+    actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var isSliderDragging by remember { mutableStateOf(false) }
@@ -122,7 +135,10 @@ fun SearchScreenContent(
                         selectedTabIndex = uiState.selectedTabIndex,
                         uiState = uiState,
                         interactionsListener = searchListener,
-                        modifier = Modifier.align(Alignment.Start)
+                        modifier = Modifier.align(Alignment.Start),
+                        moviesPagingData = moviesPagingData,
+                        tvShowsPagingData = tvShowsPagingData,
+                        actorsPagingData = actorsPagingData,
                     )
 
                     false -> SearchHistoryContent(
