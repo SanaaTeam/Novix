@@ -13,7 +13,8 @@ class LocalSearchHistoryDataSourceImpl(
     private val recentViewedDao: RecentViewedDao
 ) : LocalSearchHistoryDataSource {
     override suspend fun insertQuery(query: String) {
-        queryDao.insertQuery(QueryLocalDto(query = query))
+        val normalizedQuery = query.trim().replace(Regex("\\s+"), " ")
+        queryDao.upsertQuery(normalizedQuery, System.currentTimeMillis())
     }
 
     override fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>> {

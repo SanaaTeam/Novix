@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import kotlinx.coroutines.flow.Flow
 
@@ -12,6 +13,16 @@ interface QueryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuery(query: QueryLocalDto)
 
+    @Query("UPDATE queries SET timestamp = :timestamp WHERE search_query = :query")
+    suspend fun updateQueryTimestamp(query: String, timestamp: Long): Int
+
+    @Transaction
+    suspend fun upsertQuery(query: String, timestamp: Long) {
+        val updated = updateQueryTimestamp(query, timestamp)
+        if (updated == 0) {
+            insertQuery(QueryLocalDto(query = query, timestamp = timestamp))
+        }
+    }
     @Query("SELECT * FROM queries ORDER BY timestamp DESC LIMIT :limit")
     fun getAllQueries(limit: Int): Flow<List<QueryLocalDto>>
 
