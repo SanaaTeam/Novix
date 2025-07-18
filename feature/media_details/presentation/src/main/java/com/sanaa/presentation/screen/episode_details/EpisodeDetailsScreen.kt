@@ -136,7 +136,8 @@ private fun EpisodeDetailsScreenContent(
                                 airDate = state.episode.airDate,
                                 imagesUrl = state.imagesUrl,
                                 genres = emptyList(),
-                                showReviews = false
+                                showReviews = false,
+                                onGenreClicked = {}
                             )
 
                             state.episode.overview?.let {
