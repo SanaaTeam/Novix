@@ -28,10 +28,10 @@ class LocalCachedSearchDataSourceImpl(
 
     override suspend fun cacheSearchResult(query: String, itemId: Int, itemType: String) {
         val existingSearch = searchDao.getSearchByQueryAndLanguage(query, currentLanguage)
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
 
         val searchId = if (existingSearch != null) {
-            searchDao.updateTimestamp(query, currentLanguage, inWholeMilliseconds)
+            searchDao.updateTimestamp(query, currentLanguage, currentTimestamp)
             existingSearch.id
         } else {
             searchDao.insertSearch(
@@ -42,7 +42,7 @@ class LocalCachedSearchDataSourceImpl(
             )
         }
 
-        clearExpiredCache(inWholeMilliseconds - CACHE_EXPIRATION_TIME)
+        clearExpiredCache(currentTimestamp - CACHE_EXPIRATION_TIME)
         searchResultDao.insert(
             SearchResultLocalDto(
                 id = searchId.toInt(),
@@ -53,8 +53,8 @@ class LocalCachedSearchDataSourceImpl(
     }
 
     override suspend fun getCachedResults(query: String, type: String): List<SearchResultLocalDto> {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
-        clearExpiredCache(inWholeMilliseconds - CACHE_EXPIRATION_TIME)
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
+        clearExpiredCache(currentTimestamp - CACHE_EXPIRATION_TIME)
 
         val search = searchDao.getSearchByQueryAndLanguage(query, currentLanguage)
 
@@ -62,7 +62,7 @@ class LocalCachedSearchDataSourceImpl(
             return emptyList()
         }
 
-        searchDao.updateTimestamp(query, currentLanguage, inWholeMilliseconds)
+        searchDao.updateTimestamp(query, currentLanguage, currentTimestamp)
 
         return searchResultDao.getByQueryAndLanguage(query, currentLanguage, type)
     }
@@ -137,8 +137,8 @@ class LocalCachedSearchDataSourceImpl(
     }
 
     private fun isExpired(timestamp: Long): Boolean {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
-        return inWholeMilliseconds - timestamp > CACHE_EXPIRATION_TIME
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
+        return currentTimestamp - timestamp > CACHE_EXPIRATION_TIME
     }
 
     companion object {

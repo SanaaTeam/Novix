@@ -70,12 +70,12 @@ class LocalSearchDataSourceImplTest {
         val query = "existing query"
         val itemId = 123
         val itemType = "movie"
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val existingSearch = SearchLocalDto(
             id = 42,
             query = query,
             language = "en",
-            timestamp = inWholeMilliseconds
+            timestamp = currentTimestamp
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns existingSearch
@@ -95,13 +95,13 @@ class LocalSearchDataSourceImplTest {
         val query = "test query"
         val type = "movie"
         val expected = listOf(SearchResultLocalDto(1, 123, "movie"))
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(
             1,
             query,
             "en",
-            inWholeMilliseconds
+            currentTimestamp
         )
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", type) } returns expected
 
@@ -114,8 +114,8 @@ class LocalSearchDataSourceImplTest {
     @Test
     fun `getCachedResults returns empty list when search is expired`() = runTest {
         val query = "expired query"
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
-        val expiredTimestamp = inWholeMilliseconds - (LocalCachedSearchDataSourceImpl.CACHE_EXPIRATION_TIME + 1000)
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
+        val expiredTimestamp = currentTimestamp - (LocalCachedSearchDataSourceImpl.CACHE_EXPIRATION_TIME + 1000)
         val expiredSearch = SearchLocalDto(
             id = 1,
             query = query,
@@ -147,8 +147,8 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `clearExpiredCache should call deleteOldResults`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
-        val expiredTime = inWholeMilliseconds - 3600000L
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
+        val expiredTime = currentTimestamp - 3600000L
 
         dataSource.clearExpiredCache(expiredTime)
 
@@ -159,10 +159,10 @@ class LocalSearchDataSourceImplTest {
     fun `getActorsByQuery returns cached results`() = runTest {
         val query = "actor query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "actor"))
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
-        val actor = ActorLocalDto(123, "Actor Name", "", "en", inWholeMilliseconds)
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
+        val actor = ActorLocalDto(123, "Actor Name", "", "en", currentTimestamp)
 
-        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", inWholeMilliseconds)
+        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", currentTimestamp)
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "actor") } returns cachedResults
         coEvery { actorDao.getActorsByQuery("123") } returns listOf(actor)
 
@@ -175,11 +175,11 @@ class LocalSearchDataSourceImplTest {
     @Test
     fun `getActorsByQuery returns direct actorDao result if no cached results`() = runTest {
         val query = "actor query"
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
         coEvery { actorDao.getActorsByQuery(query) } returns listOf(ActorLocalDto(
-            id = 99, name = "Actor", imagePath = "", language = "en", timestamp = inWholeMilliseconds
+            id = 99, name = "Actor", imagePath = "", language = "en", timestamp = currentTimestamp
         ))
 
         val result = dataSource.getActorsByQuery(query)
@@ -190,12 +190,12 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `getMoviesByQuery returns cached results`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "movie query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "movie"))
-        val movies = listOf(MovieLocalDto(123, "Movie1", "", 2020, null, 7.5f, "en", inWholeMilliseconds))
+        val movies = listOf(MovieLocalDto(123, "Movie1", "", 2020, null, 7.5f, "en", currentTimestamp))
 
-        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", inWholeMilliseconds)
+        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", currentTimestamp)
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "movie") } returns cachedResults
         coEvery { movieDao.getFilteredMovies("123", 20, 0) } returns movies
 
@@ -206,10 +206,10 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `getMoviesByQuery returns direct movieDao results if no cached results`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "movie query"
         val movieList = listOf(
-            MovieLocalDto(1, "Movie1", "", 2020, null, 7.5f, "en", inWholeMilliseconds)
+            MovieLocalDto(1, "Movie1", "", 2020, null, 7.5f, "en", currentTimestamp)
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns null
@@ -223,12 +223,12 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `getTvSeriesByQuery returns cached results`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "tv query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "tv_series"))
-        val series = listOf(TvSeriesLocalDto(123, "Series1", "", 2020, null, 8.1f, "en", inWholeMilliseconds))
+        val series = listOf(TvSeriesLocalDto(123, "Series1", "", 2020, null, 8.1f, "en", currentTimestamp))
 
-        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", inWholeMilliseconds)
+        coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(1, query, "en", currentTimestamp)
         coEvery { searchResultDao.getByQueryAndLanguage(query, "en", "tv_series") } returns cachedResults
         coEvery { seriesDao.getFilteredSeries("123", 20, 0) } returns series
 
@@ -250,7 +250,7 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `insertMovie should call insertMovie from movieDao`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val movie = MovieLocalDto(
             id = 1,
             title = "title",
@@ -259,7 +259,7 @@ class LocalSearchDataSourceImplTest {
             genres = null,
             imdbRating = 2.1f,
             language = "en",
-            timestamp = inWholeMilliseconds,
+            timestamp = currentTimestamp,
         )
         coEvery { movieDao.insertMovie(movie) } returns Unit
 
@@ -270,13 +270,13 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `insertActor should call insertActor from actorDao`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val actor = ActorLocalDto(
             id = 1,
             name = "name",
             imagePath = "",
             language = "en",
-            timestamp = inWholeMilliseconds,
+            timestamp = currentTimestamp,
         )
         coEvery { actorDao.insertActor(actor) } returns Unit
 
@@ -287,7 +287,7 @@ class LocalSearchDataSourceImplTest {
 
     @Test
     fun `insertSeries should call insertSeries from seriesDao`() = runTest {
-        val inWholeMilliseconds = TimeUtils.getCurrentTimeStamp()
+        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val series = TvSeriesLocalDto(
             id = 1,
             title = "title",
@@ -296,7 +296,7 @@ class LocalSearchDataSourceImplTest {
             genres = null,
             imdbRating = 2.1f,
             language = "en",
-            timestamp = inWholeMilliseconds,
+            timestamp = currentTimestamp,
         )
         coEvery { seriesDao.insertSeries(series) } returns Unit
 
