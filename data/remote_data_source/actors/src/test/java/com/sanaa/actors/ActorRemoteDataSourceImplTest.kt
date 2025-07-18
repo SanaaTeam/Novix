@@ -111,8 +111,8 @@ class ActorRemoteDataSourceImplTest {
     fun `getActorTopMovies returns expected ActorMovieCastDto`() = runTest {
         val result = dataSource.getActorTopMovies(1)
         assertEquals(1, result.actorId)
-        assertEquals(1, result.cast.size)
-        assertEquals("Inception", result.cast[0].title)
+        assertEquals(1, result.cast?.size ?: 1)
+        assertEquals("Inception", result.cast?.get(0)?.title)
     }
 
     @Test
@@ -123,7 +123,6 @@ class ActorRemoteDataSourceImplTest {
         assertEquals("Breaking Bad", result.cast[0].name)
     }
 
-    // Must be an extension on MockRequestHandleScope and return HttpResponseData
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
         content = ByteReadChannel(content),
         status = HttpStatusCode.OK,
