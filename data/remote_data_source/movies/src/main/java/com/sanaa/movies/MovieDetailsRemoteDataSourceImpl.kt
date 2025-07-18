@@ -1,8 +1,13 @@
 package com.sanaa.movies
 
-import com.example.preferences.service.LanguageProvider
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
-import com.sanaa.movies.dataSource.remote.dto.*
+import com.sanaa.movies.dataSource.remote.dto.CastDto
+import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
+import com.sanaa.movies.dataSource.remote.dto.ReviewDto
+import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
+import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

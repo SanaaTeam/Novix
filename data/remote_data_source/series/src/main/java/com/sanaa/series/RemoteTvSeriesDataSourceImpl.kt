@@ -1,9 +1,20 @@
 package com.sanaa.series
 
-import com.example.preferences.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
-import com.sanaa.series.dto.*
-import com.sanaa.series.response.*
+import com.sanaa.series.dto.ActorDto
+import com.sanaa.series.dto.EpisodeDto
+import com.sanaa.series.dto.ReviewDto
+import com.sanaa.series.dto.SeasonDto
+import com.sanaa.series.dto.TvSeriesDto
+import com.sanaa.series.dto.TvSeriesImageDto
+import com.sanaa.series.dto.TvSeriesVideoDto
+import com.sanaa.series.response.GenreTvSeriesResponse
+import com.sanaa.series.response.ImagesResponse
+import com.sanaa.series.response.TvSeriesCastResponse
+import com.sanaa.series.response.TvSeriesGuestOfStarsResponse
+import com.sanaa.series.response.TvSeriesReviewsResponse
+import com.sanaa.series.response.TvSeriesVideosResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get

@@ -1,8 +1,8 @@
 package com.sanaa.presentation.filter_bottomsheet
 
 import app.cash.turbine.test
-import com.example.preferences.service.GenreLocalizer
 import com.google.common.truth.Truth
+import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
 import io.mockk.mockk
@@ -14,7 +14,6 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import search.usecase.search_param.MediaFilters
-import kotlin.collections.emptySet
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
@@ -25,7 +24,7 @@ class FilterViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        filterViewModel = FilterViewModel(testDispatcher,genreLocalizer)
+        filterViewModel = FilterViewModel(testDispatcher, genreLocalizer)
     }
 
     @Test
@@ -98,7 +97,7 @@ class FilterViewModelTest {
                 imdbRating = rate,
                 isDefaultState = false
             )
-            Truth.assertThat(expected.imdbRating).isEqualTo(item.imdbRating  )
+            Truth.assertThat(expected.imdbRating).isEqualTo(item.imdbRating)
         }
     }
 

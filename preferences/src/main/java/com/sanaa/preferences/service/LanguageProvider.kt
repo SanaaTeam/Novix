@@ -1,4 +1,4 @@
-package com.example.preferences.service
+package com.sanaa.preferences.service
 
 interface LanguageProvider {
     fun getCurrentLanguage(): String

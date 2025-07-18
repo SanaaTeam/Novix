@@ -1,6 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import com.example.preferences.service.GenreLocalizer
+import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
@@ -18,7 +18,8 @@ class FilterViewModel(
     private val genreLocalizer: GenreLocalizer,
 ) : BaseViewModel<FilterUiState>(
     initialState = FilterUiState(),
-    defaultDispatcher = dispatcher),
+    defaultDispatcher = dispatcher
+),
     FilterBottomSheetInteractionsListener {
 
 
@@ -63,7 +64,7 @@ class FilterViewModel(
                     MediaFilters(
                         startYear = currentState.yearRange.start.toInt(),
                         endYear = currentState.yearRange.endInclusive.toInt(),
-                        genres = currentState.selectedGenres.toList().mapNotNull {genreName->
+                        genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
                             Genre.entries.find { it.name == genreName }
                         },
                         imdbRating = if (currentState.imdbRating > 0) currentState.imdbRating.toFloat() else null

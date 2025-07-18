@@ -1,8 +1,11 @@
 package com.sanaa.actors
 
-import com.example.preferences.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
-import com.sanaa.actors.dataSource.remote.dto.*
+import com.sanaa.actors.dataSource.remote.dto.ActorDto
+import com.sanaa.actors.dataSource.remote.dto.ActorImagesDto
+import com.sanaa.actors.dataSource.remote.dto.ActorMovieCastDto
+import com.sanaa.actors.dataSource.remote.dto.ActorTvCastDto
+import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
