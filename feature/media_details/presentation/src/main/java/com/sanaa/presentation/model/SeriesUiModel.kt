@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.sanaa.presentation.util.formatDateLocalizedDigits
 import com.sanaa.presentation.util.formatLocalizedDate
 import entity.Episode
+import entity.Genre
 import entity.Season
 import entity.TvSeries
 
@@ -13,7 +14,7 @@ data class SeriesUiModel(
     val posterPath: String? = null,
     val rating: String = "",
     val overview: String? = null,
-    val genres: List<String> = emptyList(),
+    val genres: List<Genre> = emptyList(),
     val seasonsCount: Int = 0,
     val trailerUrl: String? = null,
     val releaseDate: String = "",
@@ -45,7 +46,7 @@ fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
-    genres = genres.map { it.name },
+    genres = genres,
     releaseDate = releaseDate.formatDateLocalizedDigits().toString(),
 )
 

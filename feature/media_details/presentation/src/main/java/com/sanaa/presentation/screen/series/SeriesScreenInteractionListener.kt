@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.series
 
+import entity.Genre
+
 interface SeriesScreenInteractionListener {
     fun onBackClicked()
     fun onViewReviewsClicked(seriesId: Int)
@@ -10,4 +12,5 @@ interface SeriesScreenInteractionListener {
     fun onRateClicked()
     fun onDismissRateBottomSheet()
     fun onSaveSeriesClicked()
+    fun onGenreClicked(genre: Genre)
 }

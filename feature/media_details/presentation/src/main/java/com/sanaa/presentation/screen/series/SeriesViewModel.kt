@@ -1,10 +1,12 @@
 package com.sanaa.presentation.screen.series
 
+import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import details.usecase.ManageTvSeriesDetailsUseCase
+import entity.Genre
 
 class SeriesViewModel(
     private val seriesId: Int,
@@ -20,15 +22,15 @@ class SeriesViewModel(
         tryToExecute(
             callee = {
                 updateState { it.copy(isLoading = true) }
-                val series    = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
-                val cast      = manageTvSeriesDetails.getTvSeriesCast(seriesId)
-                val season    = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
-                val images    = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-                val trailer   = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+                val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
+                val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
+                val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
+                val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
+                val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
                 updateState {
                     it.copy(
                         series = series.toSeriesUiModel(trailer),
-                        cast   = cast.map { a -> a.toActorUiModel() },
+                        cast = cast.map { a -> a.toActorUiModel() },
                         season = season.toSeasonUiModel(),
                         images = images
                     )
@@ -91,5 +93,9 @@ class SeriesViewModel(
 
     override fun onSaveSeriesClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
+    }
+
+    override fun onGenreClicked(genre: Genre) {
+        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre.name))
     }
 }
