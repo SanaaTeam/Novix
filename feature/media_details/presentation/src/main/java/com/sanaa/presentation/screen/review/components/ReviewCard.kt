@@ -34,7 +34,9 @@ import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
+import com.sanaa.presentation.component.ExpandableText
 import com.sanaa.presentation.component.IconWithText
+import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable
@@ -102,28 +104,20 @@ fun ReviewCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
+        ExpandableText(
             text = review.content,
             style = Theme.textStyle.body.small,
             color = Theme.colors.body,
-            maxLines = if (expanded) Int.MAX_VALUE else 4,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.animateContentSize(
-                animationSpec = tween(
-                    durationMillis = 300,
-                    easing = FastOutSlowInEasing
-                )
-            )
+            collapsedMaxLines = 5,
+            readMoreText = " ${stringResource(R.string.read_more)}",
+            readLessText = " ${stringResource(R.string.read_less)}",
+            onReadMore = { }
         )
-        if (review.content.length > 150) {
-            TextButton(
-                onClick = { expanded = !expanded },
-                text = if (expanded) stringResource(R.string.read_less) else stringResource(R.string.read_more),
-            )
-        }
+
         Spacer(modifier = Modifier.height(12.dp))
+        
         IconWithText(
             text = review.createdDate,
             iconRes = R.drawable.icon_calender,
