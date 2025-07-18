@@ -7,7 +7,7 @@ import org.koin.dsl.module
 val remoteTvSeriesDataSourceModule = module {
     single<RemoteTvSeriesDataSource> {
         RemoteTvSeriesDataSourceImpl(
-            get(), get(), get()
+            get(), get()
         )
     }
 

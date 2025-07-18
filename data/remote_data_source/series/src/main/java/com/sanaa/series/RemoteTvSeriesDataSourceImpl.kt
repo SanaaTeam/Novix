@@ -2,8 +2,19 @@ package com.sanaa.series
 
 import com.example.preferences.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
-import com.sanaa.series.dto.*
-import com.sanaa.series.response.*
+import com.sanaa.series.dto.ActorDto
+import com.sanaa.series.dto.EpisodeDto
+import com.sanaa.series.dto.ReviewDto
+import com.sanaa.series.dto.SeasonDto
+import com.sanaa.series.dto.TvSeriesDto
+import com.sanaa.series.dto.TvSeriesImageDto
+import com.sanaa.series.dto.TvSeriesVideoDto
+import com.sanaa.series.response.GenreTvSeriesResponse
+import com.sanaa.series.response.ImagesResponse
+import com.sanaa.series.response.TvSeriesCastResponse
+import com.sanaa.series.response.TvSeriesGuestOfStarsResponse
+import com.sanaa.series.response.TvSeriesReviewsResponse
+import com.sanaa.series.response.TvSeriesVideosResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -13,7 +24,6 @@ import io.ktor.util.reflect.typeInfo
 
 class RemoteTvSeriesDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ) : RemoteTvSeriesDataSource {
 
@@ -32,7 +42,7 @@ class RemoteTvSeriesDataSourceImpl(
         fetchTvSeries<ImagesResponse>("tv", id, "images").backdrops
 
     override suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeriesDto> =
-        client.get("$baseUrl/discover/tv") {
+        client.get("${BuildConfig.TMDB_URL}/discover/tv") {
             parameter("with_genres", genreId)
             parameter("language", languageProvider.getCurrentLanguage())
             parameter("api_key", BuildConfig.TMDB_API_KEY)
@@ -85,7 +95,7 @@ class RemoteTvSeriesDataSourceImpl(
         type: TypeInfo
     ): T {
         val fullPath = buildString {
-            append("$baseUrl/$path/$id")
+            append("${BuildConfig.TMDB_URL}/$path/$id")
             if (!subPath.isNullOrBlank()) append("/$subPath")
         }
 

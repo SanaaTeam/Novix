@@ -1,6 +1,6 @@
 package com.sanaa.search.repository.util
 
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
@@ -23,7 +23,7 @@ internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Searc
 
 
 internal fun MediaFilters.filterCashedMovies(
-    cachedMovies: List<MoviesLocalDto>,
+    cachedMovies: List<MovieLocalDto>,
 ): List<SearchMovieOutput> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
     return cachedMovies

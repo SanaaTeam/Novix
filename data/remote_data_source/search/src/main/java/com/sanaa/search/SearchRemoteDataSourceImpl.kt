@@ -14,9 +14,8 @@ import io.ktor.client.request.parameter
 
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
-    private val languageProvider: LanguageProvider,
-) : SearchRemoteDataSource {
+    private val languageProvider: LanguageProvider
+): SearchRemoteDataSource {
 
     override suspend fun searchActors(query: String, page: Int): SearchResponse<ActorSearchDto> =
         search(path = "person", query, page)
@@ -33,7 +32,7 @@ class SearchRemoteDataSourceImpl(
         query: String,
         page: Int = 1,
     ): SearchResponse<T> {
-        return client.get("$baseUrl/search/$path") {
+        return client.get("${BuildConfig.TMDB_URL}/search/$path") {
             parameter("query", query)
             parameter("page", page)
             parameter("language", languageProvider.getCurrentLanguage())

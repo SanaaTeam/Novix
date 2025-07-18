@@ -19,7 +19,6 @@ import io.ktor.util.reflect.typeInfo
 
 class MovieDetailsRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ) : MovieDetailsRemoteDataSource {
 
@@ -53,7 +52,7 @@ class MovieDetailsRemoteDataSourceImpl(
         path: String,
         withLang: Boolean,
         type: TypeInfo
-    ): T = client.get("$baseUrl/$path") {
+    ): T = client.get("${BuildConfig.TMDB_URL}/$path") {
         if (withLang) parameter("language", languageProvider.getCurrentLanguage())
         parameter("api_key", BuildConfig.TMDB_API_KEY)
     }.body(type)

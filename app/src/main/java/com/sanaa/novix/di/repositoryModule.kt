@@ -12,19 +12,22 @@ import com.sanaa.series.TvSeriesRepositoryImpl
 import details.repository.ActorRepository
 import details.repository.MovieRepository
 import details.repository.TvSeriesRepository
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
 
 val repositoryModule = module {
-    single<SearchRepository> { SearchRepositoryImpl(get(), get(), get()) }
-    single { SearchRepositoryImpl(get(), get(), get()) }
-    single<SearchHistoryRepository> { SearchHistoryRepositoryImpl(get()) }
-    single<LocalSearchHistoryDataSource> { LocalSearchHistoryDataSourceImpl(get(), get()) }
+    singleOf(::SearchRepositoryImpl) bind SearchRepository::class
+    singleOf(::SearchRepositoryImpl)
+    singleOf(::SearchHistoryRepositoryImpl) bind SearchHistoryRepository::class
+    singleOf(::LocalSearchHistoryDataSourceImpl) bind LocalSearchHistoryDataSource::class
 
-    single<ActorRepository> { ActorRepositoryImpl(get()) }
-    single<MovieRepository> { MovieRepositoryImpl(get()) }
-    single<TvSeriesRepository> { TvSeriesRepositoryImpl(get()) }
-    single { ActorRemoteDataSourceImpl(get(), get(), get()) }
-    single { MovieDetailsRemoteDataSourceImpl(get(), get(), get()) }
+    singleOf(::ActorRepositoryImpl) bind ActorRepository::class
+    singleOf(::MovieRepositoryImpl) bind MovieRepository::class
+    singleOf(::TvSeriesRepositoryImpl) bind TvSeriesRepository::class
+    singleOf(::ActorRemoteDataSourceImpl)
+    singleOf(::TvSeriesRepositoryImpl)
+    singleOf(::MovieDetailsRemoteDataSourceImpl)
 }
