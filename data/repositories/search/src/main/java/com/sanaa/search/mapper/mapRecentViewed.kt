@@ -1,10 +1,11 @@
 package com.sanaa.search.mapper
 
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
+import com.sanaa.search.util.TimeUtils
 import search.usecase.search_param.MediaType
 import search.usecase.search_param.RecentViewedMedia
 
-fun RecentViewedMedia.toDto(time: Long = System.currentTimeMillis()): RecentViewedLocalDto {
+fun RecentViewedMedia.toDto(time: Long = TimeUtils.getCurrentTimeStamp()): RecentViewedLocalDto {
     return RecentViewedLocalDto(
         id = id,
         imageUrl = posterImageUrl,

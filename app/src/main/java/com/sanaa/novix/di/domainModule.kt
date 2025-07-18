@@ -11,6 +11,7 @@ import details.usecase.movie.GetMovieImagesUseCase
 import details.usecase.movie.GetMoviesByCategory
 import details.usecase.movie.GetReviewsByMovieId
 import details.usecase.movie.GetSimilarMoviesByMovieId
+import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -23,27 +24,27 @@ import search.usecase.SearchMoviesUseCase
 import search.usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
-    single { SearchMoviesUseCase(get(), get()) }
-    single { SearchTvSeriesUseCase(get(), get()) }
-    single { SearchActorsUseCase(get(), get()) }
-    single { GetRecentViewedUseCase(get()) }
-    single { GetSearchHistoryUseCase(get()) }
-    single { ClearRecentViewedUseCase(get()) }
-    single { ClearSearchHistoryUseCase(get()) }
-    single { RemoveSearchHistoryUseCase(get()) }
-    single { AddRecentViewedUseCase(get()) }
-    single { RemoveSearchHistoryUseCase(get()) }
+    singleOf(::SearchMoviesUseCase)
+    singleOf(::SearchTvSeriesUseCase)
+    singleOf(::SearchActorsUseCase)
+    singleOf(::GetRecentViewedUseCase)
+    singleOf(::GetSearchHistoryUseCase)
+    singleOf(::ClearRecentViewedUseCase)
+    singleOf(::ClearSearchHistoryUseCase)
+    singleOf(::RemoveSearchHistoryUseCase)
+    singleOf(::AddRecentViewedUseCase)
+    singleOf(::RemoveSearchHistoryUseCase)
 
-    single { GetActorDetailsUseCase(get()) }
-    single { GetActorTopMoviesUseCase(get()) }
-    single { GetActorTopTvSeriesUseCase(get()) }
-    single { GetGalleryImagesUseCase(get()) }
-    single { GetProfileImagesUseCase(get()) }
+    singleOf(::GetActorDetailsUseCase)
+    singleOf(::GetActorTopMoviesUseCase)
+    singleOf(::GetActorTopTvSeriesUseCase)
+    singleOf(::GetGalleryImagesUseCase)
+    singleOf(::GetProfileImagesUseCase)
 
-    single { GetMovieCastUseCase(get()) }
-    single { GetMovieDetailsUseCase(get()) }
-    single { GetMovieImagesUseCase(get()) }
-    single { GetMoviesByCategory(get()) }
-    single { GetReviewsByMovieId(get()) }
-    single { GetSimilarMoviesByMovieId(get()) }
+    singleOf(::GetMovieCastUseCase)
+    singleOf(::GetMovieDetailsUseCase)
+    singleOf(::GetMovieImagesUseCase)
+    singleOf(::GetMoviesByCategory)
+    singleOf(::GetReviewsByMovieId)
+    singleOf(::GetSimilarMoviesByMovieId)
 }

@@ -2,8 +2,8 @@ package com.sanaa.search.search_result.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.sanaa.search.dataSource.local.dto.ActorsLocalDto
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.ActorLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchLocalDto
@@ -21,9 +21,9 @@ import com.sanaa.search.search_result.dao.SeriesDao
     entities = [
         SearchLocalDto::class,
         SearchResultLocalDto::class,
-        MoviesLocalDto::class,
+        MovieLocalDto::class,
         TvSeriesLocalDto::class,
-        ActorsLocalDto::class,
+        ActorLocalDto::class,
         QueryLocalDto::class,
         RecentViewedLocalDto::class
     ],

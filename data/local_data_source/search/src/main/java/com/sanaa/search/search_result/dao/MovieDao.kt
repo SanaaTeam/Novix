@@ -4,13 +4,13 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 
 @Dao
 interface MovieDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMovie(movie: MoviesLocalDto)
+    suspend fun insertMovie(movie: MovieLocalDto)
 
     @Query(
         """
@@ -26,5 +26,7 @@ interface MovieDao {
         LIMIT :limit OFFSET :offset
         """
     )
-    suspend fun getFilteredMovies(query: String, limit: Int, offset: Int): List<MoviesLocalDto>
+    suspend fun getFilteredMovies(
+        query: String, limit: Int, offset: Int,
+    ): List<MovieLocalDto>
 }

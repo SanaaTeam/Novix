@@ -2,7 +2,7 @@ package com.sanaa.search.repository
 
 import com.example.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
-import com.sanaa.search.dataSource.local.dto.MoviesLocalDto
+import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.mapper.toLocalDto
@@ -88,7 +88,7 @@ class SearchRepositoryImpl(
 
     private fun getMoviesFromCache(
         filters: MediaFilters?,
-        cachedMedia: List<MoviesLocalDto>,
+        cachedMedia: List<MovieLocalDto>,
     ): List<SearchMovieOutput> {
         return filters
             ?.filterCashedMovies(cachedMedia)
