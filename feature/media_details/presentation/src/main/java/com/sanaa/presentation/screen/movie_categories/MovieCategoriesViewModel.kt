@@ -42,8 +42,6 @@ class MovieCategoriesViewModel(
                     it.copy(isLoading = true)
                 }
                 val movies = manageMoviesDetailsUseCase.getMoviesByCategory(categoryId)
-                Log.i("view_model", "genre: ${categoryId}")
-                Log.i("view_model", "movies: ${movies}")
                 updateState {
                     it.copy(
                         title = categoryId, movies = movies.map { it ->
@@ -53,8 +51,8 @@ class MovieCategoriesViewModel(
                                 imageUrl = it.posterImageUrl,
                                 rating = it.imdbRating
                             )
-                        }
-
+                        },
+                        isLoading = false
                     )
                 }
             }, onSuccess = {
@@ -62,10 +60,11 @@ class MovieCategoriesViewModel(
                     it.copy(isLoading = false)
                 }
             },
-            onError = {
+            onError = { exception ->
                 updateState {
-                    it.copy(error = it.error, isLoading = false)
+                    it.copy(error = exception.message, isLoading = false)
                 }
-            })
+            }
+        )
     }
 }
