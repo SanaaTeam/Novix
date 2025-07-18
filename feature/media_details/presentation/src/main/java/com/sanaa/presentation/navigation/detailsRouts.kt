@@ -103,3 +103,12 @@ data class ActorGalleryScreenRoute(val actorId: Int) : Destination {
         const val ARG_ACTOR_ID = "actorId"
     }
 }
+
+@Serializable
+data class MovieCategoriesScreenRoute(val categoryId: String) : Destination {
+    override fun route() = "movie/$categoryId"
+    companion object {
+        const val PATTERN = "movie/{categoryId}"
+        const val ARG_CATEGORY = "categoryId"
+    }
+}
