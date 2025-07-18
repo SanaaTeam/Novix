@@ -111,7 +111,7 @@ private fun ActorGalleryContent(
                                 8.dp
                             )
                         ) {
-                            items(state.galleryImages) { image ->
+                            items(state.galleryImageUrls) { image ->
                                 GalleryCard(image, modifier = Modifier.height(101.dp))
                             }
                         }
