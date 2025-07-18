@@ -77,7 +77,7 @@ private fun ContentState(
     recentSearches: List<RecentSearchUiModel>,
 ) {
     LazyColumn(
-        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
+        modifier = Modifier.padding(top = 12.dp), contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         if (recentViewed.isNotEmpty()) {
             item {
@@ -144,6 +144,7 @@ private fun MediaPoster(
     }
 
     MovieSeriesPosterCard(
+        onCardClick = { interactionsListener.onSearchResultMediaClicked(item) },
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
@@ -170,10 +171,8 @@ private fun MediaPoster(
             }
         },
         topLeftContent = {
-            SaveIconChip(
-                onClick = interactionsListener::onSaveIconClicked
-            )
-        },
+            SaveIconChip(onClick = { })
+        }
     )
 }
 

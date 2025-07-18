@@ -93,7 +93,7 @@ class SearchMoviesUseCaseTest {
             }
         }
 
-    companion object {
+    private companion object {
         private val searchMediaOutputList = listOf(
             SearchMovieOutput(
                 id = 1,

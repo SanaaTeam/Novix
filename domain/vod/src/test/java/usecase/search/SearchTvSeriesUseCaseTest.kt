@@ -96,8 +96,8 @@ class SearchTvSeriesUseCaseTest {
             }
         }
 
-    companion object {
-        private val searchTvShowsOutputList = listOf(
+    private companion object {
+        val searchTvShowsOutputList = listOf(
             SearchTvSeriesOutput(
                 id = 1,
                 title = "title",

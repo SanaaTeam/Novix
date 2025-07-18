@@ -43,7 +43,7 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
     "com.sanaa.presentation.screen.SearchScreen*",
-    "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetContent*",
+    "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet*",
     "com.sanaa.search.search_result.db.*",
 
     "com.sanaa.presentation.navigation.**",
