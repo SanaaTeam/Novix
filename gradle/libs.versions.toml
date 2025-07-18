@@ -3,6 +3,7 @@
 # Project Config
 compileSdk = "35"
 minSdk = "26"
+slf4jApi = "2.0.17"
 targetSdk = "35"
 truth = "1.4.4"
 versionCode = "1"
@@ -15,6 +16,8 @@ testRunner = "androidx.test.runner.AndroidJUnitRunner"
 # Dependancies versions
 agp = "8.10.1"
 
+# Paging
+paging = "3.3.6"
 
 composeBomVersion = "2024.06.00"
 foundationLayoutAndroid = "1.6.8"
@@ -56,6 +59,7 @@ kotlinx-coroutines = "1.6.4"
 workRuntimeKtx = "2.10.2"
 turbine = "1.2.1"
 material3Jvmstubs = "1.4.0-alpha17"
+pagingCommonAndroid = "3.3.6"
 
 
 [libraries]
@@ -109,6 +113,11 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-testing = { group = "androidx.room", name = "room-testing", version.ref = "room" }
 
+# Paging
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
+
 
 # ktor
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
@@ -129,6 +138,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 # Test
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 # junit
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }
@@ -146,6 +156,7 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
 androidx-material3-jvmstubs = { group = "androidx.compose.material3", name = "material3-jvmstubs", version.ref = "material3Jvmstubs" }
 
 [plugins]

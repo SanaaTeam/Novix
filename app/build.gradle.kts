@@ -80,7 +80,6 @@ dependencies {
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
 
-    implementation(projects.envConfig)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)
@@ -132,5 +131,5 @@ dependencies {
     implementation(projects.data.localDataSource.search)
 
     // Language Provider
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 }

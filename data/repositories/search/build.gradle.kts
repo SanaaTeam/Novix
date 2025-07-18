@@ -36,13 +36,14 @@ android {
 
 dependencies {
     implementation(projects.domain.vod)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
 
     // Room dependencies
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.paging.common.android)
     ksp(libs.androidx.room.compiler)
 
     // Coroutines
@@ -51,6 +52,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
@@ -59,6 +61,7 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.truth)
     testImplementation(kotlin("test"))
+    implementation(libs.slf4j.api)
 
 }
 tasks.withType<Test> {

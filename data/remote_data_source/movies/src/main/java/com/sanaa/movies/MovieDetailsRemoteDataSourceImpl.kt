@@ -1,6 +1,6 @@
 package com.sanaa.movies
 
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.dataSource.remote.dto.CastDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto

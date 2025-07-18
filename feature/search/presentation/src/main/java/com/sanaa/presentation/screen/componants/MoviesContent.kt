@@ -4,23 +4,20 @@ import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
@@ -29,7 +26,10 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 @Composable
-fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel) -> Unit) {
+fun MoviesContent(
+    moviesPagingData: LazyPagingItems<MovieUiModel>,
+    onMovieClick: (RecentViewedUiModel) -> Unit,
+) {
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme)
         R.drawable.movie_placeholder_dark
@@ -39,58 +39,53 @@ fun MoviesContent(movies: List<MovieUiModel>, onMovieClick: (RecentViewedUiModel
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(horizontal = 16.dp),
         contentPadding = PaddingValues(bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(movies) { movie ->
-            Log.d("MoviesContent", "Movie: $movie")
-            MovieSeriesPosterCard(boastImage = {
-                RemoteBlurredHaramImageViewer(
-                    imageUrl = movie.imageUrl,
-                    modifier = Modifier.fillMaxWidth(),
-                    blurRadius = 150,
-                    haramThreshold = 0.2f,
-                    nonHaramThreshold = 0.7f,
-                    placeholder = painterResource(placeholderResId),
-                    error = painterResource(placeholderResId),
-                    contentDescription = movie.title,
-                ) {
-                    OnBlurContent(
-                        hintText = stringResource(R.string.unsuitable_image),
-                        textStyle = Theme.textStyle.body.small.copy(
-                            color = Color(0x99FFFFFF)
-                        ),
-                        iconSize = 24.dp,
-                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                    )
-                }
-            }, topLeftContent = {
-                SaveIconChip(onClick = {})
-            }, onCardClick = {
-                onMovieClick(
-                    RecentViewedUiModel(
-                        id = movie.id,
-                        imageUrl = movie.imageUrl,
-                        mediaType = MediaTypeUi.MOVIE.name
-                    )
+        items(moviesPagingData.itemCount) { index ->
+            val movie = moviesPagingData[index]
+            if (movie != null) {
+                Log.d("MoviesContent", "Movie: $movie")
+                MovieSeriesPosterCard(
+                    boastImage = {
+                        RemoteBlurredHaramImageViewer(
+                            imageUrl = movie.imageUrl,
+                            modifier = Modifier.fillMaxWidth(),
+                            blurRadius = 150,
+                            haramThreshold = 0.2f,
+                            nonHaramThreshold = 0.7f,
+                            placeholder = painterResource(placeholderResId),
+                            error = painterResource(placeholderResId),
+                            contentDescription = movie.title,
+                        ) {
+                            OnBlurContent(
+                                hintText = stringResource(R.string.unsuitable_image),
+                                textStyle = Theme.textStyle.body.small.copy(
+                                    color = Color(0x99FFFFFF)
+                                ),
+                                iconSize = 24.dp,
+                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                            )
+                        }
+                    },
+                    topLeftContent = {
+                        SaveIconChip(onClick = {})
+                    },
+                    onCardClick = {
+                        onMovieClick(
+                            RecentViewedUiModel(
+                                id = movie.id,
+                                imageUrl = movie.imageUrl,
+                                mediaType = MediaTypeUi.MOVIE.name
+                            )
+                        )
+                    }
                 )
-            })
+            }
         }
-    }
-}
 
-@PreviewLightDark
-@Composable
-private fun PreviewMoviesContent() {
-    val movies = listOf(
-        MovieUiModel(1, "Movie1", "https://image.com", "1"),
-        MovieUiModel(1, "Movie2", "https://image.com", "1"),
-        MovieUiModel(1, "Movie3", "https://image.com", "1")
-    )
-    NovixTheme(isSystemInDarkTheme()) {
-        MoviesContent(movies) {}
     }
 }

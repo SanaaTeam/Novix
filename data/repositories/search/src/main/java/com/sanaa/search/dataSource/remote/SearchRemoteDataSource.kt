@@ -8,15 +8,18 @@ import com.sanaa.search.dataSource.remote.response.SearchResponse
 interface SearchRemoteDataSource {
 
     suspend fun searchActors(
-        query: String
+        query: String,
+        page: Int = 1,
     ): SearchResponse<ActorSearchDto>
 
     suspend fun searchTvShows(
-        query: String
+        query: String,
+        page: Int = 1,
     ): SearchResponse<TvShowSearchDto>
 
     suspend fun searchMovies(
-        query: String
+        query: String,
+        page: Int = 1,
     ): SearchResponse<MovieSearchDto>
 
 }

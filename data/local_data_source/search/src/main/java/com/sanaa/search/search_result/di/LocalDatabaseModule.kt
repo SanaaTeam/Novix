@@ -1,7 +1,7 @@
 package com.sanaa.search.search_result.di
 
 import androidx.room.Room
-import com.example.env_config.service.LanguageProvider
+import com.example.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.search_result.dao.ActorDao
 import com.sanaa.search.search_result.dao.MovieDao
