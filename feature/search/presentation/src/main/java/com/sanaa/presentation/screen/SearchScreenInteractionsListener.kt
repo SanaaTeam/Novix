@@ -8,6 +8,8 @@ interface SearchScreenInteractionsListener {
     fun onClearRecentSearchClicked()
     fun onDeleteRecentSearchItem(id: Int)
     fun onSaveIconClicked()
+    fun onFilterClicked()
+    fun onBottomSheetDragged()
     fun onTabSelected(index: Int)
     fun onRecentSearchItemClicked(query: String)
     fun onSearchQueryChanged(title: String)

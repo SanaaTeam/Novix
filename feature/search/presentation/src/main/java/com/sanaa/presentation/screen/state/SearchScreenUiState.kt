@@ -15,6 +15,7 @@ data class SearchScreenUiState(
     val actors: List<ActorUiModel> = emptyList(),
     val error: String? = null,
     val filters: MediaFilters? = null,
+    val showBottomSheet: Boolean = false
 )
 
 data class MovieUiModel(

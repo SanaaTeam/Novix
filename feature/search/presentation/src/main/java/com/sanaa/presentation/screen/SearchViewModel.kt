@@ -300,6 +300,20 @@ class SearchViewModel(
 
     }
 
+    override fun onFilterClicked() {
+        updateState {
+            it.copy(showBottomSheet = true)
+        }
+    }
+
+    override fun onBottomSheetDragged() {
+        updateState {
+            it.copy(
+                showBottomSheet = false
+            )
+        }
+    }
+
     companion object {
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
