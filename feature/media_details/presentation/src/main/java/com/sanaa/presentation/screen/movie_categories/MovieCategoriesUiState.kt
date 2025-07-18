@@ -7,7 +7,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import entity.Genre
 
 data class MovieCategoriesScreenUiState(
-    val title: Genre = Genre.DRAMA,
+    val title: Genre? = null,
     val movies: List<MovieUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
