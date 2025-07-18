@@ -1,13 +1,15 @@
 package com.sanaa.presentation.screen
 
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import app.cash.turbine.test
 import com.google.common.truth.Truth
+import com.sanaa.presentation.screen.SearchViewModel.Companion.ACTOR_INDEX
+import com.sanaa.presentation.screen.SearchViewModel.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.ActorUiModel
-import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenUiState
-import com.sanaa.presentation.screen.state.TvShowUiModel
 import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -59,17 +61,66 @@ class SearchViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
-            searchMoviesUseCase,
-            searchTvSeriesUseCase,
-            searchActorsUseCase,
-            addRecentViewedUseCase,
-            getRecentViewedUseCase,
-            getSearchHistoryUseCase,
-            clearRecentViewedUseCase,
-            clearSearchHistoryUseCase,
-            deleteSearchItemUseCase,
-            testDispatcher,
+            searchMoviesUseCase = searchMoviesUseCase,
+            searchTvSeriesUseCase = searchTvSeriesUseCase,
+            searchActorsUseCase = searchActorsUseCase,
+            addRecentViewedUseCase = addRecentViewedUseCase,
+            getRecentViewedUseCase = getRecentViewedUseCase,
+            getSearchHistoryUseCase = getSearchHistoryUseCase,
+            clearRecentViewedUseCase = clearRecentViewedUseCase,
+            clearSearchHistoryUseCase = clearSearchHistoryUseCase,
+            deleteSearchItemUseCase = deleteSearchItemUseCase,
+            dispatcher = testDispatcher,
         )
+    }
+
+    @Test
+    fun `loadMediaByTab should load actors when ACTOR_INDEX is selected`() = runTest {
+        // When
+        val actorList = listOf(
+            ActorUiModel(id = 1, name = "John Doe", imageUrl = "url1"),
+            ActorUiModel(id = 2, name = "Jane Smith", imageUrl = "url2")
+        )
+        TestActorPagingSource(actorList)
+
+        searchViewModel.updateState { it.copy(selectedTabIndex = ACTOR_INDEX) }
+
+        // invoke private method via reflection
+        val method =
+            SearchViewModel::class.java.getDeclaredMethod("loadMediaByTab", String::class.java)
+        method.isAccessible = true
+        method.invoke(searchViewModel, "john")
+
+        // Then
+        searchViewModel.actorsPagingData.test {
+            val result = awaitItem()
+            Truth.assertThat(result).isNotNull()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `load tv shows when tab index is TV_SHOW_INDEX and query is not blank`() = runTest {
+        // When
+
+        val actorList = listOf(
+            ActorUiModel(id = 1, name = "John Doe", imageUrl = "url1"),
+            ActorUiModel(id = 2, name = "Jane Smith", imageUrl = "url2")
+        )
+
+        TestActorPagingSource(actorList)
+        searchViewModel.updateState { it.copy(selectedTabIndex = TV_SHOW_INDEX) }
+
+        val method =
+            SearchViewModel::class.java.getDeclaredMethod("loadMediaByTab", String::class.java)
+        method.isAccessible = true
+        method.invoke(searchViewModel, "john")
+        // Then
+        searchViewModel.actorsPagingData.test {
+            val result = awaitItem()
+            Truth.assertThat(result).isNotNull()
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
@@ -297,7 +348,8 @@ class SearchViewModelTest {
     fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
         // Given
         val initialState = searchViewModel.state.value
-        Truth.assertThat(initialState.selectedTabIndex).isNotEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
+        Truth.assertThat(initialState.selectedTabIndex)
+            .isNotEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
 
         // When
         searchViewModel.onTabSelected(SearchScreenUiState.TV_SHOW_INDEX)
@@ -317,11 +369,13 @@ class SearchViewModelTest {
         val index = SearchScreenUiState.MOVIE_INDEX
         val uiState = searchViewModel.state
         val movieName = "Movie"
+        val page = 1
         val movies = listOf(SearchMovieOutput(1, movieName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(movieName)
         coEvery {
             searchMoviesUseCase.execute(
                 uiState.value.searchQuery,
+                page = page,
                 filters = uiState.value.filters
             )
         } returns movies
@@ -337,7 +391,6 @@ class SearchViewModelTest {
                 searchQuery = movieName,
                 selectedTabIndex = index,
                 isLoading = false,
-                movies = movies.map { MovieUiModel(it.id, it.title, it.posterImageUrl, "") },
                 isFilterButtonVisible = true
             )
             Truth.assertThat(item).isEqualTo(expected)
@@ -350,12 +403,14 @@ class SearchViewModelTest {
         val index = SearchScreenUiState.TV_SHOW_INDEX
         val uiState = searchViewModel.state
         val tvShowName = "TvShow"
+        val page = 1
         val tvShows = listOf(SearchTvSeriesOutput(1, tvShowName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(tvShowName)
         coEvery {
             searchTvSeriesUseCase.execute(
                 uiState.value.searchQuery,
-                filters = uiState.value.filters,
+                page = page,
+                filters = uiState.value.filters
             )
         } returns tvShows
 
@@ -370,7 +425,6 @@ class SearchViewModelTest {
                 searchQuery = tvShowName,
                 selectedTabIndex = index,
                 isLoading = false,
-                tvShows = tvShows.map { TvShowUiModel(it.id, it.title, it.posterImageUrl, "") },
                 isFilterButtonVisible = true
             )
             Truth.assertThat(item).isEqualTo(expected)
@@ -397,11 +451,12 @@ class SearchViewModelTest {
         val index = SearchScreenUiState.ACTOR_INDEX
         val uiState = searchViewModel.state
         val actorName = "TvShow"
+        val page = 1
         val actors = listOf(SearchActorOutput(1, actorName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(actorName)
         coEvery {
             searchActorsUseCase.execute(
-                uiState.value.searchQuery,
+                uiState.value.searchQuery, page
             )
         } returns actors
 
@@ -417,7 +472,6 @@ class SearchViewModelTest {
                 selectedTabIndex = index,
                 isLoading = false,
                 isFilterButtonVisible = false,
-                actors = actors.map { ActorUiModel(it.id, it.name, it.profileImageUrl) }
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
@@ -442,7 +496,7 @@ class SearchViewModelTest {
     @Test
     fun `onFilterApplied() should set state filters`() = runTest {
         // Given
-        val filters = mediaFilters
+        val filters = MediaFilters()
 
         // When
         searchViewModel.onFilterApplied(filters)
@@ -458,7 +512,7 @@ class SearchViewModelTest {
     @Test
     fun `onFilterApplied() should search movie when apply filters`() = runTest {
         // Given
-        val filters = mediaFilters
+        val filters = MediaFilters()
         val index = SearchScreenUiState.MOVIE_INDEX
         val movieName = "Movie"
         searchViewModel.onSearchQueryChanged(movieName)
@@ -572,11 +626,18 @@ class SearchViewModelTest {
             }
         }
 
-    companion object {
-        val mediaFilters = MediaFilters(
-            startYear = 1980,
-            endYear = 2025,
-            imdbRating = 5f
+}
+
+class TestActorPagingSource(
+    private val data: List<ActorUiModel>,
+) : PagingSource<Int, ActorUiModel>() {
+    override fun getRefreshKey(state: PagingState<Int, ActorUiModel>): Int? = null
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ActorUiModel> {
+        return LoadResult.Page(
+            data = data,
+            prevKey = null,
+            nextKey = null
         )
     }
 }

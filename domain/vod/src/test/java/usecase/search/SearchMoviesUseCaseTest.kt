@@ -30,9 +30,10 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Movie"
+            val page = 1
 
             // When
-            searchMoviesUseCase.execute(query, null)
+            searchMoviesUseCase.execute(query, page, null)
 
             // Then
             coVerify {
@@ -46,12 +47,13 @@ class SearchMoviesUseCaseTest {
             // Given
             val query = "Movie"
             val filters = null
+            val page = 1
             coEvery {
-                searchRepository.searchMovies(query, filters)
+                searchRepository.searchMovies(query, page, filters)
             } returns searchMediaOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchMediaOutputList)
@@ -62,13 +64,14 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Movie"
-            val filters = mediaFilters
+            val page = 1
+            val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMovies(query, filters)
+                searchRepository.searchMovies(query, page, filters)
             } returns searchMediaOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, filters)
+            val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchMediaOutputList)
@@ -79,13 +82,14 @@ class SearchMoviesUseCaseTest {
         runTest {
             // Given
             val query = "Sam"
+            val page = 1
             coEvery {
-                searchRepository.searchMovies(query, null)
+                searchRepository.searchMovies(query, page, null)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchMoviesUseCase.execute(query, null)
+                searchMoviesUseCase.execute(query, page, null)
             }
         }
 
@@ -96,11 +100,6 @@ class SearchMoviesUseCaseTest {
                 title = "title",
                 posterImageUrl = "imageUrl",
             )
-        )
-        val mediaFilters = MediaFilters(
-            startYear = 1980,
-            endYear = 2025,
-            imdbRating = 5f
         )
     }
 }
