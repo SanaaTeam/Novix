@@ -61,7 +61,7 @@ fun RemoteBlurredHaramImageViewer(
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var bitmapToDisplay by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+    var bitmapToDisplay by remember { mutableStateOf<Bitmap?>(null) }
     var isHaram by rememberSaveable { mutableStateOf(isBlurEnabled) }
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
 

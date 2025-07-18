@@ -61,6 +61,7 @@ fun SearchScreen(
     }
 
     NovixTheme(isSystemInDarkTheme()) {
+
         SearchScreenContent(
             uiState = uiState,
             filterUiState = filterUiState,

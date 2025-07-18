@@ -35,6 +35,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(libs.kotlinx.serialization.json)
     implementation(projects.imageViewer)
