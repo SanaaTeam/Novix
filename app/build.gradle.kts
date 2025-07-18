@@ -29,6 +29,10 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
+
+        lint {
+            baseline = file("lint-baseline.xml")
+        }
     }
 
     buildTypes {
