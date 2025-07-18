@@ -8,6 +8,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
+import com.sanaa.preferences.R
 
 class GenreLocalizerImplTest {
 
