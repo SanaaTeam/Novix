@@ -45,7 +45,6 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreen
 import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
 import com.sanaa.presentation.screen.series.components.BottomContainer
@@ -179,13 +178,15 @@ fun MovieDetailsContent(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        IconWithText(
-                                            iconRes = designR.drawable.star,
-                                            contentDescription = null,
-                                            text = state.movieDetails.rating,
-                                            tint = Theme.colors.statusColors.yellowAccent
-                                        )
-                                        DotSeparator()
+                                        state.movieDetails.rating?.let {
+                                            IconWithText(
+                                                iconRes = designR.drawable.star,
+                                                contentDescription = null,
+                                                text = state.movieDetails.rating,
+                                                tint = Theme.colors.statusColors.yellowAccent
+                                            )
+                                            DotSeparator()
+                                        }
                                         state.movieDetails.duration?.let {
                                             IconWithText(
                                                 iconRes = presentationR.drawable.icon_duration,
@@ -214,27 +215,31 @@ fun MovieDetailsContent(
                         }
 
                         item {
-                            OverviewSection(
-                                overview = state.movieDetails.overview,
-                                onReadMore = { interactionListener.onReadMoreClick() },
-                                modifier = Modifier.padding(16.dp),
-                                titleResId = presentationR.string.overview
-                            )
+                            state.movieDetails.overview?.let {
+                                OverviewSection(
+                                    overview = state.movieDetails.overview,
+                                    onReadMore = { interactionListener.onReadMoreClick() },
+                                    modifier = Modifier.padding(16.dp),
+                                    titleResId = presentationR.string.overview
+                                )
+                            }
                         }
 
                         item {
-                            CastComponent(
-                                cast = state.cast,
-                                onActorClicked = interactionListener::onActorCardClick
-                            )
+                            if (state.cast.isNotEmpty())
+                                CastComponent(
+                                    cast = state.cast,
+                                    onActorClicked = interactionListener::onActorCardClick
+                                )
                         }
                         item {
-                            MoreLikeThisSection(
-                                similarMovies = state.similarMovies,
-                                onBookmarkClick = interactionListener::onBookmarkClick,
-                                onSimilarMovieClick = interactionListener::onSimilarMovieClick,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
+                            if (state.similarMovies.isNotEmpty())
+                                MoreLikeThisSection(
+                                    similarMovies = state.similarMovies,
+                                    onBookmarkClick = interactionListener::onBookmarkClick,
+                                    onSimilarMovieClick = interactionListener::onSimilarMovieClick,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
                         }
                     }
 

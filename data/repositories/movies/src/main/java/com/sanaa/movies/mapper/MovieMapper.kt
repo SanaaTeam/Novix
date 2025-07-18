@@ -15,39 +15,39 @@ fun MovieDetailsDto.toDomain(): Movie {
     return Movie(
         id = id,
         posterImageUrl = posterImagePath.fullImageUrlOrEmpty(),
-        title = title ?: "Unknown Title",
+        title = title.orEmpty(),
         genres = genres.mapNotNull { it.id?.toGenre() },
-        imdbRating = voteAverage ?: 0.0f,
-        duration = duration ?: 0,
+        imdbRating = voteAverage,
+        duration = duration,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview ?: "No overview available"
+        overview = overview
     )
 }
 
 fun SimilarMoviesDto.Results.toDomain(): Movie {
     return Movie(
-        id = id ,
+        id = id,
         posterImageUrl = posterPath.fullImageUrlOrEmpty(),
-        title = title ?: "Unknown Title",
+        title = title.orEmpty(),
         genres = genreIds.mapNotNull { it.toGenre() },
-        imdbRating = voteAverage?.toFloat() ?: 0.0f,
+        imdbRating = voteAverage?.toFloat(),
         duration = 0,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview ?: "No overview available"
+        overview = overview
     )
 
 }
 
 fun MoviesByCategoryResponse.MoviesByCategoryDto.toDomain(): Movie {
     return Movie(
-        id = id ,
+        id = id,
         title = title.orEmpty(),
         posterImageUrl = posterPath.fullImageUrlOrEmpty(),
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
         genres = genreIds.mapNotNull { it.toGenre() },
-        overview = overview.orEmpty(),
+        overview = overview,
         duration = 0,
-        imdbRating = voteAverage?.toFloat()?: 0.0f,
+        imdbRating = voteAverage?.toFloat(),
     )
 }
 

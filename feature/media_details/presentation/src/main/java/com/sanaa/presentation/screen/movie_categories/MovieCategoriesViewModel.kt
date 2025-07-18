@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.movie_categories
 
 import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.model.toUiModel
 import details.usecase.ManageMovieDetailsUseCase
 import entity.Genre
 
@@ -31,7 +32,7 @@ class MovieCategoriesViewModel(
         emitEffect(MovieCategoriesScreenEffects.NavigateBack)
     }
 
-    override fun onMovieClick(id:Int) {
+    override fun onMovieClick(id: Int) {
         emitEffect(MovieCategoriesScreenEffects.NavigateToMovieDetails(id))
     }
 
@@ -47,14 +48,8 @@ class MovieCategoriesViewModel(
                 updateState {
                     it.copy(
                         title = categoryId, movies = movies.map { it ->
-                            MovieCardUiModel(
-                                id = it.id,
-                                title = it.title,
-                                imageUrl = it.posterImageUrl,
-                                rating = it.imdbRating
-                            )
+                            it.toUiModel()
                         }
-
                     )
                 }
             }, onSuccess = {

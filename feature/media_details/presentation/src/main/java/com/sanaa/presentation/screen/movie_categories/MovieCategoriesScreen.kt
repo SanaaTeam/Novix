@@ -122,7 +122,7 @@ fun MovieCategoriesScreenContent(
                                 MovieSeriesPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.imageUrl,
+                                            imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             blurRadius = 150,
                                             haramThreshold = 0.2f,
