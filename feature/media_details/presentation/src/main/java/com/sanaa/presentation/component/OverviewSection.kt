@@ -41,8 +41,8 @@ fun ExpandableText(
     val textMeasurer = rememberTextMeasurer()
 
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    var hasOverflow by remember { mutableStateOf(false) }
-    var displayText by remember { mutableStateOf(text) }
+    var hasOverflow by rememberSaveable { mutableStateOf(false) }
+    var displayText by rememberSaveable { mutableStateOf(text) }
 
     BoxWithConstraints(
         modifier = modifier

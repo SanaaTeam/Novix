@@ -1,8 +1,5 @@
 package com.sanaa.presentation.screen.review.components
 
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -28,15 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.ExpandableText
 import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable
@@ -105,7 +99,6 @@ fun ReviewCard(
         }
 
         Spacer(modifier = Modifier.height(12.dp))
-
         ExpandableText(
             text = review.content,
             style = Theme.textStyle.body.small,
@@ -117,7 +110,7 @@ fun ReviewCard(
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-        
+
         IconWithText(
             text = review.createdDate,
             iconRes = R.drawable.icon_calender,
