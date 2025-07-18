@@ -43,10 +43,10 @@ import org.koin.core.parameter.parametersOf
 fun ActorGalleryScreen(
     actorId: Int,
     navigateBack: () -> Unit,
+    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
 ) {
     BackHandler(onBack = navigateBack)
 
-    val viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
