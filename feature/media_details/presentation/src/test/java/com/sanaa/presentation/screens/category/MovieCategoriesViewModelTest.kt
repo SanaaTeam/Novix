@@ -1,6 +1,10 @@
-package com.sanaa.presentation.screen.movie_categories
+package com.sanaa.presentation.screens.category
 
 import app.cash.turbine.test
+import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenEffects
+import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenUiState
+import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
 import details.usecase.ManageMovieDetailsUseCase
 import entity.Genre
 import entity.Movie
@@ -62,32 +66,28 @@ class MovieCategoriesViewModelTest {
     fun setUp() {
         clearAllMocks()
     }
+
     @Test
-    fun `init should load movies and update state`() = runTest(testDispatcher) {
+    fun `when init then should load movies and update state`() = runTest(testDispatcher) {
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns movieList
 
         viewModel = MovieCategoriesViewModel(Genre.DRAMA, manageMoviesDetailsUseCase)
 
-        val expectedState = MovieCategoriesScreenUiState(
-            title = Genre.DRAMA,
-            movies = movieList.map {
-                MovieCardUiModel(
-                    id = it.id,
-                    title = it.title,
-                    imageUrl = it.posterImageUrl,
-                    rating = it.imdbRating
-                )
-            },
-            isLoading = false,
-            error = null,
-            showBottomSheet = false
-        )
-
         viewModel.state.test {
-            skipItems(1)
+            var currentState = awaitItem()
+            while (currentState.isLoading) {
+                currentState = awaitItem()
+            }
 
-            val actualState = awaitItem()
-            assertEquals(expectedState, actualState)
+            val expectedState = MovieCategoriesScreenUiState(
+                title = Genre.DRAMA,
+                movies = movieList.map { it.toUiModel() },
+                isLoading = false,
+                error = null,
+                showBottomSheet = false
+            )
+
+            assertEquals(expectedState, currentState)
         }
     }
 
@@ -140,6 +140,31 @@ class MovieCategoriesViewModelTest {
         viewModel.effect.test {
             viewModel.onMovieClick(10)
             assertEquals(MovieCategoriesScreenEffects.NavigateToMovieDetails(10), awaitItem())
+        }
+    }
+    @Test
+    fun `when getMoviesByCategory throws exception then should update state with error`() = runTest(testDispatcher) {
+        val exception = RuntimeException()
+
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } throws exception
+
+        viewModel = MovieCategoriesViewModel(Genre.DRAMA, manageMoviesDetailsUseCase)
+
+        viewModel.state.test {
+            var currentState = awaitItem()
+            while (currentState.isLoading) {
+                currentState = awaitItem()
+            }
+
+            val expectedState = MovieCategoriesScreenUiState(
+                title = null,
+                movies = emptyList(),
+                isLoading = false,
+                error = exception.message,
+                showBottomSheet = false
+            )
+
+            assertEquals(expectedState, currentState)
         }
     }
 
