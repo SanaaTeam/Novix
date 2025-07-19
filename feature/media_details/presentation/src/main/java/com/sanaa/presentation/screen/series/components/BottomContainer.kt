@@ -19,7 +19,7 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.presentation.R
 
 val boxContainerGradient = Brush.verticalGradient(
-    colors = listOf(Color(0x0D060800), Color(0xFF0D0608))
+    colors = listOf( Color(0x00000000), Color(0xFF0D0608))
 )
 
 @Composable

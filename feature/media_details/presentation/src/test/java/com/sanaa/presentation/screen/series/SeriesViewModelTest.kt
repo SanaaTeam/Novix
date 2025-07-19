@@ -1,13 +1,7 @@
-package com.sanaa.presentation.screens.series
+package com.sanaa.presentation.screen.series
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeasonUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
-import com.sanaa.presentation.screen.series.SeriesScreenEffects
-import com.sanaa.presentation.screen.series.SeriesScreenUiState
-import com.sanaa.presentation.screen.series.SeriesViewModel
 import details.usecase.ManageTvSeriesDetailsUseCase
 import entity.Actor
 import entity.Actor.Gender

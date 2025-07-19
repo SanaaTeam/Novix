@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.series.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,12 @@ import com.sanaa.presentation.model.EpisodeUiModel
 fun EpisodeCard(
     episode: EpisodeUiModel, modifier: Modifier = Modifier
 ) {
+
+    val placeholderResId = if (isSystemInDarkTheme()) {
+        R.drawable.movie_placeholder_dark
+    } else {
+        R.drawable.movie_placeholder_light
+    }
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -56,7 +63,7 @@ fun EpisodeCard(
                 )
             } ?: run {
                 Image(
-                    painter = painterResource(R.drawable.movie_placeholder_light),
+                    painter = painterResource(placeholderResId),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
                 )

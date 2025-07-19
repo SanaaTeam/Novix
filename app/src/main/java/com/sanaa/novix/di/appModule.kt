@@ -12,6 +12,6 @@ val appModule = module {
     includes(
         firebaseModule, loggingModule, repositoryModule, localDatabaseModule,
         networkModule, remoteDataSource, remoteDetailsDataSource, remoteMovieDetailsDataSource,
-        remoteTvSeriesDataSourceModule, domainModule
+        remoteTvSeriesDataSourceModule, domainModule, navigationModule
     )
 }

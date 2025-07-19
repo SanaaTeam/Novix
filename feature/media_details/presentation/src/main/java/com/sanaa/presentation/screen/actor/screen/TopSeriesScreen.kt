@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -33,8 +36,10 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
+import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
@@ -70,18 +75,12 @@ private fun TopSeriesContent(
     onBackClick: () -> Unit,
 ) {
     val navController = LocalNavControllerProvider.current
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        R.drawable.movie_placeholder_dark
-    } else {
-        R.drawable.movie_placeholder_light
-    }
 
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Column(
-            modifier = modifier
+            modifier = modifier.navigationBarsPadding()
         ) {
             AppTopBar(
                 leftContent = {
@@ -89,7 +88,7 @@ private fun TopSeriesContent(
                         icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
                     )
                 },
-                screenTitle = stringResource(com.sanaa.presentation.R.string.top_series_picks),
+                screenTitle = stringResource(R.string.top_series_picks),
                 modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
@@ -101,8 +100,11 @@ private fun TopSeriesContent(
             ) {
 
                 AnimatedContent(
-                    targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
+                    state.isLoading,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+
+                )  { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -124,11 +126,27 @@ private fun TopSeriesContent(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = series.posterPath ?: "",
-                                            modifier = Modifier.fillMaxSize(),
-                                            blurRadius = 150,
-                                            contentDescription = series.title,
-                                            placeholder = painterResource(placeholderResId),
-                                        )
+                                                modifier = Modifier.fillMaxSize(),
+                                                blurRadius = 150,
+                                                haramThreshold = 0.2f,
+                                                nonHaramThreshold = 0.7f,
+                                                contentDescription = series.title,
+                                                placeholderContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                                errorContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                            ) {
+                                                OnBlurContent(
+                                                    hintText = stringResource(R.string.unsuitable_image),
+                                                    textStyle = Theme.textStyle.body.small.copy(
+                                                        color = Color(0x99FFFFFF)
+                                                    ),
+                                                    iconSize = 24.dp,
+                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                                )
+                                            }
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
                                     onCardClick = {

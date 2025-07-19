@@ -3,6 +3,8 @@ package com.sanaa.designsystem.design_system.component.cards
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +35,7 @@ fun ActorCard(
     actorName: String,
     actorImage: Painter,
     modifier: Modifier = Modifier,
+    onCardClick: () -> Unit = {},
     playedCharacter: String? = null,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
@@ -44,6 +48,11 @@ fun ActorCard(
         modifier = modifier
             .height(78.dp)
             .fillMaxWidth()
+            .clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = onCardClick
+            )
     ) {
         Box(
             modifier = Modifier

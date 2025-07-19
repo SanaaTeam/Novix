@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +25,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
@@ -50,6 +52,7 @@ import search.usecase.search_param.MediaFilters
 fun SearchScreen(
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
     filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
     val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
@@ -65,6 +68,7 @@ fun SearchScreen(
     SetNavigationBarColor(Theme.colors.surface)
 
     NovixTheme(isSystemInDarkTheme()) {
+
         SearchScreenContent(
             uiState = uiState,
             filterUiState = filterUiState,
@@ -73,6 +77,8 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
+            onMediaClick = onMediaClick
+
         )
     }
 }
@@ -87,6 +93,7 @@ fun SearchScreenContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -143,12 +150,22 @@ fun SearchScreenContent(
                         moviesPagingData = moviesPagingData,
                         tvShowsPagingData = tvShowsPagingData,
                         actorsPagingData = actorsPagingData,
+                        onMovieClick = { movie ->
+                            onMediaClick(StartRoute.MOVIE, movie.id)
+                        },
+                        onTvShowClick = { tvShow ->
+                            onMediaClick(StartRoute.SERIES, tvShow.id)
+                        },
+                        onActorClick = { actor ->
+                            onMediaClick(StartRoute.ACTOR, actor.id)
+                        }
                     )
 
                     false -> SearchHistoryContent(
                         recentSearches = uiState.recentSearchQueries,
                         recentViewed = uiState.recentViewedMedia,
                         interactionsListener = searchListener,
+                        onMediaClick = onMediaClick
                     )
                 }
             }

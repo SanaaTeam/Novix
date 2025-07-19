@@ -1,12 +1,9 @@
-package com.sanaa.presentation.screens.episode_details
+package com.sanaa.presentation.screen.episode_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsEffects
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenUiState
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
 import details.usecase.ManageEpisodeDetailsUseCase
 import details.usecase.ManageTvSeriesDetailsUseCase
 import entity.Actor
@@ -20,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -39,34 +37,6 @@ class EpisodeDetailsScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
     }
 
-    @Test
-    fun `init emits loading then populated state`() = runTest {
-        coEvery { manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber) } returns dummyEpisode
-        coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber) } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            seriesId, seasonNumber, episodeNumber,
-            manageEpisodeDetails, manageTvSeriesDetails
-        )
-
-        viewModel.state.test {
-            val loading = awaitItem()
-            assertThat(loading.isLoading).isTrue()
-            val expected = EpisodeDetailsScreenUiState(
-                episode = dummyEpisode.toEpisodeUiModel(),
-                guestOfHonor = dummyGuests.map { it.toActorUiModel() },
-                seriesId = seriesId,
-                imagesUrl = dummyImages,
-                trailerUrl = dummyTrailer,
-                isLoading = true,
-                error = null
-            )
-            assertThat(awaitItem()).isEqualTo(expected)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {

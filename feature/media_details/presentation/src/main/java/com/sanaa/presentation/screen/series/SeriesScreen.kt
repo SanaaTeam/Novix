@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -38,13 +40,11 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
-import entity.Genre
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -80,7 +80,9 @@ fun SeriesScreen(
                 }
 
                 is SeriesScreenEffects.NavigateBack -> {
-                    // TODO
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
                 }
 
                 is SeriesScreenEffects.PlayTrailer -> {
@@ -110,7 +112,8 @@ fun SeriesScreenContent(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.navigationBarsPadding()
+                .fillMaxSize()
         ) {
             AppTopBar(
                 leftContent = {
@@ -164,8 +167,7 @@ fun SeriesScreenContent(
                                     state.series.id
                                 )
                             },
-                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) }
-                            )
+                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
                         state.series.overview?.let {
                             OverviewSection(
                                 onReadMore = {},
@@ -176,6 +178,7 @@ fun SeriesScreenContent(
                                 )
                             )
                         }
+
                         if (state.cast.isNotEmpty())
                             CastComponent(
                                 cast = state.cast,

@@ -42,15 +42,8 @@ fun GuestsOfHonorComponent(
                     model = it.imageUrl,
                 ),
                 modifier = Modifier
-                    .fillMaxWidth(
-                    )
-                    .clickable(
-                        onClick = {
-                            onActorClick(it.id)
-                        },
-                        indication = null,
-                        interactionSource = MutableInteractionSource()
-                    )
+                    .fillMaxWidth(),
+                onCardClick = { onActorClick(it.id) }
             )
         }
     }

@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.button.TextButton
@@ -42,6 +42,7 @@ fun SearchHistoryContent(
     interactionsListener: SearchScreenInteractionsListener,
     recentSearches: List<RecentSearchUiModel> = emptyList(),
     recentViewed: List<RecentViewedUiModel> = emptyList(),
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -52,7 +53,12 @@ fun SearchHistoryContent(
         ) {
             when (it) {
                 true -> EmptyState()
-                false -> ContentState(recentViewed, interactionsListener, recentSearches)
+                false -> ContentState(
+                    recentViewed,
+                    interactionsListener,
+                    recentSearches,
+                    onMediaClick
+                )
             }
         }
     }
@@ -64,7 +70,7 @@ private fun EmptyState() {
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            icon = painterResource(id = R.drawable.empty_search),
+            icon = painterResource(id = com.sanaa.presentation.R.drawable.icon_search),
             text = stringResource(id = R.string.empty_search_message)
         )
     }
@@ -75,9 +81,10 @@ private fun ContentState(
     recentViewed: List<RecentViewedUiModel>,
     interactionsListener: SearchScreenInteractionsListener,
     recentSearches: List<RecentSearchUiModel>,
+    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     LazyColumn(
-        modifier = Modifier.padding(top = 12.dp), contentPadding = PaddingValues(bottom = 24.dp)
+        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
     ) {
         if (recentViewed.isNotEmpty()) {
             item {
@@ -96,7 +103,16 @@ private fun ContentState(
                     )
                 ) {
                     itemsIndexed(recentViewed) { _, item ->
-                        MediaPoster(item, interactionsListener)
+                        MediaPoster(
+                            item,
+                            onMediaClick = {
+                                if (item.mediaType == "MOVIE")
+                                    onMediaClick(StartRoute.MOVIE, item.id)
+                                else
+                                    onMediaClick(StartRoute.SERIES, item.id)
+                            },
+                            interactionsListener,
+                        )
                     }
                 }
             }
@@ -134,17 +150,12 @@ private fun ContentState(
 @Composable
 private fun MediaPoster(
     item: RecentViewedUiModel,
+    onMediaClick: () -> Unit,
     interactionsListener: SearchScreenInteractionsListener,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        com.sanaa.presentation.R.drawable.movie_placeholder_dark
-    } else {
-        com.sanaa.presentation.R.drawable.movie_placeholder_light
-    }
 
     MovieSeriesPosterCard(
-        onCardClick = { interactionsListener.onSearchResultMediaClicked(item) },
+        onCardClick = onMediaClick,
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
@@ -155,9 +166,12 @@ private fun MediaPoster(
                 blurRadius = 150,
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
-                placeholder = painterResource(placeholderResId),
-                error = painterResource(placeholderResId),
-
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
                 contentDescription = null,
             ) {
                 OnBlurContent(
@@ -171,8 +185,10 @@ private fun MediaPoster(
             }
         },
         topLeftContent = {
-            SaveIconChip(onClick = { })
-        }
+            SaveIconChip(
+                onClick = {}
+            )
+        },
     )
 }
 

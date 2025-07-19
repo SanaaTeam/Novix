@@ -16,7 +16,8 @@ import com.sanaa.presentation.screen.state.ActorUiModel
 
 @Composable
 fun ActorsContent(
-    actors: LazyPagingItems<ActorUiModel>
+    actors: LazyPagingItems<ActorUiModel>,
+    onActorClick: (ActorUiModel) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -31,7 +32,9 @@ fun ActorsContent(
                 ActorCard(
                     actorName = actor.name,
                     actorImage = rememberAsyncImagePainter(actor.imageUrl),
-                    playedCharacter = null
+                    playedCharacter = null,
+                    onCardClick = { onActorClick(actor) }
+
                 )
             }
         }

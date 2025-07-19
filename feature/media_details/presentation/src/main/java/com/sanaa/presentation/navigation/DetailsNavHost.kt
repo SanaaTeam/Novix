@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
@@ -166,8 +167,4 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
             }
         }
     }
-}
-
-enum class StartRoute {
-    SERIES, MOVIE, ACTOR
 }
