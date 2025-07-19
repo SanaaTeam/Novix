@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class ActorMovieCastDto(
     @SerialName("id") val actorId: Int,
 
-    @SerialName("cast") val cast: List<MovieCastCreditDto>
+    @SerialName("cast") val cast: List<MovieCastCreditDto>?
 ) {
     @Serializable
     data class MovieCastCreditDto(

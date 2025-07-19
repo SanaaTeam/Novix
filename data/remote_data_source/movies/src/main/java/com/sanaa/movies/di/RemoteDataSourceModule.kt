@@ -6,5 +6,5 @@ import org.koin.dsl.module
 
 
 val remoteMovieDetailsDataSource = module {
-    single<MovieDetailsRemoteDataSource> { MovieDetailsRemoteDataSourceImpl(get(), get(),get()) }
+    single<MovieDetailsRemoteDataSource> { MovieDetailsRemoteDataSourceImpl(get(), get()) }
 }

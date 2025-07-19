@@ -1,4 +1,3 @@
-
 package com.sanaa.actors
 
 import com.example.preferences.service.LanguageProvider
@@ -88,7 +87,7 @@ class ActorRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
-        dataSource = ActorRemoteDataSourceImpl(client, baseUrl, languageProvider)
+        dataSource = ActorRemoteDataSourceImpl(client, languageProvider)
     }
 
     @Test
@@ -111,8 +110,8 @@ class ActorRemoteDataSourceImplTest {
     fun `getActorTopMovies returns expected ActorMovieCastDto`() = runTest {
         val result = dataSource.getActorTopMovies(1)
         assertEquals(1, result.actorId)
-        assertEquals(1, result.cast.size)
-        assertEquals("Inception", result.cast[0].title)
+        assertEquals(1, result.cast?.size ?: 1)
+        assertEquals("Inception", result.cast?.get(0)?.title)
     }
 
     @Test
