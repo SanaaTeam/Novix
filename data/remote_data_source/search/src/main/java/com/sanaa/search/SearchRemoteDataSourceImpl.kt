@@ -1,6 +1,6 @@
 package com.sanaa.search
 
-import com.example.preferences.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
@@ -15,7 +15,7 @@ import io.ktor.client.request.parameter
 class SearchRemoteDataSourceImpl(
     private val client: HttpClient,
     private val languageProvider: LanguageProvider
-): SearchRemoteDataSource {
+) : SearchRemoteDataSource {
 
     override suspend fun searchActors(query: String, page: Int): SearchResponse<ActorSearchDto> =
         search(path = "person", query, page)

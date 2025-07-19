@@ -1,6 +1,6 @@
 package com.sanaa.search.search_result.local.datasource
 
-import com.example.preferences.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.local.dto.ActorLocalDto
 import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchLocalDto
