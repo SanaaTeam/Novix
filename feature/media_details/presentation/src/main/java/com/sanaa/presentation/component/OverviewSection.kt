@@ -128,8 +128,8 @@ fun OverviewSection(
     onReadMore: () -> Unit,
     @StringRes titleResId: Int,
     overview: String,
+    modifier: Modifier = Modifier,
     collapsedMaxLines: Int = 4,
-    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
         Text(

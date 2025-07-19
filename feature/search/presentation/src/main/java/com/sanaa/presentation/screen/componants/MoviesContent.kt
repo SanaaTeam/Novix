@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.componants
 
 import android.util.Log
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -30,12 +30,6 @@ fun MoviesContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     onMovieClick: (RecentViewedUiModel, MovieUiModel) -> Unit,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme)
-        R.drawable.movie_placeholder_dark
-    else
-        R.drawable.movie_placeholder_light
-
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
@@ -57,8 +51,12 @@ fun MoviesContent(
                             blurRadius = 150,
                             haramThreshold = 0.2f,
                             nonHaramThreshold = 0.7f,
-                            placeholder = painterResource(placeholderResId),
-                            error = painterResource(placeholderResId),
+                            placeholderContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            errorContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
                             contentDescription = movie.title,
                         ) {
                             OnBlurContent(
@@ -92,6 +90,5 @@ fun MoviesContent(
                 )
             }
         }
-
     }
 }

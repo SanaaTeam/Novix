@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.movie_details.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,9 +13,9 @@ import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCar
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.R
+import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.designsystem.R as designR
-import com.sanaa.presentation.R as presentationR
 
 @Composable
 fun MoreLikeThisCard(
@@ -24,12 +24,6 @@ fun MoreLikeThisCard(
     onMovieClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        designR.drawable.movie_placeholder_dark
-    } else {
-        designR.drawable.movie_placeholder_light
-    }
 
     MovieSeriesPosterCard(
         modifier = modifier,
@@ -37,21 +31,25 @@ fun MoreLikeThisCard(
         boastImage = {
             RemoteBlurredHaramImageViewer(
                 imageUrl = movie.posterUrl.orEmpty(),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 blurRadius = 150,
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
-                placeholder = painterResource(placeholderResId),
-                error = painterResource(placeholderResId),
-                contentDescription = movie.title
+                contentDescription = movie.title,
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
             ) {
                 OnBlurContent(
-                    hintText = stringResource(presentationR.string.unsuitable_image),
+                    hintText = stringResource(R.string.unsuitable_image),
                     textStyle = Theme.textStyle.body.small.copy(
                         color = Color(0x99FFFFFF)
                     ),
                     iconSize = 24.dp,
-                    icon = painterResource(designR.drawable.icon_eye_slash)
+                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                 )
             }
         },

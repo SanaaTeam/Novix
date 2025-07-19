@@ -175,7 +175,6 @@ class RemoteTvSeriesDataSourceImplTest {
 
         dataSource = RemoteTvSeriesDataSourceImpl(
             client = client,
-            baseUrl = baseUrl,
             languageProvider = languageProvider
         )
     }
