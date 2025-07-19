@@ -150,7 +150,7 @@ class ActorMapperTest {
 
     @Test
     fun `should return correct URL when getProfileImageUrl is called with path`() {
-        val url = getProfileImageUrl("/image.jpg")
+        val url = getFullImageUrl("/image.jpg")
         assertThat(url).isEqualTo("https://image.tmdb.org/t/p/w185/image.jpg")
     }
 

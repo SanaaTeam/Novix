@@ -12,7 +12,7 @@ import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.TvSeriesVideoDto
 import com.sanaa.series.mapper.apiGenderMapping
 import com.sanaa.series.mapper.buildPosterUrl
-import com.sanaa.series.mapper.getProfileImageUrl
+import com.sanaa.series.mapper.getFullImageUrl
 import com.sanaa.series.mapper.toDtoId
 import com.sanaa.series.mapper.toEntity
 import entity.Actor
@@ -202,7 +202,7 @@ class MapperTest {
 
     @Test
     fun `getProfileImageUrl formats URL correctly`() {
-        val url = getProfileImageUrl("/path.jpg")
+        val url = getFullImageUrl("/path.jpg")
         assertEquals("https://image.tmdb.org/t/p/w185/path.jpg", url)
     }
 
