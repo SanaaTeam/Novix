@@ -32,7 +32,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun MovieSeriesPosterCard(
     modifier: Modifier = Modifier,
-    poster: Painter = painterResource(R.drawable.movie_poster),
+    poster: Painter = painterResource(R.drawable.icon_placeholder_light),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
@@ -82,10 +82,10 @@ private fun PreviewMovieSeriesPosterCard() {
         ) {
             item {
                 MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.movie_poster),
+                    poster = painterResource(R.drawable.icon_placeholder_light),
                     boastImage = {
                         Image(
-                            painter = painterResource(R.drawable.movie_poster),
+                            painter = painterResource(R.drawable.icon_placeholder_light),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
@@ -100,7 +100,7 @@ private fun PreviewMovieSeriesPosterCard() {
             }
             item {
                 MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.movie_poster),
+                    poster = painterResource(R.drawable.icon_placeholder_light),
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}
@@ -110,7 +110,7 @@ private fun PreviewMovieSeriesPosterCard() {
             }
             item {
                 MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.movie_poster),
+                    poster = painterResource(R.drawable.icon_placeholder_light),
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}

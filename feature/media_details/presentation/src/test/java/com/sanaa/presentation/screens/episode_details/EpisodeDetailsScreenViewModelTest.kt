@@ -143,7 +143,7 @@ class EpisodeDetailsScreenViewModelTest {
         private val dummyGuests = listOf(
             Actor(
                 id = 11,
-                imageUrl = "/actor.jpg",
+                imageUrl = "/icon_placeholder_light.xml",
                 name = "Guest One",
                 region = "US",
                 lastShow = "Show",

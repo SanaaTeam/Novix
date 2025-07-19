@@ -119,7 +119,7 @@ class ActorViewModelTest {
     companion object {
         private val dummyActor = Actor(
             id = 77,
-            imageUrl = "/actor.jpg",
+            imageUrl = "/icon_placeholder_light.xml",
             name = "Jane Doe",
             region = "UK",
             lastShow = "Fabulous Show",

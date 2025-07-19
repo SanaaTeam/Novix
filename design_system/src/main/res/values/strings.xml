@@ -9,7 +9,6 @@
         No search result, please try with another keyword!</string>
     <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
     <string name="search">Search</string>
-    <string name="icon_filter">icon filter</string>
     <string name="recent_viewed">Recent viewed</string>
     <string name="clear_all">Clear all</string>
     <string name="recent_search">Recent search</string>
@@ -24,7 +23,6 @@
     <string name="no_review">There is no review!</string>
     <string name="reviews">Reviews</string>
     <string name="rating">Rating</string>
-    <string name="date">Date</string>
 
 
     <!-- Tab Labels -->
