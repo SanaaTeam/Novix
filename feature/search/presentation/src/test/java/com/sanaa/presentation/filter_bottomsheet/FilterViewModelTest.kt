@@ -1,8 +1,8 @@
 package com.sanaa.presentation.filter_bottomsheet
 
 import app.cash.turbine.test
-import com.example.preferences.service.GenreLocalizer
 import com.google.common.truth.Truth
+import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
 import io.mockk.mockk
