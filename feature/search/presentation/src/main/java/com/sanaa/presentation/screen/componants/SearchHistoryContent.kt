@@ -186,7 +186,7 @@ private fun MediaPoster(
         },
         topLeftContent = {
             SaveIconChip(
-                onClick = interactionsListener::onSaveIconClicked
+                onClick = {}
             )
         },
     )
