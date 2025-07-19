@@ -183,7 +183,7 @@ class MapperTest {
         assertEquals(1, result.id)
         assertEquals("Bryan Cranston", result.name)
         assertEquals("Walter White", result.character)
-        assertEquals("https://image.tmdb.org/t/p/w185/bryan.jpg", result.imageUrl)
+        assertEquals("https://image.tmdb.org/t/p/w500/bryan.jpg", result.imageUrl)
         assertEquals(Actor.Gender.MALE, result.gender)
         assertNull(result.region)
         assertNull(result.lastShow)
@@ -201,9 +201,9 @@ class MapperTest {
     }
 
     @Test
-    fun `getProfileImageUrl formats URL correctly`() {
+    fun `getFullImageUrl formats URL correctly`() {
         val url = getFullImageUrl("/path.jpg")
-        assertEquals("https://image.tmdb.org/t/p/w185/path.jpg", url)
+        assertEquals("https://image.tmdb.org/t/p/w500/path.jpg", url)
     }
 
     @Test
@@ -248,6 +248,12 @@ class MapperTest {
     fun `toEntity maps unknown id to DRAMA`() {
         val dto = GenreDto(99999)
         assertThat(dto.toEntity()).isEqualTo(Genre.DRAMA)
+    }
+
+    @Test
+    fun `getFullImageUrl returns empty string when path is empty`() {
+        val url = getFullImageUrl("")
+        assertEquals("", url)
     }
 
     @Test
