@@ -9,7 +9,7 @@ import exceptions.RetrievingDataFailureException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import search.repository.SearchHistoryRepository
-import search.usecase.search_param.RecentViewedMedia
+import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.SearchHistory
 
 class SearchHistoryRepositoryImpl(

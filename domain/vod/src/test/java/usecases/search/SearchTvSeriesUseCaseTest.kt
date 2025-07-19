@@ -11,29 +11,29 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
-import search.usecase.SearchTvSeriesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvSeriesUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
-    private lateinit var searchTvSeriesUseCase: SearchTvSeriesUseCase
+    private lateinit var searchUseCase: SearchUseCase
 
     @BeforeEach
     fun setUp() {
-        searchTvSeriesUseCase = SearchTvSeriesUseCase(searchRepository, searchHistoryRepository)
+        searchUseCase = SearchUseCase(searchRepository, searchHistoryRepository)
     }
 
     @Test
-    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
+    fun `searchTvShows() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
         runTest {
             // Given
             val query = "TvSeries"
             val page = 1
 
             // When
-            searchTvSeriesUseCase.execute(query, page, null)
+            searchUseCase.searchTvShows(query, page, null)
 
             // Then
             coVerify {
@@ -42,7 +42,7 @@ class SearchTvSeriesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return tv series search result when search without filters`() =
+    fun `searchTvShows() should return tv series search result when search without filters`() =
         runTest {
             // Given
             val query = "Tv Series"
@@ -53,7 +53,7 @@ class SearchTvSeriesUseCaseTest {
             } returns searchTvShowsOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, page, filters)
+            val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchTvShowsOutputList)
@@ -61,7 +61,7 @@ class SearchTvSeriesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return tv series search result when search with filters`() =
+    fun `searchTvShows() should return tv series search result when search with filters`() =
         runTest {
             // Given
             val query = "Tv Series"
@@ -72,7 +72,7 @@ class SearchTvSeriesUseCaseTest {
             } returns searchTvShowsOutputList
 
             // When
-            val result = searchTvSeriesUseCase.execute(query, page, filters)
+            val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
             assertThat(result).isEqualTo(searchTvShowsOutputList)
@@ -80,7 +80,7 @@ class SearchTvSeriesUseCaseTest {
 
 
     @Test
-    fun `execute() should throw RetrievingDataFailureException when try to search an tv series failed`() =
+    fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv series failed`() =
         runTest {
             // Given
             val query = "Sam"
@@ -91,7 +91,7 @@ class SearchTvSeriesUseCaseTest {
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchTvSeriesUseCase.execute(query, page, null)
+                searchUseCase.searchTvShows(query, page, null)
             }
         }
 

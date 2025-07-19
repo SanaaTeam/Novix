@@ -26,33 +26,21 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.AddRecentViewedUseCase
-import search.usecase.ClearRecentViewedUseCase
-import search.usecase.ClearSearchHistoryUseCase
-import search.usecase.GetRecentViewedUseCase
-import search.usecase.GetSearchHistoryUseCase
-import search.usecase.RemoveSearchHistoryUseCase
-import search.usecase.SearchActorsUseCase
-import search.usecase.SearchMoviesUseCase
-import search.usecase.SearchTvSeriesUseCase
+import search.usecase.ManageRecentViewedUseCase
+import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
+import search.usecase.ManageSearchHistoryUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
-import search.usecase.search_param.RecentViewedMedia
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchHistory
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchViewModelTest {
-    private val searchMoviesUseCase: SearchMoviesUseCase = mockk(relaxed = true)
-    private val searchTvSeriesUseCase: SearchTvSeriesUseCase = mockk(relaxed = true)
-    private val searchActorsUseCase: SearchActorsUseCase = mockk(relaxed = true)
-    private val getRecentViewedUseCase: GetRecentViewedUseCase = mockk(relaxed = true)
-    private val addRecentViewedUseCase: AddRecentViewedUseCase = mockk(relaxed = true)
-    private val getSearchHistoryUseCase: GetSearchHistoryUseCase = mockk(relaxed = true)
-    private val clearRecentViewedUseCase: ClearRecentViewedUseCase = mockk(relaxed = true)
-    private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase = mockk(relaxed = true)
-    private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase = mockk(relaxed = true)
+    private val searchUseCase: SearchUseCase = mockk(relaxed = true)
+    private val manageRecentViewedUseCase: ManageRecentViewedUseCase = mockk(relaxed = true)
+    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase = mockk(relaxed = true)
     private lateinit var searchViewModel: SearchViewModel
     private val testDispatcher = StandardTestDispatcher()
 
@@ -61,15 +49,9 @@ class SearchViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
-            searchMoviesUseCase = searchMoviesUseCase,
-            searchTvSeriesUseCase = searchTvSeriesUseCase,
-            searchActorsUseCase = searchActorsUseCase,
-            addRecentViewedUseCase = addRecentViewedUseCase,
-            getRecentViewedUseCase = getRecentViewedUseCase,
-            getSearchHistoryUseCase = getSearchHistoryUseCase,
-            clearRecentViewedUseCase = clearRecentViewedUseCase,
-            clearSearchHistoryUseCase = clearSearchHistoryUseCase,
-            deleteSearchItemUseCase = deleteSearchItemUseCase,
+            searchUseCase = searchUseCase,
+            manageRecentViewedUseCase = manageRecentViewedUseCase,
+            manageSearchHistoryUseCase = manageSearchHistoryUseCase,
             dispatcher = testDispatcher,
         )
     }
@@ -144,7 +126,7 @@ class SearchViewModelTest {
             val viewedMedias = listOf(
                 RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
             )
-            coEvery { getRecentViewedUseCase.execute() } returns flowOf(viewedMedias)
+            coEvery { manageRecentViewedUseCase.getRecentViewed() } returns flowOf(viewedMedias)
 
             // When
             searchViewModel.observeRecentViewedItems()
@@ -192,7 +174,7 @@ class SearchViewModelTest {
             val resentSearchHistories = listOf(
                 SearchHistory(1, "Movie", timestamp = timestamp)
             )
-            coEvery { getSearchHistoryUseCase.execute() } returns flowOf(resentSearchHistories)
+            coEvery { manageSearchHistoryUseCase.getSearchHistory() } returns flowOf(resentSearchHistories)
 
             // When
             searchViewModel.observeRecentSearchHistory()
@@ -235,7 +217,7 @@ class SearchViewModelTest {
     fun `onClearRecentViewClicked() stop loading when clear recent viewed item success`() =
         runTest {
             // Given
-            coEvery { clearRecentViewedUseCase.execute() } just Runs
+            coEvery { manageRecentViewedUseCase.clearRecentViewed() } just Runs
 
             // When
             searchViewModel.onClearRecentViewClicked()
@@ -255,7 +237,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             val errorMessage = "Some Error"
-            coEvery { clearRecentViewedUseCase.execute() } throws Exception(errorMessage)
+            coEvery { manageRecentViewedUseCase.clearRecentViewed() } throws Exception(errorMessage)
 
             // When
             searchViewModel.onClearRecentViewClicked()
@@ -289,7 +271,7 @@ class SearchViewModelTest {
     fun `onClearRecentSearchClicked() stop loading when clear search history success`() =
         runTest {
             // Given
-            coEvery { clearSearchHistoryUseCase.execute() } just Runs
+            coEvery { manageSearchHistoryUseCase.clearSearchHistory() } just Runs
 
             // When
             searchViewModel.onClearRecentSearchClicked()
@@ -309,7 +291,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             val errorMessage = "Unknown error"
-            coEvery { clearSearchHistoryUseCase.execute() } throws Exception(errorMessage)
+            coEvery { manageSearchHistoryUseCase.clearSearchHistory() } throws Exception(errorMessage)
 
             // When
             searchViewModel.onClearRecentSearchClicked()
@@ -373,7 +355,7 @@ class SearchViewModelTest {
         val movies = listOf(SearchMovieOutput(1, movieName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(movieName)
         coEvery {
-            searchMoviesUseCase.execute(
+            searchUseCase.searchMovies(
                 uiState.value.searchQuery,
                 page = page,
                 filters = uiState.value.filters
@@ -407,7 +389,7 @@ class SearchViewModelTest {
         val tvShows = listOf(SearchTvSeriesOutput(1, tvShowName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(tvShowName)
         coEvery {
-            searchTvSeriesUseCase.execute(
+            searchUseCase.searchTvShows(
                 uiState.value.searchQuery,
                 page = page,
                 filters = uiState.value.filters
@@ -455,7 +437,7 @@ class SearchViewModelTest {
         val actors = listOf(SearchActorOutput(1, actorName, "https://image.com"))
         searchViewModel.onSearchQueryChanged(actorName)
         coEvery {
-            searchActorsUseCase.execute(
+            searchUseCase.searchActors(
                 uiState.value.searchQuery, page
             )
         } returns actors
@@ -608,7 +590,7 @@ class SearchViewModelTest {
         runTest {
             // Given
             val id = 1
-            coEvery { deleteSearchItemUseCase.execute(id) } throws NoNetworkException()
+            coEvery { manageSearchHistoryUseCase.removeSearchHistory(id) } throws NoNetworkException()
 
             // When
             searchViewModel.onDeleteRecentSearchItem(id)
@@ -627,7 +609,7 @@ class SearchViewModelTest {
     fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
         runTest {
             // Given
-            coEvery { clearSearchHistoryUseCase.execute() } throws Exception()
+            coEvery { manageSearchHistoryUseCase.clearSearchHistory() } throws Exception()
 
             // When
             searchViewModel.onClearRecentSearchClicked()

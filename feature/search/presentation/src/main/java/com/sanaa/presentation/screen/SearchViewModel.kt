@@ -27,29 +27,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import search.usecase.AddRecentViewedUseCase
-import search.usecase.ClearRecentViewedUseCase
-import search.usecase.ClearSearchHistoryUseCase
-import search.usecase.GetRecentViewedUseCase
-import search.usecase.GetSearchHistoryUseCase
-import search.usecase.RemoveSearchHistoryUseCase
-import search.usecase.SearchActorsUseCase
-import search.usecase.SearchMoviesUseCase
-import search.usecase.SearchTvSeriesUseCase
+import search.usecase.ManageRecentViewedUseCase
+import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
+import search.usecase.ManageSearchHistoryUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
-import search.usecase.search_param.RecentViewedMedia
 
 class SearchViewModel(
-    private val searchMoviesUseCase: SearchMoviesUseCase,
-    private val searchTvSeriesUseCase: SearchTvSeriesUseCase,
-    private val searchActorsUseCase: SearchActorsUseCase,
-    private val addRecentViewedUseCase: AddRecentViewedUseCase,
-    private val getRecentViewedUseCase: GetRecentViewedUseCase,
-    private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
-    private val clearRecentViewedUseCase: ClearRecentViewedUseCase,
-    private val clearSearchHistoryUseCase: ClearSearchHistoryUseCase,
-    private val deleteSearchItemUseCase: RemoveSearchHistoryUseCase,
+    private val searchUseCase: SearchUseCase,
+    private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
+    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
@@ -89,7 +77,7 @@ class SearchViewModel(
     }
 
     private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedUiModel>> {
-        return getRecentViewedUseCase.execute().toUiState()
+        return manageRecentViewedUseCase.getRecentViewed().toUiState()
     }
 
     private fun onCollectRecentViewedItems(viewed: List<RecentViewedUiModel>) {
@@ -105,7 +93,7 @@ class SearchViewModel(
     }
 
     suspend fun getRecentSearchHistory(): Flow<List<RecentSearchUiModel>> {
-        return getSearchHistoryUseCase.execute().toUiState()
+        return manageSearchHistoryUseCase.getSearchHistory().toUiState()
     }
 
     fun onCollectRecentSearchHistory(queries: List<RecentSearchUiModel>) {
@@ -159,7 +147,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchMoviesPagingSource(
-                    searchMoviesUseCase,
+                    searchUseCase,
                     query = query,
                     filters = state.value.filters
                 )
@@ -201,7 +189,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchTvShowsPagingSource(
-                    searchTvSeriesUseCase,
+                    searchUseCase,
                     query = query,
                     filters = state.value.filters
                 )
@@ -240,7 +228,7 @@ class SearchViewModel(
             ),
             pagingSourceFactory = {
                 SearchActorsPagingSource(
-                    searchActorsUseCase,
+                    searchUseCase,
                     query = query
                 )
             }
@@ -278,7 +266,7 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
-        override fun retrySearch() {
+    override fun retrySearch() {
         loadMediaByTab(state.value.searchQuery)
     }
 
@@ -309,7 +297,7 @@ class SearchViewModel(
     }
 
     private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
-        addRecentViewedUseCase.execute(
+        manageRecentViewedUseCase.addRecentViewed(
             RecentViewedMedia(
                 id = viewed.id,
                 posterImageUrl = viewed.imageUrl,
@@ -321,14 +309,14 @@ class SearchViewModel(
 
     override fun onClearRecentViewClicked() {
         tryToExecute(
-            callee = clearRecentViewedUseCase::execute,
+            callee = manageRecentViewedUseCase::clearRecentViewed,
             onError = ::onDataLoadError
         )
     }
 
     override fun onClearRecentSearchClicked() {
         tryToExecute(
-            clearSearchHistoryUseCase::execute,
+            manageSearchHistoryUseCase::clearSearchHistory,
             onError = ::onDataLoadError
         )
     }
@@ -336,7 +324,7 @@ class SearchViewModel(
     override fun onDeleteRecentSearchItem(id: Int) {
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
-            callee = { deleteSearchItemUseCase.execute(id) },
+            callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = {
                 updateState { it.copy(isLoading = false, noInternetConnection = false) }
             },

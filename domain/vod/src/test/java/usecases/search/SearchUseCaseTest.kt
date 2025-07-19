@@ -1,4 +1,4 @@
-package usecase.search
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -11,29 +11,29 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import search.repository.SearchHistoryRepository
 import search.repository.SearchRepository
-import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchMovieOutput
 
-class SearchMoviesUseCaseTest {
+class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
     private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
-    private lateinit var searchMoviesUseCase: SearchMoviesUseCase
+    private lateinit var searchMoviesUseCase: SearchUseCase
 
     @BeforeEach
     fun setUp() {
-        searchMoviesUseCase = SearchMoviesUseCase(searchRepository, searchHistoryRepository)
+        searchMoviesUseCase = SearchUseCase(searchRepository, searchHistoryRepository)
     }
 
     @Test
-    fun `execute() should call addSearchHistory() from SearchHistoryRepository when search a movie`() =
+    fun `searchMovies() should call addSearchHistory() from SearchHistoryRepository when search a movie`() =
         runTest {
             // Given
             val query = "Movie"
             val page = 1
 
             // When
-            searchMoviesUseCase.execute(query, page, null)
+            searchMoviesUseCase.searchMovies(query, page, null)
 
             // Then
             coVerify {
@@ -42,7 +42,7 @@ class SearchMoviesUseCaseTest {
         }
 
     @Test
-    fun `execute() should return movie search result when search without filters`() =
+    fun `searchMovies() should return movie search result when search without filters`() =
         runTest {
             // Given
             val query = "Movie"
@@ -50,17 +50,17 @@ class SearchMoviesUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns searchMovieOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, page, filters)
+            val result = searchMoviesUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
-    fun `execute() should return movie search result when search with filters`() =
+    fun `searchMovies() should return movie search result when search with filters`() =
         runTest {
             // Given
             val query = "Movie"
@@ -68,17 +68,17 @@ class SearchMoviesUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns searchMovieOutputList
 
             // When
-            val result = searchMoviesUseCase.execute(query, page, filters)
+            val result = searchMoviesUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
-    fun `execute() should throw RetrievingDataFailureException when try to search a movie failed`() =
+    fun `searchMovies() should throw RetrievingDataFailureException when try to search a movie failed`() =
         runTest {
             // Given
             val query = "Sam"
@@ -89,12 +89,12 @@ class SearchMoviesUseCaseTest {
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchMoviesUseCase.execute(query, page, null)
+                searchMoviesUseCase.searchMovies(query, page, null)
             }
         }
 
     private companion object {
-        private val searchMediaOutputList = listOf(
+         val searchMovieOutputList = listOf(
             SearchMovieOutput(
                 id = 1,
                 title = "title",
