@@ -278,7 +278,7 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
-    override fun retrySearch() {
+        override fun retrySearch() {
         loadMediaByTab(state.value.searchQuery)
     }
 
@@ -347,10 +347,6 @@ class SearchViewModel(
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
-    }
-
-    override fun onSaveIconClicked() {
-
     }
 
     override fun onFilterClicked() {
