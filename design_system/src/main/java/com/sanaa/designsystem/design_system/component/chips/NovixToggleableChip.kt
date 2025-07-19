@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTaggableChip(
+fun NovixToggleableChip(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -81,8 +81,8 @@ private fun PreviewCategoryChip() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixTaggableChip(text = "Action", onClick = {}, isSelected = true)
-            NovixTaggableChip(
+            NovixToggleableChip(text = "Action", onClick = {}, isSelected = true)
+            NovixToggleableChip(
                 text = "Action",
                 onClick = { isSelected = !isSelected },
                 isSelected = isSelected

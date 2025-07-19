@@ -37,7 +37,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
-import com.sanaa.presentation.component.cards.MovieSeriesPosterCard
+import com.sanaa.presentation.component.cards.MediaPosterCard
 import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
@@ -117,7 +117,7 @@ fun MovieCategoriesScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(state.movies) { movie ->
-                                MovieSeriesPosterCard(
+                                MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = movie.posterUrl.orEmpty(),

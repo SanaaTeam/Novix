@@ -48,12 +48,12 @@ fun InlineAction(
         Text(
             text = text,
             style = Theme.textStyle.label.medium,
-            color = iconColor,
+            color = textColor
         )
         Icon(
             painter = icon,
             contentDescription = null,
-            tint = textColor,
+            tint = iconColor,
         )
     }
 }

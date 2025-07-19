@@ -24,7 +24,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun MovieSeriesRatingChip(
+fun MediaRatingChip(
     rating: String,
     modifier: Modifier = Modifier
 ) {
@@ -68,7 +68,7 @@ private fun PreviewMovieSeriesRatingChip() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MovieSeriesRatingChip(rating = "9.9")
+            MediaRatingChip(rating = "9.9")
         }
     }
 }

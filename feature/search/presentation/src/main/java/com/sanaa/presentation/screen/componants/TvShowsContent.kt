@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.presentation.screen.componants.cards.MovieSeriesPosterCard
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -45,7 +45,7 @@ fun TvShowsContent(
         items(count = tvShowsPagingData.itemCount) { index ->
             val tvShow = tvShowsPagingData[index]
             if (tvShow != null) {
-                MovieSeriesPosterCard(
+                MediaPosterCard(
                     boastImage = {
                         RemoteBlurredHaramImageViewer(
                             imageUrl = tvShow.imageUrl,

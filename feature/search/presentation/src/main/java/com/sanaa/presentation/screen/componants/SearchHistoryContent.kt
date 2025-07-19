@@ -29,7 +29,7 @@ import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
-import com.sanaa.presentation.screen.componants.cards.MovieSeriesPosterCard
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -154,7 +154,7 @@ private fun MediaPoster(
     interactionsListener: SearchScreenInteractionsListener,
 ) {
 
-    MovieSeriesPosterCard(
+    MediaPosterCard(
         onCardClick = onMediaClick,
         modifier = Modifier
             .width(158.dp)

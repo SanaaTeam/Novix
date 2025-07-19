@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component.cards
+package com.sanaa.presentation.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun MovieSeriesPosterCard(
+fun MediaPosterCard(
     modifier: Modifier = Modifier,
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
@@ -77,7 +77,7 @@ private fun PreviewMovieSeriesPosterCard() {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                MovieSeriesPosterCard(
+                MediaPosterCard(
                     boastImage = {
                         Image(
                             painter = painterResource(R.drawable.movie_poster),
@@ -87,14 +87,14 @@ private fun PreviewMovieSeriesPosterCard() {
                         )
                     },
                     topLeftContent = {
-                        MovieSeriesRatingChip(
+                        MediaRatingChip(
                             rating = "9.9"
                         )
                     },
                 )
             }
             item {
-                MovieSeriesPosterCard(
+                MediaPosterCard(
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}
@@ -103,14 +103,14 @@ private fun PreviewMovieSeriesPosterCard() {
                 )
             }
             item {
-                MovieSeriesPosterCard(
+                MediaPosterCard(
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}
                         )
                     },
                     topRightContent = {
-                        MovieSeriesRatingChip(
+                        MediaRatingChip(
                             rating = "9.9"
                         )
                     }

@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.presentation.screen.componants.cards.MovieSeriesPosterCard
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -43,7 +43,7 @@ fun MoviesContent(
             val movie = moviesPagingData[index]
             if (movie != null) {
                 Log.d("MoviesContent", "Movie: $movie")
-                MovieSeriesPosterCard(
+                MediaPosterCard(
                     boastImage = {
                         RemoteBlurredHaramImageViewer(
                             imageUrl = movie.imageUrl,
