@@ -24,7 +24,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun OutlinedButton(
+fun NovixOutlinedButton(
     text: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -74,9 +74,9 @@ private fun PreviewOutlinedButton() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            OutlinedButton(text = "Watch", onClick = {}, isLoading = true)
-            OutlinedButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
-            OutlinedButton(
+            NovixOutlinedButton(text = "Watch", onClick = {}, isLoading = true)
+            NovixOutlinedButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
+            NovixOutlinedButton(
                 text = "Watch",
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)

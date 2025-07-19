@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -24,14 +26,18 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun ViewAllComponent(
+fun InlineAction(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    icon: Painter = painterResource(R.drawable.icon_right_arrow),
+    text: String = stringResource(R.string.view_all),
+    iconColor: Color = Theme.colors.primary,
+    textColor: Color = Theme.colors.primary
 ) {
     Row(
         modifier = modifier.clickable(
             onClick = onClick,
-            onClickLabel = stringResource(R.string.view_all),
+            onClickLabel = text,
             indication = null,
             interactionSource = remember { MutableInteractionSource() }
 
@@ -40,14 +46,14 @@ fun ViewAllComponent(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Text(
-            text = stringResource(R.string.view_all),
+            text = text,
             style = Theme.textStyle.label.medium,
-            color = Theme.colors.primary,
+            color = iconColor,
         )
         Icon(
-            painter = painterResource(R.drawable.icon_right_arrow),
+            painter = icon,
             contentDescription = null,
-            tint = Theme.colors.primary,
+            tint = textColor,
         )
     }
 }
@@ -64,7 +70,7 @@ private fun PreviewViewAllIcon() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ViewAllComponent(
+            InlineAction(
                 onClick = {}
             )
         }

@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.chips.CategoryChip
+import com.sanaa.designsystem.design_system.component.chips.NovixTaggableChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 
@@ -45,7 +45,7 @@ fun GenreChips(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             genres.forEach { genre ->
-                CategoryChip(
+                NovixTaggableChip(
                     text = genre,
                     isSelected = (genre in selectedGenres),
                     animateWidth = animateWidth,

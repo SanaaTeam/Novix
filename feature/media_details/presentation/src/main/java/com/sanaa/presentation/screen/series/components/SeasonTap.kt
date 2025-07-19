@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.chips.CategoryChip
+import com.sanaa.designsystem.design_system.component.chips.NovixTaggableChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 
@@ -39,7 +39,7 @@ fun SeasonTap(
             items = (1..seasonCounts).toList(),
             key = { _, item -> item }
         ) { index, item ->
-            CategoryChip(
+            NovixTaggableChip(
                 text = stringResource(R.string.season_number, item),
                 onClick = { onClick(item) },
                 isSelected = currentSeason == item,

@@ -27,11 +27,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.button.TextButton
+import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
@@ -119,7 +119,7 @@ fun MovieDetailsContent(
                 .fillMaxSize()
 
         ) {
-            AppTopBar(
+            NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
@@ -211,7 +211,7 @@ fun MovieDetailsContent(
                                             tint = Theme.colors.body
                                         )
                                     }
-                                    TextButton(
+                                    NovixTextButton(
                                         text = stringResource(id = presentationR.string.view_reviews),
                                         textColor = Theme.colors.primary,
                                         onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })

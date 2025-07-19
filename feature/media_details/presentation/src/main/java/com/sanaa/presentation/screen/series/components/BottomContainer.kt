@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.presentation.R
 
 val boxContainerGradient = Brush.verticalGradient(
@@ -45,12 +45,12 @@ fun BottomContainer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            PrimaryButton(
+            NovixPrimaryButton(
                 text = null,
                 onClick = onSetRateClicked,
                 icon = painterResource(R.drawable.icon_star_outlined)
             )
-            PrimaryButton(
+            NovixPrimaryButton(
                 text = stringResource(R.string.play_trailer),
                 isEnabled = trailerUrl != null,
                 modifier = Modifier.weight(1f),

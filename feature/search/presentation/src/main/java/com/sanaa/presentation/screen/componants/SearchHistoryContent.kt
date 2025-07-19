@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.button.TextButton
-import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.button.NovixTextButton
+import com.sanaa.presentation.screen.componants.cards.MovieSeriesPosterCard
+import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
@@ -219,7 +219,7 @@ fun SectionHeader(
             color = Theme.colors.body,
             modifier = Modifier.weight(1f)
         )
-        TextButton(
+        NovixTextButton(
             text = actionText, onClick = onActionClick, isLoading = false, isEnabled = true
         )
     }

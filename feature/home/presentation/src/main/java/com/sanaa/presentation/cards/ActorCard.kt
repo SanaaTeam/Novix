@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.componants.cards
+package com.sanaa.presentation.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -118,16 +118,14 @@ fun ActorCard(
                 .padding(start = 86.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
+            BasicText(
                 text = actorName,
-                style = Theme.textStyle.title.medium,
-                color = Theme.colors.body,
+                style = Theme.textStyle.title.medium.copy(color = Theme.colors.body),
             )
             playedCharacter?.let {
-                Text(
+                BasicText(
                     text = it,
-                    style = Theme.textStyle.label.small,
-                    color = Theme.colors.hint
+                    style = Theme.textStyle.label.small.copy(color = Theme.colors.hint),
                 )
             }
         }
