@@ -59,6 +59,7 @@ fun SearchScreen(
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
+
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters: MediaFilters? ->
             searchViewModel.onFilterApplied(filters)
