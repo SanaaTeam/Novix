@@ -2,9 +2,6 @@ package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,18 +25,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.RemoteImagePlaceholder
+import com.sanaa.presentation.component.cards.MediaPosterCard
+import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
@@ -82,7 +79,7 @@ private fun TopSeriesContent(
         Column(
             modifier = modifier.navigationBarsPadding()
         ) {
-            AppTopBar(
+            NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
@@ -104,7 +101,7 @@ private fun TopSeriesContent(
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
 
-                )  { loading ->
+                ) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -122,31 +119,31 @@ private fun TopSeriesContent(
                             )
                         ) {
                             items(state.topTvSeries) { series ->
-                                MovieSeriesPosterCard(
+                                MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = series.posterPath ?: "",
-                                                modifier = Modifier.fillMaxSize(),
-                                                blurRadius = 150,
-                                                haramThreshold = 0.2f,
-                                                nonHaramThreshold = 0.7f,
-                                                contentDescription = series.title,
-                                                placeholderContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                                errorContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                            ) {
-                                                OnBlurContent(
-                                                    hintText = stringResource(R.string.unsuitable_image),
-                                                    textStyle = Theme.textStyle.body.small.copy(
-                                                        color = Color(0x99FFFFFF)
-                                                    ),
-                                                    iconSize = 24.dp,
-                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                                                )
-                                            }
+                                            modifier = Modifier.fillMaxSize(),
+                                            blurRadius = 150,
+                                            haramThreshold = 0.2f,
+                                            nonHaramThreshold = 0.7f,
+                                            contentDescription = series.title,
+                                            placeholderContent = {
+                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                            },
+                                            errorContent = {
+                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                            },
+                                        ) {
+                                            OnBlurContent(
+                                                hintText = stringResource(R.string.unsuitable_image),
+                                                textStyle = Theme.textStyle.body.small.copy(
+                                                    color = Color(0x99FFFFFF)
+                                                ),
+                                                iconSize = 24.dp,
+                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                            )
+                                        }
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
                                     onCardClick = {

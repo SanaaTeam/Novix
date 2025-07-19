@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.cards
+package com.sanaa.presentation.component.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,21 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.chips.MovieSeriesRatingChip
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun MovieSeriesPosterCard(
+fun MediaPosterCard(
     modifier: Modifier = Modifier,
-    poster: Painter = painterResource(R.drawable.icon_placeholder_light),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
@@ -68,7 +64,7 @@ fun MovieSeriesPosterCard(
 
 @PreviewLightDark
 @Composable
-private fun PreviewMovieSeriesPosterCard() {
+private fun PreviewMediaPosterCard() {
     NovixTheme(isSystemInDarkTheme()) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(
@@ -81,26 +77,24 @@ private fun PreviewMovieSeriesPosterCard() {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             item {
-                MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.icon_placeholder_light),
+                MediaPosterCard(
                     boastImage = {
                         Image(
-                            painter = painterResource(R.drawable.icon_placeholder_light),
+                            painter = painterResource(R.drawable.movie_poster),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
                     },
                     topLeftContent = {
-                        MovieSeriesRatingChip(
+                        MediaRatingChip(
                             rating = "9.9"
                         )
                     },
                 )
             }
             item {
-                MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.icon_placeholder_light),
+                MediaPosterCard(
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}
@@ -109,15 +103,14 @@ private fun PreviewMovieSeriesPosterCard() {
                 )
             }
             item {
-                MovieSeriesPosterCard(
-                    poster = painterResource(R.drawable.icon_placeholder_light),
+                MediaPosterCard(
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {}
                         )
                     },
                     topRightContent = {
-                        MovieSeriesRatingChip(
+                        MediaRatingChip(
                             rating = "9.9"
                         )
                     }

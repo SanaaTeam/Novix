@@ -18,6 +18,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.component.tab.NovixTab
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -33,9 +34,6 @@ fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
     interactionsListener: SearchScreenInteractionsListener,
-    onMovieClick: (MovieUiModel) -> Unit,
-    onTvShowClick: (TvShowUiModel) -> Unit,
-    onActorClick: (ActorUiModel) -> Unit,
     modifier: Modifier = Modifier,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
@@ -50,7 +48,7 @@ fun CategoryTabSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.padding(top = 12.dp)
     ) {
-        CategoryTab(
+        NovixTab(
             categories = tabs,
             selectedIndex = selectedTabIndex,
             onCategorySelected = interactionsListener::onTabSelected,
@@ -76,9 +74,6 @@ fun CategoryTabSection(
                     moviesPagingData = moviesPagingData,
                     tvShowsPagingData = tvShowsPagingData,
                     actorsPagingData = actorsPagingData,
-                    onMovieClick = onMovieClick,
-                    onTvShowClick = onTvShowClick,
-                    onActorClick = onActorClick
                 )
             }
         }
@@ -92,9 +87,6 @@ fun CategoryTabContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onMovieClick: (MovieUiModel) -> Unit,
-    onTvShowClick: (TvShowUiModel) -> Unit,
-    onActorClick: (ActorUiModel) -> Unit,
 ) {
     val movieState = moviesPagingData.loadState.refresh
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
@@ -119,7 +111,6 @@ fun CategoryTabContent(
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
                     onMovieClick = { recent, movie ->
-                        onMovieClick(movie)
                         interactionsListener.onSearchResultMediaClicked(recent)
                     }
                 )
@@ -133,7 +124,6 @@ fun CategoryTabContent(
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
                     onTvShowClick = { recent, tvShow ->
-                        onTvShowClick(tvShow)
                         interactionsListener.onSearchResultMediaClicked(recent)
                     }
                 )
@@ -145,7 +135,7 @@ fun CategoryTabContent(
                 NoSearchResultState()
             } else {
                 ActorsContent(actorsPagingData, onActorClick = {
-                    onActorClick(it)
+                    interactionsListener.onActorClicked(it.id)
                 })
             }
         }

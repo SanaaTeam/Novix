@@ -21,12 +21,14 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun NetworkDisconnectionContact(
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
+    errorTitle: String = stringResource(id = R.string.offline_title),
+    errorMessage: String = stringResource(id = R.string.offline_subtitle)
 ) {
     ErrorStateContent(
         onRetryClick = onRetryClick,
         modifier = modifier,
-        errorTitle = stringResource(id = R.string.offline_title),
-        errorMessage = stringResource(id = R.string.offline_subtitle)
+        errorTitle = errorTitle,
+        errorMessage = errorMessage
     ) {
         val iconPainter = if (isSystemInDarkTheme()) {
             painterResource(id = R.drawable.disconnect_dark_icon)

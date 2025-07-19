@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.cards
+package com.sanaa.presentation.component.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -147,12 +147,12 @@ private fun PreviewActorCard() {
         ) {
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                actorImage = painterResource(R.drawable.lee_jung_jae),
                 playedCharacter = "Peter Parker"
             )
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                actorImage = painterResource(R.drawable.lee_jung_jae),
                 playedCharacter = null
             )
         }

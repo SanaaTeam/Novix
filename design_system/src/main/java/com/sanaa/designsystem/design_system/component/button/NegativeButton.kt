@@ -32,7 +32,7 @@ fun NegativeButton(
     icon: Painter? = null,
     iconTint: Color = Theme.colors.statusColors.redAccent
 ) {
-    OutlinedButton(
+    NovixOutlinedButton(
         text = text,
         modifier = modifier,
         onClick = onClick,
