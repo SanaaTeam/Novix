@@ -24,7 +24,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun PrimaryButton(
+fun NovixPrimaryButton(
     text: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -87,15 +87,15 @@ private fun PrimaryButtonPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            PrimaryButton(text = "Watch", onClick = {}, isLoading = false)
-            PrimaryButton(text = "Watch", onClick = {}, isLoading = true)
-            PrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
-            PrimaryButton(
+            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false)
+            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = true)
+            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
+            NovixPrimaryButton(
                 text = null,
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)
             )
-            PrimaryButton(
+            NovixPrimaryButton(
                 text = "Watch",
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)
