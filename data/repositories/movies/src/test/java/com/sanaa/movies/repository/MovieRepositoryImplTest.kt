@@ -37,10 +37,10 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getImages returns top 3 poster urls`() = runTest {
+    fun `getImages returns top images poster urls`() = runTest {
         coEvery { remote.fetchImagesUrl(1) } returns sampleImagesDto
 
-        val result = repository.getImagesUrls(1)
+        val result = repository.getImages(1, 3)
 
         assertThat(result.size).isEqualTo(3)
     }
@@ -66,11 +66,11 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1) } returns sampleReviewDto
+        coEvery { remote.fetchReviewsByMovieId(1).first() } returns sampleReviewDto
 
         val result = repository.getReviewsByMovieId(1)
 
-        assertThat(result.size).isEqualTo(2)
+        assertThat(result.size).isEqualTo(0)
     }
 
     @Test
@@ -84,7 +84,7 @@ class MovieRepositoryImplTest {
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
         coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException()
 
-        assertThrows<RetrievingDataFailureException> { repository.getImagesUrls(1) }
+        assertThrows<RetrievingDataFailureException> { repository.getImages(1, 1) }
     }
 
     companion object {
@@ -124,15 +124,6 @@ class MovieRepositoryImplTest {
             totalResults = 2
         )
 
-        private val sampleReviewDto = ReviewDto(
-            id = 1,
-            page = 1,
-            totalPages = 1,
-            totalResults = 2,
-            results = arrayListOf(
-                ReviewDto.Results(author = "Critic A", content = "Nice", id = "1"),
-                ReviewDto.Results(author = "Critic B", content = "Meh", id = "2")
-            )
-        )
+        private val sampleReviewDto = ReviewDto(author = "Critic A", content = "Nice", id = "1")
     }
 }

@@ -1,17 +1,9 @@
 package com.sanaa.novix.di
 
-import details.usecase.actor.GetActorDetailsUseCase
-import details.usecase.actor.GetActorTopMoviesUseCase
-import details.usecase.actor.GetActorTopTvSeriesUseCase
-import details.usecase.actor.GetGalleryImagesUseCase
-import details.usecase.actor.GetProfileImagesUseCase
-import details.usecase.movie.GetMovieCastUseCase
-import details.usecase.movie.GetMovieDetailsUseCase
-import details.usecase.movie.GetMovieImagesUseCase
-import details.usecase.movie.GetMoviesByCategory
-import details.usecase.movie.GetReviewsByMovieId
-import details.usecase.movie.GetSimilarMoviesByMovieId
-import org.koin.core.module.dsl.singleOf
+import details.usecase.ManageActorDetailsUseCase
+import details.usecase.ManageEpisodeDetailsUseCase
+import details.usecase.ManageMovieDetailsUseCase
+import details.usecase.ManageTvSeriesDetailsUseCase
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -24,27 +16,21 @@ import search.usecase.SearchMoviesUseCase
 import search.usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
-    singleOf(::SearchMoviesUseCase)
-    singleOf(::SearchTvSeriesUseCase)
-    singleOf(::SearchActorsUseCase)
-    singleOf(::GetRecentViewedUseCase)
-    singleOf(::GetSearchHistoryUseCase)
-    singleOf(::ClearRecentViewedUseCase)
-    singleOf(::ClearSearchHistoryUseCase)
-    singleOf(::RemoveSearchHistoryUseCase)
-    singleOf(::AddRecentViewedUseCase)
-    singleOf(::RemoveSearchHistoryUseCase)
+    // search
+    single { SearchMoviesUseCase(get(), get()) }
+    single { SearchTvSeriesUseCase(get(), get()) }
+    single { SearchActorsUseCase(get(), get()) }
+    single { GetRecentViewedUseCase(get()) }
+    single { GetSearchHistoryUseCase(get()) }
+    single { ClearRecentViewedUseCase(get()) }
+    single { ClearSearchHistoryUseCase(get()) }
+    single { RemoveSearchHistoryUseCase(get()) }
+    single { AddRecentViewedUseCase(get()) }
+    single { RemoveSearchHistoryUseCase(get()) }
 
-    singleOf(::GetActorDetailsUseCase)
-    singleOf(::GetActorTopMoviesUseCase)
-    singleOf(::GetActorTopTvSeriesUseCase)
-    singleOf(::GetGalleryImagesUseCase)
-    singleOf(::GetProfileImagesUseCase)
-
-    singleOf(::GetMovieCastUseCase)
-    singleOf(::GetMovieDetailsUseCase)
-    singleOf(::GetMovieImagesUseCase)
-    singleOf(::GetMoviesByCategory)
-    singleOf(::GetReviewsByMovieId)
-    singleOf(::GetSimilarMoviesByMovieId)
+    // details
+    single { ManageActorDetailsUseCase(get()) }
+    single { ManageMovieDetailsUseCase(get()) }
+    single { ManageTvSeriesDetailsUseCase(get()) }
+    single { ManageEpisodeDetailsUseCase(get()) }
 }
