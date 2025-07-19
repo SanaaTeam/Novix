@@ -9,6 +9,7 @@ import entity.Episode
 import entity.Genre
 import entity.Season
 import entity.TvSeries
+import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -99,6 +100,16 @@ class SeriesViewModelTest {
     }
 
     @Test
+    fun `onPlayTrailerClicked sets showLoginBottomSheet to true`() = runTest {
+        givenHappyViewModel()
+        viewModel.effect.test {
+            viewModel.onPlayTrailerClicked()
+            val playTrailer = SeriesScreenEffects.PlayTrailer(trailerUrl = viewModel.state.value.series.trailerUrl)
+            assertThat(playTrailer).isEqualTo(awaitItem())
+        }
+    }
+
+    @Test
     fun `onDismissRateBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
         viewModel.onRateClicked()
@@ -111,6 +122,19 @@ class SeriesViewModelTest {
         givenHappyViewModel()
         viewModel.onSaveSeriesClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `should when show error when there is an exception`() = runTest {
+        val errorMessage = "Error Message"
+        coEvery {
+            manageTvSeriesDetails.getTvSeriesDetails(any())
+        } throws RetrievingDataFailureException(errorMessage)
+        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails)
+        viewModel.state.test {
+            val item = awaitItem()
+            assertThat(item.error).isEqualTo(errorMessage)
+        }
     }
 
     @Test

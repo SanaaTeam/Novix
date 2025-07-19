@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
@@ -10,7 +9,7 @@ import entity.Genre
 
 class SeriesViewModel(
     private val seriesId: Int,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase
+    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(SeriesScreenUiState()),
     SeriesScreenInteractionListener {
 
@@ -39,8 +38,8 @@ class SeriesViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = {
-                updateState { it.copy(error = it.error, isLoading = false) }
+            onError = { errorMessage ->
+                updateState { it.copy(error = errorMessage.message, isLoading = false) }
             }
         )
     }

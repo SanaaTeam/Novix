@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,7 +41,6 @@ fun MoviesContent(
         items(moviesPagingData.itemCount) { index ->
             val movie = moviesPagingData[index]
             if (movie != null) {
-                Log.d("MoviesContent", "Movie: $movie")
                 MovieSeriesPosterCard(
                     boastImage = {
                         RemoteBlurredHaramImageViewer(

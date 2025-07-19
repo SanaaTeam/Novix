@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.series
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -152,7 +151,6 @@ fun SeriesScreenContent(
                     Column(
                         modifier = Modifier.padding(bottom = 112.dp)
                     ) {
-                        Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
                         SeriesHeaderSection(
                             title = state.series.title,
                             rating = state.series.rating,
