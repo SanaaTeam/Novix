@@ -80,7 +80,7 @@ class ReviewViewModelTest {
             dispatcher = testDispatcher // ✅ Inject dispatcher into BaseViewModel
         )
 
-        advanceUntilIdle() // ✅ Ensure coroutine finishes
+        advanceUntilIdle()
 
         assertThat(viewModel.state.value.isLoading).isFalse()
     }

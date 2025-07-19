@@ -14,9 +14,9 @@ class EpisodeDetailsScreenViewModel(
     episodeNumber: Int,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : EpisodeDetailsInteractionListener,
-    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState(),dispatcher) {
+    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState(), defaultDispatcher = dispatcher) {
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)

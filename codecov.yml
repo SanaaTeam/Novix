@@ -53,3 +53,4 @@ ignore:
   - "com/sanaa/presentation/screen/review/**"
   - "com/sanaa/presentation/screen/series/components/**"
   - "com/sanaa/presentation/screen/series/SeriesScreen*"
+  - "com/sanaa/feature/media_details.api/*"
