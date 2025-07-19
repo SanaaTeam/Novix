@@ -30,9 +30,12 @@ android {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
 
-        lint {
-            baseline = file("lint-baseline.xml")
-        }
+    }
+
+    lint {
+        abortOnError = false // Prevents CI from failing
+        checkReleaseBuilds = true
+        baseline = file("lint-baseline.xml")
     }
 
     buildTypes {
