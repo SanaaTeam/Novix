@@ -52,6 +52,9 @@ class FilterViewModel(
         _uiState.update {
             FilterUiState(allGenres = it.allGenres, isLoading = false, isDefaultState = true)
         }
+        tryToExecute(
+            callee = { _filterResult.emit(null) }
+        )
     }
 
     override fun onApplyClicked() {
@@ -61,19 +64,28 @@ class FilterViewModel(
                 val mediaFilters = if (currentState.isDefaultState) {
                     null
                 } else {
-                    MediaFilters(
-                        startYear = currentState.yearRange.start.toInt(),
-                        endYear = currentState.yearRange.endInclusive.toInt(),
-                        genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
-                            Genre.entries.find {
-                                it.name.equals(
-                                    genreName,
-                                    ignoreCase = true
-                                )
-                            }
-                        },
-                        imdbRating = currentState.imdbRating.toFloat()
-                    )
+                    val hasValidFilters = currentState.selectedGenres.isNotEmpty() ||
+                            currentState.imdbRating > 0 ||
+                            currentState.yearRange.start > 1980 ||
+                            currentState.yearRange.endInclusive < 2025
+                    
+                    if (hasValidFilters) {
+                        MediaFilters(
+                            startYear = currentState.yearRange.start.toInt(),
+                            endYear = currentState.yearRange.endInclusive.toInt(),
+                            genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
+                                Genre.entries.find {
+                                    it.name.equals(
+                                        genreName,
+                                        ignoreCase = true
+                                    )
+                                }
+                            },
+                            imdbRating = currentState.imdbRating.toFloat()
+                        )
+                    } else {
+                        null
+                    }
                 }
                 _filterResult.emit(mediaFilters)
 

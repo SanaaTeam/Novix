@@ -17,9 +17,9 @@ internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Searc
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
     return movies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
-        .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
-        .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseDate, year) }
-        .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseDate, year) }
+        .filterNonNull(if (imdbRating > 0f) imdbRating else null) { movie, rating -> byRate(movie.voteAverage, rating) }
+        .filterNonNull(if (startYear > 1950) startYear else null) { movie, year -> byStartYear(movie.releaseDate, year) }
+        .filterNonNull(if (endYear < 2025) endYear else null) { movie, year -> byEndYear(movie.releaseDate, year) }
         .map { it.toSearchOutput() }
 }
 
@@ -30,9 +30,9 @@ internal fun MediaFilters.filterCashedMovies(
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
     return cachedMovies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
-        .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }
-        .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseYear, year) }
-        .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseYear, year) }
+        .filterNonNull(if (imdbRating > 0f) imdbRating else null) { movie, rating -> byRate(movie.imdbRating, rating) }
+        .filterNonNull(if (startYear > 1950) startYear else null) { movie, year -> byStartYear(movie.releaseYear, year) }
+        .filterNonNull(if (endYear < 2025) endYear else null) { movie, year -> byEndYear(movie.releaseYear, year) }
         .map { it.toSearchOutput() }
 }
 
@@ -43,9 +43,9 @@ internal fun MediaFilters.filterTvShows(
         val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
         return tvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
-            .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
-            .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseDate, year) }
-            .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseDate, year) }
+            .filterNonNull(if (imdbRating > 0f) imdbRating else null) { movie, rating -> byRate(movie.voteAverage, rating) }
+            .filterNonNull(if (startYear > 1950) startYear else null) { movie, year -> byStartYear(movie.releaseDate, year) }
+            .filterNonNull(if (endYear < 2025) endYear else null) { movie, year -> byEndYear(movie.releaseDate, year) }
             .map { it.toSearchOutput() }
     }
 }
@@ -57,9 +57,9 @@ internal fun MediaFilters.filterCashedTvShows(
         val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
         return cachedTvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
-            .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }
-            .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseYear, year) }
-            .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseYear, year) }
+            .filterNonNull(if (imdbRating > 0f) imdbRating else null) { movie, rating -> byRate(movie.imdbRating, rating) }
+            .filterNonNull(if (startYear > 1950) startYear else null) { movie, year -> byStartYear(movie.releaseYear, year) }
+            .filterNonNull(if (endYear < 2025) endYear else null) { movie, year -> byEndYear(movie.releaseYear, year) }
             .map { it.toSearchOutput() }
     }
 }
