@@ -1,15 +1,14 @@
-package com.example.preferences
+package com.sanaa.preferences
 
 import android.content.Context
-import com.example.preferences.service.GenreLocalizer
-import com.sanaa.preferences.R
+import com.sanaa.preferences.service.GenreLocalizer
 
 
 class GenreLocalizerImpl(
     private val context: Context
 ) : GenreLocalizer {
     override fun getLocalizedName(genreName: String): String {
-        return when(genreName){
+        return when (genreName) {
             "DRAMA" -> context.getString(R.string.genre_drama)
             "COMEDY" -> context.getString(R.string.genre_comedy)
             "ADVENTURE" -> context.getString(R.string.genre_adventure)

@@ -1,6 +1,6 @@
-package com.example.preferences
+package com.sanaa.preferences
 
-import com.example.preferences.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import java.util.Locale
 
 class DeviceLanguageProvider(
