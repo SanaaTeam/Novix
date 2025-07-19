@@ -31,4 +31,7 @@
     <string name="actors">ممثلين</string>
     <string name="unsuitable_image">"صورة غير مناسبة "</string>
 
+    <string name="error_general_title">عذرًا! حدث خطاء.</string>
+    <string name="error_general_message">حاول مرة أخرى لاحقا، نحن بانتظارك مع الأفلام والفشار</string>
+
 </resources>

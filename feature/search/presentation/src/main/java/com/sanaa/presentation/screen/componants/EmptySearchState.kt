@@ -30,6 +30,7 @@ fun EmptySearchState(
     modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
+    topIcon: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -39,7 +40,6 @@ fun EmptySearchState(
     ) {
         Box(
             modifier = Modifier.size(128.dp),
-            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = icon,
@@ -47,6 +47,7 @@ fun EmptySearchState(
                 modifier = Modifier
                     .size(128.dp)
             )
+            topIcon()
         }
         Text(
             text = text,
