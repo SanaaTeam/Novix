@@ -8,14 +8,11 @@ import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
 
-const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
-
-fun String?.fullImageUrlOrEmpty(): String =
-    if (this.isNullOrBlank()) "" else "$TMDB_IMAGE_BASE_URL$this"
+private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
 fun ActorDto.toDomain(): Actor = Actor(
     id = id,
-    imageUrl = profileImagePath.fullImageUrlOrEmpty(),
+    imageUrl = getFullImageUrl(profileImagePath),
     name = name ?: "Unknown",
     region = null,
     department = knownForDepartment,
@@ -34,12 +31,12 @@ fun ActorDto.toDomain(): Actor = Actor(
 
 fun MovieCastCreditDto.toDomain(): Movie = Movie(
     id = movieId,
-    posterImageUrl = posterPath.fullImageUrlOrEmpty(),
+    posterImageUrl = getFullImageUrl(posterPath),
     title = title ?: originalTitle ?: "Unknown",
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = 0,
-    releaseDate = releaseDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
+    releaseDate = toLocalDateOrNull(releaseDate) ?: LocalDate(1900, 1, 1),
     overview = overview ?: ""
 )
 
@@ -47,14 +44,17 @@ fun TvCastCreditDto.toDomain(): TvSeries = TvSeries(
     id = tvId,
     title = name ?: originalName ?: "Unknown",
     overview = overview ?: "",
-    releaseDate = firstAirDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
+    releaseDate = toLocalDateOrNull(firstAirDate) ?: LocalDate(1900, 1, 1),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
-    posterImageUrl = posterPath.fullImageUrlOrEmpty(),
+    posterImageUrl = getFullImageUrl(posterPath),
     seasonsCount = 0
 )
 
-internal  fun String?.toLocalDateOrNull(): LocalDate? =
-    this
-        ?.takeIf(String::isNotBlank)
+internal fun getFullImageUrl(path: String?): String =
+    if (path.isNullOrBlank()) "" else "$TMDB_IMAGE_BASE_URL$path"
+
+internal fun toLocalDateOrNull(value: String?): LocalDate? =
+    value
+        ?.takeIf { it.isNotBlank() }
         ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
