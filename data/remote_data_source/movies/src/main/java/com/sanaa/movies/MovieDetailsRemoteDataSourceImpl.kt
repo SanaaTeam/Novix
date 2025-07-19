@@ -1,13 +1,15 @@
 package com.sanaa.movies
 
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.dataSource.remote.dto.CastDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
-import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
-import com.sanaa.preferences.service.LanguageProvider
+import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
+import com.sanaa.movies.response.MovieReviewsResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -17,7 +19,6 @@ import io.ktor.util.reflect.typeInfo
 
 class MovieDetailsRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ) : MovieDetailsRemoteDataSource {
 
@@ -33,11 +34,14 @@ class MovieDetailsRemoteDataSourceImpl(
     override suspend fun fetchSimilarMoviesByMovieId(id: Int): SimilarMoviesDto =
         fetch("movie/$id/similar")
 
-    override suspend fun fetchReviewsByMovieId(id: Int): ReviewDto =
-        fetch("movie/$id/reviews")
+    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> =
+        fetch<MovieReviewsResponse>("movie/$id/reviews").results
 
-    override suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryDto =
-        fetch("movie?with_genres=$category")
+    override suspend fun fetchMoviesByCategory(category: Int): MoviesByCategoryResponse =
+        fetch("discover/movie?with_genres=$category")
+
+    override suspend fun fetchMovieTrailerUrl(id: Int): VideoResponseDto =
+        fetch("movie/$id/videos", withLang = false)
 
     private suspend inline fun <reified T> fetch(
         path: String,
@@ -48,7 +52,7 @@ class MovieDetailsRemoteDataSourceImpl(
         path: String,
         withLang: Boolean,
         type: TypeInfo
-    ): T = client.get("$baseUrl/$path") {
+    ): T = client.get("${BuildConfig.TMDB_URL}/$path") {
         if (withLang) parameter("language", languageProvider.getCurrentLanguage())
         parameter("api_key", BuildConfig.TMDB_API_KEY)
     }.body(type)

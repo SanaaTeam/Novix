@@ -262,6 +262,63 @@ class ActorMapperTest {
         val result = dto.toDomain()
         assertThat(result.posterImageUrl).isEmpty()
     }
+    @Test
+    fun `toLocalDateOrNull returns null on invalid format`() {
+        val invalidDate = "2020-99-99"
+        val result = invalidDate.toLocalDateOrNull()
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `ActorDto maps unknown gender as MALE`() {
+        val dto = ActorDto(
+            id = 2,
+            name = "Test",
+            profileImagePath = null,
+            biography = null,
+            birthDay = null,
+            deathDay = null,
+            gender = 5, // unknown gender
+            knownForDepartment = null,
+            placeOfBirth = null
+        )
+
+        val result = dto.toDomain()
+        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
+    }
+
+    @Test
+    fun `should fallback to Unknown when MovieCastCreditDto title and originalTitle are blank`() {
+        val dto = MovieCastCreditDto(
+            movieId = 123,
+            title = "",
+            originalTitle = "",
+            posterPath = null,
+            releaseDate = null,
+            voteAverage = null,
+            overview = null
+        )
+
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("")
+    }
+
+    @Test
+    fun `should fallback to Unknown when TvCastCreditDto name and originalName are blank`() {
+        val dto = TvCastCreditDto(
+            tvId = 321,
+            name = "",
+            originalName = "",
+            posterPath = null,
+            firstAirDate = null,
+            voteAverage = null,
+            overview = null
+        )
+
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("")
+    }
+
 
 
     @AfterEach

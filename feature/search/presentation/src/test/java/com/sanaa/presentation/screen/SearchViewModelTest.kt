@@ -494,6 +494,22 @@ class SearchViewModelTest {
     }
 
     @Test
+    fun `retrySearch() should reset state search query`() = runTest {
+        // Given
+        val query = ""
+
+        // When
+        searchViewModel.retrySearch()
+
+        // Then
+        searchViewModel.state.test {
+            val item = awaitItem()
+            val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
+            Truth.assertThat(item).isEqualTo(expected)
+        }
+    }
+
+    @Test
     fun `onFilterApplied() should set state filters`() = runTest {
         // Given
         val filters = MediaFilters()
@@ -622,6 +638,38 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false, error = "Unknown error")
+                Truth.assertThat(item).isEqualTo(expected)
+            }
+        }
+
+    @Test
+    fun `onFilterClicked() should show bottom sheet when filter button clicked`() =
+        runTest {
+            // When
+            searchViewModel.onFilterClicked()
+
+            // Then
+            searchViewModel.state.test {
+                awaitItem()
+
+                val item = awaitItem()
+                val expected = SearchScreenUiState(showBottomSheet = true)
+                Truth.assertThat(item).isEqualTo(expected)
+            }
+        }
+
+    @Test
+    fun `onBottomSheetDragged() should hide bottom sheet when filter dragged`() =
+        runTest {
+            // When
+            searchViewModel.onBottomSheetDragged()
+
+            // Then
+            searchViewModel.state.test {
+                awaitItem()
+
+                val item = awaitItem()
+                val expected = SearchScreenUiState(showBottomSheet = false)
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }

@@ -1,0 +1,267 @@
+package com.sanaa.presentation.screen.movie_details
+
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.designsystem.design_system.component.button.TextButton
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
+import com.sanaa.presentation.component.DotSeparator
+import com.sanaa.presentation.component.IconWithText
+import com.sanaa.presentation.component.ImageSlider
+import com.sanaa.presentation.component.InfoSection
+import com.sanaa.presentation.component.OverviewSection
+import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MediaTypeParam
+import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movie_categories.toLocalizedString
+import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
+import com.sanaa.presentation.screen.series.components.BottomContainer
+import com.sanaa.presentation.screen.series.components.CastComponent
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
+import com.sanaa.designsystem.R as designR
+import com.sanaa.presentation.R as presentationR
+
+@Composable
+fun MovieDetailsScreen(
+    movieId: Int,
+    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val effect by viewModel.effect.collectAsStateWithLifecycle(null)
+
+    val navController = LocalNavControllerProvider.current
+
+    LaunchedEffect(effect) {
+        when (val e = effect) {
+            is MovieDetailsUiEffect.OpenTrailer -> {
+                val intent = Intent(Intent.ACTION_VIEW, e.url?.toUri())
+                navController.context.startActivity(intent)
+            }
+
+            is MovieDetailsUiEffect.NavigateBack -> {
+                if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
+            }
+
+            is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
+                Log.d("TAG", "MovieDetailsScreen: ${e.movieId}")
+                navController.navigate(
+                    ReviewsScreenRoute(e.movieId, MediaTypeParam.MOVIE).route()
+                )
+            }
+
+            is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
+                navController.navigate(MovieDetailsScreenRoute(e.movieId).route())
+            }
+
+            is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                navController.navigate(ActorDetailsScreenRoute(e.actorId).route())
+            }
+
+            is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
+                navController.navigate(MovieCategoriesScreenRoute(e.categoryId).route())
+            }
+
+            else -> Unit
+        }
+    }
+    MovieDetailsContent(
+        state = state, interactionListener = viewModel
+    )
+
+}
+
+@Composable
+fun MovieDetailsContent(
+    state: MovieDetailsUiState,
+    interactionListener: MovieDetailsScreenInteractionListener,
+) {
+    NovixScaffold(
+        backgroundShapes = { NovixBackgroundShapes() }) {
+        Box(
+            modifier = Modifier.navigationBarsPadding()
+                .fillMaxSize()
+
+        ) {
+            AppTopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = { interactionListener.onBackClick() })
+                }, rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_save), onClick = {
+                            interactionListener.onBookmarkClick(state.movieDetails.id)
+                        })
+                }, modifier = Modifier
+                    .systemBarsPadding()
+                    .zIndex(10f)
+            )
+            AnimatedContent(
+                targetState = state.isLoading,
+                modifier = Modifier.align(Alignment.Center),
+                contentAlignment = Alignment.Center
+            ) {
+                if (it) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        NovixLoadingIndicator()
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 112.dp)
+                    ) {
+                        item {
+                            Box(modifier = Modifier.fillMaxWidth()) {
+                                ImageSlider(
+                                    images = state.imagesUrls,
+                                    contentDescription = state.movieDetails.title,
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+
+                                InfoSection(
+                                    title = state.movieDetails.title,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 220.dp)
+                                        .padding(horizontal = 16.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(top = 16.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        state.movieDetails.genres.forEachIndexed { index, genre ->
+                                            Text(
+                                                text = genre.toLocalizedString(),
+                                                style = Theme.textStyle.label.small,
+                                                color = Theme.colors.body,
+                                                modifier = Modifier.clickable {
+                                                    interactionListener.onGenreClicked(genre)
+                                                })
+                                            if (index < state.movieDetails.genres.lastIndex) {
+                                                DotSeparator()
+                                            }
+                                        }
+                                    }
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        state.movieDetails.rating?.let {
+                                            IconWithText(
+                                                iconRes = designR.drawable.star,
+                                                contentDescription = null,
+                                                text = state.movieDetails.rating,
+                                                tint = Theme.colors.statusColors.yellowAccent
+                                            )
+                                            DotSeparator()
+                                        }
+                                        state.movieDetails.duration?.let {
+                                            IconWithText(
+                                                iconRes = presentationR.drawable.icon_duration,
+                                                contentDescription = null,
+                                                text = stringResource(
+                                                    R.string.m, state.movieDetails.duration
+                                                ),
+                                                tint = Theme.colors.body
+                                            )
+                                            DotSeparator()
+                                        }
+                                        IconWithText(
+                                            iconRes = presentationR.drawable.icon_calender,
+                                            contentDescription = null,
+                                            text = state.movieDetails.releaseDate,
+                                            tint = Theme.colors.body
+                                        )
+                                    }
+                                    TextButton(
+                                        text = stringResource(id = presentationR.string.view_reviews),
+                                        textColor = Theme.colors.primary,
+                                        onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })
+                                }
+                            }
+                        }
+
+                        item {
+                            state.movieDetails.overview?.let {
+                                OverviewSection(
+                                    overview = state.movieDetails.overview,
+                                    onReadMore = { interactionListener.onReadMoreClick() },
+                                    modifier = Modifier.padding(16.dp),
+                                    titleResId = presentationR.string.overview
+                                )
+                            }
+                        }
+
+                        item {
+                            if (state.cast.isNotEmpty()) CastComponent(
+                                cast = state.cast,
+                                onActorClicked = interactionListener::onActorCardClick
+                            )
+                        }
+                        item {
+                            if (state.similarMovies.isNotEmpty()) MoreLikeThisSection(
+                                similarMovies = state.similarMovies,
+                                onBookmarkClick = interactionListener::onBookmarkClick,
+                                onSimilarMovieClick = interactionListener::onSimilarMovieClick,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
+                    }
+
+                }
+            }
+            BottomContainer(
+                onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
+                trailerUrl = state.movieDetails.trailerUrl,
+                modifier = Modifier.align(Alignment.BottomCenter),
+                onSetRateClicked = { interactionListener.onRateMovieClick() })
+
+
+            if (state.showLoginBottomSheet) {
+                RequestToLoginBottomSheet(
+                    onDismiss = { interactionListener.onDismissLoginBottomSheet() })
+            }
+
+        }
+
+    }
+}
+

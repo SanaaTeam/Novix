@@ -45,6 +45,19 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.SearchScreen*",
     "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet*",
     "com.sanaa.search.search_result.db.*",
+    "com.sanaa.presentation.navigation.**",
+    "com.sanaa.presentation.screen.actor.componants.**",
+    "com.sanaa.presentation.screen.actor.screen.**",
+    "com.sanaa.presentation.screen.episode_details.components.**",
+    "com.sanaa.presentation.screen.episode_details.**",
+    "com.sanaa.presentation.screen.movie_details.components.**",
+    "com.sanaa.presentation.screen.movie_categories.**",
+    "com.sanaa.presentation.screen.movie_details.**",
+    "com.sanaa.presentation.screen.review.components.**",
+    "com.sanaa.presentation.screen.review.ReviewsScreen*",
+    "com.sanaa.presentation.screen.series.components.**",
+    "com.sanaa.presentation.screen.series.SeriesScreen*",
+    "com.sanaa.feature.media_details.api.*"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")

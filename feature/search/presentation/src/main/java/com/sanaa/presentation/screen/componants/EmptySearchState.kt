@@ -30,6 +30,7 @@ fun EmptySearchState(
     modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
+    topIcon: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -38,8 +39,11 @@ fun EmptySearchState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.size(128.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .size(128.dp),
+
+            contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = icon,
@@ -47,6 +51,7 @@ fun EmptySearchState(
                 modifier = Modifier
                     .size(128.dp)
             )
+            topIcon()
         }
         Text(
             text = text,

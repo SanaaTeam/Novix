@@ -20,9 +20,18 @@
     <string name="apply">تطبيق</string>
     <string name="cancel">إلغاء</string>
     <string name="search_hint">بحث…</string>
-    
+    <string name="read_more">اقرأ المزيد</string>
+    <string name="no_review">لا توجد مراجعات!</string>
+    <string name="reviews">المراجعات</string>
+    <string name="rating">التقييم</string>
+    <string name="date">التاريخ</string>
     <!-- Tab Labels -->
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
     <string name="actors">ممثلين</string>
+    <string name="unsuitable_image">"صورة غير مناسبة "</string>
+
+    <string name="error_general_title">عذرًا! حدث خطاء.</string>
+    <string name="error_general_message">حاول مرة أخرى لاحقا، نحن بانتظارك مع الأفلام والفشار</string>
+
 </resources>

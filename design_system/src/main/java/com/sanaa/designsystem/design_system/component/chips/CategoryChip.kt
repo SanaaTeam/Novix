@@ -2,7 +2,6 @@ package com.sanaa.designsystem.design_system.component.chips
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,18 +32,16 @@ fun CategoryChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
+    animateWidth: Boolean = true,
 ) {
     val animateBackgroundColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.secondary else Color.Transparent,
-        animationSpec = tween(200, delayMillis = 80)
     )
     val animateTextColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.onPrimary else Theme.colors.body,
-        animationSpec = tween(200, delayMillis = 80)
     )
     val animatedHorizontalPadding by animateDpAsState(
-        targetValue = if (isSelected) 24.dp else 12.dp,
-        animationSpec = tween(100)
+        targetValue = if (isSelected && animateWidth) 24.dp else 12.dp,
     )
     Box(
         modifier = modifier

@@ -132,13 +132,13 @@ class FilterViewModelTest {
         }
 
     @Test
-    fun `onApplyClicked() should change the media filter when filters are default`() =
+    fun `onApplyClicked() should return media filters with selected genres`() =
         runTest {
             // Given
             val rate = 1f
-
             // When
             filterViewModel.onRatingChanged(rate.toInt())
+            filterViewModel.onGenreSelected("Kids")
             filterViewModel.onApplyClicked()
 
             // Then
@@ -148,9 +148,46 @@ class FilterViewModelTest {
                     MediaFilters(
                         startYear = 1980,
                         endYear = 2025,
+                        genres = listOf(Genre.KIDS),
                         imdbRating = rate
                     )
                 )
             }
         }
+
+    @Test
+    fun `onApplyClicked should emit media filters with correctly mapped genres`() = runTest {
+        // Given
+        filterViewModel.onGenreSelected("KIDS")
+
+        // When
+        filterViewModel.onApplyClicked()
+
+        // Then
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+
+            Truth.assertThat(item?.genres).containsExactly(Genre.KIDS)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onApplyClicked should emit media filters with correct genres after selecting genre`() =
+        runTest {
+            // Given
+            filterViewModel.onGenreSelected("Kids")
+
+            // When
+            filterViewModel.onApplyClicked()
+
+            // Then
+            filterViewModel.filterResult.test {
+                val result = awaitItem()
+                Truth.assertThat(result?.genres).containsExactly(Genre.KIDS)
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+
 }
