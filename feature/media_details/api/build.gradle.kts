@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+kover {
+    disable()
+}
+
 android {
     namespace = "com.sanaa.api"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -21,7 +25,7 @@ android {
             isShrinkResources = false
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
