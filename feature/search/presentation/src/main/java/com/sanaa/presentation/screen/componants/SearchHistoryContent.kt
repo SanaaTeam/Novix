@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -136,12 +135,6 @@ private fun MediaPoster(
     item: RecentViewedUiModel,
     interactionsListener: SearchScreenInteractionsListener,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        com.sanaa.presentation.R.drawable.movie_placeholder_dark
-    } else {
-        com.sanaa.presentation.R.drawable.movie_placeholder_light
-    }
 
     MovieSeriesPosterCard(
         onCardClick = { interactionsListener.onSearchResultMediaClicked(item) },
@@ -155,9 +148,12 @@ private fun MediaPoster(
                 blurRadius = 150,
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
-                placeholder = painterResource(placeholderResId),
-                error = painterResource(placeholderResId),
-
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
                 contentDescription = null,
             ) {
                 OnBlurContent(

@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -33,13 +33,6 @@ fun TvShowsContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     onTvShowClick: (RecentViewedUiModel) -> Unit,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        R.drawable.movie_placeholder_dark
-    } else {
-        R.drawable.movie_placeholder_light
-    }
-
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         modifier = Modifier
@@ -61,8 +54,12 @@ fun TvShowsContent(
                             haramThreshold = 0.2f,
                             nonHaramThreshold = 0.7f,
                             contentDescription = tvShow.title,
-                            placeholder = painterResource(placeholderResId),
-                            error = painterResource(placeholderResId),
+                            placeholderContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            errorContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
