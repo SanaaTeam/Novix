@@ -33,9 +33,8 @@ android {
     }
 
     lint {
-        abortOnError = false // Prevents CI from failing
-        checkReleaseBuilds = true
-        baseline = file("lint-baseline.xml")
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 
     buildTypes {

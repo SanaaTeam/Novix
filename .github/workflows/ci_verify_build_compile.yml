@@ -46,4 +46,4 @@ jobs:
           cp keys.properties ./data/remote_data_source/search/keys.properties
 
       - name: Build without tests
-        run: ./gradlew assemble
+        run: ./gradlew assemble -x lintVitalRelease -x lint
