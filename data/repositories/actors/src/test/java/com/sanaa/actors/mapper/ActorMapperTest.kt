@@ -17,7 +17,7 @@ class ActorMapperTest {
     @Test
     fun `toFullImageUrl appends base URL`() {
         val path = "/img.jpg"
-        val fullUrl = path.fullImageUrlOrEmpty()
+        val fullUrl = getFullImageUrl(path)
 
         assertThat(fullUrl).isEqualTo("https://image.tmdb.org/t/p/w500/img.jpg")
     }
@@ -215,7 +215,7 @@ class ActorMapperTest {
     @Test
     fun `ActorDto imageUrl falls back when helper returns blank`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
-        every { any<String>().fullImageUrlOrEmpty() } returns ""
+        every { getFullImageUrl(any<String>()) } returns ""
 
         val dto = ActorDto(
             id = 11,
@@ -236,7 +236,7 @@ class ActorMapperTest {
     @Test
     fun `MovieCastCreditDto posterImageUrl falls back when helper returns blank`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
-        every { any<String>().fullImageUrlOrEmpty() } returns ""
+        every { getFullImageUrl(any<String>())  } returns ""
 
         val dto = MovieCastCreditDto(
             movieId = 21, title = "Title", originalTitle = null,
@@ -251,7 +251,7 @@ class ActorMapperTest {
     @Test
     fun `TvCastCreditDto posterImageUrl falls back when helper returns blank`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
-        every { any<String>().fullImageUrlOrEmpty() } returns ""
+        every { getFullImageUrl(any<String>()) } returns ""
 
         val dto = TvCastCreditDto(
             tvId = 31, name = "Show", originalName = null,
@@ -265,7 +265,7 @@ class ActorMapperTest {
     @Test
     fun `toLocalDateOrNull returns null on invalid format`() {
         val invalidDate = "2020-99-99"
-        val result = invalidDate.toLocalDateOrNull()
+        val result = toLocalDateOrNull(invalidDate)
         assertThat(result).isNull()
     }
 
