@@ -35,9 +35,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":design_system"))
-    implementation(project(":domain:vod"))
-    implementation(project(":image_viewer"))
+    implementation(projects.designSystem)
+    implementation(projects.domain.vod)
+    implementation(projects.imageViewer)
     implementation(projects.preferences)
     implementation(projects.feature.search.api)
     implementation(projects.feature.mediaDetails.api)

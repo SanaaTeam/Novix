@@ -79,7 +79,7 @@ fun TvShowsContent(
                             RecentViewedUiModel(
                                 id = tvShow.id,
                                 imageUrl = tvShow.imageUrl,
-                                mediaType = MediaTypeUi.TV_SERIES.name
+                                mediaType = MediaTypeUi.TV_SERIES
                             ),
                             TvShowUiModel(
                                 id = tvShow.id,

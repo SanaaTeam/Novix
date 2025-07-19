@@ -34,9 +34,6 @@ fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
     interactionsListener: SearchScreenInteractionsListener,
-    onMovieClick: (MovieUiModel) -> Unit,
-    onTvShowClick: (TvShowUiModel) -> Unit,
-    onActorClick: (ActorUiModel) -> Unit,
     modifier: Modifier = Modifier,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
@@ -77,9 +74,6 @@ fun CategoryTabSection(
                     moviesPagingData = moviesPagingData,
                     tvShowsPagingData = tvShowsPagingData,
                     actorsPagingData = actorsPagingData,
-                    onMovieClick = onMovieClick,
-                    onTvShowClick = onTvShowClick,
-                    onActorClick = onActorClick
                 )
             }
         }
@@ -93,9 +87,6 @@ fun CategoryTabContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onMovieClick: (MovieUiModel) -> Unit,
-    onTvShowClick: (TvShowUiModel) -> Unit,
-    onActorClick: (ActorUiModel) -> Unit,
 ) {
     val movieState = moviesPagingData.loadState.refresh
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
@@ -120,7 +111,6 @@ fun CategoryTabContent(
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
                     onMovieClick = { recent, movie ->
-                        onMovieClick(movie)
                         interactionsListener.onSearchResultMediaClicked(recent)
                     }
                 )
@@ -134,7 +124,6 @@ fun CategoryTabContent(
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
                     onTvShowClick = { recent, tvShow ->
-                        onTvShowClick(tvShow)
                         interactionsListener.onSearchResultMediaClicked(recent)
                     }
                 )
@@ -146,7 +135,7 @@ fun CategoryTabContent(
                 NoSearchResultState()
             } else {
                 ActorsContent(actorsPagingData, onActorClick = {
-                    onActorClick(it)
+                    interactionsListener.onActorClicked(it.id)
                 })
             }
         }
