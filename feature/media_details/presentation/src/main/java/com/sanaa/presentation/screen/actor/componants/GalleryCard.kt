@@ -33,11 +33,12 @@ fun GalleryCard(
     ) {
 
         RemoteBlurredHaramImageViewer(
-            imageUrl = imageUrl ?: "",
+            imageUrl = imageUrl.orEmpty(),
             modifier = Modifier.fillMaxWidth(),
             blurRadius = 150,
             haramThreshold = 0.2f,
             nonHaramThreshold = 0.7f,
+            isBlurEnabled = false,
             contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
             placeholderContent = {
                 RemoteImagePlaceholder(Modifier.fillMaxSize())

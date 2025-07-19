@@ -75,7 +75,9 @@ fun RemoteBlurredHaramImageViewer(
         result.onSuccess { success ->
             val bitmap = (success.drawable as? BitmapDrawable)?.bitmap
             if (bitmap != null) {
-                isHaram = classifier.isInappropriateImage(bitmap, nonHaramThreshold, haramThreshold)
+                if (isBlurEnabled)
+                    isHaram =
+                        classifier.isInappropriateImage(bitmap, nonHaramThreshold, haramThreshold)
                 bitmapToDisplay = bitmap
                 requestState = RequestState.SUCCESS
                 onSuccess?.invoke()
@@ -108,7 +110,7 @@ fun RemoteBlurredHaramImageViewer(
             }
 
             RequestState.ERROR -> {
-                  errorContent()
+                errorContent()
             }
         }
 

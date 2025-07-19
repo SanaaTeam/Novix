@@ -155,7 +155,6 @@ private fun ActorScreenContent(
                                 actor = state.actor,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
-                                    .offset(y = (-16).dp)
                             )
                         }
 
