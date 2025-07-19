@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="novix"  translatable="false">Novix</string>
+    <string name="novix" translatable="false">Novix</string>
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
     <string name="offline_note">Retry</string>
@@ -20,9 +20,16 @@
     <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
     <string name="search_hint">Search…</string>
-    
+    <string name="read_more">Read more</string>
+    <string name="no_review">There is no review!</string>
+    <string name="reviews">Reviews</string>
+    <string name="rating">Rating</string>
+    <string name="date">Date</string>
+
+
     <!-- Tab Labels -->
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
     <string name="actors">Actors</string>
+    <string name="unsuitable_image">"unsuitable image "</string>
 </resources>

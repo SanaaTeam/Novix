@@ -42,23 +42,28 @@ class MovieDetailsRemoteDataSourceImplTest {
                     """{"id":1,"poster_path":"/p.jpg","title":"A","genres":[{"id":28,"name":"Action"}],
                        "vote_average":7.0,"runtime":100,"release_date":"2020-01-01","overview":"Ok"}"""
                 )
+
                 url.endsWith("/movie/1/images") -> respondJson(
                     """{"id":1,"posters":[{"file_path":"/img.jpg"}],"backdrops":[],"logos":[]}"""
                 )
+
                 url.endsWith("/movie/1/credits") -> respondJson(
                     """{"id":1,"cast":[{"id":10,"name":"Actor","character":"Hero","profile_path":"/a.jpg"}],
                        "crew":[]}"""
                 )
+
                 url.endsWith("/movie/1/similar") -> respondJson(
                     """{"page":1,"results":[{"id":2,"poster_path":"/p2.jpg","title":"B",
                         "genre_ids":[28],"vote_average":6.5,"release_date":"2021-01-01","overview":"Ok"}],
                        "total_pages":1,"total_results":1}"""
                 )
+
                 url.endsWith("/movie/1/reviews") -> respondJson(
                     """{"id":1,"results":[{"id": "rev123","author_details":{"name":"John","username":"j",
                         "avatar_path":"/av.jpg","rating":5.0},"content":"Fine","created_at":"2022-01-01"}],
                       "page":1,"total_pages":1,"total_results":1}"""
                 )
+
                 else -> respondError(HttpStatusCode.NotFound)
             }
         }
@@ -70,7 +75,7 @@ class MovieDetailsRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
-        dataSource = MovieDetailsRemoteDataSourceImpl(client, baseUrl, languageProvider)
+        dataSource = MovieDetailsRemoteDataSourceImpl(client, languageProvider)
     }
 
     @Test
@@ -146,27 +151,28 @@ class MovieDetailsRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `should return correct movie id in similar movies when fetching similar movies`() = runTest {
-        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
-        assertEquals(2, dto.results.first().id)
-    }
+    fun `should return correct movie id in similar movies when fetching similar movies`() =
+        runTest {
+            val dto = dataSource.fetchSimilarMoviesByMovieId(1)
+            assertEquals(2, dto.results.first().id)
+        }
 
     @Test
     fun `should return correct id when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals(1, dto.id)
+        assertEquals("rev123", dto.first().id)
     }
 
     @Test
     fun `should return correct number of results when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals(1, dto.results.size)
+        assertEquals(1, dto.size)
     }
 
     @Test
     fun `should return correct review content when fetching movie reviews`() = runTest {
         val dto = dataSource.fetchReviewsByMovieId(1)
-        assertEquals("Fine", dto.results.first().content)
+        assertEquals("Fine", dto.first().content)
     }
 
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
