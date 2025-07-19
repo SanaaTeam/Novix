@@ -38,8 +38,11 @@ fun EmptySearchState(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.size(128.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier
+                .padding(bottom = 12.dp)
+                .size(128.dp),
+
+            contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = icon,

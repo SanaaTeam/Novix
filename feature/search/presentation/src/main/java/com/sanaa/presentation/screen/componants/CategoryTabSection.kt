@@ -163,7 +163,7 @@ fun CategoryTabContent(
 @Composable
 private fun NoSearchResultState() {
     EmptySearchState(
-        icon = painterResource(id = R.drawable.ic_no_search_result),
+        icon = painterResource(id = com.sanaa.presentation.R.drawable.icon_no_search_result),
         text = stringResource(id = R.string.no_search_result_message)
     )
 }

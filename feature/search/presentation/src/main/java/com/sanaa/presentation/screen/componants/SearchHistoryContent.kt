@@ -70,7 +70,7 @@ private fun EmptyState() {
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            icon = painterResource(id = R.drawable.empty_search),
+            icon = painterResource(id = com.sanaa.presentation.R.drawable.icon_search),
             text = stringResource(id = R.string.empty_search_message)
         )
     }
