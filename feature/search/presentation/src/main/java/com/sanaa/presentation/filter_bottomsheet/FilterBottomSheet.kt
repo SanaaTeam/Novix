@@ -22,8 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.OutlinedButton
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
+import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
@@ -132,14 +132,14 @@ private fun FilterActions(
         modifier = Modifier.padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        PrimaryButton(
+        NovixPrimaryButton(
             onClick = onApplyClicked,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
             text = stringResource(R.string.apply)
         )
-        OutlinedButton(
+        NovixOutlinedButton(
             onClick = onClearClicked,
             modifier = Modifier
                 .fillMaxWidth()

@@ -27,18 +27,21 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun CategoryChip(
+fun NovixToggleableChip(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     animateWidth: Boolean = true,
+    selectedBackgroundColor: Color = Theme.colors.secondary,
+    selectedTextColor: Color = Theme.colors.onPrimary,
+    notSelectedTextColor: Color = Theme.colors.body,
 ) {
     val animateBackgroundColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.secondary else Color.Transparent,
+        targetValue = if (isSelected) selectedBackgroundColor else Color.Transparent,
     )
     val animateTextColor by animateColorAsState(
-        targetValue = if (isSelected) Theme.colors.onPrimary else Theme.colors.body,
+        targetValue = if (isSelected) selectedTextColor else notSelectedTextColor,
     )
     val animatedHorizontalPadding by animateDpAsState(
         targetValue = if (isSelected && animateWidth) 24.dp else 12.dp,
@@ -78,8 +81,8 @@ private fun PreviewCategoryChip() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CategoryChip(text = "Action", onClick = {}, isSelected = true)
-            CategoryChip(
+            NovixToggleableChip(text = "Action", onClick = {}, isSelected = true)
+            NovixToggleableChip(
                 text = "Action",
                 onClick = { isSelected = !isSelected },
                 isSelected = isSelected

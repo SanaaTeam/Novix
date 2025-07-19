@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.chips
+package com.sanaa.presentation.component.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,7 +23,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun MovieSeriesRatingChip(
+fun MediaRatingChip(
     rating: String,
     modifier: Modifier = Modifier
 ) {
@@ -59,7 +59,7 @@ fun MovieSeriesRatingChip(
 
 @Preview
 @Composable
-private fun PreviewMovieSeriesRatingChip() {
+private fun PreviewMediaRatingChip() {
     NovixTheme(isSystemInDarkTheme()) {
         Column(
             modifier = Modifier
@@ -68,7 +68,7 @@ private fun PreviewMovieSeriesRatingChip() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            MovieSeriesRatingChip(rating = "9.9")
+            MediaRatingChip(rating = "9.9")
         }
     }
 }

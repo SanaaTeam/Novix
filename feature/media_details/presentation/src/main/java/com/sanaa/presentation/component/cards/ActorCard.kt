@@ -1,4 +1,4 @@
-package com.sanaa.designsystem.design_system.component.cards
+package com.sanaa.presentation.component.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

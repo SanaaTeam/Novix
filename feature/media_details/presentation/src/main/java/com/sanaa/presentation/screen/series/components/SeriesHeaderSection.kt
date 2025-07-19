@@ -15,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.button.TextButton
+import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.DotSeparator
@@ -110,7 +110,7 @@ fun SeriesHeaderSection(
                     )
                 }
                 if (showReviews) {
-                    TextButton(
+                    NovixTextButton(
                         text = stringResource(R.string.view_reviews),
                         onClick = onReviewClicked
                     )

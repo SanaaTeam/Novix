@@ -26,7 +26,7 @@ fun NovixLoadingIndicator(
 
 @Preview(showBackground = true)
 @Composable
-fun WavyProgressIndicatorPreview() {
+fun NovixIndicatorPreview() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center

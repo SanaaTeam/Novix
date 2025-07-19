@@ -12,9 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
-import com.sanaa.designsystem.design_system.component.cards.ActorCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
+import com.sanaa.presentation.component.cards.ActorCard
 import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
