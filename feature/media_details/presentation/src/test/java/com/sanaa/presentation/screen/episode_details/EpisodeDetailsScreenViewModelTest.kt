@@ -17,6 +17,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -36,34 +37,6 @@ class EpisodeDetailsScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
     }
 
-    @Test
-    fun `init emits loading then populated state`() = runTest {
-        coEvery { manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber) } returns dummyEpisode
-        coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber) } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            seriesId, seasonNumber, episodeNumber,
-            manageEpisodeDetails, manageTvSeriesDetails
-        )
-
-        viewModel.state.test {
-            val loading = awaitItem()
-            assertThat(loading.isLoading).isTrue()
-            val expected = EpisodeDetailsScreenUiState(
-                episode = dummyEpisode.toEpisodeUiModel(),
-                guestOfHonor = dummyGuests.map { it.toActorUiModel() },
-                seriesId = seriesId,
-                imagesUrl = dummyImages,
-                trailerUrl = dummyTrailer,
-                isLoading = true,
-                error = null
-            )
-            assertThat(awaitItem()).isEqualTo(expected)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {

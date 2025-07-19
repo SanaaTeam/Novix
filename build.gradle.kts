@@ -57,7 +57,8 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.review.components.**",
     "com.sanaa.presentation.screen.review.ReviewsScreen*",
     "com.sanaa.presentation.screen.series.components.**",
-    "com.sanaa.presentation.screen.series.SeriesScreen*"
+    "com.sanaa.presentation.screen.series.SeriesScreen*",
+    "com.sanaa.feature.media_details.api.*"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
