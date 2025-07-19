@@ -21,6 +21,7 @@ abstract class BaseViewModel<T>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<T> = _state.asStateFlow()
 
+
     fun updateState(updater: (T) -> T) {
         _state.update(updater)
     }

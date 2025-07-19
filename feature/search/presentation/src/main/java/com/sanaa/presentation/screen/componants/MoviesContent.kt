@@ -77,7 +77,7 @@ fun MoviesContent(
                             RecentViewedUiModel(
                                 id = movie.id,
                                 imageUrl = movie.imageUrl,
-                                mediaType = MediaTypeUi.MOVIE.name
+                                mediaType = MediaTypeUi.MOVIE
                             ),
                             MovieUiModel(
                                 id = movie.id,
