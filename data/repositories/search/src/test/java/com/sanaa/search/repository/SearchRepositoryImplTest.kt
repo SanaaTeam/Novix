@@ -1,7 +1,7 @@
 package com.sanaa.search.repository
 
-import com.example.preferences.service.LanguageProvider
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 import com.sanaa.search.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.search.fake.FakeData.ActorsLocalDtoList

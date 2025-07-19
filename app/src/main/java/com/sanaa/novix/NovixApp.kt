@@ -1,7 +1,6 @@
 package com.sanaa.novix
 
 import android.app.Application
-import com.example.preferences.di.preferencesModule
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.sanaa.novix.di.appModule
 import com.sanaa.novix.di.domainModule
@@ -23,7 +22,6 @@ class NovixApp : Application(), KoinComponent {
         startKoin {
             androidContext(this@NovixApp)
             modules(
-                preferencesModule,
                 appModule,
                 firebaseModule,
                 domainModule,
