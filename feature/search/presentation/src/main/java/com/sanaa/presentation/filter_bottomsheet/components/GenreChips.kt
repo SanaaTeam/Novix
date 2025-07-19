@@ -1,7 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
@@ -19,10 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.CategoryChip
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
-import entity.Genre
 
 @Composable
 fun GenreChips(
@@ -30,6 +27,7 @@ fun GenreChips(
     selectedGenres: Set<String>,
     onGenreSelected: (String) -> Unit,
     modifier: Modifier = Modifier,
+    animateWidth: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -50,14 +48,13 @@ fun GenreChips(
                 CategoryChip(
                     text = genre,
                     isSelected = (genre in selectedGenres),
+                    animateWidth = animateWidth,
                     onClick = { onGenreSelected(genre) }
                 )
             }
         }
     }
 }
-
-
 
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
