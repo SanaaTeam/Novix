@@ -154,4 +154,40 @@ class FilterViewModelTest {
                 )
             }
         }
+
+    @Test
+    fun `onApplyClicked should emit media filters with correctly mapped genres`() = runTest {
+        // Given
+        filterViewModel.onGenreSelected("KIDS")
+
+        // When
+        filterViewModel.onApplyClicked()
+
+        // Then
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+
+            Truth.assertThat(item?.genres).containsExactly(Genre.KIDS)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onApplyClicked should emit media filters with correct genres after selecting genre`() =
+        runTest {
+            // Given
+            filterViewModel.onGenreSelected("Kids")
+
+            // When
+            filterViewModel.onApplyClicked()
+
+            // Then
+            filterViewModel.filterResult.test {
+                val result = awaitItem()
+                Truth.assertThat(result?.genres).containsExactly(Genre.KIDS)
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+
 }
