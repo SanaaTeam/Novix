@@ -6,6 +6,9 @@ import com.sanaa.search.dataSource.local.dto.MovieLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchLocalDto
 import com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
 import com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
+import com.sanaa.search.fake.FakeData
+import com.sanaa.search.fake.FakeData.currentTimestamp
+import com.sanaa.search.fake.FakeData.movieList
 import com.sanaa.search.search_result.LocalCachedSearchDataSourceImpl
 import com.sanaa.search.search_result.dao.ActorDao
 import com.sanaa.search.search_result.dao.MovieDao
