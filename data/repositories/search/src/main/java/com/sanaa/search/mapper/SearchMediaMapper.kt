@@ -22,7 +22,7 @@ fun MovieSearchDto.toLocalDto(language: String): MovieLocalDto {
         title = title ?: "",
         imagePath = IMAGE_URL + posterImagePath,
         language = language,
-        releaseYear = releaseDate?.let { LocalDate.parse(it).year },
+        releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
         imdbRating = voteAverage,
     )

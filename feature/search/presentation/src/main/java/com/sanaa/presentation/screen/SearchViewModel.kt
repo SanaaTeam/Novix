@@ -130,9 +130,9 @@ class SearchViewModel(
     private fun loadMediaByTab(query: String) {
         if (query.isBlank()) return
         when (state.value.selectedTabIndex) {
-            MOVIE_INDEX -> loadMovies(query)
-            TV_SHOW_INDEX -> loadTvShows(query)
-            else -> loadActors(query)
+            MOVIE_INDEX -> loadMovies(query.trim())
+            TV_SHOW_INDEX -> loadTvShows(query.trim())
+            else -> loadActors(query.trim())
         }
     }
 
@@ -278,6 +278,10 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
     }
 
+        override fun retrySearch() {
+        loadMediaByTab(state.value.searchQuery)
+    }
+
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
         if (index == ACTOR_INDEX) {
@@ -345,10 +349,6 @@ class SearchViewModel(
         loadMediaByTab(query)
     }
 
-    override fun onSaveIconClicked() {
-
-    }
-
     override fun onFilterClicked() {
         updateState {
             it.copy(showBottomSheet = true)
@@ -362,8 +362,6 @@ class SearchViewModel(
             )
         }
     }
-
-
 
     companion object {
         private const val PAGE_SIZE = 20

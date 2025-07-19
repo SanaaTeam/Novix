@@ -54,7 +54,6 @@ class SeriesViewModel(
     }
 
     override fun onActorClicked(actorId: Int) {
-        Log.d("Actor ID ", "ACTOR ${actorId}")
         emitEffect(SeriesScreenEffects.NavigateToActorScreen(actorId))
     }
 

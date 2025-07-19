@@ -18,7 +18,8 @@ class FilterViewModel(
     private val genreLocalizer: GenreLocalizer,
 ) : BaseViewModel<FilterUiState>(
     initialState = FilterUiState(),
-    defaultDispatcher = dispatcher),
+    defaultDispatcher = dispatcher
+),
     FilterBottomSheetInteractionsListener {
 
 
@@ -63,13 +64,19 @@ class FilterViewModel(
                     MediaFilters(
                         startYear = currentState.yearRange.start.toInt(),
                         endYear = currentState.yearRange.endInclusive.toInt(),
-                        genres = currentState.selectedGenres.toList().mapNotNull {genreName->
-                            Genre.entries.find { it.name == genreName }
+                        genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
+                            Genre.entries.find {
+                                it.name.equals(
+                                    genreName,
+                                    ignoreCase = true
+                                )
+                            }
                         },
-                        imdbRating =currentState.imdbRating.toFloat()
+                        imdbRating = currentState.imdbRating.toFloat()
                     )
                 }
                 _filterResult.emit(mediaFilters)
+
             }
         )
     }

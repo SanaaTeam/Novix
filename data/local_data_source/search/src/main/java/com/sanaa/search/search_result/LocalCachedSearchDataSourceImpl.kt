@@ -96,7 +96,7 @@ class LocalCachedSearchDataSourceImpl(
             }
         }
 
-        return actorDao.getActorsByQuery(query)
+        return emptyList()
     }
 
     override suspend fun getMoviesByQuery(
@@ -113,7 +113,7 @@ class LocalCachedSearchDataSourceImpl(
             }
         }
 
-        return movieDao.getFilteredMovies(query = query, limit = limit, offset = offset)
+        return emptyList()
     }
 
     override suspend fun getTvSeriesByQuery(
