@@ -29,4 +29,6 @@
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
     <string name="actors">ممثلين</string>
+    <string name="unsuitable_image">"صورة غير مناسبة "</string>
+
 </resources>

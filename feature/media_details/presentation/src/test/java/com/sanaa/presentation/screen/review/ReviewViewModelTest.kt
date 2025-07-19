@@ -12,6 +12,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -25,6 +26,7 @@ class ReviewViewModelTest {
     private val manageMovieDetails: ManageMovieDetailsUseCase = mockk(relaxed = true)
     private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ReviewViewModel
+
     private val mediaId = 101
     @BeforeEach
     fun setUp() {
@@ -63,16 +65,22 @@ class ReviewViewModelTest {
         assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `fetchReviews handles NoNetworkException correctly`() = runTest {
+        val testDispatcher = StandardTestDispatcher(testScheduler)
+
         coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId) } throws NoNetworkException()
 
         viewModel = ReviewViewModel(
             mediaId = mediaId,
             mediaType = MediaTypeUiModel.SERIES,
             manageMovieDetails = manageMovieDetails,
-            manageTvSeriesDetails = manageTvSeriesDetails
+            manageTvSeriesDetails = manageTvSeriesDetails,
+            dispatcher = testDispatcher // ✅ Inject dispatcher into BaseViewModel
         )
+
+        advanceUntilIdle() // ✅ Ensure coroutine finishes
 
         assertThat(viewModel.state.value.isLoading).isFalse()
     }

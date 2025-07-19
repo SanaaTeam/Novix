@@ -16,9 +16,11 @@
     <string name="season">الموسم</string>
     <string name="guest_of_honor">ضيوف الحلقة</string>
     <string name="anonymous">مجهول</string>
-    <string name="request_login">يرجى تسجيل الدخول لحفظه في القائمة</string>
-    <string name="add_to_list">أضف إلى القائمة</string>
-    <string name="login">تسجيل الدخول</string>
+    <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
+    <string name="add_to_list">اضافة الى القائمة</string>"
+    <string name="login">تسجيل دخول</string>
+    <string name="reviews">مراجعات</string>"
+
 
     // Genre
     <string name="genres">الفئات</string>
