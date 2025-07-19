@@ -93,8 +93,8 @@ class SearchMoviesUseCaseTest {
             }
         }
 
-    companion object {
-        private val searchMovieOutputList = listOf(
+    private companion object {
+         val searchMovieOutputList = listOf(
             SearchMovieOutput(
                 id = 1,
                 title = "title",
