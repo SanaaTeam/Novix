@@ -5,11 +5,14 @@ import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import com.sanaa.presentation.model.toUiModel
 import details.usecase.ManageActorDetailsUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 class ActorViewModel(
     private val actorId: Int,
-    private val manageActorDetails: ManageActorDetailsUseCase
-) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(ActorScreenUiState()),
+    private val manageActorDetails: ManageActorDetailsUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(ActorScreenUiState(), dispatcher),
     ActorsScreenInteractionListener {
 
     init {
