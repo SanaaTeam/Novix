@@ -1,4 +1,4 @@
-package usecase.search
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -50,13 +50,13 @@ class SearchMoviesUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns searchMovieOutputList
 
             // When
             val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
@@ -68,13 +68,13 @@ class SearchMoviesUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns searchMovieOutputList
 
             // When
             val result = searchMoviesUseCase.execute(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(searchMovieOutputList)
         }
 
     @Test
@@ -94,7 +94,7 @@ class SearchMoviesUseCaseTest {
         }
 
     private companion object {
-        private val searchMediaOutputList = listOf(
+         val searchMovieOutputList = listOf(
             SearchMovieOutput(
                 id = 1,
                 title = "title",

@@ -10,6 +10,8 @@ import kotlinx.datetime.LocalDate
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
+import kotlin.collections.mapNotNull
+import kotlin.text.toIntOrNull
 
 internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<SearchMovieOutput> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
@@ -84,11 +86,16 @@ private fun byRate(voteAverage: Float?, rating: Float): Boolean {
 }
 
 private fun byGenres(genreIds: List<Int>?, ids: List<Int>): Boolean {
-    return genreIds?.any { it in ids } == true
+    return genreIds?.let { genreIds->
+        ids.all { id -> id in genreIds }
+    } ?: false
 }
 
 private fun byGenres(genreIds: String?, ids: List<Int>): Boolean {
-    return genreIds?.split(", ")?.any { it.toIntOrNull() in ids } == true
+    val genreIds = genreIds?.split(", ")
+        ?.mapNotNull { it.toIntOrNull() }
+        ?.toSet() ?: emptySet()
+         return ids.all { it in genreIds }
 }
 
 fun <T, R> List<R>.filterNonNull(

@@ -1,4 +1,4 @@
-package usecase.search
+package usecases.search
 
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
@@ -65,12 +65,11 @@ class SearchTvSeriesUseCaseTest {
         runTest {
             // Given
             val query = "Tv Series"
-            val page = 1
             val filters = MediaFilters()
+            val page = 1
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
             } returns searchTvShowsOutputList
-
 
             // When
             val result = searchTvSeriesUseCase.execute(query, page, filters)
@@ -97,7 +96,7 @@ class SearchTvSeriesUseCaseTest {
         }
 
     private companion object {
-        val searchTvShowsOutputList = listOf(
+        private val searchTvShowsOutputList = listOf(
             SearchTvSeriesOutput(
                 id = 1,
                 title = "title",
