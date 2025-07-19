@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -113,27 +114,30 @@ fun MovieDetailsContent(
 ) {
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.navigationBarsPadding()
+                .fillMaxSize()
+
+        ) {
             AppTopBar(
                 leftContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(R.drawable.icon_back),
-                    onClick = { interactionListener.onBackClick() })
-            }, rightContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(R.drawable.icon_save), onClick = {
-                        interactionListener.onBookmarkClick(state.movieDetails.id)
-                    })
-            }, modifier = Modifier
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = { interactionListener.onBackClick() })
+                }, rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_save), onClick = {
+                            interactionListener.onBookmarkClick(state.movieDetails.id)
+                        })
+                }, modifier = Modifier
                     .systemBarsPadding()
                     .zIndex(10f)
             )
             AnimatedContent(
-                state.isLoading,
+                targetState = state.isLoading,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-
-            )  {
+            ) {
                 if (it) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         NovixLoadingIndicator()
@@ -169,8 +173,8 @@ fun MovieDetailsContent(
                                                 style = Theme.textStyle.label.small,
                                                 color = Theme.colors.body,
                                                 modifier = Modifier.clickable {
-                                                        interactionListener.onGenreClicked(genre)
-                                                    })
+                                                    interactionListener.onGenreClicked(genre)
+                                                })
                                             if (index < state.movieDetails.genres.lastIndex) {
                                                 DotSeparator()
                                             }

@@ -40,7 +40,7 @@ fun RequestToLoginBottomSheet(
     val loginImageId = if (isDarkTheme) {
         R.drawable.icon_users_dark
     } else {
-        R.drawable.icon_users_dark
+        R.drawable.icon_users_light
     }
     BaseBottomSheet(
         onDismiss = onDismiss,

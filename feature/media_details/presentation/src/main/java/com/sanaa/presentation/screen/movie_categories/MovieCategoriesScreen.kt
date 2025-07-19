@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -83,7 +84,7 @@ fun MovieCategoriesScreenContent(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Column(
-            modifier = Modifier
+            modifier = Modifier.navigationBarsPadding()
         ) {
             AppTopBar(
                 leftContent = {
