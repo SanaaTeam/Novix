@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,7 +104,7 @@ fun CategoryTabContent(
     when (selectedTabIndex) {
         MOVIE_INDEX -> {
             if (movieState is LoadState.Error) {
-                ErrorState(movieState) {interactionsListener.retrySearch()}
+                ErrorState(movieState) { interactionsListener.retrySearch() }
             } else if (isMovieEmpty) {
                 NoSearchResultState()
             } else {
@@ -136,7 +138,13 @@ fun CategoryTabContent(
 
 @Composable
 private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    val scrollState = rememberScrollState()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(scrollState),
+        contentAlignment = Alignment.Center
+    ) {
         if (movieState.error is NoNetworkException)
             NetworkDisconnectionContact(onRetryClick = onRetryClick)
         else
