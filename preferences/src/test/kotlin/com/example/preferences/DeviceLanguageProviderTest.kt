@@ -1,5 +1,6 @@
 package com.example.preferences
 
+import com.sanaa.preferences.DeviceLanguageProvider
 import org.junit.Test
 import java.util.Locale
 import kotlin.test.assertEquals

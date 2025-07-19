@@ -1,4 +1,4 @@
-package com.example.preferences.service
+package com.sanaa.preferences.service
 
 interface GenreLocalizer {
     fun getLocalizedName(genreName: String): String

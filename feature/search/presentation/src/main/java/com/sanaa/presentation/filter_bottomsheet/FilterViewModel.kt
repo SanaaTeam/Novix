@@ -1,6 +1,6 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import com.example.preferences.service.GenreLocalizer
+import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import entity.Genre
