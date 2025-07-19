@@ -1,12 +1,8 @@
-package com.sanaa.presentation.screens.actors
+package com.sanaa.presentation.screen.actors
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
-import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
-import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import details.usecase.ManageActorDetailsUseCase
 import entity.Actor

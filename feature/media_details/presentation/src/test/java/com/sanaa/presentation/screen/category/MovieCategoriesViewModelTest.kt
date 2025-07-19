@@ -1,7 +1,6 @@
-package com.sanaa.presentation.screens.category
+package com.sanaa.presentation.screen.category
 
 import app.cash.turbine.test
-import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenEffects
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenUiState
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel

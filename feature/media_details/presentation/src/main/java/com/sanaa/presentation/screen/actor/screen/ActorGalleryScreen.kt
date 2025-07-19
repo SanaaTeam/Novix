@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -69,7 +71,7 @@ private fun ActorGalleryContent(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Column(
-            modifier = modifier
+            modifier = modifier.navigationBarsPadding()
         ) {
             AppTopBar(
                 leftContent = {
@@ -92,9 +94,11 @@ private fun ActorGalleryContent(
             ) {
 
                 AnimatedContent(
-                    targetState = state.isLoading,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }
-                ) { loading ->
+                    state.isLoading,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+
+                )  { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -112,7 +116,7 @@ private fun ActorGalleryContent(
                             )
                         ) {
                             items(state.galleryImageUrls) { image ->
-                                GalleryCard(image, modifier = Modifier.height(101.dp))
+                                GalleryCard(image, modifier = Modifier.aspectRatio(1f))
                             }
                         }
                     }

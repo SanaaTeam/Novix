@@ -35,6 +35,7 @@ android {
 
 dependencies {
 
+    implementation(projects.feature.mediaDetails.api)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

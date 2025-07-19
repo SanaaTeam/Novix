@@ -1,14 +1,15 @@
 package com.sanaa.presentation.screen.actor.screen
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -61,7 +62,11 @@ fun ActorScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                ActorScreenEffects.NavigateBack -> navController.popBackStack()
+                ActorScreenEffects.NavigateBack -> {
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
+                }
 
                 is ActorScreenEffects.NavigateToTopMovies -> navController.navigate(
                     TopMoviesScreenRoute(effect.actorId).route()
@@ -105,16 +110,10 @@ private fun ActorScreenContent(
     listener: ActorsScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        R.drawable.movie_placeholder_dark
-    } else {
-        R.drawable.movie_placeholder_light
-    }
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
-        Box(modifier = modifier) {
+        Box(modifier = modifier.navigationBarsPadding()) {
 
             AppTopBar(
                 leftContent = {
@@ -128,11 +127,11 @@ private fun ActorScreenContent(
             )
 
             AnimatedContent(
-                targetState = state.isLoading,
-                transitionSpec = { fadeIn() togetherWith fadeOut() },
+                state.isLoading,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { loading ->
+
+            )  { loading ->
                 if (loading) {
                     NovixLoadingIndicator(
                         modifier = Modifier.align(Alignment.Center)
@@ -146,7 +145,7 @@ private fun ActorScreenContent(
                             Box {
                                 ImageSlider(
                                     images = state.profileImageUrls,
-                                    contentDescription = stringResource(com.sanaa.presentation.R.string.actor_photos),
+                                    contentDescription = stringResource(R.string.actor_photos),
                                 )
                             }
                         }
@@ -156,14 +155,13 @@ private fun ActorScreenContent(
                                 actor = state.actor,
                                 modifier = Modifier
                                     .padding(horizontal = 16.dp)
-                                    .offset(y = (-16).dp)
                             )
                         }
 
                         state.actor.biography?.let { bio ->
                             item {
                                 OverviewSection(
-                                    titleResId = com.sanaa.presentation.R.string.overview,
+                                    titleResId = R.string.overview,
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier
@@ -175,7 +173,7 @@ private fun ActorScreenContent(
 
                         item {
                             MediaSection(
-                                title = stringResource(com.sanaa.presentation.R.string.gallery),
+                                title = stringResource(R.string.gallery),
                                 items = state.galleryImageUrls.take(10),
                                 onActionClick = listener::onViewAllGalleryClicked
                             ) { image ->
@@ -185,7 +183,7 @@ private fun ActorScreenContent(
 
                         item {
                             MediaSection(
-                                title = stringResource(com.sanaa.presentation.R.string.top_movie_picks),
+                                title = stringResource(R.string.top_movie_picks),
                                 items = state.topMovies.take(10),
                                 onActionClick = listener::onTopMoviesClicked
                             ) { movie ->
@@ -197,7 +195,7 @@ private fun ActorScreenContent(
 
                         item {
                             MediaSection(
-                                title = stringResource(com.sanaa.presentation.R.string.top_series_picks),
+                                title = stringResource(R.string.top_series_picks),
                                 items = state.topTvSeries.take(10),
                                 onActionClick = listener::onTopSeriesClicked
                             ) { series ->
@@ -215,6 +213,5 @@ private fun ActorScreenContent(
                 onDismiss = listener::onDismissBottomSheet,
             )
         }
-
     }
 }

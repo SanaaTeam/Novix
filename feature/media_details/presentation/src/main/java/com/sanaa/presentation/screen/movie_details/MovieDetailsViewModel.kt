@@ -6,12 +6,17 @@ import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.screen.series.SeriesScreenEffects
 import details.usecase.ManageMovieDetailsUseCase
 import entity.Genre
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 class MovieDetailsViewModel(
     private val movieId: Int,
-    private val manageMovieDetails: ManageMovieDetailsUseCase
-) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
-    MovieDetailsUiState()
+    private val manageMovieDetails: ManageMovieDetailsUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+
+    ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
+    MovieDetailsUiState(),
+        dispatcher
 ), MovieDetailsScreenInteractionListener {
 
     init {

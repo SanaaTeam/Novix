@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.series.components
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -65,13 +64,11 @@ fun SeriesHeaderSection(
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
                         genres.forEachIndexed { index, genre ->
-                            Log.d("TAG", "Component: ${genres}")
-
                             Text(
                                 text = genre.toLocalizedString(),
                                 style = Theme.textStyle.label.small,
                                 color = Theme.colors.body,
-                                modifier = Modifier.padding(end = 8.dp)
+                                modifier = Modifier
                                     .clickable { onGenreClicked(genre) }
                             )
                             if (index != genres.lastIndex) {

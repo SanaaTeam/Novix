@@ -5,15 +5,18 @@ import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
 import details.usecase.ManageEpisodeDetailsUseCase
 import details.usecase.ManageTvSeriesDetailsUseCase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 class EpisodeDetailsScreenViewModel(
     seriesId: Int,
     seasonNumber: Int,
     episodeNumber: Int,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase
+    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : EpisodeDetailsInteractionListener,
-    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState()) {
+    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState(), defaultDispatcher = dispatcher) {
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)

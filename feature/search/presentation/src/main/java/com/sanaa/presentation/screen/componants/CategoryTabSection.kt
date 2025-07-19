@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,9 @@ fun CategoryTabSection(
     selectedTabIndex: Int,
     uiState: SearchScreenUiState,
     interactionsListener: SearchScreenInteractionsListener,
+    onMovieClick: (MovieUiModel) -> Unit,
+    onTvShowClick: (TvShowUiModel) -> Unit,
+    onActorClick: (ActorUiModel) -> Unit,
     modifier: Modifier = Modifier,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
@@ -74,6 +76,9 @@ fun CategoryTabSection(
                     moviesPagingData = moviesPagingData,
                     tvShowsPagingData = tvShowsPagingData,
                     actorsPagingData = actorsPagingData,
+                    onMovieClick = onMovieClick,
+                    onTvShowClick = onTvShowClick,
+                    onActorClick = onActorClick
                 )
             }
         }
@@ -87,6 +92,9 @@ fun CategoryTabContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onMovieClick: (MovieUiModel) -> Unit,
+    onTvShowClick: (TvShowUiModel) -> Unit,
+    onActorClick: (ActorUiModel) -> Unit,
 ) {
     val movieState = moviesPagingData.loadState.refresh
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
@@ -110,7 +118,10 @@ fun CategoryTabContent(
             } else {
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
-                    onMovieClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                    onMovieClick = { recent, movie ->
+                        onMovieClick(movie)
+                        interactionsListener.onSearchResultMediaClicked(recent)
+                    }
                 )
             }
         }
@@ -121,7 +132,10 @@ fun CategoryTabContent(
             } else {
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
-                    onTvShowClick = { interactionsListener.onSearchResultMediaClicked(it) }
+                    onTvShowClick = { recent, tvShow ->
+                        onTvShowClick(tvShow)
+                        interactionsListener.onSearchResultMediaClicked(recent)
+                    }
                 )
             }
         }
@@ -130,7 +144,9 @@ fun CategoryTabContent(
             if (isActorEmpty) {
                 NoSearchResultState()
             } else {
-                ActorsContent(actorsPagingData)
+                ActorsContent(actorsPagingData, onActorClick = {
+                    onActorClick(it)
+                })
             }
         }
     }
@@ -158,19 +174,8 @@ private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
 
 @Composable
 private fun NoSearchResultState() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        EmptySearchState(
-            icon = painterResource(id = R.drawable.empty_search),
-            text = stringResource(id = R.string.no_search_result_message)
-        ) {
-            Image(
-                modifier = Modifier.padding(start = 8.dp, top = 16.dp),
-                painter = painterResource(R.drawable.alert_circle),
-                contentDescription = null
-            )
-        }
-    }
+    EmptySearchState(
+        icon = painterResource(id = R.drawable.ic_no_search_result),
+        text = stringResource(id = R.string.no_search_result_message)
+    )
 }

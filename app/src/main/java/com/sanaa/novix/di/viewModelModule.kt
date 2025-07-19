@@ -34,6 +34,7 @@ val viewModelModule = module {
             dispatcher = Dispatchers.IO,
         )
     }
+    single { Dispatchers.IO }
     viewModelOf(::MovieDetailsViewModel)
     viewModelOf(::SeriesViewModel)
     viewModelOf(::EpisodeDetailsScreenViewModel)

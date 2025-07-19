@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movie_details
 
+import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.AnimatedContent
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -72,7 +74,9 @@ fun MovieDetailsScreen(
             }
 
             is MovieDetailsUiEffect.NavigateBack -> {
-                navController.popBackStack()
+                if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
             }
 
             is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
@@ -110,7 +114,11 @@ fun MovieDetailsContent(
 ) {
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.navigationBarsPadding()
+                .fillMaxSize()
+
+        ) {
             AppTopBar(
                 leftContent = {
                     TopBarClickableIcon(
@@ -164,11 +172,9 @@ fun MovieDetailsContent(
                                                 text = genre.toLocalizedString(),
                                                 style = Theme.textStyle.label.small,
                                                 color = Theme.colors.body,
-                                                modifier = Modifier
-                                                    .clickable {
-                                                        interactionListener.onGenreClicked(genre)
-                                                    }
-                                            )
+                                                modifier = Modifier.clickable {
+                                                    interactionListener.onGenreClicked(genre)
+                                                })
                                             if (index < state.movieDetails.genres.lastIndex) {
                                                 DotSeparator()
                                             }
@@ -192,8 +198,7 @@ fun MovieDetailsContent(
                                                 iconRes = presentationR.drawable.icon_duration,
                                                 contentDescription = null,
                                                 text = stringResource(
-                                                    R.string.m,
-                                                    state.movieDetails.duration
+                                                    R.string.m, state.movieDetails.duration
                                                 ),
                                                 tint = Theme.colors.body
                                             )
@@ -226,20 +231,18 @@ fun MovieDetailsContent(
                         }
 
                         item {
-                            if (state.cast.isNotEmpty())
-                                CastComponent(
-                                    cast = state.cast,
-                                    onActorClicked = interactionListener::onActorCardClick
-                                )
+                            if (state.cast.isNotEmpty()) CastComponent(
+                                cast = state.cast,
+                                onActorClicked = interactionListener::onActorCardClick
+                            )
                         }
                         item {
-                            if (state.similarMovies.isNotEmpty())
-                                MoreLikeThisSection(
-                                    similarMovies = state.similarMovies,
-                                    onBookmarkClick = interactionListener::onBookmarkClick,
-                                    onSimilarMovieClick = interactionListener::onSimilarMovieClick,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
-                                )
+                            if (state.similarMovies.isNotEmpty()) MoreLikeThisSection(
+                                similarMovies = state.similarMovies,
+                                onBookmarkClick = interactionListener::onBookmarkClick,
+                                onSimilarMovieClick = interactionListener::onSimilarMovieClick,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
                         }
                     }
 
