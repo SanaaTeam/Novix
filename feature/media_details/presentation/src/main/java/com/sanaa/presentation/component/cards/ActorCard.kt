@@ -147,12 +147,12 @@ private fun PreviewActorCard() {
         ) {
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.lee_jung_jae),
+                actorImage = painterResource(R.drawable.icon_placeholder_light),
                 playedCharacter = "Peter Parker"
             )
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.lee_jung_jae),
+                actorImage = painterResource(R.drawable.icon_placeholder_light),
                 playedCharacter = null
             )
         }

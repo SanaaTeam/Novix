@@ -80,7 +80,7 @@ private fun PreviewMediaPosterCard() {
                 MediaPosterCard(
                     boastImage = {
                         Image(
-                            painter = painterResource(R.drawable.movie_poster),
+                            painter = painterResource(R.drawable.icon_placeholder_light),
                             contentDescription = null,
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
