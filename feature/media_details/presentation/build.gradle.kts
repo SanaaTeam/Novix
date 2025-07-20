@@ -52,7 +52,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.material3)
     implementation(libs.kotlinx.datetime)
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.ui.compose.tooling.preview)
