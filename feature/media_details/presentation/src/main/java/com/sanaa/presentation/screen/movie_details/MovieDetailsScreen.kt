@@ -232,7 +232,7 @@ fun MovieDetailsContent(
 
                         item {
                             if (state.cast.isNotEmpty()) CastComponent(
-                                cast = state.cast,
+                                casts = state.cast,
                                 onActorClicked = interactionListener::onActorCardClick
                             )
                         }

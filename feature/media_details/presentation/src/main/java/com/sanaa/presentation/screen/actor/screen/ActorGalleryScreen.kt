@@ -41,7 +41,7 @@ import org.koin.core.parameter.parametersOf
 fun ActorGalleryScreen(
     actorId: Int,
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
+    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) },
 ) {
     BackHandler(onBack = navigateBack)
 
@@ -61,7 +61,7 @@ fun ActorGalleryScreen(
 private fun ActorGalleryContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
 ) {
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
@@ -94,7 +94,7 @@ private fun ActorGalleryContent(
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
 
-                )  { loading ->
+                ) { loading ->
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
@@ -111,7 +111,9 @@ private fun ActorGalleryContent(
                                 8.dp
                             )
                         ) {
-                            items(state.galleryImageUrls) { image ->
+                            items(
+                                state.galleryImageUrls,
+                            ) { image ->
                                 GalleryCard(image, modifier = Modifier.aspectRatio(1f))
                             }
                         }
