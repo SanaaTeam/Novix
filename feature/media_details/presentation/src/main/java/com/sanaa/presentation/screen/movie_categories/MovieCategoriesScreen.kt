@@ -49,7 +49,7 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun MovieCategoriesScreen(
     categoryId: Genre,
-    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) })
+    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) }),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -76,7 +76,7 @@ fun MovieCategoriesScreen(
 @Composable
 fun MovieCategoriesScreenContent(
     state: MovieCategoriesScreenUiState,
-    interactionListener: MovieCategoriesScreenInteractionListener
+    interactionListener: MovieCategoriesScreenInteractionListener,
 ) {
 
     NovixScaffold(
@@ -116,7 +116,10 @@ fun MovieCategoriesScreenContent(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            items(state.movies) { movie ->
+                            items(
+                                state.movies,
+                                key = { item -> item.id }
+                            ) { movie ->
                                 MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(

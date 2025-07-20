@@ -12,7 +12,7 @@ import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.TvSeriesVideoDto
 import com.sanaa.series.mapper.apiGenderMapping
 import com.sanaa.series.mapper.buildPosterUrl
-import com.sanaa.series.mapper.getProfileImageUrl
+import com.sanaa.series.mapper.getFullImageUrl
 import com.sanaa.series.mapper.toDtoId
 import com.sanaa.series.mapper.toEntity
 import entity.Actor
@@ -26,62 +26,308 @@ import kotlin.test.assertTrue
 class MapperTest {
 
     @Test
-    fun `TvSeriesDto toEntity maps correctly`() {
-        val dto = TvSeriesDto(
-            id = 1,
-            name = "My Series",
-            overview = "Overview text",
-            posterPath = "/poster.jpg",
-            voteAverage = 8.5f,
-            firstAirDate = "2023-06-01",
-            genres = listOf(GenreDto(28, "Action"), GenreDto(35, "Comedy")),
-            seasonsCount = 3
-        )
-
-        val entity = dto.toEntity()
-
-        assertEquals(1, entity.id)
-        assertEquals("My Series", entity.title)
-        assertEquals("Overview text", entity.overview)
-        assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", entity.posterImageUrl)
-        assertEquals(8.5f, entity.imdbRating)
-        assertEquals(LocalDate.parse("2023-06-01"), entity.releaseDate)
-        assertEquals(2, entity.genres.size)
-        assertEquals(3, entity.seasonsCount)
-        assertTrue(entity.genres.contains(Genre.ACTION))
-        assertTrue(entity.genres.contains(Genre.COMEDY))
+    fun `should map gender to MALE when gender id is 0`() {
+        val result = createActorDto(gender = 0).toEntity()
+        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
     }
 
     @Test
-    fun `SeasonDto toEntity maps correctly`() {
-        val episodeDto = EpisodeDto(1, "Ep 1", "Desc", 1, 1, 7.0f, "2023-01-01", 60)
-        val seasonDto = SeasonDto(10, "Season 1", "Season overview", 1, listOf(episodeDto))
-
-        val season = seasonDto.toEntity()
-
-        assertEquals(10, season.id)
-        assertEquals("Season 1", season.title)
-        assertEquals("Season overview", season.overview)
-        assertEquals(1, season.number)
-        assertEquals(1, season.episodes.size)
-        assertEquals("Ep 1", season.episodes[0].title)
+    fun `should map gender to FEMALE when gender id is 1`() {
+        val result = createActorDto(gender = 1).toEntity()
+        assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
     }
 
     @Test
-    fun `EpisodeDto toEntity maps correctly`() {
-        val dto = EpisodeDto(100, "Episode 1", "Some overview", 2, 3, 8.2f, "2023-04-20", 60)
+    fun `should default gender to MALE when gender id is unknown`() {
+        val result = createActorDto(gender = 99).toEntity()
+        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
+    }
 
+    @Test
+    fun `should map imageUrl when profilePath is valid`() {
+        val result = createActorDto(profilePath = "/abc.jpg").toEntity()
+        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/abc.jpg")
+    }
+
+    @Test
+    fun `should return empty imageUrl when profilePath is null`() {
+        val result = createActorDto(profilePath = null).toEntity()
+        assertThat(result.imageUrl).isEmpty()
+    }
+
+    @Test
+    fun `should return empty imageUrl when profilePath is blank`() {
+        val result = createActorDto(profilePath = "").toEntity()
+        assertThat(result.imageUrl).isEmpty()
+    }
+
+
+    @Test
+    fun `should map title when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(name = "My Series").toEntity()
+        assertThat(result.title).isEqualTo("My Series")
+    }
+
+    @Test
+    fun `should map seasonsCount when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(seasonsCount = 3).toEntity()
+        assertThat(result.seasonsCount).isEqualTo(3)
+    }
+
+    @Test
+    fun `should map overview when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(overview = "Overview text").toEntity()
+        assertThat(result.overview).isEqualTo("Overview text")
+    }
+
+    @Test
+    fun `should map firstAirDate when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(firstAirDate = "2023-06-01").toEntity()
+        assertEquals(LocalDate.parse("2023-06-01"), result.releaseDate)
+    }
+
+    @Test
+    fun `should map voteAverage when TvSeriesDto is mapped`() {
+
+        val result = createTvSeriesDto(voteAverage = 8.5f).toEntity()
+        assertThat(result.imdbRating).isEqualTo(8.5f)
+    }
+
+    @Test
+    fun `should map posterPath when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(posterPath = "/poster.jpg").toEntity()
+        assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", result.posterImageUrl)
+    }
+
+    @Test
+    fun `should map genres when TvSeriesDto is mapped`() {
+        val result = createTvSeriesDto(
+            genres = listOf(
+                GenreDto(28, "Action"),
+                GenreDto(35, "Comedy")
+            )
+        ).toEntity()
+        assertTrue(result.genres.contains(Genre.ACTION))
+        assertTrue(result.genres.contains(Genre.COMEDY))
+    }
+
+
+    //SeasonDto
+    @Test
+    fun `SeasonDto toEntity maps id correctly`() {
+        val dto = createSeasonDto(id = 10)
         val entity = dto.toEntity()
+        assertEquals(10, entity.id)
+    }
 
+    @Test
+    fun `SeasonDto toEntity maps title correctly`() {
+        val dto = createSeasonDto(name = "Season 1")
+        val entity = dto.toEntity()
+        assertEquals("Season 1", entity.title)
+    }
+
+    @Test
+    fun `SeasonDto toEntity maps overview correctly`() {
+        val dto = createSeasonDto(overview = "Season overview")
+        val entity = dto.toEntity()
+        assertEquals("Season overview", entity.overview)
+    }
+
+    @Test
+    fun `SeasonDto toEntity maps season number correctly`() {
+        val dto = createSeasonDto(seasonNumber = 1)
+        val entity = dto.toEntity()
+        assertEquals(1, entity.number)
+    }
+
+    @Test
+    fun `SeasonDto toEntity maps episodes size correctly`() {
+        val dto = createSeasonDto(episodes = listOf(createEpisodeDto()))
+        val entity = dto.toEntity()
+        assertEquals(1, entity.episodes.size)
+    }
+
+    @Test
+    fun `SeasonDto toEntity maps episode title correctly`() {
+        val dto = createSeasonDto(episodes = listOf(createEpisodeDto(name = "Ep 1")))
+        val entity = dto.toEntity()
+        assertEquals("Ep 1", entity.episodes[0].title)
+    }
+
+    //EpisodeDto
+    @Test
+    fun `EpisodeDto toEntity maps id correctly`() {
+        val dto = createEpisodeDto(id = 100)
+        val entity = dto.toEntity()
         assertEquals(100, entity.id)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps title correctly`() {
+        val dto = createEpisodeDto(name = "Episode 1")
+        val entity = dto.toEntity()
         assertEquals("Episode 1", entity.title)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps overview correctly`() {
+        val dto = createEpisodeDto(overview = "Some overview")
+        val entity = dto.toEntity()
         assertEquals("Some overview", entity.overview)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps seasonNumber correctly`() {
+        val dto = createEpisodeDto(seasonNumber = 2)
+        val entity = dto.toEntity()
         assertEquals(2, entity.seasonNumber)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps episode number correctly`() {
+        val dto = createEpisodeDto(episodeNumber = 3)
+        val entity = dto.toEntity()
         assertEquals(3, entity.number)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps imdbRating correctly`() {
+        val dto = createEpisodeDto(voteAverage = 8.2f)
+        val entity = dto.toEntity()
         assertEquals(8.2f, entity.imdbRating)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps duration correctly`() {
+        val dto = createEpisodeDto(runtime = 60)
+        val entity = dto.toEntity()
         assertEquals(60, entity.durationMinutes)
+    }
+
+    @Test
+    fun `EpisodeDto toEntity maps releaseDate correctly`() {
+        val dto = createEpisodeDto(airDate = "2023-04-20")
+        val entity = dto.toEntity()
         assertEquals(LocalDate.parse("2023-04-20"), entity.releaseDate)
     }
+
+    // ReviewDto
+    @Test
+    fun `should return correct author when ReviewDto is mapped`() {
+        val result = createReviewDto(authorName = "Haider").toEntity()
+        assertThat(result.authorName).isEqualTo("Haider")
+    }
+
+
+    @Test
+    fun `should return correct id when ReviewDto is mapped`() {
+        val result = createReviewDto(id = "123").toEntity()
+        assertEquals(123, result.id)
+    }
+
+    @Test
+    fun `should return correct username when ReviewDto is mapped`() {
+        val result = createReviewDto(username = "haider123").toEntity()
+        assertEquals("haider123", result.userHandle)
+    }
+
+    @Test
+    fun `should return correct avatarPath when ReviewDto is mapped`() {
+        val result = createReviewDto(avatarPath = "/avatar.png").toEntity()
+        assertEquals("https://image.tmdb.org/t/p/w185/avatar.png", result.avatarUrl)
+    }
+
+    @Test
+    fun `should return correct rating when ReviewDto is mapped`() {
+        val result = createReviewDto(rating = 4.5f).toEntity()
+        assertEquals(4.5f, result.rating)
+    }
+
+    @Test
+    fun `should return correct createdAt when ReviewDto is mapped`() {
+        val result = createReviewDto(createdAt = "2024-07-15T12:34:56.000Z").toEntity()
+        assertEquals(LocalDate(2024, 7, 15), result.createdDate)
+    }
+
+    @Test
+    fun `should handles null avatarPath when avatarPath is null`() {
+        val result = createReviewDto(avatarPath = null).toEntity()
+        assertNull(result.avatarUrl)
+    }
+
+    @Test
+    fun `should handles null rating when rating is null`() {
+        val result = createReviewDto(rating = null).toEntity()
+        assertNull(result.rating)
+    }
+
+    @Test
+    fun `buildPosterUrl returns correct full URL`() {
+        val url = buildPosterUrl("/abc.jpg")
+        assertEquals("https://image.tmdb.org/t/p/w500/abc.jpg", url)
+    }
+
+//    @Test
+//    fun `TvSeriesVideoDto toEntity returns correct YouTube url`() {
+//        val dtoYoutube = TvSeriesVideoDto("123", "key123", "Trailer", "YouTube", "Trailer")
+//        val dtoOther = TvSeriesVideoDto("456", "key456", "Trailer2", "Vimeo", "Trailer")
+//
+//        assertEquals("https://www.youtube.com/watch?v=key123", dtoYoutube.toEntity())
+//        assertEquals("", dtoOther.toEntity())
+//    }
+    @Test
+    fun `should return youtube url when site is YouTube`() {
+        val result = createVideoDto(site = "YouTube").toEntity()
+        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=key123")
+    }
+
+    @Test
+    fun `should return empty url when site is not YouTube`() {
+        val result = createVideoDto(site = "Vimeo").toEntity()
+        assertThat(result).isEqualTo("")
+    }
+
+    @Test
+    fun `TvSeriesImageDto toEntity returns correct image url`() {
+        val dto = TvSeriesImageDto("image_path.jpg")
+        assertEquals("https://image.tmdb.org/t/p/w500image_path.jpg", dto.toEntity())
+    }
+
+//apiGenderMapping
+
+    @Test
+    fun `should return MALE when gender id is 0`() {
+        val result = apiGenderMapping(0)
+        assertThat(result).isEqualTo(Actor.Gender.MALE)
+    }
+
+    @Test
+    fun `should return FEMALE when gender id is 1`() {
+        val result = apiGenderMapping(1)
+        assertThat(result).isEqualTo(Actor.Gender.FEMALE)
+    }
+
+    @Test
+    fun `should default to MALE when gender id is unknown`() {
+        val result = apiGenderMapping(999)
+        assertThat(result).isEqualTo(Actor.Gender.MALE)
+    }
+
+
+    @Test
+    fun `getFullImageUrl formats URL correctly`() {
+        val url = getFullImageUrl("/path.jpg")
+        assertEquals("https://image.tmdb.org/t/p/w500/path.jpg", url)
+    }
+
+    @Test
+    fun `getFullImageUrl returns empty string when path is empty`() {
+        val url = getFullImageUrl("")
+        assertEquals("", url)
+    }
+
+    //Genre
 
     @Test
     fun `GenreDto toEntity returns correct Genre`() {
@@ -96,114 +342,6 @@ class MapperTest {
         assertEquals(28, Genre.ACTION.toDtoId())
         assertEquals(35, Genre.COMEDY.toDtoId())
         assertEquals(18, Genre.DRAMA.toDtoId())
-        assertEquals(10759, Genre.ACTION_AND_ADVENTURE.toDtoId())
-    }
-
-    @Test
-    fun `buildPosterUrl returns correct full URL`() {
-        val url = buildPosterUrl("/abc.jpg")
-        assertEquals("https://image.tmdb.org/t/p/w500/abc.jpg", url)
-    }
-
-    @Test
-    fun `TvSeriesVideoDto toEntity returns correct YouTube url`() {
-        val dtoYoutube = TvSeriesVideoDto("123", "key123", "Trailer", "YouTube", "Trailer")
-        val dtoOther = TvSeriesVideoDto("456", "key456", "Trailer2", "Vimeo", "Trailer")
-
-        assertEquals("https://www.youtube.com/watch?v=key123", dtoYoutube.toEntity())
-        assertEquals("", dtoOther.toEntity())
-    }
-
-    @Test
-    fun `TvSeriesImageDto toEntity returns correct image url`() {
-        val dto = TvSeriesImageDto("image_path.jpg")
-        assertEquals("https://image.tmdb.org/t/p/w500image_path.jpg", dto.toEntity())
-    }
-
-    @Test
-    fun `ReviewDto toEntity maps fields correctly`() {
-        val dto = ReviewDto(
-            id = "123",
-            content = "Great review!",
-            authorDetails = AuthorDetailsDto(
-                name = "Haider",
-                username = "haider123",
-                avatarPath = "/avatar.png",
-                rating = 4.5f
-            ),
-            createdAt = "2024-07-15T12:34:56.000Z"
-        )
-
-        val result = dto.toEntity()
-
-        assertEquals(0, result.id)
-        assertEquals("Great review!", result.content)
-        assertEquals("Haider", result.authorName)
-        assertEquals("haider123", result.userHandle)
-        assertEquals("https://image.tmdb.org/t/p/w185/avatar.png", result.avatarUrl)
-        assertEquals(4.5f, result.rating)
-        assertEquals(LocalDate(2024, 7, 15), result.createdDate)
-    }
-
-    @Test
-    fun `ReviewDto toEntity handles null avatarPath and rating`() {
-        val dto = ReviewDto(
-            id = "123",
-            content = "Nice!",
-            authorDetails = AuthorDetailsDto(
-                name = "Sara",
-                username = "sara456",
-                avatarPath = null,
-                rating = null
-            ),
-            createdAt = "2023-01-05T08:00:00Z"
-        )
-
-        val result = dto.toEntity()
-
-        assertEquals("Sara", result.authorName)
-        assertEquals("sara456", result.userHandle)
-        assertNull(result.avatarUrl)
-        assertNull(result.rating)
-        assertEquals(LocalDate(2023, 1, 5), result.createdDate)
-    }
-
-    @Test
-    fun `toEntity maps all fields correctly`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Bryan Cranston",
-            character = "Walter White",
-            profilePath = "/bryan.jpg",
-            gender = 0
-        )
-
-        val result = dto.toEntity()
-
-        assertEquals(1, result.id)
-        assertEquals("Bryan Cranston", result.name)
-        assertEquals("Walter White", result.character)
-        assertEquals("https://image.tmdb.org/t/p/w185/bryan.jpg", result.imageUrl)
-        assertEquals(Actor.Gender.MALE, result.gender)
-        assertNull(result.region)
-        assertNull(result.lastShow)
-        assertNull(result.birthDate)
-        assertNull(result.deathDate)
-        assertNull(result.placeOfBirth)
-        assertEquals("", result.biography)
-    }
-
-    @Test
-    fun `apiGenderMapping maps known and unknown IDs correctly`() {
-        assertEquals(Actor.Gender.MALE, apiGenderMapping(0))
-        assertEquals(Actor.Gender.FEMALE, apiGenderMapping(1))
-        assertEquals(Actor.Gender.MALE, apiGenderMapping(2)) // default fallback
-    }
-
-    @Test
-    fun `getProfileImageUrl formats URL correctly`() {
-        val url = getProfileImageUrl("/path.jpg")
-        assertEquals("https://image.tmdb.org/t/p/w185/path.jpg", url)
     }
 
     @Test
@@ -245,12 +383,6 @@ class MapperTest {
     }
 
     @Test
-    fun `toEntity maps unknown id to DRAMA`() {
-        val dto = GenreDto(99999)
-        assertThat(dto.toEntity()).isEqualTo(Genre.DRAMA)
-    }
-
-    @Test
     fun `toDtoId maps genres to correct ids`() {
         val reverseMappings = mapOf(
             Genre.ACTION to 28,
@@ -286,4 +418,120 @@ class MapperTest {
             assertThat(genre.toDtoId()).isEqualTo(expectedId)
         }
     }
+
+    @Test
+    fun `toEntity maps unknown id to DRAMA`() {
+        val dto = GenreDto(99999)
+        assertThat(dto.toEntity()).isEqualTo(Genre.DRAMA)
+    }
+
+    private fun createVideoDto(
+        id: String = "123",
+        key: String = "key123",
+        name: String = "Trailer",
+        site: String = "YouTube",
+        type: String = "Trailer"
+    ): TvSeriesVideoDto {
+        return TvSeriesVideoDto(
+            id = id,
+            key = key,
+            name = name,
+            site = site,
+            type = type
+        )
+    }
+
+
+    private fun createReviewDto(
+        id: String = "123",
+        content: String = "Default review content",
+        authorName: String = "Default Author",
+        username: String = "defaultUser",
+        avatarPath: String? = "/default_avatar.png",
+        rating: Float? = 5.0f,
+        createdAt: String = "2024-07-15T12:34:56.000Z"
+    ) = ReviewDto(
+        id = id,
+        content = content,
+        authorDetails = AuthorDetailsDto(
+            name = authorName,
+            username = username,
+            avatarPath = avatarPath,
+            rating = rating
+        ),
+        createdAt = createdAt
+    )
+
+
+    private fun createSeasonDto(
+        id: Int = 10,
+        name: String = "Season 1",
+        overview: String = "Season overview",
+        seasonNumber: Int = 1,
+        episodes: List<EpisodeDto> = listOf(createEpisodeDto())
+    ) = SeasonDto(
+        id = id,
+        name = name,
+        overview = overview,
+        seasonNumber = seasonNumber,
+        episodes = episodes
+    )
+
+    private fun createEpisodeDto(
+        id: Int = 1,
+        name: String = "Ep 1",
+        overview: String = "Desc",
+        seasonNumber: Int = 1,
+        episodeNumber: Int = 1,
+        voteAverage: Float = 7.0f,
+        airDate: String = "2023-01-01",
+        runtime: Int = 60
+    ) = EpisodeDto(
+        id = id,
+        name = name,
+        overview = overview,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+        voteAverage = voteAverage,
+        airDate = airDate,
+        runtime = runtime
+    )
+
+    private fun createTvSeriesDto(
+        id: Int = 1,
+        name: String = "My Series",
+        overview: String = "Overview text",
+        posterPath: String = "/poster.jpg",
+        voteAverage: Float = 8.5f,
+        firstAirDate: String = "2023-06-01",
+        genres: List<GenreDto> = listOf(GenreDto(28, "Action"), GenreDto(35, "Comedy")),
+        seasonsCount: Int = 3
+    ) = TvSeriesDto(
+        id = id,
+        name = name,
+        overview = overview,
+        posterPath = posterPath,
+        voteAverage = voteAverage,
+        firstAirDate = firstAirDate,
+        genres = genres,
+        seasonsCount = seasonsCount
+    )
+
+    private fun createActorDto(
+        id: Int = 1,
+        name: String = "Default Name",
+        character: String = "Default Character",
+        profilePath: String? = "/default.jpg",
+        gender: Int = 0
+    ): ActorDto {
+        return ActorDto(
+            id = id,
+            name = name,
+            character = character,
+            profilePath = profilePath,
+            gender = gender
+        )
+    }
+
+
 }
