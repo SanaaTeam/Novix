@@ -87,7 +87,6 @@ dependencies {
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.search.api)
-
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)

@@ -72,12 +72,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 

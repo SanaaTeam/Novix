@@ -38,18 +38,11 @@ android {
 }
 
 dependencies {
-    // Core AndroidX
     implementation(libs.androidx.core.ktx)
 
-    // Koin DI
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.bundles.test)
 }

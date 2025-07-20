@@ -38,16 +38,13 @@ android {
 }
 
 dependencies {
+    implementation(projects.domain.vod)
+
     implementation(libs.kotlinx.datetime)
     implementation(libs.androidx.core.ktx)
-    implementation(projects.domain.vod)
     implementation(libs.ktor.serialization.kotlinx.json)
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
+
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
 }
 

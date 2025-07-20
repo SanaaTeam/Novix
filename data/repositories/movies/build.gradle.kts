@@ -41,22 +41,14 @@ android {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
-
     implementation(libs.kotlinx.datetime)
-
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
 }
 
 tasks.withType<Test> {
