@@ -14,21 +14,14 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.bundles.room)
+    testImplementation(libs.bundles.room.testing)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
-    androidTestImplementation(libs.androidx.junit)
-    implementation(libs.bundles.room)
-    testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
 
 }
 tasks.withType<Test> {

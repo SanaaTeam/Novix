@@ -30,14 +30,6 @@ dependencies {
     implementation(libs.bundles.coroutines)
     implementation(projects.data.repositories.series)
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
 
 }
 

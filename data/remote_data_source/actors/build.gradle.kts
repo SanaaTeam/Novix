@@ -33,13 +33,7 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
+
 }
 
 tasks.withType<Test> {

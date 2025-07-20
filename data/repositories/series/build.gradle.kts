@@ -8,13 +8,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(projects.domain.vod)
     implementation(libs.ktor.serialization.kotlinx.json)
-    testImplementation(libs.junit)
+
     testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
-    androidTestImplementation(libs.androidx.junit)
+
 }
 
 tasks.withType<Test> {
