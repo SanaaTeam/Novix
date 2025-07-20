@@ -10,10 +10,13 @@ import entity.Genre
 import entity.Season
 import entity.TvSeries
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -26,6 +29,7 @@ class SeriesViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
     private lateinit var viewModel: SeriesViewModel
+
     private val seriesId = 42
 
     @BeforeEach
@@ -125,13 +129,65 @@ class SeriesViewModelTest {
         }
     }
 
-    private fun givenHappyViewModel() {
+
+    @Test
+    fun `loadSeries handles error correctly when use case fails`() = runTest {
+        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } throws RuntimeException("Test failure")
+
+        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher = testDispatcher)
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.error).isEqualTo("Test failure")
+    }
+
+    @Test
+    fun `onSeasonNumberClicked updates state when selecting new season`() = runTest {
+        // Arrange
+        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
+        coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
+        coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
+        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails,testDispatcher)
+
+        // Act
+        viewModel.onSeasonNumberClicked(2)
+        advanceUntilIdle() // Wait for coroutine to complete
+
+        // Assert
+        with(viewModel.state.value) {
+            assertThat(selectedSeason).isEqualTo(2)
+            assertThat(season.episodes.first().seasonNumber).isEqualTo(2)
+            assertThat(isLoadingEpisodes).isFalse()
+        }
+    }
+
+//    @Test
+//    fun `onPlayTrailerClicked emits PlayTrailer effect`() = runTest {
+//        // Inject dispatcher so init {} and emitEffect() run in test scope
+//        givenHappyViewModel(dispatcher = testDispatcher)
+//        advanceUntilIdle() // Wait for loadSeries()
+//
+//        viewModel.onPlayTrailerClicked()
+//        advanceUntilIdle() // Wait for emitEffect()
+//
+//        viewModel.effect.test {
+//            val effect = awaitItem()
+//            assertThat(effect).isEqualTo(
+//                SeriesScreenEffects.PlayTrailer(trailerUrl = dummyTrailer)
+//            )
+//            cancelAndIgnoreRemainingEvents()
+//        }
+//    }
+
+    private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
         coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) } returns dummySeason
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails)
+
+        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher)
     }
 
     companion object {
