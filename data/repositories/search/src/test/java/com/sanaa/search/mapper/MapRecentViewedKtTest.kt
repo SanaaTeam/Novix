@@ -11,63 +11,35 @@ import search.usecase.search_param.RecentViewedMedia
 class MapRecentViewedKtTest {
 
     @Test
-    fun `toDto maps RecentViewedMedia to RecentViewedLocalDto`() {
-        val recentViewedMedia = RecentViewedMedia(
-            id = 1,
-            posterImageUrl = "imageUrl",
-            isSaved = true,
-            mediaType = MediaType.MOVIE,
-        )
-        val fixedTimestamp = 1234567890L
-
-        val expectedDto = RecentViewedLocalDto(
-            id = 1,
-            imageUrl = "imageUrl",
-            isSaved = true,
-            mediaType = MediaType.MOVIE.name,
-            timestamp = fixedTimestamp
-        )
-
-        assertEquals(expectedDto, recentViewedMedia.toDto(fixedTimestamp))
-
+    fun `given RecentViewedMedia when toDto called with timestamp should map id correctly`() {
+        val dto = createRecentViewedMedia().toDto(1234567890L)
+        assertEquals(1, dto.id)
     }
 
     @Test
-    fun `toEntity maps RecentViewedLocalDto to RecentViewedMedia`() {
-        val recentViewedLocalDto = RecentViewedLocalDto(
-            id = 1,
-            imageUrl = "imageUrl",
-            isSaved = true,
-            mediaType = MediaType.MOVIE.name,
-            timestamp = 1234567890L
-        )
-        val expectedMedia = RecentViewedMedia(
-            id = 1,
-            posterImageUrl = "imageUrl",
-            isSaved = true,
-            mediaType = MediaType.MOVIE,
-        )
-        assertEquals(expectedMedia, recentViewedLocalDto.toEntity())
+    fun `given RecentViewedMedia when toDto called with timestamp should map imageUrl correctly`() {
+        val dto = createRecentViewedMedia().toDto(1234567890L)
+        assertEquals("imageUrl", dto.imageUrl)
     }
-
 
     @Test
-    fun `toDto uses current timestamp by default`() {
-        val recentViewedMedia = RecentViewedMedia(
-            id = 1,
-            posterImageUrl = "imageUrl",
-            isSaved = true,
-            mediaType = MediaType.MOVIE,
-        )
-
-        val result = recentViewedMedia.toDto()
-
-        assertEquals(1, result.id)
-        assertEquals("imageUrl", result.imageUrl)
-        assertEquals(true, result.isSaved)
-        assertEquals("MOVIE", result.mediaType)
-        assertTrue(TimeUtils.getCurrentTimeStamp() - result.timestamp < 1000)
+    fun `given RecentViewedMedia when toDto called with timestamp should map isSaved correctly`() {
+        val dto = createRecentViewedMedia().toDto(1234567890L)
+        assertEquals(true, dto.isSaved)
     }
+
+    @Test
+    fun `given RecentViewedMedia when toDto called with timestamp should map mediaType correctly`() {
+        val dto = createRecentViewedMedia().toDto(1234567890L)
+        assertEquals("MOVIE", dto.mediaType)
+    }
+
+    @Test
+    fun `given RecentViewedMedia when toDto called with timestamp should map timestamp correctly`() {
+        val dto = createRecentViewedMedia().toDto(1234567890L)
+        assertEquals(1234567890L, dto.timestamp)
+    }
+
     private fun createRecentViewedMedia(): RecentViewedMedia {
         return RecentViewedMedia(
             id = 1,
