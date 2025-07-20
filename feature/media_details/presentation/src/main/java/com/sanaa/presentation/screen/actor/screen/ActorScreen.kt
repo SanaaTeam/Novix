@@ -2,15 +2,11 @@ package com.sanaa.presentation.screen.actor.screen
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,7 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.ImageSlider
@@ -115,7 +111,7 @@ private fun ActorScreenContent(
     ) {
         Box(modifier = modifier.navigationBarsPadding()) {
 
-            AppTopBar(
+            NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),

@@ -3,13 +3,11 @@
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
     <string name="offline_note">Retry</string>
-    <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="view_all">All</string>
     <string name="no_search_result_message">
         No search result, please try with another keyword!</string>
     <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
     <string name="search">Search</string>
-    <string name="icon_filter">icon filter</string>
     <string name="recent_viewed">Recent viewed</string>
     <string name="clear_all">Clear all</string>
     <string name="recent_search">Recent search</string>
@@ -24,7 +22,6 @@
     <string name="no_review">There is no review!</string>
     <string name="reviews">Reviews</string>
     <string name="rating">Rating</string>
-    <string name="date">Date</string>
 
 
     <!-- Tab Labels -->

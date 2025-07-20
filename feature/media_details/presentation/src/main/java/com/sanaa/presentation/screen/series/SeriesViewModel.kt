@@ -7,11 +7,14 @@ import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import details.usecase.ManageTvSeriesDetailsUseCase
 import entity.Genre
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 class SeriesViewModel(
     private val seriesId: Int,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase
-) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(SeriesScreenUiState()),
+    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(initialState = SeriesScreenUiState(), defaultDispatcher = dispatcher),
     SeriesScreenInteractionListener {
 
     init {
@@ -39,8 +42,10 @@ class SeriesViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = {
-                updateState { it.copy(error = it.error, isLoading = false) }
+            onError = {e ->
+                updateState {state->
+                    state.copy(error = e.message, isLoading = false)
+                }
             }
         )
     }

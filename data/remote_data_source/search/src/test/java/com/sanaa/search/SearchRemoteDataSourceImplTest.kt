@@ -1,6 +1,6 @@
 package com.sanaa.search
 
-import com.example.preferences.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.search.dataSource.remote.dto.ActorSearchDto
 import com.sanaa.search.dataSource.remote.dto.MovieSearchDto
 import com.sanaa.search.dataSource.remote.dto.TvShowSearchDto
@@ -55,8 +55,12 @@ class SearchRemoteDataSourceImplTest {
                             "total_results": 1
                         }""",
                         status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                        headers = headersOf(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
                     )
+
                     "${BuildConfig.TMDB_URL}/search/tv" -> respond(
                         content = """{
                             "page": 1,
@@ -65,8 +69,12 @@ class SearchRemoteDataSourceImplTest {
                             "total_results": 1
                         }""",
                         status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                        headers = headersOf(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
                     )
+
                     "${BuildConfig.TMDB_URL}/search/movie" -> respond(
                         content = """{
                             "page": 1,
@@ -75,8 +83,12 @@ class SearchRemoteDataSourceImplTest {
                             "total_results": 1
                         }""",
                         status = HttpStatusCode.OK,
-                        headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                        headers = headersOf(
+                            HttpHeaders.ContentType,
+                            ContentType.Application.Json.toString()
+                        )
                     )
+
                     else -> {
                         logger.error("Unexpected path: $fullPath")
                         respondError(HttpStatusCode.NotFound)
@@ -106,102 +118,114 @@ class SearchRemoteDataSourceImplTest {
     }
 
     @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid actor query`() = runTest {
-        // Given
-        val query = "Tom Hanks"
-        val expectedResponse = SearchResponse<ActorSearchDto>(
-            page = 1,
-            results = listOf(
-                ActorSearchDto(
-                    id = 1,
-                    name = "Tom Hanks",
-                    profileImagePath = "/path",
-                )
-            ),
-            totalPages = 1,
-            totalResults = 1
-        )
+    fun `should make GET request with correct parameters and return SearchResponse when valid actor query`() =
+        runTest {
+            // Given
+            val query = "Tom Hanks"
+            val expectedResponse = SearchResponse<ActorSearchDto>(
+                page = 1,
+                results = listOf(
+                    ActorSearchDto(
+                        id = 1,
+                        name = "Tom Hanks",
+                        profileImagePath = "/path",
+                    )
+                ),
+                totalPages = 1,
+                totalResults = 1
+            )
 
-        every { languageProvider.getCurrentLanguage() } returns "en"
+            every { languageProvider.getCurrentLanguage() } returns "en"
 
-        // When
-        val result = dataSource.searchActors(query)
+            // When
+            val result = dataSource.searchActors(query)
 
-        // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
-        assertEquals("${BuildConfig.TMDB_URL}/search/person", request.url.toString().substringBefore("?"))
-        assertEquals(query, request.url.parameters["query"])
-        assertEquals("1", request.url.parameters["page"])
-        assertEquals("en", request.url.parameters["language"])
-        assertEquals(apiKey, request.url.parameters["api_key"])
-    }
-
-    @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid tv query`() = runTest {
-        // Given
-        val query = "Breaking Bad"
-        val expectedResponse = SearchResponse<TvShowSearchDto>(
-            page = 1,
-            results = listOf(
-                TvShowSearchDto(
-                    id = 1,
-                    name = "Breaking Bad",
-                    posterImagePath = "/path",
-                    releaseDate = null,
-                    voteAverage = null,
-                    genreIds = null
-                )
-            ),
-            totalPages = 1,
-            totalResults = 1
-        )
-        every { languageProvider.getCurrentLanguage() } returns "en"
-
-        // When
-        val result = dataSource.searchTvShows(query)
-
-        // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
-        assertEquals("${BuildConfig.TMDB_URL}/search/tv", request.url.toString().substringBefore("?"))
-        assertEquals(query, request.url.parameters["query"])
-        assertEquals("1", request.url.parameters["page"])
-        assertEquals("en", request.url.parameters["language"])
-        assertEquals(apiKey, request.url.parameters["api_key"])
-    }
+            // Then
+            assertEquals(expectedResponse, result)
+            val request = mockEngine.requestHistory.first()
+            assertEquals(
+                "${BuildConfig.TMDB_URL}/search/person",
+                request.url.toString().substringBefore("?")
+            )
+            assertEquals(query, request.url.parameters["query"])
+            assertEquals("1", request.url.parameters["page"])
+            assertEquals("en", request.url.parameters["language"])
+            assertEquals(apiKey, request.url.parameters["api_key"])
+        }
 
     @Test
-    fun `should make GET request with correct parameters and return SearchResponse when valid movie query`() = runTest {
-        // Given
-        val query = "Inception"
-        val expectedResponse = SearchResponse<MovieSearchDto>(
-            page = 1,
-            results = listOf(
-                MovieSearchDto(
-                    id = 1,
-                    title = "Inception",
-                    posterImagePath = "/path",
-                    releaseDate = null,
-                    voteAverage = null,
-                    genreIds = null
-                )
-            ),
-            totalPages = 1,
-            totalResults = 1
-        )
-        every { languageProvider.getCurrentLanguage() } returns "en"
+    fun `should make GET request with correct parameters and return SearchResponse when valid tv query`() =
+        runTest {
+            // Given
+            val query = "Breaking Bad"
+            val expectedResponse = SearchResponse<TvShowSearchDto>(
+                page = 1,
+                results = listOf(
+                    TvShowSearchDto(
+                        id = 1,
+                        name = "Breaking Bad",
+                        posterImagePath = "/path",
+                        releaseDate = null,
+                        voteAverage = null,
+                        genreIds = null
+                    )
+                ),
+                totalPages = 1,
+                totalResults = 1
+            )
+            every { languageProvider.getCurrentLanguage() } returns "en"
 
-        // When
-        val result = dataSource.searchMovies(query)
+            // When
+            val result = dataSource.searchTvShows(query)
 
-        // Then
-        assertEquals(expectedResponse, result)
-        val request = mockEngine.requestHistory.first()
-        assertEquals("${BuildConfig.TMDB_URL}/search/movie", request.url.toString().substringBefore("?"))
-        assertEquals(query, request.url.parameters["query"])
-        assertEquals("1", request.url.parameters["page"])
-        assertEquals("en", request.url.parameters["language"])
-        assertEquals(apiKey, request.url.parameters["api_key"])
-    }
+            // Then
+            assertEquals(expectedResponse, result)
+            val request = mockEngine.requestHistory.first()
+            assertEquals(
+                "${BuildConfig.TMDB_URL}/search/tv",
+                request.url.toString().substringBefore("?")
+            )
+            assertEquals(query, request.url.parameters["query"])
+            assertEquals("1", request.url.parameters["page"])
+            assertEquals("en", request.url.parameters["language"])
+            assertEquals(apiKey, request.url.parameters["api_key"])
+        }
+
+    @Test
+    fun `should make GET request with correct parameters and return SearchResponse when valid movie query`() =
+        runTest {
+            // Given
+            val query = "Inception"
+            val expectedResponse = SearchResponse<MovieSearchDto>(
+                page = 1,
+                results = listOf(
+                    MovieSearchDto(
+                        id = 1,
+                        title = "Inception",
+                        posterImagePath = "/path",
+                        releaseDate = null,
+                        voteAverage = null,
+                        genreIds = null
+                    )
+                ),
+                totalPages = 1,
+                totalResults = 1
+            )
+            every { languageProvider.getCurrentLanguage() } returns "en"
+
+            // When
+            val result = dataSource.searchMovies(query)
+
+            // Then
+            assertEquals(expectedResponse, result)
+            val request = mockEngine.requestHistory.first()
+            assertEquals(
+                "${BuildConfig.TMDB_URL}/search/movie",
+                request.url.toString().substringBefore("?")
+            )
+            assertEquals(query, request.url.parameters["query"])
+            assertEquals("1", request.url.parameters["page"])
+            assertEquals("en", request.url.parameters["language"])
+            assertEquals(apiKey, request.url.parameters["api_key"])
+        }
 }

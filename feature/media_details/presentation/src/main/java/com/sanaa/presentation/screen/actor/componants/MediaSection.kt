@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
-import com.sanaa.designsystem.design_system.component.section_header.ViewAllComponent
+import com.sanaa.designsystem.design_system.component.section_header.InlineAction
 
 @Composable
 fun <T> MediaSection(
@@ -33,7 +33,7 @@ fun <T> MediaSection(
             title = title,
             modifier = Modifier.padding(bottom = 12.dp),
             rightContent = {
-                ViewAllComponent(
+                InlineAction(
                     onClick = onActionClick
                 )
             }

@@ -9,12 +9,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.RemoteImagePlaceholder
+import com.sanaa.presentation.component.cards.MediaPosterCard
+import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.model.MovieUiModel
 
 @Composable
@@ -25,7 +25,7 @@ fun MoreLikeThisCard(
     modifier: Modifier = Modifier
 ) {
 
-    MovieSeriesPosterCard(
+    MediaPosterCard(
         modifier = modifier,
         onCardClick = onMovieClick,
         boastImage = {

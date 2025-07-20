@@ -17,6 +17,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -36,6 +40,8 @@ android {
 
 dependencies {
 
+    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(projects.designSystem)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

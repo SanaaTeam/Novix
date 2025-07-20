@@ -25,15 +25,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.button.TextButton
-import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
+import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
@@ -42,7 +41,6 @@ fun SearchHistoryContent(
     interactionsListener: SearchScreenInteractionsListener,
     recentSearches: List<RecentSearchUiModel> = emptyList(),
     recentViewed: List<RecentViewedUiModel> = emptyList(),
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -57,7 +55,6 @@ fun SearchHistoryContent(
                     recentViewed,
                     interactionsListener,
                     recentSearches,
-                    onMediaClick
                 )
             }
         }
@@ -81,7 +78,6 @@ private fun ContentState(
     recentViewed: List<RecentViewedUiModel>,
     interactionsListener: SearchScreenInteractionsListener,
     recentSearches: List<RecentSearchUiModel>,
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
@@ -105,13 +101,9 @@ private fun ContentState(
                     itemsIndexed(recentViewed) { _, item ->
                         MediaPoster(
                             item,
-                            onMediaClick = {
-                                if (item.mediaType == "MOVIE")
-                                    onMediaClick(StartRoute.MOVIE, item.id)
-                                else
-                                    onMediaClick(StartRoute.SERIES, item.id)
-                            },
-                            interactionsListener,
+                            onMediaClicked = {
+                                interactionsListener.onRecentViewedMediaClicked(item)
+                            }
                         )
                     }
                 }
@@ -150,12 +142,11 @@ private fun ContentState(
 @Composable
 private fun MediaPoster(
     item: RecentViewedUiModel,
-    onMediaClick: () -> Unit,
-    interactionsListener: SearchScreenInteractionsListener,
+    onMediaClicked: () -> Unit = {},
 ) {
 
-    MovieSeriesPosterCard(
-        onCardClick = onMediaClick,
+    MediaPosterCard(
+        onCardClick = onMediaClicked,
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
@@ -219,7 +210,7 @@ fun SectionHeader(
             color = Theme.colors.body,
             modifier = Modifier.weight(1f)
         )
-        TextButton(
+        NovixTextButton(
             text = actionText, onClick = onActionClick, isLoading = false, isEnabled = true
         )
     }

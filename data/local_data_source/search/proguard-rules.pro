@@ -20,3 +20,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class org.slf4j.impl.StaticLoggerBinder { *; }
+-dontwarn com.sanaa.search.dataSource.local.dto.ActorLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.MovieLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.QueryLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.SearchLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.SearchResultLocalDto
+-dontwarn com.sanaa.search.dataSource.local.dto.TvSeriesLocalDto
+-dontwarn java.lang.invoke.StringConcatFactory

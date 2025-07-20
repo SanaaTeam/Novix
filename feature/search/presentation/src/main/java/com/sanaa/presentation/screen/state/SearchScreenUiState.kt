@@ -54,7 +54,7 @@ data class RecentSearchUiModel(
 data class RecentViewedUiModel(
     val id: Int = 0,
     val imageUrl: String = "",
-    val mediaType: String = "",
+    val mediaType: MediaTypeUi = MediaTypeUi.MOVIE,
     val isSaved: Boolean = false,
 )
 

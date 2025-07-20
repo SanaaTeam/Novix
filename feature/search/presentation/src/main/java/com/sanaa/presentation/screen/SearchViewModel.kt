@@ -11,9 +11,11 @@ import com.sanaa.presentation.paging.SearchActorsPagingSource
 import com.sanaa.presentation.paging.SearchMoviesPagingSource
 import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
+import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
@@ -22,8 +24,11 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -41,6 +46,9 @@ class SearchViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
+
+    private val _effect = MutableSharedFlow<SearchScreenEffects>()
+    val effect: SharedFlow<SearchScreenEffects> = _effect.asSharedFlow()
 
     private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
     val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
@@ -127,9 +135,7 @@ class SearchViewModel(
     private fun loadMovies(query: String) {
         updateState {
             it.copy(
-                isLoading = true,
-                error = null,
-                noInternetConnection = false
+                isLoading = true, error = null, noInternetConnection = false
             )
         }
         tryToCollect(
@@ -142,23 +148,17 @@ class SearchViewModel(
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
+                pageSize = PAGE_SIZE, enablePlaceholders = false
+            ), pagingSourceFactory = {
                 SearchMoviesPagingSource(
                     searchUseCase,
                     query = query,
                     filters = state.value.filters
                 )
-            }
-        ).flow.map { pagingData ->
+            }).flow.map { pagingData ->
             pagingData.map { item ->
                 MovieUiModel(
-                    id = item.id,
-                    title = item.title,
-                    imageUrl = item.posterImageUrl,
-                    rating = ""
+                    id = item.id, title = item.title, imageUrl = item.posterImageUrl, rating = ""
                 )
             }
         }.cachedIn(viewModelScope)
@@ -172,35 +172,25 @@ class SearchViewModel(
     private fun loadTvShows(query: String) {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
         tryToCollect(
-            callee = { loadTvShowsOperation(query) },
-            onCollect = { pagingData ->
+            callee = { loadTvShowsOperation(query) }, onCollect = { pagingData ->
                 _tvShowsPagingData.value = pagingData
                 updateState { it.copy(isLoading = false, noInternetConnection = false) }
-            },
-            onError = ::onDataLoadError
+            }, onError = ::onDataLoadError
         )
     }
 
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
+                pageSize = PAGE_SIZE, enablePlaceholders = false
+            ), pagingSourceFactory = {
                 SearchTvShowsPagingSource(
-                    searchUseCase,
-                    query = query,
-                    filters = state.value.filters
+                    searchUseCase, query = query, filters = state.value.filters
                 )
-            }
-        ).flow.map { pagingData ->
+            }).flow.map { pagingData ->
             pagingData.map { item ->
                 TvShowUiModel(
-                    id = item.id,
-                    title = item.title,
-                    imageUrl = item.posterImageUrl,
-                    rating = ""
+                    id = item.id, title = item.title, imageUrl = item.posterImageUrl, rating = ""
                 )
             }
         }.cachedIn(viewModelScope)
@@ -211,28 +201,20 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
 
         tryToCollect(
-            callee = { onLoadActors(query) },
-            onCollect = { pagingData ->
+            callee = { onLoadActors(query) }, onCollect = { pagingData ->
                 _actorsPagingData.value = pagingData
                 updateState { it.copy(isLoading = false, noInternetConnection = false) }
-            },
-            onError = ::onDataLoadError
+            }, onError = ::onDataLoadError
         )
     }
 
     private fun onLoadActors(query: String): Flow<PagingData<ActorUiModel>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                SearchActorsPagingSource(
-                    searchUseCase,
-                    query = query
-                )
-            }
-        ).flow.map { pagingData ->
+                pageSize = PAGE_SIZE, enablePlaceholders = false
+            ), pagingSourceFactory = {
+                SearchActorsPagingSource(searchUseCase, query = query)
+            }).flow.map { pagingData ->
             pagingData.map { searchActorOutput ->
                 ActorUiModel(
                     id = searchActorOutput.id,
@@ -244,21 +226,19 @@ class SearchViewModel(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException)
-            updateState {
-                it.copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                )
-            }
-        else
-            updateState {
-                it.copy(
-                    isLoading = false,
-                    error = e.message ?: "Unknown error",
-                    noInternetConnection = false
-                )
-            }
+        if (e is NoNetworkException) updateState {
+            it.copy(
+                noInternetConnection = true,
+                isLoading = false,
+            )
+        }
+        else updateState {
+            it.copy(
+                isLoading = false,
+                error = e.message ?: "Unknown error",
+                noInternetConnection = false
+            )
+        }
     }
 
 
@@ -289,10 +269,18 @@ class SearchViewModel(
         loadMediaByTab(currentQuery)
     }
 
+    override fun onActorClicked(id: Int) {
+        emitEffect(SearchScreenEffects.NavigateToActorDetails(id))
+    }
+
     override fun onSearchResultMediaClicked(viewed: RecentViewedUiModel) {
+        if (viewed.mediaType == MediaTypeUi.MOVIE) {
+            emitEffect(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+        } else {
+            emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+        }
         tryToExecute(
-            callee = { addRecentViewedMedia(viewed) },
-            onError = ::onDataLoadError
+            callee = { addRecentViewedMedia(viewed) }, onError = ::onDataLoadError
         )
     }
 
@@ -301,7 +289,7 @@ class SearchViewModel(
             RecentViewedMedia(
                 id = viewed.id,
                 posterImageUrl = viewed.imageUrl,
-                mediaType = MediaType.valueOf(viewed.mediaType),
+                mediaType = MediaType.valueOf(viewed.mediaType.name),
                 isSaved = viewed.isSaved
             )
         )
@@ -327,14 +315,21 @@ class SearchViewModel(
             callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = {
                 updateState { it.copy(isLoading = false, noInternetConnection = false) }
-            },
-            onError = ::onDataLoadError
+            }, onError = ::onDataLoadError
         )
     }
 
     override fun onRecentSearchItemClicked(query: String) {
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
+    }
+
+    override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
+        if (viewed.mediaType == MediaTypeUi.MOVIE) {
+            emitEffect(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+        } else {
+            emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+        }
     }
 
     override fun onFilterClicked() {
@@ -348,6 +343,12 @@ class SearchViewModel(
             it.copy(
                 showBottomSheet = false
             )
+        }
+    }
+
+    private fun emitEffect(effect: SearchScreenEffects) {
+        viewModelScope.launch {
+            _effect.emit(effect)
         }
     }
 

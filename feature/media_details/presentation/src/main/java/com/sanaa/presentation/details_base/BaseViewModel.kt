@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.jvm.Throws
 
- abstract class BaseViewModel<T, E>(
+abstract class BaseViewModel<T, E>(
     initialState: T,
     val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
@@ -30,7 +31,7 @@ import kotlinx.coroutines.launch
     protected fun <T> tryToExecute(
         callee: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
+        onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         viewModelScope.launch(dispatcher) {
