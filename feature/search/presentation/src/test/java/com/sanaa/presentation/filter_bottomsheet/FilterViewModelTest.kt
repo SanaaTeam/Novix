@@ -117,7 +117,14 @@ class FilterViewModelTest {
             // Then
             filterViewModel.filterResult.test {
                 val item = awaitItem()
-                Truth.assertThat(item).isEqualTo(null)
+                Truth.assertThat(item).isEqualTo(
+                    MediaFilters(
+                        startYear = 1980,
+                        endYear = 2025,
+                        genres = emptyList(),
+                        imdbRating = 0.0f
+                    )
+                )
             }
         }
 
