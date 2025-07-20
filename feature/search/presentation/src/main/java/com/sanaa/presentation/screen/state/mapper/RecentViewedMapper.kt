@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.state.mapper
 
+import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -8,7 +9,7 @@ import search.usecase.search_param.RecentViewedMedia
 fun RecentViewedMedia.toUiState() = RecentViewedUiModel(
     id = this.id,
     imageUrl = this.posterImageUrl,
-    mediaType = this.mediaType.name,
+    mediaType = MediaTypeUi.valueOf(mediaType.name),
     isSaved = this.isSaved,
 )
 

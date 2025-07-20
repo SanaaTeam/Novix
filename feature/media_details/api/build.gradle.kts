@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+kover {
+    disable()
+}
+
 android {
     namespace = "com.sanaa.api"
     compileSdk = libs.versions.compileSdk.get().toInt()
@@ -16,6 +20,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(

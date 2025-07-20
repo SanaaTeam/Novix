@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.OutlinedButton
+import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -56,7 +56,7 @@ fun ErrorStateContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedButton(
+        NovixOutlinedButton(
             text = stringResource(id = R.string.offline_note),
             onClick = onRetryClick,
         )

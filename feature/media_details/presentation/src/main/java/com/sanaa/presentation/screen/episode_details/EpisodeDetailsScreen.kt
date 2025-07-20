@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.R
 import com.sanaa.presentation.component.OverviewSection
@@ -88,7 +88,7 @@ private fun EpisodeDetailsScreenContent(
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
         Box(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
-            AppTopBar(
+            NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),

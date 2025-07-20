@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +29,7 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.AppTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
@@ -42,8 +41,10 @@ import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
+import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import search.usecase.search_param.MediaFilters
@@ -59,11 +60,31 @@ fun SearchScreen(
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
+
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters: MediaFilters? ->
             searchViewModel.onFilterApplied(filters)
         }
     }
+    LaunchedEffect(Unit) {
+        searchViewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is SearchScreenEffects.NavigateToActorDetails -> onMediaClick(
+                    StartRoute.ACTOR, effect.id
+                )
+
+                is SearchScreenEffects.NavigateToMovieDetails -> onMediaClick(
+                    StartRoute.MOVIE, effect.id
+                )
+
+                is SearchScreenEffects.NavigateToTvShowDetails -> onMediaClick(
+                    StartRoute.SERIES, effect.id
+                )
+            }
+        }
+    }
+
+
 
     SetNavigationBarColor(Theme.colors.surface)
 
@@ -77,9 +98,8 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-            onMediaClick = onMediaClick
 
-        )
+            )
     }
 }
 
@@ -93,7 +113,6 @@ fun SearchScreenContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
@@ -104,34 +123,30 @@ fun SearchScreenContent(
         }
     }
 
-    NovixScaffold(
-        topBar = {
-            AppTopBar(
-                modifier = Modifier.statusBarsPadding(),
-                screenTitle = stringResource(R.string.search)
+    NovixScaffold(topBar = {
+        NovixTopBar(
+            modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
+        )
+    }, bottomBar = {
+        NovixNavBar(modifier = Modifier.navigationBarsPadding()) {
+            val navItems = listOf(
+                R.drawable.icon_home to R.drawable.icon_home_selected,
+                R.drawable.icon_search to R.drawable.icon_search_selected,
+                R.drawable.icon_category to R.drawable.icon_category_selected,
+                R.drawable.icon_save to R.drawable.icon_save_selected,
+                R.drawable.icon_account to R.drawable.icon_account_selected,
             )
-        },
-        bottomBar = {
-            NovixNavBar(modifier = Modifier.navigationBarsPadding()) {
-                val navItems = listOf(
-                    R.drawable.icon_home to R.drawable.icon_home_selected,
-                    R.drawable.icon_search to R.drawable.icon_search_selected,
-                    R.drawable.icon_category to R.drawable.icon_category_selected,
-                    R.drawable.icon_save to R.drawable.icon_save_selected,
-                    R.drawable.icon_account to R.drawable.icon_account_selected,
+            navItems.forEachIndexed { index, (icon, selectedIcon) ->
+                NovixNavBarItem(
+                    modifier = Modifier.weight(1f),
+                    isSelected = index == 1,
+                    onClick = { /* TODO: Handle app-wide navigation */ },
+                    iconRes = icon,
+                    selectedIconRes = selectedIcon,
                 )
-                navItems.forEachIndexed { index, (icon, selectedIcon) ->
-                    NovixNavBarItem(
-                        modifier = Modifier.weight(1f),
-                        isSelected = index == 1,
-                        onClick = { /* TODO: Handle app-wide navigation */ },
-                        iconRes = icon,
-                        selectedIconRes = selectedIcon,
-                    )
-                }
             }
         }
-    ) { _ ->
+    }) { _ ->
         Column {
             SearchSection(
                 text = uiState.searchQuery,
@@ -150,22 +165,12 @@ fun SearchScreenContent(
                         moviesPagingData = moviesPagingData,
                         tvShowsPagingData = tvShowsPagingData,
                         actorsPagingData = actorsPagingData,
-                        onMovieClick = { movie ->
-                            onMediaClick(StartRoute.MOVIE, movie.id)
-                        },
-                        onTvShowClick = { tvShow ->
-                            onMediaClick(StartRoute.SERIES, tvShow.id)
-                        },
-                        onActorClick = { actor ->
-                            onMediaClick(StartRoute.ACTOR, actor.id)
-                        }
                     )
 
                     false -> SearchHistoryContent(
                         recentSearches = uiState.recentSearchQueries,
                         recentViewed = uiState.recentViewedMedia,
                         interactionsListener = searchListener,
-                        onMediaClick = onMediaClick
                     )
                 }
             }
