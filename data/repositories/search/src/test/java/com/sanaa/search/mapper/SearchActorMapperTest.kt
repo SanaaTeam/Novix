@@ -28,6 +28,34 @@ class SearchActorMapperTest {
         assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tom.jpg")
     }
 
+    //ActorSearchDto
+
+    @Test
+    fun `should map correct id when ActorSearchDto has valid name`() {
+        val dto = createActorSearchDto(id = 2)
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.id).isEqualTo(1)
+    }
+
+    @Test
+    fun `should map correct name when ActorSearchDto has valid id`() {
+        val dto = createActorSearchDto(name = "Emma Watson")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.name).isEqualTo("Emma Watson")
+    }
+    @Test
+    fun `should map correct profileImageUrl when ActorSearchDto has valid profileImageUrl`() {
+        val dto = createActorSearchDto(profileImagePath = "/emma.jpg")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.imagePath).isEqualTo("https://image.tmdb.org/t/p/w500/emma.jpg")
+    }
+    @Test
+    fun `should map correct language when converting ActorSearchDto to ActorLocalDto`() {
+        val dto = createActorSearchDto(id = 2, name = "Emma Watson", profileImagePath = "/emma.jpg")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.language).isEqualTo("en")
+    }
+
 
     private fun createActorLocalDto(
         id: Int = 1,
