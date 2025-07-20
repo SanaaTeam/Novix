@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 
 class SearchMediaMapperTest {
 
-
+    // Movie
     @Test
     fun `given MovieSearchDto when toLocalDto called should map id correctly`() {
         val dto = createMovieSearchDto(id = 1)
@@ -101,6 +101,56 @@ class SearchMediaMapperTest {
         assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tenet.jpg")
     }
 
+//TvShowSearchDto.toLocalDto
+
+    @Test
+    fun `given TvShowSearchDto when toLocalDto called should map id correctly`() {
+        val dto = createTvShowSearchDto(id = 4)
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.id).isEqualTo(4)
+    }
+
+    @Test
+    fun `given TvShowSearchDto when toLocalDto called should map title correctly`() {
+        val dto = createTvShowSearchDto(name = "Breaking Bad")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.title).isEqualTo("Breaking Bad")
+    }
+
+    @Test
+    fun `given TvShowSearchDto when toLocalDto called should map imagePath correctly`() {
+        val dto = createTvShowSearchDto(posterImagePath = "/breaking.jpg")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.imagePath).isEqualTo("https://image.tmdb.org/t/p/w500/breaking.jpg")
+    }
+
+    @Test
+    fun `given TvShowSearchDto when toLocalDto called should map language correctly`() {
+        val dto = createTvShowSearchDto()
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.language).isEqualTo("en")
+    }
+
+    @Test
+    fun `given TvShowSearchDto with releaseDate when toLocalDto called should extract releaseYear correctly`() {
+        val dto = createTvShowSearchDto(releaseDate = "2008-01-20")
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.releaseYear).isEqualTo(2008)
+    }
+
+    @Test
+    fun `given TvShowSearchDto with genreIds when toLocalDto called should map genres correctly`() {
+        val dto = createTvShowSearchDto(genreIds = listOf(80, 18))
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.genres).isEqualTo("80, 18")
+    }
+
+    @Test
+    fun `given TvShowSearchDto with voteAverage when toLocalDto called should map imdbRating correctly`() {
+        val dto = createTvShowSearchDto(voteAverage = 9.5f)
+        val result = dto.toLocalDto(language = "en")
+        assertThat(result.imdbRating).isEqualTo(9.5f)
+    }
 
     private fun createMovieSearchDto(
         id: Int = 1,
