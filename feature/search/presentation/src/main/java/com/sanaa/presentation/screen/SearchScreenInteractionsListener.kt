@@ -7,11 +7,14 @@ interface SearchScreenInteractionsListener {
     fun onClearRecentViewClicked()
     fun onClearRecentSearchClicked()
     fun onDeleteRecentSearchItem(id: Int)
-    fun onSaveIconClicked()
+    fun onFilterClicked()
+    fun onBottomSheetDragged()
     fun onTabSelected(index: Int)
     fun onRecentSearchItemClicked(query: String)
-    fun onSearchQueryChanged(title: String)
+    fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel)
+    fun onSearchQueryChanged(query: String)
+    fun retrySearch()
     fun onFilterApplied(filters: MediaFilters?)
+    fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
-
 }

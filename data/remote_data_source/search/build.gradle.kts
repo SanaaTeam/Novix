@@ -15,6 +15,7 @@ android {
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
         buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3\"")
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -24,7 +25,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 
     implementation(projects.data.repositories.search)
     implementation(libs.bundles.ktor)
@@ -35,6 +36,6 @@ dependencies {
 
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }

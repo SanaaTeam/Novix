@@ -1,9 +1,20 @@
 package com.sanaa.series
 
-import com.example.env_config.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
-import com.sanaa.series.dto.*
-import com.sanaa.series.response.*
+import com.sanaa.series.dto.ActorDto
+import com.sanaa.series.dto.EpisodeDto
+import com.sanaa.series.dto.ReviewDto
+import com.sanaa.series.dto.SeasonDto
+import com.sanaa.series.dto.TvSeriesDto
+import com.sanaa.series.dto.TvSeriesImageDto
+import com.sanaa.series.dto.TvSeriesVideoDto
+import com.sanaa.series.response.GenreTvSeriesResponse
+import com.sanaa.series.response.ImagesResponse
+import com.sanaa.series.response.TvSeriesCastResponse
+import com.sanaa.series.response.TvSeriesGuestOfStarsResponse
+import com.sanaa.series.response.TvSeriesReviewsResponse
+import com.sanaa.series.response.TvSeriesVideosResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -13,7 +24,6 @@ import io.ktor.util.reflect.typeInfo
 
 class RemoteTvSeriesDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ) : RemoteTvSeriesDataSource {
 
@@ -21,7 +31,7 @@ class RemoteTvSeriesDataSourceImpl(
         fetchTvSeries("tv", id)
 
     override suspend fun getTvSeriesVideos(id: Int): List<TvSeriesVideoDto> =
-        fetchTvSeries<TvSeriesVideosResponse>("tv", id, "videos").results
+        fetchTvSeries<TvSeriesVideosResponse>("tv", id, "videos",false).results
 
     override suspend fun getTvSeriesSeasonDetails(
         seriesId: Int, seasonNumber: Int
@@ -29,10 +39,10 @@ class RemoteTvSeriesDataSourceImpl(
         fetchTvSeries("tv", seriesId, "season/$seasonNumber")
 
     override suspend fun getTvSeriesImages(id: Int): List<TvSeriesImageDto> =
-        fetchTvSeries<ImagesResponse>("tv", id, "images").backdrops
+        fetchTvSeries<ImagesResponse>("tv", id, "images",false).backdrops
 
     override suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeriesDto> =
-        client.get("$baseUrl/discover/tv") {
+        client.get("${BuildConfig.TMDB_URL}/discover/tv") {
             parameter("with_genres", genreId)
             parameter("language", languageProvider.getCurrentLanguage())
             parameter("api_key", BuildConfig.TMDB_API_KEY)
@@ -59,7 +69,8 @@ class RemoteTvSeriesDataSourceImpl(
         fetchTvSeries<ImagesResponse>(
             "tv",
             seriesId,
-            "season/$seasonNumber/episode/$episodeNumber/images"
+            "season/$seasonNumber/episode/$episodeNumber/images",
+            false
         ).backdrops
 
     override suspend fun getEpisodeGuestsOfHonor(
@@ -75,22 +86,26 @@ class RemoteTvSeriesDataSourceImpl(
     private suspend inline fun <reified T> fetchTvSeries(
         path: String,
         id: Int,
-        subPath: String? = null
-    ): T = fetchInternal(path, id, subPath, typeInfo<T>())
+        subPath: String? = null,
+        withLanguage: Boolean = true
+    ): T = fetchInternal(path, id, subPath, typeInfo<T>(), withLanguage)
 
     private suspend fun <T> fetchInternal(
         path: String,
         id: Int,
         subPath: String?,
-        type: TypeInfo
+        type: TypeInfo,
+        withLanguage: Boolean
     ): T {
         val fullPath = buildString {
-            append("$baseUrl/$path/$id")
+            append("${BuildConfig.TMDB_URL}/$path/$id")
             if (!subPath.isNullOrBlank()) append("/$subPath")
         }
 
         return client.get(fullPath) {
-            parameter("language", languageProvider.getCurrentLanguage())
+            if (withLanguage) {
+                parameter("language", languageProvider.getCurrentLanguage())
+            }
             parameter("api_key", BuildConfig.TMDB_API_KEY)
         }.body(type)
     }

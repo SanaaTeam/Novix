@@ -31,7 +31,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getSearchHistory returns list of search history`() = runTest {
         // Given
-        coEvery { localDataSource.getAllQueries(2) } returns flowOf(givenQueries)
+        coEvery { localDataSource.getQueries(2) } returns flowOf(givenQueries)
         // When
         val expected = givenQueries.map { it.toEntity() }
         val result = repository.getSearchHistory(2)
@@ -42,7 +42,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getSearchHistory throws exception when failed to retrieve search history`() = runTest {
         // Given
-        coEvery { localDataSource.getAllQueries(2) } throws Exception()
+        coEvery { localDataSource.getQueries(2) } throws Exception()
 
         // When & Then
         assertThrows<RetrievingDataFailureException> { repository.getSearchHistory(2).first() }

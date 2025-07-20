@@ -5,13 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.sanaa.presentation.screen.SearchScreen
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.SearchFeatureApi
 import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
+    private val searchFeatureApi: SearchFeatureApi by inject()
+    private val mediaDetailsNavigator: MediaDetailsApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +26,11 @@ class MainActivity : ComponentActivity() {
         Timber.d("MainActivity created")
 
         setContent {
-            SearchScreen()
+            searchFeatureApi.SearchScreen(
+                onMediaClick = { startRoute, id ->
+                    mediaDetailsNavigator.launch(this, startRoute, id)
+                }
+            )
         }
     }
 }

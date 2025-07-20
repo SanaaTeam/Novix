@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     implementation(projects.data.repositories.search)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(projects.domain.vod)
     implementation(libs.androidx.core.ktx)
 
@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.bundles.koin)
 
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
+
+tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
 }

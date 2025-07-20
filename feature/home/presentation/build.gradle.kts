@@ -3,8 +3,14 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.presentation"
+}
+
 dependencies {
 
+    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(projects.designSystem)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

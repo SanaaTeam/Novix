@@ -15,7 +15,16 @@ data class SearchScreenUiState(
     val actors: List<ActorUiModel> = emptyList(),
     val error: String? = null,
     val filters: MediaFilters? = null,
-)
+    val isFilterButtonVisible: Boolean = true,
+    val showBottomSheet: Boolean = false,
+    val lastTabIndex: Int = -1,
+){
+    companion object {
+        const val MOVIE_INDEX = 0
+        const val TV_SHOW_INDEX = 1
+        const val ACTOR_INDEX = 2
+    }
+}
 
 data class MovieUiModel(
     val id: Int,
@@ -45,7 +54,7 @@ data class RecentSearchUiModel(
 data class RecentViewedUiModel(
     val id: Int = 0,
     val imageUrl: String = "",
-    val mediaType: String = "",
+    val mediaType: MediaTypeUi = MediaTypeUi.MOVIE,
     val isSaved: Boolean = false,
 )
 

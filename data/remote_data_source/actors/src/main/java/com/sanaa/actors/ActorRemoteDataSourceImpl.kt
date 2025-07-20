@@ -1,8 +1,11 @@
 package com.sanaa.actors
 
-import com.example.env_config.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
-import com.sanaa.actors.dataSource.remote.dto.*
+import com.sanaa.actors.dataSource.remote.dto.ActorDto
+import com.sanaa.actors.dataSource.remote.dto.ActorImagesDto
+import com.sanaa.actors.dataSource.remote.dto.ActorMovieCastDto
+import com.sanaa.actors.dataSource.remote.dto.ActorTvCastDto
+import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -12,7 +15,6 @@ import io.ktor.util.reflect.typeInfo
 
 class ActorRemoteDataSourceImpl(
     private val client: HttpClient,
-    private val baseUrl: String,
     private val languageProvider: LanguageProvider
 ) : ActorRemoteDataSource {
 
@@ -37,7 +39,7 @@ class ActorRemoteDataSourceImpl(
         path: String,
         withLang: Boolean,
         typeInfo: TypeInfo
-    ): T = client.get("$baseUrl/$path") {
+    ): T = client.get("${BuildConfig.TMDB_URL}/$path") {
         if (withLang) parameter("language", languageProvider.getCurrentLanguage())
         parameter("api_key", BuildConfig.TMDB_API_KEY)
     }.body(typeInfo)

@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(projects.domain.vod)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
 
@@ -19,6 +19,6 @@ dependencies {
 
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }

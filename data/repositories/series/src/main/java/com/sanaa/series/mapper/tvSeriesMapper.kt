@@ -44,7 +44,7 @@ fun EpisodeDto.toEntity(): Episode {
         number = episodeNumber,
         imdbRating = voteAverage,
         durationMinutes = runtime,
-        releaseDate = LocalDate.parse(airDate),
+        releaseDate = airDate?.let { LocalDate.parse(it) } ?: LocalDate.parse("1970-01-01"),
         stillImagePath = buildPosterUrl(stillPath),
     )
 }

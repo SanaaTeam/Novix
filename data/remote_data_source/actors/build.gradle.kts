@@ -22,9 +22,8 @@ android {
     }
 }
 
-
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 
     implementation(projects.data.repositories.actors)
 
@@ -36,6 +35,6 @@ dependencies {
 
 }
 
-tasks.withType<Test> {
+tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
