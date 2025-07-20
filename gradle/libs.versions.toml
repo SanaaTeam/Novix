@@ -166,6 +166,7 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version = "3.0.
 firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 novix-android-compose = { id = "novix.android.library.compose" }
+novix-android-library = { id = "novix.android.library" }
 
 [bundles]
 room = [
