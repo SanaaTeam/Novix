@@ -181,7 +181,7 @@ fun SeriesScreenContent(
 
                         if (state.cast.isNotEmpty())
                             CastComponent(
-                                cast = state.cast,
+                                casts = state.cast,
                                 onActorClicked = interactionListener::onActorClicked,
                             )
                         SeasonTap(
