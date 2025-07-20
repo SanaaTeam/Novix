@@ -132,5 +132,6 @@ dependencies {
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.room)
 
 }
