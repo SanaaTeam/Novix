@@ -43,12 +43,11 @@ dependencies {
     implementation(projects.data.repositories.search)
     implementation(projects.preferences)
     implementation(projects.domain.vod)
+
     implementation(libs.androidx.core.ktx)
 
     // Room dependencies
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    testImplementation(libs.junit.jupiter)
+    implementation(libs.bundles.room)
     ksp(libs.androidx.room.compiler)
 
     // WorkManager for background cache cleanup
@@ -58,15 +57,11 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
 
-
     // Testing
-    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
+
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.bundles.test.runtime)
 
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)

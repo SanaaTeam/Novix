@@ -49,20 +49,16 @@ android {
 
 dependencies {
     implementation(projects.preferences)
+
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
     implementation(projects.data.repositories.series)
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
 
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.ktor.client.mock)
+    androidTestImplementation(libs.androidx.junit)
 }
 
 tasks.withType<Test> {

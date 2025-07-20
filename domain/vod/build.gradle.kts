@@ -15,14 +15,9 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.paging.common)
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
+
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.bundles.test.runtime)
 }
 
 tasks.withType<Test> {

@@ -49,21 +49,18 @@ android {
 
 dependencies {
     implementation(projects.preferences)
-
     implementation(projects.data.repositories.movies)
+
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
 
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
+    testImplementation(libs.bundles.test)
+    androidTestImplementation(libs.androidx.junit)
     testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
+
 }
 tasks.withType<Test> {
     useJUnitPlatform()
