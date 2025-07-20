@@ -115,7 +115,54 @@ class MapperTest {
         assertEquals("Ep 1", entity.episodes[0].title)
     }
 
+    //EpisodeDto
+    @Test fun `EpisodeDto toEntity maps id correctly`() {
+        val dto = createEpisodeDto(id = 100)
+        val entity = dto.toEntity()
+        assertEquals(100, entity.id)
+    }
 
+    @Test fun `EpisodeDto toEntity maps title correctly`() {
+        val dto = createEpisodeDto(name = "Episode 1")
+        val entity = dto.toEntity()
+        assertEquals("Episode 1", entity.title)
+    }
+
+    @Test fun `EpisodeDto toEntity maps overview correctly`() {
+        val dto = createEpisodeDto(overview = "Some overview")
+        val entity = dto.toEntity()
+        assertEquals("Some overview", entity.overview)
+    }
+
+    @Test fun `EpisodeDto toEntity maps seasonNumber correctly`() {
+        val dto = createEpisodeDto(seasonNumber = 2)
+        val entity = dto.toEntity()
+        assertEquals(2, entity.seasonNumber)
+    }
+
+    @Test fun `EpisodeDto toEntity maps episode number correctly`() {
+        val dto = createEpisodeDto(episodeNumber = 3)
+        val entity = dto.toEntity()
+        assertEquals(3, entity.number)
+    }
+
+    @Test fun `EpisodeDto toEntity maps imdbRating correctly`() {
+        val dto = createEpisodeDto(voteAverage = 8.2f)
+        val entity = dto.toEntity()
+        assertEquals(8.2f, entity.imdbRating)
+    }
+
+    @Test fun `EpisodeDto toEntity maps duration correctly`() {
+        val dto = createEpisodeDto(runtime = 60)
+        val entity = dto.toEntity()
+        assertEquals(60, entity.durationMinutes)
+    }
+
+    @Test fun `EpisodeDto toEntity maps releaseDate correctly`() {
+        val dto = createEpisodeDto(airDate = "2023-04-20")
+        val entity = dto.toEntity()
+        assertEquals(LocalDate.parse("2023-04-20"), entity.releaseDate)
+    }
 
 
     private fun createSeasonDto(
