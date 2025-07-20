@@ -41,23 +41,20 @@ android {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.junit.jupiter.api)
-    androidTestImplementation(libs.androidx.junit)
     implementation(libs.bundles.room)
-    testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-    testImplementation(kotlin("test"))
+
+    testImplementation(libs.bundles.test)
+
+    androidTestImplementation(libs.androidx.junit)
+    testImplementation(libs.bundles.room.testing)
 }
 tasks.withType<Test> {
     useJUnitPlatform()

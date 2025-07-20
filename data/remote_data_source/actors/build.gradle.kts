@@ -50,7 +50,6 @@ android {
 
 dependencies {
     implementation(projects.preferences)
-
     implementation(projects.data.repositories.actors)
 
     implementation(libs.bundles.ktor)
@@ -58,13 +57,10 @@ dependencies {
     implementation(libs.bundles.coroutines)
 
     implementation(libs.androidx.core.ktx)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    testImplementation(libs.mockk)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
+
+    testImplementation(libs.bundles.test)
     testImplementation(libs.ktor.client.mock)
-    testImplementation(kotlin("test"))
+    androidTestImplementation(libs.androidx.junit)
 }
 
 tasks.withType<Test> {
