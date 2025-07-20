@@ -1,9 +1,7 @@
 package com.sanaa.movies.mapper
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
-import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
-import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
+import com.sanaa.movies.dataSource.remote.dto.MovieDto
 import entity.Genre
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
@@ -54,55 +52,55 @@ class MovieMapperKtTest{
     }
     @Test
     fun `toDomain returns default title when null`() {
-        val dto = MovieDetailsDto(id = 1, title = null)
+        val dto = MovieDto(id = 1, title = null)
         assertThat(dto.toDomain().title).isEqualTo("Unknown Title")
     }
 
     @Test
     fun `toDomain returns default overview when null`() {
-        val dto = MovieDetailsDto(id = 1, overview = null)
+        val dto = MovieDto(id = 1, overview = null)
         assertThat(dto.toDomain().overview).isEqualTo("No overview available")
     }
 
     @Test
     fun `toDomain returns default releaseDate when null`() {
-        val dto = MovieDetailsDto(id = 1, releaseDate = null)
+        val dto = MovieDto(id = 1, releaseDate = null)
         assertThat(dto.toDomain().releaseDate).isEqualTo(LocalDate(1900, 1, 1))
     }
 
     @Test
     fun `toDomain returns default voteAverage when null`() {
-        val dto = MovieDetailsDto(id = 1, voteAverage = null)
+        val dto = MovieDto(id = 1, voteAverage = null)
         assertThat(dto.toDomain().imdbRating).isEqualTo(0.0f)
     }
 
     @Test
     fun `toDomain returns default duration when null`() {
-        val dto = MovieDetailsDto(id = 1, duration = null)
+        val dto = MovieDto(id = 1, duration = null)
         assertThat(dto.toDomain().duration).isEqualTo(0)
     }
 
     @Test
     fun `toDomain maps valid genre correctly`() {
-        val dto = MovieDetailsDto(id = 1, genres = arrayListOf(MovieDetailsDto.Genres(id = 28)))
+        val dto = MovieDto(id = 1, genres = arrayListOf(MovieDto.Genres(id = 28)))
         assertThat(dto.toDomain().genres).containsExactly(Genre.ACTION)
     }
 
     @Test
     fun `toDomain ignores null genre id`() {
-        val dto = MovieDetailsDto(id = 1, genres = arrayListOf(MovieDetailsDto.Genres(id = null)))
+        val dto = MovieDto(id = 1, genres = arrayListOf(MovieDto.Genres(id = null)))
         assertThat(dto.toDomain().genres).isEmpty()
     }
 
     @Test
     fun `toDomain returns empty poster url when path is null`() {
-        val dto = MovieDetailsDto(id = 1, posterImagePath = null)
+        val dto = MovieDto(id = 1, posterImagePath = null)
         assertThat(dto.toDomain().posterImageUrl).isEmpty()
     }
 
     @Test
     fun `toDomain returns full poster url when path is valid`() {
-        val dto = MovieDetailsDto(id = 1, posterImagePath = "/poster.jpg")
+        val dto = MovieDto(id = 1, posterImagePath = "/poster.jpg")
         assertThat(dto.toDomain().posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/poster.jpg")
     }
 
@@ -218,11 +216,11 @@ class MovieMapperKtTest{
     }
 
 
-    private fun createSampleMovieDetailsDto() = MovieDetailsDto(
+    private fun createSampleMovieDetailsDto() = MovieDto(
         id = 42,
         posterImagePath = "/poster.jpg",
         title = "The Matrix",
-        genres = arrayListOf(MovieDetailsDto.Genres(id = 28)),
+        genres = arrayListOf(MovieDto.Genres(id = 28)),
         voteAverage = 8.5f,
         duration = 120,
         releaseDate = "1999-03-31",

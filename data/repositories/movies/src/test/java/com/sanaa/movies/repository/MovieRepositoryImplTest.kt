@@ -2,11 +2,9 @@ package com.sanaa.movies.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
-import com.sanaa.movies.dataSource.remote.dto.CastDto
-import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.MovieDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
-import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -88,7 +86,7 @@ class MovieRepositoryImplTest {
     }
 
     companion object {
-        private val sampleMovieDto = MovieDetailsDto(
+        private val sampleMovieDto = MovieDto(
             id = 1,
             title = "Sample Title",
         )

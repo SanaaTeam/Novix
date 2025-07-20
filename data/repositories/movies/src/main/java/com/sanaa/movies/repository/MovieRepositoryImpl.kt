@@ -24,17 +24,17 @@ class MovieRepositoryImpl(
 
     override suspend fun getImages(id: Int, count: Int): List<String> =
         safeCall("Failed to fetch images") {
-            remote.fetchImagesUrl(id).posters.take(count).map { getFullImageUrl(it.filePath) }
+            remote.fetchImagesUrl(id).take(count).map { getFullImageUrl(it.filePath) }
         }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =
         safeCall("Failed to fetch movie cast") {
-            remote.fetchCast(id).cast.map { it.toDomain() }
+            remote.fetchCast(id).map { it.toDomain() }
         }
 
     override suspend fun getSimilarMoviesByMovieId(id: Int): List<Movie> =
         safeCall("Failed to fetch similar movies") {
-            remote.fetchSimilarMoviesByMovieId(id).results.map { it.toDomain() }
+            remote.fetchSimilarMoviesByMovieId(id).map { it.toDomain() }
         }
 
     override suspend fun getReviewsByMovieId(id: Int): List<Review> =
@@ -44,12 +44,13 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.toDtoId()).moviesByCategoryDto.map { it.toDomain() }
+            remote.fetchMoviesByCategory(category.toDtoId()).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =
         safeCall("Failed to fetch movie trailer") {
-            remote.fetchMovieTrailerUrl(id).results.firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
+            remote.fetchMovieTrailerUrl(id)
+                .firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
                 ?.let { "https://www.youtube.com/watch?v=${it.key}" }
         }
 
