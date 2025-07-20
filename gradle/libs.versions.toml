@@ -182,6 +182,7 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 # Custom plugins
 novix-kotlin = { id = "novix.kotlin.library" }
 novix-android-compose = { id = "novix.android.library.compose" }
+novix-android-library = { id = "novix.android.library" }
 
 [bundles]
 room = [

@@ -9,6 +9,11 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("androidLibraryConvention") {
+            id = libs.plugins.novix.android.library.get().pluginId
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
+
         register("androidComposeLibraryConvention") {
             id = libs.plugins.novix.android.compose.get().pluginId
             implementationClass = "AndroidComposeLibraryConventionPlugin"

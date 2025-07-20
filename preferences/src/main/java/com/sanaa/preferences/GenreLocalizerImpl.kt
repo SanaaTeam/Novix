@@ -2,6 +2,7 @@ package com.sanaa.preferences
 
 import android.content.Context
 import com.sanaa.preferences.service.GenreLocalizer
+import preferences.R
 
 
 class GenreLocalizerImpl(
