@@ -5,14 +5,16 @@ import com.sanaa.movies.dataSource.remote.dto.CastDto
 import entity.Actor
 import entity.Actor.Gender
 
+private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
+
 fun ActorDto.toDomain(): Actor {
     return Actor(
         id = id,
         name = name ?: "Unknown",
-        imageUrl = getProfileImageUrl(profileImagePath),
+        imageUrl = getFullImageUrl(profileImagePath),
         gender = apiGenderMapping(gender),
         character = character,
-        biography = biography ?: "",
+        biography = biography ?: "Unknown biography",
         birthDate = null,
         deathDate = null,
         placeOfBirth = null,
@@ -27,7 +29,7 @@ fun CastDto.Cast.toDomain(): Actor {
     return Actor(
         id = id,
         name = name ?: "Unknown",
-        imageUrl = getProfileImageUrl(profilePath),
+        imageUrl = getFullImageUrl(profilePath),
         gender = apiGenderMapping(gender),
         character = character,
         biography = "",
@@ -48,8 +50,5 @@ fun apiGenderMapping(id: Int?): Gender {
     }
 }
 
-fun getProfileImageUrl(profilePath: String?): String {
-    return profilePath.let {
-        "https://image.tmdb.org/t/p/w185$it"
-    }
-}
+internal fun getFullImageUrl(path: String?): String =
+    if (path.isNullOrBlank()) "" else "${TMDB_IMAGE_BASE_URL}$path"

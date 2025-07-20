@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,7 +20,7 @@ import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
 fun CastComponent(
-    cast: List<ActorUiModel>, onActorClicked: (Int) -> Unit, modifier: Modifier = Modifier
+    casts: List<ActorUiModel>, onActorClicked: (Int) -> Unit, modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
@@ -34,14 +35,17 @@ fun CastComponent(
             contentPadding = PaddingValues(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            items(cast.size, key = { cast[it].id }) {
+            items(
+                casts,
+                key = { item -> item.id }
+            ) { cast ->
                 ActorCard(
-                    actorName = cast[it].name,
-                    playedCharacter = cast[it].character,
-                    actorImage = rememberAsyncImagePainter(cast[it].imageUrl),
+                    actorName = cast.name,
+                    playedCharacter = cast.character,
+                    actorImage = rememberAsyncImagePainter(cast.imageUrl),
                     modifier = Modifier.width(296.dp),
                     onCardClick = {
-                        onActorClicked(cast[it].id)
+                        onActorClicked(cast.id)
                     })
             }
         }

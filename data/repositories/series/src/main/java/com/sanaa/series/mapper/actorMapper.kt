@@ -4,13 +4,14 @@ import com.sanaa.series.dto.ActorDto
 import entity.Actor
 import entity.Actor.Gender
 
+private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
 fun ActorDto.toEntity(): Actor {
     return Actor(
         id = id,
         name = name,
         character = character,
-        imageUrl = getProfileImageUrl(profilePath),
+        imageUrl = getFullImageUrl(profilePath),
         gender = apiGenderMapping(gender),
         region = null,
         lastShow = null,
@@ -30,9 +31,5 @@ fun apiGenderMapping(id: Int): Gender {
     }
 }
 
-fun getProfileImageUrl(profilePath: String?): String {
-    return profilePath.let {
-        "https://image.tmdb.org/t/p/w185$it"
-    }
-
-}
+internal fun getFullImageUrl(path: String?): String =
+    if (path.isNullOrBlank()) "" else "${TMDB_IMAGE_BASE_URL}$path"

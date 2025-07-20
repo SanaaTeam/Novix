@@ -47,7 +47,7 @@ import org.koin.core.parameter.parametersOf
 fun TopMoviesScreen(
     actorId: Int,
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
+    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) },
 ) {
     BackHandler(onBack = navigateBack)
 
@@ -62,7 +62,7 @@ fun TopMoviesScreen(
 
 @Composable
 private fun TopMoviesContent(
-    state: ActorScreenUiState, modifier: Modifier = Modifier, onBackClick: () -> Unit
+    state: ActorScreenUiState, modifier: Modifier = Modifier, onBackClick: () -> Unit,
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -112,7 +112,10 @@ private fun TopMoviesContent(
                                 12.dp
                             )
                         ) {
-                            items(state.topMovies) { movie ->
+                            items(
+                                state.topMovies,
+                                key = { item -> item.id }
+                            ) { movie ->
                                 MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(

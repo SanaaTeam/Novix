@@ -1,7 +1,7 @@
 package com.sanaa.actors.repository
 
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
-import com.sanaa.actors.mapper.fullImageUrlOrEmpty
+import com.sanaa.actors.mapper.getFullImageUrl
 import com.sanaa.actors.mapper.toDomain
 import details.repository.ActorRepository
 import entity.Actor
@@ -28,7 +28,7 @@ class ActorRepositoryImpl(
     override suspend fun getProfileImages(id: Int, count: Int): List<String> {
         return try {
             remoteDataSource.getActorImages(id).profiles.take(count)
-                .map { it.path.fullImageUrlOrEmpty() }
+                .map { getFullImageUrl(it.path) }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
@@ -39,7 +39,7 @@ class ActorRepositoryImpl(
     override suspend fun getGalleryImages(id: Int): List<String> {
         return try {
             remoteDataSource.getActorImages(id).profiles.drop(1)
-                .map { it.path.fullImageUrlOrEmpty() }
+                .map { getFullImageUrl(it.path) }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {
