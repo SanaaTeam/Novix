@@ -47,7 +47,7 @@ class ActorMapperTest {
             biography = null
         )
         val result = dto.toDomain()
-        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w185/pic.jpg")
+        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/pic.jpg")
     }
 
     @Test
@@ -137,7 +137,7 @@ class ActorMapperTest {
             character = null
         )
         val result = dto.toDomain()
-        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w185/cast.jpg")
+        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/cast.jpg")
     }
 
     @Test
@@ -151,7 +151,7 @@ class ActorMapperTest {
     @Test
     fun `should return correct URL when getProfileImageUrl is called with path`() {
         val url = getFullImageUrl("/image.jpg")
-        assertThat(url).isEqualTo("https://image.tmdb.org/t/p/w185/image.jpg")
+        assertThat(url).isEqualTo("https://image.tmdb.org/t/p/w500/image.jpg")
     }
 
     @Test
