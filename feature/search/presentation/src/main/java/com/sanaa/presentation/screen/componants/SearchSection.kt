@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,19 +16,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.text_field.NovixTextField
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 
 
 @Composable
 fun SearchSection(
     text: String,
     onFilterClicked: () -> Unit = {},
-    onTextChange: (String) -> Unit = {}
+    onTextChange: (String) -> Unit = {},
+    isFilterButtonVisible: Boolean = true
 ) {
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = text)) }
+
+    if (textFieldValue.text != text) {
+        textFieldValue = TextFieldValue(
+            text = text,
+            selection = TextRange(text.length)
+        )
+    }
+
     Row(
         modifier = Modifier
             .height(48.dp)
@@ -36,29 +51,37 @@ fun SearchSection(
         verticalAlignment = Alignment.CenterVertically
     ) {
         NovixTextField(
-            value = text,
-            onValueChange = onTextChange,
+            value = textFieldValue,
+            onValueChange = { newValue ->
+                textFieldValue = newValue
+                onTextChange(newValue.text)
+            },
             hint = stringResource(R.string.search_hint),
             icon = painterResource(R.drawable.icon_search),
             modifier = Modifier
                 .weight(1f)
 
         )
-        PrimaryButton(
-            text = null,
-            onClick = onFilterClicked,
-            icon = painterResource(R.drawable.icon_filter)
-        )
+        AnimatedVisibility(
+            visible = isFilterButtonVisible,
+        ) {
+            NovixPrimaryButton(
+                text = null,
+                onClick = onFilterClicked,
+                icon = painterResource(R.drawable.icon_filter)
+            )
+        }
     }
-
 }
 
-@Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 private fun SearchAppBarPreview() {
     var text by remember { mutableStateOf("") }
-    SearchSection(
-        text = text,
-        onTextChange = { text = it }
-    )
+    NovixTheme(isSystemInDarkTheme()) {
+        SearchSection(
+            text = text,
+            onTextChange = { text = it }
+        )
+    }
 }

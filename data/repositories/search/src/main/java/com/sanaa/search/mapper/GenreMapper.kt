@@ -3,7 +3,7 @@ package com.sanaa.search.mapper
 import entity.Genre
 
 fun Genre.toDtoId(): Int {
-    return when(this) {
+    return when (this) {
         Genre.ACTION -> 28
         Genre.ADVENTURE -> 12
         Genre.COMEDY -> 35
@@ -25,7 +25,7 @@ fun Genre.toDtoId(): Int {
         Genre.REALITY -> 10764
         Genre.SOAP -> 10766
         Genre.TALK -> 10767
-        Genre.WAR ->  10752
+        Genre.WAR -> 10752
         Genre.WAR_AND_POLITICS -> 10768
         Genre.WESTERN -> 37
         Genre.TV_MOVIE -> 10770

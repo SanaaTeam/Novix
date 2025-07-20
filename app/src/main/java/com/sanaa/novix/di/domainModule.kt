@@ -1,16 +1,9 @@
 package com.sanaa.novix.di
 
-import details.usecase.actor.GetActorDetailsUseCase
-import details.usecase.actor.GetActorTopMoviesUseCase
-import details.usecase.actor.GetActorTopTvSeriesUseCase
-import details.usecase.actor.GetGalleryImagesUseCase
-import details.usecase.actor.GetProfileImagesUseCase
-import details.usecase.movie.GetMovieCastUseCase
-import details.usecase.movie.GetMovieDetailsUseCase
-import details.usecase.movie.GetMovieImagesUseCase
-import details.usecase.movie.GetMoviesByCategory
-import details.usecase.movie.GetReviewsByMovieId
-import details.usecase.movie.GetSimilarMoviesByMovieId
+import details.usecase.ManageActorDetailsUseCase
+import details.usecase.ManageEpisodeDetailsUseCase
+import details.usecase.ManageMovieDetailsUseCase
+import details.usecase.ManageTvSeriesDetailsUseCase
 import org.koin.dsl.module
 import search.usecase.AddRecentViewedUseCase
 import search.usecase.ClearRecentViewedUseCase
@@ -23,6 +16,7 @@ import search.usecase.SearchMoviesUseCase
 import search.usecase.SearchTvSeriesUseCase
 
 val domainModule = module {
+    // search
     single { SearchMoviesUseCase(get(), get()) }
     single { SearchTvSeriesUseCase(get(), get()) }
     single { SearchActorsUseCase(get(), get()) }
@@ -34,16 +28,9 @@ val domainModule = module {
     single { AddRecentViewedUseCase(get()) }
     single { RemoveSearchHistoryUseCase(get()) }
 
-    single { GetActorDetailsUseCase(get()) }
-    single { GetActorTopMoviesUseCase(get()) }
-    single { GetActorTopTvSeriesUseCase(get()) }
-    single { GetGalleryImagesUseCase(get()) }
-    single { GetProfileImagesUseCase(get()) }
-
-    single { GetMovieCastUseCase(get()) }
-    single { GetMovieDetailsUseCase(get()) }
-    single { GetMovieImagesUseCase(get()) }
-    single { GetMoviesByCategory(get()) }
-    single { GetReviewsByMovieId(get()) }
-    single { GetSimilarMoviesByMovieId(get()) }
+    // details
+    single { ManageActorDetailsUseCase(get()) }
+    single { ManageMovieDetailsUseCase(get()) }
+    single { ManageTvSeriesDetailsUseCase(get()) }
+    single { ManageEpisodeDetailsUseCase(get()) }
 }

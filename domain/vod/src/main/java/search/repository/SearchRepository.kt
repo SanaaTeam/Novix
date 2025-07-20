@@ -7,14 +7,16 @@ import search.usecase.search_param.SearchTvSeriesOutput
 
 
 interface SearchRepository {
-    suspend fun searchActors(query: String): List<SearchActorOutput>
+    suspend fun searchActors(query: String, page: Int): List<SearchActorOutput>
     suspend fun searchMovies(
         query: String,
+        page: Int,
         filters: MediaFilters?,
     ): List<SearchMovieOutput>
 
     suspend fun searchTvShows(
         query: String,
+        page: Int,
         filters: MediaFilters?,
     ): List<SearchTvSeriesOutput>
 }

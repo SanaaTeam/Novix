@@ -22,13 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.R
 import kotlinx.coroutines.delay
 
 val boxContainerGradient = Brush.linearGradient(
@@ -43,7 +46,7 @@ fun ImageSlider(
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
 
-    LaunchedEffect(pagerState) {
+    LaunchedEffect(images) {
         while (images.size > 1) {
             delay(4000)
             val nextPage = if (pagerState.currentPage < images.size - 1) {
@@ -71,12 +74,29 @@ fun ImageSlider(
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) { page ->
-            AsyncImage(
-                model = images[page], contentDescription = contentDescription,
-//                placeholder = TODO,
-//                error = TODO,
-                modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop
-            )
+            RemoteBlurredHaramImageViewer(
+                imageUrl = images[page], contentDescription = contentDescription,
+                modifier = Modifier.fillMaxWidth(),
+                blurRadius = 150,
+                haramThreshold = 0.2f,
+                nonHaramThreshold = 0.7f,
+                isBlurEnabled = false,
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+            ) {
+                OnBlurContent(
+                    hintText = stringResource(R.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small.copy(
+                        color = Color(0x99FFFFFF)
+                    ),
+                    iconSize = 24.dp,
+                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                )
+            }
         }
         Box(
             modifier = Modifier

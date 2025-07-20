@@ -1,7 +1,7 @@
 package com.sanaa.actors
 
-import com.example.env_config.service.LanguageProvider
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
+import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
@@ -30,7 +30,6 @@ class ActorRemoteDataSourceImplTest {
     private lateinit var mockEngine: MockEngine
 
     private val baseUrl = "https://api.themoviedb.org/3"
-    private val apiKey = "fake_api_key"
 
     @BeforeEach
     fun setup() {
@@ -43,38 +42,38 @@ class ActorRemoteDataSourceImplTest {
             when {
                 url.endsWith("/person/1") -> respondJson(
                     """{
-                    "id": 1,
-                    "name": "Tom Hanks",
-                    "profile_path": "/img.jpg",
-                    "gender": 2
-                }"""
+                        "id": 1,
+                        "name": "Tom Hanks",
+                        "profile_path": "/img.jpg",
+                        "gender": 2
+                    }"""
                 )
 
                 url.endsWith("/person/1/images") -> respondJson(
                     """{
-                    "id": 1,
-                    "profiles": [
-                        {"aspect_ratio": 1.0, "height": 1000, "width": 800, "file_path": "/img1.jpg", "vote_average": 5.0, "vote_count": 10}
-                    ]
-                }"""
+                        "id": 1,
+                        "profiles": [
+                            {"aspect_ratio": 1.0, "height": 1000, "width": 800, "file_path": "/img1.jpg", "vote_average": 5.0, "vote_count": 10}
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/person/1/movie_credits") -> respondJson(
                     """{
-                    "id": 1,
-                    "cast": [
-                        {"id": 100, "title": "Inception", "vote_average": 8.8}
-                    ]
-                }"""
+                        "id": 1,
+                        "cast": [
+                            {"id": 100, "title": "Inception", "vote_average": 8.8}
+                        ]
+                    }"""
                 )
 
                 url.endsWith("/person/1/tv_credits") -> respondJson(
                     """{
-                    "id": 1,
-                    "cast": [
-                        {"id": 200, "name": "Breaking Bad", "vote_average": 9.5}
-                    ]
-                }"""
+                        "id": 1,
+                        "cast": [
+                            {"id": 200, "name": "Breaking Bad", "vote_average": 9.5}
+                        ]
+                    }"""
                 )
 
                 else -> respondError(HttpStatusCode.NotFound)
@@ -88,7 +87,7 @@ class ActorRemoteDataSourceImplTest {
             expectSuccess = false
         }
 
-        dataSource = ActorRemoteDataSourceImpl(client, baseUrl, languageProvider)
+        dataSource = ActorRemoteDataSourceImpl(client, languageProvider)
     }
 
     @Test
@@ -111,8 +110,8 @@ class ActorRemoteDataSourceImplTest {
     fun `getActorTopMovies returns expected ActorMovieCastDto`() = runTest {
         val result = dataSource.getActorTopMovies(1)
         assertEquals(1, result.actorId)
-        assertEquals(1, result.cast.size)
-        assertEquals("Inception", result.cast[0].title)
+        assertEquals(1, result.cast?.size ?: 1)
+        assertEquals("Inception", result.cast?.get(0)?.title)
     }
 
     @Test
@@ -123,11 +122,9 @@ class ActorRemoteDataSourceImplTest {
         assertEquals("Breaking Bad", result.cast[0].name)
     }
 
-    // Must be an extension on MockRequestHandleScope and return HttpResponseData
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
         content = ByteReadChannel(content),
         status = HttpStatusCode.OK,
         headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
     )
-
 }

@@ -14,7 +14,7 @@ data class Actor(
     val birthDate: LocalDate?,
     val deathDate: LocalDate?,
     val placeOfBirth: String?,
-    val biography: String
+    val biography: String?
 ) {
     enum class Gender {
         MALE,

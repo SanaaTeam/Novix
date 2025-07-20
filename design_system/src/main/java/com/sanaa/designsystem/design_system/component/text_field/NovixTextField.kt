@@ -21,6 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
@@ -31,6 +33,33 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun NovixTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    hint: String = "",
+    icon: Painter? = null,
+    isEnable: Boolean = true,
+    maxLines: Int = 1,
+    singleLine: Boolean = true,
+    readOnly: Boolean = false,
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+) {
+    NovixTextField(
+        value = TextFieldValue(text = value),
+        onValueChange = { onValueChange(it.text) },
+        modifier = modifier,
+        hint = hint,
+        icon = icon,
+        isEnable = isEnable,
+        maxLines = maxLines,
+        singleLine = singleLine,
+        readOnly = readOnly,
+        interactionSource = interactionSource
+    )
+}
+
+@Composable
+fun NovixTextField(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
     icon: Painter? = null,
@@ -71,7 +100,7 @@ fun NovixTextField(
                     .weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
-                if (value.isEmpty()) {
+                if (value.text.isEmpty()) {
                     Text(
                         text = hint,
                         style = Theme.textStyle.body.small,

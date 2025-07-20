@@ -16,6 +16,10 @@ dependencies {
     implementation(libs.androidx.ui.compose.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
+
+    implementation(libs.material3)
 
     debugImplementation(libs.androidx.ui.compose.tooling)
 }

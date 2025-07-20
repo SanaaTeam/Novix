@@ -140,7 +140,7 @@ class MapperTest {
         assertEquals("Great review!", result.content)
         assertEquals("Haider", result.authorName)
         assertEquals("haider123", result.userHandle)
-        assertEquals("/avatar.png", result.avatarUrl)
+        assertEquals("https://image.tmdb.org/t/p/w185/avatar.png", result.avatarUrl)
         assertEquals(4.5f, result.rating)
         assertEquals(LocalDate(2024, 7, 15), result.createdDate)
     }

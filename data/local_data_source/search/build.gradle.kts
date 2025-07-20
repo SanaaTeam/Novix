@@ -16,6 +16,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -37,7 +41,7 @@ android {
 
 dependencies {
     implementation(projects.data.repositories.search)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(projects.domain.vod)
     implementation(libs.androidx.core.ktx)
 
@@ -67,6 +71,7 @@ dependencies {
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
 }
-tasks.withType<Test> {
-    useJUnitPlatform()
+
+tasks.withType<Test>().configureEach {
+        useJUnitPlatform()
 }

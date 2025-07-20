@@ -53,7 +53,7 @@ private fun PreviewNovixSectionHeader() {
             NovixSectionHeader(
                 title = "New arrival",
                 rightContent = {
-                    ViewAllComponent(
+                    InlineAction(
                         onClick = {}
                     )
                 }

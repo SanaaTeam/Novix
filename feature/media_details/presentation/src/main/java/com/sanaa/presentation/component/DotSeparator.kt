@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.foundation.background
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DotSeparator() {
@@ -16,4 +17,10 @@ fun DotSeparator() {
             .size(3.dp)
             .background(Theme.colors.body, CircleShape)
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DotPrev() {
+    DotSeparator()
 }

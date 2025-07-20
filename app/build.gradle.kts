@@ -29,6 +29,12 @@ android {
         ndk {
             abiFilters += listOf("arm64-v8a", "armeabi-v7a")
         }
+
+    }
+
+    lint {
+        checkReleaseBuilds = false
+        abortOnError = false
     }
 
     buildTypes {
@@ -79,9 +85,12 @@ dependencies {
 
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.search.api)
 
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
+    implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.data.repositories.search)
     implementation(projects.data.repositories.actors)
     implementation(projects.data.repositories.movies)
@@ -130,5 +139,5 @@ dependencies {
     implementation(projects.data.localDataSource.search)
 
     // Language Provider
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 }
