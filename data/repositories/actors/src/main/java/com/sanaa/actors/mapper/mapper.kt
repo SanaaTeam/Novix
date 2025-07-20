@@ -4,27 +4,21 @@ import com.sanaa.actors.dataSource.remote.dto.ActorDto
 import com.sanaa.actors.dataSource.remote.dto.ActorMovieCastDto.MovieCastCreditDto
 import com.sanaa.actors.dataSource.remote.dto.ActorTvCastDto.TvCastCreditDto
 import entity.Actor
+import entity.Actor.Gender
 import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
 
-const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
-
-fun String?.fullImageUrlOrEmpty(): String =
-    if (this.isNullOrBlank()) "" else "$TMDB_IMAGE_BASE_URL$this"
+private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
 fun ActorDto.toDomain(): Actor = Actor(
     id = id,
-    imageUrl = profileImagePath.fullImageUrlOrEmpty(),
-    name = name ?: "Unknown",
+    imageUrl = getFullImageUrl(profileImagePath),
+    name = name ?: "Unknown name",
     region = null,
     department = knownForDepartment,
     lastShow = null,
-    gender = when (gender) {
-        1 -> Actor.Gender.FEMALE
-        2 -> Actor.Gender.MALE
-        else -> Actor.Gender.MALE
-    },
+    gender = apiGenderMapping(gender),
     character = null,
     birthDate = birthDay?.takeIf(String::isNotBlank)?.let(LocalDate::parse),
     deathDate = deathDay?.takeIf(String::isNotBlank)?.let(LocalDate::parse),
@@ -34,27 +28,37 @@ fun ActorDto.toDomain(): Actor = Actor(
 
 fun MovieCastCreditDto.toDomain(): Movie = Movie(
     id = movieId,
-    posterImageUrl = posterPath.fullImageUrlOrEmpty(),
-    title = title ?: originalTitle ?: "Unknown",
+    posterImageUrl = getFullImageUrl(posterPath),
+    title = title ?: originalTitle ?: "Unknown name",
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = 0,
-    releaseDate = releaseDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
+    releaseDate = toLocalDateOrNull(releaseDate) ?: LocalDate(1900, 1, 1),
     overview = overview ?: ""
 )
 
 fun TvCastCreditDto.toDomain(): TvSeries = TvSeries(
     id = tvId,
-    title = name ?: originalName ?: "Unknown",
+    title = name ?: originalName ?: "Unknown name",
     overview = overview ?: "",
-    releaseDate = firstAirDate.toLocalDateOrNull() ?: LocalDate(1900, 1, 1),
+    releaseDate = toLocalDateOrNull(firstAirDate) ?: LocalDate(1900, 1, 1),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
-    posterImageUrl = posterPath.fullImageUrlOrEmpty(),
+    posterImageUrl = getFullImageUrl(posterPath),
     seasonsCount = 0
 )
 
-internal  fun String?.toLocalDateOrNull(): LocalDate? =
-    this
-        ?.takeIf(String::isNotBlank)
+fun apiGenderMapping(id: Int?): Gender {
+    return when (id) {
+        0 -> Gender.MALE
+        1 -> Gender.FEMALE
+        else -> Gender.MALE
+    }
+}
+internal fun getFullImageUrl(path: String?): String =
+    if (path.isNullOrBlank()) "" else "$TMDB_IMAGE_BASE_URL$path"
+
+internal fun toLocalDateOrNull(value: String?): LocalDate? =
+    value
+        ?.takeIf { it.isNotBlank() }
         ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }

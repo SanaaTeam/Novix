@@ -1,7 +1,7 @@
 package com.sanaa.movies.repository
 
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
-import com.sanaa.movies.mapper.fullImageUrlOrEmpty
+import com.sanaa.movies.mapper.getFullImageUrl
 import com.sanaa.movies.mapper.toDomain
 import com.sanaa.movies.mapper.toDtoId
 import com.sanaa.movies.mapper.toEntity
@@ -24,7 +24,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getImages(id: Int, count: Int): List<String> =
         safeCall("Failed to fetch images") {
-            remote.fetchImagesUrl(id).posters.take(count).map { it.filePath.fullImageUrlOrEmpty() }
+            remote.fetchImagesUrl(id).posters.take(count).map { getFullImageUrl(it.filePath) }
         }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =

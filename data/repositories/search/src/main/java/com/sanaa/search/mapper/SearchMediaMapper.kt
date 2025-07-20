@@ -12,7 +12,7 @@ fun MovieLocalDto.toSearchOutput(): SearchMovieOutput {
     return SearchMovieOutput(
         id = id,
         title = title,
-        posterImageUrl = (IMAGE_URL + imagePath),
+        posterImageUrl = getFullImageUrl(imagePath),
     )
 }
 
@@ -20,7 +20,7 @@ fun MovieSearchDto.toLocalDto(language: String): MovieLocalDto {
     return MovieLocalDto(
         id = id,
         title = title ?: "",
-        imagePath = IMAGE_URL + posterImagePath,
+        imagePath = getFullImageUrl(posterImagePath),
         language = language,
         releaseYear = releaseDate?.takeIf { it.isNotBlank() }?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -32,7 +32,7 @@ fun MovieSearchDto.toSearchOutput(): SearchMovieOutput {
     return SearchMovieOutput(
         id = id,
         title = title ?: "",
-        posterImageUrl = (IMAGE_URL + posterImagePath),
+        posterImageUrl = getFullImageUrl(posterImagePath),
     )
 }
 
@@ -40,7 +40,7 @@ fun TvSeriesLocalDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
         title = title,
-        posterImageUrl = (IMAGE_URL + imagePath) ?: "",
+        posterImageUrl = getFullImageUrl(imagePath),
     )
 }
 
@@ -48,7 +48,7 @@ fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
     return TvSeriesLocalDto(
         id = id,
         title = name ?: "",
-        imagePath = IMAGE_URL + posterImagePath,
+        imagePath = getFullImageUrl(posterImagePath) ,
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
         genres = genreIds?.joinToString(separator = ", "),
@@ -60,8 +60,6 @@ fun TvShowSearchDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
         title = name ?: "",
-        posterImageUrl = (IMAGE_URL + posterImagePath),
+        posterImageUrl = getFullImageUrl(posterImagePath),
     )
 }
-
-const val IMAGE_URL = "https://image.tmdb.org/t/p/original"
