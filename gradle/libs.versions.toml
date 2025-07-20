@@ -71,7 +71,7 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 
 # Compose
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
-androidx-compose-foundation = { module = "androidx.compose.foundation:foundation-layout-android", version.ref = "foundationLayoutAndroid" }
+androidx-ui-compose-foundation = { module = "androidx.compose.foundation:foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 androidx-ui-compose = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-compose-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-compose-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -170,6 +170,12 @@ firebase-perf = { id = "com.google.firebase.firebase-perf", version = "1.4.2" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 
 [bundles]
+compose = [
+    "androidx-ui-compose",
+    "androidx-ui-compose-graphics",
+    "androidx-ui-compose-tooling-preview",
+]
+
 room = [
     "androidx-room-runtime",
     "androidx-room-ktx",

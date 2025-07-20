@@ -41,7 +41,7 @@ android {
 dependencies {
     implementation(projects.designSystem)
 
-    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
