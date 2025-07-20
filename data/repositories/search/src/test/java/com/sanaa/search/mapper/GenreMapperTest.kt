@@ -43,12 +43,4 @@ class GenreMapperTest {
             assertThat(actualId).isEqualTo(expectedId)
         }
     }
-//    @Test
-//    fun `should return null when genre ID is invalid`() {
-//        val invalidIds = listOf(-1, 0, 999, 1234)
-//        for (id in invalidIds) {
-//            val genre = id.toGenre()
-//            assertThat(genre).isNull()
-//        }
-//    }
 }
