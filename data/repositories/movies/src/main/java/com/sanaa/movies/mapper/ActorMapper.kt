@@ -14,7 +14,7 @@ fun ActorDto.toDomain(): Actor {
         imageUrl = getFullImageUrl(profileImagePath),
         gender = apiGenderMapping(gender),
         character = character,
-        biography = biography ?: "",
+        biography = biography ?: "Unknown biography",
         birthDate = null,
         deathDate = null,
         placeOfBirth = null,

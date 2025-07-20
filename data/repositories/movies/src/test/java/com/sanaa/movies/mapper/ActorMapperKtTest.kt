@@ -10,111 +10,64 @@ class ActorMapperTest {
 
     @Test
     fun `should return correct name when ActorDto has valid name`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Robert",
-            profileImagePath = null,
-            gender = null,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(name = "Robert")
         val result = dto.toDomain()
         assertThat(result.name).isEqualTo("Robert")
     }
 
     @Test
     fun `should return Unknown name when ActorDto name is null`() {
-        val dto = ActorDto(
-            id = 1,
-            name = null,
-            profileImagePath = null,
-            gender = null,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(name = null)
         val result = dto.toDomain()
         assertThat(result.name).isEqualTo("Unknown")
     }
 
     @Test
     fun `should return imageUrl from profile path in ActorDto`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Any",
-            profileImagePath = "/pic.jpg",
-            gender = null,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(profileImagePath = "/pic.jpg")
         val result = dto.toDomain()
         assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/pic.jpg")
     }
 
     @Test
     fun `should map gender as FEMALE when ActorDto gender is 1`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Any",
-            profileImagePath = null,
-            gender = 1,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(gender = 1)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
     }
 
     @Test
     fun `should map gender as MALE when ActorDto gender is 0`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Any",
-            profileImagePath = null,
-            gender = 0,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(gender = 0)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
     }
 
     @Test
     fun `should map gender as MALE when ActorDto gender is unknown`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Any",
-            profileImagePath = null,
-            gender = 99,
-            character = null,
-            biography = null
-        )
+        val dto = createActorDto(gender = 99)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
     }
 
     @Test
-    fun `should map biography to empty when ActorDto biography is null`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Any",
-            profileImagePath = null,
-            gender = null,
-            character = null,
-            biography = null
-        )
+    fun `should return correct biography when ActorDto has valid biography`() {
+        val dto = createActorDto(biography = "Any biography")
         val result = dto.toDomain()
-        assertThat(result.biography).isEqualTo("")
+        assertThat(result.biography).isEqualTo("Any biography")
     }
 
     @Test
+    fun `should return Unknown biography  when ActorDto biography is null`() {
+        val dto = createActorDto(biography = null)
+        val result = dto.toDomain()
+        assertThat(result.biography).isEqualTo("Unknown biography")
+    }
+
+    //CastDto
+    @Test
     fun `should return correct name when CastDto has valid name`() {
-        val dto = CastDto.Cast(
-            id = 2,
-            name = "Scarlett",
-            profilePath = null,
-            gender = null,
-            character = null
-        )
+        val dto = createCastDto(name = "Scarlett")
         val result = dto.toDomain()
         assertThat(result.name).isEqualTo("Scarlett")
     }
@@ -122,28 +75,21 @@ class ActorMapperTest {
     @Test
     fun `should return Unknown name when CastDto name is null`() {
         val dto =
-            CastDto.Cast(id = 2, name = null, profilePath = null, gender = null, character = null)
+            createCastDto()
         val result = dto.toDomain()
         assertThat(result.name).isEqualTo("Unknown")
     }
 
     @Test
     fun `should return imageUrl from profile path in CastDto`() {
-        val dto = CastDto.Cast(
-            id = 2,
-            name = "Any",
-            profilePath = "/cast.jpg",
-            gender = null,
-            character = null
-        )
+        val dto = createCastDto(profilePath = "/cast.jpg")
         val result = dto.toDomain()
         assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/cast.jpg")
     }
 
     @Test
     fun `should map gender as FEMALE when CastDto gender is 1`() {
-        val dto =
-            CastDto.Cast(id = 2, name = "Any", profilePath = null, gender = 1, character = null)
+        val dto = createCastDto(gender = 1)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
     }
@@ -156,33 +102,40 @@ class ActorMapperTest {
 
     @Test
     fun `should map gender as MALE when CastDto gender is null`() {
-        val dto =
-            CastDto.Cast(id = 2, name = "Any", profilePath = null, gender = null, character = null)
+        val dto = createCastDto(gender = null)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
     }
 
-    @Test
-    fun `should map gender as MALE when gender value is unrecognized`() {
-        val gender = apiGenderMapping(99)
-        assertThat(gender).isEqualTo(Actor.Gender.MALE)
-    }
+    private fun createActorDto(
+        id: Int = 1,
+        name: String? = null,
+        profileImagePath: String? = null,
+        gender: Int? = null,
+        character: String? = null,
+        biography: String? = null
+    ) = ActorDto(
+        id = id,
+        name = name,
+        profileImagePath = profileImagePath,
+        gender = gender,
+        character = character,
+        biography = biography
+    )
 
-    @Test
-    fun `should map gender as MALE when gender is 0`() {
-        val gender = apiGenderMapping(0)
-        assertThat(gender).isEqualTo(Actor.Gender.MALE)
-    }
+    private fun createCastDto(
+        id: Int = 2,
+        name: String? = null,
+        profilePath: String? = null,
+        gender: Int? = null,
+        character: String? = null
+    ) = CastDto.Cast(
+        id = id,
+        name = name,
+        profilePath = profilePath,
+        gender = gender,
+        character = character
+    )
 
-    @Test
-    fun `should map gender as FEMALE when gender is 1`() {
-        val gender = apiGenderMapping(1)
-        assertThat(gender).isEqualTo(Actor.Gender.FEMALE)
-    }
 
-    @Test
-    fun `should map gender as MALE when gender is null`() {
-        val gender = apiGenderMapping(null)
-        assertThat(gender).isEqualTo(Actor.Gender.MALE)
-    }
 }
