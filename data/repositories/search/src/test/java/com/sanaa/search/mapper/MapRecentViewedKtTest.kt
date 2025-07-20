@@ -1,17 +1,12 @@
 package com.sanaa.search.mapper
 
-import com.sanaa.search.dataSource.local.dto.QueryLocalDto
 import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.util.TimeUtils
-import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import search.usecase.search_param.MediaType
 import search.usecase.search_param.RecentViewedMedia
-import search.usecase.search_param.SearchHistory
 
 class MapRecentViewedKtTest {
 
@@ -55,21 +50,6 @@ class MapRecentViewedKtTest {
         assertEquals(expectedMedia, recentViewedLocalDto.toEntity())
     }
 
-    @Test
-    fun `toEntity maps QueryLocalDto to SearchHistory`() {
-        val queryLocalDto = QueryLocalDto(
-            id = 1,
-            query = "query",
-            timestamp = 1234567890L
-        )
-        val expectedSearchHistory = SearchHistory(
-            id = 1,
-            query = "query",
-            timestamp = Instant.fromEpochMilliseconds(1234567890L)
-                .toLocalDateTime(TimeZone.currentSystemDefault())
-        )
-        assertEquals(expectedSearchHistory, queryLocalDto.toEntity())
-    }
 
     @Test
     fun `toDto uses current timestamp by default`() {
@@ -87,6 +67,24 @@ class MapRecentViewedKtTest {
         assertEquals(true, result.isSaved)
         assertEquals("MOVIE", result.mediaType)
         assertTrue(TimeUtils.getCurrentTimeStamp() - result.timestamp < 1000)
+    }
+    private fun createRecentViewedMedia(): RecentViewedMedia {
+        return RecentViewedMedia(
+            id = 1,
+            posterImageUrl = "imageUrl",
+            isSaved = true,
+            mediaType = MediaType.MOVIE,
+        )
+    }
+
+    private fun createRecentViewedLocalDto(timestamp: Long = 1234567890L): RecentViewedLocalDto {
+        return RecentViewedLocalDto(
+            id = 1,
+            imageUrl = "imageUrl",
+            isSaved = true,
+            mediaType = MediaType.MOVIE.name,
+            timestamp = timestamp
+        )
     }
 
 }
