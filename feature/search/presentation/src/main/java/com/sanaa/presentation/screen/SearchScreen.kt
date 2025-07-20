@@ -47,7 +47,6 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import search.usecase.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
@@ -61,11 +60,6 @@ fun SearchScreen(
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
-    LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters: MediaFilters? ->
-            searchViewModel.onFilterApplied(filters)
-        }
-    }
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -83,8 +77,6 @@ fun SearchScreen(
             }
         }
     }
-
-
 
     SetNavigationBarColor(Theme.colors.surface)
 
@@ -178,7 +170,14 @@ fun SearchScreenContent(
     }
 
     if (uiState.showBottomSheet) {
-        FilterBottomSheet(dismissSheet, sheetState, filterUiState, filterListener)
+        FilterBottomSheet(
+            dismissSheet,
+            sheetState,
+            filterUiState,
+            filterListener,
+            onApplyFilters = { filters ->
+                searchListener.onFilterApplied(filters)
+            })
     }
 }
 

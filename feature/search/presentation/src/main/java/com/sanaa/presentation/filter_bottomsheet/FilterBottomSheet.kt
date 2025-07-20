@@ -31,6 +31,8 @@ import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
+import entity.Genre
+import search.usecase.search_param.MediaFilters
 
 
 @Composable
@@ -39,7 +41,8 @@ fun FilterBottomSheet(
     dismissSheet: () -> Unit,
     sheetState: SheetState,
     filterUiState: FilterUiState,
-    filterListener: FilterBottomSheetInteractionsListener
+    filterListener: FilterBottomSheetInteractionsListener,
+    onApplyFilters: (MediaFilters?) -> Unit
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
 
@@ -57,6 +60,7 @@ fun FilterBottomSheet(
             listener = filterListener,
             onDismissRequest = dismissSheet,
             isSliderDragging = isSliderDragging,
+            onApplyFilters = onApplyFilters,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
     }
@@ -68,6 +72,7 @@ fun FilterBottomSheetContent(
     listener: FilterBottomSheetInteractionsListener,
     onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
+    onApplyFilters: (MediaFilters?) -> Unit,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
     Column(
@@ -114,12 +119,28 @@ fun FilterBottomSheetContent(
         }
         FilterActions(
             onApplyClicked = {
-                listener.onApplyClicked()
+                val mediaFilters = if (uiState.isDefaultState) {
+                    null
+                } else {
+                    MediaFilters(
+                        startYear = uiState.yearRange.start.toInt(),
+                        endYear = uiState.yearRange.endInclusive.toInt(),
+                        genres = uiState.selectedGenres.toList().mapNotNull { genreName ->
+                            Genre.entries.find {
+                                it.name.equals(genreName, ignoreCase = true)
+                            }
+                        },
+                        imdbRating = uiState.imdbRating.toFloat()
+                    )
+                }
+                onApplyFilters(mediaFilters)
                 onDismissRequest()
             },
             onClearClicked = listener::onClearFilters
         )
     }
+
+
 }
 
 
