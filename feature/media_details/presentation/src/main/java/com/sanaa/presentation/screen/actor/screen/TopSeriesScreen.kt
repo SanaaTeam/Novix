@@ -48,9 +48,9 @@ import org.koin.core.parameter.parametersOf
 fun TopSeriesScreen(
     actorId: Int,
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) }
+    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) },
 
-) {
+    ) {
     BackHandler(onBack = navigateBack)
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -118,7 +118,10 @@ private fun TopSeriesContent(
                                 12.dp
                             )
                         ) {
-                            items(state.topTvSeries) { series ->
+                            items(
+                                state.topTvSeries,
+                                key = { item -> item.id }
+                            ) { series ->
                                 MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(

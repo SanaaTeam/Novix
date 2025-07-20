@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test
 
 class GenreMapperKtTest{
     @Test
-    fun `All genres map to correct ID and back`() {
+    fun `should map all genres to correct ID and back`() {
         val genreToIdMap = mapOf(
             Genre.ACTION to 28,
             Genre.ADVENTURE to 12,
@@ -46,7 +46,7 @@ class GenreMapperKtTest{
         }
     }
     @Test
-    fun `Invalid ID returns null genre`() {
+    fun `should return null when genre ID is invalid`() {
         val invalidIds = listOf(-1, 0, 999, 1234)
         for (id in invalidIds) {
             val genre = id.toGenre()
