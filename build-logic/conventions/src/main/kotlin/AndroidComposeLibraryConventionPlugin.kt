@@ -28,11 +28,16 @@ class AndroidComposeLibraryConventionPlugin : Plugin<Project> {
 
             defaultConfig {
                 minSdk = libs.findVersion("minSdk").get().toString().toInt()
+                testOptions.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
                 testInstrumentationRunner = testRunner
                 consumerProguardFiles("consumer-rules.pro")
             }
 
             buildTypes {
+                getByName("debug").apply {
+                    isMinifyEnabled = false
+                    isShrinkResources = false
+                }
                 getByName("release").apply {
                     isMinifyEnabled = false
                     proguardFiles(

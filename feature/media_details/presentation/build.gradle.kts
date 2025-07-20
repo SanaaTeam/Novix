@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.presentation"
+}
+
 dependencies {
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
@@ -46,10 +50,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 }
 
-
-tasks.withType<Test> {
-    useJUnitPlatform()
-}
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()

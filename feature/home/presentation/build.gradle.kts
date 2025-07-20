@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.presentation"
+}
+
 dependencies {
 
     implementation(libs.androidx.ui.compose.tooling.preview)
