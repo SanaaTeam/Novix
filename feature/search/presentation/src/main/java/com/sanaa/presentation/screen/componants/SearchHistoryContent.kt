@@ -1,10 +1,10 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,12 +26,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.TextButton
-import com.sanaa.designsystem.design_system.component.cards.MovieSeriesPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
+import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
@@ -44,131 +45,158 @@ fun SearchHistoryContent(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        AnimatedVisibility(
-            recentSearches.isEmpty() && recentViewed.isEmpty(), enter = fadeIn(), exit = fadeOut()
+        AnimatedContent(
+            recentSearches.isEmpty() && recentViewed.isEmpty(),
+            transitionSpec = { fadeIn() togetherWith fadeOut() }
         ) {
-            Box(
-                modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-            ) {
-                EmptySearchState(
-                    icon = painterResource(id = R.drawable.empty_search),
-                    text = stringResource(id = R.string.empty_search_message)
+            when (it) {
+                true -> EmptyState()
+                false -> ContentState(
+                    recentViewed,
+                    interactionsListener,
+                    recentSearches,
                 )
             }
         }
-        val isDarkTheme = isSystemInDarkTheme()
-        val placeholderResId = if (isDarkTheme) {
-            com.sanaa.presentation.R.drawable.movie_placeholder_dark
-        } else {
-            com.sanaa.presentation.R.drawable.movie_placeholder_light
-        }
-        AnimatedVisibility(
-            recentSearches.isNotEmpty() || recentViewed.isNotEmpty(),
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            LazyColumn(
-                modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
-            ) {
-                if (recentViewed.isNotEmpty()) {
-                    item {
-                        SectionHeader(
-                            title = stringResource(R.string.recent_viewed),
-                            actionText = stringResource(R.string.clear_all),
-                            onActionClick = interactionsListener::onClearRecentViewClicked
-                        )
-                    }
+    }
+}
 
-                    item {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 24.dp
-                            )
-                        ) {
-                            itemsIndexed(recentViewed) { _, item ->
-                                MovieSeriesPosterCard(
-                                    modifier = Modifier
-                                        .width(158.dp)
-                                        .height(210.dp),
-                                    boastImage = {
-                                        RemoteBlurredHaramImageViewer(
-                                            imageUrl = item.imageUrl,
-                                            modifier = Modifier.fillMaxWidth(),
-                                            blurRadius = 150,
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
-                                            placeholder = painterResource(placeholderResId),
-                                            error = painterResource(placeholderResId),
+@Composable
+private fun EmptyState() {
+    Box(
+        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
+    ) {
+        EmptySearchState(
+            icon = painterResource(id = com.sanaa.presentation.R.drawable.icon_search),
+            text = stringResource(id = R.string.empty_search_message)
+        )
+    }
+}
 
-                                            contentDescription = null,
-                                        ) {
-                                            OnBlurContent(
-                                                hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
-                                                textStyle = Theme.textStyle.body.small.copy(
-                                                    color = Color(0x99FFFFFF)
-                                                ),
-                                                iconSize = 24.dp,
-                                                icon = painterResource(R.drawable.icon_eye_slash),
-                                            )
-                                        }
-                                    },
-                                    topLeftContent = {
-                                        SaveIconChip(
-                                            onClick = interactionsListener::onSaveIconClicked
-                                        )
-                                    },
-                                )
+@Composable
+private fun ContentState(
+    recentViewed: List<RecentViewedUiModel>,
+    interactionsListener: SearchScreenInteractionsListener,
+    recentSearches: List<RecentSearchUiModel>,
+) {
+    LazyColumn(
+        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
+    ) {
+        if (recentViewed.isNotEmpty()) {
+            item {
+                SectionHeader(
+                    title = stringResource(R.string.recent_viewed),
+                    actionText = stringResource(R.string.clear_all),
+                    onActionClick = interactionsListener::onClearRecentViewClicked
+                )
+            }
+
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp, end = 16.dp, bottom = 24.dp
+                    )
+                ) {
+                    itemsIndexed(recentViewed) { _, item ->
+                        MediaPoster(
+                            item,
+                            onMediaClicked = {
+                                interactionsListener.onRecentViewedMediaClicked(item)
                             }
-                        }
+                        )
                     }
                 }
+            }
+        }
 
-                if (recentSearches.isNotEmpty()) {
-                    item {
-                        SectionHeader(
-                            title = stringResource(R.string.recent_search),
-                            actionText = stringResource(R.string.clear_all),
-                            onActionClick = interactionsListener::onClearRecentSearchClicked,
-                        )
-                    }
+        if (recentSearches.isNotEmpty()) {
+            item {
+                SectionHeader(
+                    title = stringResource(R.string.recent_search),
+                    actionText = stringResource(R.string.clear_all),
+                    onActionClick = interactionsListener::onClearRecentSearchClicked,
+                )
+            }
 
-                    itemsIndexed(
-                        recentSearches, key = { _, item -> item.id }) { index, item ->
-                        RecentSearchItem(
-                            text = item.title,
-                            onDeleteClicked = {
-                                interactionsListener.onDeleteRecentSearchItem(item.id)
-                            },
-                            onRecentSearchItemClicked = {
-                                interactionsListener.onRecentSearchItemClicked(item.title)
-                            },
-                            modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
-                        )
-                        if (index != recentSearches.lastIndex) {
-                            Box(
-                                modifier = Modifier
-                                    .animateItem(
-                                        fadeInSpec = null,
-                                        fadeOutSpec = null
-                                    )
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp)
-                                    .height(1.dp)
-                                    .background(color = Theme.colors.stroke)
-                            )
-                        }
-                    }
+            itemsIndexed(
+                recentSearches, key = { _, item -> item.id }) { index, item ->
+                RecentSearchItem(
+                    text = item.title,
+                    onDeleteClicked = {
+                        interactionsListener.onDeleteRecentSearchItem(item.id)
+                    },
+                    onRecentSearchItemClicked = {
+                        interactionsListener.onRecentSearchItemClicked(item.title)
+                    },
+                    modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
+                )
+                if (index != recentSearches.lastIndex) {
+                    Divider()
                 }
             }
         }
     }
 }
 
+@Composable
+private fun MediaPoster(
+    item: RecentViewedUiModel,
+    onMediaClicked: () -> Unit = {},
+) {
+
+    MediaPosterCard(
+        onCardClick = onMediaClicked,
+        modifier = Modifier
+            .width(158.dp)
+            .height(210.dp),
+        boastImage = {
+            RemoteBlurredHaramImageViewer(
+                imageUrl = item.imageUrl,
+                modifier = Modifier.fillMaxWidth(),
+                blurRadius = 150,
+                haramThreshold = 0.2f,
+                nonHaramThreshold = 0.7f,
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                contentDescription = null,
+            ) {
+                OnBlurContent(
+                    hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                    textStyle = Theme.textStyle.body.small.copy(
+                        color = Color(0x99FFFFFF)
+                    ),
+                    iconSize = 24.dp,
+                    icon = painterResource(R.drawable.icon_eye_slash),
+                )
+            }
+        },
+        topLeftContent = {
+            SaveIconChip(
+                onClick = {}
+            )
+        },
+    )
+}
+
+@Composable
+private fun Divider() {
+    Box(
+        modifier = Modifier.Companion
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(1.dp)
+            .background(color = Theme.colors.stroke)
+    )
+}
 
 @Composable
 fun SectionHeader(
-    title: String, actionText: String, onActionClick: () -> Unit, modifier: Modifier = Modifier
+    title: String, actionText: String, onActionClick: () -> Unit, modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -182,7 +210,7 @@ fun SectionHeader(
             color = Theme.colors.body,
             modifier = Modifier.weight(1f)
         )
-        TextButton(
+        NovixTextButton(
             text = actionText, onClick = onActionClick, isLoading = false, isEnabled = true
         )
     }

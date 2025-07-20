@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+kover {
+    disable()
+}
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)

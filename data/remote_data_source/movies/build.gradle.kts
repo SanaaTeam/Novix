@@ -15,6 +15,7 @@ android {
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
         buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3\"")
         minSdk = libs.versions.minSdk.get().toInt()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -22,6 +23,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -43,7 +48,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
 
     implementation(projects.data.repositories.movies)
     implementation(libs.bundles.ktor)

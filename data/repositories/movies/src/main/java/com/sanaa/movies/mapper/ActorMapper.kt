@@ -9,7 +9,7 @@ fun ActorDto.toDomain(): Actor {
     return Actor(
         id = id,
         name = name ?: "Unknown",
-        imageUrl = profileImagePath ?: "",
+        imageUrl = getProfileImageUrl(profileImagePath),
         gender = apiGenderMapping(gender),
         character = character,
         biography = biography ?: "",
@@ -27,7 +27,7 @@ fun CastDto.Cast.toDomain(): Actor {
     return Actor(
         id = id,
         name = name ?: "Unknown",
-        imageUrl = profilePath ?: "",
+        imageUrl = getProfileImageUrl(profilePath),
         gender = apiGenderMapping(gender),
         character = character,
         biography = "",
@@ -48,4 +48,8 @@ fun apiGenderMapping(id: Int?): Gender {
     }
 }
 
-
+fun getProfileImageUrl(profilePath: String?): String {
+    return profilePath.let {
+        "https://image.tmdb.org/t/p/w185$it"
+    }
+}

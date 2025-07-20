@@ -25,9 +25,9 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getProfileImages(id: Int): List<String> {
+    override suspend fun getProfileImages(id: Int, count: Int): List<String> {
         return try {
-            remoteDataSource.getActorImages(id).profiles.take(3)
+            remoteDataSource.getActorImages(id).profiles.take(count)
                 .map { it.path.fullImageUrlOrEmpty() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
@@ -47,22 +47,25 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getActorTopMovies(id: Int): List<Movie> {
-        return try {
-            remoteDataSource.getActorTopMovies(id).cast.sortedByDescending { it.voteAverage ?: 0.0 }
-                .take(20).map { it.toDomain() }
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $id")
-        }
+    override suspend fun getActorTopMovies(id: Int): List<Movie> = try {
+        remoteDataSource
+            .getActorTopMovies(id)
+            .cast.orEmpty()
+            .sortedByDescending { it.voteAverage ?: 0.0 }
+            .take(20)
+            .map { it.toDomain() }
+    } catch (_: UnknownHostException) {
+        throw NoNetworkException()
+    } catch (e: Exception) {
+        throw RetrievingDataFailureException("Failed to retrieve top movies for actor ID: $id")
     }
+
 
     override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
         return try {
             remoteDataSource.getActorTopTvSeries(id).cast.sortedByDescending {
-                    it.voteAverage ?: 0.0
-                }.take(20).map { it.toDomain() }
+                it.voteAverage ?: 0.0
+            }.take(20).map { it.toDomain() }
         } catch (_: UnknownHostException) {
             throw NoNetworkException()
         } catch (e: Exception) {

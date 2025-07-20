@@ -15,7 +15,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
@@ -32,8 +31,8 @@ import com.skydoves.cloudy.cloudy
  *  represents. This should always be provided unless this image is used for decorative purposes,
  *  and does not represent a meaningful action that a user can take.
  * @param modifier Modifier used to adjust the layout algorithm or draw decoration content.
- * @param placeholder A [Painter] that is displayed while the image is loading.
- * @param error A [Painter] that is displayed when the image request is unsuccessful.
+ * @param placeholderContent A [Composable] that is displayed while the image is loading.
+ * @param errorContent A [Composable] that is displayed when the image request is unsuccessful.
  * @param onSuccess Called when the image request completes successfully.
  * @param onError Called when the image request completes unsuccessfully.
  * @param blurRadius Radius of the blur along both the x and y axis.
@@ -50,8 +49,8 @@ fun RemoteBlurredHaramImageViewer(
     modifier: Modifier = Modifier,
     blurRadius: Int = 20,
     isBlurEnabled: Boolean = true,
-    placeholder: Painter? = null,
-    error: Painter? = placeholder,
+    placeholderContent: @Composable () -> Unit = {},
+    errorContent: @Composable () -> Unit = {},
     onSuccess: (() -> Unit)? = null,
     onError: (() -> Unit)? = null,
     @FloatRange(from = 0.0, to = 1.0) haramThreshold: Float = 0.5f,
@@ -61,7 +60,7 @@ fun RemoteBlurredHaramImageViewer(
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var bitmapToDisplay by rememberSaveable { mutableStateOf<Bitmap?>(null) }
+    var bitmapToDisplay by remember { mutableStateOf<Bitmap?>(null) }
     var isHaram by rememberSaveable { mutableStateOf(isBlurEnabled) }
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
 
@@ -76,7 +75,9 @@ fun RemoteBlurredHaramImageViewer(
         result.onSuccess { success ->
             val bitmap = (success.drawable as? BitmapDrawable)?.bitmap
             if (bitmap != null) {
-                isHaram = classifier.isInappropriateImage(bitmap, nonHaramThreshold, haramThreshold)
+                if (isBlurEnabled)
+                    isHaram =
+                        classifier.isInappropriateImage(bitmap, nonHaramThreshold, haramThreshold)
                 bitmapToDisplay = bitmap
                 requestState = RequestState.SUCCESS
                 onSuccess?.invoke()
@@ -92,13 +93,7 @@ fun RemoteBlurredHaramImageViewer(
     Box(modifier = modifier) {
         when (requestState) {
             RequestState.LOADING -> {
-                if (placeholder != null)
-                    Image(
-                        painter = placeholder,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                placeholderContent()
             }
 
             RequestState.SUCCESS -> {
@@ -115,13 +110,7 @@ fun RemoteBlurredHaramImageViewer(
             }
 
             RequestState.ERROR -> {
-                if (error != null)
-                    Image(
-                        painter = error,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
+                errorContent()
             }
         }
 

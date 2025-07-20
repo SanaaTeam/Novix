@@ -8,8 +8,8 @@ class SearchActorsUseCase(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {
-    suspend fun execute(query: String): List<SearchActorOutput> {
+    suspend fun execute(query: String, page: Int): List<SearchActorOutput> {
         searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchActors(query)
+        return searchRepository.searchActors(query, page)
     }
 }

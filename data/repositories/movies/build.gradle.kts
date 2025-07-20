@@ -17,6 +17,10 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            isShrinkResources = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -36,7 +40,7 @@ android {
 
 dependencies {
     implementation(projects.domain.vod)
-    implementation(projects.envConfig)
+    implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.androidx.core.ktx)
 

@@ -64,7 +64,7 @@ fun BaseBottomSheet(
             Box(
                 modifier = Modifier
                     .wrapContentHeight()
-                    .padding(bottom = 24.dp, start = 16.dp, end = 16.dp),
+                    .padding(bottom = 24.dp),
             )
             {
                 content()

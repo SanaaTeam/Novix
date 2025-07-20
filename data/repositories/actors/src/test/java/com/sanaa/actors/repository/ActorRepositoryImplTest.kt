@@ -1,6 +1,6 @@
 package com.sanaa.actors.repository
 
-import com.example.env_config.service.LanguageProvider
+import com.sanaa.preferences.service.LanguageProvider
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.actors.dataSource.remote.dto.*
@@ -55,10 +55,10 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getProfileImages returns top 3 image URLs`() = runTest {
+    fun `getProfileImages returns top images URLs`() = runTest {
         coEvery { remoteDataSource.getActorImages(1) } returns sampleImagesDto
 
-        val result = repository.getProfileImages(1)
+        val result = repository.getProfileImages(1,3)
 
         assertThat(result.size).isEqualTo(3)
         assertThat(result[0]).startsWith("https://image.tmdb.org/t/p/w500")
@@ -139,7 +139,7 @@ class ActorRepositoryImplTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws Exception()
 
         assertThrows<RetrievingDataFailureException> {
-            repository.getProfileImages(1)
+            repository.getProfileImages(1,1)
         }
     }
 
@@ -165,7 +165,7 @@ class ActorRepositoryImplTest {
     fun `getProfileImages propagates NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
 
-        assertThrows<NoNetworkException> { repository.getProfileImages(42) }
+        assertThrows<NoNetworkException> { repository.getProfileImages(42,1) }
     }
 
     @Test

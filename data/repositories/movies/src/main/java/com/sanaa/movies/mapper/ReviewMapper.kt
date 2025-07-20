@@ -5,22 +5,27 @@ import entity.Review
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.JsonNull.content
 
-
-fun ReviewDto.Results.toDomain(): Review {
+fun ReviewDto.toEntity(): Review {
     return Review(
         id = id.toInt(),
-        authorName = authorDetails?.name ?: "Unknown",
-        userHandle = authorDetails?.username,
-        avatarUrl = authorDetails?.avatarPath?.let { avatarPath ->
-            when {
-                avatarPath.startsWith("/https") -> avatarPath.removePrefix("/")
-                avatarPath.startsWith("/") -> "https://image.tmdb.org/t/p/w500$avatarPath"
-                else -> avatarPath
-            }
-        },
-        rating = authorDetails?.rating,
-        content = content ?: "",
-        createdDate = createdAt?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1)
+        content = content,
+        authorName = authorDetails.name,
+        userHandle = authorDetails.username,
+        avatarUrl = buildAvatarUrl(authorDetails.avatarPath),
+        rating = authorDetails.rating,
+        createdDate = LocalDate.parse(createdAt.substring(0, 10))
     )
 }
 
+fun buildAvatarUrl(avatarPath: String?): String? {
+    if (avatarPath.isNullOrBlank()) return null
+    return when {
+        avatarPath.startsWith("/https") || avatarPath.startsWith("/http") ->
+            avatarPath.removePrefix("/")
+
+        avatarPath.startsWith("/") ->
+            "https://image.tmdb.org/t/p/w185$avatarPath"
+
+        else -> avatarPath
+    }
+}
