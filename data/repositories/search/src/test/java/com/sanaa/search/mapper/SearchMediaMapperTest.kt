@@ -80,6 +80,26 @@ class SearchMediaMapperTest {
         val result = dto.toSearchOutput()
         assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/interstellar.jpg")
     }
+    @Test
+    fun `given MovieLocalDto when toSearchOutput called should map id correctly`() {
+        val dto = createMovieLocalDto(id = 3)
+        val result = dto.toSearchOutput()
+        assertThat(result.id).isEqualTo(3)
+    }
+
+    @Test
+    fun `given MovieLocalDto when toSearchOutput called should map title correctly`() {
+        val dto = createMovieLocalDto(title = "Tenet")
+        val result = dto.toSearchOutput()
+        assertThat(result.title).isEqualTo("Tenet")
+    }
+
+    @Test
+    fun `given MovieLocalDto when toSearchOutput called should map posterImageUrl correctly`() {
+        val dto = createMovieLocalDto(imagePath = "/tenet.jpg")
+        val result = dto.toSearchOutput()
+        assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tenet.jpg")
+    }
 
 
     private fun createMovieSearchDto(
