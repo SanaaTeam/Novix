@@ -7,20 +7,21 @@ plugins {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+
     implementation(libs.ktor.serialization.kotlinx.json)
 
-    // Room dependencies
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.paging.common.android)
-    ksp(libs.androidx.room.compiler)
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
+    ksp(libs.androidx.room.compiler)
 
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.paging.common.android)
+    implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.junit.jupiter.api)
-    implementation(libs.kotlinx.datetime)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    androidTestImplementation(libs.androidx.junit)
+
     implementation(libs.slf4j.api)
 }
+

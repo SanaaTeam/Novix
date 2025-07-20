@@ -82,12 +82,10 @@ android {
 }
 
 dependencies {
-
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.search.api)
-
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)
@@ -97,18 +95,18 @@ dependencies {
     implementation(projects.data.remoteDataSource.search)
     implementation(projects.data.remoteDataSource.actors)
     implementation(projects.data.remoteDataSource.movies)
+    implementation(projects.data.localDataSource.search)
+    implementation(projects.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui.compose)
-    implementation(libs.androidx.ui.compose.graphics)
-    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.material3)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.compose.test.junit4)
@@ -134,10 +132,6 @@ dependencies {
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.room)
 
-    // Local Data Sources
-    implementation(projects.data.localDataSource.search)
-
-    // Language Provider
-    implementation(projects.preferences)
 }

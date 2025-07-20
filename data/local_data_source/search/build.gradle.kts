@@ -10,11 +10,9 @@ dependencies {
 
     // Room dependencies
     implementation(libs.bundles.room)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-
     testImplementation(libs.bundles.room.testing)
+
 
     // WorkManager for background cache cleanup
     implementation(libs.androidx.work.runtime.ktx)
@@ -22,5 +20,4 @@ dependencies {
     // Koin dependencies
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
-
 }

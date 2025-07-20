@@ -1,66 +1,20 @@
-package com.sanaa.series
+package com.sanaa.series.mapper
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.series.dto.ActorDto
-import com.sanaa.series.dto.AuthorDetailsDto
 import com.sanaa.series.dto.EpisodeDto
 import com.sanaa.series.dto.GenreDto
-import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesDto
 import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.TvSeriesVideoDto
-import com.sanaa.series.mapper.apiGenderMapping
-import com.sanaa.series.mapper.buildPosterUrl
-import com.sanaa.series.mapper.getFullImageUrl
-import com.sanaa.series.mapper.toDtoId
-import com.sanaa.series.mapper.toEntity
 import entity.Actor
 import entity.Genre
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class MapperTest {
-
-    @Test
-    fun `should map gender to MALE when gender id is 0`() {
-        val result = createActorDto(gender = 0).toEntity()
-        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-    }
-
-    @Test
-    fun `should map gender to FEMALE when gender id is 1`() {
-        val result = createActorDto(gender = 1).toEntity()
-        assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
-    }
-
-    @Test
-    fun `should default gender to MALE when gender id is unknown`() {
-        val result = createActorDto(gender = 99).toEntity()
-        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-    }
-
-    @Test
-    fun `should map imageUrl when profilePath is valid`() {
-        val result = createActorDto(profilePath = "/abc.jpg").toEntity()
-        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/abc.jpg")
-    }
-
-    @Test
-    fun `should return empty imageUrl when profilePath is null`() {
-        val result = createActorDto(profilePath = null).toEntity()
-        assertThat(result.imageUrl).isEmpty()
-    }
-
-    @Test
-    fun `should return empty imageUrl when profilePath is blank`() {
-        val result = createActorDto(profilePath = "").toEntity()
-        assertThat(result.imageUrl).isEmpty()
-    }
-
+class TvSeriesMapperTest {
 
     @Test
     fun `should map title when TvSeriesDto is mapped`() {
@@ -111,6 +65,17 @@ class MapperTest {
         assertTrue(result.genres.contains(Genre.COMEDY))
     }
 
+    @Test
+    fun `should return youtube url when site is YouTube`() {
+        val result = createVideoDto(site = "YouTube").toEntity()
+        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=key123")
+    }
+
+    @Test
+    fun `should return empty url when site is not YouTube`() {
+        val result = createVideoDto(site = "Vimeo").toEntity()
+        assertThat(result).isEqualTo("")
+    }
 
     //SeasonDto
     @Test
@@ -212,81 +177,14 @@ class MapperTest {
         assertEquals(LocalDate.parse("2023-04-20"), entity.releaseDate)
     }
 
-    // ReviewDto
-    @Test
-    fun `should return correct author when ReviewDto is mapped`() {
-        val result = createReviewDto(authorName = "Haider").toEntity()
-        assertThat(result.authorName).isEqualTo("Haider")
-    }
-
-
-    @Test
-    fun `should return correct id when ReviewDto is mapped`() {
-        val result = createReviewDto(id = "123").toEntity()
-        assertEquals(123, result.id)
-    }
-
-    @Test
-    fun `should return correct username when ReviewDto is mapped`() {
-        val result = createReviewDto(username = "haider123").toEntity()
-        assertEquals("haider123", result.userHandle)
-    }
-
-    @Test
-    fun `should return correct avatarPath when ReviewDto is mapped`() {
-        val result = createReviewDto(avatarPath = "/avatar.png").toEntity()
-        assertEquals("https://image.tmdb.org/t/p/w185/avatar.png", result.avatarUrl)
-    }
-
-    @Test
-    fun `should return correct rating when ReviewDto is mapped`() {
-        val result = createReviewDto(rating = 4.5f).toEntity()
-        assertEquals(4.5f, result.rating)
-    }
-
-    @Test
-    fun `should return correct createdAt when ReviewDto is mapped`() {
-        val result = createReviewDto(createdAt = "2024-07-15T12:34:56.000Z").toEntity()
-        assertEquals(LocalDate(2024, 7, 15), result.createdDate)
-    }
-
-    @Test
-    fun `should handles null avatarPath when avatarPath is null`() {
-        val result = createReviewDto(avatarPath = null).toEntity()
-        assertNull(result.avatarUrl)
-    }
-
-    @Test
-    fun `should handles null rating when rating is null`() {
-        val result = createReviewDto(rating = null).toEntity()
-        assertNull(result.rating)
-    }
-
     @Test
     fun `buildPosterUrl returns correct full URL`() {
         val url = buildPosterUrl("/abc.jpg")
         assertEquals("https://image.tmdb.org/t/p/w500/abc.jpg", url)
     }
 
-//    @Test
-//    fun `TvSeriesVideoDto toEntity returns correct YouTube url`() {
-//        val dtoYoutube = TvSeriesVideoDto("123", "key123", "Trailer", "YouTube", "Trailer")
-//        val dtoOther = TvSeriesVideoDto("456", "key456", "Trailer2", "Vimeo", "Trailer")
-//
-//        assertEquals("https://www.youtube.com/watch?v=key123", dtoYoutube.toEntity())
-//        assertEquals("", dtoOther.toEntity())
-//    }
-    @Test
-    fun `should return youtube url when site is YouTube`() {
-        val result = createVideoDto(site = "YouTube").toEntity()
-        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=key123")
-    }
 
-    @Test
-    fun `should return empty url when site is not YouTube`() {
-        val result = createVideoDto(site = "Vimeo").toEntity()
-        assertThat(result).isEqualTo("")
-    }
+
 
     @Test
     fun `TvSeriesImageDto toEntity returns correct image url`() {
@@ -425,6 +323,27 @@ class MapperTest {
         assertThat(dto.toEntity()).isEqualTo(Genre.DRAMA)
     }
 
+
+    private fun createTvSeriesDto(
+        id: Int = 1,
+        name: String = "My Series",
+        overview: String = "Overview text",
+        posterPath: String = "/poster.jpg",
+        voteAverage: Float = 8.5f,
+        firstAirDate: String = "2023-06-01",
+        genres: List<GenreDto> = listOf(GenreDto(28, "Action"), GenreDto(35, "Comedy")),
+        seasonsCount: Int = 3
+    ) = TvSeriesDto(
+        id = id,
+        name = name,
+        overview = overview,
+        posterPath = posterPath,
+        voteAverage = voteAverage,
+        firstAirDate = firstAirDate,
+        genres = genres,
+        seasonsCount = seasonsCount
+    )
+
     private fun createVideoDto(
         id: String = "123",
         key: String = "key123",
@@ -440,28 +359,6 @@ class MapperTest {
             type = type
         )
     }
-
-
-    private fun createReviewDto(
-        id: String = "123",
-        content: String = "Default review content",
-        authorName: String = "Default Author",
-        username: String = "defaultUser",
-        avatarPath: String? = "/default_avatar.png",
-        rating: Float? = 5.0f,
-        createdAt: String = "2024-07-15T12:34:56.000Z"
-    ) = ReviewDto(
-        id = id,
-        content = content,
-        authorDetails = AuthorDetailsDto(
-            name = authorName,
-            username = username,
-            avatarPath = avatarPath,
-            rating = rating
-        ),
-        createdAt = createdAt
-    )
-
 
     private fun createSeasonDto(
         id: Int = 10,
@@ -496,42 +393,4 @@ class MapperTest {
         airDate = airDate,
         runtime = runtime
     )
-
-    private fun createTvSeriesDto(
-        id: Int = 1,
-        name: String = "My Series",
-        overview: String = "Overview text",
-        posterPath: String = "/poster.jpg",
-        voteAverage: Float = 8.5f,
-        firstAirDate: String = "2023-06-01",
-        genres: List<GenreDto> = listOf(GenreDto(28, "Action"), GenreDto(35, "Comedy")),
-        seasonsCount: Int = 3
-    ) = TvSeriesDto(
-        id = id,
-        name = name,
-        overview = overview,
-        posterPath = posterPath,
-        voteAverage = voteAverage,
-        firstAirDate = firstAirDate,
-        genres = genres,
-        seasonsCount = seasonsCount
-    )
-
-    private fun createActorDto(
-        id: Int = 1,
-        name: String = "Default Name",
-        character: String = "Default Character",
-        profilePath: String? = "/default.jpg",
-        gender: Int = 0
-    ): ActorDto {
-        return ActorDto(
-            id = id,
-            name = name,
-            character = character,
-            profilePath = profilePath,
-            gender = gender
-        )
-    }
-
-
 }

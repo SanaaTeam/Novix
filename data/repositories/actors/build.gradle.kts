@@ -7,6 +7,7 @@ plugins {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+
     implementation(libs.ktor.serialization.kotlinx.json)
 
     // Coroutines

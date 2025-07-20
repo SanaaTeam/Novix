@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     implementation(libs.kotlinx.datetime)
+    testImplementation(libs.bundles.test)
+    testRuntimeOnly(libs.bundles.test.runtime)
 }
