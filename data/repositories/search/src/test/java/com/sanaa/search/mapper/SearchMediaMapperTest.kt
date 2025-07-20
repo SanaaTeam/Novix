@@ -151,6 +151,47 @@ class SearchMediaMapperTest {
         val result = dto.toLocalDto(language = "en")
         assertThat(result.imdbRating).isEqualTo(9.5f)
     }
+    @Test
+    fun `given TvShowSearchDto when toSearchOutput called should map id correctly`() {
+        val dto = createTvShowSearchDto(id = 5)
+        val result = dto.toSearchOutput()
+        assertThat(result.id).isEqualTo(5)
+    }
+
+    @Test
+    fun `given TvShowSearchDto when toSearchOutput called should map title correctly`() {
+        val dto = createTvShowSearchDto(name = "Loki")
+        val result = dto.toSearchOutput()
+        assertThat(result.title).isEqualTo("Loki")
+    }
+
+    @Test
+    fun `given TvShowSearchDto when toSearchOutput called should map posterImageUrl correctly`() {
+        val dto = createTvShowSearchDto(posterImagePath = "/loki.jpg")
+        val result = dto.toSearchOutput()
+        assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/loki.jpg")
+    }
+    @Test
+    fun `given TvSeriesLocalDto when toSearchOutput called should map id correctly`() {
+        val dto = createTvSeriesLocalDto(id = 6)
+        val result = dto.toSearchOutput()
+        assertThat(result.id).isEqualTo(6)
+    }
+
+    @Test
+    fun `given TvSeriesLocalDto when toSearchOutput called should map title correctly`() {
+        val dto = createTvSeriesLocalDto(title = "The Witcher")
+        val result = dto.toSearchOutput()
+        assertThat(result.title).isEqualTo("The Witcher")
+    }
+
+    @Test
+    fun `given TvSeriesLocalDto when toSearchOutput called should map posterImageUrl correctly`() {
+        val dto = createTvSeriesLocalDto(imagePath = "/witcher.jpg")
+        val result = dto.toSearchOutput()
+        assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/witcher.jpg")
+    }
+
 
     private fun createMovieSearchDto(
         id: Int = 1,
