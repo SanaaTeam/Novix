@@ -17,13 +17,18 @@ fun Project.configureAndroidLibrary(
         namespace = name.replace("-", ".")
 
         defaultConfig {
-            libs.findVersion("minSdk").get().toString().toInt()
+            minSdk = libs.findVersion("minSdk").get().toString().toInt()
+            testOptions.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
             testInstrumentationRunner = testRunner
             consumerProguardFiles("consumer-rules.pro")
         }
 
         buildTypes {
-            getByName("release") {
+            getByName("debug").apply {
+                isMinifyEnabled = false
+                isShrinkResources = false
+            }
+            getByName("release").apply {
                 isMinifyEnabled = false
                 proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),

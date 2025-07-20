@@ -2,8 +2,8 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.novix.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.novix.android.library)
 }
 
 val localProperties = Properties()
@@ -16,7 +16,6 @@ android {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
         buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
         buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3\"")
-        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildFeatures {
@@ -31,11 +30,4 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
-
-    implementation(libs.androidx.core.ktx)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

@@ -4,15 +4,9 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.androidx.core.ktx)
     implementation(projects.domain.vod)
+    implementation(libs.kotlinx.datetime)
     implementation(libs.ktor.serialization.kotlinx.json)
 
     testImplementation(libs.junit.jupiter.api)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

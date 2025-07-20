@@ -7,7 +7,6 @@ dependencies {
     implementation(projects.data.repositories.search)
     implementation(projects.preferences)
     implementation(projects.domain.vod)
-    implementation(libs.androidx.core.ktx)
 
     // Room dependencies
     implementation(libs.bundles.room)
@@ -24,8 +23,4 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
 
-}
-
-tasks.withType<Test>().configureEach {
-        useJUnitPlatform()
 }

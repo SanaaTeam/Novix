@@ -30,11 +30,4 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
-
-    implementation(libs.androidx.core.ktx)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

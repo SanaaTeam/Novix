@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.androidx.core.ktx)
 
     implementation(libs.kotlinx.datetime)
 
@@ -17,8 +16,4 @@ dependencies {
 
     testImplementation(libs.junit.jupiter.api)
 
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

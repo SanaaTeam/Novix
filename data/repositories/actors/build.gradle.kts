@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.androidx.core.ktx)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -17,8 +16,4 @@ dependencies {
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

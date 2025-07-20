@@ -2,8 +2,8 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.novix.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.novix.android.library)
 }
 
 val localProperties = Properties()
@@ -30,11 +30,4 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
-
-    implementation(libs.androidx.core.ktx)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

@@ -8,7 +8,6 @@ dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
     implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.androidx.core.ktx)
 
     // Room dependencies
     implementation(libs.androidx.room.runtime)
@@ -22,13 +21,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     testImplementation(libs.junit.jupiter.api)
-    implementation(libs.bundles.room)
-    testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)
     implementation(libs.slf4j.api)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }
