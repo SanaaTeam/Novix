@@ -34,7 +34,7 @@ class SearchActorMapperTest {
     fun `should map correct id when ActorSearchDto has valid name`() {
         val dto = createActorSearchDto(id = 2)
         val result = dto.toLocalDto(language = "en")
-        assertThat(result.id).isEqualTo(1)
+        assertThat(result.id).isEqualTo(2)
     }
 
     @Test
@@ -78,6 +78,26 @@ class SearchActorMapperTest {
         assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
     }
 
+
+    @Test
+    fun `should return empty imageUrl when path is null`() {
+        val result = getFullImageUrl(null)
+        assertThat(result).isEqualTo("")
+    }
+
+    @Test
+    fun `should return empty imageUrl when path is blank`() {
+        val result = getFullImageUrl(" ")
+        assertThat(result).isEqualTo("")
+    }
+
+    @Test
+    fun `should return full imageUrl when path is valid`() {
+        val result = getFullImageUrl("/somePath.jpg")
+        assertThat(result).isEqualTo("https://image.tmdb.org/t/p/w500/somePath.jpg")
+    }
+
+    // Helper functions
     private fun createActorLocalDto(
         id: Int = 1,
         name: String = "Default",
