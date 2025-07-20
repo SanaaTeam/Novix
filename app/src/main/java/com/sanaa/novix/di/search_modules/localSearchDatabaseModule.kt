@@ -1,7 +1,9 @@
-package com.sanaa.search.search_result.di
+package com.sanaa.novix.di.search_modules
 
 import androidx.room.Room
 import com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
+import com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
+import com.sanaa.search.search_history.LocalSearchHistoryDataSourceImpl
 import com.sanaa.search.search_history.dao.QueryDao
 import com.sanaa.search.search_history.dao.RecentViewedDao
 import com.sanaa.search.search_result.LocalCachedSearchDataSourceImpl
@@ -16,7 +18,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-val localDatabaseModule = module {
+val localSearchDatabaseModule = module {
     single {
         Room.databaseBuilder(
             androidContext(),
@@ -40,4 +42,6 @@ val localDatabaseModule = module {
     single<RecentViewedDao> { get<AppDatabase>().recentViewedDao() }
 
     singleOf(::LocalCachedSearchDataSourceImpl) bind LocalCacheSearchDataSource::class
+
+    singleOf(::LocalSearchHistoryDataSourceImpl) bind LocalSearchHistoryDataSource::class
 }

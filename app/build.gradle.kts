@@ -140,4 +140,6 @@ dependencies {
 
     // Language Provider
     implementation(projects.preferences)
+
+    implementation(libs.bundles.room)
 }
