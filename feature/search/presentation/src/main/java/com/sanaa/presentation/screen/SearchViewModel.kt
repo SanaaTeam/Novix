@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import search.usecase.ManageRecentViewedUseCase
 import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.ManageSearchHistoryUseCase
