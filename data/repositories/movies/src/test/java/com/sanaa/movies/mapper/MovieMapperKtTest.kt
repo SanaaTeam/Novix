@@ -200,20 +200,20 @@ class MovieMapperKtTest{
 
     @Test
     fun `should return full image url when path is valid`() {
-        val result = "/path.jpg".fullImageUrlOrEmpty()
+        val result = getFullImageUrl("/path.jpg")
         assertThat(result).isEqualTo("https://image.tmdb.org/t/p/w500/path.jpg")
     }
 
     @Test
     fun `should return empty string when path is null`() {
         val path: String? = null
-        val result = path.fullImageUrlOrEmpty()
+        val result = getFullImageUrl(path)
         assertThat(result).isEqualTo("")
     }
 
     @Test
     fun `should return empty string when path is blank`() {
-        val result = "   ".fullImageUrlOrEmpty()
+        val result = getFullImageUrl("   ")
         assertThat(result).isEqualTo("")
     }
 
