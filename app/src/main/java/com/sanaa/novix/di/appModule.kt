@@ -1,18 +1,12 @@
 package com.sanaa.novix.di
 
-import com.sanaa.preferences.di.preferencesModule
-import com.sanaa.actors.di.remoteDetailsDataSource
-import com.sanaa.movies.di.remoteMovieDetailsDataSource
-import com.sanaa.search.di.networkModule
-import com.sanaa.search.di.remoteDataSource
-import com.sanaa.search.search_result.di.localDatabaseModule
-import com.sanaa.series.di.remoteTvSeriesDataSourceModule
+import com.sanaa.novix.di.details_modules.detailsModule
+import com.sanaa.novix.di.search_modules.searchModule
 import org.koin.dsl.module
 
 val appModule = module {
     includes(
-        firebaseModule, loggingModule, repositoryModule, localDatabaseModule,
-        networkModule, remoteDataSource, remoteDetailsDataSource, remoteMovieDetailsDataSource,
-        remoteTvSeriesDataSourceModule,preferencesModule, domainModule, navigationModule
+        firebaseModule, loggingModule, navigationModule, networkModule, preferencesModule,
+        detailsModule, searchModule
     )
 }
