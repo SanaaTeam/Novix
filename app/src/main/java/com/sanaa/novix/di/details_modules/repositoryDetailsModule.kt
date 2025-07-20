@@ -1,6 +1,5 @@
 package com.sanaa.novix.di.details_modules
 
-import com.sanaa.actors.ActorRemoteDataSourceImpl
 import com.sanaa.actors.repository.ActorRepositoryImpl
 import com.sanaa.movies.repository.MovieRepositoryImpl
 import com.sanaa.series.TvSeriesRepositoryImpl
@@ -15,7 +14,4 @@ val repositoryDetailsModule = module {
     singleOf(::ActorRepositoryImpl) bind ActorRepository::class
     singleOf(::MovieRepositoryImpl) bind MovieRepository::class
     singleOf(::TvSeriesRepositoryImpl) bind TvSeriesRepository::class
-    singleOf(::ActorRemoteDataSourceImpl)
-    singleOf(::TvSeriesRepositoryImpl)
-    singleOf(::MovieRepositoryImpl)
 }

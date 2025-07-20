@@ -6,16 +6,12 @@ import com.sanaa.movies.MovieDetailsRemoteDataSourceImpl
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.series.RemoteTvSeriesDataSourceImpl
 import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val remoteDetailsDataSource = module {
-    single<ActorRemoteDataSource> {
-        ActorRemoteDataSourceImpl(get(), get())
-    }
-    single<MovieDetailsRemoteDataSource> {
-        MovieDetailsRemoteDataSourceImpl(get(), get())
-    }
-    single<RemoteTvSeriesDataSource> {
-        RemoteTvSeriesDataSourceImpl(get(), get())
-    }
+    singleOf(::ActorRemoteDataSourceImpl) bind ActorRemoteDataSource::class
+    singleOf(::MovieDetailsRemoteDataSourceImpl) bind MovieDetailsRemoteDataSource::class
+    singleOf(::RemoteTvSeriesDataSourceImpl) bind RemoteTvSeriesDataSource::class
 }

@@ -10,6 +10,5 @@ import search.repository.SearchRepository
 
 val repositorySearchModule = module {
     singleOf(::SearchRepositoryImpl) bind SearchRepository::class
-    singleOf(::SearchRepositoryImpl)
     singleOf(::SearchHistoryRepositoryImpl) bind SearchHistoryRepository::class
 }

@@ -5,6 +5,6 @@ import org.koin.dsl.module
 val searchModule = module {
     includes(
         domainSearchModule, repositorySearchModule, remoteSearchDataSource,
-         localDatabaseModule, viewModelSearchModule
+        localSearchDatabaseModule, viewModelSearchModule
     )
 }

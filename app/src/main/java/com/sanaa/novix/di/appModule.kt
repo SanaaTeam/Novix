@@ -6,7 +6,7 @@ import org.koin.dsl.module
 
 val appModule = module {
     includes(
-        firebaseModule, loggingModule, navigationModule, networkModule, preferencesModule,
+        firebaseModule, loggingModule, apiModule, networkModule, preferencesModule,
         detailsModule, searchModule
     )
 }
