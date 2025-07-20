@@ -1,15 +1,15 @@
-package com.example.preferences
+package com.sanna.preferences
 
 import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.GenreLocalizerImpl
-import com.sanaa.preferences.R
 import com.sanaa.preferences.service.GenreLocalizer
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
 import org.junit.Before
 import org.junit.Test
+import preferences.R
 
 class GenreLocalizerImplTest {
 

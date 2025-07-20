@@ -2,8 +2,8 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.novix.android.library)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.novix.android.library)
 }
 
 val localProperties = Properties()
@@ -25,9 +25,10 @@ android {
 
 dependencies {
     implementation(projects.preferences)
-
     implementation(projects.data.repositories.movies)
+
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
+    implementation(libs.ktor.client.mock)
 }

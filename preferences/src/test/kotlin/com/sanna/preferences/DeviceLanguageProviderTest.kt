@@ -1,4 +1,4 @@
-package com.example.preferences
+package com.sanna.preferences
 
 import com.sanaa.preferences.DeviceLanguageProvider
 import org.junit.Test

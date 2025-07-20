@@ -20,6 +20,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             add("implementation", libs.findLibrary("androidx.core.ktx").get())
             add("testImplementation", libs.findLibrary("junit").get())
             add("testImplementation", libs.findLibrary("junit.jupiter").get())
+            add("testImplementation", libs.findLibrary("junit.jupiter.api").get())
             add("testRuntimeOnly", libs.findLibrary("junit.jupiter.engine").get())
             add("androidTestImplementation", libs.findLibrary("androidx.junit").get())
             add("testImplementation", libs.findLibrary("mockk").get())

@@ -24,10 +24,10 @@ android {
 
 dependencies {
     implementation(projects.preferences)
-
     implementation(projects.data.repositories.actors)
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.bundles.coroutines)
+    implementation(libs.ktor.client.mock)
 }

@@ -136,7 +136,6 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 
 
 # Test
-kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
