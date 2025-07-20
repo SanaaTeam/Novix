@@ -38,7 +38,7 @@ class FilterViewModelTest {
         // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
-            val expected = FilterUiState(yearRange = range, isDefaultState = false)
+            val expected = FilterUiState(yearRange = range)
             Truth.assertThat(item.yearRange).isEqualTo(expected.yearRange)
         }
     }
@@ -54,10 +54,7 @@ class FilterViewModelTest {
         // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
-            val expected = FilterUiState(
-                selectedGenres = setOf(genre).toMutableSet(),
-                isDefaultState = false
-            )
+            val expected = FilterUiState(selectedGenres = setOf(genre).toMutableSet())
             Truth.assertThat(item.selectedGenres).isEqualTo(expected.selectedGenres)
         }
     }
@@ -73,11 +70,8 @@ class FilterViewModelTest {
 
         // Then
         filterViewModel.uiState.test {
-            val item = awaitItem()
-            val expected = FilterUiState(
-                selectedGenres = emptySet(),
-                isDefaultState = false
-            )
+            awaitItem()
+            val expected = FilterUiState(selectedGenres = emptySet())
             Truth.assertThat(expected.selectedGenres).isEqualTo(emptySet<String>())
         }
     }
@@ -93,10 +87,7 @@ class FilterViewModelTest {
         // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
-            val expected = FilterUiState(
-                imdbRating = rate,
-                isDefaultState = false
-            )
+            val expected = FilterUiState(imdbRating = rate)
             Truth.assertThat(expected.imdbRating).isEqualTo(item.imdbRating)
         }
     }
@@ -112,7 +103,6 @@ class FilterViewModelTest {
             val expected = FilterUiState(
                 allGenres = filterViewModel.uiState.value.allGenres,
                 isLoading = false,
-                isDefaultState = true,
             )
             Truth.assertThat(item).isEqualTo(expected)
         }
