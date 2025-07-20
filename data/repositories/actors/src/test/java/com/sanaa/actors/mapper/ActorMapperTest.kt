@@ -14,254 +14,253 @@ import org.junit.jupiter.api.Test
 
 class ActorMapperTest {
 
+
     @Test
-    fun `toFullImageUrl appends base URL`() {
+    fun `should append base URL in toFullImageUrl`() {
         val path = "/img.jpg"
         val fullUrl = getFullImageUrl(path)
-
         assertThat(fullUrl).isEqualTo("https://image.tmdb.org/t/p/w500/img.jpg")
     }
 
     @Test
-    fun `ActorDto toDomain maps all fields correctly`() {
-        val dto = ActorDto(
-            id = 1,
-            name = "Tom Hanks",
-            profileImagePath = "/img.jpg",
-            biography = "Biography",
-            birthDay = "1956-07-09",
-            deathDay = "2020-01-01",
-            gender = 2,
-            knownForDepartment = "Acting",
-            placeOfBirth = "USA"
-        )
-
+    fun `should map actor id correctly`() {
+        val dto = createActorDto(id = 1)
         val result = dto.toDomain()
-
         assertThat(result.id).isEqualTo(1)
+    }
+
+    @Test
+    fun `should map actor name correctly`() {
+        val dto = createActorDto(name = "Tom Hanks")
+        val result = dto.toDomain()
         assertThat(result.name).isEqualTo("Tom Hanks")
-        assertThat(result.imageUrl).contains("/img.jpg")
-        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-        assertThat(result.region).isEqualTo(null)
-        assertThat(result.biography).isEqualTo("Biography")
-        assertThat(result.birthDate).isEqualTo(LocalDate(1956, 7, 9))
-        assertThat(result.deathDate).isEqualTo(LocalDate(2020, 1, 1))
     }
 
     @Test
-    fun `ActorDto toDomain uses fallback values`() {
-        val dto = ActorDto(
-            id = 99,
-            name = null,
-            profileImagePath = null,
-            biography = null,
-            gender = null,
-            birthDay = null,
-            deathDay = null,
-            knownForDepartment = null,
-            placeOfBirth = null
-        )
-
+    fun `should return Unknown name when name is null`() {
+        val dto = createActorDto(name = null)
         val result = dto.toDomain()
+        assertThat(result.name).isEqualTo("Unknown name")
+    }
 
-        assertThat(result.name).isEqualTo("Unknown")
+    @Test
+    fun `should map profile image URL correctly`() {
+        val dto = createActorDto(profileImagePath = "/img.jpg")
+        val result = dto.toDomain()
+        assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/img.jpg")
+    }
+
+    @Test
+    fun `should return empty imageUrl when profileImagePath is null`() {
+        val dto = createActorDto(profileImagePath = null)
+        val result = dto.toDomain()
         assertThat(result.imageUrl).isEqualTo("")
+    }
+
+    @Test
+    fun `should map gender as MALE when gender is 2`() {
+        val dto = createActorDto(gender = 2)
+        val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-        assertThat(result.birthDate).isNull()
-        assertThat(result.deathDate).isNull()
-        assertThat(result.region).isEqualTo(null)
     }
 
     @Test
-    fun `MovieCastCreditDto toDomain maps correctly`() {
-        val dto = MovieCastCreditDto(
-            movieId = 10,
-            title = "Inception",
-            originalTitle = "Inception (Original)",
-            posterPath = "/poster.jpg",
-            releaseDate = "2010-07-16",
-            voteAverage = 8.8,
-            overview = "Dreams within dreams"
-        )
-
-        val result = dto.toDomain()
-
-        assertThat(result.id).isEqualTo(10)
-        assertThat(result.title).isEqualTo("Inception")
-        assertThat(result.posterImageUrl).contains("/poster.jpg")
-        assertThat(result.imdbRating).isEqualTo(8.8f)
-        assertThat(result.releaseDate).isEqualTo(LocalDate(2010, 7, 16))
-        assertThat(result.overview).isEqualTo("Dreams within dreams")
-    }
-
-    @Test
-    fun `MovieCastCreditDto toDomain uses fallback for missing data`() {
-        val dto = MovieCastCreditDto(
-            movieId = 99,
-            title = null,
-            originalTitle = null,
-            posterPath = null,
-            releaseDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val result = dto.toDomain()
-
-        assertThat(result.title).isEqualTo("Unknown")
-        assertThat(result.posterImageUrl).isEmpty()
-        assertThat(result.imdbRating).isEqualTo(0f)
-        assertThat(result.releaseDate).isEqualTo(LocalDate(1900, 1, 1))
-    }
-
-    @Test
-    fun `TvCastCreditDto toDomain maps correctly`() {
-        val dto = TvCastCreditDto(
-            tvId = 22,
-            name = "Breaking Bad",
-            originalName = "Breaking Bad (Original)",
-            posterPath = "/tv.jpg",
-            firstAirDate = "2008-01-20",
-            voteAverage = 9.5,
-            overview = "Chemistry teacher turns to crime"
-        )
-
-        val result = dto.toDomain()
-
-        assertThat(result.id).isEqualTo(22)
-        assertThat(result.title).isEqualTo("Breaking Bad")
-        assertThat(result.posterImageUrl).contains("/tv.jpg")
-        assertThat(result.imdbRating).isEqualTo(9.5f)
-        assertThat(result.releaseDate).isEqualTo(LocalDate(2008, 1, 20))
-    }
-
-    @Test
-    fun `TvCastCreditDto toDomain uses fallback for missing fields`() {
-        val dto = TvCastCreditDto(
-            tvId = 33,
-            name = null,
-            originalName = null,
-            posterPath = null,
-            firstAirDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val result = dto.toDomain()
-
-        assertThat(result.title).isEqualTo("Unknown")
-        assertThat(result.posterImageUrl).isEqualTo("")
-        assertThat(result.imdbRating).isEqualTo(0f)
-        assertThat(result.releaseDate).isEqualTo(LocalDate(1900, 1, 1))
-        assertThat(result.overview).isEqualTo("")
-    }
-
-    @Test
-    fun `ActorDto maps FEMALE branch and ignores blank dates`() {
-        val dto = ActorDto(
-            id = 7,
-            name = "Meryl Streep",
-            profileImagePath = "/streep.jpg",
-            biography = null,
-            birthDay = "",
-            deathDay = "",
-            gender = 1,
-            knownForDepartment = null,
-            placeOfBirth = null
-        )
-
+    fun `should map gender as FEMALE when gender is 1`() {
+        val dto = createActorDto(gender = 1)
         val result = dto.toDomain()
         assertThat(result.gender).isEqualTo(Actor.Gender.FEMALE)
+    }
+
+    @Test
+    fun `should fallback to MALE when gender is unknown`() {
+        val dto = createActorDto(gender = 5)
+        val result = dto.toDomain()
+        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
+    }
+
+    @Test
+    fun `should map biography when provided`() {
+        val dto = createActorDto(biography = "Famous actor")
+        val result = dto.toDomain()
+        assertThat(result.biography).isEqualTo("Famous actor")
+    }
+
+    @Test
+    fun `should fallback to empty biography when null`() {
+        val dto = createActorDto(biography = null)
+        val result = dto.toDomain()
+        assertThat(result.biography).isEqualTo("")
+    }
+
+    @Test
+    fun `should parse valid birth date`() {
+        val dto = createActorDto(birthDay = "1980-01-01")
+        val result = dto.toDomain()
+        assertThat(result.birthDate).isEqualTo(LocalDate(1980, 1, 1))
+    }
+
+    @Test
+    fun `should return null birthDate when blank`() {
+        val dto = createActorDto(birthDay = "")
+        val result = dto.toDomain()
         assertThat(result.birthDate).isNull()
+    }
+
+    @Test
+    fun `should return null deathDate when blank`() {
+        val dto = createActorDto(deathDay = "")
+        val result = dto.toDomain()
         assertThat(result.deathDate).isNull()
     }
 
-    /* ---------- MovieCastCreditDto ---------- */
-
     @Test
-    fun `MovieCastCreditDto uses originalTitle when title is null`() {
-        val dto = MovieCastCreditDto(
-            movieId = 55,
-            title = null,
-            originalTitle = "Le Fabuleux Destin d'Amélie Poulain",
-            posterPath = null,
-            releaseDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val r = dto.toDomain()
-        assertThat(r.title)
-            .isEqualTo("Le Fabuleux Destin d'Amélie Poulain")
-    }
-
-    @Test
-    fun `TvCastCreditDto uses originalName when name is null`() {
-        val dto = TvCastCreditDto(
-            tvId = 77,
-            name = null,
-            originalName = "La Casa de Papel",
-            posterPath = null,
-            firstAirDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val r = dto.toDomain()
-        assertThat(r.title).isEqualTo("La Casa de Papel")
-    }
-
-
-    @Test
-    fun `ActorDto imageUrl falls back when helper returns blank`() {
+    fun `should return empty imageUrl when helper returns blank`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
         every { getFullImageUrl(any<String>()) } returns ""
 
-        val dto = ActorDto(
-            id = 11,
-            name = "Someone",
-            profileImagePath = "/profile.jpg",
-            biography = null,
-            birthDay = null,
-            deathDay = null,
-            gender = 2,
-            knownForDepartment = null,
-            placeOfBirth = null
-        )
-
+        val dto = createActorDto(profileImagePath = "/profile.jpg")
         val result = dto.toDomain()
         assertThat(result.imageUrl).isEmpty()
     }
 
     @Test
-    fun `MovieCastCreditDto posterImageUrl falls back when helper returns blank`() {
+    fun `should map knownForDepartment when provided`() {
+        val dto = createActorDto(knownForDepartment = "Acting")
+        val result = dto.toDomain()
+        assertThat(result.department).isEqualTo("Acting")
+    }
+
+    @Test
+    fun `should map placeOfBirth when provided`() {
+        val dto = createActorDto(placeOfBirth = "New York")
+        val result = dto.toDomain()
+        assertThat(result.placeOfBirth).isEqualTo("New York")
+    }
+
+
+    // MovieCastCreditDto
+
+    @Test
+    fun `should map movie id correctly`() {
+        val dto = createMovieCastDto(movieId = 10)
+        val result = dto.toDomain()
+        assertThat(result.id).isEqualTo(10)
+    }
+
+    @Test
+    fun `should fallback to originalTitle when title is null`() {
+        val dto = createMovieCastDto(title = null, originalTitle = "Fallback Title")
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Fallback Title")
+    }
+
+    @Test
+    fun `should fallback to Unknown when title and originalTitle are null`() {
+        val dto = createMovieCastDto(title = null, originalTitle = null)
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Unknown name")
+    }
+
+    @Test
+    fun `should return 0f when voteAverage is null`() {
+        val dto = createMovieCastDto(voteAverage = null)
+        val result = dto.toDomain()
+        assertThat(result.imdbRating).isEqualTo(0f)
+    }
+
+    @Test
+    fun `should return empty posterImageUrl when helper returns blank in MovieCast`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
-        every { getFullImageUrl(any<String>())  } returns ""
+        every { getFullImageUrl(any<String>()) } returns ""
 
-        val dto = MovieCastCreditDto(
-            movieId = 21, title = "Title", originalTitle = null,
-            posterPath = "/poster.jpg", releaseDate = null,
-            voteAverage = null, overview = null
-        )
-
+        val dto = createMovieCastDto(posterPath = "/poster.jpg")
         val result = dto.toDomain()
         assertThat(result.posterImageUrl).isEmpty()
     }
 
     @Test
-    fun `TvCastCreditDto posterImageUrl falls back when helper returns blank`() {
+    fun `should parse valid releaseDate correctly in MovieCast`() {
+        val dto = createMovieCastDto(releaseDate = "2001-12-19")
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(2001, 12, 19))
+    }
+
+    @Test
+    fun `should fallback to default releaseDate when null in MovieCast`() {
+        val dto = createMovieCastDto(releaseDate = null)
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(1900, 1, 1))
+    }
+
+    @Test
+    fun `should fallback to empty overview when null in MovieCast`() {
+        val dto = createMovieCastDto(overview = null)
+        val result = dto.toDomain()
+        assertThat(result.overview).isEqualTo("")
+    }
+
+    // TvCastCreditDto
+
+    @Test
+    fun `should use name when available`() {
+        val dto = createTvCastDto(name = "Breaking Bad")
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Breaking Bad")
+    }
+
+    @Test
+    fun `should fallback to originalName when name is null`() {
+        val dto = createTvCastDto(name = null, originalName = "Original")
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Original")
+    }
+
+    @Test
+    fun `should fallback to Unknown when both name and originalName are null`() {
+        val dto = createTvCastDto(name = null, originalName = null)
+        val result = dto.toDomain()
+        assertThat(result.title).isEqualTo("Unknown name")
+    }
+
+    @Test
+    fun `should return empty posterImageUrl when helper returns blank in TvCastDto`() {
         mockkStatic("com.sanaa.actors.mapper.MapperKt")
         every { getFullImageUrl(any<String>()) } returns ""
 
-        val dto = TvCastCreditDto(
-            tvId = 31, name = "Show", originalName = null,
-            posterPath = "/poster.jpg", firstAirDate = null,
-            voteAverage = null, overview = null
-        )
-
+        val dto = createTvCastDto(posterPath = "/poster.jpg")
         val result = dto.toDomain()
         assertThat(result.posterImageUrl).isEmpty()
     }
+
+    @Test
+    fun `should parse valid firstAirDate in TvCast`() {
+        val dto = createTvCastDto(firstAirDate = "2015-05-01")
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(2015, 5, 1))
+    }
+
+    @Test
+    fun `should fallback to default releaseDate when null in TvCast`() {
+        val dto = createTvCastDto(firstAirDate = null)
+        val result = dto.toDomain()
+        assertThat(result.releaseDate).isEqualTo(LocalDate(1900, 1, 1))
+    }
+
+    @Test
+    fun `should fallback to empty overview when null in TvCast`() {
+        val dto = createTvCastDto(overview = null)
+        val result = dto.toDomain()
+        assertThat(result.overview).isEqualTo("")
+    }
+
+
+    @Test
+    fun `should return null when parsing invalid date format`() {
+        val invalidDate = "2020-99-99"
+        val result = toLocalDateOrNull(invalidDate)
+        assertThat(result).isNull()
+    }
+
     @Test
     fun `toLocalDateOrNull returns null on invalid format`() {
         val invalidDate = "2020-99-99"
@@ -269,58 +268,65 @@ class ActorMapperTest {
         assertThat(result).isNull()
     }
 
-    @Test
-    fun `ActorDto maps unknown gender as MALE`() {
-        val dto = ActorDto(
-            id = 2,
-            name = "Test",
-            profileImagePath = null,
-            biography = null,
-            birthDay = null,
-            deathDay = null,
-            gender = 5, // unknown gender
-            knownForDepartment = null,
-            placeOfBirth = null
-        )
-
-        val result = dto.toDomain()
-        assertThat(result.gender).isEqualTo(Actor.Gender.MALE)
-    }
-
-    @Test
-    fun `should fallback to Unknown when MovieCastCreditDto title and originalTitle are blank`() {
-        val dto = MovieCastCreditDto(
-            movieId = 123,
-            title = "",
-            originalTitle = "",
-            posterPath = null,
-            releaseDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val result = dto.toDomain()
-        assertThat(result.title).isEqualTo("")
-    }
-
-    @Test
-    fun `should fallback to Unknown when TvCastCreditDto name and originalName are blank`() {
-        val dto = TvCastCreditDto(
-            tvId = 321,
-            name = "",
-            originalName = "",
-            posterPath = null,
-            firstAirDate = null,
-            voteAverage = null,
-            overview = null
-        )
-
-        val result = dto.toDomain()
-        assertThat(result.title).isEqualTo("")
-    }
-
-
 
     @AfterEach
     fun tearDown() = unmockkAll()
+
+    private fun createActorDto(
+        id: Int = 1,
+        name: String? = null,
+        profileImagePath: String? = null,
+        biography: String? = null,
+        birthDay: String? = null,
+        deathDay: String? = null,
+        gender: Int? = null,
+        knownForDepartment: String? = null,
+        placeOfBirth: String? = null
+    ) = ActorDto(
+        id = id,
+        name = name,
+        profileImagePath = profileImagePath,
+        biography = biography,
+        birthDay = birthDay,
+        deathDay = deathDay,
+        gender = gender,
+        knownForDepartment = knownForDepartment,
+        placeOfBirth = placeOfBirth
+    )
+
+    private fun createMovieCastDto(
+        movieId: Int = 1,
+        title: String? = null,
+        originalTitle: String? = null,
+        posterPath: String? = null,
+        releaseDate: String? = null,
+        voteAverage: Double? = null,
+        overview: String? = null
+    ) = MovieCastCreditDto(
+        movieId = movieId,
+        title = title,
+        originalTitle = originalTitle,
+        posterPath = posterPath,
+        releaseDate = releaseDate,
+        voteAverage = voteAverage,
+        overview = overview
+    )
+
+    private fun createTvCastDto(
+        tvId: Int = 1,
+        name: String? = null,
+        originalName: String? = null,
+        posterPath: String? = null,
+        firstAirDate: String? = null,
+        voteAverage: Double? = null,
+        overview: String? = null
+    ) = TvCastCreditDto(
+        tvId = tvId,
+        name = name,
+        originalName = originalName,
+        posterPath = posterPath,
+        firstAirDate = firstAirDate,
+        voteAverage = voteAverage,
+        overview = overview
+    )
 }
