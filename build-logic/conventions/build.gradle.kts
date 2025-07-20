@@ -13,5 +13,10 @@ gradlePlugin {
             id = libs.plugins.novix.android.compose.get().pluginId
             implementationClass = "AndroidComposeLibraryConventionPlugin"
         }
+
+        register("kotlinLibraryConvention") {
+            id = libs.plugins.novix.kotlin.get().pluginId
+            implementationClass = "KotlinLibraryConventionPlugin"
+        }
     }
 }
