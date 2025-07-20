@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ fun ReviewsScreen(
     mediaType: String?,
     viewModel: ReviewViewModel = koinViewModel(parameters = {
         parametersOf(seriesId, MediaTypeUiModel.valueOf(mediaType.orEmpty()))
-    })
+    }),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -56,7 +57,7 @@ fun ReviewsScreen(
 
 @Composable
 fun ReviewsScreenContent(
-    state: ReviewScreenUiState, interactionListener: ReviewScreenInteractionListener
+    state: ReviewScreenUiState, interactionListener: ReviewScreenInteractionListener,
 ) {
     NovixScaffold(
         topBar = {
@@ -91,8 +92,11 @@ fun ReviewsScreenContent(
                             contentPadding = PaddingValues(vertical = 12.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            items(state.reviews.size, key = { it }) { review ->
-                                ReviewCard(review = state.reviews[review])
+                            items(
+                                state.reviews,
+                                key = { item -> item.id }
+                            ) { review ->
+                                ReviewCard(review = review)
                             }
                         }
                     } else {
