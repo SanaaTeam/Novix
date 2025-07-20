@@ -75,6 +75,82 @@ class MapperTest {
         assertTrue(result.genres.contains(Genre.COMEDY))
     }
 
+
+
+
+//SeasonDto
+@Test fun `SeasonDto toEntity maps id correctly`() {
+    val dto = createSeasonDto(id = 10)
+    val entity = dto.toEntity()
+    assertEquals(10, entity.id)
+}
+
+    @Test fun `SeasonDto toEntity maps title correctly`() {
+        val dto = createSeasonDto(name = "Season 1")
+        val entity = dto.toEntity()
+        assertEquals("Season 1", entity.title)
+    }
+
+    @Test fun `SeasonDto toEntity maps overview correctly`() {
+        val dto = createSeasonDto(overview = "Season overview")
+        val entity = dto.toEntity()
+        assertEquals("Season overview", entity.overview)
+    }
+
+    @Test fun `SeasonDto toEntity maps season number correctly`() {
+        val dto = createSeasonDto(seasonNumber = 1)
+        val entity = dto.toEntity()
+        assertEquals(1, entity.number)
+    }
+
+    @Test fun `SeasonDto toEntity maps episodes size correctly`() {
+        val dto = createSeasonDto(episodes = listOf(createEpisodeDto()))
+        val entity = dto.toEntity()
+        assertEquals(1, entity.episodes.size)
+    }
+
+    @Test fun `SeasonDto toEntity maps episode title correctly`() {
+        val dto = createSeasonDto(episodes = listOf(createEpisodeDto(name = "Ep 1")))
+        val entity = dto.toEntity()
+        assertEquals("Ep 1", entity.episodes[0].title)
+    }
+
+
+
+
+    private fun createSeasonDto(
+        id: Int = 10,
+        name: String = "Season 1",
+        overview: String = "Season overview",
+        seasonNumber: Int = 1,
+        episodes: List<EpisodeDto> = listOf(createEpisodeDto())
+    ) = SeasonDto(
+        id = id,
+        name = name,
+        overview = overview,
+        seasonNumber = seasonNumber,
+        episodes = episodes
+    )
+
+    private fun createEpisodeDto(
+        id: Int = 1,
+        name: String = "Ep 1",
+        overview: String = "Desc",
+        seasonNumber: Int = 1,
+        episodeNumber: Int = 1,
+        voteAverage: Float = 7.0f,
+        airDate: String = "2023-01-01",
+        runtime: Int = 60
+    ) = EpisodeDto(
+        id = id,
+        name = name,
+        overview = overview,
+        seasonNumber = seasonNumber,
+        episodeNumber = episodeNumber,
+        voteAverage = voteAverage,
+        airDate = airDate,
+        runtime = runtime
+    )
     private fun createTvSeriesDto(
         id: Int = 1,
         name: String = "My Series",
