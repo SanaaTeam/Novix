@@ -82,7 +82,6 @@ android {
 }
 
 dependencies {
-
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)
@@ -96,6 +95,8 @@ dependencies {
     implementation(projects.data.remoteDataSource.search)
     implementation(projects.data.remoteDataSource.actors)
     implementation(projects.data.remoteDataSource.movies)
+    implementation(projects.data.localDataSource.search)
+    implementation(projects.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -132,9 +133,4 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
 
-    // Local Data Sources
-    implementation(projects.data.localDataSource.search)
-
-    // Language Provider
-    implementation(projects.preferences)
 }
