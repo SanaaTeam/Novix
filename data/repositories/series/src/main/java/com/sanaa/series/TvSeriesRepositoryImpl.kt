@@ -38,7 +38,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         }
     }
 
-    override suspend fun getTvSeriesImages(id: Int, count: Int): List<String> {
+    override suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String> {
         return try {
             remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }.take(count)
         } catch (_: UnknownHostException) {
@@ -94,7 +94,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         }
     }
 
-    override suspend fun getEpisodeImages(
+    override suspend fun getEpisodeImageUrls(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int, count: Int
     ): List<String> {
         try {

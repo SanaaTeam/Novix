@@ -72,7 +72,7 @@ class ManageMovieDetailsUseCaseTest {
     fun `getMovieImages should return images when available`() = runTest {
         val movieId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
-        coEvery { movieRepository.getImages(movieId, 10) } returns expected
+        coEvery { movieRepository.getImageUrls(movieId, 10) } returns expected
 
         val result = manageMovieDetailsUseCase.getMovieImages(movieId)
 
@@ -83,7 +83,7 @@ class ManageMovieDetailsUseCaseTest {
     fun `getMovieImages should throw RetrievingDataFailureException when fails`() = runTest {
         val movieId = 100
         coEvery {
-            movieRepository.getImages(
+            movieRepository.getImageUrls(
                 movieId,
                 10
             )

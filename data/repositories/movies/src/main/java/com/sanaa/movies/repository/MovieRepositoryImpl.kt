@@ -22,7 +22,7 @@ class MovieRepositoryImpl(
             remote.fetchMovieDetails(id).toDomain()
         }
 
-    override suspend fun getImages(id: Int, count: Int): List<String> =
+    override suspend fun getImageUrls(id: Int, count: Int): List<String> =
         safeCall("Failed to fetch images") {
             remote.fetchImagesUrl(id).take(count).map { getFullImageUrl(it.filePath) }
         }

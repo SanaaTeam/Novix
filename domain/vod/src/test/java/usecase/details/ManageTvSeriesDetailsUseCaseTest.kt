@@ -103,7 +103,7 @@ class ManageTvSeriesDetailsUseCaseTest {
     fun `getTvSeriesImages should return images when available`() = runTest {
         val seriesId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
-        coEvery { tvSeriesRepository.getTvSeriesImages(seriesId, any()) } returns expected
+        coEvery { tvSeriesRepository.getTvSeriesImageUrls(seriesId, any()) } returns expected
         val result = manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         assertThat(result).isEqualTo(expected)
     }
@@ -111,7 +111,7 @@ class ManageTvSeriesDetailsUseCaseTest {
     @Test
     fun `getTvSeriesImages should return empty list when none available`() = runTest {
         val seriesId = 3
-        coEvery { tvSeriesRepository.getTvSeriesImages(seriesId, 5) } returns emptyList()
+        coEvery { tvSeriesRepository.getTvSeriesImageUrls(seriesId, 5) } returns emptyList()
         val result = manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         assertThat(result).isEmpty()
     }
@@ -120,7 +120,7 @@ class ManageTvSeriesDetailsUseCaseTest {
     fun `getTvSeriesImages should throw when repository fails`() = runTest {
         val seriesId = 3
         coEvery {
-            tvSeriesRepository.getTvSeriesImages(
+            tvSeriesRepository.getTvSeriesImageUrls(
                 seriesId,
                 any()
             )

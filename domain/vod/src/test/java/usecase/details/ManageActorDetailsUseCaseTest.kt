@@ -84,7 +84,7 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getGalleryImages should call repository and return list`() = runTest {
         val actorId = 7
-        coEvery { actorRepository.getGalleryImages(actorId) } returns dummyGallery
+        coEvery { actorRepository.getGalleryImageUrls(actorId) } returns dummyGallery
         val result = manageActorDetailsUseCase.getGalleryImages(actorId)
         assertThat(result).isEqualTo(dummyGallery)
     }
@@ -92,7 +92,7 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getGalleryImages should throw when repository fails`() = runTest {
         val actorId = 8
-        coEvery { actorRepository.getGalleryImages(actorId) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getGalleryImageUrls(actorId) } throws RetrievingDataFailureException(
             "Error"
         )
         assertThrows<RetrievingDataFailureException> {
@@ -103,7 +103,7 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getProfileImages should call repository and return list`() = runTest {
         val actorId = 9
-        coEvery { actorRepository.getProfileImages(actorId, 10) } returns dummyProfiles
+        coEvery { actorRepository.getProfileImageUrls(actorId, 10) } returns dummyProfiles
         val result = manageActorDetailsUseCase.getProfileImages(actorId)
         assertThat(result).isEqualTo(dummyProfiles)
     }
@@ -112,7 +112,7 @@ class ManageActorDetailsUseCaseTest {
     fun `getProfileImages should throw when repository fails`() = runTest {
         val actorId = 10
         coEvery {
-            actorRepository.getProfileImages(
+            actorRepository.getProfileImageUrls(
                 actorId,
                 10
             )

@@ -25,7 +25,7 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getProfileImages(id: Int, count: Int): List<String> {
+    override suspend fun getProfileImageUrls(id: Int, count: Int): List<String> {
         return try {
             remoteDataSource.getActorImages(id).profiles.take(count)
                 .map { getFullImageUrl(it.path) }
@@ -36,7 +36,7 @@ class ActorRepositoryImpl(
         }
     }
 
-    override suspend fun getGalleryImages(id: Int): List<String> {
+    override suspend fun getGalleryImageUrls(id: Int): List<String> {
         return try {
             remoteDataSource.getActorImages(id).profiles.drop(1)
                 .map { getFullImageUrl(it.path) }
