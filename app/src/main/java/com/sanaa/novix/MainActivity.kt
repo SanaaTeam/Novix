@@ -22,6 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         analytics = getKoin().get()
+
         Timber.d("MainActivity created")
 
         setContent {
