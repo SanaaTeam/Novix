@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.map
 import search.repository.SearchHistoryRepository
 import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.SearchHistory
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImpl(
@@ -80,10 +81,11 @@ class SearchHistoryRepositoryImpl(
         try {
             return block()
         } catch (_: UnknownHostException) {
+            Timber.w("Error while fetching search history")
             throw NoNetworkException()
         } catch (e: Exception) {
+            Timber.e(e, "Error fetching search history")
             throw exceptionProvider("$errorMessage: ${e.message}")
         }
     }
-
 }

@@ -12,6 +12,7 @@ import entity.Season
 import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSource) :
@@ -86,10 +87,11 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
         try {
             return block()
         } catch (_: UnknownHostException) {
+            Timber.w("Error while fetching tv series")
             throw NoNetworkException()
         } catch (e: Exception) {
+            Timber.e(e, "Error fetching tv series")
             throw RetrievingDataFailureException("$errorMessage: ${e.message}")
         }
     }
-
 }

@@ -17,6 +17,7 @@ import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
+import timber.log.Timber
 import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
@@ -126,9 +127,11 @@ class SearchRepositoryImpl(
         try {
             return callee()
         } catch (_: UnresolvedAddressException) {
+            Timber.w("No network while fetching search data")
             throw NoNetworkException()
         } catch (e: Exception) {
             e.printStackTrace()
+            Timber.e(e, "Error fetching search data")
             throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
         }
     }

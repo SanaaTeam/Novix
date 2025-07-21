@@ -14,5 +14,7 @@ dependencies {
 
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    implementation(libs.timber)
+
     implementation(libs.kotlinx.datetime)
 }

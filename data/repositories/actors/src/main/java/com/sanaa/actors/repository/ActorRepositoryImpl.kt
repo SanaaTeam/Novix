@@ -9,6 +9,7 @@ import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class ActorRepositoryImpl(
@@ -57,10 +58,12 @@ class ActorRepositoryImpl(
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()
-        } catch (_: UnknownHostException) {
+        } catch (ex: UnknownHostException) {
+            Timber.w(ex, "No network while fetching actor data")
             throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
+        } catch (ex: Exception) {
+            Timber.e(ex, "Error fetching actor data")
+            throw RetrievingDataFailureException("$errorMessage: ${ex.message}")
         }
     }
 }

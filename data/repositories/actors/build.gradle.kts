@@ -14,6 +14,8 @@ dependencies {
 
     implementation(libs.ktor.serialization.kotlinx.json)
 
+    implementation(libs.timber)
+
     implementation(libs.bundles.room)
     testImplementation(libs.bundles.room.testing)
     implementation(libs.kotlinx.datetime)

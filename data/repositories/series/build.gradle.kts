@@ -10,6 +10,8 @@ android {
 dependencies {
     implementation(projects.domain.vod)
 
+    implementation(libs.timber)
+
     implementation(libs.kotlinx.datetime)
     implementation(libs.ktor.serialization.kotlinx.json)
 }
