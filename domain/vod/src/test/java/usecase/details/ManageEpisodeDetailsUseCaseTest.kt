@@ -104,7 +104,7 @@ class ManageEpisodeDetailsUseCaseTest {
         val count = 5
         val expected = listOf("img1.jpg", "img2.jpg")
         coEvery {
-            tvSeriesRepository.getEpisodeImages(
+            tvSeriesRepository.getEpisodeImageUrls(
                 seriesId,
                 season,
                 episode,
@@ -124,7 +124,7 @@ class ManageEpisodeDetailsUseCaseTest {
         val episode = 1
         val count = 5
         coEvery {
-            tvSeriesRepository.getEpisodeImages(
+            tvSeriesRepository.getEpisodeImageUrls(
                 seriesId,
                 season,
                 episode,

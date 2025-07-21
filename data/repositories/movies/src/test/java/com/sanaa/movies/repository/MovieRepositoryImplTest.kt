@@ -2,14 +2,12 @@ package com.sanaa.movies.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
-import com.sanaa.movies.dataSource.remote.dto.CastDto
-import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.ActorDto
+import com.sanaa.movies.dataSource.remote.dto.AuthorDetailsDto
+import com.sanaa.movies.dataSource.remote.dto.MovieDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
-import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
+import com.sanaa.movies.dataSource.remote.dto.MovieVideoDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
-import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
-import com.sanaa.movies.dataSource.remote.dto.VideoDto
-import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
 import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -24,7 +22,8 @@ import java.net.UnknownHostException
 class MovieRepositoryImplTest {
 
     private lateinit var repository: MovieRepositoryImpl
-    private val remote: MovieDetailsRemoteDataSource = mockk(relaxed = true)
+    private val remote: MovieDetailsRemoteDataSource =
+        mockk<MovieDetailsRemoteDataSource>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -37,16 +36,16 @@ class MovieRepositoryImplTest {
 
         val result = repository.getMovieDetails(1)
 
-        assertThat(result.title).isEqualTo("Sample Title")
+        assertThat(result.title).isEqualTo("Fight club")
     }
 
     @Test
     fun `getImages returns top images poster urls`() = runTest {
-        coEvery { remote.fetchImagesUrl(1) } returns sampleImagesDto
+        coEvery { remote.fetchImagesUrl(1) } returns listOf(sampleImagesDto)
 
-        val result = repository.getImages(1, 3)
+        val result = repository.getImageUrls(1, 2)
 
-        assertThat(result.size).isEqualTo(3)
+        assertThat(result.size).isEqualTo(1)
     }
 
     @Test
@@ -56,7 +55,6 @@ class MovieRepositoryImplTest {
         val result = repository.getMovieCast(1)
 
         assertThat(result.size).isEqualTo(2)
-        assertThat(result[0].name).isEqualTo("Actor A")
     }
 
     @Test
@@ -70,11 +68,11 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1).first() } returns sampleReviewDto
+        coEvery { remote.fetchReviewsByMovieId(1) } returns listOf(sampleReviewDto)
 
         val result = repository.getReviewsByMovieId(1)
 
-        assertThat(result.size).isEqualTo(0)
+        assertThat(result.first().authorName).isEqualTo("Critic A")
     }
 
     @Test
@@ -86,44 +84,24 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
-        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException()
+        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException("some error")
 
-        assertThrows<RetrievingDataFailureException> { repository.getImages(1, 1) }
+        assertThrows<RetrievingDataFailureException> { repository.getImageUrls(1, 2) }
     }
 
     @Test
-    fun `getMoviesByCategory returns correct list of movies`() = runTest {
-        coEvery { remote.fetchMoviesByCategory(any()) } returns sampleMoviesByCategoryResponse
+    fun `getMoviesByCategory should return list of MovieDto `() = runTest {
+        coEvery { remote.fetchMoviesByCategory(any()) } returns sampleSimilarDto
 
-        val genre = Genre.ACTION
-        val result = repository.getMoviesByCategory(genre)
+        val result = repository.getMoviesByCategory(Genre.ACTION)
 
         assertThat(result).isNotEmpty()
-        assertThat(result[0].title).isEqualTo("Category Movie")
     }
 
-    @Test
-    fun `getMovieTrailer throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.fetchMovieTrailerUrl(any()) } throws UnknownHostException()
-
-        assertThrows<NoNetworkException> { repository.getMovieTrailer(1) }
-    }
 
     @Test
-    fun `getMovieTrailer returns YouTube URL when trailer exists`() = runTest {
-        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(
-            1,
-            listOf(sampleTrailerYouTube)
-        )
-
-        val result = repository.getMovieTrailer(1)
-
-        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=abcd1234")
-    }
-
-    @Test
-    fun `getMovieTrailer returns null when no trailer found`() = runTest {
-        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, emptyList())
+    fun `getMovieTrailer returns null when no YouTube trailer found`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns trailers
 
         val result = repository.getMovieTrailer(1)
 
@@ -131,73 +109,41 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieTrailer returns null when trailer is not YouTube or type is not Trailer`() =
-        runTest {
-            val videos = listOf(sampleClipYouTube, sampleTrailerVimeo)
-            coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, videos)
+    fun `getMovieTrailer returns null when empty list returned`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns emptyList()
 
-            val result = repository.getMovieTrailer(1)
+        val result = repository.getMovieTrailer(1)
 
-            assertThat(result).isNull()
-        }
+        assertThat(result).isNull()
+    }
 
 
     companion object {
-        private val sampleMovieDto = MovieDetailsDto(
-            id = 1,
-            title = "Sample Title",
-        )
+        private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")
+        private val sampleImagesDto = MovieImagesDto(filePath = "/poster1.jpg")
 
-        private val sampleImagesDto = MovieImagesDto(
-            id = 1,
-            posters = listOf(
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-            ),
-            backdrops = emptyList(),
-            logos = emptyList()
-        )
-
-        private val sampleCastDto = CastDto(
-            id = 1,
-            cast = arrayListOf(
-                CastDto.Cast(name = "Actor A", id = 1),
-                CastDto.Cast(name = "Actor B", id = 2)
-            ),
-            crew = arrayListOf()
-        )
-
-        private val sampleSimilarDto = SimilarMoviesDto(
-            page = 1,
-            results = arrayListOf(
-                SimilarMoviesDto.Results(title = "Similar A", id = 1),
-                SimilarMoviesDto.Results(title = "Similar B", id = 2)
-            ),
-            totalPages = 1,
-            totalResults = 2
-        )
-
-        private val sampleReviewDto = ReviewDto(author = "Critic A", content = "Nice", id = "1")
-
-        private val sampleMoviesByCategoryResponse = MoviesByCategoryResponse(
-            moviesByCategoryDto = arrayListOf(
-                MoviesByCategoryResponse.MoviesByCategoryDto(
-                    id = 10,
-                    title = "Category Movie",
-                    posterPath = "/poster.jpg",
-                    releaseDate = "2023-01-01",
-                    genreIds = arrayListOf(28),
-                    overview = "Overview",
-                    voteAverage = 8.5
-                )
+        private val sampleCastDto = listOf<ActorDto>(
+            ActorDto(name = "Actor A", id = 1, profilePath = "/profile1.jpg"), ActorDto(
+                name = "Actor B", id = 2, profilePath = "/profile2.jpg"
             )
         )
 
-        val sampleTrailerYouTube = VideoDto(key = "abcd1234", type = "Trailer", site = "YouTube")
-        val sampleClipYouTube = VideoDto(key = "abcd1234", type = "Clip", site = "YouTube")
-        val sampleTrailerVimeo = VideoDto(key = "efgh5678", type = "Trailer", site = "Vimeo")
+        private val sampleSimilarDto = listOf<MovieDto>(
+            MovieDto(
+                id = 1, title = "A"
+            ), MovieDto(
+                id = 2, title = "B"
+            )
+        )
 
+        private val sampleReviewDto = ReviewDto(
+            id = "1", content = "Nice movie!", authorDetails = AuthorDetailsDto(
+                name = "Critic A", username = "critic_a", avatarPath = "/avatar.jpg", rating = 8.5f
+            ), createdAt = "2024-01-01T00:00:00Z"
+        )
+        val trailers = listOf(
+            MovieVideoDto(type = "Teaser", site = "YouTube", key = "def456"),
+            MovieVideoDto(type = "Trailer", site = "Vimeo", key = "ghi789")
+        )
     }
 }

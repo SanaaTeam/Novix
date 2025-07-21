@@ -16,7 +16,7 @@ class ManageMovieDetailsUseCase(
         movieRepo.getMovieCast(id)
 
     suspend fun getMovieImages(id: Int): List<String> =
-        movieRepo.getImages(id, IMAGE_COUNT)
+        movieRepo.getImageUrls(id, IMAGE_COUNT)
 
     suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         movieRepo.getMoviesByCategory(category)

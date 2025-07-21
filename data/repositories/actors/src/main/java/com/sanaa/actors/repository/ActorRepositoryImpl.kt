@@ -20,14 +20,14 @@ class ActorRepositoryImpl(
             remoteDataSource.getActorDetails(id).toDomain()
         }
 
-    override suspend fun getProfileImages(id: Int, count: Int): List<String> =
+    override suspend fun getProfileImageUrls(id: Int, count: Int): List<String> =
         safeCall("Failed to retrieve profile images for actor ID: $id") {
             remoteDataSource.getActorImages(id).profiles
                 .take(count)
                 .map { getFullImageUrl(it.path) }
         }
 
-    override suspend fun getGalleryImages(id: Int): List<String> =
+    override suspend fun getGalleryImageUrls(id: Int): List<String> =
         safeCall("Failed to retrieve gallery images for actor ID: $id") {
             remoteDataSource.getActorImages(id).profiles
                 .drop(1)

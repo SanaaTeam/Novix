@@ -27,7 +27,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
             remoteDataSource.getTvSeriesReviews(id).map { it.toEntity() }
         }
 
-    override suspend fun getTvSeriesImages(id: Int, count: Int): List<String> =
+    override suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String> =
         safeCall("Images not found") {
             remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }.take(count)
         }
@@ -56,7 +56,7 @@ class TvSeriesRepositoryImpl(private val remoteDataSource: RemoteTvSeriesDataSou
             remoteDataSource.getEpisodeDetails(seriesId, seasonNumber, episodeNumber).toEntity()
         }
 
-    override suspend fun getEpisodeImages(
+    override suspend fun getEpisodeImageUrls(
         seriesId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
