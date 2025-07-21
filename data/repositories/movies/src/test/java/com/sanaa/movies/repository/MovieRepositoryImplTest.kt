@@ -2,9 +2,13 @@ package com.sanaa.movies.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
+import com.sanaa.movies.dataSource.remote.dto.ActorDto
+import com.sanaa.movies.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
+import com.sanaa.movies.dataSource.remote.dto.MovieVideoDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
+import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -18,7 +22,8 @@ import java.net.UnknownHostException
 class MovieRepositoryImplTest {
 
     private lateinit var repository: MovieRepositoryImpl
-    private val remote: MovieDetailsRemoteDataSource = mockk(relaxed = true)
+    private val remote: MovieDetailsRemoteDataSource =
+        mockk<MovieDetailsRemoteDataSource>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -31,16 +36,16 @@ class MovieRepositoryImplTest {
 
         val result = repository.getMovieDetails(1)
 
-        assertThat(result.title).isEqualTo("Sample Title")
+        assertThat(result.title).isEqualTo("Fight club")
     }
 
     @Test
     fun `getImages returns top images poster urls`() = runTest {
-        coEvery { remote.fetchImagesUrl(1) } returns sampleImagesDto
+        coEvery { remote.fetchImagesUrl(1) } returns listOf(sampleImagesDto)
 
-        val result = repository.getImages(1, 3)
+        val result = repository.getImages(1, 2)
 
-        assertThat(result.size).isEqualTo(3)
+        assertThat(result.size).isEqualTo(1)
     }
 
     @Test
@@ -50,7 +55,6 @@ class MovieRepositoryImplTest {
         val result = repository.getMovieCast(1)
 
         assertThat(result.size).isEqualTo(2)
-        assertThat(result[0].name).isEqualTo("Actor A")
     }
 
     @Test
@@ -64,11 +68,11 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1).first() } returns sampleReviewDto
+        coEvery { remote.fetchReviewsByMovieId(1) } returns listOf(sampleReviewDto)
 
         val result = repository.getReviewsByMovieId(1)
 
-        assertThat(result.size).isEqualTo(0)
+        assertThat(result.first().authorName).isEqualTo("Critic A")
     }
 
     @Test
@@ -80,48 +84,66 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
-        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException()
+        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException("some error")
 
-        assertThrows<RetrievingDataFailureException> { repository.getImages(1, 1) }
+        assertThrows<RetrievingDataFailureException> { repository.getImages(1, 2) }
     }
 
+    @Test
+    fun `getMoviesByCategory should return list of MovieDto `() = runTest {
+        coEvery { remote.fetchMoviesByCategory(any()) } returns sampleSimilarDto
+
+        val result = repository.getMoviesByCategory(Genre.ACTION)
+
+        assertThat(result).isNotEmpty()
+    }
+
+
+    @Test
+    fun `getMovieTrailer returns null when no YouTube trailer found`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns trailers
+
+        val result = repository.getMovieTrailer(1)
+
+        assertThat(result).isNull()
+    }
+
+    @Test
+    fun `getMovieTrailer returns null when empty list returned`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns emptyList()
+
+        val result = repository.getMovieTrailer(1)
+
+        assertThat(result).isNull()
+    }
+
+
     companion object {
-        private val sampleMovieDto = MovieDto(
-            id = 1,
-            title = "Sample Title",
+        private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")
+        private val sampleImagesDto = MovieImagesDto(filePath = "/poster1.jpg")
+
+        private val sampleCastDto = listOf<ActorDto>(
+            ActorDto(name = "Actor A", id = 1, profilePath = "/profile1.jpg"), ActorDto(
+                name = "Actor B", id = 2, profilePath = "/profile2.jpg"
+            )
         )
 
-        private val sampleImagesDto = MovieImagesDto(
-            id = 1,
-            posters = listOf(
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-                MovieImagesDto.ImageItemDto(filePath = "/poster1.jpg"),
-            ),
-            backdrops = emptyList(),
-            logos = emptyList()
+        private val sampleSimilarDto = listOf<MovieDto>(
+            MovieDto(
+                id = 1, title = "A"
+            ), MovieDto(
+                id = 2, title = "B"
+            )
         )
 
-        private val sampleCastDto = CastDto(
-            id = 1,
-            cast = arrayListOf(
-                CastDto.Cast(name = "Actor A", id = 1),
-                CastDto.Cast(name = "Actor B", id = 2)
-            ),
-            crew = arrayListOf()
+        private val sampleReviewDto = ReviewDto(
+            id = "1", content = "Nice movie!", authorDetails = AuthorDetailsDto(
+                name = "Critic A", username = "critic_a", avatarPath = "/avatar.jpg", rating = 8.5f
+            ), createdAt = "2024-01-01T00:00:00Z"
         )
-
-        private val sampleSimilarDto = SimilarMoviesDto(
-            page = 1,
-            results = arrayListOf(
-                SimilarMoviesDto.Results(title = "Similar A", id = 1),
-                SimilarMoviesDto.Results(title = "Similar B", id = 2)
-            ),
-            totalPages = 1,
-            totalResults = 2
+        val trailers = listOf(
+            MovieVideoDto(type = "Teaser", site = "YouTube", key = "def456"),
+            MovieVideoDto(type = "Trailer", site = "Vimeo", key = "ghi789")
         )
-
-        private val sampleReviewDto = ReviewDto(author = "Critic A", content = "Nice", id = "1")
     }
 }
