@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -31,7 +24,6 @@ import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
@@ -85,8 +77,6 @@ fun SearchScreen(
     }
 
 
-
-    SetNavigationBarColor(Theme.colors.surface)
 
     NovixTheme(isSystemInDarkTheme()) {
 
@@ -182,22 +172,3 @@ fun SearchScreenContent(
     }
 }
 
-
-@Composable
-fun SetNavigationBarColor(color: Color, useDarkIcons: Boolean = true) {
-    val context = LocalContext.current
-    val view = LocalView.current
-
-    // Make sure we're working with an Activity
-    if (context is Activity) {
-        val window = context.window
-        window.navigationBarColor = color.toArgb()
-
-        // Configure icon color (light/dark)
-        val insetsController = WindowInsetsControllerCompat(window, view)
-        insetsController.isAppearanceLightNavigationBars = useDarkIcons
-
-        // Optionally make nav bar visible if hidden
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-    }
-}
