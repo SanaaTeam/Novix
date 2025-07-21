@@ -60,7 +60,7 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.review.ReviewsScreen*",
     "com.sanaa.presentation.screen.series.components.**",
     "com.sanaa.presentation.screen.series.SeriesScreen*",
-    "com.sanaa.feature.media_details.api.*",
+    "feature.media_details.api**",
     "com.sanaa.presentation.cards.**"
 )
 allprojects {

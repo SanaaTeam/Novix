@@ -1,4 +1,4 @@
-package com.sanaa.series.data_source.remote
+package com.sanaa.series.dataSource.remote
 
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.EpisodeDto

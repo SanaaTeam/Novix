@@ -2,9 +2,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.novix.android.application)
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -12,34 +10,11 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kover)
 }
+
 val localProperties = Properties()
 localProperties.load(FileInputStream(rootProject.file("keys.properties")))
-
 android {
-
     namespace = libs.versions.namespace.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        val apiKey = localProperties["TMDB_API_KEY"].toString()
-        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
-        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
-        applicationId = libs.versions.applicationId.get()
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-        testInstrumentationRunner = libs.versions.testRunner.get()
-
-        val ciCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull()
-        val ciName = System.getenv("CI_VERSION_NAME")
-
-        versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
-        versionName = ciName ?: libs.versions.versionName.get()
-
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-        }
-
-    }
 
     lint {
         checkReleaseBuilds = false
@@ -56,45 +31,20 @@ android {
             manifestPlaceholders["crashlytics_debug"] = "true"
             manifestPlaceholders["analytics_debug"] = "true"
         }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
-
-    compileOptions {
-        val javaVer = JavaVersion.toVersion(libs.versions.javaVersion.get())
-        sourceCompatibility = javaVer
-        targetCompatibility = javaVer
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.javaVersion.get()
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        viewBinding = false
-        dataBinding = false
-        mlModelBinding = true
-        aidl = false
-        prefab = false
-        renderScript = false
-        shaders = false
+    defaultConfig {
+        val apiKey = localProperties["TMDB_API_KEY"].toString()
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
     }
 }
 
 dependencies {
 
     implementation(libs.retrofit)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
 
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)

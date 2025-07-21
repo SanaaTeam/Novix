@@ -1,4 +1,4 @@
-package com.sanaa.presentation.ui
+package com.sanaa.presentation.navigation
 
 import android.app.ActivityOptions
 import android.content.Context
@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.navigation.DetailsNavHost
 
 class MediaDetailsApiImpl : MediaDetailsApi {
     override fun launch(context: Context, startRoute: StartRoute, id: Int) {
