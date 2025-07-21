@@ -3,8 +3,4 @@
     <!-- Dark Theme Colors -->
     <color name="dark_background">#0D0608</color>
     <color name="dark_surface">#0D0608</color>
-
-    <!-- Light Theme Colors -->
-    <color name="light_background">#FCF9F5</color>
-    <color name="light_surface">#FCF9F5</color>
-</resources>
+</resources> 
