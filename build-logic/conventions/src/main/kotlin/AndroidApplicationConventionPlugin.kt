@@ -14,9 +14,9 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             rootProject.extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 
         pluginManager.apply {
-            apply("com.android.application")
-            apply("org.jetbrains.kotlin.android")
-            apply("org.jetbrains.kotlin.plugin.compose")
+            apply(libs.findPlugin("android.application").get().get().pluginId)
+            apply(libs.findPlugin("kotlin.android").get().get().pluginId)
+            apply(libs.findPlugin("kotlin.compose").get().get().pluginId)
         }
 
         val javaVersion =

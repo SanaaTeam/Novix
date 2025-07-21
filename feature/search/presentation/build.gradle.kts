@@ -3,8 +3,8 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
-android{
-    namespace= "com.sanaa.presentation"
+android {
+    namespace = "com.sanaa.presentation"
 }
 
 dependencies {
@@ -42,9 +42,4 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
-
-}
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
 }

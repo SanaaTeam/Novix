@@ -44,8 +44,3 @@ dependencies {
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 }
-
-
-tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
-}

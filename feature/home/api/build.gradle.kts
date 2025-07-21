@@ -13,5 +13,4 @@ dependencies {
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
-
 }
