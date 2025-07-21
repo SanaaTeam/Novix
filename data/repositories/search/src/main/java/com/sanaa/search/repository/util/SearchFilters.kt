@@ -88,14 +88,14 @@ private fun byRate(voteAverage: Float?, rating: Float): Boolean {
 private fun byGenres(genreIds: List<Int>?, ids: List<Int>): Boolean {
     return genreIds?.let { genreIds->
         ids.all { id -> id in genreIds }
-    } ?: false
+    } == true
 }
 
 private fun byGenres(genreIds: String?, ids: List<Int>): Boolean {
     val genreIds = genreIds?.split(", ")
         ?.mapNotNull { it.toIntOrNull() }
         ?.toSet() ?: emptySet()
-         return ids.all { it in genreIds }
+    return ids.all { it in genreIds }
 }
 
 fun <T, R> List<R>.filterNonNull(

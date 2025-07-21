@@ -7,6 +7,7 @@ import com.sanaa.search.dataSource.local.dto.RecentViewedLocalDto
 import com.sanaa.search.mapper.toEntity
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
+import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import search.usecase.search_param.MediaType
+import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImplTest {
     private lateinit var repository: SearchHistoryRepositoryImpl
@@ -193,6 +195,17 @@ class SearchHistoryRepositoryImplTest {
         // Then
         assertThrows<FailedToDeleteException> { result.getOrThrow() }
     }
+    @Test
+    fun `getSearchHistory throws NoNetworkException when UnknownHostException occurs`() = runTest {
+        // Given
+        coEvery { localDataSource.getQueries(any()) } throws UnknownHostException()
+
+        // When & Then
+        assertThrows<NoNetworkException> {
+            repository.getSearchHistory(2).first()
+        }
+    }
+
 
 
     val givenRecentViewed = listOf(

@@ -54,11 +54,11 @@
 -dontwarn com.sanaa.search.search_history.dao.QueryDao
 -dontwarn com.sanaa.search.search_history.dao.RecentViewedDao
 -dontwarn com.sanaa.search.search_result.di.LocalDatabaseModuleKt
--dontwarn com.sanaa.series.TvSeriesRepositoryImpl
--dontwarn com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+-dontwarn com.sanaa.series.repository.TvSeriesRepositoryImpl
+-dontwarn com.sanaa.series.dataSource.remote.RemoteTvSeriesDataSource
 -dontwarn com.sanaa.series.di.RemoteTvSeriesDataSourceModuleKt
 -dontwarn com.sanaa.api.MediaDetailsApi
 -dontwarn com.sanaa.api.SearchFeatureApi
 -dontwarn com.sanaa.api.StartRoute
 -dontwarn com.sanaa.presentation.navigation.SearchFeatureApiImpl
--dontwarn com.sanaa.presentation.ui.MediaDetailsApiImpl
+-dontwarn com.sanaa.presentation.navigation.MediaDetailsApiImpl
