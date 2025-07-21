@@ -3,24 +3,12 @@ package com.sanaa.movies.dataSource.remote.dto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
 @Serializable
 data class ActorDto(
-    @SerialName("id")
-    val id: Int,
-
-    @SerialName("name")
-    val name: String? = null,
-
-    @SerialName("profile_path")
-    val profileImagePath: String?= null,
-
-    @SerialName("gender")
-    val gender: Int? = null,
-
-    @SerialName("character")
-    val character: String?= null,
-
-    @SerialName("biography")
-    val biography: String? = null,
-
-    )
+    @SerialName("id") val id: Int = 0,
+    @SerialName("name") val name: String = "",
+    @SerialName("character") val character: String = "",
+    @SerialName("profile_path") val profilePath: String?,
+    @SerialName("gender") val gender: Int = 0,
+)

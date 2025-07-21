@@ -77,7 +77,7 @@ class ReviewViewModelTest {
             mediaType = MediaTypeUiModel.SERIES,
             manageMovieDetails = manageMovieDetails,
             manageTvSeriesDetails = manageTvSeriesDetails,
-            dispatcher = testDispatcher // ✅ Inject dispatcher into BaseViewModel
+            dispatcher = testDispatcher
         )
 
         advanceUntilIdle()
@@ -118,7 +118,7 @@ class ReviewViewModelTest {
     companion object {
         private val dummyReviews = listOf(
             Review(
-                id = 1,
+                id = "1",
                 authorName = "CinephileHub",
                 userHandle = "MovieBuff1967",
                 content = "A poetic exploration of adolescence.",
@@ -127,7 +127,7 @@ class ReviewViewModelTest {
                 avatarUrl = ""
             ),
             Review(
-                id = 2,
+                id = "2",
                 authorName = "CritiqueMaster",
                 userHandle = "SharpEye",
                 content = "Visually stunning but narratively weak.",

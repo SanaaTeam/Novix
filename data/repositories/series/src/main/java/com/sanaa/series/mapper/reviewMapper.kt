@@ -6,7 +6,7 @@ import kotlinx.datetime.LocalDate
 
 fun ReviewDto.toEntity(): Review {
     return Review(
-        id = id.toInt(),
+        id = id,
         content = content,
         authorName = authorDetails.name,
         userHandle = authorDetails.username,

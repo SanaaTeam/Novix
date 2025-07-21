@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.novix.android.application)
     alias(libs.plugins.firebase.appdistribution)
@@ -8,6 +11,8 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 android {
     namespace = libs.versions.namespace.get()
 
@@ -27,9 +32,20 @@ android {
             manifestPlaceholders["analytics_debug"] = "true"
         }
     }
+    defaultConfig {
+        val apiKey = localProperties["TMDB_API_KEY"].toString()
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
+    }
 }
 
 dependencies {
+
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)
@@ -81,4 +97,5 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.room)
+
 }

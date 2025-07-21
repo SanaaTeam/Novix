@@ -58,7 +58,7 @@ class TvSeriesRepositoryImplTest {
     @Test
     fun `getTvSeriesImages throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvSeriesImages(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesImages(99, 1) }
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesImageUrls(99, 1) }
     }
 
     @Test
@@ -96,7 +96,7 @@ class TvSeriesRepositoryImplTest {
     @Test
     fun `getTvSeriesImages throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvSeriesImages(any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesImages(1, 3) }
+        assertThrows<NoNetworkException> { repository.getTvSeriesImageUrls(1, 3) }
     }
 
 
@@ -128,7 +128,7 @@ class TvSeriesRepositoryImplTest {
     @Test
     fun `getEpisodeImages throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getEpisodeImages(any(), any(), any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getEpisodeImages(1, 1, 1, 1) }
+        assertThrows<NoNetworkException> { repository.getEpisodeImageUrls(1, 1, 1, 1) }
     }
 
     @Test
@@ -179,14 +179,14 @@ class TvSeriesRepositoryImplTest {
     @Test
     fun `getEpisodeImages returns list`() = runTest {
         coEvery { remote.getEpisodeImages(any(), any(), any()) } returns listOf(TvSeriesImageDto("2"))
-        val result = repository.getEpisodeImages(1, 1, 1, 1)
+        val result = repository.getEpisodeImageUrls(1, 1, 1, 1)
         assertEquals(1, result.size)
     }
 
     @Test
     fun `getEpisodeImages throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getEpisodeImages(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getEpisodeImages(1, 1, 99, 11) }
+        assertThrows<RetrievingDataFailureException> { repository.getEpisodeImageUrls(1, 1, 99, 11) }
     }
 
     @Test

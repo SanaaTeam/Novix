@@ -5,7 +5,7 @@ import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Review
 
 data class ReviewUiModel(
-    val id: Int,
+    val id: String,
     val authorName: String? = null,
     val username: String? = null,
     val content: String,
