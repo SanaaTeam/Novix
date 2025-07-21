@@ -1,6 +1,6 @@
-package com.sanaa.series
+package com.sanaa.series.repository
 
-import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import com.sanaa.series.dataSource.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.mapper.toDtoId
 import com.sanaa.series.mapper.toEntity
 import details.repository.TvSeriesRepository

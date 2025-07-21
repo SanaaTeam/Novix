@@ -2,7 +2,7 @@ package com.sanaa.novix.di.details_modules
 
 import com.sanaa.actors.repository.ActorRepositoryImpl
 import com.sanaa.movies.repository.MovieRepositoryImpl
-import com.sanaa.series.TvSeriesRepositoryImpl
+import com.sanaa.series.repository.TvSeriesRepositoryImpl
 import details.repository.ActorRepository
 import details.repository.MovieRepository
 import details.repository.TvSeriesRepository
