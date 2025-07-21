@@ -1,5 +1,6 @@
 package com.sanaa.movies
 
+import com.sanaa.data.remotedatasource.movies.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.dataSource.remote.dto.CastDto

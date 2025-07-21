@@ -61,4 +61,4 @@
 -dontwarn com.sanaa.api.SearchFeatureApi
 -dontwarn com.sanaa.api.StartRoute
 -dontwarn com.sanaa.presentation.navigation.SearchFeatureApiImpl
--dontwarn com.sanaa.presentation.ui.MediaDetailsApiImpl
+-dontwarn com.sanaa.presentation.navigation.MediaDetailsApiImpl
