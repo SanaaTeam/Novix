@@ -2,14 +2,14 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import search.usecase.SearchTvSeriesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvShowsPagingSource(
-    private val searchTvShowsUseCase: SearchTvSeriesUseCase,
+    private val searchUseCase: SearchUseCase,
     private val query: String,
-    private val filters: MediaFilters?
+    private val filters: MediaFilters?,
 ) : PagingSource<Int, SearchTvSeriesOutput>() {
 
     override fun getRefreshKey(state: PagingState<Int, SearchTvSeriesOutput>): Int? {
@@ -23,7 +23,7 @@ class SearchTvShowsPagingSource(
         val page = params.key ?: STARTING_PAGE_INDEX
 
         return try {
-            val results = searchTvShowsUseCase.execute(query, page, filters)
+            val results = searchUseCase.searchTvShows(query, page, filters)
 
             LoadResult.Page(
                 data = results,

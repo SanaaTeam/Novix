@@ -2,11 +2,11 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import search.usecase.SearchActorsUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsPagingSource(
-    private val searchActorsPagingUseCase: SearchActorsUseCase,
+    private val searchUseCase: SearchUseCase,
     private val query: String,
 ) : PagingSource<Int, SearchActorOutput>() {
 
@@ -20,7 +20,7 @@ class SearchActorsPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchActorOutput> {
         val page = params.key ?: STARTING_PAGE_INDEX
         return try {
-            val data = searchActorsPagingUseCase.execute(query = query, page = page)
+            val data = searchUseCase.searchActors(query = query, page = page)
 
             LoadResult.Page(
                 data = data,

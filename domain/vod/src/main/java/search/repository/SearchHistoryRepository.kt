@@ -1,7 +1,7 @@
 package search.repository
 
 import kotlinx.coroutines.flow.Flow
-import search.usecase.search_param.RecentViewedMedia
+import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.SearchHistory
 
 interface SearchHistoryRepository {

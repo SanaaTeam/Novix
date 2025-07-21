@@ -2,12 +2,12 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSource(
-    private val searchMoviesUseCase: SearchMoviesUseCase,
+    private val searchMoviesUseCase: SearchUseCase,
     private val query: String,
     private val filters: MediaFilters?
 ) : PagingSource<Int, SearchMovieOutput>() {
@@ -22,7 +22,7 @@ class SearchMoviesPagingSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchMovieOutput> {
         val page = params.key ?: STARTING_PAGE_INDEX
         return try {
-            val results = searchMoviesUseCase.execute(query = query, page = page, filters = filters)
+            val results = searchMoviesUseCase.searchMovies(query = query, page = page, filters = filters)
 
             LoadResult.Page(
                 data = results,
