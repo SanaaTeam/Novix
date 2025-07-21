@@ -7,6 +7,7 @@ import com.sanaa.novix.logging.CrashReportingTree
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import timber.log.Timber
+import com.sanaa.novix.BuildConfig
 
 val loggingModule = module {
 
