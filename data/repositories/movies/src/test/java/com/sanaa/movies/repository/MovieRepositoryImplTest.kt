@@ -101,15 +101,26 @@ class MovieRepositoryImplTest {
         assertThat(result).isNotEmpty()
         assertThat(result[0].title).isEqualTo("Category Movie")
     }
+
+    @Test
+    fun `getMovieTrailer throws NoNetworkException on UnknownHostException`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(any()) } throws UnknownHostException()
+
+        assertThrows<NoNetworkException> { repository.getMovieTrailer(1) }
+    }
+
     @Test
     fun `getMovieTrailer returns YouTube URL when trailer exists`() = runTest {
-        val trailer = VideoDto(key = "abcd1234", type = "Trailer", site = "YouTube")
-        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, listOf(trailer))
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(
+            1,
+            listOf(sampleTrailerYouTube)
+        )
 
         val result = repository.getMovieTrailer(1)
 
         assertThat(result).isEqualTo("https://www.youtube.com/watch?v=abcd1234")
     }
+
     @Test
     fun `getMovieTrailer returns null when no trailer found`() = runTest {
         coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, emptyList())
@@ -118,6 +129,17 @@ class MovieRepositoryImplTest {
 
         assertThat(result).isNull()
     }
+
+    @Test
+    fun `getMovieTrailer returns null when trailer is not YouTube or type is not Trailer`() =
+        runTest {
+            val videos = listOf(sampleClipYouTube, sampleTrailerVimeo)
+            coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, videos)
+
+            val result = repository.getMovieTrailer(1)
+
+            assertThat(result).isNull()
+        }
 
 
     companion object {
@@ -172,6 +194,10 @@ class MovieRepositoryImplTest {
                 )
             )
         )
+
+        val sampleTrailerYouTube = VideoDto(key = "abcd1234", type = "Trailer", site = "YouTube")
+        val sampleClipYouTube = VideoDto(key = "abcd1234", type = "Clip", site = "YouTube")
+        val sampleTrailerVimeo = VideoDto(key = "efgh5678", type = "Trailer", site = "Vimeo")
 
     }
 }
