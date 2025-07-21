@@ -49,9 +49,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieTrailer(id: Int): String? =
         safeCall("Failed to fetch movie trailer") {
-            remote.fetchMovieTrailerUrl(id)
-                .firstOrNull { it.type == "Trailer" && it.site == "YouTube" }
-                ?.let { "https://www.youtube.com/watch?v=${it.key}" }
+            remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {

@@ -6,11 +6,9 @@ import com.sanaa.movies.dataSource.remote.dto.MovieDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
 import com.sanaa.movies.dataSource.remote.dto.MovieVideoDto
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
-import com.sanaa.preferences.service.LanguageProvider
 
 class MovieDetailsRemoteDataSourceImpl(
     private val apiService: MovieApiService,
-    private val languageProvider: LanguageProvider
 ) : MovieDetailsRemoteDataSource {
 
     override suspend fun fetchMovieDetails(id: Int): MovieDto = apiService.fetchMovieDetails(id)

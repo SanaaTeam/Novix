@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
 
     testImplementation(libs.bundles.test)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     testImplementation(libs.ktor.client.mock)
 

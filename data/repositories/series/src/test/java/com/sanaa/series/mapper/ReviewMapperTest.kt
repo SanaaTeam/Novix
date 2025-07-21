@@ -21,7 +21,7 @@ class ReviewMapperTest {
     @Test
     fun `should return correct id when ReviewDto is mapped`() {
         val result = createReviewDto(id = "123").toEntity()
-        assertEquals(123, result.id)
+        assertEquals("123", result.id)
     }
 
     @Test

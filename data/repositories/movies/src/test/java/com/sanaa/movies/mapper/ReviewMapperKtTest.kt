@@ -76,7 +76,7 @@ class ReviewMapperKtTest {
     fun `should parse id correctly when ReviewDto id is numeric`() {
         val dto = validReviewDto().copy(id = "42")
         val result = dto.toEntity()
-        assertThat(result.id).isEqualTo(42)
+        assertThat(result.id).isEqualTo("42")
     }
 
     private fun validReviewDto() = ReviewDto(
