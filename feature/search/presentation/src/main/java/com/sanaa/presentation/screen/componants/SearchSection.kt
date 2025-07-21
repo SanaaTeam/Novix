@@ -57,7 +57,7 @@ fun SearchSection(
                 onTextChange(newValue.text)
             },
             hint = stringResource(R.string.search_hint),
-            icon = painterResource(R.drawable.icon_search),
+            icon = painterResource(R.drawable.icon_empty_search),
             modifier = Modifier
                 .weight(1f)
 

@@ -1,7 +1,8 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.novix.android.application)
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -10,27 +11,10 @@ plugins {
     alias(libs.plugins.kover)
 }
 
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 android {
     namespace = libs.versions.namespace.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = libs.versions.applicationId.get()
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-        testInstrumentationRunner = libs.versions.testRunner.get()
-
-        val ciCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull()
-        val ciName = System.getenv("CI_VERSION_NAME")
-
-        versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
-        versionName = ciName ?: libs.versions.versionName.get()
-
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
-        }
-
-    }
 
     lint {
         checkReleaseBuilds = false
@@ -47,47 +31,25 @@ android {
             manifestPlaceholders["crashlytics_debug"] = "true"
             manifestPlaceholders["analytics_debug"] = "true"
         }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
     }
-
-    compileOptions {
-        val javaVer = JavaVersion.toVersion(libs.versions.javaVersion.get())
-        sourceCompatibility = javaVer
-        targetCompatibility = javaVer
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.javaVersion.get()
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        viewBinding = false
-        dataBinding = false
-        mlModelBinding = true
-        aidl = false
-        prefab = false
-        renderScript = false
-        shaders = false
+    defaultConfig {
+        val apiKey = localProperties["TMDB_API_KEY"].toString()
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
     }
 }
 
 dependencies {
 
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.search.api)
-
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)
@@ -97,18 +59,18 @@ dependencies {
     implementation(projects.data.remoteDataSource.search)
     implementation(projects.data.remoteDataSource.actors)
     implementation(projects.data.remoteDataSource.movies)
+    implementation(projects.data.localDataSource.search)
+    implementation(projects.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
 
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui.compose)
-    implementation(libs.androidx.ui.compose.graphics)
-    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.material3)
 
-    testImplementation(libs.junit)
+    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.compose.test.junit4)
@@ -134,12 +96,6 @@ dependencies {
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)
-
-    // Local Data Sources
-    implementation(projects.data.localDataSource.search)
-
-    // Language Provider
-    implementation(projects.preferences)
-
     implementation(libs.bundles.room)
+
 }

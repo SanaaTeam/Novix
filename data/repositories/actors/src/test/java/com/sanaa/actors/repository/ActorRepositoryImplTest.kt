@@ -58,7 +58,7 @@ class ActorRepositoryImplTest {
     fun `getProfileImages returns top images URLs`() = runTest {
         coEvery { remoteDataSource.getActorImages(1) } returns sampleImagesDto
 
-        val result = repository.getProfileImages(1,3)
+        val result = repository.getProfileImageUrls(1,3)
 
         assertThat(result.size).isEqualTo(3)
         assertThat(result[0]).startsWith("https://image.tmdb.org/t/p/w500")
@@ -68,7 +68,7 @@ class ActorRepositoryImplTest {
     fun `getGalleryImages skips first image`() = runTest {
         coEvery { remoteDataSource.getActorImages(1) } returns sampleImagesDto
 
-        val result = repository.getGalleryImages(1)
+        val result = repository.getGalleryImageUrls(1)
 
         assertThat(result.size).isEqualTo(3)
     }
@@ -89,6 +89,17 @@ class ActorRepositoryImplTest {
         assertThat(result.size).isEqualTo(20)
         assertThat(result[0].title).isEqualTo("Movie 25")
     }
+
+    @Test
+    fun `getActorTopMovies returns empty list when cast is null`() = runTest {
+        val dtoWithNullCast = ActorMovieCastDto(actorId = 1, cast = null)
+        coEvery { remoteDataSource.getActorTopMovies(1) } returns dtoWithNullCast
+
+        val result = repository.getActorTopMovies(1)
+
+        assertThat(result).isEmpty()
+    }
+
 
     @Test
     fun `getActorTopTvSeries returns sorted top 20`() = runTest {
@@ -112,7 +123,7 @@ class ActorRepositoryImplTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
 
         assertThrows<NoNetworkException> {
-            repository.getGalleryImages(1)
+            repository.getGalleryImageUrls(1)
         }
     }
 
@@ -139,7 +150,7 @@ class ActorRepositoryImplTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws Exception()
 
         assertThrows<RetrievingDataFailureException> {
-            repository.getProfileImages(1,1)
+            repository.getProfileImageUrls(1,1)
         }
     }
 
@@ -165,14 +176,14 @@ class ActorRepositoryImplTest {
     fun `getProfileImages propagates NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
 
-        assertThrows<NoNetworkException> { repository.getProfileImages(42,1) }
+        assertThrows<NoNetworkException> { repository.getProfileImageUrls(42,1) }
     }
 
     @Test
     fun `getGalleryImages propagates RetrievingDataFailureException on generic error`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws IllegalStateException("boom")
 
-        assertThrows<RetrievingDataFailureException> { repository.getGalleryImages(42) }
+        assertThrows<RetrievingDataFailureException> { repository.getGalleryImageUrls(42) }
     }
 
     @Test

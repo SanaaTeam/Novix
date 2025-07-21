@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.movie_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
-import com.sanaa.presentation.screen.series.SeriesScreenEffects
 import details.usecase.ManageMovieDetailsUseCase
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
@@ -13,10 +12,9 @@ class MovieDetailsViewModel(
     private val movieId: Int,
     private val manageMovieDetails: ManageMovieDetailsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-
-    ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
+) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),
-        dispatcher
+    dispatcher
 ), MovieDetailsScreenInteractionListener {
 
     init {

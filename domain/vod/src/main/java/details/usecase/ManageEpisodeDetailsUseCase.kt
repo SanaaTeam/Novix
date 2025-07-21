@@ -23,5 +23,5 @@ class ManageEpisodeDetailsUseCase(
         episodeNumber: Int,
         count: Int
     ): List<String> =
-        tvSeriesRepo.getEpisodeImages(id, seasonNumber, episodeNumber, count)
+        tvSeriesRepo.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
 }

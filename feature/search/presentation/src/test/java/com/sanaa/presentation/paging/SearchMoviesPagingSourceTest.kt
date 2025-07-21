@@ -11,13 +11,13 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchMoviesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSourceTest {
-    private val searchMoviesUseCase: SearchMoviesUseCase = mockk(relaxed = true)
+    private val searchMoviesUseCase: SearchUseCase = mockk(relaxed = true)
     private val filters: MediaFilters = mockk(relaxed = true)
     private val query: String = "Movie1"
     private lateinit var searchMoviesPagingSource: SearchMoviesPagingSource
@@ -73,7 +73,7 @@ class SearchMoviesPagingSourceTest {
     fun `load() should returns correct data when successful`() = runTest {
         val mockData = FakeData.moviesOutput
         val params = getPagingParams(key = null)
-        coEvery { searchMoviesUseCase.execute(query, 1, filters) } returns mockData
+        coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
 
         val page = result as LoadResult.Page
@@ -84,7 +84,7 @@ class SearchMoviesPagingSourceTest {
     fun `load() should returns empty list when there is no data`() = runTest {
         val mockData = FakeData.moviesOutput
         val params = getPagingParams(key = 2)
-        coEvery { searchMoviesUseCase.execute(query, 1, filters) } returns mockData
+        coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
 
         val page = result as LoadResult.Page

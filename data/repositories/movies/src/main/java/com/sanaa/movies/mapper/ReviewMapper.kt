@@ -3,11 +3,11 @@ package com.sanaa.movies.mapper
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import entity.Review
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.json.JsonNull.content
+import kotlin.random.Random
 
 fun ReviewDto.toEntity(): Review {
     return Review(
-        id = id.toInt(),
+        id = id,
         content = content,
         authorName = authorDetails.name,
         userHandle = authorDetails.username,

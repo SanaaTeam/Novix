@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.movie_categories
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MovieUiModel
 import entity.Genre
 

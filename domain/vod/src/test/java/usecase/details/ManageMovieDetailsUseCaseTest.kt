@@ -10,7 +10,6 @@ import entity.Review
 import exceptions.NotFoundException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -73,7 +72,7 @@ class ManageMovieDetailsUseCaseTest {
     fun `getMovieImages should return images when available`() = runTest {
         val movieId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
-        coEvery { movieRepository.getImages(movieId,10) } returns expected
+        coEvery { movieRepository.getImageUrls(movieId, 10) } returns expected
 
         val result = manageMovieDetailsUseCase.getMovieImages(movieId)
 
@@ -83,7 +82,12 @@ class ManageMovieDetailsUseCaseTest {
     @Test
     fun `getMovieImages should throw RetrievingDataFailureException when fails`() = runTest {
         val movieId = 100
-        coEvery { movieRepository.getImages(movieId, 10) } throws RetrievingDataFailureException("Error")
+        coEvery {
+            movieRepository.getImageUrls(
+                movieId,
+                10
+            )
+        } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
             manageMovieDetailsUseCase.getMovieImages(movieId)

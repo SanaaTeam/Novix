@@ -119,20 +119,17 @@ fun FilterBottomSheetContent(
         }
         FilterActions(
             onApplyClicked = {
-                val mediaFilters = if (uiState.isDefaultState) {
-                    null
-                } else {
-                    MediaFilters(
-                        startYear = uiState.yearRange.start.toInt(),
-                        endYear = uiState.yearRange.endInclusive.toInt(),
-                        genres = uiState.selectedGenres.toList().mapNotNull { genreName ->
-                            Genre.entries.find {
-                                it.name.equals(genreName, ignoreCase = true)
-                            }
-                        },
-                        imdbRating = uiState.imdbRating.toFloat()
-                    )
-                }
+                val mediaFilters = MediaFilters(
+                    startYear = uiState.yearRange.start.toInt(),
+                    endYear = uiState.yearRange.endInclusive.toInt(),
+                    genres = uiState.selectedGenres.toList().mapNotNull { genreName ->
+                        Genre.entries.find {
+                            it.name.equals(genreName, ignoreCase = true)
+                        }
+                    },
+                    imdbRating = uiState.imdbRating.toFloat()
+                )
+
                 onApplyFilters(mediaFilters)
                 onDismissRequest()
             },

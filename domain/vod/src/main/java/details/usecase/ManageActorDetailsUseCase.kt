@@ -18,10 +18,10 @@ class ManageActorDetailsUseCase(
         actorRepo.getActorTopTvSeries(id)
 
     suspend fun getGalleryImages(id: Int): List<String> =
-        actorRepo.getGalleryImages(id)
+        actorRepo.getGalleryImageUrls(id)
 
     suspend fun getProfileImages(id: Int): List<String> =
-        actorRepo.getProfileImages(id, IMAGE_COUNT)
+        actorRepo.getProfileImageUrls(id, IMAGE_COUNT)
 
     private companion object {
         const val IMAGE_COUNT = 10
