@@ -2,7 +2,7 @@ package com.sanaa.novix.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.sanaa.movies.APIKeyInterceptor
-import com.sanaa.movies.MovieApiService
+import com.sanaa.movies.LanguageInterceptor
 import com.sanaa.novix.BuildConfig
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -44,6 +44,7 @@ val networkModule = module {
 
     single {
         OkHttpClient.Builder().addInterceptor(APIKeyInterceptor())
+            .addInterceptor(LanguageInterceptor(get()))
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
             }).build()
