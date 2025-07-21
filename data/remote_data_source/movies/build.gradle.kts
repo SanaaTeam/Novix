@@ -48,6 +48,9 @@ android {
 }
 
 dependencies {
+    implementation(libs.retrofit)
+    implementation(libs.okhttp)
+
     implementation(projects.preferences)
     implementation(projects.data.repositories.movies)
 

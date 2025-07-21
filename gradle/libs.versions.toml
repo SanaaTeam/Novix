@@ -2,7 +2,11 @@
 
 # Project Config
 compileSdk = "35"
+loggingInterceptor = "4.10.0"
 minSdk = "26"
+okhttp = "4.12.0"
+retrofit = "2.9.0"
+retrofit2KotlinxSerializationConverter = "1.0.0"
 slf4jApi = "2.0.17"
 targetSdk = "35"
 truth = "1.4.4"
@@ -145,6 +149,11 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitVersion" } # ←★ NEW
 # Mock
 mockk = { module = "io.mockk:mockk", version.ref = "mockkMockkVersion" }
+# Retrofit
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2KotlinxSerializationConverter" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 
 
 # Other
