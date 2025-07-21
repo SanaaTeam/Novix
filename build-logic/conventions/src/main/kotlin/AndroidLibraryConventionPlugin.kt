@@ -7,14 +7,17 @@ import org.gradle.kotlin.dsl.kotlin
 
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     override fun apply(project: Project) = with(project) {
-        pluginManager.apply("com.android.library")
-        pluginManager.apply("org.jetbrains.kotlin.android")
-
-        configureAndroidLibrary()
 
         val libs = project.rootProject.extensions
             .getByType(VersionCatalogsExtension::class.java)
             .named("libs")
+
+        pluginManager.apply {
+            apply("com.android.library")
+            apply("org.jetbrains.kotlin.android")
+        }
+
+        configureAndroidLibrary()
 
         dependencies.apply {
             add("implementation", libs.findLibrary("androidx.core.ktx").get())
