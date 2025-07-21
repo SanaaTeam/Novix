@@ -43,7 +43,7 @@ val networkModule = module {
 
 
     single {
-        OkHttpClient.Builder().addInterceptor(APIKeyInterceptor())
+        OkHttpClient.Builder().addInterceptor(APIKeyInterceptor(BuildConfig.TMDB_API_KEY))
             .addInterceptor(LanguageInterceptor(get()))
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
