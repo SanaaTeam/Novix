@@ -5,6 +5,7 @@ import com.sanaa.actors.dataSource.remote.dto.ActorDto
 import com.sanaa.actors.dataSource.remote.dto.ActorImagesDto
 import com.sanaa.actors.dataSource.remote.dto.ActorMovieCastDto
 import com.sanaa.actors.dataSource.remote.dto.ActorTvCastDto
+import com.sanaa.data.remotedatasource.actors.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body

@@ -1,5 +1,6 @@
 package com.sanaa.series
 
+import com.sanaa.data.remotedatasource.series.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.series.dataSource.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto

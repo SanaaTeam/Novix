@@ -1,31 +1,35 @@
-package com.example.preferences
+package com.sanaa.preferences
 
-import com.sanaa.preferences.DeviceLanguageProvider
-import org.junit.Test
+import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Test
 import java.util.Locale
-import kotlin.test.assertEquals
-
 
 class DeviceLanguageProviderTest {
 
     @Test
     fun `returns ar when locale is Arabic`() {
         val provider = DeviceLanguageProvider { Locale("ar") }
+
         val language = provider.getCurrentLanguage()
-        assertEquals("ar", language)
+
+        assertThat(language).isEqualTo("ar")
     }
 
     @Test
     fun `returns en when locale is not Arabic`() {
         val provider = DeviceLanguageProvider { Locale("fr") }
+
         val language = provider.getCurrentLanguage()
-        assertEquals("en", language)
+
+        assertThat(language).isEqualTo("en")
     }
 
     @Test
     fun `returns en when locale is default and not Arabic`() {
         val provider = DeviceLanguageProvider { Locale.ENGLISH }
+
         val language = provider.getCurrentLanguage()
-        assertEquals("en", language)
+
+        assertThat(language).isEqualTo("en")
     }
 }
