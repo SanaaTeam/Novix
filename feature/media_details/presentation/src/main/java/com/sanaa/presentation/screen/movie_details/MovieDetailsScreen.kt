@@ -34,7 +34,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
@@ -54,7 +54,6 @@ import com.sanaa.presentation.screen.series.components.CastComponent
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 import com.sanaa.designsystem.R as designR
-import com.sanaa.presentation.R as presentationR
 
 @Composable
 fun MovieDetailsScreen(
@@ -195,7 +194,7 @@ fun MovieDetailsContent(
                                         }
                                         state.movieDetails.duration?.let {
                                             IconWithText(
-                                                iconRes = presentationR.drawable.icon_duration,
+                                                iconRes = R.drawable.icon_duration,
                                                 contentDescription = null,
                                                 text = stringResource(
                                                     R.string.m, state.movieDetails.duration
@@ -205,14 +204,14 @@ fun MovieDetailsContent(
                                             DotSeparator()
                                         }
                                         IconWithText(
-                                            iconRes = presentationR.drawable.icon_calender,
+                                            iconRes = R.drawable.icon_calender,
                                             contentDescription = null,
                                             text = state.movieDetails.releaseDate,
                                             tint = Theme.colors.body
                                         )
                                     }
                                     NovixTextButton(
-                                        text = stringResource(id = presentationR.string.view_reviews),
+                                        text = stringResource(id = R.string.view_reviews),
                                         textColor = Theme.colors.primary,
                                         onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })
                                 }
@@ -225,7 +224,7 @@ fun MovieDetailsContent(
                                     overview = state.movieDetails.overview,
                                     onReadMore = { interactionListener.onReadMoreClick() },
                                     modifier = Modifier.padding(16.dp),
-                                    titleResId = presentationR.string.overview
+                                    titleResId = R.string.overview
                                 )
                             }
                         }

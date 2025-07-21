@@ -30,8 +30,8 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.R
 import kotlinx.coroutines.delay
 
 val boxContainerGradient = Brush.linearGradient(

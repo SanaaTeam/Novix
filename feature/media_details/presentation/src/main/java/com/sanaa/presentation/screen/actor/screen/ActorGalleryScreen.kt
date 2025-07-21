@@ -30,7 +30,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
@@ -76,7 +76,7 @@ private fun ActorGalleryContent(
                         onClick = onBackClick
                     )
                 },
-                screenTitle = stringResource(com.sanaa.presentation.R.string.gallery),
+                screenTitle = stringResource(R.string.gallery),
                 modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()

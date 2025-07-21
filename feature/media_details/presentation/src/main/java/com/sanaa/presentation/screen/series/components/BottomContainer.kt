@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 
 val boxContainerGradient = Brush.verticalGradient(
     colors = listOf( Color(0x00000000), Color(0xFF0D0608))
