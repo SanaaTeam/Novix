@@ -49,7 +49,6 @@ class FilterViewModelTest {
         filterViewModel.uiState.test {
             val updatedState = awaitItem()
             assertThat(updatedState.yearRange).isEqualTo(newRange)
-            assertThat(updatedState.isDefaultState).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -66,7 +65,6 @@ class FilterViewModelTest {
         filterViewModel.uiState.test {
             val updatedState = awaitItem()
             assertThat(updatedState.selectedGenres).contains(genre)
-            assertThat(updatedState.isDefaultState).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -84,7 +82,6 @@ class FilterViewModelTest {
         filterViewModel.uiState.test {
             val updatedState = awaitItem()
             assertThat(updatedState.selectedGenres).doesNotContain(genre)
-            assertThat(updatedState.isDefaultState).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -101,7 +98,6 @@ class FilterViewModelTest {
         filterViewModel.uiState.test {
             val updatedState = awaitItem()
             assertThat(updatedState.imdbRating).isEqualTo(newRating)
-            assertThat(updatedState.isDefaultState).isFalse()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -122,7 +118,6 @@ class FilterViewModelTest {
             val expectedState = FilterUiState(
                 allGenres = filterViewModel.uiState.value.allGenres,
                 isLoading = false,
-                isDefaultState = true,
             )
             assertThat(clearedState).isEqualTo(expectedState)
             cancelAndIgnoreRemainingEvents()
