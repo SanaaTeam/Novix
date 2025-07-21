@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sanaa.presentation"
+    namespace = "com.sanaa.feature.search.presentation"
 }
 
 dependencies {

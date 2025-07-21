@@ -24,8 +24,7 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.R
-
+import com.sanaa.feature.mediadetails.presentation.R
 
 @Composable
 fun OverviewSection(

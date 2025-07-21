@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.R
+import com.sanaa.feature.search.presentation.R
 
 @Composable
 fun GenreChips(

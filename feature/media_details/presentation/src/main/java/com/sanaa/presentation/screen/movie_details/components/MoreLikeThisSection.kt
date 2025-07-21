@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.R as presentationR
+import com.sanaa.feature.mediadetails.presentation.R
 
 @Composable
 fun MoreLikeThisSection(
@@ -28,7 +28,7 @@ fun MoreLikeThisSection(
         modifier = modifier.padding(top = 16.dp)
     ) {
         Text(
-            text = stringResource(id = presentationR.string.more_like_this),
+            text = stringResource(id = R.string.more_like_this),
             color = Theme.colors.title,
             style = Theme.textStyle.title.medium,
             modifier = Modifier.padding(bottom = 4.dp)
