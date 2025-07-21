@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -9,12 +12,18 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kover)
 }
+val localProperties = Properties()
+localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 
 android {
+
     namespace = libs.versions.namespace.get()
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
+        val apiKey = localProperties["TMDB_API_KEY"].toString()
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
         applicationId = libs.versions.applicationId.get()
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
@@ -82,6 +91,11 @@ android {
 }
 
 dependencies {
+
+    implementation(libs.retrofit)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.logging.interceptor)
+
     implementation(projects.data.remoteDataSource.series)
     implementation(projects.data.repositories.series)
     implementation(projects.feature.mediaDetails.api)

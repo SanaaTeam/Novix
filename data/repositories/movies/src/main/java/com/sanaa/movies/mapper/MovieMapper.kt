@@ -9,12 +9,11 @@ fun MovieDto.toDomain(): Movie {
         id = id,
         posterImageUrl = getFullImageUrl(posterImagePath),
         title = title.orEmpty(),
-        genres = genreIds?.mapNotNull { it.toGenre() } ?: emptyList(),
+        genres = genres?.mapNotNull { it.id?.toGenre() } ?: emptyList(),
         imdbRating = voteAverage ?: 0.0f,
         duration = duration ?: 0,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview
-    )
+        overview = overview)
 }
 
 
