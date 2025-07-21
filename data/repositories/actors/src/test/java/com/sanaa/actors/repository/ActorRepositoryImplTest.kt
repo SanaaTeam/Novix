@@ -91,6 +91,17 @@ class ActorRepositoryImplTest {
     }
 
     @Test
+    fun `getActorTopMovies returns empty list when cast is null`() = runTest {
+        val dtoWithNullCast = ActorMovieCastDto(actorId = 1, cast = null)
+        coEvery { remoteDataSource.getActorTopMovies(1) } returns dtoWithNullCast
+
+        val result = repository.getActorTopMovies(1)
+
+        assertThat(result).isEmpty()
+    }
+
+
+    @Test
     fun `getActorTopTvSeries returns sorted top 20`() = runTest {
         val cast = (0..25).map {
             ActorTvCastDto.TvCastCreditDto(
