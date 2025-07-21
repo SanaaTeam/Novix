@@ -11,20 +11,20 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchTvSeriesUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchTvShowsPagingSourceTest {
-    private val searchTvSeriesUseCase: SearchTvSeriesUseCase = mockk(relaxed = true)
+    private val seriesUseCase: SearchUseCase = mockk(relaxed = true)
     private val filters: MediaFilters = mockk(relaxed = true)
     private val query: String = "Movie1"
     private lateinit var searchTvShowsPagingSource: SearchTvShowsPagingSource
 
     @BeforeEach
     fun setUp() {
-        searchTvShowsPagingSource = SearchTvShowsPagingSource(searchTvSeriesUseCase, query, filters)
+        searchTvShowsPagingSource = SearchTvShowsPagingSource(seriesUseCase, query, filters)
     }
 
     @Test
@@ -73,7 +73,7 @@ class SearchTvShowsPagingSourceTest {
     fun `load() should returns correct data when successful`() = runTest {
         val mockData = FakeData.tvShowsOutput
         val params = getPagingParams(key = null)
-        coEvery { searchTvSeriesUseCase.execute(query, 1, filters) } returns mockData
+        coEvery { seriesUseCase.searchTvShows(query, 1, filters) } returns mockData
         val result = searchTvShowsPagingSource.load(params)
 
         val page = result as LoadResult.Page
@@ -84,7 +84,7 @@ class SearchTvShowsPagingSourceTest {
     fun `load() should returns empty list when there is no data`() = runTest {
         val mockData = FakeData.tvShowsOutput
         val params = getPagingParams(key = 2)
-        coEvery { searchTvSeriesUseCase.execute(query, 1, filters) } returns mockData
+        coEvery { seriesUseCase.searchTvShows(query, 1, filters) } returns mockData
         val result = searchTvShowsPagingSource.load(params)
 
         val page = result as LoadResult.Page

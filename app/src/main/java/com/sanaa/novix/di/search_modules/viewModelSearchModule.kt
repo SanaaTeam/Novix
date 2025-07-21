@@ -9,7 +9,6 @@ import org.koin.dsl.module
 
 val viewModelSearchModule = module {
     single<CoroutineDispatcher> { Dispatchers.IO }
-
     viewModelOf(::FilterViewModel)
     viewModelOf(::SearchViewModel)
 }

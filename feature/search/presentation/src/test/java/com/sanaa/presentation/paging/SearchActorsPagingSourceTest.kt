@@ -11,17 +11,17 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchActorsUseCase
+import search.usecase.SearchUseCase
 import search.usecase.search_param.SearchActorOutput
 
 class SearchActorsPagingSourceTest {
-    private val searchActorsUseCase: SearchActorsUseCase = mockk(relaxed = true)
+    private val searchUseCase: SearchUseCase = mockk(relaxed = true)
     private val query: String = "Actor1"
     private lateinit var searchActorsPagingSource: SearchActorsPagingSource
 
     @BeforeEach
     fun setUp() {
-        searchActorsPagingSource = SearchActorsPagingSource(searchActorsUseCase, query)
+        searchActorsPagingSource = SearchActorsPagingSource(searchUseCase, query)
     }
 
     @Test
@@ -70,7 +70,7 @@ class SearchActorsPagingSourceTest {
     fun `load() should returns correct data when successful`() = runTest {
         val mockData = FakeData.actorOutputs
         val params = getPagingParams(key = null)
-        coEvery { searchActorsUseCase.execute(query, 1) } returns mockData
+        coEvery { searchUseCase.searchActors(query, 1) } returns mockData
         val result = searchActorsPagingSource.load(params)
 
         val page = result as LoadResult.Page
@@ -81,7 +81,7 @@ class SearchActorsPagingSourceTest {
     fun `load() should returns empty list when there is no data`() = runTest {
         val mockData = FakeData.actorOutputs
         val params = getPagingParams(key = 2)
-        coEvery { searchActorsUseCase.execute(query, 1) } returns mockData
+        coEvery { searchUseCase.searchActors(query, 1) } returns mockData
         val result = searchActorsPagingSource.load(params)
 
         val page = result as LoadResult.Page
