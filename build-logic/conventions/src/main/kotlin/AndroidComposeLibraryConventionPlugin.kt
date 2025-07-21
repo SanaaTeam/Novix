@@ -3,12 +3,12 @@ import org.gradle.api.Project
 
 
 class AndroidComposeLibraryConventionPlugin : Plugin<Project> {
-    override fun apply(project: Project) {
-        project.pluginManager.apply("com.android.library")
-        project.pluginManager.apply("org.jetbrains.kotlin.android")
-        project.pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
+    override fun apply(project: Project) = with(project) {
+        pluginManager.apply("com.android.library")
+        pluginManager.apply("org.jetbrains.kotlin.android")
+        pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
-        project.configureAndroidLibrary(
+        configureAndroidLibrary(
             testRunner = "androidx.test.runner.AndroidJUnitRunner"
         )
     }

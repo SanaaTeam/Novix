@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.novix.android.library)
 }
 
+android {
+    namespace = "com.sanaa.data.repositories.movies"
+}
+
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
@@ -11,8 +15,4 @@ dependencies {
     implementation(libs.ktor.serialization.kotlinx.json)
 
     implementation(libs.kotlinx.datetime)
-    implementation(libs.kotlinx.coroutines.android)
-
-    testImplementation(libs.junit.jupiter.api)
-
 }

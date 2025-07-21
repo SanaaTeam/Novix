@@ -14,7 +14,6 @@ fun Project.configureAndroidLibrary(
 
     extensions.configure<LibraryExtension> {
         compileSdk = libs.findVersion("compileSdk").get().toString().toInt()
-        namespace = name.replace("-", ".")
 
         defaultConfig {
             minSdk = libs.findVersion("minSdk").get().toString().toInt()

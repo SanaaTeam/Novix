@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 class KotlinLibraryConventionPlugin : Plugin<Project> {
-    override fun apply(target: Project): Unit = with(target) {
+    override fun apply(project: Project): Unit = with(project) {
 
         val libs = getLibs()
 

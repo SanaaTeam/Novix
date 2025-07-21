@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.feature.userprofile.presentation"
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

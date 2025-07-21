@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.feature.search.api"
+}
+
 dependencies {
     implementation(projects.feature.mediaDetails.api)
     implementation(libs.androidx.core.ktx)

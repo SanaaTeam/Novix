@@ -1,5 +1,6 @@
 package com.sanaa.series
 
+import com.sanaa.data.remotedatasource.series.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine

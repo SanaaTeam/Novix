@@ -4,6 +4,10 @@ plugins {
     alias(libs.plugins.novix.android.library)
 }
 
+android {
+    namespace = "com.sanaa.data.repositories.search"
+}
+
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
@@ -17,9 +21,6 @@ dependencies {
     implementation(libs.androidx.paging.common.android)
     implementation(libs.kotlinx.datetime)
 
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.bundles.test)
-    testImplementation(libs.bundles.test.runtime)
     androidTestImplementation(libs.androidx.junit)
 
     implementation(libs.slf4j.api)

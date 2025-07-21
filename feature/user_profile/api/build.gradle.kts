@@ -2,8 +2,11 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
-dependencies {
+android {
+    namespace = "com.sanaa.feature.userprofile.api"
+}
 
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

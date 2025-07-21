@@ -3,6 +3,10 @@ plugins {
     alias(libs.plugins.novix.android.library)
 }
 
+android {
+    namespace = "com.sanaa.data.localdatasource.search"
+}
+
 dependencies {
     implementation(projects.data.repositories.search)
     implementation(projects.preferences)

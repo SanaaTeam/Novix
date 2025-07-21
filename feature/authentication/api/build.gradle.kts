@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.novix.android.compose)
 }
 
+android {
+    namespace = "com.sanaa.feature.authentication.api"
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -10,7 +10,7 @@ val localProperties = Properties()
 localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 
 android {
-    namespace = "com.sanaa.series"
+    namespace = "com.sanaa.data.remotedatasource.series"
 
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
@@ -29,6 +29,5 @@ dependencies {
 
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
-    implementation(libs.bundles.coroutines)
     implementation(libs.ktor.client.mock)
 }

@@ -3,13 +3,13 @@ plugins {
     alias(libs.plugins.novix.android.library)
 }
 
+android {
+    namespace = "com.sanaa.data.repositories.series"
+}
+
 dependencies {
     implementation(projects.domain.vod)
 
     implementation(libs.kotlinx.datetime)
     implementation(libs.ktor.serialization.kotlinx.json)
-
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.bundles.test)
-    androidTestImplementation(libs.androidx.junit)
 }
