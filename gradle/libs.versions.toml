@@ -177,6 +177,7 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 novix-kotlin = { id = "novix.kotlin.library" }
 novix-android-compose = { id = "novix.android.library.compose" }
 novix-android-library = { id = "novix.android.library" }
+novix-android-application = { id = "novix.android.application" }
 
 [bundles]
 compose = [

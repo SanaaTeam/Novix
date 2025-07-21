@@ -1,6 +1,7 @@
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.kotlin
@@ -10,7 +11,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 class KotlinLibraryConventionPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = with(project) {
 
-        val libs = getLibs()
+        val libs =
+            rootProject.extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
 
         pluginManager.apply(libs.findPlugin("jetbrains.kotlin.jvm").get().get().pluginId)
 
