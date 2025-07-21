@@ -6,14 +6,10 @@ import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
 import com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
 import com.sanaa.presentation.screen.review.ReviewViewModel
 import com.sanaa.presentation.screen.series.SeriesViewModel
-import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val viewModelDetailsModule = module {
-    single { Dispatchers.IO }
-    viewModelOf(::FilterViewModel)
-    viewModelOf(::SearchViewModel)
     viewModelOf(::MovieDetailsViewModel)
     viewModelOf(::SeriesViewModel)
     viewModelOf(::EpisodeDetailsScreenViewModel)

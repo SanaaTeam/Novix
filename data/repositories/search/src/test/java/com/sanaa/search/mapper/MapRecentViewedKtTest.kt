@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchHistory
-import search.usecase.search_param.RecentViewedMedia
 
 class MapRecentViewedKtTest {
 
