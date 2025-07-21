@@ -5,7 +5,7 @@ import com.sanaa.actors.dataSource.remote.ActorRemoteDataSource
 import com.sanaa.movies.MovieDetailsRemoteDataSourceImpl
 import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.series.RemoteTvSeriesDataSourceImpl
-import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import com.sanaa.series.dataSource.remote.RemoteTvSeriesDataSource
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module

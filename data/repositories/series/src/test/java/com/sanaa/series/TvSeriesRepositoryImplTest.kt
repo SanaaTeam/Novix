@@ -1,6 +1,6 @@
 package com.sanaa.series
 
-import com.sanaa.series.data_source.remote.RemoteTvSeriesDataSource
+import com.sanaa.series.dataSource.remote.RemoteTvSeriesDataSource
 import com.sanaa.series.dto.ActorDto
 import com.sanaa.series.dto.AuthorDetailsDto
 import com.sanaa.series.dto.EpisodeDto
@@ -8,6 +8,7 @@ import com.sanaa.series.dto.TvSeriesImageDto
 import com.sanaa.series.dto.ReviewDto
 import com.sanaa.series.dto.SeasonDto
 import com.sanaa.series.dto.TvSeriesVideoDto
+import com.sanaa.series.repository.TvSeriesRepositoryImpl
 import details.repository.TvSeriesRepository
 import entity.Genre
 import exceptions.NoNetworkException

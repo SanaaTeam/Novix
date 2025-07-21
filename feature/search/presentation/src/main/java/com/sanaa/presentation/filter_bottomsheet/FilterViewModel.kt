@@ -19,10 +19,7 @@ class FilterViewModel(
 ) : BaseViewModel<FilterUiState>(
     initialState = FilterUiState(),
     defaultDispatcher = dispatcher
-),
-    FilterBottomSheetInteractionsListener {
-
-
+), FilterBottomSheetInteractionsListener {
     private val _uiState = MutableStateFlow(FilterUiState(allGenres = Genre.entries.map {
         genreLocalizer.getLocalizedName(it.name)
     }))
@@ -32,7 +29,7 @@ class FilterViewModel(
     val filterResult = _filterResult.asSharedFlow()
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        _uiState.update { it.copy(yearRange = newRange, isDefaultState = false) }
+        _uiState.update { it.copy(yearRange = newRange) }
     }
 
     override fun onGenreSelected(genre: String) {
@@ -40,17 +37,17 @@ class FilterViewModel(
             val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
                 if (contains(genre)) remove(genre) else add(genre)
             }
-            currentState.copy(selectedGenres = newSelectedGenres, isDefaultState = false)
+            currentState.copy(selectedGenres = newSelectedGenres)
         }
     }
 
     override fun onRatingChanged(newRating: Int) {
-        _uiState.update { it.copy(imdbRating = newRating, isDefaultState = false) }
+        _uiState.update { it.copy(imdbRating = newRating) }
     }
 
     override fun onClearFilters() {
         _uiState.update {
-            FilterUiState(allGenres = it.allGenres, isLoading = false, isDefaultState = true)
+            FilterUiState(allGenres = it.allGenres)
         }
     }
 
@@ -58,25 +55,20 @@ class FilterViewModel(
         tryToExecute(
             callee = {
                 val currentState = _uiState.value
-                val mediaFilters = if (currentState.isDefaultState) {
-                    null
-                } else {
-                    MediaFilters(
-                        startYear = currentState.yearRange.start.toInt(),
-                        endYear = currentState.yearRange.endInclusive.toInt(),
-                        genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
-                            Genre.entries.find {
-                                it.name.equals(
-                                    genreName,
-                                    ignoreCase = true
-                                )
-                            }
-                        },
-                        imdbRating = currentState.imdbRating.toFloat()
-                    )
-                }
+                val mediaFilters = MediaFilters(
+                    startYear = currentState.yearRange.start.toInt(),
+                    endYear = currentState.yearRange.endInclusive.toInt(),
+                    genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
+                        Genre.entries.find {
+                            it.name.equals(
+                                genreName,
+                                ignoreCase = true
+                            )
+                        }
+                    },
+                    imdbRating = currentState.imdbRating.toFloat()
+                )
                 _filterResult.emit(mediaFilters)
-
             }
         )
     }

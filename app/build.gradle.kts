@@ -1,7 +1,5 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.novix.android.application)
     alias(libs.plugins.firebase.appdistribution)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -12,25 +10,6 @@ plugins {
 
 android {
     namespace = libs.versions.namespace.get()
-    compileSdk = libs.versions.compileSdk.get().toInt()
-
-    defaultConfig {
-        applicationId = libs.versions.applicationId.get()
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-        testInstrumentationRunner = libs.versions.testRunner.get()
-
-        val ciCode = System.getenv("CI_VERSION_CODE")?.toIntOrNull()
-        val ciName = System.getenv("CI_VERSION_NAME")
-
-        versionCode = ciCode ?: libs.versions.versionCode.get().toInt()
-        versionName = ciName ?: libs.versions.versionName.get()
-
-        ndk {
-            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
-        }
-
-    }
 
     lint {
         checkReleaseBuilds = false
@@ -47,37 +26,6 @@ android {
             manifestPlaceholders["crashlytics_debug"] = "true"
             manifestPlaceholders["analytics_debug"] = "true"
         }
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-
-    compileOptions {
-        val javaVer = JavaVersion.toVersion(libs.versions.javaVersion.get())
-        sourceCompatibility = javaVer
-        targetCompatibility = javaVer
-    }
-
-    kotlinOptions {
-        jvmTarget = libs.versions.javaVersion.get()
-    }
-
-    buildFeatures {
-        compose = true
-        buildConfig = true
-        viewBinding = false
-        dataBinding = false
-        mlModelBinding = true
-        aidl = false
-        prefab = false
-        renderScript = false
-        shaders = false
     }
 }
 
@@ -133,5 +81,4 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.room)
-
 }
