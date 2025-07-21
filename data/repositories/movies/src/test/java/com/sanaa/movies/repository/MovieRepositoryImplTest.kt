@@ -5,8 +5,12 @@ import com.sanaa.movies.dataSource.remote.MovieDetailsRemoteDataSource
 import com.sanaa.movies.dataSource.remote.dto.CastDto
 import com.sanaa.movies.dataSource.remote.dto.MovieDetailsDto
 import com.sanaa.movies.dataSource.remote.dto.MovieImagesDto
+import com.sanaa.movies.dataSource.remote.dto.MoviesByCategoryResponse
 import com.sanaa.movies.dataSource.remote.dto.ReviewDto
 import com.sanaa.movies.dataSource.remote.dto.SimilarMoviesDto
+import com.sanaa.movies.dataSource.remote.dto.VideoDto
+import com.sanaa.movies.dataSource.remote.dto.VideoResponseDto
+import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -87,6 +91,35 @@ class MovieRepositoryImplTest {
         assertThrows<RetrievingDataFailureException> { repository.getImages(1, 1) }
     }
 
+    @Test
+    fun `getMoviesByCategory returns correct list of movies`() = runTest {
+        coEvery { remote.fetchMoviesByCategory(any()) } returns sampleMoviesByCategoryResponse
+
+        val genre = Genre.ACTION
+        val result = repository.getMoviesByCategory(genre)
+
+        assertThat(result).isNotEmpty()
+        assertThat(result[0].title).isEqualTo("Category Movie")
+    }
+    @Test
+    fun `getMovieTrailer returns YouTube URL when trailer exists`() = runTest {
+        val trailer = VideoDto(key = "abcd1234", type = "Trailer", site = "YouTube")
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, listOf(trailer))
+
+        val result = repository.getMovieTrailer(1)
+
+        assertThat(result).isEqualTo("https://www.youtube.com/watch?v=abcd1234")
+    }
+    @Test
+    fun `getMovieTrailer returns null when no trailer found`() = runTest {
+        coEvery { remote.fetchMovieTrailerUrl(1) } returns VideoResponseDto(1, emptyList())
+
+        val result = repository.getMovieTrailer(1)
+
+        assertThat(result).isNull()
+    }
+
+
     companion object {
         private val sampleMovieDto = MovieDetailsDto(
             id = 1,
@@ -125,5 +158,20 @@ class MovieRepositoryImplTest {
         )
 
         private val sampleReviewDto = ReviewDto(author = "Critic A", content = "Nice", id = "1")
+
+        private val sampleMoviesByCategoryResponse = MoviesByCategoryResponse(
+            moviesByCategoryDto = arrayListOf(
+                MoviesByCategoryResponse.MoviesByCategoryDto(
+                    id = 10,
+                    title = "Category Movie",
+                    posterPath = "/poster.jpg",
+                    releaseDate = "2023-01-01",
+                    genreIds = arrayListOf(28),
+                    overview = "Overview",
+                    voteAverage = 8.5
+                )
+            )
+        )
+
     }
 }
