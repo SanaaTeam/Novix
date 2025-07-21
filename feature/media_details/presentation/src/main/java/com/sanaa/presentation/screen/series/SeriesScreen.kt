@@ -31,7 +31,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgr
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute

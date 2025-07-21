@@ -7,7 +7,7 @@ kover {
 }
 
 android {
-    namespace = "com.sanaa.feature.media_details.api"
+    namespace = "com.sanaa.feature.mediadetails.api"
 }
 
 dependencies {

@@ -22,7 +22,7 @@ import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndica
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent

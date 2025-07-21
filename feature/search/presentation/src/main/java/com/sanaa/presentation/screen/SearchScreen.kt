@@ -121,7 +121,7 @@ fun SearchScreenContent(
         NovixNavBar(modifier = Modifier.navigationBarsPadding()) {
             val navItems = listOf(
                 R.drawable.icon_home to R.drawable.icon_home_selected,
-                R.drawable.icon_search to R.drawable.icon_search_selected,
+                R.drawable.icon_empty_search to R.drawable.icon_search_selected,
                 R.drawable.icon_category to R.drawable.icon_category_selected,
                 R.drawable.icon_save to R.drawable.icon_save_selected,
                 R.drawable.icon_account to R.drawable.icon_account_selected,

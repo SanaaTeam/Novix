@@ -33,7 +33,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.R
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.component.cards.MediaPosterCard
 import com.sanaa.presentation.component.cards.SaveIconChip

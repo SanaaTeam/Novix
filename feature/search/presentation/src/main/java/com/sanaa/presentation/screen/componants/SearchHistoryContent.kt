@@ -67,7 +67,7 @@ private fun EmptyState() {
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
         EmptySearchState(
-            icon = painterResource(id = com.sanaa.presentation.R.drawable.icon_search),
+            icon = painterResource(id = R.drawable.icon_empty_search),
             text = stringResource(id = R.string.empty_search_message)
         )
     }
@@ -166,7 +166,7 @@ private fun MediaPoster(
                 contentDescription = null,
             ) {
                 OnBlurContent(
-                    hintText = stringResource(com.sanaa.presentation.R.string.unsuitable_image),
+                    hintText = stringResource(R.string.unsuitable_image),
                     textStyle = Theme.textStyle.body.small.copy(
                         color = Color(0x99FFFFFF)
                     ),
