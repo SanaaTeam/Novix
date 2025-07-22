@@ -73,21 +73,20 @@ class TvShowRepositoryImpl(
         }
 
     override suspend fun getTopRatedTvSeries(): List<TvSeries> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getTrendingTvSeries(): List<TvSeries> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getSeriesByGenre(genre: Genre): List<TvSeries> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getPopularSeries(): List<TvSeries> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
-
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {

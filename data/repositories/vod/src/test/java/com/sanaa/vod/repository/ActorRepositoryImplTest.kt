@@ -196,6 +196,20 @@ class ActorRepositoryImplTest {
         )
     }
 
+    @Test
+    fun `getActorTopTvSeries returns empty list`() = runTest {
+        val result = repository.getActorTopTvSeries(1)
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTrendingActors returns empty list`() = runTest {
+        val result = repository.getTrendingActors()
+
+        assertThat(result).isEmpty()
+    }
+
     companion object {
         private val sampleActorDto = ActorDto(
             id = 1,

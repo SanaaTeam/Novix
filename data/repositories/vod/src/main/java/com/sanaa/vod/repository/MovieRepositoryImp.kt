@@ -54,23 +54,23 @@ class MovieRepositoryImpl(
         }
 
     override suspend fun getPopularMovies(): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getTopRatedMovies(): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getUpcomingMovies(): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getTrendingMovies(): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
@@ -82,6 +82,4 @@ class MovieRepositoryImpl(
             throw RetrievingDataFailureException("$errorMessage: ${e.message}")
         }
     }
-
-
 }

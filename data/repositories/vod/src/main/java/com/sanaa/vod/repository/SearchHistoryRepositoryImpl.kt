@@ -75,11 +75,11 @@ class SearchHistoryRepositoryImpl(
     }
 
     override suspend fun getWatchedMoviesHistory(): List<Movie> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     override suspend fun getWatchedSeriesHistory(): List<TvSeries> {
-        TODO("Not yet implemented")
+        return emptyList()
     }
 
     private inline fun <T> safeCall(
