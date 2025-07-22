@@ -6,7 +6,7 @@ import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.media.actor.ActorApiService
 import com.sanaa.vod.media.actor.RemoteActorDataSourceImpl
 import com.sanaa.vod.media.movie.MovieApiService
-import com.sanaa.vod.media.movie.RemoteMovieDataSourceImp
+import com.sanaa.vod.media.movie.RemoteMovieDataSourceImpl
 import com.sanaa.vod.media.tvShow.RemoteTvShowDataSourceImpl
 import com.sanaa.vod.media.tvShow.TvShowApiService
 import org.koin.core.module.dsl.singleOf
@@ -16,7 +16,7 @@ import retrofit2.Retrofit
 
 val remoteDetailsDataSource = module {
     singleOf(::RemoteActorDataSourceImpl) bind RemoteActorDataSource::class
-    singleOf(::RemoteMovieDataSourceImp) bind RemoteMovieDataSource::class
+    singleOf(::RemoteMovieDataSourceImpl) bind RemoteMovieDataSource::class
     singleOf(::RemoteTvShowDataSourceImpl) bind RemoteTvShowDataSource::class
     single<MovieApiService> {
         get<Retrofit>().create(MovieApiService::class.java)

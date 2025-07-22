@@ -7,7 +7,7 @@ import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.media.movie.MovieApiService
-import com.sanaa.vod.media.movie.RemoteMovieDataSourceImp
+import com.sanaa.vod.media.movie.RemoteMovieDataSourceImpl
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
@@ -25,7 +25,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @BeforeEach
     fun setup() {
-        dataSource = RemoteMovieDataSourceImp(apiService)
+        dataSource = RemoteMovieDataSourceImpl(apiService)
     }
 
     @Test
