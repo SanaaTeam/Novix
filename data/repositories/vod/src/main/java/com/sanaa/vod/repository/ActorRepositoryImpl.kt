@@ -32,7 +32,7 @@ class ActorRepositoryImpl(
 
     override suspend fun getGalleryImageUrls(id: Int): List<String> =
         safeCall("Failed to retrieve gallery images for actor ID: $id") {
-            remoteDataSource.getActorImages(id).drop(1).map {
+            remoteDataSource.getActorImages(id).map {
                 it.toEntity()
             }
         }
