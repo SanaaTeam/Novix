@@ -11,7 +11,7 @@ import com.sanaa.vod.dataSource.remote.dto.VideoDto
 
 interface RemoteTvShowDataSource {
     suspend fun getTvShowDetails(id: Int): TvShowDto
-    suspend fun getTvShowVideos(id: Int): List<VideoDto>
+    suspend fun getTvShowVideosUrls(id: Int): List<VideoDto>
     suspend fun getTvShowSeasonDetails(seriesId: Int, seasonNumber: Int): SeasonDto
     suspend fun getTvShowImageUrls(id: Int): List<ImageDto>
     suspend fun getTvShowsByGenre(genreId: Int): List<TvShowDto>

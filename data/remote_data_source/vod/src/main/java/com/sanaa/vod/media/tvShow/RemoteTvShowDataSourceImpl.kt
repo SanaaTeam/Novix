@@ -15,7 +15,7 @@ class RemoteTvShowDataSourceImpl(
 
     override suspend fun getTvShowDetails(id: Int): TvShowDto = apiService.fetchTvShowsDetails(id)
 
-    override suspend fun getTvShowVideos(id: Int): List<VideoDto> =
+    override suspend fun getTvShowVideosUrls(id: Int): List<VideoDto> =
         apiService.fetchTvShowsVideos(id).results
 
     override suspend fun getTvShowSeasonDetails(

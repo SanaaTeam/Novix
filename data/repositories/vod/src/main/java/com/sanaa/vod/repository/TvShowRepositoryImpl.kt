@@ -69,7 +69,7 @@ class TvShowRepositoryImpl(
 
     override suspend fun getTvSeriesTrailer(id: Int): String? =
         safeCall(errorMessage = "Trailer not found") {
-            remoteDataSource.getTvShowVideos(id).toDomain()
+            remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
 

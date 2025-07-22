@@ -113,7 +113,7 @@ class RemoteTvShowDataSourceImplTest {
     fun `getTvShowVideos should return List of VideoDto `() = runTest {
         coEvery { apiService.fetchTvShowsVideos(1) } returns dummyTvShowVideosResponse
 
-        val result = remoteTvShowDataSource.getTvShowVideos(1)
+        val result = remoteTvShowDataSource.getTvShowVideosUrls(1)
 
         assertThat(result.size == dummyTvShowVideosResponse.results.size)
     }

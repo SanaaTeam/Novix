@@ -36,83 +36,83 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvSeriesDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowDetails throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowDetails(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesDetails(999) }
     }
 
     @Test
-    fun `getTvSeriesReviews returns list`() = runTest {
+    fun `getReviewsByTvShowId returns list`() = runTest {
         coEvery { remote.getReviewsByTvShowId(1) } returns listOf(dummyReviewDto)
         val result = repository.getTvSeriesReviews(1)
         assertEquals("A", result.first().authorName)
     }
 
     @Test
-    fun `getTvSeriesReviews throws RetrievingDataFailureException`() = runTest {
+    fun `getReviewsByTvShowId throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getReviewsByTvShowId(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999) }
     }
 
     @Test
-    fun `getTvSeriesImages throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowImageUrls throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesImageUrls(99, 1) }
     }
 
     @Test
-    fun `getTvSeriesByGenre throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(Genre.CRIME) }
     }
 
     @Test
-    fun `getTvSeriesCast returns actors`() = runTest {
+    fun `getTvShowCast returns actors`() = runTest {
         coEvery { remote.getTvShowCast(any()) } returns listOf(dummyActorDto)
         val result = repository.getTvSeriesCast(1)
         assertEquals("Actor", result.first().name)
     }
 
     @Test
-    fun `getTvSeriesCast throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowCast throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowCast(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesCast(999) }
     }
 
     @Test
-    fun `getTvSeriesDetails throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getTvShowDetails throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvShowDetails(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesDetails(1) }
     }
 
     @Test
-    fun `getTvSeriesReviews throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getReviewsByTvShowId throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getReviewsByTvShowId(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1) }
     }
 
 
     @Test
-    fun `getTvSeriesImages throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getTvShowImageUrls throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesImageUrls(1, 3) }
     }
 
 
     @Test
-    fun `getTvSeriesByGenre throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getTvShowsByGenre throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(Genre.CRIME) }
     }
 
     @Test
-    fun `getTvSeriesCast throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getTvShowCast throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvShowCast(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesCast(1) }
     }
 
     @Test
-    fun `getTvSeriesSeason throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getTvShowSeasonDetails throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesSeason(1, 1) }
     }
@@ -125,7 +125,7 @@ class TvShowRepositoryImplTest {
 
 
     @Test
-    fun `getEpisodeImages throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getEpisodeImageUrls throws NoNetworkException on UnknownHostException`() = runTest {
         coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getEpisodeImageUrls(1, 1, 1, 1) }
     }
@@ -142,21 +142,21 @@ class TvShowRepositoryImplTest {
 
 
     @Test
-    fun `getTvSeriesTrailer throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowVideos(any()) } throws UnknownHostException()
+    fun `getTvShowVideosUrls throws NoNetworkException on UnknownHostException`() = runTest {
+        coEvery { remote.getTvShowVideosUrls(any()) } throws UnknownHostException()
         assertThrows<NoNetworkException> { repository.getTvSeriesTrailer(1) }
     }
 
 
     @Test
-    fun `getTvSeriesSeason returns season entity`() = runTest {
+    fun `getTvShowSeasonDetails returns season entity`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } returns dummySeasonDto
         val result = repository.getTvSeriesSeason(1, 1)
         assertEquals("Season 1", result.title)
     }
 
     @Test
-    fun `getTvSeriesSeason throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowSeasonDetails throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesSeason(1, 99) }
     }
@@ -176,7 +176,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeImages returns list`() = runTest {
+    fun `getEpisodeImageUrls returns list`() = runTest {
         coEvery {
             remote.getEpisodeImageUrls(
                 any(),
@@ -189,7 +189,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeImages throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeImageUrls throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> {
             repository.getEpisodeImageUrls(
@@ -212,21 +212,21 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvSeriesTrailer returns null if no videos`() = runTest {
-        coEvery { remote.getTvShowVideos(any()) } returns emptyList()
+    fun `getTvShowVideosUrls returns null if no videos`() = runTest {
+        coEvery { remote.getTvShowVideosUrls(any()) } returns emptyList()
         val result = repository.getTvSeriesTrailer(1)
         assertNull(result)
     }
 
     @Test
-    fun `getTvSeriesTrailer throws RetrievingDataFailureException`() = runTest {
-        coEvery { remote.getTvShowVideos(any()) } throws Exception()
+    fun `getTvShowVideosUrls throws RetrievingDataFailureException`() = runTest {
+        coEvery { remote.getTvShowVideosUrls(any()) } throws Exception()
         assertThrows<RetrievingDataFailureException> { repository.getTvSeriesTrailer(404) }
     }
 
     @Test
-    fun `getTvSeriesTrailer return url if there is a video`() = runTest {
-        coEvery { remote.getTvShowVideos(any()) } returns listOf(
+    fun `getTvShowVideosUrls return url if there is a video`() = runTest {
+        coEvery { remote.getTvShowVideosUrls(any()) } returns listOf(
             VideoDto(
                 id = "1", key = "xyz", site = "YouTube", type = "Trailer"
             )
