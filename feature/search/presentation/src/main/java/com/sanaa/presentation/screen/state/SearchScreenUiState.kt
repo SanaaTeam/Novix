@@ -17,9 +17,8 @@ data class SearchScreenUiState(
     val filters: MediaFilters? = null,
     val isFilterButtonVisible: Boolean = true,
     val showBottomSheet: Boolean = false,
-    val lastTabIndex: Int = -1,
-
-){
+    val lastTabIndex: Int = -1
+) {
     companion object {
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
