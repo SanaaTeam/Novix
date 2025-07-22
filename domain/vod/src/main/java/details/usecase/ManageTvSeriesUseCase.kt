@@ -7,7 +7,7 @@ import entity.Review
 import entity.Season
 import entity.TvSeries
 
-class ManageTvSeriesDetailsUseCase(
+class ManageTvSeriesUseCase(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
     suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> =

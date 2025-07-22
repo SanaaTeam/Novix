@@ -2,7 +2,7 @@ package usecase.details
 
 import com.google.common.truth.Truth.assertThat
 import details.repository.ActorRepository
-import details.usecase.ManageActorDetailsUseCase
+import details.usecase.ManageActorUseCase
 import entity.Actor
 import entity.Genre
 import entity.Movie
@@ -19,11 +19,11 @@ import org.junit.jupiter.api.assertThrows
 class ManageActorDetailsUseCaseTest {
 
     private val actorRepository: ActorRepository = mockk(relaxed = true)
-    private lateinit var manageActorDetailsUseCase: ManageActorDetailsUseCase
+    private lateinit var manageActorDetailsUseCase: ManageActorUseCase
 
     @BeforeEach
     fun setUp() {
-        manageActorDetailsUseCase = ManageActorDetailsUseCase(actorRepository)
+        manageActorDetailsUseCase = ManageActorUseCase(actorRepository)
     }
 
     @Test

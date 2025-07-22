@@ -5,7 +5,7 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 
-class ManageActorDetailsUseCase(
+class ManageActorUseCase(
     private val actorRepo: ActorRepository
 ) {
     suspend fun getActorDetails(id: Int): Actor =

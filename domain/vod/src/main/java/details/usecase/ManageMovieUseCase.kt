@@ -6,7 +6,7 @@ import entity.Genre
 import entity.Movie
 import entity.Review
 
-class ManageMovieDetailsUseCase(
+class ManageMovieUseCase(
     private val movieRepo: MovieRepository
 ) {
     suspend fun getMovieDetails(id: Int): Movie =
