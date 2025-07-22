@@ -3,6 +3,7 @@ package details.usecase
 import details.repository.TvSeriesRepository
 import entity.Actor
 import entity.Genre
+import entity.Movie
 import entity.Review
 import entity.Season
 import entity.TvSeries
@@ -30,6 +31,10 @@ class ManageTvSeriesUseCase(
 
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
+
+    suspend fun getPopularSeries(): List<TvSeries> {
+        return tvSeriesRepo.getPopularSeries()
+    }
 
     suspend fun getTopRatedTvSeries(): List<TvSeries> {
         return tvSeriesRepo.getTopRatedTvSeries()

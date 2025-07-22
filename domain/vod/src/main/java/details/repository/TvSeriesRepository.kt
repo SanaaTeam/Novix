@@ -27,4 +27,5 @@ interface TvSeriesRepository {
     suspend fun getTopRatedTvSeries(): List<TvSeries>
     suspend fun getTrendingTvSeries(): List<TvSeries>
     suspend fun getSeriesByGenre(genre: Genre): List<TvSeries>
-}
+    suspend fun getPopularSeries(): List<TvSeries>
+    }

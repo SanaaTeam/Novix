@@ -84,6 +84,10 @@ class TvShowRepositoryImpl(
         TODO("Not yet implemented")
     }
 
+    override suspend fun getPopularSeries(): List<TvSeries> {
+        TODO("Not yet implemented")
+    }
+
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
