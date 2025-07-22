@@ -35,7 +35,7 @@ fun MediaListGrid(
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
         columns = GridCells.Adaptive(minSize = 140.dp),
-        contentPadding = PaddingValues(12.dp),
+        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -81,7 +81,7 @@ fun MediaListGridPreview(modifier: Modifier = Modifier) {
                     id = 1,
                     title = "Media 1",
                     imageUrl = "https://example.com/image1.jpg",
-                    mediaType = MediaType.MOVIE
+                    mediaType = MediaType.MOVIE,
                 ),
                 MediaItem(
                     id = 2,
