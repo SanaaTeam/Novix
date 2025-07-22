@@ -1,7 +1,7 @@
 package com.sanaa.vod.util
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.util.retrofit.APIKeyInterceptor
+import com.sanaa.vod.interceptor.APIKeyInterceptor
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.HttpUrl

@@ -1,4 +1,4 @@
-package com.sanaa.vod.util.retrofit
+package com.sanaa.vod.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response
