@@ -13,7 +13,6 @@ import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
-import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
@@ -35,6 +34,7 @@ import search.usecase.ManageSearchHistoryUseCase
 import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchHistory
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
@@ -108,9 +108,8 @@ class SearchViewModel(
         updateState { it.copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
-            onSuccess = {
-                updateState { it.copy(isLoading = false, noInternetConnection = false) }
-            }, onError = ::onDataLoadError
+            onSuccess = { setSuccessState() },
+            onError = ::onDataLoadError
         )
     }
 
@@ -150,8 +149,7 @@ class SearchViewModel(
     }
 
     fun observeRecentViewedItems() {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
-
+        setLoadingState()
         tryToCollect(
             callee = ::onGetRecentViewedItems,
             onCollect = ::onCollectRecentViewedItems,
@@ -168,7 +166,7 @@ class SearchViewModel(
     }
 
     private fun loadTvShows(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        setLoadingState()
         tryToCollect(
             callee = { loadTvShowsOperation(query) },
             onCollect = ::onTvShowsLoaded,
@@ -190,7 +188,7 @@ class SearchViewModel(
     }
 
     private fun loadActors(query: String) {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        setLoadingState()
         tryToCollect(
             callee = { onLoadActors(query) },
             onCollect = ::onActorsLoaded,
@@ -221,22 +219,23 @@ class SearchViewModel(
         if (query.isBlank()) clearSearchResults() else loadMediaByTab(query)
     }
 
-
-    private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedUiModel>> {
-        return manageRecentViewedUseCase.getRecentViewed().toUiState()
+    private fun onCollectRecentViewedItems(viewed: List<RecentViewedMedia>) {
+        val uiItems = viewed.map { it.toUiState() }
+        updateState { it.copy(recentViewedMedia = uiItems, noInternetConnection = false) }
     }
 
-    private fun onCollectRecentViewedItems(viewed: List<RecentViewedUiModel>) {
-        updateState { it.copy(recentViewedMedia = viewed, noInternetConnection = false) }
+    private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedMedia>> {
+        return manageRecentViewedUseCase.getRecentViewed()
     }
 
 
-    suspend fun getRecentSearchHistory(): Flow<List<RecentSearchUiModel>> {
-        return manageSearchHistoryUseCase.getSearchHistory().toUiState()
+    suspend fun getRecentSearchHistory(): Flow<List<SearchHistory>> {
+        return manageSearchHistoryUseCase.getSearchHistory()
     }
 
-    fun onCollectRecentSearchHistory(queries: List<RecentSearchUiModel>) {
-        updateState { it.copy(recentSearchQueries = queries, noInternetConnection = false) }
+    fun onCollectRecentSearchHistory(queries: List<SearchHistory>) {
+        val uiQueries = queries.map { it.toUiState() }
+        updateState { it.copy(recentSearchQueries = uiQueries, noInternetConnection = false) }
     }
 
     private fun clearSearchResults() {
@@ -285,14 +284,13 @@ class SearchViewModel(
 
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
         _moviesPagingData.value = pagingData
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+        setSuccessState()
     }
 
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
         _tvShowsPagingData.value = pagingData
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
-
+        setSuccessState()
     }
 
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
@@ -315,7 +313,7 @@ class SearchViewModel(
 
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
         _actorsPagingData.value = pagingData
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+        setSuccessState()
     }
 
     private fun onLoadActors(query: String): Flow<PagingData<ActorUiModel>> {
@@ -362,6 +360,15 @@ class SearchViewModel(
             )
         )
     }
+
+    private fun setLoadingState() {
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+    }
+
+    private fun setSuccessState() {
+        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+    }
+
 
     companion object {
         private const val PAGE_SIZE = 20
