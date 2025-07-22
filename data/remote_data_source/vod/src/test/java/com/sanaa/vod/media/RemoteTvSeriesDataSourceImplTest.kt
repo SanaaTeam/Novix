@@ -1,7 +1,7 @@
 package com.sanaa.vod.media
 
+import com.sanaa.data.remotedatasource.vod.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.BuildConfig
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvSeriesDataSource
 import com.sanaa.vod.media.tvShow.RemoteTvShowDataSourceImpl
 import io.ktor.client.HttpClient

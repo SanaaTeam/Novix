@@ -11,7 +11,7 @@ val localProperties = Properties()
 localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 
 android {
-    namespace = "com.sanaa.vod"
+    namespace = "com.sanaa.data.remotedatasource.vod"
 
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()

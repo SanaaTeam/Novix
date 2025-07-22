@@ -1,7 +1,7 @@
 package com.sanaa.vod.media.tvShow
 
+import com.sanaa.data.remotedatasource.vod.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.BuildConfig
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto

@@ -59,7 +59,6 @@ kotlinx-coroutines = "1.6.4"
 workRuntimeKtx = "2.10.2"
 turbine = "1.2.1"
 pagingCommonAndroid = "3.3.6"
-espressoCore = "3.6.1"
 
 
 [libraries]
@@ -167,7 +166,6 @@ androidx-paging-common-android = { group = "androidx.paging", name = "paging-com
 # Gradle Plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

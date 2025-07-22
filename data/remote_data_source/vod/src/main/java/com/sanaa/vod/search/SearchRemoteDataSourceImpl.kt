@@ -1,7 +1,7 @@
 package com.sanaa.vod.search
 
+import com.sanaa.data.remotedatasource.vod.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.BuildConfig
 import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto

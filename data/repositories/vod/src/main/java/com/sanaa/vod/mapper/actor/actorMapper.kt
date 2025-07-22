@@ -30,7 +30,7 @@ fun ActorDto.toDomain(): Actor = Actor(
 fun ActorCastCreditDto.toMovie(): Movie = Movie(
     id = id,
     posterImageUrl = getFullImageUrl(posterPath),
-    title = movieTitle ?: tvShowTitle.orEmpty(),
+    title = movieTitle.orEmpty(),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = 0,
@@ -40,7 +40,7 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
 
 fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
     id = id,
-    title = tvShowTitle ?: movieTitle.orEmpty(),
+    title = tvShowTitle.orEmpty(),
     overview = overview.orEmpty(),
     releaseDate = toLocalDateOrNull(firstAirDate ?: releaseDate) ?: LocalDate(1900, 1, 1),
     genres = emptyList(),
@@ -48,8 +48,6 @@ fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
     posterImageUrl = getFullImageUrl(posterPath),
     seasonsCount = 0
 )
-
-
 
 
 fun apiGenderMapping(id: Int?): Gender {

@@ -2,9 +2,9 @@ package com.sanaa.vod.repository
 
 import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
 import com.sanaa.vod.mapper.actor.toDomain
-import com.sanaa.vod.mapper.media.toEntity
 import com.sanaa.vod.mapper.actor.toMovie
 import com.sanaa.vod.mapper.actor.toTvSeries
+import com.sanaa.vod.mapper.media.toEntity
 import details.repository.ActorRepository
 import entity.Actor
 import entity.Movie
@@ -27,12 +27,12 @@ class ActorRepositoryImpl(
         safeCall("Failed to retrieve profile images for actor ID: $id") {
             remoteDataSource.getActorImages(id).map {
                 it.toEntity()
-            }
+            }.take(count)
         }
 
     override suspend fun getGalleryImageUrls(id: Int): List<String> =
         safeCall("Failed to retrieve gallery images for actor ID: $id") {
-            remoteDataSource.getActorImages(id).map {
+            remoteDataSource.getActorImages(id).drop(1).map {
                 it.toEntity()
             }
         }
@@ -42,7 +42,7 @@ class ActorRepositoryImpl(
         safeCall("Failed to retrieve top movies for actor ID: $id") {
             remoteDataSource.getActorTopMovies(id).map {
                 it.toMovie()
-            }
+            }.take(20)
         }
 
 
@@ -50,7 +50,7 @@ class ActorRepositoryImpl(
         safeCall("Failed to retrieve top TV series for actor ID: $id") {
             remoteDataSource.getActorTopTvSeries(id).map {
                 it.toTvSeries()
-            }
+            }.take(20)
         }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
