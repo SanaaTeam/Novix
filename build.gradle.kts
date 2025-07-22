@@ -36,7 +36,7 @@ val excludedPackages = listOf(
     "**.db.**",
     "**.response.**",
     "exceptions.**",
-
+    "com.sanaa.identity.**",
     "com.sanaa.vod.mapper.*",
     "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
