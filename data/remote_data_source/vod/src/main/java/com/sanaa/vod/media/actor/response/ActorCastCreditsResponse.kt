@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ActorActorCastCreditResponse(
+data class ActorCastCreditsResponse(
     @SerialName("id") val actorId: Int,
     @SerialName("cast") val cast: List<ActorCastCreditDto>
 )

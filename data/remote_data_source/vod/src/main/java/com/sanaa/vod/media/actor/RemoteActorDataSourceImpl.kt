@@ -6,7 +6,7 @@ import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
-import com.sanaa.vod.media.actor.response.ActorActorCastCreditResponse
+import com.sanaa.vod.media.actor.response.ActorCastCreditsResponse
 import com.sanaa.vod.media.actor.response.ActorImagesResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -27,10 +27,10 @@ class RemoteActorDataSourceImpl(
         fetch<ActorImagesResponse>("person/$actorId/images", withLang = false).profiles
 
     override suspend fun getActorTopMovies(actorId: Int): List<ActorCastCreditDto> =
-        fetch<ActorActorCastCreditResponse>("person/$actorId/movie_credits").cast
+        fetch<ActorCastCreditsResponse>("person/$actorId/movie_credits").cast
 
     override suspend fun getActorTopTvSeries(actorId: Int): List<ActorCastCreditDto> =
-        fetch<ActorActorCastCreditResponse>("person/$actorId/tv_credits").cast
+        fetch<ActorCastCreditsResponse>("person/$actorId/tv_credits").cast
 
     private suspend inline fun <reified T> fetch(
         path: String,
