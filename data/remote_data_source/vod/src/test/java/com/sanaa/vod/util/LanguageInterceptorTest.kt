@@ -2,7 +2,7 @@ package com.sanaa.vod.util
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.interceptor.LanguageInterceptor
+import com.sanaa.vod.network.interceptor.LanguageInterceptor
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.HttpUrl
