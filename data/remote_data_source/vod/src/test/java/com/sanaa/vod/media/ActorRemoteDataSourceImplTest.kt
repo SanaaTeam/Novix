@@ -99,10 +99,70 @@ class ActorRemoteDataSourceImplTest {
         assertEquals("/img.jpg", result.profileImagePath)
     }
 
+    @Test
+    fun `getActorImages returns list with correct size`() = runTest {
+        val result = dataSource.getActorImages(1)
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `getActorImages returns image with correct file path`() = runTest {
+        val result = dataSource.getActorImages(1)
+        assertEquals("/img1.jpg", result.first().filePath)
+    }
+
+    @Test
+    fun `getActorTopMovies returns list with correct size`() = runTest {
+        val result = dataSource.getActorTopMovies(1)
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `getActorTopMovies returns movie with correct id`() = runTest {
+        val result = dataSource.getActorTopMovies(1)
+        assertEquals(100, result.first().id)
+    }
+
+    @Test
+    fun `getActorTopMovies returns movie with correct title`() = runTest {
+        val result = dataSource.getActorTopMovies(1)
+        assertEquals("Inception", result.first().movieTitle)
+    }
+
+    @Test
+    fun `getActorTopMovies returns movie with correct vote average`() = runTest {
+        val result = dataSource.getActorTopMovies(1)
+        assertEquals(8.8, result.first().voteAverage)
+    }
+
+    @Test
+    fun `getActorTopTvSeries returns list with correct size`() = runTest {
+        val result = dataSource.getActorTopTvSeries(1)
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `getActorTopTvSeries returns TV show with correct id`() = runTest {
+        val result = dataSource.getActorTopTvSeries(1)
+        assertEquals(200, result.first().id)
+    }
+
+    @Test
+    fun `getActorTopTvSeries returns TV show with correct title`() = runTest {
+        val result = dataSource.getActorTopTvSeries(1)
+        assertEquals("Breaking Bad", result.first().tvShowTitle)
+    }
+
+    @Test
+    fun `getActorTopTvSeries returns TV show with correct vote average`() = runTest {
+        val result = dataSource.getActorTopTvSeries(1)
+        assertEquals(9.5, result.first().voteAverage)
+    }
 
     private fun MockRequestHandleScope.respondJson(content: String) = respond(
         content = ByteReadChannel(content),
         status = HttpStatusCode.OK,
         headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
     )
+
 }
