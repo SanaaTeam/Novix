@@ -45,11 +45,8 @@ class SearchViewModel(
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
+) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
-
-    private val _effect = MutableSharedFlow<SearchScreenEffects>()
-    val effect: SharedFlow<SearchScreenEffects> = _effect.asSharedFlow()
 
     private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
     val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
@@ -347,11 +344,6 @@ class SearchViewModel(
         }
     }
 
-    private fun emitEffect(effect: SearchScreenEffects) {
-        viewModelScope.launch {
-            _effect.emit(effect)
-        }
-    }
 
     companion object {
         private const val PAGE_SIZE = 20

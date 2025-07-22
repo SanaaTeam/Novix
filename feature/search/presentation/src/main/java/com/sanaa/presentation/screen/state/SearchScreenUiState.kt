@@ -18,6 +18,7 @@ data class SearchScreenUiState(
     val isFilterButtonVisible: Boolean = true,
     val showBottomSheet: Boolean = false,
     val lastTabIndex: Int = -1,
+
 ){
     companion object {
         const val MOVIE_INDEX = 0
