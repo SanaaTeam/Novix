@@ -29,6 +29,8 @@ dependencies {
     implementation(projects.data.repositories.vod)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.ktor.client.mock)

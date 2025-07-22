@@ -1,7 +1,6 @@
-package com.sanaa.vod.util
+package com.sanaa.vod.network.interceptor
 
-import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.util.retrofit.APIKeyInterceptor
+import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.HttpUrl
@@ -43,6 +42,6 @@ class APIKeyInterceptorTest {
         val response = interceptor.intercept(chain)
         val newRequest = response.request
 
-        assertThat(newRequest.url.queryParameter("api_key")).isEqualTo(apiKey)
+        Truth.assertThat(newRequest.url.queryParameter("api_key")).isEqualTo(apiKey)
     }
 }

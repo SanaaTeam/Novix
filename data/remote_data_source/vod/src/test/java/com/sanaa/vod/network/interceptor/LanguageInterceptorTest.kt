@@ -1,8 +1,8 @@
-package com.sanaa.vod.util
+package com.sanaa.vod.network.interceptor
 
+import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.util.retrofit.LanguageInterceptor
 import io.mockk.every
 import io.mockk.mockk
 import okhttp3.HttpUrl
@@ -48,7 +48,7 @@ class LanguageInterceptorTest {
         val proceededRequest = response.request
 
 
-        assertThat(proceededRequest.url.queryParameter("language")).isEqualTo("en-US")
+        Truth.assertThat(proceededRequest.url.queryParameter("language")).isEqualTo("en-US")
     }
 
 
