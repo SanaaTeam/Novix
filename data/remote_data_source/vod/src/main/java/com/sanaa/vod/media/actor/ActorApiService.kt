@@ -16,9 +16,9 @@ interface ActorApiService {
     suspend fun fetchActorImages(@Path("actor_id") id: Int): ActorImagesResponse
 
     @GET("person/{actor_id}/movie_credits")
-    suspend fun fetchActorTopMovies(@Path("actor_id") id: Int): ActorCastCreditsResponse
+    suspend fun fetchActorMovies(@Path("actor_id") id: Int): ActorCastCreditsResponse
 
     @GET("person/{actor_id}/tv_credits")
-    suspend fun fetchActorTopTvSeries(@Path("actor_id") id: Int): ActorCastCreditsResponse
+    suspend fun fetchActorTvShows(@Path("actor_id") id: Int): ActorCastCreditsResponse
 
 }

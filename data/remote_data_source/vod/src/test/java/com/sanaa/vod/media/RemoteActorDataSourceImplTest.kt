@@ -43,19 +43,19 @@ class RemoteActorDataSourceImplTest {
     }
 
     @Test
-    fun `getActorTopMovies show return List of ActorCastCreditDto `() = runTest {
-        coEvery { actorApi.fetchActorTopMovies(1) } returns dummyActorTopMoviesResponse
+    fun `getActorMovies show return List of ActorCastCreditDto `() = runTest {
+        coEvery { actorApi.fetchActorMovies(1) } returns dummyActorTopMoviesResponse
 
-        val result = actorDataSource.getActorTopMovies(1)
+        val result = actorDataSource.getActorMovies(1)
 
         assertThat(result.size == dummyActorTopMoviesResponse.cast.size)
     }
 
     @Test
-    fun `getActorTopTvShows show return List of ActorCastCreditDto `() = runTest {
-        coEvery { actorApi.fetchActorTopTvSeries(1) } returns dummyActorTopTvShowsResponse
+    fun `getActorTvShows show return List of ActorCastCreditDto `() = runTest {
+        coEvery { actorApi.fetchActorTvShows(1) } returns dummyActorTopTvShowsResponse
 
-        val result = actorDataSource.getActorTopTvShows(1)
+        val result = actorDataSource.getActorTvShows(1)
 
         assertThat(result.size == dummyActorTopTvShowsResponse.cast.size)
     }

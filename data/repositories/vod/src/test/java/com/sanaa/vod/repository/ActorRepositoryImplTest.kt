@@ -68,7 +68,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopMovies throws NoNetworkException when network is down`() = runTest {
-        coEvery { remoteDataSource.getActorTopMovies(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorMovies(any()) } throws UnknownHostException()
 
         assertThrows<NoNetworkException> {
             repository.getActorTopMovies(1)
@@ -77,7 +77,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopTvShows throws NoNetworkException when network is down`() = runTest {
-        coEvery { remoteDataSource.getActorTopTvShows(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorTvShows(any()) } throws UnknownHostException()
 
         assertThrows<NoNetworkException> {
             repository.getActorTopTvShows(1)
@@ -97,7 +97,7 @@ class ActorRepositoryImplTest {
     @Test
     fun `getActorTopMovies throws RetrievingDataFailureException when an unknown error occurs`() =
         runTest {
-            coEvery { remoteDataSource.getActorTopMovies(any()) } throws Exception()
+            coEvery { remoteDataSource.getActorMovies(any()) } throws Exception()
 
             assertThrows<RetrievingDataFailureException> {
                 repository.getActorTopMovies(1)
@@ -107,7 +107,7 @@ class ActorRepositoryImplTest {
     @Test
     fun `getActorTopTvShows throws RetrievingDataFailureException when an unknown error occurs`() =
         runTest {
-            coEvery { remoteDataSource.getActorTopTvShows(any()) } throws Exception()
+            coEvery { remoteDataSource.getActorTvShows(any()) } throws Exception()
 
             assertThrows<RetrievingDataFailureException> {
                 repository.getActorTopTvShows(1)
@@ -130,7 +130,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopMovies returns empty list when no data`() = runTest {
-        coEvery { remoteDataSource.getActorTopMovies(any()) } returns emptyList()
+        coEvery { remoteDataSource.getActorMovies(any()) } returns emptyList()
 
         val result = repository.getActorTopMovies(1)
 
@@ -140,7 +140,7 @@ class ActorRepositoryImplTest {
     @Test
     fun `getActorTopTvShows returns list of TV series`() = runTest {
         val tvDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorTopTvShows(1) } returns tvDtos
+        coEvery { remoteDataSource.getActorTvShows(1) } returns tvDtos
 
         val result = repository.getActorTopTvShows(1)
 
@@ -150,7 +150,7 @@ class ActorRepositoryImplTest {
     @Test
     fun `getActorTopMovies returns list of movies`() = runTest {
         val movieDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorTopMovies(1) } returns movieDtos
+        coEvery { remoteDataSource.getActorMovies(1) } returns movieDtos
 
         val result = repository.getActorTopMovies(1)
 
