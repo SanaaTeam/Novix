@@ -158,11 +158,10 @@ fun MovieDetailsContent(
                                     title = state.movieDetails.title,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 220.dp)
+                                        .padding(top = 210.dp)
                                         .padding(horizontal = 16.dp)
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(top = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -187,6 +186,7 @@ fun MovieDetailsContent(
                                             IconWithText(
                                                 iconRes = designR.drawable.star,
                                                 contentDescription = null,
+                                                textColor = Theme.colors.title,
                                                 text = state.movieDetails.rating,
                                                 tint = Theme.colors.statusColors.yellowAccent
                                             )
