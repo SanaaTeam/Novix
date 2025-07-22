@@ -31,6 +31,18 @@ class ManageTvSeriesDetailsUseCase(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
+    suspend fun getTopRatedTvSeries(): List<TvSeries> {
+        return tvSeriesRepo.getTopRatedTvSeries()
+    }
+
+    suspend fun getTrendingTvSeries(): List<TvSeries> {
+        return tvSeriesRepo.getTrendingTvSeries()
+    }
+
+    suspend fun getMoviesByGenre(genre: Genre): List<TvSeries> {
+        return tvSeriesRepo.getSeriesByGenre(genre)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }

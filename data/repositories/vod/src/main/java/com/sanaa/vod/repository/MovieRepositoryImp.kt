@@ -69,6 +69,10 @@ class MovieRepositoryImpl(
         TODO("Not yet implemented")
     }
 
+    override suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()
