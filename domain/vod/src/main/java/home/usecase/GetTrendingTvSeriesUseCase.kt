@@ -1,13 +1,12 @@
 package home.usecase
 
+import details.repository.TvSeriesRepository
 import entity.TvSeries
-import home.repository.HomeRepository
-import kotlinx.coroutines.flow.Flow
 
 class GetTrendingTvSeriesUseCase(
-    private val homeRepository: HomeRepository
+    private val tvSeriesRepository: TvSeriesRepository
 ) {
-    operator fun invoke(): Flow<List<TvSeries>> {
-        return homeRepository.getTrendingTvSeries()
+    suspend operator fun invoke(): List<TvSeries> {
+        return tvSeriesRepository.getTrendingTvSeries()
     }
 }

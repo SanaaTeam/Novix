@@ -53,6 +53,10 @@ class ActorRepositoryImpl(
             }.take(20)
         }
 
+    override suspend fun getTrendingActors(): List<Actor> {
+        TODO("Not yet implemented")
+    }
+
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()

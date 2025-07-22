@@ -24,4 +24,6 @@ interface TvSeriesRepository {
     ): List<Actor>
 
     suspend fun getTvSeriesTrailer(id: Int): String?
+    suspend fun getTopRatedTvSeries(): List<TvSeries>
+    suspend fun getTrendingTvSeries(): List<TvSeries>
 }

@@ -10,4 +10,5 @@ interface ActorRepository {
     suspend fun getGalleryImageUrls(id: Int): List<String>
     suspend fun getActorTopMovies(id: Int): List<Movie>
     suspend fun getActorTopTvSeries(id: Int): List<TvSeries>
+    suspend fun getTrendingActors(): List<Actor>
 }

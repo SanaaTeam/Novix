@@ -14,12 +14,12 @@ import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.usecase.ManageSearchHistoryUseCase
 import search.usecase.search_param.SearchHistory
 
 class ManageSearchHistoryUseCaseTest {
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var manageSearchHistoryUseCase: ManageSearchHistoryUseCase
 
     @BeforeEach

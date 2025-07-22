@@ -1,13 +1,12 @@
 package home.usecase
 
+import details.repository.ActorRepository
 import entity.Actor
-import home.repository.HomeRepository
-import kotlinx.coroutines.flow.Flow
 
 class GetTrendingPeopleUseCase(
-    private val homeRepository: HomeRepository
+    private val actorRepository: ActorRepository
 ) {
-    operator fun invoke(): Flow<List<Actor>> {
-        return homeRepository.getTrendingPeople()
+    suspend operator fun invoke(): List<Actor> {
+        return actorRepository.getTrendingActors()
     }
 }

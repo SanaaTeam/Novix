@@ -72,6 +72,14 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvSeriesVideos(id).toDomain()
         }
 
+    override suspend fun getTopRatedTvSeries(): List<TvSeries> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getTrendingTvSeries(): List<TvSeries> {
+        TODO("Not yet implemented")
+    }
+
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {

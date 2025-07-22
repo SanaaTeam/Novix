@@ -53,6 +53,22 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
+    override suspend fun getPopularMovies(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getTopRatedMovies(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getUpcomingMovies(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getTrendingMovies(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()

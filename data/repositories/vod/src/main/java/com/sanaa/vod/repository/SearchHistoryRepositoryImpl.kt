@@ -3,20 +3,22 @@ package com.sanaa.vod.repository
 import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
+import entity.Movie
+import entity.TvSeries
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.SearchHistory
 import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
-) : SearchHistoryRepository {
+) : HistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
         errorMessage = "Failed to retrieve search history"
@@ -70,6 +72,14 @@ class SearchHistoryRepositoryImpl(
         exceptionProvider = ::FailedToDeleteException
     ) {
         local.deleteAllRecentViewed()
+    }
+
+    override suspend fun getWatchedMoviesHistory(): List<Movie> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getWatchedSeriesHistory(): List<TvSeries> {
+        TODO("Not yet implemented")
     }
 
     private inline fun <T> safeCall(

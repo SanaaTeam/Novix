@@ -1,11 +1,11 @@
 package search.usecase
 
 import kotlinx.coroutines.flow.Flow
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.usecase.search_param.SearchHistory
 
 class ManageSearchHistoryUseCase(
-    private val historyRepo: SearchHistoryRepository,
+    private val historyRepo: HistoryRepository,
 ) {
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> = historyRepo.getSearchHistory(HISTORY_ITEM_LIMIT)
     suspend fun removeSearchHistory(id: Int) = historyRepo.removeSearchHistoryById(id)

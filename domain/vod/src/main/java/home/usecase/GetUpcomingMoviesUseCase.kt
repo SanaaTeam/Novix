@@ -1,13 +1,12 @@
 package home.usecase
 
+import details.repository.MovieRepository
 import entity.Movie
-import home.repository.HomeRepository
-import kotlinx.coroutines.flow.Flow
 
 class GetUpcomingMoviesUseCase(
-    private val homeRepository: HomeRepository
+    private val movieRepository: MovieRepository
 ) {
-    operator fun invoke(): Flow<List<Movie>> {
-        return homeRepository.getUpcomingMovies()
+    suspend operator fun invoke(): List<Movie> {
+        return movieRepository.getUpcomingMovies()
     }
 }
