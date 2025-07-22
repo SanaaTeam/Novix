@@ -11,4 +11,5 @@ interface ActorRepository {
     suspend fun getActorTopMovies(id: Int): List<Movie>
     suspend fun getActorTopTvSeries(id: Int): List<TvSeries>
     suspend fun getTrendingActors(): List<Actor>
+    suspend fun getActorTopTvShows(id: Int): List<TvSeries>
 }

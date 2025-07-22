@@ -40,15 +40,15 @@ class ActorRepositoryImpl(
 
     override suspend fun getActorTopMovies(id: Int): List<Movie> =
         safeCall("Failed to retrieve top movies for actor ID: $id") {
-            remoteDataSource.getActorTopMovies(id).map {
+            remoteDataSource.getActorMovies(id).map {
                 it.toMovie()
             }.take(20)
         }
 
 
-    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> =
+    override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
         safeCall("Failed to retrieve top TV series for actor ID: $id") {
-            remoteDataSource.getActorTopTvSeries(id).map {
+            remoteDataSource.getActorTvShows(id).map {
                 it.toTvSeries()
             }.take(20)
         }

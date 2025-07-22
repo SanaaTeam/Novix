@@ -7,7 +7,7 @@ import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 
-class RemoteMovieDataSourceImp(
+class RemoteMovieDataSourceImpl(
     private val apiService: MovieApiService,
 ) : RemoteMovieDataSource {
 

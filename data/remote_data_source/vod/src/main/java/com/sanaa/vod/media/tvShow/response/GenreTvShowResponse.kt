@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GenreTvSeriesResponse(
+data class GenreTvShowResponse(
     @SerialName("page") val page: Int,
     @SerialName("results") val results: List<TvShowDto>,
 )

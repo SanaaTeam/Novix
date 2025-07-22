@@ -5,8 +5,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-class ImagesResponse {
+data class TvShowImagesResponse(
     @SerialName("backdrops")
     val backdrops: List<ImageDto> = emptyList()
-}
+)
 
