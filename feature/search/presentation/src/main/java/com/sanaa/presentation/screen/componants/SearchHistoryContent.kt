@@ -150,7 +150,7 @@ private fun MediaPoster(
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
-        boastImage = {
+        PosterImage = {
             RemoteBlurredHaramImageViewer(
                 imageUrl = item.imageUrl,
                 modifier = Modifier.fillMaxWidth(),

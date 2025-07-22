@@ -46,7 +46,7 @@ fun TvShowsContent(
             val tvShow = tvShowsPagingData[index]
             if (tvShow != null) {
                 MediaPosterCard(
-                    boastImage = {
+                    PosterImage = {
                         RemoteBlurredHaramImageViewer(
                             imageUrl = tvShow.imageUrl,
                             modifier = Modifier.fillMaxWidth(),

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.cards
+package com.sanaa.presentation.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.components.chips.MediaRatingChip
+import com.sanaa.presentation.components.chips.SaveIconChip
 
 @Composable
 fun MediaPosterCard(
@@ -32,7 +34,7 @@ fun MediaPosterCard(
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
-    boastImage: @Composable () -> Unit = {}
+    posterImage: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -44,7 +46,7 @@ fun MediaPosterCard(
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
     ) {
-        boastImage()
+        posterImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -78,7 +80,7 @@ private fun PreviewMovieSeriesPosterCard() {
         ) {
             item {
                 MediaPosterCard(
-                    boastImage = {
+                    posterImage = {
                         Image(
                             painter = painterResource(R.drawable.icon_placeholder_light),
                             contentDescription = null,

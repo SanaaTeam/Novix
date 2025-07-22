@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.designSystem)
+    implementation(projects.imageViewer)
 
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
