@@ -26,10 +26,11 @@ ignore:
   - "search/usecase/search_param/**"
   - "**/dao/**"
   - "**/dto/**"
+  - "**/db/**"
   - "**/response/**"
   - "**/exceptions/**"
   - "com/sanaa/search/dataSource/**"
-  - "com/sanaa/search/mapper/**"
+  - "com/sanaa/vod/mapper/**"
   - "com/sanaa/search/repository/**"
   - "com/sanaa/presentation/filter_bottomsheet/components/**"
   - "com/sanaa/presentation/screen/componants/**"
@@ -40,7 +41,7 @@ ignore:
   - "com/sanaa/presentation/screen/SearchScreen*"
   - "com/sanaa/presentation/filter_bottomsheet/FilterBottomSheet*"
   - "com/sanaa/search/search_result/db/**"
-  - "com/sanaa/movies/MovieApiResponse*"
+  - "com/sanaa/vod/media/movie/MovieApiService/*",
 
   - "com/sanaa/presentation/navigation/**"
   - "com/sanaa/presentation/screen/actor/componants/**"

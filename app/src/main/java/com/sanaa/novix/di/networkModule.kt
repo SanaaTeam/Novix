@@ -1,9 +1,9 @@
 package com.sanaa.novix.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.sanaa.movies.APIKeyInterceptor
-import com.sanaa.movies.LanguageInterceptor
 import com.sanaa.novix.BuildConfig
+import com.sanaa.vod.util.retrofit.APIKeyInterceptor
+import com.sanaa.vod.util.retrofit.LanguageInterceptor
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
