@@ -54,4 +54,5 @@
     <string name="more_like_this">More like this</string>
     <string name="unsuitable_image">This image is not suitable</string>
     <string name="play_trailer">Play trailer</string>
+    <string name="biography">"biography "</string>
 </resources>
