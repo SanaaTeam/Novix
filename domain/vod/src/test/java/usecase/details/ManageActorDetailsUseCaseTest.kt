@@ -123,6 +123,26 @@ class ManageActorDetailsUseCaseTest {
             manageActorDetailsUseCase.getProfileImages(actorId)
         }
     }
+    @Test
+    fun `getTrendingActors should call repository and return list of actors`() = runTest {
+        val trendingActors = listOf(dummyActor, dummyActor.copy(id = 2, name = "Jane Smith"))
+        coEvery { actorRepository.getTrendingActors() } returns trendingActors
+
+        val result = manageActorDetailsUseCase.getTrendingActors()
+
+        assertThat(result).isEqualTo(trendingActors)
+    }
+
+    @Test
+    fun `getTrendingActors should throw when repository fails`() = runTest {
+        coEvery { actorRepository.getTrendingActors() } throws RetrievingDataFailureException(
+            "Error fetching trending actors"
+        )
+
+        assertThrows<RetrievingDataFailureException> {
+            manageActorDetailsUseCase.getTrendingActors()
+        }
+    }
 
     companion object {
         private val dummyActor = Actor(

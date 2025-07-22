@@ -126,6 +126,82 @@ class ManageSearchHistoryUseCaseTest {
                 manageSearchHistoryUseCase.clearSearchHistory()
             }
         }
+
+    @Test
+    fun `getWatchedMoviesHistory should return movies when available`() = runTest {
+        // Given
+        val expectedMovies = listOf(mockk<entity.Movie>())
+        coEvery { searchHistoryRepository.getWatchedMoviesHistory() } returns expectedMovies
+
+        // When
+        val result = manageSearchHistoryUseCase.getWatchedMoviesHistory()
+
+        // Then
+        assertThat(result).isEqualTo(expectedMovies)
+    }
+
+    @Test
+    fun `getWatchedMoviesHistory should return empty list when none available`() = runTest {
+        // Given
+        coEvery { searchHistoryRepository.getWatchedMoviesHistory() } returns emptyList()
+
+        // When
+        val result = manageSearchHistoryUseCase.getWatchedMoviesHistory()
+
+        // Then
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getWatchedMoviesHistory should throw when repository fails`() = runTest {
+        // Given
+        coEvery {
+            searchHistoryRepository.getWatchedMoviesHistory()
+        } throws RetrievingDataFailureException("Watched Movies")
+
+        // When, Then
+        assertThrows<RetrievingDataFailureException> {
+            manageSearchHistoryUseCase.getWatchedMoviesHistory()
+        }
+    }
+
+    @Test
+    fun `getWatchedSeriesHistory should return series when available`() = runTest {
+        // Given
+        val expectedSeries = listOf(mockk<entity.TvSeries>())
+        coEvery { searchHistoryRepository.getWatchedSeriesHistory() } returns expectedSeries
+
+        // When
+        val result = manageSearchHistoryUseCase.getWatchedSeriesHistory()
+
+        // Then
+        assertThat(result).isEqualTo(expectedSeries)
+    }
+
+    @Test
+    fun `getWatchedSeriesHistory should return empty list when none available`() = runTest {
+        // Given
+        coEvery { searchHistoryRepository.getWatchedSeriesHistory() } returns emptyList()
+
+        // When
+        val result = manageSearchHistoryUseCase.getWatchedSeriesHistory()
+
+        // Then
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getWatchedSeriesHistory should throw when repository fails`() = runTest {
+        // Given
+        coEvery {
+            searchHistoryRepository.getWatchedSeriesHistory()
+        } throws RetrievingDataFailureException("Watched Series")
+
+        // When, Then
+        assertThrows<RetrievingDataFailureException> {
+            manageSearchHistoryUseCase.getWatchedSeriesHistory()
+        }
+    }
     companion object {
         private val SearchHistoryList = listOf(
             SearchHistory(1, "Search Query 1", timestamp = LocalDateTime.now()),
