@@ -25,9 +25,7 @@ val excludedPackages = listOf(
     "*.NovixApp*",
     "com.sanaa.image_viewer.*",
     "com.sanaa.designsystem.*",
-    "com.sanaa.search.dto.*",
-    "com.sanaa.search.di.*",
-    "com.sanaa.movies.MovieApiService.*",
+    "com.sanaa.vod.media.movie.MovieApiService.*",
 
     "entity.**",
     "search.usecase.search_param.**",

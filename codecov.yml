@@ -40,7 +40,7 @@ ignore:
   - "com/sanaa/presentation/screen/SearchScreen*"
   - "com/sanaa/presentation/filter_bottomsheet/FilterBottomSheet*"
   - "com/sanaa/search/search_result/db/**"
-  - "com/sanaa/movies/MovieApiResponse*"
+  - "com/sanaa/vod/media/movie/MovieApiService/*",
 
   - "com/sanaa/presentation/navigation/**"
   - "com/sanaa/presentation/screen/actor/componants/**"
