@@ -1,254 +1,201 @@
 package com.sanaa.vod.media
 
-import com.sanaa.data.remotedatasource.vod.BuildConfig
-import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvSeriesDataSource
+import com.google.common.truth.Truth.assertThat
+import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.ReviewDto
+import com.sanaa.vod.dataSource.remote.dto.SeasonDto
+import com.sanaa.vod.dataSource.remote.dto.TvShowDto
+import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.media.tvShow.RemoteTvShowDataSourceImpl
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.mock.MockEngine
-import io.ktor.client.engine.mock.MockRequestHandleScope
-import io.ktor.client.engine.mock.respond
-import io.ktor.client.engine.mock.respondError
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.ContentType
-import io.ktor.http.HttpHeaders
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.utils.io.ByteReadChannel
-import io.mockk.every
+import com.sanaa.vod.media.tvShow.TvShowApiService
+import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
+import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
+import com.sanaa.vod.media.tvShow.response.TvShowGuestOfStarsResponse
+import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
+import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
+import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.BeforeEach
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import org.junit.jupiter.api.Test
 
-class RemoteTvSeriesDataSourceImplTest {
-
-    private lateinit var mockEngine: MockEngine
-    private lateinit var client: HttpClient
-    private lateinit var languageProvider: LanguageProvider
-    private lateinit var dataSource: RemoteTvSeriesDataSource
-    private val baseUrl = "https://api.themoviedb.org/3"
-    private val apiKey = BuildConfig.TMDB_API_KEY
+class RemoteTvShowDataSourceTest {
+    lateinit var remoteTvShowDataSource: RemoteTvShowDataSource
+    private val apiService: TvShowApiService = mockk()
 
     @BeforeEach
-    fun setup() {
-        languageProvider = mockk()
-        every { languageProvider.getCurrentLanguage() } returns "en"
+    fun setUp() {
+        remoteTvShowDataSource = RemoteTvShowDataSourceImpl(apiService)
+    }
 
-        mockEngine = MockEngine { request ->
-            val url = request.url.toString().substringBefore("?")
-            val queryParams = request.url.parameters
-            val language = queryParams["language"]
-            val apiKeyParam = queryParams["api_key"]
+    @Test
+    fun `getTvShowDetails should return TvShowDto `() = runTest {
+        coEvery { apiService.fetchTvShowsDetails(1) } returns dummyTvShowDto
 
-            when {
-                url.endsWith("/tv/100") -> respondJson(
-                    """{
-                        "id": 100,
-                        "name": "Stranger Things",
-                        "overview": "A show about mysterious events.",
-                        "first_air_date": "2016-07-15",
-                        "vote_average": 8.7,
-                        "poster_path": "/poster.jpg",
-                        "number_of_seasons": 4,
-                        "genres": [
-                            {"id": 18, "name": "Drama"},
-                            {"id": 9648, "name": "Mystery"}
-                        ]
-                    }"""
+        val result = remoteTvShowDataSource.getTvShowDetails(1)
+
+        assertThat(result.id == dummyTvShowDto.id)
+
+    }
+
+    @Test
+    fun `getTvShowImageUrls should return List of ImageDto `() = runTest {
+        coEvery { apiService.fetchTvShowsImages(1) } returns dummyTvShowImagesResponse
+
+        val result = remoteTvShowDataSource.getTvShowImageUrls(1)
+
+        assertThat(result.size == dummyTvShowImagesResponse.backdrops.size)
+    }
+
+    @Test
+    fun `getTvShowsByGenre should return List of TvShowDto `() = runTest {
+        coEvery { apiService.fetchTvShowsByCategory(1) } returns dummyGenreTvShowResponse
+
+        val result = remoteTvShowDataSource.getTvShowsByGenre(1)
+
+        assertThat(result.size == dummyGenreTvShowResponse.results.size)
+
+    }
+
+    @Test
+    fun `getReviewsByTvShowId should return List of ReviewDto `() = runTest {
+        coEvery { apiService.fetchTvShowsReviews(1) } returns dummyTvShowReviewsResponse
+
+        val result = remoteTvShowDataSource.getReviewsByTvShowId(1)
+
+        assertThat(result.size == dummyTvShowReviewsResponse.results.size)
+
+    }
+
+    @Test
+    fun `getTvShowCast should return List of ActorDto `() = runTest {
+        coEvery { apiService.fetchTvShowsCast(1) } returns dummyTvShowCastResponse
+
+        val result = remoteTvShowDataSource.getTvShowCast(1)
+
+        assertThat(result.size == dummyTvShowCastResponse.cast.size)
+    }
+
+    @Test
+    fun `getEpisodeDetails should return EpisodeDto `() = runTest {
+        coEvery { apiService.fetchEpisodeDetails(1, 1, 1) } returns dummyEpisodeDto
+
+        val result = remoteTvShowDataSource.getEpisodeDetails(1, 1, 1)
+
+        assertThat(result.id == dummyEpisodeDto.id)
+
+    }
+
+    @Test
+    fun `getEpisodeImageUrls should return List of ImageDto `() = runTest {
+        coEvery { apiService.fetchEpisodeImages(1, 1, 1) } returns dummyTvShowImagesResponse
+
+        val result = remoteTvShowDataSource.getEpisodeImageUrls(1, 1, 1)
+
+        assertThat(result.size == dummyTvShowImagesResponse.backdrops.size)
+
+    }
+
+    @Test
+    fun `getEpisodeGuestsOfHonor should return List of ActorDto `() = runTest {
+        coEvery { apiService.fetchEpisodeGuestsOfHonor(1, 1, 1) } returns dummyGuestOfHonor
+
+        val result = remoteTvShowDataSource.getEpisodeGuestsOfHonor(1, 1, 1)
+
+        assertThat(result.size == dummyGuestOfHonor.guestStars.size)
+    }
+
+    @Test
+    fun `getTvShowVideos should return List of VideoDto `() = runTest {
+        coEvery { apiService.fetchTvShowsVideos(1) } returns dummyTvShowVideosResponse
+
+        val result = remoteTvShowDataSource.getTvShowVideos(1)
+
+        assertThat(result.size == dummyTvShowVideosResponse.results.size)
+    }
+
+    @Test
+    fun `getTvShowSeasonDetails should return SeasonDto `() = runTest {
+        coEvery { apiService.fetchSeasonDetails(1, 1) } returns dummySeasonDto
+
+        val result = remoteTvShowDataSource.getTvShowSeasonDetails(1, 1)
+
+        assertThat(result.id == dummySeasonDto.id)
+    }
+
+
+    companion object {
+        val dummyTvShowDto = TvShowDto(
+            id = 1,
+            name = "name",
+            overview = "overview",
+            posterPath = "posterPath",
+            voteAverage = 1f,
+        )
+        val dummyTvShowImagesResponse = TvShowImagesResponse(
+            backdrops = listOf(
+                ImageDto(
+                    filePath = "filePath",
+                )
+            )
+        )
+        val dummyGenreTvShowResponse = GenreTvShowResponse(
+            results = listOf(
+                TvShowDto(
+                    id = 1,
+                    name = "name",
+                    overview = "overview",
+                )
+            ), page = 1
+        )
+        val dummyTvShowReviewsResponse = TvShowReviewsResponse(
+            results = listOf(
+                ReviewDto(
+                    id = "1",
+                    author = "author",
+                    content = "content",
+                    createdAt = "createdAt",
                 )
 
-                url.endsWith("/tv/100/videos") -> respondJson(
-                    """{
-                        "id": 100,
-                        "results": [
-                            {"id": "abc123", "key": "xyz", "site": "YouTube", "type": "Trailer"}
-                        ]
-                    }"""
+            ), id = 1, page = 1
+        )
+        val dummyTvShowCastResponse = TvShowCastResponse(
+            cast = listOf(
+                ActorDto(
+                    id = 1,
+                    name = "name",
                 )
-
-                url.endsWith("/tv/100/season/1") -> respondJson(
-                    """{
-                        "id": 100,
-                        "name": "Season 1"
-                    }"""
+            )
+        )
+        val dummyEpisodeDto = EpisodeDto(
+            id = 1,
+            name = "name",
+        )
+        val dummyGuestOfHonor = TvShowGuestOfStarsResponse(
+            guestStars = listOf(
+                ActorDto(
+                    id = 1,
+                    name = "name",
                 )
-
-                url.endsWith("/tv/100/images") -> respondJson(
-                    """{
-                        "id": 100,
-                        "backdrops": [
-                            {"file_path": "/image.jpg"}
-                        ]
-                    }"""
+            )
+        )
+        val dummyTvShowVideosResponse = TvShowVideosResponse(
+            id = 1, results = listOf(
+                VideoDto(
+                    id = "1",
+                    key = "key",
+                    name = "name",
                 )
+            )
+        )
 
-                url.contains("/discover/tv") -> respondJson(
-                    """{
-                        "page": 1,
-                        "results": [
-                            {
-                                "id": 123,
-                                "name": "Breaking Bad",
-                                "overview": "A high school chemistry teacher...",
-                                "poster_path": "/somepath.jpg",
-                                "vote_average": 9.5
-                            }
-                        ],
-                        "total_pages": 10,
-                        "total_results": 200
-                    }"""
-                )
-
-                url.endsWith("/tv/100/reviews") -> respondJson(
-                    """{
-                        "id": 100,
-                        "page": 1,
-                        "results": [
-                            {
-                                "id": "r1",
-                                "author": "Haider",
-                                "content": "This show is amazing!",
-                                "created_at": "2024-01-01T12:00:00.000Z"
-                            }
-                        ]
-                    }"""
-                )
-
-                url.endsWith("/tv/100/credits") -> respondJson(
-                    """{
-                        "id": 100,
-                        "cast": [
-                            {
-                                "id": 1,
-                                "name": "Actor Name",
-                                "character": "Main Character",
-                                "profile_path": "/actor.jpg"
-                            }
-                        ]
-                    }"""
-                )
-
-                url.endsWith("/tv/100/season/1/episode/1") -> respondJson(
-                    """{
-                        "id": 1,
-                        "name": "Pilot"
-                    }"""
-                )
-
-                url.endsWith("/tv/100/season/1/episode/1/images") -> respondJson(
-                    """{
-                        "id": 1,
-                        "backdrops": [
-                            {"file_path": "/image1.jpg"}
-                        ]
-                    }"""
-                )
-
-                url.endsWith("/tv/100/season/1/episode/1/credits") -> respondJson(
-                    """{
-                        "id": 1,
-                        "guest_stars": [
-                            {
-                                "id": 2,
-                                "name": "Guest Star",
-                                "profile_path": "/guest.jpg"
-                            }
-                        ]
-                    }"""
-                )
-
-                else -> respondError(HttpStatusCode.NotFound)
-            }
-        }
-
-        client = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                    isLenient = true
-                    coerceInputValues = true
-                })
-            }
-        }
-
-        dataSource = RemoteTvShowDataSourceImpl(
-            client = client,
-            languageProvider = languageProvider
+        val dummySeasonDto = SeasonDto(
+            id = 1,
+            name = "name",
         )
     }
-
-    @Test
-    fun `getTvSeries returns expected result`() = runTest {
-        val result = dataSource.getTvSeries(100)
-        assertEquals("Stranger Things", result.name)
-    }
-
-    @Test
-    fun `getTvSeriesVideos returns video list`() = runTest {
-        val result = dataSource.getTvSeriesVideos(100)
-        assertEquals(1, result.size)
-        assertEquals("YouTube", result.first().site)
-    }
-
-    @Test
-    fun `getTvSeriesSeasonDetails returns season info`() = runTest {
-        val result = dataSource.getTvSeriesSeasonDetails(100, 1)
-        assertEquals("Season 1", result.name)
-    }
-
-    @Test
-    fun `getTvSeriesImages returns image list`() = runTest {
-        val result = dataSource.getTvSeriesImages(100)
-        assertEquals("/image.jpg", result.first().filePath)
-    }
-
-    @Test
-    fun `getTvSeriesByGenre returns list`() = runTest {
-        val result = dataSource.getTvSeriesByGenre(18)
-        assertEquals(1, result.size)
-    }
-
-    @Test
-    fun `getTvSeriesReviews returns review list`() = runTest {
-        val result = dataSource.getTvSeriesReviews(100)
-        assertEquals("This show is amazing!", result.first().content)
-    }
-
-    @Test
-    fun `getTvSeriesCast returns cast list`() = runTest {
-        val result = dataSource.getTvSeriesCast(100)
-        assertEquals("Actor Name", result.first().name)
-    }
-
-    @Test
-    fun `getEpisodeDetails returns episode`() = runTest {
-        val result = dataSource.getEpisodeDetails(100, 1, 1)
-        assertEquals("Pilot", result.name)
-    }
-
-    @Test
-    fun `getEpisodeImages returns episode images`() = runTest {
-        val result = dataSource.getEpisodeImages(100, 1, 1)
-        assertEquals("/image1.jpg", result.first().filePath)
-    }
-
-    @Test
-    fun `getEpisodeGuestsOfHonor returns guests`() = runTest {
-        val result = dataSource.getEpisodeGuestsOfHonor(100, 1, 1)
-        assertEquals("Guest Star", result.first().name)
-    }
-
-    private fun MockRequestHandleScope.respondJson(content: String) = respond(
-        content = ByteReadChannel(content),
-        status = HttpStatusCode.OK,
-        headers = headersOf(
-            HttpHeaders.ContentType,
-            listOf(ContentType.Application.Json.toString())
-        )
-    )
 }
