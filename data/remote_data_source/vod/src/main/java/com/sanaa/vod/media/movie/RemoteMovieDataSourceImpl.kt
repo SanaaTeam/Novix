@@ -6,30 +6,37 @@ import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.util.wrapApiCall
 
 class RemoteMovieDataSourceImpl(
     private val apiService: MovieApiService,
 ) : RemoteMovieDataSource {
 
-    override suspend fun fetchMovieDetails(id: Int): MovieDto = apiService.fetchMovieDetails(id)
+    override suspend fun fetchMovieDetails(id: Int): MovieDto =
+        wrapApiCall { apiService.fetchMovieDetails(id) }
 
-    override suspend fun fetchImagesUrl(id: Int): List<ImageDto> =
+    override suspend fun fetchImagesUrl(id: Int): List<ImageDto> = wrapApiCall {
         apiService.fetchImagesUrl(id).backdrops
+    }
 
-    override suspend fun fetchCast(id: Int): List<ActorDto> = apiService.fetchCast(id).cast
+    override suspend fun fetchCast(id: Int): List<ActorDto> = wrapApiCall {
+        apiService.fetchCast(id).cast
+    }
 
-
-    override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDto> =
+    override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDto> = wrapApiCall {
         apiService.fetchSimilarMoviesByMovieId(id).results
+    }
 
-    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> =
+    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> = wrapApiCall {
         apiService.fetchReviewsByMovieId(id).results
+    }
 
 
-    override suspend fun fetchMoviesByCategory(category: Int): List<MovieDto> =
+    override suspend fun fetchMoviesByCategory(category: Int): List<MovieDto> = wrapApiCall {
         apiService.fetchMoviesByCategory(category).results
+    }
 
-    override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> =
+    override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> = wrapApiCall {
         apiService.fetchMovieTrailerUrl(id).results
-
+    }
 }
