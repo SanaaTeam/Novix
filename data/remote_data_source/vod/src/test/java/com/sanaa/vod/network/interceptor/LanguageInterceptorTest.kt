@@ -1,6 +1,7 @@
 package com.sanaa.vod.network.interceptor
 
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.service.LanguageProvider
 import io.mockk.every
 import io.mockk.mockk
@@ -78,6 +79,6 @@ class LanguageInterceptorTest {
         val response = interceptor.intercept(chain)
         val proceededRequest = response.request
 
-        Truth.assertThat(proceededRequest.url.queryParameter("language")).isNull()
+        assertThat(proceededRequest.url.queryParameter("language")).isNull()
     }
 }
