@@ -3,7 +3,9 @@ package com.sanaa.vod.repository
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
+import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -124,6 +126,74 @@ class ActorRepositoryImplTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws IllegalStateException("boom")
 
         assertThrows<RetrievingDataFailureException> { repository.getGalleryImageUrls(42) }
+    }
+
+    @Test
+    fun `getActorTopMovies returns empty list when no data`() = runTest {
+        coEvery { remoteDataSource.getActorTopMovies(any()) } returns emptyList()
+
+        val result = repository.getActorTopMovies(1)
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getActorTopTvSeries returns list of TV series`() = runTest {
+        val tvDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorTopTvSeries(1) } returns tvDtos
+
+        val result = repository.getActorTopTvSeries(1)
+
+        assertThat(result).hasSize(1)
+    }
+
+    @Test
+    fun `getActorTopMovies returns list of movies`() = runTest {
+        val movieDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorTopMovies(1) } returns movieDtos
+
+        val result = repository.getActorTopMovies(1)
+
+        assertThat(result).hasSize(1)
+    }
+
+    @Test
+    fun `getActorDetails wraps exception with custom error message`() = runTest {
+        val error = RuntimeException("Something went wrong")
+        coEvery { remoteDataSource.getActorDetails(1) } throws error
+
+        val exception = assertThrows<RetrievingDataFailureException> {
+            repository.getActorDetails(1)
+        }
+
+        assertThat(exception.message).contains("Failed to retrieve actor details for ID: 1")
+        assertThat(exception.message).contains("Something went wrong")
+    }
+
+    @Test
+    fun `getProfileImageUrls returns mapped image URLs`() = runTest {
+        val imageDtos = listOf(mockk<ImageDto>(relaxed = true), mockk(relaxed = true))
+        coEvery { remoteDataSource.getActorImages(1) } returns imageDtos
+
+        val result = repository.getProfileImageUrls(1, 2)
+
+        assertThat(result).hasSize(2)
+    }
+    @Test
+    fun `getGalleryImageUrls returns mapped image URLs successfully`() = runTest {
+        val sampleDtoList = listOf(
+            ImageDto(filePath = "/img1.jpg"),
+            ImageDto(filePath = "/img2.jpg")
+        )
+
+        coEvery { remoteDataSource.getActorImages(1) } returns sampleDtoList
+
+        val result = repository.getGalleryImageUrls(1)
+
+        assertThat(result).containsExactly(
+            "https://image.tmdb.org/t/p/w500/img1.jpg",
+            "https://image.tmdb.org/t/p/w500/img2.jpg"
+        )
     }
 
     companion object {
