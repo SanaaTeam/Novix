@@ -15,7 +15,7 @@ class ManageActorDetailsUseCase(
         actorRepo.getActorTopMovies(id)
 
     suspend fun getActorTopTvSeries(id: Int): List<TvSeries> =
-        actorRepo.getActorTopTvSeries(id)
+        actorRepo.getActorTopTvShows(id)
 
     suspend fun getGalleryImages(id: Int): List<String> =
         actorRepo.getGalleryImageUrls(id)

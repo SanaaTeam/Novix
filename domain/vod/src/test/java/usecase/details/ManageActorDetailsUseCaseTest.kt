@@ -65,7 +65,7 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getActorTopTvSeries should call repository and return list`() = runTest {
         val actorId = 5
-        coEvery { actorRepository.getActorTopTvSeries(actorId) } returns dummySeries
+        coEvery { actorRepository.getActorTopTvShows(actorId) } returns dummySeries
         val result = manageActorDetailsUseCase.getActorTopTvSeries(actorId)
         assertThat(result).isEqualTo(dummySeries)
     }
@@ -73,7 +73,7 @@ class ManageActorDetailsUseCaseTest {
     @Test
     fun `getActorTopTvSeries should throw when repository fails`() = runTest {
         val actorId = 6
-        coEvery { actorRepository.getActorTopTvSeries(actorId) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getActorTopTvShows(actorId) } throws RetrievingDataFailureException(
             "Error"
         )
         assertThrows<RetrievingDataFailureException> {

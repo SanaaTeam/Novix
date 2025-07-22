@@ -18,6 +18,6 @@ class RemoteActorDataSourceImpl(
     override suspend fun getActorTopMovies(actorId: Int): List<ActorCastCreditDto> =
         apiService.fetchActorTopMovies(actorId).cast
 
-    override suspend fun getActorTopTvSeries(actorId: Int): List<ActorCastCreditDto> =
+    override suspend fun getActorTopTvShows(actorId: Int): List<ActorCastCreditDto> =
         apiService.fetchActorTopTvSeries(actorId).cast
 }
