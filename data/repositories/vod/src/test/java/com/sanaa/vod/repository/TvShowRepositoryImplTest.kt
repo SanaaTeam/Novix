@@ -24,7 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
-class TvSeriesRepositoryImplTest {
+class TvShowRepositoryImplTest {
 
     private lateinit var repository: TvSeriesRepository
     private val remote: RemoteTvShowDataSource = mockk(relaxed = true)

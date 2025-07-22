@@ -23,7 +23,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class RemoteTvShowDataSourceTest {
+class RemoteTvShowDataSourceImplTest {
     lateinit var remoteTvShowDataSource: RemoteTvShowDataSource
     private val apiService: TvShowApiService = mockk()
 
