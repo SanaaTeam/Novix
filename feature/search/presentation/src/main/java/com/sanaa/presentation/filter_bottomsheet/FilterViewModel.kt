@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import usecase.search.search_param.MediaFilters
 
 class FilterViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val manageMovieUseCase: ManageMovieUseCase,
+    private val manageMovieUseCase: ManageTvSeriesUseCase,
 ) : BaseViewModel<FilterUiState>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
@@ -29,11 +30,9 @@ class FilterViewModel(
     private fun fetchGenres() {
         tryToExecute(
             callee = {
-                val genres = manageMovieUseCase.getMovieGenres()
+                val genres = manageMovieUseCase.getSeriesGenres()
                 _uiState.update {
-                    it.copy(allGenres = genres.map { genre ->
-                        GenreUiState(
-                            id = genre.id, name = genre.name
+                    it.copy(allGenres = genres.map { genre -> GenreUiState(id = genre.id, name = genre.name
                         )
                     })
                 }
