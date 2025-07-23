@@ -103,6 +103,6 @@ class SeriesViewModel(
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
-        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre.id, genre.name))
+        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }
 }

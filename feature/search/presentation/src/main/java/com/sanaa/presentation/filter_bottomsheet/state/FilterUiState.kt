@@ -10,5 +10,5 @@ data class FilterUiState(
 
 data class GenreUiState(
     val id: Int = 0,
-    val name: String? = null
+    val name: String = ""
 )
