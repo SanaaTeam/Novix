@@ -40,9 +40,9 @@ class MovieRepositoryImpl(
             remote.fetchReviewsByMovieId(id).map { it.toEntity() }
         }
 
-    override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
+    override suspend fun getMoviesByCategory(genreId: Int): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.id).map { it.toDomain() }
+            remote.fetchMoviesByCategory(genreId).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =
@@ -55,15 +55,15 @@ class MovieRepositoryImpl(
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
