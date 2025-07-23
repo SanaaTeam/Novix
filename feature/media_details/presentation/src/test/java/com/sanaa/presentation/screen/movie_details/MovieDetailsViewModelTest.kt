@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.movie_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageMovieDetailsUseCase
+import usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 class MovieDetailsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageMovieDetails: ManageMovieDetailsUseCase = mockk(relaxed = true)
+    private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
 

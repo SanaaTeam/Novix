@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.series
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageTvSeriesDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -10,7 +10,6 @@ import entity.Genre
 import entity.Season
 import entity.TvSeries
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +26,7 @@ import org.junit.jupiter.api.Test
 class SeriesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: SeriesViewModel
 
     private val seriesId = 42

@@ -4,8 +4,8 @@ import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.util.TimeUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import search.usecase.ManageRecentViewedUseCase
-import search.usecase.search_param.MediaType
+import usecase.search.ManageRecentViewedUseCase
+import usecase.search.search_param.MediaType
 
 class MapRecentViewedKtTest {
 

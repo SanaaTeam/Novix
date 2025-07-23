@@ -8,6 +8,7 @@ import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.util.exceptions.ConnectionException
 import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -17,7 +18,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.net.UnknownHostException
 
 class MovieRepositoryImplTest {
 
@@ -76,8 +76,8 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getMovieDetails throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.fetchMovieDetails(any()) } throws UnknownHostException()
+    fun `getMovieDetails throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.fetchMovieDetails(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> { repository.getMovieDetails(1) }
     }
@@ -117,6 +117,35 @@ class MovieRepositoryImplTest {
         assertThat(result).isNull()
     }
 
+    @Test
+    fun `getPopularMovies returns empty list`() = runTest {
+        val result = repository.getPopularMovies(1)
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTopRatedMovies returns empty list`() = runTest {
+        val result = repository.getTopRatedMovies(1, Genre.ACTION)
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getUpcomingMovies returns empty list`() = runTest {
+        val result = repository.getUpcomingMovies(1, null)
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTrendingMovies returns empty list`() = runTest {
+        val result = repository.getTrendingMovies(1, Genre.DRAMA)
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getMovieGenres returns empty list`() = runTest {
+        val result = repository.getMovieGenres()
+        assertThat(result).isEmpty()
+    }
 
     companion object {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")

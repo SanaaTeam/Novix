@@ -5,16 +5,14 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.TvSeriesRepository
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
-import java.net.UnknownHostException
+import repository.TvSeriesRepository
 
 class TvShowRepositoryImpl(
     private val remoteDataSource: RemoteTvShowDataSource
@@ -72,15 +70,19 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
+    override suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
     }
 
+    override suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getSeriesGenres(): List<Genre> {
+        return emptyList()
+    }
 }
