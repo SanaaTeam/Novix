@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.TvShowUiModel
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 fun SearchTvSeriesOutput.toUiState(): TvShowUiModel {
     return TvShowUiModel(

@@ -1,8 +1,8 @@
-package search.usecase
+package usecase.search
 
 import kotlinx.coroutines.flow.Flow
-import search.repository.HistoryRepository
-import search.usecase.search_param.MediaType
+import repository.HistoryRepository
+import usecase.search.search_param.MediaType
 
 class ManageRecentViewedUseCase(
     private val historyRepo: HistoryRepository,

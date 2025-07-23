@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.review
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
-import details.usecase.ManageMovieUseCase
-import details.usecase.ManageTvSeriesUseCase
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import entity.Review
 import exceptions.NoNetworkException
 import io.mockk.coEvery

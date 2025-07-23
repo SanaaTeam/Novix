@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.episode_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import details.usecase.ManageEpisodeDetailsUseCase
-import details.usecase.ManageTvSeriesUseCase
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

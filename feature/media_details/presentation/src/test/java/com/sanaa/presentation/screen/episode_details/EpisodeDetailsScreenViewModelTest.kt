@@ -2,8 +2,8 @@ package com.sanaa.presentation.screen.episode_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageEpisodeDetailsUseCase
-import details.usecase.ManageTvSeriesUseCase
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode

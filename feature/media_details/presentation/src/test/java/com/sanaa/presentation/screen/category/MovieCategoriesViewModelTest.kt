@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenEffects
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenUiState
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
-import details.usecase.ManageMovieUseCase
+import usecase.ManageMovieUseCase
 import entity.Genre
 import entity.Movie
 import io.mockk.*

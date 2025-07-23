@@ -6,7 +6,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import search.usecase.search_param.SearchHistory
+import usecase.history.history_param.SearchHistory
 
 class MapSearchHistoryTest {
 

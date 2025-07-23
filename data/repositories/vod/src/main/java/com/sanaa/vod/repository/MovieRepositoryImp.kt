@@ -6,7 +6,7 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.MovieRepository
+import repository.MovieRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie
@@ -53,23 +53,23 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
-    override suspend fun getPopularMovies(): List<Movie> {
+    override suspend fun getPopularMovies(page: Int): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(): List<Movie> {
+    override suspend fun getTopRatedMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(): List<Movie> {
+    override suspend fun getUpcomingMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(): List<Movie> {
+    override suspend fun getTrendingMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
+    override suspend fun getMovieGenres(): List<Genre> {
         return emptyList()
     }
 
