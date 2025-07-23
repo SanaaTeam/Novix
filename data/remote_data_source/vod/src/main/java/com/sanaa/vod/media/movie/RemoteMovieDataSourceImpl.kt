@@ -42,7 +42,9 @@ class RemoteMovieDataSourceImpl(
     }
 
     override suspend fun fetchMovieGenres(): List<GenreDto> {
-        return apiService.fetchMovieGenres().genres
+        return wrapApiCall {
+            apiService.fetchMovieGenres().genres
+        }
     }
 
 }

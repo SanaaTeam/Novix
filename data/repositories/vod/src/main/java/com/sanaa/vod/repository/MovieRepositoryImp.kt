@@ -68,6 +68,8 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieGenres(): List<Genre> {
-        return emptyList()
+        return safeCall("Failed to fetch movie genres") {
+            remote.fetchMovieGenres().map { it.toEntity() }
+        }
     }
 }
