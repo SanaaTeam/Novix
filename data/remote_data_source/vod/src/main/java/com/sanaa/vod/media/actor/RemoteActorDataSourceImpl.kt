@@ -22,4 +22,8 @@ class RemoteActorDataSourceImpl(
 
     override suspend fun getActorTvShows(actorId: Int): List<ActorCastCreditDto> =
         wrapApiCall { apiService.fetchActorTvShows(actorId).cast }
+
+    override suspend fun fetchTrendingPeople(page: Int): List<ActorDto>  =
+        wrapApiCall {  apiService.fetchTrendingPeople(page = page).results
+    }
 }
