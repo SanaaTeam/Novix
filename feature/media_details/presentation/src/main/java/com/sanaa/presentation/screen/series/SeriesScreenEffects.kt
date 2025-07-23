@@ -9,6 +9,6 @@ sealed class SeriesScreenEffects {
 
     object NavigateBack : SeriesScreenEffects()
     data class PlayTrailer(val trailerUrl: String?) : SeriesScreenEffects()
-    data class NavigateToMovieCategoriesScreen(val categoryId: String) : SeriesScreenEffects()
+    data class NavigateToMovieCategoriesScreen(val categoryId: Int, val categoryName: String) : SeriesScreenEffects()
 
 }

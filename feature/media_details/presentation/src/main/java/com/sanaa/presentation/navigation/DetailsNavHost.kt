@@ -22,7 +22,6 @@ import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreen
 import com.sanaa.presentation.screen.movie_details.MovieDetailsScreen
 import com.sanaa.presentation.screen.review.ReviewsScreen
 import com.sanaa.presentation.screen.series.SeriesScreen
-import entity.Genre
 
 @Composable
 fun DetailsNavHost(startRoute: StartRoute, id: Int) {
@@ -156,13 +155,17 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                 // category
                 composable(
                     route = MovieCategoriesScreenRoute.PATTERN,
-                    arguments = listOf(navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY) {
+                    arguments = listOf(
+                        navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_ID) {
+                        type = NavType.IntType
+                    }, navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME) {
                         type = NavType.StringType
-                    })
+                    },
+                    )
                 ) {
-                    val category = it.arguments!!.getString(MovieCategoriesScreenRoute.ARG_CATEGORY)
-                    val categoryId = Genre.valueOf(category!!)
-                    MovieCategoriesScreen(categoryId = categoryId)
+                    val categoryId = it.arguments!!.getInt(MovieCategoriesScreenRoute.ARG_CATEGORY_ID)
+                    val categoryName = it.arguments!!.getString(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME)
+                    MovieCategoriesScreen(categoryId = categoryId, categoryName = categoryName)
                 }
             }
         }
