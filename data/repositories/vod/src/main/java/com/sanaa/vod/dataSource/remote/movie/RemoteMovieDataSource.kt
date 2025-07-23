@@ -14,4 +14,8 @@ interface RemoteMovieDataSource {
     suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto>
     suspend fun fetchMoviesByCategory(category: Int): List<MovieDto>
     suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto>
+    suspend fun fetchPopularMovies(page: Int): List<MovieDto>
+    suspend fun fetchTrendingMovies(page: Int, genreId: String?): List<MovieDto>
+    suspend fun fetchTopRatedMovies(page: Int, genreId: String?): List<MovieDto>
+    suspend fun fetchUpcomingMovies(page: Int, genreId: String?): List<MovieDto>
 }

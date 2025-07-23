@@ -32,4 +32,15 @@ class RemoteMovieDataSourceImpl(
     override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> =
         apiService.fetchMovieTrailerUrl(id).results
 
+    override suspend fun fetchPopularMovies(page: Int): List<MovieDto> =
+        apiService.getPopularMovies(page).results
+
+    override suspend fun fetchTrendingMovies(page: Int, genreId: String?): List<MovieDto> =
+        apiService.fetchTrendingMovies(page, genreId).results
+
+    override suspend fun fetchTopRatedMovies(page: Int, genreId: String?): List<MovieDto> =
+        apiService.fetchTopRatingMovies(page).results
+
+    override suspend fun fetchUpcomingMovies(page: Int, genreId: String?): List<MovieDto> =
+        apiService.fetchUpcomingMovies(page).results
 }

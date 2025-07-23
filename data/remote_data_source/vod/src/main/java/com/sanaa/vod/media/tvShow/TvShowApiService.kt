@@ -1,7 +1,6 @@
 package com.sanaa.vod.media.tvShow
 
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
-import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.media.movie.response.MovieApiResponse
@@ -88,6 +87,6 @@ interface TvShowApiService {
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("sort_by") sortBy: String = "vote_average.desc",
         @Query("vote_count.gte") voteCountGte: Int = 100,
-    ): MovieApiResponse<MovieDto>
+    ): MovieApiResponse<TvShowDto>
 
 }

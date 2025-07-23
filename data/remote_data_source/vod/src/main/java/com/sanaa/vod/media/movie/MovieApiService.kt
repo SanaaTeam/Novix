@@ -57,7 +57,7 @@ interface MovieApiService {
 
     @GET("discover/movie")
     @Headers("Ignore-Language: true")
-    suspend fun fetchTopRatingTvShows(
+    suspend fun fetchTopRatingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
         @Query("include_adult") includeAdult: Boolean = false,
