@@ -35,7 +35,10 @@ import search.usecase.ManageSearchHistoryUseCase
 import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.MediaType
+import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchHistory
+import search.usecase.search_param.SearchMovieOutput
+import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
@@ -300,71 +303,48 @@ class SearchViewModel(
     }
 
 
-
     private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
         return createPagingFlow(
-            pagingSourceFactory = {
-                SearchActorsPagingSource(searchUseCase, query = query)
-            },
-            mapper = { searchActorOutput ->
-                ActorUiModel(
-                    id = searchActorOutput.id,
-                    name = searchActorOutput.name,
-                    imageUrl = searchActorOutput.profileImageUrl
-                )
-            }
+            pagingSourceFactory = { createActorsPagingSource(query) },
+            mapper = SearchActorOutput::toUiState
         )
     }
 
 
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
         return createPagingFlow(
-            pagingSourceFactory = {
-                SearchTvShowsPagingSource(
-                    searchUseCase,
-                    query = query,
-                    filters = state.value.filters
-                )
-            },
-            mapper = { item ->
-                TvShowUiModel(
-                    id = item.id,
-                    title = item.title,
-                    imageUrl = item.posterImageUrl,
-                    rating = ""
-                )
-
-            }
+            pagingSourceFactory = { createTvShowsPagingSource(query) },
+            mapper = SearchTvSeriesOutput::toUiState
         )
     }
 
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
         return createPagingFlow(
-            pagingSourceFactory = {
-                SearchMoviesPagingSource(
-                    searchUseCase,
-                    query = query,
-                    filters = state.value.filters
-                )
-            },
-            mapper = { item ->
-                MovieUiModel(
-                    id = item.id,
-                    title = item.title,
-                    imageUrl = item.posterImageUrl,
-                    rating = ""
-                )
-            }
+            pagingSourceFactory = { createMoviesPagingSource(query) },
+            mapper = SearchMovieOutput::toUiState
         )
     }
 
-    private fun setLoadingState() {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+    private fun createActorsPagingSource(query: String): PagingSource<Int, SearchActorOutput> {
+        return SearchActorsPagingSource(searchUseCase, query = query)
     }
 
-    private fun setSuccessState() {
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+    private fun createTvShowsPagingSource(query: String): PagingSource<Int, SearchTvSeriesOutput> {
+        return SearchTvShowsPagingSource(
+            searchUseCase,
+            query = query,
+            filters = state.value.filters
+        )
     }
+
+    private fun createMoviesPagingSource(query: String): PagingSource<Int, SearchMovieOutput> {
+        return SearchMoviesPagingSource(
+            searchMoviesUseCase = searchUseCase,
+            query = query,
+            filters = state.value.filters
+        )
+    }
+
 
     private fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
@@ -378,6 +358,14 @@ class SearchViewModel(
             pagingData.map(mapper)
         }.cachedIn(viewModelScope)
 
+    }
+
+    private fun setLoadingState() {
+        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+    }
+
+    private fun setSuccessState() {
+        updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
     companion object {
