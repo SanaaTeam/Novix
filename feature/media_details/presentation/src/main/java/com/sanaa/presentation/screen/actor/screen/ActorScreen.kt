@@ -125,8 +125,7 @@ private fun ActorScreenContent(
                 state.isLoading,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-
-            )  { loading ->
+            ) { loading ->
                 if (loading) {
                     NovixLoadingIndicator(
                         modifier = Modifier.align(Alignment.Center)
@@ -141,22 +140,22 @@ private fun ActorScreenContent(
                                 ImageSlider(
                                     images = state.profileImageUrls,
                                     contentDescription = stringResource(R.string.actor_photos),
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                                ActorInfoCard(
+                                    actor = state.actor,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 208.dp)
+                                        .padding(horizontal = 16.dp)
                                 )
                             }
-                        }
-
-                        item {
-                            ActorInfoCard(
-                                actor = state.actor,
-                                modifier = Modifier
-                                    .padding(horizontal = 16.dp)
-                            )
                         }
 
                         state.actor.biography?.let { bio ->
                             item {
                                 OverviewSection(
-                                    titleResId = R.string.overview,
+                                    titleResId = R.string.biography,
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier

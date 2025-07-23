@@ -25,11 +25,11 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun EmptySearchState(
+fun EmptySearchContent(
+    topIcon: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
-    topIcon: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -66,7 +66,7 @@ fun EmptySearchState(
 @Composable
 fun EmptySearchStatePreview() {
     NovixTheme(isSystemInDarkTheme()) {
-        EmptySearchState(
+        EmptySearchContent(
             icon = painterResource(id = R.drawable.empty_search),
             text = stringResource(id = R.string.empty_search_message)
         )
