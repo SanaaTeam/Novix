@@ -6,7 +6,6 @@ import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
-import entity.Genre
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
@@ -211,7 +210,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getWatchedMoviesHistory returns empty list`() = runTest {
         // Act
-        val result = repository.getWatchedMoviesHistory(1, Genre.ACTION)
+        val result = repository.getWatchedMoviesHistory(page = 1, genreId = 1)
 
         // Assert
         assertThat(result).isEmpty()

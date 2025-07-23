@@ -32,7 +32,10 @@ class TvShowMapperTest {
         assertEquals("https://image.tmdb.org/t/p/w500/breakingbad.jpg", result.posterImageUrl)
         assertEquals(9.5f, result.imdbRating)
         assertEquals(LocalDate(2008, 1, 20), result.releaseDate)
-        assertEquals(listOf(Genre.DRAMA, Genre.CRIME), result.genres)
+        assertEquals(
+            listOf(Genre(id = 18, name = "Drama"), Genre(id = 80, name = "Crime")),
+            result.genres
+        )
         assertEquals(5, result.seasonsCount)
     }
 
