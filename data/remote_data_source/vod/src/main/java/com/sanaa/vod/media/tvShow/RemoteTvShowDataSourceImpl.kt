@@ -2,6 +2,7 @@ package com.sanaa.vod.media.tvShow
 
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
@@ -48,4 +49,7 @@ class RemoteTvShowDataSourceImpl(
     ): List<ActorDto> =
         apiService.fetchEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber).guestStars
 
+    override suspend fun getTvShowGenres(): List<GenreDto> {
+        return apiService.fetchTvShowsGenres().genres
+    }
 }

@@ -1,6 +1,7 @@
 package com.sanaa.vod.media.movie
 
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
@@ -18,7 +19,6 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun fetchCast(id: Int): List<ActorDto> = apiService.fetchCast(id).cast
 
-
     override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDto> =
         apiService.fetchSimilarMoviesByMovieId(id).results
 
@@ -31,5 +31,9 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> =
         apiService.fetchMovieTrailerUrl(id).results
+
+    override suspend fun fetchMovieGenres(): List<GenreDto> {
+        return apiService.fetchMovieGenres().genres
+    }
 
 }
