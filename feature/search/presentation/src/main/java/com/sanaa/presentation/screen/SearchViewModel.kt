@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.base.BaseViewModel
@@ -103,6 +104,13 @@ class SearchViewModel(
         )
     }
 
+    override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
+        if (viewed.mediaType == MediaTypeUi.MOVIE) {
+            emitEffect(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+        } else {
+            emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+        }
+    }
 
     override fun onDeleteRecentSearchItem(id: Int) {
         updateState { it.copy(isLoading = true, error = null) }
@@ -118,26 +126,13 @@ class SearchViewModel(
         loadMediaByTab(query)
     }
 
-    override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
-        if (viewed.mediaType == MediaTypeUi.MOVIE) {
-            emitEffect(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
-        } else {
-            emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
-        }
-    }
 
     override fun onFilterClicked() {
-        updateState {
-            it.copy(showBottomSheet = true)
-        }
+        updateState { it.copy(showBottomSheet = true) }
     }
 
     override fun onBottomSheetDragged() {
-        updateState {
-            it.copy(
-                showBottomSheet = false
-            )
-        }
+        updateState { it.copy(showBottomSheet = false) }
     }
 
     fun observeSearchQueryChanges() {
@@ -175,11 +170,7 @@ class SearchViewModel(
     }
 
     private fun loadMovies(query: String) {
-        updateState {
-            it.copy(
-                isLoading = true, error = null, noInternetConnection = false
-            )
-        }
+        setLoadingState()
         tryToCollect(
             callee = { loadMoviesOperation(query) },
             onCollect = ::onMoviesLoaded,
@@ -190,7 +181,7 @@ class SearchViewModel(
     private fun loadActors(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { onLoadActors(query) },
+            callee = { loadActorsOperation(query) },
             onCollect = ::onActorsLoaded,
             onError = ::onDataLoadError
         )
@@ -263,25 +254,6 @@ class SearchViewModel(
     }
 
 
-    private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE, enablePlaceholders = false
-            ), pagingSourceFactory = {
-                SearchMoviesPagingSource(
-                    searchUseCase,
-                    query = query,
-                    filters = state.value.filters
-                )
-            }).flow.map { pagingData ->
-            pagingData.map { item ->
-                MovieUiModel(
-                    id = item.id, title = item.title, imageUrl = item.posterImageUrl, rating = ""
-                )
-            }
-        }.cachedIn(viewModelScope)
-    }
-
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
         _moviesPagingData.value = pagingData
         setSuccessState()
@@ -293,45 +265,11 @@ class SearchViewModel(
         setSuccessState()
     }
 
-    private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE, enablePlaceholders = false
-            ), pagingSourceFactory = {
-                SearchTvShowsPagingSource(
-                    searchUseCase, query = query, filters = state.value.filters
-                )
-            }).flow.map { pagingData ->
-            pagingData.map { item ->
-                TvShowUiModel(
-                    id = item.id, title = item.title, imageUrl = item.posterImageUrl, rating = ""
-                )
-            }
-        }.cachedIn(viewModelScope)
-    }
-
-
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
         _actorsPagingData.value = pagingData
         setSuccessState()
     }
 
-    private fun onLoadActors(query: String): Flow<PagingData<ActorUiModel>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE, enablePlaceholders = false
-            ), pagingSourceFactory = {
-                SearchActorsPagingSource(searchUseCase, query = query)
-            }).flow.map { pagingData ->
-            pagingData.map { searchActorOutput ->
-                ActorUiModel(
-                    id = searchActorOutput.id,
-                    name = searchActorOutput.name,
-                    imageUrl = searchActorOutput.profileImageUrl
-                )
-            }
-        }.cachedIn(viewModelScope)
-    }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) updateState {
@@ -361,6 +299,65 @@ class SearchViewModel(
         )
     }
 
+
+
+    private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
+        return createPagingFlow(
+            pagingSourceFactory = {
+                SearchActorsPagingSource(searchUseCase, query = query)
+            },
+            mapper = { searchActorOutput ->
+                ActorUiModel(
+                    id = searchActorOutput.id,
+                    name = searchActorOutput.name,
+                    imageUrl = searchActorOutput.profileImageUrl
+                )
+            }
+        )
+    }
+
+
+    private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
+        return createPagingFlow(
+            pagingSourceFactory = {
+                SearchTvShowsPagingSource(
+                    searchUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            },
+            mapper = { item ->
+                TvShowUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
+
+            }
+        )
+    }
+
+    private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
+        return createPagingFlow(
+            pagingSourceFactory = {
+                SearchMoviesPagingSource(
+                    searchUseCase,
+                    query = query,
+                    filters = state.value.filters
+                )
+            },
+            mapper = { item ->
+                MovieUiModel(
+                    id = item.id,
+                    title = item.title,
+                    imageUrl = item.posterImageUrl,
+                    rating = ""
+                )
+            }
+        )
+    }
+
     private fun setLoadingState() {
         updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
     }
@@ -369,6 +366,19 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
+    private fun <T : Any, R : Any> createPagingFlow(
+        pagingSourceFactory: () -> PagingSource<Int, T>,
+        mapper: (T) -> R
+    ): Flow<PagingData<R>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE, enablePlaceholders = false
+            ), pagingSourceFactory = pagingSourceFactory
+        ).flow.map { pagingData ->
+            pagingData.map(mapper)
+        }.cachedIn(viewModelScope)
+
+    }
 
     companion object {
         private const val PAGE_SIZE = 20
