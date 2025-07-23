@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.movie_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageMovieUseCase
+import usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre

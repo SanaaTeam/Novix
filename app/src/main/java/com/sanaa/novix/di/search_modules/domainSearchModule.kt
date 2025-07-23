@@ -2,12 +2,12 @@ package com.sanaa.novix.di.search_modules
 
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
-import search.usecase.ManageRecentViewedUseCase
-import search.usecase.ManageSearchHistoryUseCase
-import search.usecase.SearchUseCase
+import usecase.search.ManageRecentViewedUseCase
+import usecase.history.ManageHistoryUseCase
+import usecase.search.SearchUseCase
 
 val domainSearchModule = module {
     singleOf(::SearchUseCase)
     singleOf(::ManageRecentViewedUseCase)
-    singleOf(::ManageSearchHistoryUseCase)
+    singleOf(::ManageHistoryUseCase)
 }

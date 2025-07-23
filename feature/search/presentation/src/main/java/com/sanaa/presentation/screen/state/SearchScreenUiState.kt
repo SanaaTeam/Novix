@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.state
 
-import search.usecase.search_param.MediaFilters
+import usecase.search.search_param.MediaFilters
 
 
 data class SearchScreenUiState(

@@ -7,9 +7,9 @@ import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.search.toSearchOutput
 import kotlinx.datetime.LocalDate
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<SearchMovieOutput> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }

@@ -27,21 +27,21 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.ManageRecentViewedUseCase
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.ManageSearchHistoryUseCase
-import search.usecase.SearchUseCase
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
-import search.usecase.search_param.SearchActorOutput
-import search.usecase.search_param.SearchHistory
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.ManageRecentViewedUseCase
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.history.ManageHistoryUseCase
+import usecase.search.SearchUseCase
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.MediaType
+import usecase.search.search_param.SearchActorOutput
+import usecase.history.history_param.SearchHistory
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchViewModelTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase = mockk(relaxed = true)
-    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase = mockk(relaxed = true)
+    private val manageSearchHistoryUseCase: ManageHistoryUseCase = mockk(relaxed = true)
     private lateinit var searchViewModel: SearchViewModel
     private val testDispatcher = StandardTestDispatcher()
 

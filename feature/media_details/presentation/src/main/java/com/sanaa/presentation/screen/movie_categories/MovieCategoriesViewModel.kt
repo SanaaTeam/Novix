@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.movie_categories
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
-import details.usecase.ManageMovieUseCase
+import usecase.ManageMovieUseCase
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

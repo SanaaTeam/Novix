@@ -1,4 +1,4 @@
-package search.usecase.search_param
+package usecase.search.search_param
 
 data class SearchActorOutput(
     val id: Int,

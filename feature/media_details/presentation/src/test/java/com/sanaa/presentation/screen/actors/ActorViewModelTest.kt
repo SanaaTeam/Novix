@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import details.usecase.ManageActorUseCase
+import usecase.ManageActorUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre

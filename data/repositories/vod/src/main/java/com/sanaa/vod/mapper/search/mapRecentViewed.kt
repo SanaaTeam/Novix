@@ -2,8 +2,8 @@ package com.sanaa.vod.mapper.search
 
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.util.TimeUtils
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.search_param.MediaType
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.search.search_param.MediaType
 
 fun RecentViewedMedia.toDto(time: Long = TimeUtils.getCurrentTimeStamp()): RecentViewedLocalDto {
     return RecentViewedLocalDto(

@@ -4,7 +4,7 @@ import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 
 fun RecentViewedMedia.toUiState() = RecentViewedUiModel(
     id = this.id,

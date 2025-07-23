@@ -1,8 +1,7 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import details.repository.TvSeriesRepository
-import details.usecase.ManageEpisodeDetailsUseCase
+import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
 import io.mockk.coEvery
@@ -11,8 +10,9 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import usecase.ManageEpisodeDetailsUseCase
 
-class ManageEpisodeDetailsUseCaseTest {
+class ManageEpisodeUseCaseTest {
 
     private val tvSeriesRepository: TvSeriesRepository = mockk(relaxed = true)
     private lateinit var manageEpisodeDetailsUseCase: ManageEpisodeDetailsUseCase
