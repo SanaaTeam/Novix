@@ -1,7 +1,7 @@
 package com.sanaa.vod.util
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.util.exceptions.NoNetworkException
+import com.sanaa.vod.util.exceptions.ConnectionException
 import com.sanaa.vod.util.exceptions.ParsingException
 import com.sanaa.vod.util.exceptions.ServerErrorException
 import com.sanaa.vod.util.exceptions.TimeoutException
@@ -40,7 +40,7 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()).isInstanceOf(NoNetworkException::class.java)
+        assertThat(result.exceptionOrNull()).isInstanceOf(ConnectionException::class.java)
     }
 
     @Test

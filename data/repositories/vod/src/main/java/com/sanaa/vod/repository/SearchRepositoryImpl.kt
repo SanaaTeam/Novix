@@ -11,20 +11,18 @@ import com.sanaa.vod.util.filterCashedMovies
 import com.sanaa.vod.util.filterCashedTvShows
 import com.sanaa.vod.util.filterMovies
 import com.sanaa.vod.util.filterTvShows
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import com.sanaa.vod.util.safeCall
 import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
-import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,
     private val localCacheSearchDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
-    override suspend fun searchActors(query: String, page: Int) = searchOrThrow(query) {
+    override suspend fun searchActors(query: String, page: Int) = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
@@ -43,7 +41,7 @@ class SearchRepositoryImpl(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<SearchMovieOutput> = searchOrThrow(query) {
+    ): List<SearchMovieOutput> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
@@ -60,7 +58,7 @@ class SearchRepositoryImpl(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<SearchTvSeriesOutput> = searchOrThrow(query) {
+    ): List<SearchTvSeriesOutput> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
@@ -117,19 +115,5 @@ class SearchRepositoryImpl(
         return filters
             ?.filterCashedTvShows(cachedTvSeries)
             ?: return cachedTvSeries.map { it.toSearchOutput() }
-    }
-
-    private suspend fun <T> searchOrThrow(
-        query: String,
-        callee: suspend () -> T,
-    ): T {
-        try {
-            return callee()
-        } catch (_: UnresolvedAddressException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw RetrievingDataFailureException("Failed to retrieve data for query: $query")
-        }
     }
 }

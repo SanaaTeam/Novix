@@ -1,6 +1,6 @@
 package com.sanaa.vod.util
 
-import com.sanaa.vod.util.exceptions.NoNetworkException
+import com.sanaa.vod.util.exceptions.ConnectionException
 import com.sanaa.vod.util.exceptions.ParsingException
 import com.sanaa.vod.util.exceptions.ServerErrorException
 import com.sanaa.vod.util.exceptions.TimeoutException
@@ -14,7 +14,7 @@ suspend inline fun <T> wrapApiCall(block: suspend () -> T): T {
     return try {
         block()
     } catch (e: UnknownHostException) {
-        throw NoNetworkException(message = "No internet connection")
+        throw ConnectionException(message = "No internet connection")
     } catch (e: SocketTimeoutException) {
         throw TimeoutException(message = "Request timed out")
     } catch (e: HttpException) {

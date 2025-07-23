@@ -2,7 +2,7 @@ package com.sanaa.vod.util.exceptions
 
 open class DataSourceException(message: String? = null) : Exception(message)
 
-class NoNetworkException(message: String? = null) : DataSourceException(message)
+class ConnectionException(message: String? = null) : DataSourceException(message)
 class TimeoutException(message: String? = null) : DataSourceException(message)
 class ServerErrorException(message: String? = null) : DataSourceException(message)
 class ParsingException(message: String? = null) : DataSourceException(message)

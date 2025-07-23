@@ -5,6 +5,11 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.actor.toMovie
 import com.sanaa.vod.mapper.actor.toTvSeries
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.util.exceptions.ParsingException
+import com.sanaa.vod.util.exceptions.ServerErrorException
+import com.sanaa.vod.util.exceptions.TimeoutException
+import com.sanaa.vod.util.exceptions.UnknownDataSourceException
+import com.sanaa.vod.util.safeCall
 import details.repository.ActorRepository
 import entity.Actor
 import entity.Movie
@@ -53,13 +58,4 @@ class ActorRepositoryImpl(
             }.take(20)
         }
 
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
-    }
 }

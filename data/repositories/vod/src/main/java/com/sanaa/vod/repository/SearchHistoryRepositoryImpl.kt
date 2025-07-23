@@ -3,16 +3,14 @@ package com.sanaa.vod.repository
 import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.util.safeCall
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import search.repository.SearchHistoryRepository
 import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
 import search.usecase.search_param.SearchHistory
-import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
@@ -71,19 +69,4 @@ class SearchHistoryRepositoryImpl(
     ) {
         local.deleteAllRecentViewed()
     }
-
-    private inline fun <T> safeCall(
-        errorMessage: String,
-        exceptionProvider: (String) -> Exception = { msg -> RetrievingDataFailureException(msg) },
-        block: () -> T
-    ): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw exceptionProvider("$errorMessage: ${e.message}")
-        }
-    }
-
 }

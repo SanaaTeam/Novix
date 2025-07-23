@@ -6,14 +6,12 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.util.safeCall
 import details.repository.MovieRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
-import java.net.UnknownHostException
 
 class MovieRepositoryImpl(
     private val remote: RemoteMovieDataSource
@@ -52,16 +50,6 @@ class MovieRepositoryImpl(
         safeCall("Failed to fetch movie trailer") {
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
-    }
 
 
 }
