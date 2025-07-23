@@ -10,6 +10,7 @@ import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import exceptions.NoNetworkException
 import io.mockk.Runs
@@ -653,6 +654,53 @@ class SearchViewModelTest {
                 Truth.assertThat(item).isEqualTo(expected)
             }
         }
+
+    @Test
+    fun `onActorClicked should emit NavigateToActorDetails effect`() = runTest {
+        // Given
+        val actorId = 7
+
+        // When
+        searchViewModel.onActorClicked(actorId)
+
+        // Then
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            Truth.assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToActorDetails(actorId))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onSearchResultMediaClicked should emit NavigateToMovieDetails when media is MOVIE`() = runTest {
+        // Given
+        val viewed = RecentViewedUiModel(10, "url", MediaTypeUi.MOVIE, false)
+
+        // When
+        searchViewModel.onSearchResultMediaClicked(viewed)
+
+        // Then
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            Truth.assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onSearchResultMediaClicked should emit NavigateToTvShowDetails when media is TV`() = runTest {
+        // Given
+        val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SERIES, false)
+
+        // When
+        searchViewModel.onSearchResultMediaClicked(viewed)
+
+        // Then
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            Truth.assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 
 }
 
