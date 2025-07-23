@@ -5,16 +5,14 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
 import repository.TvSeriesRepository
-import java.net.UnknownHostException
 
 class TvShowRepositoryImpl(
     private val remoteDataSource: RemoteTvShowDataSource
@@ -87,15 +85,4 @@ class TvShowRepositoryImpl(
     override suspend fun getSeriesGenres(): List<Genre> {
         return emptyList()
     }
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
-    }
-
 }

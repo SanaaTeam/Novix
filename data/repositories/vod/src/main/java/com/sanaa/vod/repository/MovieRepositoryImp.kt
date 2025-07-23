@@ -6,14 +6,12 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import repository.MovieRepository
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
-import java.net.UnknownHostException
+import repository.MovieRepository
 
 class MovieRepositoryImpl(
     private val remote: RemoteMovieDataSource
@@ -53,33 +51,24 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
+
     override suspend fun getPopularMovies(page: Int): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(page: Int,genre: Genre?): List<Movie> {
+    override suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(page: Int,genre: Genre?): List<Movie> {
+    override suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(page: Int,genre: Genre?): List<Movie> {
+    override suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie> {
         return emptyList()
     }
 
     override suspend fun getMovieGenres(): List<Genre> {
         return emptyList()
-    }
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
     }
 }
