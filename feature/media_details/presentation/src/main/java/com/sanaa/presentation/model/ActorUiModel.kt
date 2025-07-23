@@ -26,8 +26,11 @@ fun Actor.toActorUiModel() = ActorUiModel(
     gender = if (gender == Actor.Gender.MALE) "male" else "female",
     department = department?.toString(),
     character = character,
-    lifeSpan = birthDate?.let { birth -> deathDate?.let { death -> "$birth - $death" } ?: birth.formatDateLocalizedDigits() }
-        .toString(),
+    lifeSpan = when {
+        birthDate != null && deathDate != null -> "$birthDate - $deathDate"
+        birthDate != null -> birthDate!!.formatDateLocalizedDigits()
+        else -> null
+    },
     placeOfBirth = placeOfBirth?.toString(),
     biography = biography?.takeIf(String::isNotBlank),
 )
