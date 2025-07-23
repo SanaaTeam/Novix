@@ -1,11 +1,11 @@
 package usecase
 
-import repository.TvSeriesRepository
 import entity.Actor
 import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
+import repository.TvSeriesRepository
 
 class ManageTvSeriesUseCase(
     private val tvSeriesRepo: TvSeriesRepository
@@ -31,16 +31,16 @@ class ManageTvSeriesUseCase(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
-    suspend fun getPopularSeries(genre: Genre): List<TvSeries> {
-        return tvSeriesRepo.getPopularSeries(genre)
+    suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return tvSeriesRepo.getPopularSeries(page, genre)
     }
 
-    suspend fun getTopRatedTvSeries(): List<TvSeries> {
-        return tvSeriesRepo.getTopRatedTvSeries()
+    suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return tvSeriesRepo.getTopRatedTvSeries(page, genre)
     }
 
-    suspend fun getTrendingTvSeries(genre: Genre): List<TvSeries> {
-        return tvSeriesRepo.getTrendingTvSeries(genre)
+    suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return tvSeriesRepo.getTrendingTvSeries(page, genre)
     }
 
     suspend fun getSeriesGenres(): List<Genre> {

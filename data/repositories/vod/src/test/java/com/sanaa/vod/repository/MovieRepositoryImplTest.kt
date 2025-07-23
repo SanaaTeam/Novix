@@ -119,31 +119,31 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getPopularMovies returns empty list`() = runTest {
-        val result = repository.getPopularMovies()
+        val result = repository.getPopularMovies(1)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getTopRatedMovies returns empty list`() = runTest {
-        val result = repository.getTopRatedMovies()
+        val result = repository.getTopRatedMovies(1, Genre.ACTION)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getUpcomingMovies returns empty list`() = runTest {
-        val result = repository.getUpcomingMovies()
+        val result = repository.getUpcomingMovies(1, null)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getTrendingMovies returns empty list`() = runTest {
-        val result = repository.getTrendingMovies()
+        val result = repository.getTrendingMovies(1, Genre.DRAMA)
         assertThat(result).isEmpty()
     }
 
     @Test
-    fun `getMoviesByGenre returns empty list`() = runTest {
-        val result = repository.getMoviesByGenre(Genre.ACTION)
+    fun `getMovieGenres returns empty list`() = runTest {
+        val result = repository.getMovieGenres()
         assertThat(result).isEmpty()
     }
 

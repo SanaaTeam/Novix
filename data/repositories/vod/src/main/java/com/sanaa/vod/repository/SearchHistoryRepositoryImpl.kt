@@ -75,11 +75,11 @@ class SearchHistoryRepositoryImpl(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun getWatchedMoviesHistory(genre: Genre): List<Movie> {
+    override suspend fun getWatchedMoviesHistory(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getWatchedSeriesHistory(genre: Genre): List<TvSeries> {
+    override suspend fun getWatchedSeriesHistory(page: Int,genre: Genre?): List<TvSeries> {
         return emptyList()
     }
 

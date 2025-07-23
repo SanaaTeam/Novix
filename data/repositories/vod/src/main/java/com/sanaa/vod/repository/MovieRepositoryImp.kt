@@ -53,19 +53,19 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
-    override suspend fun getPopularMovies(): List<Movie> {
+    override suspend fun getPopularMovies(page: Int): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(genre: Genre): List<Movie> {
+    override suspend fun getTopRatedMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(genre: Genre): List<Movie> {
+    override suspend fun getUpcomingMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(genre: Genre): List<Movie> {
+    override suspend fun getTrendingMovies(page: Int,genre: Genre?): List<Movie> {
         return emptyList()
     }
 

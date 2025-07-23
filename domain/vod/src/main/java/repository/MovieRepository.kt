@@ -13,9 +13,9 @@ interface MovieRepository {
     suspend fun getReviewsByMovieId(id: Int): List<Review>
     suspend fun getMoviesByCategory(category: Genre): List<Movie>
     suspend fun getMovieTrailer(id: Int): String?
-    suspend fun getPopularMovies(): List<Movie>
-    suspend fun getTopRatedMovies(genre: Genre): List<Movie>
-    suspend fun getUpcomingMovies(genre: Genre): List<Movie>
-    suspend fun getTrendingMovies(genre: Genre): List<Movie>
+    suspend fun getPopularMovies(page: Int): List<Movie>
+    suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie>
+    suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie>
+    suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie>
     suspend fun getMovieGenres(): List<Genre>
 }

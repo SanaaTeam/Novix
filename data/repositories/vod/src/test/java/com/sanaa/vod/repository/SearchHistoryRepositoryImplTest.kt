@@ -5,6 +5,7 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
+import entity.Genre
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
@@ -210,7 +211,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getWatchedMoviesHistory returns empty list`() = runTest {
         // Act
-        val result = repository.getWatchedMoviesHistory()
+        val result = repository.getWatchedMoviesHistory(1, Genre.ACTION)
 
         // Assert
         assertThat(result).isEmpty()
@@ -219,7 +220,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getWatchedSeriesHistory returns empty list`() = runTest {
         // Act
-        val result = repository.getWatchedSeriesHistory()
+        val result = repository.getWatchedSeriesHistory(1, null)
 
         // Assert
         assertThat(result).isEmpty()
@@ -245,4 +246,3 @@ class SearchHistoryRepositoryImplTest {
         QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
     )
 }
-

@@ -4,8 +4,8 @@ import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
-import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.history.history_param.SearchHistory
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 
 interface HistoryRepository {
     suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>>
@@ -15,6 +15,6 @@ interface HistoryRepository {
     suspend fun getRecentViewed(sizeLimit: Int): Flow<List<RecentViewedMedia>>
     suspend fun addRecentViewedMedia(item: RecentViewedMedia)
     suspend fun clearRecentViewed()
-    suspend fun getWatchedMoviesHistory(genre: Genre): List<Movie>
-    suspend fun getWatchedSeriesHistory(genre: Genre): List<TvSeries>
+    suspend fun getWatchedMoviesHistory(page: Int, genre: Genre?): List<Movie>
+    suspend fun getWatchedSeriesHistory(page: Int, genre: Genre?): List<TvSeries>
 }

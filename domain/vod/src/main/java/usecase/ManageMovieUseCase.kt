@@ -1,10 +1,10 @@
 package usecase
 
-import repository.MovieRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
+import repository.MovieRepository
 
 class ManageMovieUseCase(
     private val movieRepo: MovieRepository
@@ -30,17 +30,17 @@ class ManageMovieUseCase(
     suspend fun getSimilarMoviesByMovieId(movieId: Int): List<Movie> =
         movieRepo.getSimilarMoviesByMovieId(movieId)
 
-    suspend fun getPopularMovies(): List<Movie> =
-        movieRepo.getPopularMovies()
+    suspend fun getPopularMovies(page: Int): List<Movie> =
+        movieRepo.getPopularMovies(page)
 
-    suspend fun getTopRatedMovies(genre: Genre): List<Movie> =
-        movieRepo.getTopRatedMovies(genre)
+    suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie> =
+        movieRepo.getTopRatedMovies(page, genre)
 
-    suspend fun getTrendingMovies(genre: Genre): List<Movie> =
-        movieRepo.getTrendingMovies(genre)
+    suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie> =
+        movieRepo.getTrendingMovies(page, genre)
 
-    suspend fun getUpcomingMovies(genre: Genre): List<Movie> =
-        movieRepo.getUpcomingMovies(genre)
+    suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie> =
+        movieRepo.getUpcomingMovies(page, genre)
 
     suspend fun getMovieGenres(): List<Genre> {
         return movieRepo.getMovieGenres()
