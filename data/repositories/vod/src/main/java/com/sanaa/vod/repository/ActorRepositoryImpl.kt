@@ -5,7 +5,7 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.actor.toMovie
 import com.sanaa.vod.mapper.actor.toTvSeries
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.ActorRepository
+import repository.ActorRepository
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
@@ -40,18 +40,26 @@ class ActorRepositoryImpl(
 
     override suspend fun getActorTopMovies(id: Int): List<Movie> =
         safeCall("Failed to retrieve top movies for actor ID: $id") {
-            remoteDataSource.getActorTopMovies(id).map {
+            remoteDataSource.getActorMovies(id).map {
                 it.toMovie()
             }.take(20)
         }
 
+    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
+        return emptyList()
+    }
 
-    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> =
+
+    override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
         safeCall("Failed to retrieve top TV series for actor ID: $id") {
-            remoteDataSource.getActorTopTvSeries(id).map {
+            remoteDataSource.getActorTvShows(id).map {
                 it.toTvSeries()
             }.take(20)
         }
+
+    override suspend fun getTrendingActors(): List<Actor> {
+        return emptyList()
+    }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {

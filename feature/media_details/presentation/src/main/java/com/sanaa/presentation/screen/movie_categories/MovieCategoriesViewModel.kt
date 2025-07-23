@@ -2,14 +2,14 @@ package com.sanaa.presentation.screen.movie_categories
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
-import details.usecase.ManageMovieDetailsUseCase
+import usecase.ManageMovieUseCase
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class MovieCategoriesViewModel(
     private val categoryId: Genre,
-    private val manageMoviesDetailsUseCase: ManageMovieDetailsUseCase,
+    private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>(
     MovieCategoriesScreenUiState(),

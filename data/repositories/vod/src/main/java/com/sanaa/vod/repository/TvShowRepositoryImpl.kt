@@ -1,50 +1,48 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvSeriesDataSource
+import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.TvSeriesRepository
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
-import java.net.UnknownHostException
+import repository.TvSeriesRepository
 
 class TvShowRepositoryImpl(
-    private val remoteDataSource: RemoteTvSeriesDataSource
+    private val remoteDataSource: RemoteTvShowDataSource
 ) : TvSeriesRepository {
 
     override suspend fun getTvSeriesDetails(id: Int): TvSeries = safeCall("Tv Series not found") {
-        remoteDataSource.getTvSeries(id).toEntity()
+        remoteDataSource.getTvShowDetails(id).toEntity()
     }
 
     override suspend fun getTvSeriesReviews(id: Int): List<Review> = safeCall("Reviews not found") {
-        remoteDataSource.getTvSeriesReviews(id).map { it.toEntity() }
+        remoteDataSource.getReviewsByTvShowId(id).map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String> =
         safeCall("Images not found") {
-            remoteDataSource.getTvSeriesImages(id).map { it.toEntity() }.take(count)
+            remoteDataSource.getTvShowImageUrls(id).map { it.toEntity() }.take(count)
         }
 
     override suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> =
         safeCall("Tv Series not found") {
-            remoteDataSource.getTvSeriesByGenre(genre.toDtoId()).map { it.toEntity() }
+            remoteDataSource.getTvShowsByGenre(genre.toDtoId()).map { it.toEntity() }
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {
-        remoteDataSource.getTvSeriesCast(id).map { it.toDomain() }
+        remoteDataSource.getTvShowCast(id).map { it.toDomain() }
     }
 
     override suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): Season =
         safeCall("Season not found") {
-            remoteDataSource.getTvSeriesSeasonDetails(seriesId, seasonNumber).toEntity()
+            remoteDataSource.getTvShowSeasonDetails(seriesId, seasonNumber).toEntity()
         }
 
     override suspend fun getEpisodeDetails(
@@ -56,7 +54,7 @@ class TvShowRepositoryImpl(
     override suspend fun getEpisodeImageUrls(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int, count: Int
     ): List<String> = safeCall("Images not found") {
-        remoteDataSource.getEpisodeImages(seriesId, seasonNumber, episodeNumber)
+        remoteDataSource.getEpisodeImageUrls(seriesId, seasonNumber, episodeNumber)
             .map { it.toEntity() }.take(count)
     }
 
@@ -69,18 +67,22 @@ class TvShowRepositoryImpl(
 
     override suspend fun getTvSeriesTrailer(id: Int): String? =
         safeCall(errorMessage = "Trailer not found") {
-            remoteDataSource.getTvSeriesVideos(id).toDomain()
+            remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
+    override suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
     }
 
+    override suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getSeriesGenres(): List<Genre> {
+        return emptyList()
+    }
 }

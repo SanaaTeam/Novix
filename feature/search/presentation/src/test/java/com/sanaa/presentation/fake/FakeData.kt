@@ -1,8 +1,8 @@
 package com.sanaa.presentation.fake
 
-import search.usecase.search_param.SearchActorOutput
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.search_param.SearchActorOutput
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 object FakeData {
     val actorOutputs: List<SearchActorOutput> = listOf(

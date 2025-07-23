@@ -5,6 +5,8 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.util.exceptions.ConnectionException
+import entity.Genre
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
@@ -18,8 +20,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import search.usecase.search_param.MediaType
-import java.net.UnknownHostException
+import usecase.search.search_param.MediaType
 
 class SearchHistoryRepositoryImplTest {
     private lateinit var repository: SearchHistoryRepositoryImpl
@@ -197,9 +198,9 @@ class SearchHistoryRepositoryImplTest {
     }
 
     @Test
-    fun `getSearchHistory throws NoNetworkException when UnknownHostException occurs`() = runTest {
+    fun `getSearchHistory throws NoNetworkException when ConnectionException occurs`() = runTest {
         // Given
-        coEvery { localDataSource.getQueries(any()) } throws UnknownHostException()
+        coEvery { localDataSource.getQueries(any()) } throws ConnectionException()
 
         // When & Then
         assertThrows<NoNetworkException> {
@@ -207,6 +208,23 @@ class SearchHistoryRepositoryImplTest {
         }
     }
 
+    @Test
+    fun `getWatchedMoviesHistory returns empty list`() = runTest {
+        // Act
+        val result = repository.getWatchedMoviesHistory(1, Genre.ACTION)
+
+        // Assert
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getWatchedSeriesHistory returns empty list`() = runTest {
+        // Act
+        val result = repository.getWatchedSeriesHistory(1, null)
+
+        // Assert
+        assertThat(result).isEmpty()
+    }
 
     val givenRecentViewed = listOf(
         RecentViewedLocalDto(
@@ -228,4 +246,3 @@ class SearchHistoryRepositoryImplTest {
         QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
     )
 }
-

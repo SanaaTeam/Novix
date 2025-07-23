@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.episode_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import details.usecase.ManageEpisodeDetailsUseCase
-import details.usecase.ManageTvSeriesDetailsUseCase
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -13,7 +13,7 @@ class EpisodeDetailsScreenViewModel(
     seasonNumber: Int,
     episodeNumber: Int,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : EpisodeDetailsInteractionListener,
     BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState(), defaultDispatcher = dispatcher) {

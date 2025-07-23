@@ -39,11 +39,18 @@ import search.usecase.search_param.SearchActorOutput
 import search.usecase.search_param.SearchHistory
 import search.usecase.search_param.SearchMovieOutput
 import search.usecase.search_param.SearchTvSeriesOutput
+import kotlinx.coroutines.launch
+import usecase.search.ManageRecentViewedUseCase
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.history.ManageHistoryUseCase
+import usecase.search.SearchUseCase
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.MediaType
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
-    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase,
+    private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {

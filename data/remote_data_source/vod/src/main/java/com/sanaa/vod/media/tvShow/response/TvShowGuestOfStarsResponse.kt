@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class TvSeriesCastResponse(
+data class TvShowCastResponse(
     @SerialName("cast") val cast: List<ActorDto> = emptyList(),
 )
 
 @Serializable
-data class TvSeriesGuestOfStarsResponse(
+data class TvShowGuestOfStarsResponse(
     @SerialName("guest_stars") val guestStars: List<ActorDto> = emptyList(),
 )

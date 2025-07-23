@@ -2,10 +2,8 @@ package com.sanaa.presentation.screen.episode_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toEpisodeUiModel
-import details.usecase.ManageEpisodeDetailsUseCase
-import details.usecase.ManageTvSeriesDetailsUseCase
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -17,7 +15,6 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -26,7 +23,7 @@ class EpisodeDetailsScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val seriesId = 5
     private val seasonNumber = 2
