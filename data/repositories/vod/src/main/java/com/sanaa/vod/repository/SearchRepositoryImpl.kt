@@ -11,6 +11,7 @@ import com.sanaa.vod.util.filterCashedMovies
 import com.sanaa.vod.util.filterCashedTvShows
 import com.sanaa.vod.util.filterMovies
 import com.sanaa.vod.util.filterTvShows
+import com.sanaa.vod.util.safeCall
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.SearchMovieOutput
