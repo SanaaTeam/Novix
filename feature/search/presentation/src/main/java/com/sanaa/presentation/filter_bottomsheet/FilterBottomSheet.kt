@@ -7,12 +7,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -30,27 +28,26 @@ import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlide
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import com.sanaa.presentation.screen.componants.WavyProgressIndicator
-
+import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun FilterBottomSheet(
+    isVisible: Boolean,
     dismissSheet: () -> Unit,
-    sheetState: SheetState,
     filterUiState: FilterUiState,
     filterListener: FilterBottomSheetInteractionsListener
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
 
-    ModalBottomSheet(
-        modifier = Modifier.statusBarsPadding(),
-        onDismissRequest = {
+    BaseBottomSheet(
+        isVisible = isVisible,
+        onDismiss = {
             if (!isSliderDragging) {
                 dismissSheet()
             }
-        }, sheetState = sheetState,
-        containerColor = Theme.colors.surface
+        },
+        modifier = Modifier.systemBarsPadding()
+            .background(color = Theme.colors.surface)
     ) {
         FilterBottomSheetContent(
             uiState = filterUiState,
@@ -74,7 +71,9 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(start = 16.dp,
+                end = 16.dp,
+                bottom = 24.dp),
     ) {
         Column(
             modifier = Modifier
@@ -122,7 +121,6 @@ fun FilterBottomSheetContent(
     }
 }
 
-
 @Composable
 private fun FilterActions(
     onApplyClicked: () -> Unit,
@@ -148,3 +146,4 @@ private fun FilterActions(
         )
     }
 }
+
