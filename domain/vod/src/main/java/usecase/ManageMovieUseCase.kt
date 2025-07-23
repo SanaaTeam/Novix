@@ -18,8 +18,8 @@ class ManageMovieUseCase(
     suspend fun getMovieImages(id: Int): List<String> =
         movieRepo.getImageUrls(id, IMAGE_COUNT)
 
-    suspend fun getMoviesByCategory(category: Genre): List<Movie> =
-        movieRepo.getMoviesByCategory(category)
+    suspend fun getMoviesByCategory(genreId: Int): List<Movie> =
+        movieRepo.getMoviesByCategory(genreId)
 
     suspend fun getMovieTrailer(id: Int): String? =
         movieRepo.getMovieTrailer(id)
@@ -33,14 +33,14 @@ class ManageMovieUseCase(
     suspend fun getPopularMovies(page: Int): List<Movie> =
         movieRepo.getPopularMovies(page)
 
-    suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie> =
-        movieRepo.getTopRatedMovies(page, genre)
+    suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> =
+        movieRepo.getTopRatedMovies(page, genreId)
 
-    suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie> =
-        movieRepo.getTrendingMovies(page, genre)
+    suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =
+        movieRepo.getTrendingMovies(page, genreId)
 
-    suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie> =
-        movieRepo.getUpcomingMovies(page, genre)
+    suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
+        movieRepo.getUpcomingMovies(page, genreId)
 
     suspend fun getMovieGenres(): List<Genre> {
         return movieRepo.getMovieGenres()

@@ -1,6 +1,5 @@
 package usecase.history
 
-import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
@@ -15,11 +14,11 @@ class ManageHistoryUseCase(
 
     suspend fun removeSearchHistory(id: Int) = historyRepo.removeSearchHistoryById(id)
     suspend fun clearSearchHistory() = historyRepo.clearSearchHistory()
-    suspend fun getWatchedMoviesHistory(page: Int, genre: Genre?): List<Movie> =
-        historyRepo.getWatchedMoviesHistory(page, genre)
+    suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> =
+        historyRepo.getWatchedMoviesHistory(page, genreId)
 
-    suspend fun getWatchedSeriesHistory(page: Int, genre: Genre?): List<TvSeries> =
-        historyRepo.getWatchedSeriesHistory(page, genre)
+    suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> =
+        historyRepo.getWatchedSeriesHistory(page, genreId)
 
     companion object {
         private const val HISTORY_ITEM_LIMIT = 10

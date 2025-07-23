@@ -10,8 +10,8 @@ import repository.TvSeriesRepository
 class ManageTvSeriesUseCase(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
-    suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> =
-        tvSeriesRepo.getTvSeriesByGenre(genre)
+    suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeries> =
+        tvSeriesRepo.getTvSeriesByGenre(genreId)
 
     suspend fun getTvSeriesDetails(seriesId: Int): TvSeries =
         tvSeriesRepo.getTvSeriesDetails(seriesId)
@@ -31,16 +31,16 @@ class ManageTvSeriesUseCase(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
-    suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries> {
-        return tvSeriesRepo.getPopularSeries(page, genre)
+    suspend fun getPopularSeries(page: Int, genreId: Int?): List<TvSeries> {
+        return tvSeriesRepo.getPopularSeries(page, genreId)
     }
 
-    suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries> {
-        return tvSeriesRepo.getTopRatedTvSeries(page, genre)
+    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {
+        return tvSeriesRepo.getTopRatedTvSeries(page, genreId)
     }
 
-    suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries> {
-        return tvSeriesRepo.getTrendingTvSeries(page, genre)
+    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> {
+        return tvSeriesRepo.getTrendingTvSeries(page, genreId)
     }
 
     suspend fun getSeriesGenres(): List<Genre> {

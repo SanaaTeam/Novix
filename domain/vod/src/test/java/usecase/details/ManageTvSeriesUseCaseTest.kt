@@ -31,28 +31,32 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getTvSeriesByGenre should return list when available`() = runTest {
-        val genre = Genre.WAR_AND_POLITICS
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } returns listOf(dummyTvSeries)
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(genre)
+
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } returns listOf(
+            dummyTvSeries
+        )
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
         assertThat(result).isEqualTo(listOf(dummyTvSeries))
     }
 
     @Test
     fun `getTvSeriesByGenre should return empty list when none available`() = runTest {
-        val genre = Genre.WAR_AND_POLITICS
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } returns emptyList()
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(genre)
+
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } returns emptyList()
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
+
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getTvSeriesByGenre should throw when repository fails`() = runTest {
-        val genre = Genre.WAR_AND_POLITICS
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(genre) } throws RetrievingDataFailureException(
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } throws RetrievingDataFailureException(
             "Error"
         )
         assertThrows<RetrievingDataFailureException> {
-            manageTvSeriesDetailsUseCase.getTvSeriesByGenre(genre)
+
+            manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
         }
     }
 
@@ -60,7 +64,9 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesDetails should return details when available`() = runTest {
         val seriesId = 1
         coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } returns dummyTvSeries
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesDetails(seriesId)
+
         assertThat(result).isEqualTo(dummyTvSeries)
     }
 
@@ -68,6 +74,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesDetails should throw NotFoundException when not found`() = runTest {
         val seriesId = 1
         coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } throws NotFoundException("Not found")
+
         assertThrows<NotFoundException> {
             manageTvSeriesDetailsUseCase.getTvSeriesDetails(seriesId)
         }
@@ -78,7 +85,9 @@ class ManageTvSeriesUseCaseTest {
         val seriesId = 2
         val expected = listOf(mockk<Actor>(), mockk<Actor>())
         coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } returns expected
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesCast(seriesId)
+
         assertThat(result).isEqualTo(expected)
     }
 
@@ -86,7 +95,9 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesCast should return empty list when none available`() = runTest {
         val seriesId = 2
         coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } returns emptyList()
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesCast(seriesId)
+
         assertThat(result).isEmpty()
     }
 
@@ -94,6 +105,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesCast should throw when repository fails`() = runTest {
         val seriesId = 2
         coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } throws NotFoundException("Error")
+
         assertThrows<NotFoundException> {
             manageTvSeriesDetailsUseCase.getTvSeriesCast(seriesId)
         }
@@ -103,7 +115,9 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesImages should return images when available`() = runTest {
         val seriesId = 3
         val expected = listOf("img1.jpg", "img2.jpg")
+
         coEvery { tvSeriesRepository.getTvSeriesImageUrls(seriesId, any()) } returns expected
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         assertThat(result).isEqualTo(expected)
     }
@@ -112,6 +126,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesImages should return empty list when none available`() = runTest {
         val seriesId = 3
         coEvery { tvSeriesRepository.getTvSeriesImageUrls(seriesId, 10) } returns emptyList()
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         assertThat(result).isEmpty()
     }
@@ -134,8 +149,11 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesReviews should return reviews when available`() = runTest {
         val seriesId = 4
         val expected = listOf(mockk<Review>(), mockk<Review>())
+
         coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns expected
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
         coVerify { tvSeriesRepository.getTvSeriesReviews(seriesId) }
         assertThat(result).isEqualTo(expected)
     }
@@ -144,6 +162,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesReviews should return empty list when none available`() = runTest {
         val seriesId = 4
         coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns emptyList()
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
         assertThat(result).isEmpty()
     }
@@ -152,6 +171,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesReviews should throw when repository fails`() = runTest {
         val seriesId = 4
         coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } throws NotFoundException("Error")
+
         assertThrows<NotFoundException> {
             manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
         }
@@ -163,6 +183,7 @@ class ManageTvSeriesUseCaseTest {
         val seasonNumber = 1
         val expected = mockk<Season>()
         coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns expected
+
         val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
         assertThat(result).isEqualTo(expected)
     }
@@ -210,22 +231,25 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getPopularSeries should return series when available`() = runTest {
-        val genre = Genre.DRAMA
         val expected = listOf(dummyTvSeries)
-        coEvery { tvSeriesRepository.getPopularSeries(1, genre) } returns expected
+        coEvery { tvSeriesRepository.getPopularSeries(1, dummyGenre.id) } returns expected
 
-        val result = manageTvSeriesDetailsUseCase.getPopularSeries(1, genre)
+        val result = manageTvSeriesDetailsUseCase.getPopularSeries(1, dummyGenre.id)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getPopularSeries should throw when repository fails`() = runTest {
-        val genre = Genre.DRAMA
-        coEvery { tvSeriesRepository.getPopularSeries(1, genre) } throws RetrievingDataFailureException("Error")
+        coEvery {
+            tvSeriesRepository.getPopularSeries(
+                1,
+                dummyGenre.id
+            )
+        } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageTvSeriesDetailsUseCase.getPopularSeries(1, genre)
+            manageTvSeriesDetailsUseCase.getPopularSeries(1, dummyGenre.id)
         }
     }
 
@@ -241,7 +265,12 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getTopRatedTvSeries should throw when repository fails`() = runTest {
-        coEvery { tvSeriesRepository.getTopRatedTvSeries(1, null) } throws RetrievingDataFailureException("Error")
+        coEvery {
+            tvSeriesRepository.getTopRatedTvSeries(
+                1,
+                null
+            )
+        } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
             manageTvSeriesDetailsUseCase.getTopRatedTvSeries(1, null)
@@ -250,35 +279,37 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getTrendingTvSeries should return series when available`() = runTest {
-        val genre = Genre.ACTION
         val expected = listOf(dummyTvSeries)
-        coEvery { tvSeriesRepository.getTrendingTvSeries(1, genre) } returns expected
+        coEvery { tvSeriesRepository.getTrendingTvSeries(1, dummyGenre.id) } returns expected
 
-        val result = manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, genre)
+        val result = manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, dummyGenre.id)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getTrendingTvSeries should throw when repository fails`() = runTest {
-        val genre = Genre.ACTION
-        coEvery { tvSeriesRepository.getTrendingTvSeries(1, genre) } throws RetrievingDataFailureException("Error")
+        coEvery {
+            tvSeriesRepository.getTrendingTvSeries(
+                1,
+                dummyGenre.id
+            )
+        } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, genre)
+            manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, dummyGenre.id)
         }
     }
 
     @Test
     fun `getSeriesGenres should return genres when available`() = runTest {
-        val expected = listOf(Genre.ACTION, Genre.DRAMA)
+        val expected = listOf(dummyGenre)
         coEvery { tvSeriesRepository.getSeriesGenres() } returns expected
 
         val result = manageTvSeriesDetailsUseCase.getSeriesGenres()
 
         assertThat(result).isEqualTo(expected)
     }
-
 
 
     @Test
@@ -291,15 +322,19 @@ class ManageTvSeriesUseCaseTest {
     }
 
     companion object {
+        val dummyGenre = Genre(
+            id = 1, name = "Action"
+        )
         private val dummyTvSeries = TvSeries(
             id = 1,
             title = "The Walking Dead",
             overview = "",
             releaseDate = LocalDate(2021, 9, 10),
-            genres = listOf(Genre.WAR_AND_POLITICS),
+            genres = listOf(dummyGenre),
             imdbRating = 1.2f,
             posterImageUrl = "Image",
             seasonsCount = 5
         )
     }
+
 }

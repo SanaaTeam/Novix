@@ -1,5 +1,6 @@
 package com.sanaa.vod.media.movie
 
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
@@ -37,4 +38,9 @@ interface MovieApiService {
     @GET("movie/{movie_id}/videos")
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieTrailerUrl(@Path("movie_id") id: Int): MovieApiResponse<VideoDto>
+
+    @GET("genre/movie/list")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
+
 }

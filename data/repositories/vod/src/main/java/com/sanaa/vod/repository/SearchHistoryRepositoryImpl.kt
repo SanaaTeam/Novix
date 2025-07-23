@@ -4,7 +4,6 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
-import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import exceptions.FailedToAddException
@@ -73,11 +72,11 @@ class SearchHistoryRepositoryImpl(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun getWatchedMoviesHistory(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getWatchedSeriesHistory(page: Int, genre: Genre?): List<TvSeries> {
+    override suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> {
         return emptyList()
     }
 }

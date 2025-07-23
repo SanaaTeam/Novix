@@ -6,5 +6,5 @@ sealed class MovieDetailsUiEffect {
     data class OpenTrailer(val url: String?) : MovieDetailsUiEffect()
     data class NavigateToAnotherMovieDetails(val movieId: Int) : MovieDetailsUiEffect()
     data class NavigateToActorScreen(val actorId: Int) : MovieDetailsUiEffect()
-    data class NavigateToMovieCategoriesScreen(val categoryId: String) : MovieDetailsUiEffect()
+    data class NavigateToMovieCategoriesScreen(val categoryId: Int, val categoryName: String) : MovieDetailsUiEffect()
 }
