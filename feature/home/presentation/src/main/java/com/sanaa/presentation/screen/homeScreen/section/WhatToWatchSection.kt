@@ -11,9 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -21,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -30,9 +27,6 @@ import com.sanaa.designsystem.design_system.component.section_header.NovixSectio
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
-import com.sanaa.presentation.screen.homeScreen.AppGradients.moviesCardGradientColor
-import com.sanaa.presentation.screen.homeScreen.AppGradients.peopleCardGradientColor
-import com.sanaa.presentation.screen.homeScreen.AppGradients.tvShowCardGradientColor
 
 @Composable
 fun WhatToWatchSection(
@@ -53,19 +47,19 @@ fun WhatToWatchSection(
             WantToWatchCard(
                 label = "Movies",
                 painter = painterResource(R.drawable.popcorns),
-                brush = moviesCardGradientColor,
+                brush = Theme.colors.moviesCardGradient,
                 onClick = { onMoviesClicked() },
             )
             WantToWatchCard(
                 label = "Movies",
                 painter = painterResource(R.drawable.move_role),
-                brush = tvShowCardGradientColor,
+                brush = Theme.colors.tvShowCardGradient,
                 onClick = { onTvShowsClicked() },
             )
             WantToWatchCard(
                 label = "Movies",
                 painter = painterResource(R.drawable.cenima_board),
-                brush = peopleCardGradientColor,
+                brush = Theme.colors.peopleCardGradient,
                 onClick = { onPeopleClicked() },
             )
         }

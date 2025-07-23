@@ -1,6 +1,7 @@
 package com.sanaa.designsystem.design_system.theme.color
 
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 data class NovixColors(
@@ -22,7 +23,11 @@ data class NovixColors(
     val backgroundLow: Color,
     val disable: Color,
 
-    val statusColors: StatusColors
+    val moviesCardGradient : Brush,
+    val tvShowCardGradient  : Brush,
+    val peopleCardGradient : Brush,
+
+    val statusColors: StatusColors,
 )
 
 data class StatusColors(

@@ -1,5 +1,6 @@
 package com.sanaa.designsystem.design_system.theme.color
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 
 internal val lightSchemaColors = NovixColors(
@@ -20,6 +21,10 @@ internal val lightSchemaColors = NovixColors(
     iconBackgroundLow = Color(0x52FFFFFF),
     backgroundLow = Color(0x08FFFFFF),
     disable = Color(0xFFCCBFBC),
+
+    moviesCardGradient = Brush.verticalGradient(colors =   listOf(Color(0xFFF77053), Color(0xFFBF4C33))),
+    tvShowCardGradient = Brush.verticalGradient(colors = listOf(Color(0xFF80071F), Color(0xFF5B0113))),
+    peopleCardGradient = Brush.verticalGradient(colors = listOf(Color(0xFF3B99AC), Color(0xFF21606D))),
 
     statusColors = StatusColors(
         redAccent = Color(0xFFF75662),
