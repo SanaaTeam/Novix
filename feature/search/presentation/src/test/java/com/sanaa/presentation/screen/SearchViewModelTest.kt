@@ -374,7 +374,6 @@ class SearchViewModelTest {
                     searchQuery = movieName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = true
                 )
                 Truth.assertThat(item).isEqualTo(expected)
             }
@@ -408,7 +407,6 @@ class SearchViewModelTest {
                     searchQuery = tvShowName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = true
                 )
                 Truth.assertThat(item).isEqualTo(expected)
             }
@@ -454,7 +452,6 @@ class SearchViewModelTest {
                     searchQuery = actorName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = false,
                 )
                 Truth.assertThat(item).isEqualTo(expected)
             }
