@@ -7,14 +7,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.presentation.components.cards.ActorCard
-import com.sanaa.presentation.ui_state.ActorUiState
+import com.sanaa.presentation.ui_state.PersonUiState
 import androidx.compose.foundation.lazy.items
+import com.sanaa.presentation.components.cards.PersonCard
 
 
 @Composable
-fun ActorList(
-    people: List<ActorUiState>,
+fun PersonList(
+    people: List<PersonUiState>,
     onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
@@ -23,12 +23,12 @@ fun ActorList(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(people, key = { it.id }) { person ->
-            ActorCard(
-                actorName = person.name,
-                actorImage = person.imagePainter,
-                playedCharacter = person.character,
-                onCardClick = { onItemClick(person.id) }
-            )
+            PersonCard(
+            actorName = person.name,
+            actorImage = person.imageUrl,
+            playedCharacter = person.character,
+            onCardClick = { onItemClick(person.id) }
+        )
         }
     }
 }

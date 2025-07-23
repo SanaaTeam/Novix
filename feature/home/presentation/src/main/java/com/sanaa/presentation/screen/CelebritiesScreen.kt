@@ -23,19 +23,16 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.rememberNavController
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.components.lists.ActorList
-import com.sanaa.presentation.ui_state.ActorUiState
-import com.sanaa.presentation.ui_state.PeopleScreenEffects
-import com.sanaa.presentation.ui_state.PeopleScreenInteractionListener
-import com.sanaa.presentation.ui_state.PeopleScreenUiState
+import com.sanaa.presentation.R
+import com.sanaa.presentation.components.lists.PersonList
+import com.sanaa.presentation.ui_state.PersonUiState
+import com.sanaa.presentation.ui_state.CelebritiesScreenUiState
 import com.sanaa.presentation.viewmodel.CelebritiesViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -44,13 +41,12 @@ import kotlinx.coroutines.flow.collectLatest
 fun CelebritiesScreen() {
     val viewModel: CelebritiesViewModel = viewModel()
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = rememberNavController()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is PeopleScreenEffects.NavigateBack -> navController.popBackStack()
-                is PeopleScreenEffects.NavigateToActorDetails -> navController.navigate("actorDetails/${effect.actorId}")
+                is CelebritiesScreenEffects.NavigateBack -> TODO()
+                is CelebritiesScreenEffects.NavigateToActorDetails -> TODO()
             }
         }
     }
@@ -63,8 +59,8 @@ fun CelebritiesScreen() {
 
 @Composable
 fun CelebritiesContent(
-    state: PeopleScreenUiState,
-    interactionListener: PeopleScreenInteractionListener,
+    state: CelebritiesScreenUiState,
+    interactionListener: CelebritiesScreenInteractionListener,
 ) {
     NovixScaffold {
         Column(
@@ -75,11 +71,11 @@ fun CelebritiesContent(
             NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = com.sanaa.presentation.R.drawable.arrow_left_04),
+                        icon = painterResource(id = R.drawable.arrow_left_04),
                         onClick = interactionListener::onBackClick
                     )
                 },
-                screenTitle = stringResource(id = com.sanaa.presentation.R.string.people),
+                screenTitle = stringResource(id = R.string.people),
                 modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
@@ -99,7 +95,7 @@ fun CelebritiesContent(
                     if (loading) {
                         NovixLoadingIndicator()
                     } else {
-                        ActorList(
+                        PersonList(
                             people = state.people,
                             onItemClick = interactionListener::onActorClick
                         )
@@ -123,24 +119,23 @@ private fun CelebritiesScreenContentPreview() {
                 .fillMaxWidth()
         ) {
             CelebritiesContent(
-                state = PeopleScreenUiState(
+                state = CelebritiesScreenUiState(
                     isLoading = false,
                     people = listOf(
-                        ActorUiState(
+                        PersonUiState(
                             id = 1,
                             name = "Jennifer Lawrence",
                             character = null,
-                            imagePainter = painterResource(R.drawable.icon_placeholder_light)
-                        ),
-                        ActorUiState(
+                            imageUrl = String()                        ),
+                        PersonUiState(
                             id = 2,
                             name = "Meryl Streep",
                             character = null,
-                            imagePainter = painterResource(R.drawable.icon_placeholder_light)
+                            imageUrl = String()
                         ),
                     )
                 ),
-                interactionListener = object : PeopleScreenInteractionListener {
+                interactionListener = object : CelebritiesScreenInteractionListener {
                     override fun onBackClick() {}
                     override fun onActorClick(actorId: Int) {}
                 }
