@@ -53,6 +53,26 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
+    override suspend fun getPopularMovies(): List<Movie> {
+        return emptyList()
+    }
+
+    override suspend fun getTopRatedMovies(): List<Movie> {
+        return emptyList()
+    }
+
+    override suspend fun getUpcomingMovies(): List<Movie> {
+        return emptyList()
+    }
+
+    override suspend fun getTrendingMovies(): List<Movie> {
+        return emptyList()
+    }
+
+    override suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
+        return emptyList()
+    }
+
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()
@@ -62,6 +82,4 @@ class MovieRepositoryImpl(
             throw RetrievingDataFailureException("$errorMessage: ${e.message}")
         }
     }
-
-
 }

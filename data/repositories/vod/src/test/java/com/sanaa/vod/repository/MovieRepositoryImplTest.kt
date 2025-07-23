@@ -117,6 +117,35 @@ class MovieRepositoryImplTest {
         assertThat(result).isNull()
     }
 
+    @Test
+    fun `getPopularMovies returns empty list`() = runTest {
+        val result = repository.getPopularMovies()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTopRatedMovies returns empty list`() = runTest {
+        val result = repository.getTopRatedMovies()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getUpcomingMovies returns empty list`() = runTest {
+        val result = repository.getUpcomingMovies()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTrendingMovies returns empty list`() = runTest {
+        val result = repository.getTrendingMovies()
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getMoviesByGenre returns empty list`() = runTest {
+        val result = repository.getMoviesByGenre(Genre.ACTION)
+        assertThat(result).isEmpty()
+    }
 
     companion object {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")

@@ -72,6 +72,21 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
+    override suspend fun getTopRatedTvSeries(): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getTrendingTvSeries(): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getSeriesByGenre(genre: Genre): List<TvSeries> {
+        return emptyList()
+    }
+
+    override suspend fun getPopularSeries(): List<TvSeries> {
+        return emptyList()
+    }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {

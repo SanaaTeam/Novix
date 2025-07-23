@@ -5,7 +5,7 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 
-class ManageActorDetailsUseCase(
+class ManageActorUseCase(
     private val actorRepo: ActorRepository
 ) {
     suspend fun getActorDetails(id: Int): Actor =
@@ -22,6 +22,10 @@ class ManageActorDetailsUseCase(
 
     suspend fun getProfileImages(id: Int): List<String> =
         actorRepo.getProfileImageUrls(id, IMAGE_COUNT)
+
+    suspend fun getTrendingActors(): List<Actor> {
+        return actorRepo.getTrendingActors()
+    }
 
     private companion object {
         const val IMAGE_COUNT = 10

@@ -45,6 +45,10 @@ class ActorRepositoryImpl(
             }.take(20)
         }
 
+    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
+        return emptyList()
+    }
+
 
     override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
         safeCall("Failed to retrieve top TV series for actor ID: $id") {
@@ -52,6 +56,10 @@ class ActorRepositoryImpl(
                 it.toTvSeries()
             }.take(20)
         }
+
+    override suspend fun getTrendingActors(): List<Actor> {
+        return emptyList()
+    }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
