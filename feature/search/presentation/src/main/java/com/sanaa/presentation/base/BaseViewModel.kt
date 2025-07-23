@@ -28,7 +28,7 @@ abstract class BaseViewModel<T, E>(
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
 
-    protected fun updateState(updater: (T) -> T) {
+    internal fun updateState(updater: (T) -> T) {
         _state.update(updater)
     }
 
