@@ -5,7 +5,7 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
-import entity.Genre
+import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import usecase.search.search_param.MediaType
-import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImplTest {
     private lateinit var repository: SearchHistoryRepositoryImpl
@@ -198,9 +197,9 @@ class SearchHistoryRepositoryImplTest {
     }
 
     @Test
-    fun `getSearchHistory throws NoNetworkException when UnknownHostException occurs`() = runTest {
+    fun `getSearchHistory throws NoNetworkException when ConnectionException occurs`() = runTest {
         // Given
-        coEvery { localDataSource.getQueries(any()) } throws UnknownHostException()
+        coEvery { localDataSource.getQueries(any()) } throws ConnectionException()
 
         // When & Then
         assertThrows<NoNetworkException> {
@@ -211,7 +210,7 @@ class SearchHistoryRepositoryImplTest {
     @Test
     fun `getWatchedMoviesHistory returns empty list`() = runTest {
         // Act
-        val result = repository.getWatchedMoviesHistory(1, Genre.ACTION)
+        val result = repository.getWatchedMoviesHistory(page = 1, genreId = 1)
 
         // Assert
         assertThat(result).isEmpty()

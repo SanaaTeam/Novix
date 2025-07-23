@@ -11,7 +11,7 @@ interface TvSeriesRepository {
     suspend fun getTvSeriesDetails(id: Int): TvSeries
     suspend fun getTvSeriesReviews(id: Int): List<Review>
     suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String>
-    suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries>
+    suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeries>
     suspend fun getTvSeriesCast(id: Int): List<Actor>
     suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): Season
     suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): Episode
@@ -24,8 +24,8 @@ interface TvSeriesRepository {
     ): List<Actor>
 
     suspend fun getTvSeriesTrailer(id: Int): String?
-    suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries>
-    suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries>
-    suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries>
+    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries>
+    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries>
+    suspend fun getPopularSeries(page: Int, genreId: Int?): List<TvSeries>
     suspend fun getSeriesGenres(): List<Genre>
 }

@@ -1,14 +1,16 @@
 package com.sanaa.vod.repository
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
-import entity.Genre
+import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -19,7 +21,6 @@ import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertNull
 import org.junit.jupiter.api.assertThrows
 import repository.TvSeriesRepository
-import java.net.UnknownHostException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -63,7 +64,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(Genre.CRIME) }
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1) }
     }
 
     @Test
@@ -80,70 +81,70 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowDetails throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowDetails(any()) } throws UnknownHostException()
+    fun `getTvShowDetails throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowDetails(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesDetails(1) }
     }
 
     @Test
-    fun `getReviewsByTvShowId throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(any()) } throws UnknownHostException()
+    fun `getReviewsByTvShowId throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getReviewsByTvShowId(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1) }
     }
 
 
     @Test
-    fun `getTvShowImageUrls throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowImageUrls(any()) } throws UnknownHostException()
+    fun `getTvShowImageUrls throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowImageUrls(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesImageUrls(1, 3) }
     }
 
 
     @Test
-    fun `getTvShowsByGenre throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowsByGenre(any()) } throws UnknownHostException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(Genre.CRIME) }
+    fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowsByGenre(any()) } throws ConnectionException()
+        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1) }
     }
 
     @Test
-    fun `getTvShowCast throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowCast(any()) } throws UnknownHostException()
+    fun `getTvShowCast throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowCast(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesCast(1) }
     }
 
     @Test
-    fun `getTvShowSeasonDetails throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws UnknownHostException()
+    fun `getTvShowSeasonDetails throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesSeason(1, 1) }
     }
 
     @Test
-    fun `getEpisodeDetails throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getEpisodeDetails(any(), any(), any()) } throws UnknownHostException()
+    fun `getEpisodeDetails throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getEpisodeDetails(any(), any(), any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getEpisodeDetails(1, 1, 1) }
     }
 
 
     @Test
-    fun `getEpisodeImageUrls throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws UnknownHostException()
+    fun `getEpisodeImageUrls throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getEpisodeImageUrls(1, 1, 1, 1) }
     }
 
     @Test
-    fun `getEpisodeGuestsOfHonor throws NoNetworkException on UnknownHostException`() = runTest {
+    fun `getEpisodeGuestsOfHonor throws NoNetworkException on ConnectionException`() = runTest {
         coEvery {
             remote.getEpisodeGuestsOfHonor(
                 any(), any(), any()
             )
-        } throws UnknownHostException()
+        } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getEpisodeGuestsOfHonor(1, 1, 1) }
     }
 
 
     @Test
-    fun `getTvShowVideosUrls throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remote.getTvShowVideosUrls(any()) } throws UnknownHostException()
+    fun `getTvShowVideosUrls throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remote.getTvShowVideosUrls(any()) } throws ConnectionException()
         assertThrows<NoNetworkException> { repository.getTvSeriesTrailer(1) }
     }
 
@@ -239,7 +240,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTopRatedTvSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getTopRatedTvSeries(1, Genre.ACTION)
+        val result = repository.getTopRatedTvSeries(page = 1, genreId = 1)
 
         // Assert
         assertEquals(0, result.size)
@@ -257,19 +258,19 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getPopularSeries(1, Genre.DRAMA)
+        val result = repository.getPopularSeries(page = 1, genreId = 1)
 
         // Assert
         assertEquals(0, result.size)
     }
 
     @Test
-    fun `getSeriesGenres returns empty list`() = runTest {
-        // Act
+    fun `getSeriesGenres returns list of Genre`() = runTest {
+        coEvery { remote.getTvShowGenres() } returns dummyGenresDto
+
         val result = repository.getSeriesGenres()
 
-        // Assert
-        assertEquals(0, result.size)
+        assertThat(result).isNotEmpty()
     }
 
     private val dummyReviewDto = ReviewDto(
@@ -295,5 +296,10 @@ class TvShowRepositoryImplTest {
         voteAverage = 8f,
         airDate = "2024-01-01",
         runtime = 50
+    )
+
+    val dummyGenresDto = listOf(
+        GenreDto(id = 1, name = "Action"),
+        GenreDto(id = 2, name = "Drama")
     )
 }

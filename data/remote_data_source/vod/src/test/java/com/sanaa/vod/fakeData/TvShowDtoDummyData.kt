@@ -2,6 +2,7 @@ package com.sanaa.vod.fakeData
 
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
@@ -9,12 +10,13 @@ import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
+import com.sanaa.vod.media.tvShow.response.TvShowGenresResponse
 import com.sanaa.vod.media.tvShow.response.TvShowGuestOfStarsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
 import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
 
- object TvShowDtoDummyData{
+object TvShowDtoDummyData {
     val dummyTvShowDto = TvShowDto(
         id = 1,
         name = "name",
@@ -82,5 +84,18 @@ import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
     val dummySeasonDto = SeasonDto(
         id = 1,
         name = "name",
+    )
+
+    val dummyTvShowGenresResponse = TvShowGenresResponse(
+        genres = listOf(
+            GenreDto(
+                id = 1,
+                name = "name",
+            ),
+            GenreDto(
+                id = 2,
+                name = "name",
+            )
+        )
     )
 }
