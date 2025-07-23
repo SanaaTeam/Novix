@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.homeScreen
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -11,7 +10,8 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.components.cards.HomeTopBar
-import com.sanaa.presentation.screen.homeScreen.components.PopularMediaSection
+import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
+import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
@@ -30,6 +30,12 @@ fun HomeScreenContent(
     ){
         Column {
             PopularMediaSection()
+            WhatToWatchSection(
+                onMoviesClicked = {},
+                onTvShowsClicked = {},
+                onPeopleClicked = {}
+            )
+
         }
 
     }

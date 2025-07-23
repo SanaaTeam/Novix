@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -31,6 +33,9 @@ import com.sanaa.presentation.components.chips.SaveIconChip
 @Composable
 fun MediaPosterCard(
     modifier: Modifier = Modifier,
+    ratio: Float = (158 / 210f),
+    width: Dp = 158.dp,
+    height: Dp = 210.dp,
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
@@ -39,9 +44,10 @@ fun MediaPosterCard(
     Box(
         modifier = modifier
             .aspectRatio(
-                ratio = (158 / 210f)
+                ratio = ratio
             )
-            .width(158.dp)
+            .width(width)
+            .height(height)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
