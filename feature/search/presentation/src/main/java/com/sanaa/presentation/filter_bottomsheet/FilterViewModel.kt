@@ -34,7 +34,7 @@ class FilterViewModel(
             callee = {
                 val movieGenres = manageMovieUseCase.getMovieGenres()
                 val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
-                val genres = movieGenres.plus(tvShowGenres)
+                val genres = movieGenres.plus(tvShowGenres).toSet()
                 _uiState.update {
                     it.copy(allGenres = genres.map { it.toState()})
                 }
