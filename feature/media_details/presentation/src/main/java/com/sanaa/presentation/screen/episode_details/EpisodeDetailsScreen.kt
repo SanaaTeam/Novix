@@ -170,6 +170,7 @@ private fun EpisodeDetailsScreenContent(
             // TODO USE REAL RATE BOTTOM SHEET AFTER LOGIN FEATURE DONE
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
+                    isVisible = state.showLoginBottomSheet,
                     onDismiss = interactionListener::onDismissBottomSheet,
                 )
             }
