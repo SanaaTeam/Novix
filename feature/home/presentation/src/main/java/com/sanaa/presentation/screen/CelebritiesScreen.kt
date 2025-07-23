@@ -45,7 +45,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
-fun PeopleScreen() {
+fun CelebritiesScreen() {
     val viewModel: PeopleViewModel = viewModel()
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = rememberNavController()
@@ -59,14 +59,14 @@ fun PeopleScreen() {
         }
     }
 
-    PeopleScreenContent(
+    CelebritiesContent(
         state = state.value,
         interactionListener = viewModel
     )
 }
 
 @Composable
-fun PeopleScreenContent(
+fun CelebritiesContent(
     state: PeopleScreenUiState,
     interactionListener: PeopleScreenInteractionListener,
 ) {
@@ -137,7 +137,7 @@ fun ActorList(
 
 @PreviewLightDark
 @Composable
-private fun PeopleScreenContentPreview() {
+private fun CelebritiesScreenContentPreview() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         Column(
             modifier = Modifier
@@ -145,7 +145,7 @@ private fun PeopleScreenContentPreview() {
                 .background(Theme.colors.surface)
                 .fillMaxWidth()
         ) {
-            PeopleScreenContent(
+            CelebritiesContent(
                 state = PeopleScreenUiState(
                     isLoading = false,
                     people = listOf(
