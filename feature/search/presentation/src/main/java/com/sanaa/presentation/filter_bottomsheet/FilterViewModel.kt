@@ -16,7 +16,7 @@ import search.usecase.search_param.MediaFilters
 class FilterViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val genreLocalizer: GenreLocalizer,
-) : BaseViewModel<FilterUiState>(
+) : BaseViewModel<FilterUiState, Unit>(
     initialState = FilterUiState(),
     defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
