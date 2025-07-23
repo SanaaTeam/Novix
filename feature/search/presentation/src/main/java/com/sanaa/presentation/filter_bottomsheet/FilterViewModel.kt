@@ -81,7 +81,7 @@ class FilterViewModel(
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),
                     genres = currentState.selectedGenres.map {
-                        Genre(it.id, it.name)
+                        Genre(it.id, it.name.orEmpty())
                     },
                     imdbRating = currentState.imdbRating.toFloat()
                 )

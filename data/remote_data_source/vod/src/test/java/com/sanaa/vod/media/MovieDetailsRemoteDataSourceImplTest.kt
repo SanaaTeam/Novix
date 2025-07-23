@@ -1,6 +1,8 @@
 package com.sanaa.vod.media
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
@@ -95,6 +97,15 @@ class MovieDetailsRemoteDataSourceImplTest {
         assertEquals(2, dto.size)
     }
 
+    @Test
+    fun `fetchMovieGenres() should return list of movies dto`() = runTest {
+        coEvery { apiService.fetchMovieGenres() } returns MovieApiResponse<GenreDto>(genres = dummyGenreDto)
+
+        val dto = dataSource.fetchMovieGenres()
+
+        assertThat(dto.size).isEqualTo(2)
+    }
+
 
     val dummyMovie = MovieDto(
         id = 1, title = "A", posterImagePath = "/p.jpg", duration = 100
@@ -132,4 +143,7 @@ class MovieDetailsRemoteDataSourceImplTest {
             key = "A", type = "trailer", site = "youtube"
         ),
     )
+
+    val dummyGenreDto = listOf<GenreDto>(GenreDto(id = 1, name = "A"), GenreDto(id = 2, name = "B"))
+
 }
