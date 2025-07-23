@@ -74,11 +74,7 @@ class SearchViewModel(
 
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
-        if (index == ACTOR_INDEX) {
-            updateState { it.copy(isFilterButtonVisible = false) }
-        } else {
-            updateState { it.copy(isFilterButtonVisible = true) }
-        }
+
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
