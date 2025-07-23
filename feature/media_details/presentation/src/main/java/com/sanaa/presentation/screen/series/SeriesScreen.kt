@@ -92,7 +92,7 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        MovieCategoriesScreenRoute(it.categoryId).route()
+                        MovieCategoriesScreenRoute(it.categoryId, it.categoryName).route()
                     )
                 }
             }
