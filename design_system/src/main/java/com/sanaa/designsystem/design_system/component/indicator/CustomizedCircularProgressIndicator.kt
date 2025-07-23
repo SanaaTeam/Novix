@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.componants
+package com.sanaa.designsystem.design_system.component.indicator
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
