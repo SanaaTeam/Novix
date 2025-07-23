@@ -4,12 +4,12 @@ import entity.Genre
 
 data class GenreUiModel(
     val id: Int = 0,
-    val name: String
+    val name: String = ""
 )
 
 fun Genre.toUiModel(): GenreUiModel {
     return GenreUiModel(
         id = id,
-        name = name.orEmpty()
+        name = name
     )
 }
