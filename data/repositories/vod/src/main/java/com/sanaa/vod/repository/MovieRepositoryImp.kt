@@ -5,14 +5,12 @@ import com.sanaa.vod.mapper.actor.getFullImageUrl
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
 import repository.MovieRepository
-import java.net.UnknownHostException
 
 class MovieRepositoryImpl(
     private val remote: RemoteMovieDataSource
@@ -52,6 +50,7 @@ class MovieRepositoryImpl(
             remote.fetchMovieTrailerUrl(id).toDomain()
         }
 
+
     override suspend fun getPopularMovies(page: Int): List<Movie> {
         return emptyList()
     }
@@ -70,15 +69,5 @@ class MovieRepositoryImpl(
 
     override suspend fun getMovieGenres(): List<Genre> {
         return emptyList()
-    }
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (_: UnknownHostException) {
-            throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
-        }
     }
 }

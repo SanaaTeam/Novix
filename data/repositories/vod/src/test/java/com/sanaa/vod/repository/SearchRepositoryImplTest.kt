@@ -11,6 +11,7 @@ import com.sanaa.vod.fake.FakeData.TvSeriesLocalDtoList
 import com.sanaa.vod.fake.FakeData.TvSeriesSearchResponse
 import com.sanaa.vod.fake.FakeData.actorSearchResponse
 import com.sanaa.vod.mapper.search.toSearchOutput
+import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.Runs
@@ -23,7 +24,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import usecase.search.search_param.MediaFilters
-import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImplTest {
     private lateinit var searchRepository: SearchRepositoryImpl
@@ -72,13 +72,13 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchActors() throws NoNetworkException when throw UnresolvedAddressException`() =
+    fun `searchActors() throws NoNetworkException when throw ConnectionException`() =
         runTest {
             val page = 1
             val query = "Jane"
             coEvery {
                 localCacheSearchDataSource.getPagedActorsByQuery(query, any(), any())
-            } throws UnresolvedAddressException()
+            } throws ConnectionException()
             assertThrows<NoNetworkException> {
                 searchRepository.searchActors(query, page)
             }
@@ -185,14 +185,14 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchMovies() should throws NoNetworkException when throw UnresolvedAddressException`() =
+    fun `searchMovies() should throws NoNetworkException when throw ConnectionException`() =
         runTest {
             val page = 1
             val query = "Tom"
             val filters = MediaFilters()
             coEvery {
                 localCacheSearchDataSource.getMoviesByQuery(any(), any(), any())
-            } throws UnresolvedAddressException()
+            } throws ConnectionException()
             assertThrows<NoNetworkException> {
                 searchRepository.searchMovies(query, page, filters)
             }
@@ -306,14 +306,14 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchTvShows() should throws NoNetworkException when throw UnresolvedAddressException`() =
+    fun `searchTvShows() should throws NoNetworkException when throw ConnectionException`() =
         runTest {
             val page = 1
             val query = "Jane"
             val filters = MediaFilters()
             coEvery {
                 localCacheSearchDataSource.getTvSeriesByQuery(query, any(), any())
-            } throws UnresolvedAddressException()
+            } throws ConnectionException()
             assertThrows<NoNetworkException> {
                 searchRepository.searchTvShows(query, page, filters)
             }

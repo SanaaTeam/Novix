@@ -9,45 +9,57 @@ import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
+import com.sanaa.vod.util.wrapApiCall
 
 class RemoteTvShowDataSourceImpl(
     private val apiService: TvShowApiService,
 ) : RemoteTvShowDataSource {
 
-    override suspend fun getTvShowDetails(id: Int): TvShowDto = apiService.fetchTvShowsDetails(id)
+    override suspend fun getTvShowDetails(id: Int): TvShowDto =
+        wrapApiCall { apiService.fetchTvShowsDetails(id) }
 
-    override suspend fun getTvShowVideosUrls(id: Int): List<VideoDto> =
+    override suspend fun getTvShowVideosUrls(id: Int): List<VideoDto> = wrapApiCall {
         apiService.fetchTvShowsVideos(id).results
+    }
 
     override suspend fun getTvShowSeasonDetails(
         seriesId: Int, seasonNumber: Int
-    ): SeasonDto = apiService.fetchSeasonDetails(seriesId, seasonNumber)
+    ): SeasonDto = wrapApiCall {
+        apiService.fetchSeasonDetails(seriesId, seasonNumber)
+    }
 
-    override suspend fun getTvShowImageUrls(id: Int): List<ImageDto> =
+    override suspend fun getTvShowImageUrls(id: Int): List<ImageDto> = wrapApiCall {
         apiService.fetchTvShowsImages(id).backdrops
+    }
 
-    override suspend fun getTvShowsByGenre(genreId: Int): List<TvShowDto> =
+    override suspend fun getTvShowsByGenre(genreId: Int): List<TvShowDto> = wrapApiCall {
         apiService.fetchTvShowsByCategory(genreId).results
+    }
 
-    override suspend fun getReviewsByTvShowId(id: Int): List<ReviewDto> =
+    override suspend fun getReviewsByTvShowId(id: Int): List<ReviewDto> = wrapApiCall {
         apiService.fetchTvShowsReviews(id).results
+    }
 
-    override suspend fun getTvShowCast(id: Int): List<ActorDto> =
+    override suspend fun getTvShowCast(id: Int): List<ActorDto> = wrapApiCall {
         apiService.fetchTvShowsCast(id).cast
+    }
 
     override suspend fun getEpisodeDetails(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
-    ): EpisodeDto = apiService.fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber)
+    ): EpisodeDto =
+        wrapApiCall { apiService.fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) }
 
     override suspend fun getEpisodeImageUrls(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
-    ): List<ImageDto> =
+    ): List<ImageDto> = wrapApiCall {
         apiService.fetchEpisodeImages(seriesId, seasonNumber, episodeNumber).backdrops
+    }
 
     override suspend fun getEpisodeGuestsOfHonor(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
-    ): List<ActorDto> =
+    ): List<ActorDto> = wrapApiCall {
         apiService.fetchEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber).guestStars
+    }
 
     override suspend fun getTvShowGenres(): List<GenreDto> {
         return apiService.fetchTvShowsGenres().genres
