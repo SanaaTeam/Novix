@@ -80,6 +80,7 @@ private fun PreviewMovieSeriesPosterCard() {
         ) {
             item {
                 MediaPosterCard(
+                    modifier = Modifier,
                     posterImage = {
                         Image(
                             painter = painterResource(R.drawable.icon_placeholder_light),
