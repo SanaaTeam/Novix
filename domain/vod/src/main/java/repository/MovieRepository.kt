@@ -1,10 +1,9 @@
-package details.repository
+package repository
 
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Movie
@@ -14,9 +13,9 @@ interface MovieRepository {
     suspend fun getReviewsByMovieId(id: Int): List<Review>
     suspend fun getMoviesByCategory(category: Genre): List<Movie>
     suspend fun getMovieTrailer(id: Int): String?
-    suspend fun getPopularMovies(): List<Movie>
-    suspend fun getTopRatedMovies(): List<Movie>
-    suspend fun getUpcomingMovies(): List<Movie>
-    suspend fun getTrendingMovies(): List<Movie>
-    suspend fun getMoviesByGenre(genre: Genre): List<Movie>
+    suspend fun getPopularMovies(page: Int): List<Movie>
+    suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie>
+    suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie>
+    suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie>
+    suspend fun getMovieGenres(): List<Genre>
 }

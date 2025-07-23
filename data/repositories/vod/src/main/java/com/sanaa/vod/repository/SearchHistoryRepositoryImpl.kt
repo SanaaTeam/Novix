@@ -4,15 +4,16 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
+import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import search.repository.HistoryRepository
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.search_param.SearchHistory
+import repository.HistoryRepository
+import usecase.history.history_param.SearchHistory
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
@@ -72,11 +73,11 @@ class SearchHistoryRepositoryImpl(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun getWatchedMoviesHistory(): List<Movie> {
+    override suspend fun getWatchedMoviesHistory(page: Int, genre: Genre?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getWatchedSeriesHistory(): List<TvSeries> {
+    override suspend fun getWatchedSeriesHistory(page: Int, genre: Genre?): List<TvSeries> {
         return emptyList()
     }
 }

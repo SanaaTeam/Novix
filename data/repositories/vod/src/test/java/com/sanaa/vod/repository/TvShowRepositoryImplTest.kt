@@ -9,7 +9,6 @@ import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.util.exceptions.ConnectionException
-import details.repository.TvSeriesRepository
 import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -20,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertNull
 import org.junit.jupiter.api.assertThrows
-import java.net.UnknownHostException
+import repository.TvSeriesRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -240,7 +239,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTopRatedTvSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getTopRatedTvSeries()
+        val result = repository.getTopRatedTvSeries(1, Genre.ACTION)
 
         // Assert
         assertEquals(0, result.size)
@@ -249,16 +248,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTrendingTvSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getTrendingTvSeries()
-
-        // Assert
-        assertEquals(0, result.size)
-    }
-
-    @Test
-    fun `getSeriesByGenre returns empty list`() = runTest {
-        // Act
-        val result = repository.getSeriesByGenre(Genre.ACTION)
+        val result = repository.getTrendingTvSeries(1, null)
 
         // Assert
         assertEquals(0, result.size)
@@ -267,7 +257,16 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getPopularSeries()
+        val result = repository.getPopularSeries(1, Genre.DRAMA)
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `getSeriesGenres returns empty list`() = runTest {
+        // Act
+        val result = repository.getSeriesGenres()
 
         // Assert
         assertEquals(0, result.size)

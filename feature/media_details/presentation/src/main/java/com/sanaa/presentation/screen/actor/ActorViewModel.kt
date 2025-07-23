@@ -4,7 +4,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import com.sanaa.presentation.model.toUiModel
-import details.usecase.ManageActorUseCase
+import usecase.ManageActorUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

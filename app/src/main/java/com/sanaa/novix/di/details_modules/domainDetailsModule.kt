@@ -1,9 +1,9 @@
 package com.sanaa.novix.di.details_modules
 
-import details.usecase.ManageActorUseCase
-import details.usecase.ManageEpisodeDetailsUseCase
-import details.usecase.ManageMovieUseCase
-import details.usecase.ManageTvSeriesUseCase
+import usecase.ManageActorUseCase
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 

@@ -11,11 +11,10 @@ import com.sanaa.vod.util.filterCashedMovies
 import com.sanaa.vod.util.filterCashedTvShows
 import com.sanaa.vod.util.filterMovies
 import com.sanaa.vod.util.filterTvShows
-import com.sanaa.vod.util.safeCall
-import search.repository.SearchRepository
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import repository.SearchRepository
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,

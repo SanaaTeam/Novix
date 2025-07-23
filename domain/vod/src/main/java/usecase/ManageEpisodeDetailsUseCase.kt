@@ -1,6 +1,6 @@
-package details.usecase
+package usecase
 
-import details.repository.TvSeriesRepository
+import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
 

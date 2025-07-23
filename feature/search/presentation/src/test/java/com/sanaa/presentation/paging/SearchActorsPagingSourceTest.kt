@@ -11,8 +11,8 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchUseCase
-import search.usecase.search_param.SearchActorOutput
+import usecase.search.SearchUseCase
+import usecase.search.search_param.SearchActorOutput
 
 class SearchActorsPagingSourceTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)
