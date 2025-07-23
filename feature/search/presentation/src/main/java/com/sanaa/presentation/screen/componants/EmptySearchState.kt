@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,11 +52,9 @@ fun EmptySearchState(
             )
             topIcon()
         }
-        Text(
+        BasicText(
             text = text,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            color = Theme.colors.body,
+            style = Theme.textStyle.body.small.copy(color = Theme.colors.body,),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 48.dp)
