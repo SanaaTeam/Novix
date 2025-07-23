@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.ActorUiModel
-import search.usecase.search_param.SearchActorOutput
+import usecase.search.search_param.SearchActorOutput
 
 fun SearchActorOutput.toUiState(): ActorUiModel {
     return ActorUiModel(

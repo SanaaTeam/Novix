@@ -34,7 +34,7 @@ import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import org.koin.androidx.compose.koinViewModel
-import search.usecase.search_param.MediaFilters
+import usecase.search.search_param.MediaFilters
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
