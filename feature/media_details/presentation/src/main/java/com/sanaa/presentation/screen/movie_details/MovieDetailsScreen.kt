@@ -163,7 +163,7 @@ fun MovieDetailsContent(
                                     title = state.movieDetails.title,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 210.dp)
+                                        .padding(top = 208.dp)
                                         .padding(horizontal = 16.dp)
                                 ) {
                                     Row(

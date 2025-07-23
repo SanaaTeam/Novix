@@ -147,7 +147,7 @@ private fun ActorScreenContent(
                                     actor = state.actor,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 210.dp)
+                                        .padding(top = 208.dp)
                                         .padding(horizontal = 16.dp)
                                 )
                             }
