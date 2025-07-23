@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 class MovieCategoriesViewModel(
     private val categoryId: Genre,
     private val manageMoviesDetailsUseCase: ManageMovieDetailsUseCase,
-    val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>(
     MovieCategoriesScreenUiState(),
     dispatcher
