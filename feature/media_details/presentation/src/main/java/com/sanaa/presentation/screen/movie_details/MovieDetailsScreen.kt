@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,13 +44,14 @@ import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.InfoSection
 import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.modifier.fillWidthOfParent
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
+import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisCard
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import org.koin.androidx.compose.koinViewModel
@@ -95,8 +99,7 @@ fun MovieDetailsScreen(
             is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
                 navController.navigate(
                     MovieCategoriesScreenRoute(
-                        e.categoryId,
-                        e.categoryName
+                        e.categoryId, e.categoryName
                     ).route()
                 )
             }
@@ -147,12 +150,14 @@ fun MovieDetailsContent(
                         NovixLoadingIndicator()
                     }
                 } else {
-                    LazyColumn(
+                    LazyVerticalGrid(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = 112.dp)
+                        columns = GridCells.Adaptive(minSize = 120.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
                     ) {
-                        item {
-                            Box(modifier = Modifier.fillMaxWidth()) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            Box(modifier = Modifier.fillWidthOfParent(16.dp)) {
                                 ImageSlider(
                                     images = state.imagesUrls,
                                     contentDescription = state.movieDetails.title,
@@ -223,30 +228,44 @@ fun MovieDetailsContent(
                             }
                         }
 
-                        item {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
                             state.movieDetails.overview?.let {
                                 OverviewSection(
                                     overview = state.movieDetails.overview,
                                     onReadMore = { interactionListener.onReadMoreClick() },
-                                    modifier = Modifier.padding(16.dp),
+                                    modifier = Modifier.padding(vertical = 16.dp),
                                     titleResId = R.string.overview
                                 )
                             }
                         }
 
-                        item {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
                             if (state.cast.isNotEmpty()) CastComponent(
                                 casts = state.cast,
-                                onActorClicked = interactionListener::onActorCardClick
+                                onActorClicked = interactionListener::onActorCardClick,
+                                modifier = Modifier.fillWidthOfParent(16.dp)
                             )
                         }
-                        item {
-                            if (state.similarMovies.isNotEmpty()) MoreLikeThisSection(
-                                similarMovies = state.similarMovies,
-                                onBookmarkClick = interactionListener::onBookmarkClick,
-                                onSimilarMovieClick = interactionListener::onSimilarMovieClick,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
+                        if (state.similarMovies.isNotEmpty()) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Text(
+                                    text = stringResource(id = R.string.more_like_this),
+                                    color = Theme.colors.title,
+                                    style = Theme.textStyle.title.medium,
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
+                                )
+                            }
+
+                            itemsIndexed(
+                                state.similarMovies,
+                                key = { index, item -> item.id }) { index, item ->
+                                MoreLikeThisCard(
+                                    movie = item,
+                                    modifier = Modifier.padding(bottom = 12.dp),
+                                    onBookmarkClick = { interactionListener.onBookmarkClick(item.id) },
+                                    onMovieClick = { interactionListener.onSimilarMovieClick(item.id) },
+                                )
+                            }
                         }
                     }
 
