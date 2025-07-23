@@ -3,7 +3,8 @@ package com.sanaa.presentation.filter_bottomsheet
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
-import entity.Genre
+import com.sanaa.presentation.screen.state.mapper.toDomain
+import com.sanaa.presentation.screen.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -12,11 +13,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import usecase.search.search_param.MediaFilters
 
 class FilterViewModel(
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val manageMovieUseCase: ManageMovieUseCase,
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<FilterUiState>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
@@ -29,13 +32,11 @@ class FilterViewModel(
     private fun fetchGenres() {
         tryToExecute(
             callee = {
-                val genres = manageMovieUseCase.getMovieGenres()
+                val movieGenres = manageMovieUseCase.getMovieGenres()
+                val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
+                val genres = movieGenres.plus(tvShowGenres)
                 _uiState.update {
-                    it.copy(allGenres = genres.map { genre ->
-                        GenreUiState(
-                            id = genre.id, name = genre.name
-                        )
-                    })
+                    it.copy(allGenres = genres.map { it.toState()})
                 }
             })
     }
@@ -80,9 +81,7 @@ class FilterViewModel(
                 val mediaFilters = MediaFilters(
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),
-                    genres = currentState.selectedGenres.map {
-                        Genre(it.id, it.name.orEmpty())
-                    },
+                    genres = currentState.selectedGenres.map { it.toDomain() },
                     imdbRating = currentState.imdbRating.toFloat()
                 )
                 _filterResult.emit(mediaFilters)
