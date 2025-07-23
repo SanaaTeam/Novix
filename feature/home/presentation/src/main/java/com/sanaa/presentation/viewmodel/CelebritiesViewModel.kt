@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PeopleViewModel : ViewModel(), PeopleScreenInteractionListener {
+class CelebritiesViewModel : ViewModel(), PeopleScreenInteractionListener {
     private val _state = MutableStateFlow(
         PeopleScreenUiState(isLoading = false, people = emptyList())
     )
