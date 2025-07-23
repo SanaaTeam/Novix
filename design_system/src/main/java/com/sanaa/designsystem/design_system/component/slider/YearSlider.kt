@@ -1,4 +1,4 @@
-package com.sanaa.presentation.filter_bottomsheet.components
+package com.sanaa.designsystem.design_system.component.slider
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
