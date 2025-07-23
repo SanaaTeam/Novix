@@ -1,18 +1,17 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
-import details.usecase.ManageTvSeriesDetailsUseCase
+import details.usecase.ManageTvSeriesUseCase
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class SeriesViewModel(
     private val seriesId: Int,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(initialState = SeriesScreenUiState(), defaultDispatcher = dispatcher),
     SeriesScreenInteractionListener {

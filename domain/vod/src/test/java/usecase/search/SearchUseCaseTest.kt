@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.repository.SearchRepository
 import search.usecase.SearchUseCase
 import search.usecase.search_param.MediaFilters
@@ -19,7 +19,7 @@ import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var searchUseCase: SearchUseCase
 
     @BeforeEach
