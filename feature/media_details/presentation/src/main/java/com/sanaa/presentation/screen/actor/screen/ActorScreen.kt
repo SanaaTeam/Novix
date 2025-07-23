@@ -99,7 +99,6 @@ fun ActorScreen(
 
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ActorScreenContent(
     state: ActorScreenUiState,
@@ -206,6 +205,7 @@ private fun ActorScreenContent(
         }
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
+                isVisible = state.showLoginBottomSheet,
                 onDismiss = listener::onDismissBottomSheet,
             )
         }
