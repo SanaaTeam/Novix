@@ -6,17 +6,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -35,18 +31,18 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.components.cards.ActorCard
-import com.sanaa.presentation.ui_state.ActorUiModel
+import com.sanaa.presentation.components.lists.ActorList
+import com.sanaa.presentation.ui_state.ActorUiState
 import com.sanaa.presentation.ui_state.PeopleScreenEffects
 import com.sanaa.presentation.ui_state.PeopleScreenInteractionListener
 import com.sanaa.presentation.ui_state.PeopleScreenUiState
-import com.sanaa.presentation.viewmodel.PeopleViewModel
+import com.sanaa.presentation.viewmodel.CelebritiesViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun CelebritiesScreen() {
-    val viewModel: PeopleViewModel = viewModel()
+    val viewModel: CelebritiesViewModel = viewModel()
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = rememberNavController()
 
@@ -114,26 +110,7 @@ fun CelebritiesContent(
     }
 }
 
-@Composable
-fun ActorList(
-    people: List<ActorUiModel>,
-    onItemClick: (Int) -> Unit
-) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        items(people, key = { it.id }) { person ->
-            ActorCard(
-                actorName = person.name,
-                actorImage = person.imagePainter,
-                playedCharacter = person.character,
-                onCardClick = { onItemClick(person.id) }
-            )
-        }
-    }
-}
+
 
 @PreviewLightDark
 @Composable
@@ -149,13 +126,13 @@ private fun CelebritiesScreenContentPreview() {
                 state = PeopleScreenUiState(
                     isLoading = false,
                     people = listOf(
-                        ActorUiModel(
+                        ActorUiState(
                             id = 1,
                             name = "Jennifer Lawrence",
                             character = null,
                             imagePainter = painterResource(R.drawable.icon_placeholder_light)
                         ),
-                        ActorUiModel(
+                        ActorUiState(
                             id = 2,
                             name = "Meryl Streep",
                             character = null,
