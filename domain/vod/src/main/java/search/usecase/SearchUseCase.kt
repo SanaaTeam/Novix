@@ -1,6 +1,6 @@
 package search.usecase
 
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.repository.SearchRepository
 import search.usecase.search_param.MediaFilters
 import search.usecase.search_param.SearchActorOutput
@@ -9,7 +9,7 @@ import search.usecase.search_param.SearchTvSeriesOutput
 
 class SearchUseCase(
     private val searchRepository: SearchRepository,
-    private val searchHistoryRepository: SearchHistoryRepository,
+    private val searchHistoryRepository: HistoryRepository,
 ) {
     suspend fun searchMovies(query: String, page: Int, filters: MediaFilters?): List<SearchMovieOutput> {
         searchHistoryRepository.addSearchHistory(query)
