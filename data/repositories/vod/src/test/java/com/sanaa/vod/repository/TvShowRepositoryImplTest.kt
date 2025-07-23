@@ -236,6 +236,42 @@ class TvShowRepositoryImplTest {
 
     }
 
+    @Test
+    fun `getTopRatedTvSeries returns empty list`() = runTest {
+        // Act
+        val result = repository.getTopRatedTvSeries()
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `getTrendingTvSeries returns empty list`() = runTest {
+        // Act
+        val result = repository.getTrendingTvSeries()
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `getSeriesByGenre returns empty list`() = runTest {
+        // Act
+        val result = repository.getSeriesByGenre(Genre.ACTION)
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `getPopularSeries returns empty list`() = runTest {
+        // Act
+        val result = repository.getPopularSeries()
+
+        // Assert
+        assertEquals(0, result.size)
+    }
+
     private val dummyReviewDto = ReviewDto(
         id = "1", content = "Review", authorDetails = AuthorDetailsDto(
             name = "A", username = "a", avatarPath = "/avatar.png", rating = 4.0f

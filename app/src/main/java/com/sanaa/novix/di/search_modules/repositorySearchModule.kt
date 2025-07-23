@@ -5,10 +5,10 @@ import com.sanaa.vod.repository.SearchRepositoryImpl
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import search.repository.SearchHistoryRepository
+import search.repository.HistoryRepository
 import search.repository.SearchRepository
 
 val repositorySearchModule = module {
     singleOf(::SearchRepositoryImpl) bind SearchRepository::class
-    singleOf(::SearchHistoryRepositoryImpl) bind SearchHistoryRepository::class
+    singleOf(::SearchHistoryRepositoryImpl) bind HistoryRepository::class
 }

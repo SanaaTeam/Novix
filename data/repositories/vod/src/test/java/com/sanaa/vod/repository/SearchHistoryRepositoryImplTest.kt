@@ -207,6 +207,23 @@ class SearchHistoryRepositoryImplTest {
         }
     }
 
+    @Test
+    fun `getWatchedMoviesHistory returns empty list`() = runTest {
+        // Act
+        val result = repository.getWatchedMoviesHistory()
+
+        // Assert
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getWatchedSeriesHistory returns empty list`() = runTest {
+        // Act
+        val result = repository.getWatchedSeriesHistory()
+
+        // Assert
+        assertThat(result).isEmpty()
+    }
 
     val givenRecentViewed = listOf(
         RecentViewedLocalDto(

@@ -3,14 +3,14 @@ package com.sanaa.presentation.screen.movie_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
-import details.usecase.ManageMovieDetailsUseCase
+import details.usecase.ManageMovieUseCase
 import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
 class MovieDetailsViewModel(
     private val movieId: Int,
-    private val manageMovieDetails: ManageMovieDetailsUseCase,
+    private val manageMovieDetails: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),

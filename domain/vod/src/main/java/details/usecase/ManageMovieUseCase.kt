@@ -2,13 +2,13 @@ package details.usecase
 
 import details.repository.MovieRepository
 import entity.Actor
-import entity.Movie
 import entity.Genre
+import entity.Movie
 import entity.Review
 
-class ManageMovieDetailsUseCase(
-    private val movieRepo: MovieRepository)
-{
+class ManageMovieUseCase(
+    private val movieRepo: MovieRepository
+) {
     suspend fun getMovieDetails(id: Int): Movie =
         movieRepo.getMovieDetails(id)
 
@@ -29,6 +29,27 @@ class ManageMovieDetailsUseCase(
 
     suspend fun getSimilarMoviesByMovieId(movieId: Int): List<Movie> =
         movieRepo.getSimilarMoviesByMovieId(movieId)
+
+    suspend fun getPopularMovies(): List<Movie> {
+        return movieRepo.getPopularMovies()
+    }
+
+    suspend fun getTopRatedMovies(): List<Movie> {
+        return movieRepo.getTopRatedMovies()
+    }
+
+    suspend fun getTrendingMovies(): List<Movie> {
+        return movieRepo.getTrendingMovies()
+    }
+
+    suspend fun getUpcomingMovies(): List<Movie> {
+        return movieRepo.getUpcomingMovies()
+    }
+
+    suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
+        return movieRepo.getMoviesByGenre(genre)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }
