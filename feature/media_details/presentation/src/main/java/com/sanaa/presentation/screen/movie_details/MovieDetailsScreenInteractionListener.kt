@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.movie_details
 
-import entity.Genre
+import com.sanaa.presentation.model.GenreUiModel
 
 interface MovieDetailsScreenInteractionListener {
     fun onBackClick()
@@ -12,5 +12,5 @@ interface MovieDetailsScreenInteractionListener {
     fun onDismissLoginBottomSheet()
     fun onActorCardClick(actorId: Int)
     fun onShowReviewsClick(movieId: Int)
-    fun onGenreClicked(genre: Genre)
+    fun onGenreClicked(genre: GenreUiModel)
 }

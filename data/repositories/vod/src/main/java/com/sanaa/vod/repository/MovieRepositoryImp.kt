@@ -4,7 +4,6 @@ import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.mapper.actor.getFullImageUrl
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
@@ -41,9 +40,9 @@ class MovieRepositoryImpl(
             remote.fetchReviewsByMovieId(id).map { it.toEntity() }
         }
 
-    override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
+    override suspend fun getMoviesByCategory(genreId: Int): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.toDtoId()).map { it.toDomain() }
+            remote.fetchMoviesByCategory(genreId).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =
@@ -56,19 +55,21 @@ class MovieRepositoryImpl(
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(page: Int, genre: Genre?): List<Movie> {
+    override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> {
         return emptyList()
     }
 
     override suspend fun getMovieGenres(): List<Genre> {
-        return emptyList()
+        return safeCall("Failed to fetch movie genres") {
+            remote.fetchMovieGenres().map { it.toEntity() }
+        }
     }
 }

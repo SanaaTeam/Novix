@@ -12,7 +12,7 @@ fun TvShowDto.toEntity(): TvSeries {
         posterImageUrl = buildPosterUrl(posterPath),
         imdbRating = voteAverage,
         releaseDate = LocalDate.parse(firstAirDate),
-        genres = genres.mapNotNull { it.id?.toGenre() },
+        genres = genres.map { it.toEntity() },
         seasonsCount = seasonsCount,
     )
 }

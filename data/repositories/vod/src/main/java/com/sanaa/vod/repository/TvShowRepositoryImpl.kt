@@ -3,7 +3,6 @@ package com.sanaa.vod.repository
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
@@ -31,9 +30,9 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowImageUrls(id).map { it.toEntity() }.take(count)
         }
 
-    override suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> =
+    override suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeries> =
         safeCall("Tv Series not found") {
-            remoteDataSource.getTvShowsByGenre(genre.toDtoId()).map { it.toEntity() }
+            remoteDataSource.getTvShowsByGenre(genreId).map { it.toEntity() }
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {
@@ -70,19 +69,21 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
-    override suspend fun getTopRatedTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {
         return emptyList()
     }
 
-    override suspend fun getTrendingTvSeries(page: Int, genre: Genre?): List<TvSeries> {
+    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> {
         return emptyList()
     }
 
-    override suspend fun getPopularSeries(page: Int, genre: Genre?): List<TvSeries> {
+    override suspend fun getPopularSeries(page: Int, genreId: Int?): List<TvSeries> {
         return emptyList()
     }
 
     override suspend fun getSeriesGenres(): List<Genre> {
-        return emptyList()
+        return safeCall("Genres not found") {
+            remoteDataSource.getTvShowGenres().map { it.toEntity() }
+        }
     }
 }

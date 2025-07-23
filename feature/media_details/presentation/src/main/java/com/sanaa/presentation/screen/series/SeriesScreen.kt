@@ -92,7 +92,7 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        MovieCategoriesScreenRoute(it.categoryId).route()
+                        MovieCategoriesScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
             }
@@ -112,7 +112,8 @@ fun SeriesScreenContent(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Box(
-            modifier = Modifier.navigationBarsPadding()
+            modifier = Modifier
+                .navigationBarsPadding()
                 .fillMaxSize()
         ) {
             NovixTopBar(

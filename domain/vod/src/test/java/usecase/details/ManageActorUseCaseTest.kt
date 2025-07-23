@@ -1,7 +1,6 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import repository.ActorRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie
@@ -14,6 +13,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import repository.ActorRepository
 import usecase.ManageActorUseCase
 
 class ManageActorUseCaseTest {
@@ -113,8 +113,7 @@ class ManageActorUseCaseTest {
         val actorId = 10
         coEvery {
             actorRepository.getProfileImageUrls(
-                actorId,
-                10
+                actorId, 10
             )
         } throws RetrievingDataFailureException(
             "Error"
@@ -123,6 +122,7 @@ class ManageActorUseCaseTest {
             manageActorDetailsUseCase.getProfileImages(actorId)
         }
     }
+
     @Test
     fun `getTrendingActors should call repository and return list of actors`() = runTest {
         val trendingActors = listOf(dummyActor, dummyActor.copy(id = 2, name = "Jane Smith"))
@@ -159,8 +159,12 @@ class ManageActorUseCaseTest {
             biography = "A short bio text.",
             department = "Acting"
         )
-        private val action = Genre.ACTION
-        private val drama = Genre.DRAMA
+        private val action = Genre(
+            id = 1, name = "Action"
+        )
+        private val drama = Genre(
+            id = 2, name = "Drama"
+        )
         private val dummyMovies = listOf(
             Movie(
                 id = 1,
@@ -171,8 +175,7 @@ class ManageActorUseCaseTest {
                 duration = 137,
                 releaseDate = LocalDate(2023, 5, 12),
                 overview = "A big summer action film."
-            ),
-            Movie(
+            ), Movie(
                 id = 2,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/poster2.jpg",
                 title = "Critically-Acclaimed Drama",
@@ -183,8 +186,12 @@ class ManageActorUseCaseTest {
                 overview = "An award-winning character study."
             )
         )
-        private val sciFi = Genre.SCIENCE_FICTION
-        private val crime = Genre.CRIME
+        private val sciFi = Genre(
+            id = 3, name = "Science Fiction"
+        )
+        private val crime = Genre(
+            id = 4, name = "Crime"
+        )
         private val dummySeries = listOf(
             TvSeries(
                 id = 101,
@@ -195,8 +202,7 @@ class ManageActorUseCaseTest {
                 imdbRating = 8.9f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
                 seasonsCount = 1
-            ),
-            TvSeries(
+            ), TvSeries(
                 id = 102,
                 title = "City Shadows",
                 overview = "Gritty crime thriller.",
