@@ -50,7 +50,7 @@ fun SearchHistoryContent(
             transitionSpec = { fadeIn() togetherWith fadeOut() }
         ) {
             when (it) {
-                true -> EmptyState()
+                true -> SearchEmptyView()
                 false -> ContentState(
                     recentViewed,
                     interactionsListener,
@@ -62,11 +62,11 @@ fun SearchHistoryContent(
 }
 
 @Composable
-private fun EmptyState() {
+private fun SearchEmptyView() {
     Box(
         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
     ) {
-        EmptySearchState(
+        EmptySearchContent(
             icon = painterResource(id = R.drawable.icon_empty_search),
             text = stringResource(id = R.string.empty_search_message)
         )
