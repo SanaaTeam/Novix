@@ -35,7 +35,6 @@ fun HomeScreenContent(
                 onTvShowsClicked = {},
                 onPeopleClicked = {}
             )
-
         }
 
     }

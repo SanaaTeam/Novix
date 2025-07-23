@@ -16,7 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -132,10 +132,9 @@ fun PopularMediaSection(modifier: Modifier = Modifier) {
                             .padding(8.dp),
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
-                        Text(
+                        BasicText(
                             text = "Media Title",
-                            style = Theme.textStyle.label.medium,
-                            color = Theme.colors.title,
+                            style = Theme.textStyle.label.medium.copy( color = Theme.colors.title)
                         )
                         MediaRatingChip(
                             rating = "9.9"

@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -94,13 +94,12 @@ fun WantToWatchCard(
                     onClick()
                 },
         ) {
-            Text(
+            BasicText(
                 modifier = Modifier
                     .align(Alignment.BottomStart)
                     .padding(8.dp),
                 text = label,
-                style = Theme.textStyle.title.medium,
-                color = Theme.colors.onPrimary
+                style = Theme.textStyle.title.medium.copy(color = Theme.colors.onPrimary),
             )
         }
         Image(
