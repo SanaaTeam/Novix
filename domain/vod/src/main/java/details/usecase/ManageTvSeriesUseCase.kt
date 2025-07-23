@@ -3,7 +3,6 @@ package details.usecase
 import details.repository.TvSeriesRepository
 import entity.Actor
 import entity.Genre
-import entity.Movie
 import entity.Review
 import entity.Season
 import entity.TvSeries
@@ -32,21 +31,22 @@ class ManageTvSeriesUseCase(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
-    suspend fun getPopularSeries(): List<TvSeries> {
-        return tvSeriesRepo.getPopularSeries()
+    suspend fun getPopularSeries(genre: Genre): List<TvSeries> {
+        return tvSeriesRepo.getPopularSeries(genre)
     }
 
     suspend fun getTopRatedTvSeries(): List<TvSeries> {
         return tvSeriesRepo.getTopRatedTvSeries()
     }
 
-    suspend fun getTrendingTvSeries(): List<TvSeries> {
-        return tvSeriesRepo.getTrendingTvSeries()
+    suspend fun getTrendingTvSeries(genre: Genre): List<TvSeries> {
+        return tvSeriesRepo.getTrendingTvSeries(genre)
     }
 
-    suspend fun getMoviesByGenre(genre: Genre): List<TvSeries> {
-        return tvSeriesRepo.getSeriesByGenre(genre)
+    suspend fun getSeriesGenres(): List<Genre> {
+        return tvSeriesRepo.getSeriesGenres()
     }
+
 
     private companion object {
         const val IMAGE_COUNT = 10

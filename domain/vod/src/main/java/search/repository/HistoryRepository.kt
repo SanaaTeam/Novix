@@ -1,5 +1,6 @@
 package search.repository
 
+import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
@@ -14,6 +15,6 @@ interface HistoryRepository {
     suspend fun getRecentViewed(sizeLimit: Int): Flow<List<RecentViewedMedia>>
     suspend fun addRecentViewedMedia(item: RecentViewedMedia)
     suspend fun clearRecentViewed()
-    suspend fun getWatchedMoviesHistory(): List<Movie>
-    suspend fun getWatchedSeriesHistory(): List<TvSeries>
+    suspend fun getWatchedMoviesHistory(genre: Genre): List<Movie>
+    suspend fun getWatchedSeriesHistory(genre: Genre): List<TvSeries>
 }

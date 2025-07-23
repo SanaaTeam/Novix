@@ -57,19 +57,19 @@ class MovieRepositoryImpl(
         return emptyList()
     }
 
-    override suspend fun getTopRatedMovies(): List<Movie> {
+    override suspend fun getTopRatedMovies(genre: Genre): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getUpcomingMovies(): List<Movie> {
+    override suspend fun getUpcomingMovies(genre: Genre): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getTrendingMovies(): List<Movie> {
+    override suspend fun getTrendingMovies(genre: Genre): List<Movie> {
         return emptyList()
     }
 
-    override suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
+    override suspend fun getMovieGenres(): List<Genre> {
         return emptyList()
     }
 

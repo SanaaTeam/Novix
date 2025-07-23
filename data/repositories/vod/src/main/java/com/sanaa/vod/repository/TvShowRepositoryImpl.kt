@@ -76,15 +76,15 @@ class TvShowRepositoryImpl(
         return emptyList()
     }
 
-    override suspend fun getTrendingTvSeries(): List<TvSeries> {
+    override suspend fun getTrendingTvSeries(genre: Genre): List<TvSeries> {
         return emptyList()
     }
 
-    override suspend fun getSeriesByGenre(genre: Genre): List<TvSeries> {
+    override suspend fun getPopularSeries(genre: Genre): List<TvSeries> {
         return emptyList()
     }
 
-    override suspend fun getPopularSeries(): List<TvSeries> {
+    override suspend fun getSeriesGenres(): List<Genre> {
         return emptyList()
     }
 

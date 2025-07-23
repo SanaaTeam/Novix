@@ -1,5 +1,6 @@
 package search.usecase
 
+import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
@@ -12,8 +13,8 @@ class ManageSearchHistoryUseCase(
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> = historyRepo.getSearchHistory(HISTORY_ITEM_LIMIT)
     suspend fun removeSearchHistory(id: Int) = historyRepo.removeSearchHistoryById(id)
     suspend fun clearSearchHistory() = historyRepo.clearSearchHistory()
-    suspend fun getWatchedMoviesHistory(): List<Movie> = historyRepo.getWatchedMoviesHistory()
-    suspend fun getWatchedSeriesHistory(): List<TvSeries> = historyRepo.getWatchedSeriesHistory()
+    suspend fun getWatchedMoviesHistory(genre: Genre): List<Movie> = historyRepo.getWatchedMoviesHistory(genre)
+    suspend fun getWatchedSeriesHistory(genre: Genre): List<TvSeries> = historyRepo.getWatchedSeriesHistory(genre)
 
     companion object {
         private const val HISTORY_ITEM_LIMIT = 10

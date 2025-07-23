@@ -30,24 +30,20 @@ class ManageMovieUseCase(
     suspend fun getSimilarMoviesByMovieId(movieId: Int): List<Movie> =
         movieRepo.getSimilarMoviesByMovieId(movieId)
 
-    suspend fun getPopularMovies(): List<Movie> {
-        return movieRepo.getPopularMovies()
-    }
+    suspend fun getPopularMovies(): List<Movie> =
+        movieRepo.getPopularMovies()
 
-    suspend fun getTopRatedMovies(): List<Movie> {
-        return movieRepo.getTopRatedMovies()
-    }
+    suspend fun getTopRatedMovies(genre: Genre): List<Movie> =
+        movieRepo.getTopRatedMovies(genre)
 
-    suspend fun getTrendingMovies(): List<Movie> {
-        return movieRepo.getTrendingMovies()
-    }
+    suspend fun getTrendingMovies(genre: Genre): List<Movie> =
+        movieRepo.getTrendingMovies(genre)
 
-    suspend fun getUpcomingMovies(): List<Movie> {
-        return movieRepo.getUpcomingMovies()
-    }
+    suspend fun getUpcomingMovies(genre: Genre): List<Movie> =
+        movieRepo.getUpcomingMovies(genre)
 
-    suspend fun getMoviesByGenre(genre: Genre): List<Movie> {
-        return movieRepo.getMoviesByGenre(genre)
+    suspend fun getMovieGenres(): List<Genre> {
+        return movieRepo.getMovieGenres()
     }
 
     private companion object {
