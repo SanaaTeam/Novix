@@ -1,6 +1,6 @@
-package search.usecase.search_param
+package usecase.search.search_param
 
-data class SearchTvSeriesOutput(
+data class SearchMovieOutput(
     val id: Int,
     val title: String,
     val posterImageUrl: String,

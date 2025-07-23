@@ -1,8 +1,6 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import details.repository.MovieRepository
-import details.usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Genre
 import entity.Movie
@@ -15,8 +13,10 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import repository.MovieRepository
+import usecase.ManageMovieUseCase
 
-class ManageMovieDetailsUseCaseTest {
+class ManageMovieUseCaseTest {
 
     private val movieRepository: MovieRepository = mockk(relaxed = true)
     private lateinit var manageMovieDetailsUseCase: ManageMovieUseCase
@@ -245,79 +245,85 @@ class ManageMovieDetailsUseCaseTest {
 
     @Test
     fun `getTopRatedMovies should return movies when available`() = runTest {
+        val genre = Genre.ACTION
         val expected = listOf(mockk<Movie>())
-        coEvery { movieRepository.getTopRatedMovies() } returns expected
+        coEvery { movieRepository.getTopRatedMovies(genre) } returns expected
 
-        val result = manageMovieDetailsUseCase.getTopRatedMovies()
+        val result = manageMovieDetailsUseCase.getTopRatedMovies(genre)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getTopRatedMovies should throw when repository fails`() = runTest {
-        coEvery { movieRepository.getTopRatedMovies() } throws RetrievingDataFailureException("Error")
+        val genre = Genre.ACTION
+        coEvery { movieRepository.getTopRatedMovies(genre) } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getTopRatedMovies()
+            manageMovieDetailsUseCase.getTopRatedMovies(genre)
         }
     }
 
     @Test
     fun `getTrendingMovies should return movies when available`() = runTest {
+        val genre = Genre.DRAMA
         val expected = listOf(mockk<Movie>())
-        coEvery { movieRepository.getTrendingMovies() } returns expected
+        coEvery { movieRepository.getTrendingMovies(genre) } returns expected
 
-        val result = manageMovieDetailsUseCase.getTrendingMovies()
+        val result = manageMovieDetailsUseCase.getTrendingMovies(genre)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getTrendingMovies should throw when repository fails`() = runTest {
-        coEvery { movieRepository.getTrendingMovies() } throws RetrievingDataFailureException("Error")
+        val genre = Genre.DRAMA
+        coEvery { movieRepository.getTrendingMovies(genre) } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getTrendingMovies()
+            manageMovieDetailsUseCase.getTrendingMovies(genre)
         }
     }
 
     @Test
     fun `getUpcomingMovies should return movies when available`() = runTest {
+        val genre = Genre.COMEDY
         val expected = listOf(mockk<Movie>())
-        coEvery { movieRepository.getUpcomingMovies() } returns expected
+        coEvery { movieRepository.getUpcomingMovies(genre) } returns expected
 
-        val result = manageMovieDetailsUseCase.getUpcomingMovies()
+        val result = manageMovieDetailsUseCase.getUpcomingMovies(genre)
 
         assertThat(result).isEqualTo(expected)
     }
 
+
+
     @Test
     fun `getUpcomingMovies should throw when repository fails`() = runTest {
-        coEvery { movieRepository.getUpcomingMovies() } throws RetrievingDataFailureException("Error")
+        val genre = Genre.COMEDY
+        coEvery { movieRepository.getUpcomingMovies(genre) } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getUpcomingMovies()
+            manageMovieDetailsUseCase.getUpcomingMovies(genre)
         }
     }
 
     @Test
-    fun `getMoviesByGenre should return movies when available`() = runTest {
-        val genre = Genre.FANTASY
-        val expected = listOf(mockk<Movie>())
-        coEvery { movieRepository.getMoviesByGenre(genre) } returns expected
+    fun `getMovieGenres should return genres when available`() = runTest {
+        val expected = listOf(Genre.ACTION, Genre.DRAMA)
+        coEvery { movieRepository.getMovieGenres() } returns expected
 
-        val result = manageMovieDetailsUseCase.getMoviesByGenre(genre)
+        val result = manageMovieDetailsUseCase.getMovieGenres()
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
-    fun `getMoviesByGenre should throw when repository fails`() = runTest {
-        val genre = Genre.FANTASY
-        coEvery { movieRepository.getMoviesByGenre(genre) } throws RetrievingDataFailureException("Error")
+    fun `getMovieGenres should throw when repository fails`() = runTest {
+        coEvery { movieRepository.getMovieGenres() } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getMoviesByGenre(genre)
+            manageMovieDetailsUseCase.getMovieGenres()
         }
     }
 }

@@ -6,7 +6,7 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.MovieRepository
+import repository.MovieRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie

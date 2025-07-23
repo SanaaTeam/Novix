@@ -1,8 +1,7 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import details.repository.ActorRepository
-import details.usecase.ManageActorUseCase
+import repository.ActorRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie
@@ -15,8 +14,9 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import usecase.ManageActorUseCase
 
-class ManageActorDetailsUseCaseTest {
+class ManageActorUseCaseTest {
 
     private val actorRepository: ActorRepository = mockk(relaxed = true)
     private lateinit var manageActorDetailsUseCase: ManageActorUseCase

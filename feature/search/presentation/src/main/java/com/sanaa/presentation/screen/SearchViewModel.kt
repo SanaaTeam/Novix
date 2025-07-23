@@ -33,17 +33,17 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import search.usecase.ManageRecentViewedUseCase
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.ManageSearchHistoryUseCase
-import search.usecase.SearchUseCase
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.MediaType
+import usecase.search.ManageRecentViewedUseCase
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.history.ManageHistoryUseCase
+import usecase.search.SearchUseCase
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.MediaType
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
-    private val manageSearchHistoryUseCase: ManageSearchHistoryUseCase,
+    private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {

@@ -1,10 +1,9 @@
-package details.repository
+package repository
 
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Movie

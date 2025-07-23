@@ -12,9 +12,9 @@ import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import search.repository.HistoryRepository
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.search_param.SearchHistory
+import repository.HistoryRepository
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.history.history_param.SearchHistory
 import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImpl(

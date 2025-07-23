@@ -1,13 +1,13 @@
-package search.usecase
+package usecase.history
 
 import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
-import search.repository.HistoryRepository
-import search.usecase.search_param.SearchHistory
+import repository.HistoryRepository
+import usecase.history.history_param.SearchHistory
 
-class ManageSearchHistoryUseCase(
+class ManageHistoryUseCase(
     private val historyRepo: HistoryRepository,
 ) {
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> = historyRepo.getSearchHistory(HISTORY_ITEM_LIMIT)

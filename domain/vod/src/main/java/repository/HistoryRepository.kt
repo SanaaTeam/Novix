@@ -1,11 +1,11 @@
-package search.repository
+package repository
 
 import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.search_param.SearchHistory
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.history.history_param.SearchHistory
 
 interface HistoryRepository {
     suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>>

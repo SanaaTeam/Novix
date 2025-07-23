@@ -18,7 +18,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import search.usecase.search_param.MediaType
+import usecase.search.search_param.MediaType
 import java.net.UnknownHostException
 
 class SearchHistoryRepositoryImplTest {

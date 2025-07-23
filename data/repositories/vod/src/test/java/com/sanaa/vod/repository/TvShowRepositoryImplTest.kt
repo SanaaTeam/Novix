@@ -8,7 +8,7 @@ import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
-import details.repository.TvSeriesRepository
+import repository.TvSeriesRepository
 import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException

@@ -1,4 +1,4 @@
-package details.repository
+package repository
 
 import entity.Actor
 import entity.Episode

@@ -1,6 +1,6 @@
-package details.usecase
+package usecase
 
-import details.repository.MovieRepository
+import repository.MovieRepository
 import entity.Actor
 import entity.Genre
 import entity.Movie

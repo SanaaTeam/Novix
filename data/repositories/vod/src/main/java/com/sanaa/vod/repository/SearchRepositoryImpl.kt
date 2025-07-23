@@ -13,10 +13,10 @@ import com.sanaa.vod.util.filterMovies
 import com.sanaa.vod.util.filterTvShows
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
-import search.repository.SearchRepository
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import repository.SearchRepository
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 import java.nio.channels.UnresolvedAddressException
 
 class SearchRepositoryImpl(

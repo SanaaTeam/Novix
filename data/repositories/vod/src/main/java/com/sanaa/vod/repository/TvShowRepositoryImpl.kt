@@ -5,7 +5,7 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toDtoId
 import com.sanaa.vod.mapper.media.toEntity
-import details.repository.TvSeriesRepository
+import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
 import entity.Genre

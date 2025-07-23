@@ -11,10 +11,10 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchUseCase
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchActorOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.SearchUseCase
+import usecase.search.search_param.MediaFilters
+import usecase.search.search_param.SearchActorOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchTvShowsPagingSourceTest {
     private val seriesUseCase: SearchUseCase = mockk(relaxed = true)
