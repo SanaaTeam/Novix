@@ -15,6 +15,6 @@ interface HistoryRepository {
     suspend fun getRecentViewed(sizeLimit: Int): Flow<List<RecentViewedMedia>>
     suspend fun addRecentViewedMedia(item: RecentViewedMedia)
     suspend fun clearRecentViewed()
-    suspend fun getWatchedMoviesHistory(page: Int, genre: Genre?): List<Movie>
-    suspend fun getWatchedSeriesHistory(page: Int, genre: Genre?): List<TvSeries>
+    suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie>
+    suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries>
 }

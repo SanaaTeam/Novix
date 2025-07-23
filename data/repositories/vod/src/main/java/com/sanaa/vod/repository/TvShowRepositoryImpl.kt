@@ -82,6 +82,8 @@ class TvShowRepositoryImpl(
     }
 
     override suspend fun getSeriesGenres(): List<Genre> {
-        return emptyList()
+        return safeCall("Genres not found") {
+            remoteDataSource.getTvShowGenres().map { it.toEntity() }
+        }
     }
 }
