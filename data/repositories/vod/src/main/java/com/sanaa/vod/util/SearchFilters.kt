@@ -4,7 +4,7 @@ import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
-import com.sanaa.vod.mapper.media.toDtoId
+import com.sanaa.vod.mapper.media.toDto
 import com.sanaa.vod.mapper.search.toSearchOutput
 import kotlinx.datetime.LocalDate
 import usecase.search.search_param.MediaFilters
@@ -12,7 +12,7 @@ import usecase.search.search_param.SearchMovieOutput
 import usecase.search.search_param.SearchTvSeriesOutput
 
 internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<SearchMovieOutput> {
-    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
+    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDto() }
     return movies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
@@ -25,7 +25,7 @@ internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Searc
 internal fun MediaFilters.filterCashedMovies(
     cachedMovies: List<MovieLocalDto>,
 ): List<SearchMovieOutput> {
-    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
+    val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDto() }
     return cachedMovies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }
@@ -38,7 +38,7 @@ internal fun MediaFilters.filterTvShows(
     tvSeries: List<TvShowSearchDto>,
 ): List<SearchTvSeriesOutput> {
     let {
-        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
+        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDto() }
         return tvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
             .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
@@ -52,7 +52,7 @@ internal fun MediaFilters.filterCashedTvShows(
     cachedTvSeries: List<TvSeriesLocalDto>,
 ): List<SearchTvSeriesOutput> {
     let {
-        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDtoId() }
+        val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.toDto() }
         return cachedTvSeries
             .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
             .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }

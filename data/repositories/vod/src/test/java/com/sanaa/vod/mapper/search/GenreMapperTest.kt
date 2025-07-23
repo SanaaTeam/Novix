@@ -1,7 +1,7 @@
 package com.sanaa.vod.mapper.search
 
 import com.google.common.truth.Truth
-import com.sanaa.vod.mapper.media.toDtoId
+import com.sanaa.vod.mapper.media.toDto
 import entity.Genre
 import org.junit.jupiter.api.Test
 import kotlin.collections.iterator
@@ -41,7 +41,7 @@ class GenreMapperTest {
         )
 
         for ((genre, expectedId) in genreToIdMap) {
-            val actualId = genre.toDtoId()
+            val actualId = genre.toDto()
             Truth.assertThat(actualId).isEqualTo(expectedId)
         }
     }

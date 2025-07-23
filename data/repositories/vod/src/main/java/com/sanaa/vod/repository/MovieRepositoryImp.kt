@@ -4,7 +4,7 @@ import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.mapper.actor.getFullImageUrl
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toDtoId
+import com.sanaa.vod.mapper.media.toDto
 import com.sanaa.vod.mapper.media.toEntity
 import repository.MovieRepository
 import entity.Actor
@@ -45,7 +45,7 @@ class MovieRepositoryImpl(
 
     override suspend fun getMoviesByCategory(category: Genre): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(category.toDtoId()).map { it.toDomain() }
+            remote.fetchMoviesByCategory(category.toDto()).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =

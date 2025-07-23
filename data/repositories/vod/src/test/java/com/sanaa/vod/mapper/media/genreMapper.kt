@@ -10,88 +10,88 @@ class GenreMapperTest {
 
 
     @Test
-    fun `Genre ACTION maps to 28`() = assertEquals(28, Genre.ACTION.toDtoId())
+    fun `Genre ACTION maps to 28`() = assertEquals(28, Genre.ACTION.toDto())
 
     @Test
-    fun `Genre ADVENTURE maps to 12`() = assertEquals(12, Genre.ADVENTURE.toDtoId())
+    fun `Genre ADVENTURE maps to 12`() = assertEquals(12, Genre.ADVENTURE.toDto())
 
     @Test
-    fun `Genre COMEDY maps to 35`() = assertEquals(35, Genre.COMEDY.toDtoId())
+    fun `Genre COMEDY maps to 35`() = assertEquals(35, Genre.COMEDY.toDto())
 
     @Test
-    fun `Genre DRAMA maps to 18`() = assertEquals(18, Genre.DRAMA.toDtoId())
+    fun `Genre DRAMA maps to 18`() = assertEquals(18, Genre.DRAMA.toDto())
 
     @Test
-    fun `Genre HORROR maps to 27`() = assertEquals(27, Genre.HORROR.toDtoId())
+    fun `Genre HORROR maps to 27`() = assertEquals(27, Genre.HORROR.toDto())
 
     @Test
-    fun `Genre SCIENCE_FICTION maps to 878`() = assertEquals(878, Genre.SCIENCE_FICTION.toDtoId())
+    fun `Genre SCIENCE_FICTION maps to 878`() = assertEquals(878, Genre.SCIENCE_FICTION.toDto())
 
     @Test
-    fun `Genre FANTASY maps to 14`() = assertEquals(14, Genre.FANTASY.toDtoId())
+    fun `Genre FANTASY maps to 14`() = assertEquals(14, Genre.FANTASY.toDto())
 
     @Test
-    fun `Genre ROMANCE maps to 10749`() = assertEquals(10749, Genre.ROMANCE.toDtoId())
+    fun `Genre ROMANCE maps to 10749`() = assertEquals(10749, Genre.ROMANCE.toDto())
 
     @Test
-    fun `Genre THRILLER maps to 53`() = assertEquals(53, Genre.THRILLER.toDtoId())
+    fun `Genre THRILLER maps to 53`() = assertEquals(53, Genre.THRILLER.toDto())
 
     @Test
-    fun `Genre DOCUMENTARY maps to 99`() = assertEquals(99, Genre.DOCUMENTARY.toDtoId())
+    fun `Genre DOCUMENTARY maps to 99`() = assertEquals(99, Genre.DOCUMENTARY.toDto())
 
     @Test
-    fun `Genre ANIMATION maps to 16`() = assertEquals(16, Genre.ANIMATION.toDtoId())
+    fun `Genre ANIMATION maps to 16`() = assertEquals(16, Genre.ANIMATION.toDto())
 
     @Test
-    fun `Genre CRIME maps to 80`() = assertEquals(80, Genre.CRIME.toDtoId())
+    fun `Genre CRIME maps to 80`() = assertEquals(80, Genre.CRIME.toDto())
 
     @Test
-    fun `Genre FAMILY maps to 10751`() = assertEquals(10751, Genre.FAMILY.toDtoId())
+    fun `Genre FAMILY maps to 10751`() = assertEquals(10751, Genre.FAMILY.toDto())
 
     @Test
-    fun `Genre HISTORY maps to 36`() = assertEquals(36, Genre.HISTORY.toDtoId())
+    fun `Genre HISTORY maps to 36`() = assertEquals(36, Genre.HISTORY.toDto())
 
     @Test
-    fun `Genre KIDS maps to 10762`() = assertEquals(10762, Genre.KIDS.toDtoId())
+    fun `Genre KIDS maps to 10762`() = assertEquals(10762, Genre.KIDS.toDto())
 
     @Test
-    fun `Genre MYSTERY maps to 9648`() = assertEquals(9648, Genre.MYSTERY.toDtoId())
+    fun `Genre MYSTERY maps to 9648`() = assertEquals(9648, Genre.MYSTERY.toDto())
 
     @Test
-    fun `Genre MUSIC maps to 10402`() = assertEquals(10402, Genre.MUSIC.toDtoId())
+    fun `Genre MUSIC maps to 10402`() = assertEquals(10402, Genre.MUSIC.toDto())
 
     @Test
-    fun `Genre NEWS maps to 10763`() = assertEquals(10763, Genre.NEWS.toDtoId())
+    fun `Genre NEWS maps to 10763`() = assertEquals(10763, Genre.NEWS.toDto())
 
     @Test
-    fun `Genre REALITY maps to 10764`() = assertEquals(10764, Genre.REALITY.toDtoId())
+    fun `Genre REALITY maps to 10764`() = assertEquals(10764, Genre.REALITY.toDto())
 
     @Test
-    fun `Genre SOAP maps to 10766`() = assertEquals(10766, Genre.SOAP.toDtoId())
+    fun `Genre SOAP maps to 10766`() = assertEquals(10766, Genre.SOAP.toDto())
 
     @Test
-    fun `Genre TALK maps to 10767`() = assertEquals(10767, Genre.TALK.toDtoId())
+    fun `Genre TALK maps to 10767`() = assertEquals(10767, Genre.TALK.toDto())
 
     @Test
-    fun `Genre WAR maps to 10752`() = assertEquals(10752, Genre.WAR.toDtoId())
+    fun `Genre WAR maps to 10752`() = assertEquals(10752, Genre.WAR.toDto())
 
     @Test
     fun `Genre WAR_AND_POLITICS maps to 10768`() =
-        assertEquals(10768, Genre.WAR_AND_POLITICS.toDtoId())
+        assertEquals(10768, Genre.WAR_AND_POLITICS.toDto())
 
     @Test
-    fun `Genre WESTERN maps to 37`() = assertEquals(37, Genre.WESTERN.toDtoId())
+    fun `Genre WESTERN maps to 37`() = assertEquals(37, Genre.WESTERN.toDto())
 
     @Test
-    fun `Genre TV_MOVIE maps to 10770`() = assertEquals(10770, Genre.TV_MOVIE.toDtoId())
+    fun `Genre TV_MOVIE maps to 10770`() = assertEquals(10770, Genre.TV_MOVIE.toDto())
 
     @Test
     fun `Genre ACTION_AND_ADVENTURE maps to 10759`() =
-        assertEquals(10759, Genre.ACTION_AND_ADVENTURE.toDtoId())
+        assertEquals(10759, Genre.ACTION_AND_ADVENTURE.toDto())
 
     @Test
     fun `Genre SCI_FI_AND_FANTASY maps to 10765`() =
-        assertEquals(10765, Genre.SCI_FI_AND_FANTASY.toDtoId())
+        assertEquals(10765, Genre.SCI_FI_AND_FANTASY.toDto())
 
     // === toGenre() Tests ===
 

@@ -3,7 +3,7 @@ package com.sanaa.vod.repository
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toDtoId
+import com.sanaa.vod.mapper.media.toDto
 import com.sanaa.vod.mapper.media.toEntity
 import entity.Actor
 import entity.Episode
@@ -35,7 +35,7 @@ class TvShowRepositoryImpl(
 
     override suspend fun getTvSeriesByGenre(genre: Genre): List<TvSeries> =
         safeCall("Tv Series not found") {
-            remoteDataSource.getTvShowsByGenre(genre.toDtoId()).map { it.toEntity() }
+            remoteDataSource.getTvShowsByGenre(genre.toDto()).map { it.toEntity() }
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {
