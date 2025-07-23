@@ -8,6 +8,7 @@ import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyGuestOfHonor
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummySeasonDto
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowCastResponse
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowDto
+import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowGenresResponse
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowImagesResponse
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowReviewsResponse
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyTvShowVideosResponse
@@ -121,6 +122,15 @@ class RemoteTvShowDataSourceImplTest {
         val result = remoteTvShowDataSource.getTvShowSeasonDetails(1, 1)
 
         assertThat(result.id == dummySeasonDto.id)
+    }
+
+    @Test
+    fun `getTvShowGenres should return List of GenreDto `() = runTest {
+        coEvery { apiService.fetchTvShowsGenres() } returns dummyTvShowGenresResponse
+
+        val result = remoteTvShowDataSource.getTvShowGenres()
+
+        assertThat(result.size == dummyTvShowGenresResponse.genres.size)
     }
 
 

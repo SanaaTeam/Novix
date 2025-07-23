@@ -30,8 +30,8 @@ class MovieMapperTest {
         assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", movie.posterImageUrl)
         assertEquals(8.8f, movie.imdbRating)
         assertEquals(148, movie.duration)
+        assertEquals(listOf(Genre(28, "Action"), Genre(12, "Adventure")), movie.genres)
         assertEquals(LocalDate(2010, 7, 16), movie.releaseDate)
-        assertEquals(listOf(Genre.ACTION, Genre.ADVENTURE), movie.genres)
     }
 
     @Test

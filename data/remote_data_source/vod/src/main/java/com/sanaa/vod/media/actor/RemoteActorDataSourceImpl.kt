@@ -4,24 +4,26 @@ import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.util.wrapApiCall
 
 class RemoteActorDataSourceImpl(
     private val apiService: ActorApiService
 ) : RemoteActorDataSource {
 
     override suspend fun getActorDetails(actorId: Int): ActorDto =
-        apiService.fetchActorDetails(actorId)
+        wrapApiCall { apiService.fetchActorDetails(actorId) }
 
-    override suspend fun getActorImages(actorId: Int): List<ImageDto> =
+    override suspend fun getActorImages(actorId: Int): List<ImageDto> = wrapApiCall {
         apiService.fetchActorImages(actorId).profiles
+    }
 
     override suspend fun getActorMovies(actorId: Int): List<ActorCastCreditDto> =
-        apiService.fetchActorMovies(actorId).cast
+        wrapApiCall { apiService.fetchActorMovies(actorId).cast }
 
     override suspend fun getActorTvShows(actorId: Int): List<ActorCastCreditDto> =
-        apiService.fetchActorTvShows(actorId).cast
+        wrapApiCall { apiService.fetchActorTvShows(actorId).cast }
 
-    override suspend fun fetchTrendingPeople(page: Int): List<ActorDto> {
-        return apiService.fetchTrendingPeople(page = page).results
+    override suspend fun fetchTrendingPeople(page: Int): List<ActorDto>  =
+        wrapApiCall {  apiService.fetchTrendingPeople(page = page).results
     }
 }

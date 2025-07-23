@@ -41,15 +41,15 @@ import com.sanaa.presentation.component.cards.MediaPosterCard
 import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import entity.Genre
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun MovieCategoriesScreen(
-    categoryId: Genre,
-    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId) }),
+    categoryId: Int,
+    categoryName: String?,
+    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId, categoryName) }),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -90,7 +90,7 @@ fun MovieCategoriesScreenContent(
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
-                }, screenTitle = state.title?.toLocalizedString().orEmpty(), modifier = Modifier
+                }, screenTitle = state.title.orEmpty(), modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
             )

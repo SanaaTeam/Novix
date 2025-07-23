@@ -1,5 +1,6 @@
 package com.sanaa.vod.media.movie
 
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
@@ -77,4 +78,9 @@ interface MovieApiService {
         @Query("release_date.gte") minDate: String? = null,
         @Query("release_date.lte") maxDate: String? = null
     ): MovieApiResponse<MovieDto>
+
+    @GET("genre/movie/list")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
+
 }
