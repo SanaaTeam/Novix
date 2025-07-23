@@ -134,6 +134,20 @@ class SearchViewModel(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onClearRecentViewClicked() {
+        tryToExecute(
+            callee = manageRecentViewedUseCase::clearRecentViewed,
+            onError = ::onDataLoadError
+        )
+    }
+
+    override fun onClearRecentSearchClicked() {
+        tryToExecute(
+            manageSearchHistoryUseCase::clearSearchHistory,
+            onError = ::onDataLoadError
+        )
+    }
+
     fun observeSearchQueryChanges() {
         tryToCollect(
             callee = ::observeSearchQueryFlow,
@@ -186,19 +200,7 @@ class SearchViewModel(
         )
     }
 
-    override fun onClearRecentViewClicked() {
-        tryToExecute(
-            callee = manageRecentViewedUseCase::clearRecentViewed,
-            onError = ::onDataLoadError
-        )
-    }
 
-    override fun onClearRecentSearchClicked() {
-        tryToExecute(
-            manageSearchHistoryUseCase::clearSearchHistory,
-            onError = ::onDataLoadError
-        )
-    }
 
     @OptIn(FlowPreview::class)
     private fun observeSearchQueryFlow(): Flow<String> {

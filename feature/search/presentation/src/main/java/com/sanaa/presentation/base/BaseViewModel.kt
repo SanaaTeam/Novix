@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-abstract class BaseViewModel<T,E>(
+abstract class BaseViewModel<T, E>(
     initialState: T,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {

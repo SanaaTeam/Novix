@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
@@ -31,11 +33,36 @@ import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.WavyProgressIndicator
+import org.koin.androidx.compose.koinViewModel
+import search.usecase.search_param.MediaFilters
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FilterBottomSheet(
+    dismissSheet: () -> Unit,
+    sheetState: SheetState,
+    onFilterApplied: (MediaFilters?) -> Unit,
+) {
+    val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
+    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        filterViewModel.filterResult.collect { filters ->
+            onFilterApplied(filters)
+        }
+    }
+
+    FilterBottomSheetContent(
+        dismissSheet = dismissSheet,
+        sheetState = sheetState,
+        filterUiState = filterUiState,
+        filterListener = filterViewModel,
+
+        )
+}
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun FilterBottomSheet(
+fun FilterBottomSheetContent(
     dismissSheet: () -> Unit,
     sheetState: SheetState,
     filterUiState: FilterUiState,
