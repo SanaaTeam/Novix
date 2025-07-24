@@ -2,17 +2,24 @@ package com.sanaa.presentation.mediaListContent
 
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.mediaListContent.getMediaStrategy.GetTopRatedMedia
+import com.sanaa.presentation.mediaListContent.getMediaStrategy.MediaProvider
 import com.sanaa.presentation.model.MediaItem
+import com.sanaa.presentation.model.MediaType
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 
-class MediaListSectionViewModel(
-    private val mediaProvider: GetTopRatedMedia,
+class MediaListScreenViewModel(
+    private val mediaType: MediaType,
+    private val mediaProvider: MediaProvider,
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageMovieUseCase: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MediaListSectionUiState, MediaListContentEffect>(
-    MediaListSectionUiState(),
+) : BaseViewModel<MediaListScreenUiState, MediaListScreenEffect>(
+    MediaListScreenUiState(),
     dispatcher
-), MediaListSectionInteractionListener {
+), MediaListScreenInteractionListener {
 
     init {
         fetchTitle()
@@ -77,6 +84,14 @@ class MediaListSectionViewModel(
     }
 
     override fun onMediaClick(media: MediaItem) {
-        emitEffect(MediaListContentEffect.NavigateToMediaDetails(media.id, media.mediaType))
+        emitEffect(MediaListScreenEffect.NavigateToMediaDetails(media.id, media.mediaType))
+    }
+
+    override fun onSaveIconClick(media: MediaItem) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onBackClick() {
+        emitEffect(MediaListScreenEffect.NavigateBack)
     }
 }

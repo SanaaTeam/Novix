@@ -1,6 +1,7 @@
 package com.sanaa.presentation.mediaListContent.getMediaStrategy
 
 import android.content.Context
+import android.util.Log
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.model.GenreUiState
 import com.sanaa.presentation.model.MediaItem
@@ -31,7 +32,7 @@ class GetTopRatedMedia(
             .plus(manageTvSeriesUseCase.getSeriesGenres())
             .distinctBy { it.id }
             .sortedBy { it.name }
-            .toState()
+            .map { it.toState() }
     }
 }
 
