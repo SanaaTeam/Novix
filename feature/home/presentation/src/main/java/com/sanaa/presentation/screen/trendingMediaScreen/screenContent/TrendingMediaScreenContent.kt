@@ -5,7 +5,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +37,7 @@ fun TrendingMediaScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
@@ -50,7 +51,7 @@ fun TrendingMediaScreenContent(
             screenTitle = title,
             modifier = Modifier
                 .fillMaxWidth()
-                .systemBarsPadding()
+                .statusBarsPadding()
         )
 
         MediaListSectionContent(

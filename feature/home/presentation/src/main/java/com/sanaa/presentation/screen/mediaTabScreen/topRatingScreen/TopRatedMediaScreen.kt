@@ -1,11 +1,13 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.StartRoute
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
@@ -39,11 +41,12 @@ fun TopRatedMediaScreen(
             }
         }
     }
-
-    MediaTabScreenContent(
-        title = stringResource(R.string.top_rated),
-        state = state.value,
-        interactionListener = viewModel,
-        modifier = modifier,
-    )
+    NovixTheme(isSystemInDarkTheme()){
+        MediaTabScreenContent(
+            title = stringResource(R.string.top_rated),
+            state = state.value,
+            interactionListener = viewModel,
+            modifier = modifier,
+        )
+    }
 }

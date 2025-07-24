@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +43,7 @@ fun MediaTabScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
@@ -57,7 +57,7 @@ fun MediaTabScreenContent(
             screenTitle = title,
             modifier = Modifier
                 .fillMaxWidth()
-                .systemBarsPadding()
+                .statusBarsPadding()
         )
 
         MediaTabs(

@@ -30,25 +30,33 @@ fun MediaTabs(
     modifier: Modifier = Modifier,
     selectedTab: MediaType = MediaType.MOVIE,
 ) {
-    Row(
-        modifier = modifier.height(40.dp).fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.BottomCenter
     ) {
-        TabButton(
-            text = stringResource(R.string.movies),
-            onClick = onTabClick,
-            isSelected = selectedTab == MediaType.MOVIE,
-            mediaType = MediaType.MOVIE,
-            modifier = Modifier.weight(1f)
-        )
-        TabButton(
-            text = stringResource(R.string.tvshows),
-            onClick = onTabClick,
-            isSelected = selectedTab == MediaType.TV_SHOW,
-            mediaType = MediaType.TV_SHOW,
-            modifier = Modifier.weight(1f)
-        )
+        Divider()
+        Row(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TabButton(
+                text = stringResource(R.string.movies),
+                onClick = onTabClick,
+                isSelected = selectedTab == MediaType.MOVIE,
+                mediaType = MediaType.MOVIE,
+                modifier = Modifier.weight(1f)
+            )
+            TabButton(
+                text = stringResource(R.string.tvshows),
+                onClick = onTabClick,
+                isSelected = selectedTab == MediaType.TV_SHOW,
+                mediaType = MediaType.TV_SHOW,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -88,6 +96,16 @@ private fun TabButton(
                 .align(Alignment.BottomCenter)
         )
     }
+}
+
+@Composable
+fun Divider(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(0.5.dp)
+            .background(Theme.colors.stroke),
+    )
 }
 
 @Preview
