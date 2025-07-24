@@ -1,9 +1,9 @@
-package com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.trendingMoviesScreen
+package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.MediaListScreenInteractionListener
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.TrendingMediaScreenEffect
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.TrendingMediaScreenUiState
+import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
+import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
+import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher

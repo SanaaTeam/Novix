@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen
+package com.sanaa.presentation.screen.trendingMediaScreen
 
 import com.sanaa.presentation.state.MediaItem
 

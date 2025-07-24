@@ -1,15 +1,14 @@
-package com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.trendingMoviesScreen
+package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
 import com.sanaa.api.StartRoute
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.TrendingMediaScreenEffect
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
+import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
+import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
 import org.koin.androidx.compose.koinViewModel
 
 
@@ -17,7 +16,7 @@ import org.koin.androidx.compose.koinViewModel
 fun TrendingMoviesScreen(
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     modifier: Modifier = Modifier,
-    navController: NavController,
+//    navController: NavController,
     viewModel: TrendingMoviesScreenViewModel = koinViewModel<TrendingMoviesScreenViewModel>(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -30,7 +29,7 @@ fun TrendingMoviesScreen(
                 }
 
                 is TrendingMediaScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
+//                    navController.popBackStack()
                 }
             }
         }

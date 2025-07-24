@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.screenContent
+package com.sanaa.presentation.screen.trendingMediaScreen.screenContent
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -22,8 +22,8 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.MediaListSectionContent
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.MediaListScreenInteractionListener
-import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.TrendingMediaScreenUiState
+import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
+import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
