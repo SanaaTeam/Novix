@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -93,9 +94,10 @@ fun LoginContent(
         Column(modifier = modifier) {
             LoginTopBar(onBackClick = listener::onBackClicked)
 
-            Spacer(Modifier.height(12.dp))
-
-            Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+            Column(
+                modifier = Modifier.padding(top = 12.dp, horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 LoginHeader()
                 Spacer(Modifier.height(40.dp))
 
@@ -103,7 +105,6 @@ fun LoginContent(
                     value = state.username,
                     onValueChange = listener::onUsernameChanged
                 )
-                Spacer(Modifier.height(16.dp))
 
                 PasswordField(
                     value = state.password,
@@ -111,7 +112,6 @@ fun LoginContent(
                     isVisible = state.isPasswordVisible,
                     onToggleVisibility = listener::onTogglePasswordVisibility
                 )
-                Spacer(Modifier.height(32.dp))
 
                 LoginActions(
                     onLogin = listener::onLoginClicked,
