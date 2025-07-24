@@ -3,19 +3,16 @@ package com.sanaa.presentation.screen.state.mapper
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import org.junit.jupiter.api.Test
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 class TvShowMapperTest {
     @Test
     fun `toUiState should map SearchTvSeriesOutput to TvShowUiModel correctly`() {
-        // Arrange
         val tvSeries =
             createSearchTvSeriesOutput(101, "Breaking Bad", "https://example.com/breaking.jpg")
 
-        // Act
         val result = tvSeries.toUiState()
 
-        // Assert
         val expected =
             createExpectedUiModel(101, "Breaking Bad", "https://example.com/breaking.jpg")
         assertThat(result).isEqualTo(expected)
