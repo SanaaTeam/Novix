@@ -45,3 +45,6 @@ include(":design_system")
 include(":preferences")
 include(":domain:identity")
 
+include(":data:repositories:identity")
+include(":data:remote_data_source:identity")
+include(":data:local_data_source:identity")

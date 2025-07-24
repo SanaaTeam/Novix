@@ -54,6 +54,10 @@ dependencies {
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.preferences)
+    implementation(projects.domain.identity)
+    implementation(project(":data:repositories:identity"))
+    implementation(project(":data:remote_data_source:identity"))
+    implementation(project(":data:local_data_source:identity"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
