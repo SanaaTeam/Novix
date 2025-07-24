@@ -2,6 +2,7 @@ package usecase.details
 
 import com.google.common.truth.Truth.assertThat
 import entity.Actor
+import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
@@ -321,9 +322,156 @@ class ManageTvSeriesUseCaseTest {
         }
     }
 
+    @Test
+    fun `getTvSeriesSeasonDetails should return correct season title`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 2
+        coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns dummySeason
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        assertThat(result.title).isEqualTo("Season 2")
+    }
+
+    @Test
+    fun `getTvSeriesSeasonDetails should return correct number of episodes`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 2
+        coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns dummySeason
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        assertThat(result.episodes.size).isEqualTo(2)
+    }
+
+    @Test
+    fun `getTvSeriesSeasonDetails should return correct title for first episode`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 2
+        coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns dummySeason
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        assertThat(result.episodes[0].title).isEqualTo("Episode 1")
+    }
+
+    @Test
+    fun `getTvSeriesSeasonDetails should return correct imdbRating for second episode`() = runTest {
+        val seriesId = 10
+        val seasonNumber = 2
+        coEvery { tvSeriesRepository.getTvSeriesSeason(seriesId, seasonNumber) } returns dummySeason
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        assertThat(result.episodes[1].imdbRating).isEqualTo(8.7f)
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct review id`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].id).isEqualTo("rev123")
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct authorName`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].authorName).isEqualTo("John Doe")
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct userHandle`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].userHandle).isEqualTo("@johnny")
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct avatarUrl`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].avatarUrl).isEqualTo("https://avatar.com/john.jpg")
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct rating`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].rating).isEqualTo(4.5f)
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct content`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].content).isEqualTo("Amazing series, highly recommended!")
+    }
+
+    @Test
+    fun `getTvSeriesReviews should return correct createdDate`() = runTest {
+        val seriesId = 4
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+
+        assertThat(result[0].createdDate).isEqualTo(LocalDate(2023, 5, 20))
+    }
+
+
     companion object {
         val dummyGenre = Genre(
             id = 1, name = "Action"
+        )
+        private val dummyEpisodes = listOf(
+            Episode(
+                id = 101,
+                title = "Episode 1",
+                number = 1,
+                seasonNumber = 2,
+                imdbRating = 8.5f,
+                overview = "First episode overview",
+                durationMinutes = 45,
+                releaseDate = LocalDate(2023, 1, 1),
+                stillImagePath = "image1.jpg"
+            ),
+            Episode(
+                id = 102,
+                title = "Episode 2",
+                number = 2,
+                seasonNumber = 2,
+                imdbRating = 8.7f,
+                overview = "Second episode overview",
+                durationMinutes = 50,
+                releaseDate = LocalDate(2023, 1, 8),
+                stillImagePath = "image2.jpg"
+            )
+        )
+
+        private val dummySeason = Season(
+            id = 20,
+            title = "Season 2",
+            overview = "Second season overview",
+            number = 2,
+            episodes = dummyEpisodes
         )
         private val dummyTvSeries = TvSeries(
             id = 1,
@@ -334,6 +482,15 @@ class ManageTvSeriesUseCaseTest {
             imdbRating = 1.2f,
             posterImageUrl = "Image",
             seasonsCount = 5
+        )
+        private val dummyReview = Review(
+            id = "rev123",
+            authorName = "John Doe",
+            userHandle = "@johnny",
+            avatarUrl = "https://avatar.com/john.jpg",
+            rating = 4.5f,
+            content = "Amazing series, highly recommended!",
+            createdDate = LocalDate(2023, 5, 20)
         )
     }
 
