@@ -55,4 +55,18 @@
     <string name="actor_photos">صور الممثلين</string>
     <string name="top_movie_picks">أفضل اختيارات الأفلام</string>
     <string name="top_series_picks">أفضل اختيارات المسلسلات</string>
+
+    <string name="login_to_your_account">تسجيل الدخول إلى حسابك</string>
+    <string name="user_name">اسم المستخدم</string>
+    <string name="password">كلمة المرور</string>
+    <string name="forgot_password">هل نسيت كلمة المرور؟</string>
+    <string name="don_t_have_an_account">ليس لديك حساب؟</string>
+    <string name="create_account">إنشاء حساب</string>
+    <string name="app_icon">أيقونة التطبيق</string>
+    <string name="onboarding_background">خلفية الإعداد</string>
+    <string name="welcome_to_novix">مرحبًا بك في نوفكس</string>
+    <string name="discover_the_world_s_greatest_movies_and_series_search_watch_and_save_your_favourites_all_in_one_place">
+        اكتشف أعظم الأفلام والمسلسلات في العالم. ابحث، شاهد، واحفظ مفضلاتك في مكان واحد.
+    </string>
+    <string name="continue_as_guest">المتابعة كضيف</string>
 </resources>
