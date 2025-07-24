@@ -22,8 +22,7 @@ import com.sanaa.presentation.component.DotSeparator
 import com.sanaa.presentation.component.IconWithText
 import com.sanaa.presentation.component.ImageSlider
 import com.sanaa.presentation.component.InfoSection
-import com.sanaa.presentation.screen.movie_categories.toLocalizedString
-import entity.Genre
+import com.sanaa.presentation.model.GenreUiModel
 
 @Composable
 fun SeriesHeaderSection(
@@ -32,11 +31,11 @@ fun SeriesHeaderSection(
     season: String,
     airDate: String?,
     imagesUrl: List<String>,
-    genres: List<Genre>,
+    genres: List<GenreUiModel>,
     modifier: Modifier = Modifier,
     onReviewClicked: () -> Unit = {},
     showReviews: Boolean = true,
-    onGenreClicked: (Genre) -> Unit = {}
+    onGenreClicked: (GenreUiModel) -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -65,7 +64,7 @@ fun SeriesHeaderSection(
                     ) {
                         genres.forEachIndexed { index, genre ->
                             Text(
-                                text = genre.toLocalizedString(),
+                                text = genre.name,
                                 style = Theme.textStyle.label.small,
                                 color = Theme.colors.body,
                                 modifier = Modifier

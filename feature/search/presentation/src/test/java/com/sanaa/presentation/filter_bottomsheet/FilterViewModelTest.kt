@@ -2,9 +2,9 @@ package com.sanaa.presentation.filter_bottomsheet
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth
-import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import entity.Genre
+import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
+import com.sanaa.presentation.screen.state.mapper.toDomain
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,29 +13,29 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.search_param.MediaFilters
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
+import usecase.search.search_param.MediaFilters
 
 class FilterViewModelTest {
     private lateinit var filterViewModel: FilterViewModel
     private val testDispatcher = StandardTestDispatcher()
-    private val genreLocalizer = mockk<GenreLocalizer>(relaxed = true)
+    private val manageMovieUseCase = mockk<ManageMovieUseCase>(relaxed = true)
+    private val manageTvSeriesUseCase = mockk<ManageTvSeriesUseCase>(relaxed = true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        filterViewModel = FilterViewModel(testDispatcher, genreLocalizer)
+        filterViewModel = FilterViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
     }
 
     @Test
     fun `onYearRangeChanged() should change range state when called`() = runTest {
-        // Given
         val range = 1995f..2012f
 
-        // When
         filterViewModel.onYearRangeChanged(range)
 
-        // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
             val expected = FilterUiState(yearRange = range)
@@ -45,13 +45,10 @@ class FilterViewModelTest {
 
     @Test
     fun `onGenreSelected() should change genre state when called`() = runTest {
-        // Given
-        val genre = Genre.ACTION.name
+        val genre = genres[0]
 
-        // When
         filterViewModel.onGenreSelected(genre)
 
-        // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
             val expected = FilterUiState(selectedGenres = setOf(genre).toMutableSet())
@@ -60,15 +57,12 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onGenreSelected() should remove genre state when called tiwce`() = runTest {
-        // Given
-        val genre = Genre.ACTION.name
+    fun `onGenreSelected() should remove genre state when called twice`() = runTest {
+        val genre = genres[0]
 
-        // When
         filterViewModel.onGenreSelected(genre)
         filterViewModel.onGenreSelected(genre)
 
-        // Then
         filterViewModel.uiState.test {
             awaitItem()
             val expected = FilterUiState(selectedGenres = emptySet())
@@ -78,13 +72,10 @@ class FilterViewModelTest {
 
     @Test
     fun `onRatingChanged() should change rate state when called`() = runTest {
-        // Given
         val rate = 10
 
-        // When
         filterViewModel.onRatingChanged(rate)
 
-        // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
             val expected = FilterUiState(imdbRating = rate)
@@ -94,10 +85,8 @@ class FilterViewModelTest {
 
     @Test
     fun `onClearFilters() should clear filter by set values to default when called`() = runTest {
-        // When
         filterViewModel.onClearFilters()
 
-        // Then
         filterViewModel.uiState.test {
             val item = awaitItem()
             val expected = FilterUiState(
@@ -109,53 +98,48 @@ class FilterViewModelTest {
     }
 
     @Test
-    fun `onApplyClicked() should init media filter when filters are default`() =
-        runTest {
-            // When
-            filterViewModel.onApplyClicked()
+    fun `onApplyClicked() should init media filter when filters are default`() = runTest {
+        filterViewModel.onApplyClicked()
 
-            // Then
-            filterViewModel.filterResult.test {
-                val item = awaitItem()
-                Truth.assertThat(item).isEqualTo(
-                    MediaFilters(
-                        startYear = 1980,
-                        endYear = 2025,
-                        genres = emptyList(),
-                        imdbRating = 0.0f
-                    )
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+            Truth.assertThat(item).isEqualTo(
+                MediaFilters(
+                    startYear = 1980,
+                    endYear = 2025,
+                    genres = emptyList(),
+                    imdbRating = 0.0f
                 )
-            }
+            )
         }
+    }
 
     @Test
-    fun `onApplyClicked() should return media filters with selected genres`() =
-        runTest {
-            // Given
-            val rate = 1f
-            // When
-            filterViewModel.onRatingChanged(rate.toInt())
-            filterViewModel.onGenreSelected("Kids")
-            filterViewModel.onApplyClicked()
+    fun `onApplyClicked() should return media filters with selected genres`() = runTest {
+        val genre = genres[0]
+        val rate = 1f
 
-            // Then
-            filterViewModel.filterResult.test {
-                val item = awaitItem()
-                Truth.assertThat(item).isEqualTo(
-                    MediaFilters(
-                        startYear = 1980,
-                        endYear = 2025,
-                        genres = listOf(Genre.KIDS),
-                        imdbRating = rate
-                    )
+        filterViewModel.onRatingChanged(rate.toInt())
+        filterViewModel.onGenreSelected(genre)
+        filterViewModel.onApplyClicked()
+
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+            Truth.assertThat(item).isEqualTo(
+                MediaFilters(
+                    startYear = 1980,
+                    endYear = 2025,
+                    genres = listOf(genre.toDomain()),
+                    imdbRating = rate
                 )
-            }
+            )
         }
+    }
 
     @Test
     fun `onApplyClicked should emit media filters with correctly mapped genres`() = runTest {
-        // Given
-        filterViewModel.onGenreSelected("KIDS")
+        val genre = genres[0]
+        filterViewModel.onGenreSelected(genre)
 
         // When
         filterViewModel.onApplyClicked()
@@ -164,7 +148,7 @@ class FilterViewModelTest {
         filterViewModel.filterResult.test {
             val item = awaitItem()
 
-            Truth.assertThat(item?.genres).containsExactly(Genre.KIDS)
+            Truth.assertThat(item?.genres).containsExactly(genre.toDomain())
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -172,19 +156,32 @@ class FilterViewModelTest {
     @Test
     fun `onApplyClicked should emit media filters with correct genres after selecting genre`() =
         runTest {
-            // Given
-            filterViewModel.onGenreSelected("Kids")
+            val genre = genres[0]
+            filterViewModel.onGenreSelected(genre)
 
-            // When
             filterViewModel.onApplyClicked()
 
-            // Then
             filterViewModel.filterResult.test {
                 val result = awaitItem()
-                Truth.assertThat(result?.genres).containsExactly(Genre.KIDS)
+                Truth.assertThat(result?.genres).containsExactly(genre.toDomain())
                 cancelAndIgnoreRemainingEvents()
             }
         }
 
-
+    private companion object {
+        val genres = listOf(
+            GenreUiState(
+                id = 1,
+                name = "Action"
+            ),
+            GenreUiState(
+                id = 2,
+                name = "Drama"
+            ),
+            GenreUiState(
+                id = 3,
+                name = "Crime"
+            ),
+        )
+    }
 }

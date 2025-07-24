@@ -5,6 +5,7 @@ import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
+import com.sanaa.vod.media.tvShow.response.TvShowGenresResponse
 import com.sanaa.vod.media.tvShow.response.TvShowGuestOfStarsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
 import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
@@ -60,4 +61,8 @@ interface TvShowApiService {
 
     @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse
+
+    @GET("genre/tv/list")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTvShowsGenres(): TvShowGenresResponse
 }

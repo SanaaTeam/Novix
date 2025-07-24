@@ -39,7 +39,7 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import search.usecase.search_param.MediaFilters
+import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(

@@ -2,7 +2,7 @@ package com.sanaa.vod.mapper.search
 
 import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
-import search.usecase.search_param.SearchActorOutput
+import usecase.search.search_param.SearchActorOutput
 
 private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 

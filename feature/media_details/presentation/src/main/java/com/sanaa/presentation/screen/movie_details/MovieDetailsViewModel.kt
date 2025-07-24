@@ -1,10 +1,10 @@
 package com.sanaa.presentation.screen.movie_details
 
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
-import details.usecase.ManageMovieUseCase
-import entity.Genre
+import usecase.ManageMovieUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
@@ -85,7 +85,7 @@ class MovieDetailsViewModel(
         emitEffect(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
     }
 
-    override fun onGenreClicked(genre: Genre) {
-        emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.name))
+    override fun onGenreClicked(genre: GenreUiModel) {
+        emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
 }

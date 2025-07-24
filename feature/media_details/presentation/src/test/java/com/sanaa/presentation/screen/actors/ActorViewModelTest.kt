@@ -4,10 +4,8 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import details.usecase.ManageActorUseCase
 import entity.Actor
 import entity.Actor.Gender
-import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import io.mockk.coEvery
@@ -20,6 +18,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.ManageActorUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ActorViewModelTest {
@@ -133,7 +132,7 @@ class ActorViewModelTest {
                 id = 1,
                 posterImageUrl = "/m1.jpg",
                 title = "Movie One",
-                genres = listOf(Genre.ACTION),
+                genres = emptyList(),
                 imdbRating = 8.3f,
                 duration = 120,
                 releaseDate = LocalDate.parse("2020-01-01"),
@@ -143,7 +142,7 @@ class ActorViewModelTest {
                 id = 2,
                 posterImageUrl = "/m2.jpg",
                 title = "Movie Two",
-                genres = listOf(Genre.DRAMA),
+                genres = emptyList(),
                 imdbRating = 7.9f,
                 duration = 118,
                 releaseDate = LocalDate.parse("2022-09-20"),
@@ -157,7 +156,7 @@ class ActorViewModelTest {
                 title = "Series One",
                 overview = "Overview",
                 releaseDate = LocalDate.parse("2019-05-12"),
-                genres = listOf(Genre.THRILLER),
+                genres = emptyList(),
                 imdbRating = 8.1f,
                 posterImageUrl = "/s1.jpg",
                 seasonsCount = 2
