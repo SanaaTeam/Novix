@@ -3,7 +3,7 @@ package com.sanaa.presentation.model
 data class MediaItem(
     val id: Int,
     val title: String,
-    val imageUrl: String?,
+    val imageUrl: String,
     val rating: Float? = null,
     val mediaType: MediaType,
 )

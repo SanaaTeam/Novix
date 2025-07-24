@@ -32,6 +32,7 @@ import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.R
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.MediaRatingChip
 import com.sanaa.presentation.components.chips.SaveIconChip
@@ -70,7 +71,6 @@ fun PopularMediaSection(modifier: Modifier = Modifier) {
                 ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
                     .coerceIn(0f, 1f)
 
-            // Animate width & height instead of scale
             val animatedWidth by animateDpAsState(
                 targetValue = lerp(unfocusedWidth, focusedWidth, 1f - pageOffset),
                 label = "animatedWidth"
@@ -118,7 +118,7 @@ fun PopularMediaSection(modifier: Modifier = Modifier) {
                         posterImage = {
                             Image(
                                 modifier = Modifier.fillMaxSize(),
-                                painter = painterResource(com.sanaa.presentation.R.drawable.freman),
+                                painter = painterResource(R.drawable.freman),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop
                             )
