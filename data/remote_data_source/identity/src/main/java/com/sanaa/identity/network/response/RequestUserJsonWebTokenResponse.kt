@@ -8,13 +8,13 @@ data class RequestUserJsonWebTokenResponse(
     val isSuccess: Boolean,
 
     @SerialName("status_code")
-    val statusCode: Boolean,
+    val statusCode: Boolean?,
 
     @SerialName("status_message")
-    val statusMessage: String,
+    val statusMessage: String?,
 
     @SerialName("request_token")
-    val requestToken: String,
+    val requestToken: String?,
 )
 
 
