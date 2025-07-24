@@ -3,5 +3,6 @@
     <string name="home_bar_subtitle">مستوحاة من نوفا، مصنوعة لفلِكس.</string>
     <string name="novix">نوفِكس</string>
     <string name="top_rated">الاعلى تقييمًا</string>
+    <string name="all">الكل</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
 </resources>

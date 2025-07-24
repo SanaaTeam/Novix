@@ -29,6 +29,7 @@ import com.sanaa.presentation.model.MediaType
 fun MediaListGrid(
     mediaList: List<MediaItem>,
     modifier: Modifier = Modifier,
+    isScrollEnabled: Boolean = true,
     onMediaClick: (MediaItem) -> Unit = {},
     onSaveIconClick: (MediaItem) -> Unit = {},
 ) {
@@ -37,7 +38,8 @@ fun MediaListGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        userScrollEnabled = isScrollEnabled
     ) {
         items (items = mediaList, key = { item -> item.id }) { media ->
             MediaPosterCard(
