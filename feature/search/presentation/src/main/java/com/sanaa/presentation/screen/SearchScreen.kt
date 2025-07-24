@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -23,9 +22,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
-import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
-import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
@@ -90,12 +86,10 @@ fun SearchScreenContent(
     actorsPagingData: LazyPagingItems<ActorUiModel>,
     onFilterApplied: (MediaFilters?) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
         searchListener.onBottomSheetDragged()
     }
-
 
     NovixScaffold(topBar = {
         NovixTopBar(
