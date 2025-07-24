@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -91,7 +92,7 @@ fun LoginContent(
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }
     ) {
-        Column(modifier = modifier) {
+        Column(modifier = modifier.statusBarsPadding(top = 12.dp)) {
             LoginTopBar(onBackClick = listener::onBackClicked)
 
             Column(
