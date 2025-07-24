@@ -15,4 +15,13 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    
+    // Design System
+    implementation(projects.designSystem)
+    
+    // Authentication API
+    implementation(projects.feature.authentication.api)
+    
+    // Navigation
+    implementation(projects.feature.mediaDetails.api)
 }

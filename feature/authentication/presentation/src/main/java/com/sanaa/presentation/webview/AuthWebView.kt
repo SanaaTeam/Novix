@@ -1,13 +1,22 @@
-package com.sanaa.feature.authentication.presentation.webview
+package com.sanaa.presentation.webview
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 
 @Composable
-fun AuthWebView(webPageUrl: String, modifier: Modifier = Modifier) {
+fun AuthWebView(
+    webPageUrl: String,
+    modifier: Modifier = Modifier,
+    onBackPressed: (() -> Unit)? = null
+) {
+    val webViewRef = remember { mutableStateOf<WebView?>(null) }
+
     AndroidView(
         factory = { context ->
             WebView(context).apply {
@@ -15,8 +24,18 @@ fun AuthWebView(webPageUrl: String, modifier: Modifier = Modifier) {
                 settings.domStorageEnabled = true
                 webViewClient = WebViewClient()
                 loadUrl(webPageUrl)
+                webViewRef.value = this
             }
         },
         modifier = modifier
     )
+
+    BackHandler {
+        val webView = webViewRef.value
+        if (webView?.canGoBack() == true) {
+            webView.goBack()
+        } else {
+            onBackPressed?.invoke()
+        }
+    }
 }
