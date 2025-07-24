@@ -16,6 +16,7 @@ class MediaListSectionViewModel(
 
     init {
         fetchTitle()
+        fetchGenres()
         fetchMedia()
     }
 
@@ -38,6 +39,27 @@ class MediaListSectionViewModel(
             }, onSuccess = {
                 updateState {
                     it.copy(isLoading = false)
+                }
+            },
+            onError = { exception ->
+                updateState {
+                    it.copy(error = exception.message, isLoading = false)
+                }
+            }
+        )
+    }
+
+    private fun fetchGenres() {
+        tryToExecute(
+            callee = {
+                updateState {
+                    it.copy(isLoading = true)
+                }
+                mediaProvider.getMediaGenreList()
+            },
+            onSuccess = { genres ->
+                updateState {
+                    it.copy(genreList = genres, isLoading = false)
                 }
             },
             onError = { exception ->
