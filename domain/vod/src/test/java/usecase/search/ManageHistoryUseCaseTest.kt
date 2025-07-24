@@ -71,7 +71,6 @@ class ManageHistoryUseCaseTest {
         }
 
 
-
     @Test
     fun `removeSearchHistory() should call removeSearchHistoryById() from SearchHistoryRepository when remove item form the search history`() =
         runTest {
@@ -131,12 +130,16 @@ class ManageHistoryUseCaseTest {
     @Test
     fun `getWatchedMoviesHistory should return movies when available`() = runTest {
         // Given
-        val genre = Genre.ACTION
         val expectedMovies = listOf(mockk<entity.Movie>())
-        coEvery { searchHistoryRepository.getWatchedMoviesHistory(1, genre) } returns expectedMovies
+        coEvery {
+            searchHistoryRepository.getWatchedMoviesHistory(
+                1,
+                dummyGenre.id
+            )
+        } returns expectedMovies
 
         // When
-        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, genre)
+        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
 
         // Then
         assertThat(result).isEqualTo(expectedMovies)
@@ -145,11 +148,15 @@ class ManageHistoryUseCaseTest {
     @Test
     fun `getWatchedMoviesHistory should return empty list when none available`() = runTest {
         // Given
-        val genre = Genre.ACTION
-        coEvery { searchHistoryRepository.getWatchedMoviesHistory(1, genre) } returns emptyList()
+        coEvery {
+            searchHistoryRepository.getWatchedMoviesHistory(
+                1,
+                dummyGenre.id
+            )
+        } returns emptyList()
 
         // When
-        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, genre)
+        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
 
         // Then
         assertThat(result).isEmpty()
@@ -158,26 +165,29 @@ class ManageHistoryUseCaseTest {
     @Test
     fun `getWatchedMoviesHistory should throw when repository fails`() = runTest {
         // Given
-        val genre = Genre.ACTION
         coEvery {
-            searchHistoryRepository.getWatchedMoviesHistory(1, genre)
+            searchHistoryRepository.getWatchedMoviesHistory(1, dummyGenre.id)
         } throws RetrievingDataFailureException("Watched Movies")
 
         // When, Then
         assertThrows<RetrievingDataFailureException> {
-            manageHistoryUseCase.getWatchedMoviesHistory(1, genre)
+            manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
         }
     }
 
     @Test
     fun `getWatchedSeriesHistory should return series when available`() = runTest {
         // Given
-        val genre = Genre.DRAMA
         val expectedSeries = listOf(mockk<entity.TvSeries>())
-        coEvery { searchHistoryRepository.getWatchedSeriesHistory(1, genre) } returns expectedSeries
+        coEvery {
+            searchHistoryRepository.getWatchedSeriesHistory(
+                1,
+                dummyGenre.id
+            )
+        } returns expectedSeries
 
         // When
-        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, genre)
+        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
 
         // Then
         assertThat(result).isEqualTo(expectedSeries)
@@ -186,11 +196,15 @@ class ManageHistoryUseCaseTest {
     @Test
     fun `getWatchedSeriesHistory should return empty list when none available`() = runTest {
         // Given
-        val genre = Genre.DRAMA
-        coEvery { searchHistoryRepository.getWatchedSeriesHistory(1, genre) } returns emptyList()
+        coEvery {
+            searchHistoryRepository.getWatchedSeriesHistory(
+                1,
+                dummyGenre.id
+            )
+        } returns emptyList()
 
         // When
-        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, genre)
+        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
 
         // Then
         assertThat(result).isEmpty()
@@ -199,20 +213,23 @@ class ManageHistoryUseCaseTest {
     @Test
     fun `getWatchedSeriesHistory should throw when repository fails`() = runTest {
         // Given
-        val genre = Genre.DRAMA
         coEvery {
-            searchHistoryRepository.getWatchedSeriesHistory(1, genre)
+            searchHistoryRepository.getWatchedSeriesHistory(1, dummyGenre.id)
         } throws RetrievingDataFailureException("Watched Series")
 
         // When, Then
         assertThrows<RetrievingDataFailureException> {
-            manageHistoryUseCase.getWatchedSeriesHistory(1, genre)
+            manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
         }
     }
+
     companion object {
         private val SearchHistoryList = listOf(
             SearchHistory(1, "Search Query 1", timestamp = LocalDateTime.now()),
             SearchHistory(2, "Search Query 2", timestamp = LocalDateTime.now()),
+        )
+        val dummyGenre = Genre(
+            id = 1, name = "Action"
         )
     }
 }

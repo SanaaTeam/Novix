@@ -47,7 +47,7 @@ fun TvSeriesLocalDto.toSearchOutput(): SearchTvSeriesOutput {
 fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
     return TvSeriesLocalDto(
         id = id,
-        title = name ?: "",
+        title = name.orEmpty(),
         imagePath = getFullImageUrl(posterImagePath),
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
@@ -59,7 +59,7 @@ fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
 fun TvShowSearchDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
-        title = name ?: "",
+        title = name.orEmpty(),
         posterImageUrl = getFullImageUrl(posterImagePath),
     )
 }

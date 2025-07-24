@@ -164,7 +164,7 @@ private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
 
 @Composable
 private fun NoSearchResultState() {
-    EmptySearchState(
+    EmptySearchContent(
         icon = painterResource(id = R.drawable.ic_no_search_result),
         text = stringResource(id = R.string.no_search_result_message)
     )

@@ -4,15 +4,23 @@ import app.cash.turbine.test
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenEffects
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenUiState
 import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
-import usecase.ManageMovieUseCase
 import entity.Genre
-import entity.Movie
-import io.mockk.*
+import io.mockk.clearAllMocks
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.*
-import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.*
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import usecase.ManageMovieUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -24,32 +32,6 @@ class MovieCategoriesViewModelTest {
     private lateinit var viewModel: MovieCategoriesViewModel
 
     private val manageMoviesDetailsUseCase: ManageMovieUseCase = mockk()
-    private val categoryId = Genre.DRAMA
-
-    private val movieList = listOf(
-        Movie(
-            id = 1,
-            title = "Movie1",
-            posterImageUrl = "url1",
-            imdbRating = 8f,
-            duration = 120,
-            releaseDate = LocalDate.parse("2021-06-01"),
-            overview = "Overview1",
-            trailerUrl = "https://youtube.com/trailer1",
-            genres = listOf(Genre.ACTION)
-        ),
-        Movie(
-            id = 2,
-            title = "Movie2",
-            posterImageUrl = "url2",
-            imdbRating = 7f,
-            duration = 90,
-            releaseDate = LocalDate.parse("2024-06-01"),
-            overview = "Overview2",
-            trailerUrl = "https://youtube.com/trailer2",
-            genres = listOf(Genre.ACTION)
-        )
-    )
 
     @BeforeAll
     fun setUpDispatcher() {
@@ -69,9 +51,14 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
+        val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(categoryId, manageMoviesDetailsUseCase)
+        viewModel = MovieCategoriesViewModel(
+            category.id,
+            category.name,
+            manageMoviesDetailsUseCase
+        )
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -81,9 +68,10 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onBottomSheetDismiss should set showBottomSheet to false`() = runTest {
+        val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(categoryId, manageMoviesDetailsUseCase)
+        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -95,9 +83,10 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
+        val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(categoryId, manageMoviesDetailsUseCase)
+        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -108,40 +97,61 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onMovieClick should emit NavigateToMovieDetails effect`() = runTest {
+        val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(categoryId, manageMoviesDetailsUseCase)
+        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onMovieClick(10)
-            assertEquals(MovieCategoriesScreenEffects.NavigateToMovieDetails(10), awaitItem())
-        }
-    }
-    @Test
-    fun `when getMoviesByCategory throws exception then should update state with error`() = runTest(testDispatcher) {
-        val exception = RuntimeException()
-
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } throws exception
-
-        viewModel = MovieCategoriesViewModel(Genre.DRAMA, manageMoviesDetailsUseCase)
-
-        viewModel.state.test {
-            var currentState = awaitItem()
-            while (currentState.isLoading) {
-                currentState = awaitItem()
-            }
-
-            val expectedState = MovieCategoriesScreenUiState(
-                title = null,
-                movies = emptyList(),
-                isLoading = false,
-                error = exception.message,
-                showBottomSheet = false
+            assertEquals(
+                MovieCategoriesScreenEffects.NavigateToMovieDetails(10),
+                awaitItem()
             )
-
-            assertEquals(expectedState, currentState)
         }
     }
 
+    @Test
+    fun `when getMoviesByCategory throws exception then should update state with error`() =
+        runTest(testDispatcher) {
+            val category = genreList[0]
+            val exception = RuntimeException()
+
+            coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } throws exception
+
+
+            viewModel =
+                MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+
+            viewModel.state.test {
+                var currentState = awaitItem()
+                while (currentState.isLoading) {
+                    currentState = awaitItem()
+                }
+
+                val expectedState = MovieCategoriesScreenUiState(
+                    title = null,
+                    movies = emptyList(),
+                    isLoading = false,
+                    error = exception.message,
+                    showBottomSheet = false
+                )
+
+                assertEquals(expectedState, currentState)
+            }
+        }
+
+    private companion object {
+        val genreList = listOf(
+            Genre(
+                id = 1,
+                name = "Drama"
+            ),
+            Genre(
+                id = 2,
+                name = "Action"
+            )
+        )
+    }
 }

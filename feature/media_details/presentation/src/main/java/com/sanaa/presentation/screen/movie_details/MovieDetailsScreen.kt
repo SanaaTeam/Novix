@@ -47,7 +47,6 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_categories.toLocalizedString
 import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisSection
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
@@ -94,7 +93,12 @@ fun MovieDetailsScreen(
             }
 
             is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
-                navController.navigate(MovieCategoriesScreenRoute(e.categoryId).route())
+                navController.navigate(
+                    MovieCategoriesScreenRoute(
+                        e.categoryId,
+                        e.categoryName
+                    ).route()
+                )
             }
 
             else -> Unit
@@ -114,7 +118,8 @@ fun MovieDetailsContent(
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
         Box(
-            modifier = Modifier.navigationBarsPadding()
+            modifier = Modifier
+                .navigationBarsPadding()
                 .fillMaxSize()
 
         ) {
@@ -158,17 +163,16 @@ fun MovieDetailsContent(
                                     title = state.movieDetails.title,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(top = 220.dp)
+                                        .padding(top = 208.dp)
                                         .padding(horizontal = 16.dp)
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(top = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         state.movieDetails.genres.forEachIndexed { index, genre ->
                                             Text(
-                                                text = genre.toLocalizedString(),
+                                                text = genre.name,
                                                 style = Theme.textStyle.label.small,
                                                 color = Theme.colors.body,
                                                 modifier = Modifier.clickable {
@@ -187,6 +191,7 @@ fun MovieDetailsContent(
                                             IconWithText(
                                                 iconRes = designR.drawable.star,
                                                 contentDescription = null,
+                                                textColor = Theme.colors.title,
                                                 text = state.movieDetails.rating,
                                                 tint = Theme.colors.statusColors.yellowAccent
                                             )

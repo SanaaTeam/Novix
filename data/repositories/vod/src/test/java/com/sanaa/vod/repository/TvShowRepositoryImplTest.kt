@@ -1,15 +1,16 @@
 package com.sanaa.vod.repository
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.util.exceptions.ConnectionException
-import entity.Genre
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -63,7 +64,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(Genre.CRIME) }
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1) }
     }
 
     @Test
@@ -102,7 +103,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(Genre.CRIME) }
+        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1) }
     }
 
     @Test
@@ -239,7 +240,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTopRatedTvSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getTopRatedTvSeries(1, Genre.ACTION)
+        val result = repository.getTopRatedTvSeries(page = 1, genreId = 1)
 
         // Assert
         assertEquals(0, result.size)
@@ -257,19 +258,19 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getPopularSeries(1, Genre.DRAMA)
+        val result = repository.getPopularSeries(page = 1, genreId = 1)
 
         // Assert
         assertEquals(0, result.size)
     }
 
     @Test
-    fun `getSeriesGenres returns empty list`() = runTest {
-        // Act
+    fun `getSeriesGenres returns list of Genre`() = runTest {
+        coEvery { remote.getTvShowGenres() } returns dummyGenresDto
+
         val result = repository.getSeriesGenres()
 
-        // Assert
-        assertEquals(0, result.size)
+        assertThat(result).isNotEmpty()
     }
 
     private val dummyReviewDto = ReviewDto(
@@ -295,5 +296,10 @@ class TvShowRepositoryImplTest {
         voteAverage = 8f,
         airDate = "2024-01-01",
         runtime = 50
+    )
+
+    val dummyGenresDto = listOf(
+        GenreDto(id = 1, name = "Action"),
+        GenreDto(id = 2, name = "Drama")
     )
 }
