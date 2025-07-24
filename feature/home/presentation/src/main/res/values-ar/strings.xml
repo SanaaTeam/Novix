@@ -4,4 +4,6 @@
     <string name="novix">نوفِكس</string>
     <string name="top_rated">الاعلى تقييمًا</string>
     <string name="all">الكل</string>
+    <string name="trending_movies">الافلام الرائجة</string>
+    <string name="trending_tvshow">المسلسلات الرائجة</string>
 </resources>

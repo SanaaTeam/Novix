@@ -1,11 +1,7 @@
-package com.sanaa.presentation.model
+package com.sanaa.presentation.state.mapper
 
+import com.sanaa.presentation.state.GenreUiState
 import entity.Genre
-
-data class GenreUiState(
-    val id: Int,
-    val name: String,
-)
 
 fun Genre.toState(): GenreUiState {
     return GenreUiState(

@@ -1,10 +1,9 @@
-package com.sanaa.presentation.mediaListContent
+package com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen
 
-import com.sanaa.presentation.model.GenreUiState
-import com.sanaa.presentation.model.MediaItem
+import com.sanaa.presentation.state.GenreUiState
+import com.sanaa.presentation.state.MediaItem
 
-data class MediaListScreenUiState (
-    val title: String = "",
+data class TrendingMediaScreenUiState (
     val mediaList: List<MediaItem> = emptyList(),
     val genreList: List<GenreUiState> = emptyList(),
     val selectedGenreId: Int? = null,
