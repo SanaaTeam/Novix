@@ -7,15 +7,16 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.AuthenticationRepository
 
 class AuthenticationRepositoryImplTest {
     private val authenticationService: AuthenticationService = mockk(relaxed = true)
     private val preferencesManager: PreferencesManager = mockk(relaxed = true)
-    private lateinit var authenticationRepositoryImpl: AuthenticationRepositoryImpl
+    private lateinit var authenticationRepository: AuthenticationRepository
 
     @BeforeEach
     fun setUp() {
-        authenticationRepositoryImpl = AuthenticationRepositoryImpl(
+        authenticationRepository = AuthenticationRepositoryImpl(
             authenticationService, preferencesManager
         )
     }
@@ -27,7 +28,7 @@ class AuthenticationRepositoryImplTest {
         val password = "password"
 
         // When
-        authenticationRepositoryImpl.login(userName, password)
+        authenticationRepository.login(userName, password)
 
         // Then
         coVerify { authenticationService.login(userName, password) }
@@ -37,7 +38,7 @@ class AuthenticationRepositoryImplTest {
     fun `requestAccessToken() should request via AuthenticationService when try to request access token`() =
         runTest {
             // When
-            authenticationRepositoryImpl.requestAccessToken()
+            authenticationRepository.requestAccessToken()
 
             // Then
             coVerify { authenticationService.requestUserAccessToken() }
@@ -48,7 +49,7 @@ class AuthenticationRepositoryImplTest {
     fun `createAccessToken() should create access token via AuthenticationService when try to create access token`() =
         runTest {
             // When
-            authenticationRepositoryImpl.createAccessToken()
+            authenticationRepository.createAccessToken()
 
             // Then
             coVerify { authenticationService.requestUserAccessToken() }
@@ -59,7 +60,7 @@ class AuthenticationRepositoryImplTest {
     fun `createAccessToken() should update the authorization token when try to create access token`() =
         runTest {
             // When
-            authenticationRepositoryImpl.createAccessToken()
+            authenticationRepository.createAccessToken()
 
             // Then
             coVerify { preferencesManager.updateAuthorizationToken(any()) }
@@ -69,7 +70,7 @@ class AuthenticationRepositoryImplTest {
     fun `createGuestSession() should create guest session via AuthenticationService when try to create guest session`() =
         runTest {
             // When
-            authenticationRepositoryImpl.createGuestSession()
+            authenticationRepository.createGuestSession()
 
             // Then
             coVerify { authenticationService.createGuestSession() }
