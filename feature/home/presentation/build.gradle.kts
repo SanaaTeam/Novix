@@ -13,6 +13,9 @@ dependencies {
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
 
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
+    
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
