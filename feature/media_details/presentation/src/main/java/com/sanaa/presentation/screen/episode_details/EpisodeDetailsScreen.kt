@@ -87,7 +87,11 @@ private fun EpisodeDetailsScreenContent(
 ) {
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
-        Box(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
             NovixTopBar(
                 leftContent = {
                     TopBarClickableIcon(
@@ -124,7 +128,7 @@ private fun EpisodeDetailsScreenContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(bottom = 112.dp)
-                                .align(Alignment.Center)
+                                .align(Alignment.TopCenter)
                         ) {
                             SeriesHeaderSection(
                                 title = stringResource(
