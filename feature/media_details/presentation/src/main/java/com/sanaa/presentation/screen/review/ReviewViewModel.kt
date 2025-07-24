@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.review
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.toReviewUiModel
-import details.usecase.ManageMovieUseCase
-import details.usecase.ManageTvSeriesUseCase
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 

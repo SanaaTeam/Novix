@@ -5,8 +5,8 @@ import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import kotlinx.datetime.LocalDate
-import search.usecase.search_param.SearchMovieOutput
-import search.usecase.search_param.SearchTvSeriesOutput
+import usecase.search.search_param.SearchMovieOutput
+import usecase.search.search_param.SearchTvSeriesOutput
 
 fun MovieLocalDto.toSearchOutput(): SearchMovieOutput {
     return SearchMovieOutput(
@@ -47,7 +47,7 @@ fun TvSeriesLocalDto.toSearchOutput(): SearchTvSeriesOutput {
 fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
     return TvSeriesLocalDto(
         id = id,
-        title = name ?: "",
+        title = name.orEmpty(),
         imagePath = getFullImageUrl(posterImagePath),
         language = language,
         releaseYear = releaseDate?.let { LocalDate.parse(it).year },
@@ -59,7 +59,7 @@ fun TvShowSearchDto.toLocalDto(language: String): TvSeriesLocalDto {
 fun TvShowSearchDto.toSearchOutput(): SearchTvSeriesOutput {
     return SearchTvSeriesOutput(
         id = id,
-        title = name ?: "",
+        title = name.orEmpty(),
         posterImageUrl = getFullImageUrl(posterImagePath),
     )
 }

@@ -2,7 +2,8 @@ package com.sanaa.presentation.screen.movie_details
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageMovieUseCase
+import com.sanaa.presentation.model.GenreUiModel
+import usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre
@@ -119,11 +120,16 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappy()
-        val genre = Genre.COMEDY
+        val genre =
+            GenreUiModel(
+            id = 1,
+            name = "Drama"
+        )
+
         viewModel.onGenreClicked(genre)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.name))
+                .isEqualTo(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -138,11 +144,21 @@ class MovieDetailsViewModelTest {
     }
 
     companion object {
+        private val genreList = listOf(
+            Genre(
+                id = 1,
+                name = "Drama"
+            ),
+            Genre(
+                id = 2,
+                name = "Action"
+            )
+        )
         private val dummyMovie = Movie(
             id = 10,
             posterImageUrl = "/poster.jpg",
             title = "Movie One",
-            genres = listOf(Genre.ACTION),
+            genres = genreList,
             imdbRating = 7.5f,
             duration = 100,
             releaseDate = LocalDate.parse("2020-05-20"),

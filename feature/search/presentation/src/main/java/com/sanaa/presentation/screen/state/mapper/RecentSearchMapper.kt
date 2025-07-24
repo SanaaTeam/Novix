@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.state.mapper
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import search.usecase.search_param.SearchHistory
+import usecase.history.history_param.SearchHistory
 
 fun SearchHistory.toUiState(): RecentSearchUiModel {
     return RecentSearchUiModel(

@@ -2,5 +2,6 @@
 <resources>
     <string name="home_bar_subtitle">Born from Nova, Made for Flix.</string>
     <string name="novix">Novix</string>
+    <string name="top_rated">Top Rated</string>
     <string name="unsuitable_image">Unsuitable image</string>
 </resources>

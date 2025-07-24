@@ -10,8 +10,6 @@ android {
 dependencies {
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
-    implementation(projects.imageViewer)
-    implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
 
@@ -25,8 +23,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
 
-    implementation(libs.androidx.material3.window.size.class1)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
 
     implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)

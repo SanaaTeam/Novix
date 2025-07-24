@@ -4,10 +4,12 @@ plugins {
 }
 
 android {
-    namespace = "com.sanaa.presentation"
+    namespace = "com.sanaa.feature.home.presentation"
 }
 
 dependencies {
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
 
