@@ -15,4 +15,26 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.designSystem)
+
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.material3)
+    implementation(libs.kotlinx.datetime)
+
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
+
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.ui.compose.foundation)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
+
+    testImplementation(libs.bundles.test.runtime)
+
+    testImplementation(libs.turbine)
 }
