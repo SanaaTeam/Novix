@@ -70,9 +70,8 @@ interface MovieApiService {
     @GET("discover/movie")
     suspend fun fetchUpcomingMovies(
         @Query("page") page: Int,
-        @Query("with_genres") genreId: Int? = null,
-        @Query("include_adult") includeAdult: Boolean = false,
         @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
         @Query("include_video") includeVideo: Boolean = false,
         @Query("with_release_type") releaseType: String = "2|3",
         @Query("release_date.gte") minDate: String? = null,
