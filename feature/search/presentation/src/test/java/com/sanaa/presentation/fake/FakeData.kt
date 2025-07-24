@@ -1,9 +1,5 @@
 package com.sanaa.presentation.fake
 
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
-
 object FakeData {
     val actorOutputs: List<SearchActorOutput> = listOf(
         SearchActorOutput(1, "Tom Hanks", "image.com"),

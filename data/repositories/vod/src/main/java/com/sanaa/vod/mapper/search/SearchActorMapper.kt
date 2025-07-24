@@ -2,15 +2,24 @@ package com.sanaa.vod.mapper.search
 
 import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
-import usecase.search.search_param.SearchActorOutput
+import entity.Actor
 
 private const val TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/w500"
 
-fun ActorLocalDto.toSearchOutput(): SearchActorOutput {
-    return SearchActorOutput(
+fun ActorLocalDto.toEntity(): Actor {
+    return Actor(
         id = id,
         name = name,
-        profileImageUrl = getFullImageUrl(imagePath),
+        imageUrl = getFullImageUrl(imagePath),
+        region = null,
+        lastShow = null,
+        gender = Actor.Gender.MALE,
+        department = null,
+        character = null,
+        birthDate = null,
+        deathDate = null,
+        placeOfBirth = null,
+        biography = null,
     )
 }
 
@@ -23,11 +32,20 @@ fun ActorSearchDto.toLocalDto(language: String): ActorLocalDto {
     )
 }
 
-fun ActorSearchDto.toSearchOutput(): SearchActorOutput {
-    return SearchActorOutput(
+fun ActorSearchDto.toEntity(): Actor {
+    return Actor(
         id = id,
-        name = name ?: "",
-        profileImageUrl = getFullImageUrl(profileImagePath),
+        name = name.orEmpty(),
+        imageUrl = getFullImageUrl(profileImagePath),
+        region = null,
+        lastShow = null,
+        gender = Actor.Gender.MALE,
+        department = null,
+        character = null,
+        birthDate = null,
+        deathDate = null,
+        placeOfBirth = null,
+        biography = null,
     )
 }
 

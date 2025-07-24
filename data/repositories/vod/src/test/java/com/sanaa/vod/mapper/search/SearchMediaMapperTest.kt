@@ -63,42 +63,42 @@ class SearchMediaMapperTest {
     @Test
     fun `given MovieSearchDto when toSearchOutput called should map id correctly`() {
         val dto = createMovieSearchDto(id = 2)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(2)
     }
 
     @Test
     fun `given MovieSearchDto when toSearchOutput called should map title correctly`() {
         val dto = createMovieSearchDto(title = "Interstellar")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.title).isEqualTo("Interstellar")
     }
 
     @Test
     fun `given MovieSearchDto when toSearchOutput called should map posterImageUrl correctly`() {
         val dto = createMovieSearchDto(posterImagePath = "/interstellar.jpg")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/interstellar.jpg")
     }
 
     @Test
     fun `given MovieLocalDto when toSearchOutput called should map id correctly`() {
         val dto = createMovieLocalDto(id = 3)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(3)
     }
 
     @Test
     fun `given MovieLocalDto when toSearchOutput called should map title correctly`() {
         val dto = createMovieLocalDto(title = "Tenet")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.title).isEqualTo("Tenet")
     }
 
     @Test
     fun `given MovieLocalDto when toSearchOutput called should map posterImageUrl correctly`() {
         val dto = createMovieLocalDto(imagePath = "/tenet.jpg")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tenet.jpg")
     }
 
@@ -156,42 +156,42 @@ class SearchMediaMapperTest {
     @Test
     fun `given TvShowSearchDto when toSearchOutput called should map id correctly`() {
         val dto = createTvShowSearchDto(id = 5)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(5)
     }
 
     @Test
     fun `given TvShowSearchDto when toSearchOutput called should map title correctly`() {
         val dto = createTvShowSearchDto(name = "Loki")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.title).isEqualTo("Loki")
     }
 
     @Test
     fun `given TvShowSearchDto when toSearchOutput called should map posterImageUrl correctly`() {
         val dto = createTvShowSearchDto(posterImagePath = "/loki.jpg")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/loki.jpg")
     }
 
     @Test
     fun `given TvSeriesLocalDto when toSearchOutput called should map id correctly`() {
         val dto = createTvSeriesLocalDto(id = 6)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(6)
     }
 
     @Test
     fun `given TvSeriesLocalDto when toSearchOutput called should map title correctly`() {
         val dto = createTvSeriesLocalDto(title = "The Witcher")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.title).isEqualTo("The Witcher")
     }
 
     @Test
     fun `given TvSeriesLocalDto when toSearchOutput called should map posterImageUrl correctly`() {
         val dto = createTvSeriesLocalDto(imagePath = "/witcher.jpg")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.posterImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/witcher.jpg")
     }
 

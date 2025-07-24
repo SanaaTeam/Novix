@@ -2,22 +2,22 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import entity.Actor
 import usecase.search.SearchUseCase
-import usecase.search.search_param.SearchActorOutput
 
 class SearchActorsPagingSource(
     private val searchUseCase: SearchUseCase,
     private val query: String,
-) : PagingSource<Int, SearchActorOutput>() {
+) : PagingSource<Int, Actor>() {
 
-    override fun getRefreshKey(state: PagingState<Int, SearchActorOutput>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Actor>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchActorOutput> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Actor> {
         val page = params.key ?: STARTING_PAGE_INDEX
         return try {
             val data = searchUseCase.searchActors(query = query, page = page)

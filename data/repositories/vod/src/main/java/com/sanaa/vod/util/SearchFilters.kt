@@ -4,38 +4,38 @@ import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
-import com.sanaa.vod.mapper.search.toSearchOutput
+import com.sanaa.vod.mapper.search.toEntity
+import entity.Movie
+import entity.TvSeries
 import kotlinx.datetime.LocalDate
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
 
-internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<SearchMovieOutput> {
+internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Movie> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.id }
     return movies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genreIds, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.voteAverage, rating) }
         .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseDate, year) }
         .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseDate, year) }
-        .map { it.toSearchOutput() }
+        .map { it.toEntity() }
 }
 
 
 internal fun MediaFilters.filterCashedMovies(
     cachedMovies: List<MovieLocalDto>,
-): List<SearchMovieOutput> {
+): List<Movie> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.id }
     return cachedMovies
         .filterNonNull(filterGenreIds) { movie, ids -> byGenres(movie.genres, ids) }
         .filterNonNull(imdbRating) { movie, rating -> byRate(movie.imdbRating, rating) }
-        .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseYear, year) }
-        .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseYear, year) }
-        .map { it.toSearchOutput() }
+        .filterNonNull(startYear) { movie, year -> byStartYear(movie.releaseDate, year) }
+        .filterNonNull(endYear) { movie, year -> byEndYear(movie.releaseDate, year) }
+        .map { it.toEntity() }
 }
 
 internal fun MediaFilters.filterTvShows(
     tvSeries: List<TvShowSearchDto>,
-): List<SearchTvSeriesOutput> {
+): List<TvSeries> {
     let {
         val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.id }
         return tvSeries
@@ -43,21 +43,21 @@ internal fun MediaFilters.filterTvShows(
             .filterNonNull(imdbRating) { tvShow, rating -> byRate(tvShow.voteAverage, rating) }
             .filterNonNull(startYear) { tvShow, year -> byStartYear(tvShow.releaseDate, year) }
             .filterNonNull(endYear) { tvShow, year -> byEndYear(tvShow.releaseDate, year) }
-            .map { it.toSearchOutput() }
+            .map { it.toEntity() }
     }
 }
 
 internal fun MediaFilters.filterCashedTvShows(
     cachedTvSeries: List<TvSeriesLocalDto>,
-): List<SearchTvSeriesOutput> {
+): List<TvSeries> {
     val filterGenreIds = if (genres.isEmpty()) null else genres.map { it.id }
     let {
         return cachedTvSeries
             .filterNonNull(filterGenreIds) { tvShow, ids -> byGenres(tvShow.genres, ids) }
             .filterNonNull(imdbRating) { tvShow, rating -> byRate(tvShow.imdbRating, rating) }
-            .filterNonNull(startYear) { tvShow, year -> byStartYear(tvShow.releaseYear, year) }
-            .filterNonNull(endYear) { tvShow, year -> byEndYear(tvShow.releaseYear, year) }
-            .map { it.toSearchOutput() }
+            .filterNonNull(startYear) { tvShow, year -> byStartYear(tvShow.releaseDate, year) }
+            .filterNonNull(endYear) { tvShow, year -> byEndYear(tvShow.releaseDate, year) }
+            .map { it.toEntity() }
     }
 }
 

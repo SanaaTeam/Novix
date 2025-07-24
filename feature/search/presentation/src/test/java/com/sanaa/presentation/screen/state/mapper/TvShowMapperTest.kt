@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.state.mapper
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import org.junit.jupiter.api.Test
-import usecase.search.search_param.SearchTvSeriesOutput
 
 class TvShowMapperTest {
     @Test

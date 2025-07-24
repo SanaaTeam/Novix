@@ -13,8 +13,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSourceTest {
     private val searchMoviesUseCase: SearchUseCase = mockk(relaxed = true)

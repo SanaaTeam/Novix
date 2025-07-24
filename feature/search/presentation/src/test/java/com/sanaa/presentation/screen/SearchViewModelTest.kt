@@ -35,9 +35,6 @@ import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchViewModelTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)

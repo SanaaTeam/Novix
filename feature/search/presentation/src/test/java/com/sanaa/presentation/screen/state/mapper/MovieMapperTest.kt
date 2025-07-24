@@ -6,7 +6,7 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import usecase.search.search_param.SearchMovieOutput
+
 class MovieMapperTest {
 
 
