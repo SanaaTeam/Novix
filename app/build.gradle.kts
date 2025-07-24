@@ -52,6 +52,7 @@ dependencies {
     implementation(projects.feature.search.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
+    implementation(projects.feature.authentication.presentation)
     implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.preferences)
 
