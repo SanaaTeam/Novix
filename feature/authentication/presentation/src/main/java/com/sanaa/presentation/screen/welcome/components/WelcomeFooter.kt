@@ -48,7 +48,7 @@ private fun WelcomeInfo() {
     )
     Spacer(Modifier.height(12.dp))
     Text(
-        text = stringResource(R.string.discover_the_world_s_greatest_movies_and_series_search_watch_and_save_your_favourites_all_in_one_place),
+        text = stringResource(R.string.onboarding_caption),
         style = Theme.textStyle.body.small,
         color = Theme.colors.body,
         textAlign = TextAlign.Center

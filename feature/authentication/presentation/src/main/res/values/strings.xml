@@ -10,6 +10,6 @@
     <string name="app_icon">app icon</string>
     <string name="onboarding_background">onboarding background</string>
     <string name="welcome_to_novix">Welcome to Novix</string>
-    <string name="discover_the_world_s_greatest_movies_and_series_search_watch_and_save_your_favourites_all_in_one_place">Discover the world's greatest movies and series. Search, watch, and save your favourites all in one place.</string>
+    <string name="onboarding_caption">Discover the world's greatest movies and series. Search, watch, and save your favourites all in one place.</string>
     <string name="continue_as_guest">Continue as guest</string>
 </resources>
