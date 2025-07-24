@@ -23,7 +23,7 @@ fun TrendingTvShowsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is TrendingMediaScreenEffect.NavigateToTrendingMediaDetails -> {
+                is TrendingMediaScreenEffect.NavigateToMediaDetails -> {
                     onMediaClick(StartRoute.SERIES, effect.id)
                 }
 
@@ -34,7 +34,7 @@ fun TrendingTvShowsScreen(
     }
 
     TrendingMediaScreenContent(
-        title = stringResource(R.string.trending_tvshow),
+        title = stringResource(R.string.trending_tvshows),
         state = state.value,
         interactionListener = viewModel,
         modifier = modifier,

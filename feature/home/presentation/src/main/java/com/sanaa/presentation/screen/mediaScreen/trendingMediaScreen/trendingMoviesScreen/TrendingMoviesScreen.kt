@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.sanaa.api.StartRoute
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.screen.mediaScreen.trendingMediaScreen.TrendingMediaScreenEffect
@@ -16,6 +17,7 @@ import org.koin.androidx.compose.koinViewModel
 fun TrendingMoviesScreen(
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: TrendingMoviesScreenViewModel = koinViewModel<TrendingMoviesScreenViewModel>(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -23,11 +25,12 @@ fun TrendingMoviesScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is TrendingMediaScreenEffect.NavigateToTrendingMediaDetails -> {
+                is TrendingMediaScreenEffect.NavigateToMediaDetails -> {
                     onMediaClick(StartRoute.MOVIE, effect.id)
                 }
 
-                is TrendingMediaScreenEffect.NavigateBack -> { /* TODO() */
+                is TrendingMediaScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
                 }
             }
         }

@@ -76,7 +76,7 @@ class TrendingTvShowsScreenViewModel(
     }
 
     override fun onMediaClick(id: Int) {
-        emitEffect(TrendingMediaScreenEffect.NavigateToTrendingMediaDetails(id))
+        emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
     }
 
     override fun onSaveIconClick(media: MediaItem) {

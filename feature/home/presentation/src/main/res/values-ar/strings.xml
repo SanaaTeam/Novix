@@ -5,5 +5,7 @@
     <string name="top_rated">الاعلى تقييمًا</string>
     <string name="all">الكل</string>
     <string name="trending_movies">الافلام الرائجة</string>
-    <string name="trending_tvshow">المسلسلات الرائجة</string>
+    <string name="trending_tvshows">المسلسلات الرائجة</string>
+    <string name="movies">الافلام</string>
+    <string name="tvshows">المسلسلات</string>
 </resources>
