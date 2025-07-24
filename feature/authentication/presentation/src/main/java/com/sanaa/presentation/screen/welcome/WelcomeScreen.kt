@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -24,9 +23,9 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    onExit: () -> Unit = {}
+    onExit: () -> Unit = {},
+    viewModel: WelcomeViewModel = koinViewModel(),
 ) {
-    val viewModel: WelcomeViewModel = koinViewModel()
     val navController = LocalNavControllerProvider.current
 
     BackHandler(onBack = viewModel::onExit)
@@ -58,7 +57,6 @@ fun WelcomeScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeContent(
     onLoginClicked: () -> Unit,
