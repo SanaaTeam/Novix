@@ -3,9 +3,11 @@ package com.sanaa.vod.media.actor
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.media.actor.response.ActorCastCreditsResponse
 import com.sanaa.vod.media.actor.response.ActorImagesResponse
+import com.sanaa.vod.media.movie.response.MovieApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ActorApiService {
     @GET("person/{actor_id}")
@@ -20,5 +22,9 @@ interface ActorApiService {
 
     @GET("person/{actor_id}/tv_credits")
     suspend fun fetchActorTvShows(@Path("actor_id") id: Int): ActorCastCreditsResponse
+
+    @GET("trending/person/day")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTrendingPeople(@Query("page") page: Int): MovieApiResponse<ActorDto>
 
 }
