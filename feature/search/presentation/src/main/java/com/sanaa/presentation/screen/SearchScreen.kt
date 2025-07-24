@@ -13,10 +13,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
@@ -40,28 +42,38 @@ import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
+    navigator: SearchNavigatorApi,
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
-                is SearchScreenEffects.NavigateToActorDetails -> onMediaClick(
-                    StartRoute.ACTOR, effect.id
-                )
+                is SearchScreenEffects.NavigateToActorDetails ->
+                    navigator.navigateToMediaDetails(
+                        context,
+                        StartRoute.ACTOR,
+                        effect.id
+                    )
 
-                is SearchScreenEffects.NavigateToMovieDetails -> onMediaClick(
-                    StartRoute.MOVIE, effect.id
-                )
+                is SearchScreenEffects.NavigateToMovieDetails ->
+                    navigator.navigateToMediaDetails(
+                        context,
+                        StartRoute.MOVIE,
+                        effect.id
+                    )
 
-                is SearchScreenEffects.NavigateToTvShowDetails -> onMediaClick(
-                    StartRoute.SERIES, effect.id
-                )
+                is SearchScreenEffects.NavigateToTvShowDetails ->
+                    navigator.navigateToMediaDetails(
+                        context,
+                        StartRoute.SERIES,
+                        effect.id
+                    )
             }
         }
     }
