@@ -1,6 +1,10 @@
 package com.sanaa.presentation.screen.mediaTabScreen.screenContent
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +68,10 @@ fun MediaTabScreenContent(
 
         AnimatedContent(
             targetState = state.selectedMediaType,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(150, delayMillis = 150))
+                    .togetherWith(fadeOut(animationSpec = tween(150)))
+    },
             modifier = Modifier.padding(top= 8.dp)
         ) { selectedMediaType ->
             when (selectedMediaType) {

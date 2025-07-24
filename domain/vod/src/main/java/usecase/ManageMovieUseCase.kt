@@ -33,13 +33,13 @@ class ManageMovieUseCase(
     suspend fun getPopularMovies(page: Int): List<Movie> =
         movieRepo.getPopularMovies(page)
 
-    suspend fun getTopRatedMovies(page: Int, genreId: String?): List<Movie> =
+    suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> =
         movieRepo.getTopRatedMovies(page, genreId)
 
-    suspend fun getTrendingMovies(page: Int, genreId: String?): List<Movie> =
+    suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =
         movieRepo.getTrendingMovies(page, genreId)
 
-    suspend fun getUpcomingMovies(page: Int, genreId: String?): List<Movie> =
+    suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
         movieRepo.getUpcomingMovies(page, genreId)
 
     suspend fun getMovieGenres(): List<Genre> {

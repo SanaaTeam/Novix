@@ -35,11 +35,11 @@ class ManageTvSeriesUseCase(
         return tvSeriesRepo.getPopularSeries(page)
     }
 
-    suspend fun getTopRatedTvSeries(page: Int, genreId: String?): List<TvSeries> {
+    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {
         return tvSeriesRepo.getTopRatedTvSeries(page, genreId)
     }
 
-    suspend fun getTrendingTvSeries(page: Int, genreId: String?): List<TvSeries> {
+    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> {
         return tvSeriesRepo.getTrendingTvSeries(page, genreId)
     }
 

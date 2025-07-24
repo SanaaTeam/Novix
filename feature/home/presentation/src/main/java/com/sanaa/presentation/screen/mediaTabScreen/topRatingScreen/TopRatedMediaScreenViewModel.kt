@@ -54,7 +54,7 @@ class TopRatedMediaScreenViewModel(
                 updateState {
                     it.copy(isLoading = true, tvShowSelectedGenreId = genreId)
                 }
-                manageMovieUseCase.getTrendingMovies(1, state.value.tvShowSelectedGenreId)
+                manageTvSeriesUseCase.getTopRatedTvSeries(1, state.value.tvShowSelectedGenreId)
                     .map { it.toState() }
             }, onSuccess = { mediaList ->
                 updateState {
