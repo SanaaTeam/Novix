@@ -1,4 +1,4 @@
-package com.sanaa.presentation.navigation
+package com.sanaa.presentation.api
 
 import androidx.compose.runtime.Composable
 import com.sanaa.api.SearchFeatureApi

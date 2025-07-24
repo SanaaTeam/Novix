@@ -3,13 +3,14 @@ package com.sanaa.presentation.screen
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import app.cash.turbine.test
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.SearchViewModel.Companion.ACTOR_INDEX
 import com.sanaa.presentation.screen.SearchViewModel.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
+import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import exceptions.NoNetworkException
 import io.mockk.Runs
@@ -67,7 +68,6 @@ class SearchViewModelTest {
 
         searchViewModel.updateState { it.copy(selectedTabIndex = ACTOR_INDEX) }
 
-        // invoke private method via reflection
         val method =
             SearchViewModel::class.java.getDeclaredMethod("loadMediaByTab", String::class.java)
         method.isAccessible = true
@@ -75,7 +75,7 @@ class SearchViewModelTest {
 
         searchViewModel.actorsPagingData.test {
             val result = awaitItem()
-            Truth.assertThat(result).isNotNull()
+            assertThat(result).isNotNull()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -97,7 +97,7 @@ class SearchViewModelTest {
 
         searchViewModel.actorsPagingData.test {
             val result = awaitItem()
-            Truth.assertThat(result).isNotNull()
+            assertThat(result).isNotNull()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -110,7 +110,7 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -140,7 +140,7 @@ class SearchViewModelTest {
                             )
                         }
                     )
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -152,7 +152,7 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -185,7 +185,7 @@ class SearchViewModelTest {
                             )
                         }
                     )
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -198,7 +198,7 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -214,7 +214,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -231,7 +231,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false, error = errorMessage)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -243,7 +243,7 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -260,7 +260,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -279,7 +279,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false, error = errorMessage)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -296,22 +296,22 @@ class SearchViewModelTest {
                 isLoading = true,
                 error = null
             )
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
     @Test
     fun `onTabSelected() should update selectedTabIndex and load media`() = runTest {
         val initialState = searchViewModel.state.value
-        Truth.assertThat(initialState.selectedTabIndex)
+        assertThat(initialState.selectedTabIndex)
             .isNotEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
 
         searchViewModel.onTabSelected(SearchScreenUiState.TV_SHOW_INDEX)
 
         searchViewModel.state.test {
             val item = awaitItem()
-            Truth.assertThat(item.selectedTabIndex).isEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
-            Truth.assertThat(item.isLoading).isTrue()
+            assertThat(item.selectedTabIndex).isEqualTo(SearchScreenUiState.TV_SHOW_INDEX)
+            assertThat(item.isLoading).isTrue()
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -342,9 +342,8 @@ class SearchViewModelTest {
                     searchQuery = movieName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = true
                 )
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -374,9 +373,8 @@ class SearchViewModelTest {
                     searchQuery = tvShowName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = true
                 )
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -388,7 +386,7 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            Truth.assertThat(item.selectedTabIndex).isEqualTo(index)
+            assertThat(item.selectedTabIndex).isEqualTo(index)
         }
     }
 
@@ -416,9 +414,8 @@ class SearchViewModelTest {
                     searchQuery = actorName,
                     selectedTabIndex = index,
                     isLoading = false,
-                    isFilterButtonVisible = false,
                 )
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -431,7 +428,7 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             val item = awaitItem()
             val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -444,7 +441,7 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             val item = awaitItem()
             val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -457,7 +454,7 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             val item = awaitItem()
             val expected = SearchScreenUiState(isLoading = true, filters = filters)
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -479,7 +476,7 @@ class SearchViewModelTest {
                 isLoading = false,
                 filters = filters
             )
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -495,7 +492,7 @@ class SearchViewModelTest {
             awaitItem()
             val item = awaitItem()
             val expected = SearchScreenUiState()
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -509,7 +506,7 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = true, error = null)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -523,7 +520,7 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             val item = awaitItem()
             val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            Truth.assertThat(item).isEqualTo(expected)
+            assertThat(item).isEqualTo(expected)
         }
     }
 
@@ -540,7 +537,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false, noInternetConnection = true)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -556,7 +553,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(isLoading = false, error = "Unknown error")
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -570,7 +567,7 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(showBottomSheet = true)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
 
@@ -584,9 +581,77 @@ class SearchViewModelTest {
 
                 val item = awaitItem()
                 val expected = SearchScreenUiState(showBottomSheet = false)
-                Truth.assertThat(item).isEqualTo(expected)
+                assertThat(item).isEqualTo(expected)
             }
         }
+
+    @Test
+    fun `onActorClicked should emit NavigateToActorDetails effect`() = runTest {
+
+        val actorId = 7
+
+
+        searchViewModel.onActorClicked(actorId)
+
+
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToActorDetails(actorId))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onSearchResultMediaClicked should emit NavigateToMovieDetails when media is MOVIE`() = runTest {
+
+        val viewed = RecentViewedUiModel(10, "url", MediaTypeUi.MOVIE, false)
+
+
+        searchViewModel.onSearchResultMediaClicked(viewed)
+
+
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onSearchResultMediaClicked should emit NavigateToTvShowDetails when media is TV`() = runTest {
+        val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SERIES, false)
+
+        searchViewModel.onSearchResultMediaClicked(viewed)
+
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onRecentViewedMediaClicked should emit NavigateToMovieDetails when media is MOVIE`() = runTest {
+        val viewed = RecentViewedUiModel(100, "url", MediaTypeUi.MOVIE, false)
+
+        searchViewModel.onRecentViewedMediaClicked(viewed)
+
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onRecentViewedMediaClicked should emit NavigateToTvShowDetails when media is TV_SERIES`() = runTest {
+        val viewed = RecentViewedUiModel(200, "url", MediaTypeUi.TV_SERIES, false)
+
+        searchViewModel.onRecentViewedMediaClicked(viewed)
+
+        searchViewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isEqualTo(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 
 }
 
