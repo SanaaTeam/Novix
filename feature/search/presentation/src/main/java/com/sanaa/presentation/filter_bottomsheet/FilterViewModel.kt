@@ -20,7 +20,7 @@ class FilterViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<FilterUiState>(
+) : BaseViewModel<FilterUiState,Unit>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
     private val _uiState = MutableStateFlow(FilterUiState())
