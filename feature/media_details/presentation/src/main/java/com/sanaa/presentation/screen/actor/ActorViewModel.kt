@@ -4,9 +4,9 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import com.sanaa.presentation.model.toUiModel
-import usecase.ManageActorUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageActorUseCase
 
 class ActorViewModel(
     private val actorId: Int,
@@ -17,34 +17,6 @@ class ActorViewModel(
 
     init {
         loadDetails()
-    }
-
-    private fun loadDetails() {
-        updateState { it.copy(isLoading = true) }
-        tryToExecute(
-            callee = {
-                val actor = manageActorDetails.getActorDetails(actorId)
-                val topMovies = manageActorDetails.getActorTopMovies(actorId)
-                val topSeries = manageActorDetails.getActorTopTvSeries(actorId)
-                val profiles = manageActorDetails.getProfileImages(actorId)
-                val gallery = manageActorDetails.getGalleryImages(actorId)
-                updateState {
-                    it.copy(
-                        actor = actor.toActorUiModel(),
-                        topMovies = topMovies.map { m -> m.toUiModel() },
-                        topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
-                        profileImageUrls = profiles,
-                        galleryImageUrls = gallery
-                    )
-                }
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState { it.copy(isLoading = false) }
-            }
-        )
     }
 
     override fun onBackClicked() {
@@ -77,5 +49,37 @@ class ActorViewModel(
 
     override fun onSaveClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
+    }
+
+
+    private fun loadDetails() {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::fetchActorDetails,
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+            },
+            onError = { e ->
+                updateState { it.copy(isLoading = false) }
+            }
+        )
+    }
+
+    private suspend fun fetchActorDetails() {
+
+        val actor = manageActorDetails.getActorDetails(actorId)
+        val topMovies = manageActorDetails.getActorTopMovies(actorId)
+        val topSeries = manageActorDetails.getActorTopTvSeries(actorId)
+        val profiles = manageActorDetails.getProfileImages(actorId)
+        val gallery = manageActorDetails.getGalleryImages(actorId)
+        updateState {
+            it.copy(
+                actor = actor.toActorUiModel(),
+                topMovies = topMovies.map { m -> m.toUiModel() },
+                topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
+                profileImageUrls = profiles,
+                galleryImageUrls = gallery
+            )
+        }
     }
 }

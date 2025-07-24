@@ -2,9 +2,9 @@ package com.sanaa.presentation.screen.movie_categories
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
-import usecase.ManageMovieUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageMovieUseCase
 
 class MovieCategoriesViewModel(
     private val categoryId: Int,
@@ -39,22 +39,12 @@ class MovieCategoriesViewModel(
         emitEffect(MovieCategoriesScreenEffects.NavigateToMovieDetails(id))
     }
 
+
+
     private fun getListOfMoviesByCategory(categoryId: Int) {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                val movies = manageMoviesDetailsUseCase.getMoviesByCategory(categoryId)
-                updateState {
-                    it.copy(
-                        title = categoryName, movies = movies.map { it ->
-                            it.toUiModel()
-                        },
-                        isLoading = false
-                    )
-                }
-            }, onSuccess = {
+            callee = { fetchMovies(categoryId) },
+            onSuccess = {
                 updateState {
                     it.copy(isLoading = false)
                 }
@@ -65,5 +55,18 @@ class MovieCategoriesViewModel(
                 }
             }
         )
+    }
+    private suspend fun fetchMovies(categoryId: Int) {
+        updateState {
+            it.copy(isLoading = true)
+        }
+        val movies = manageMoviesDetailsUseCase.getMoviesByCategory(categoryId)
+        updateState {
+            it.copy(
+                title = categoryName, movies = movies.map { it ->
+                    it.toUiModel()
+                }
+            )
+        }
     }
 }

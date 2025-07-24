@@ -5,6 +5,8 @@ import com.google.common.truth.Truth
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
 import com.sanaa.presentation.screen.state.mapper.toDomain
+import com.sanaa.presentation.screen.state.mapper.toState
+import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -167,6 +169,27 @@ class FilterViewModelTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+    @Test
+    fun `fetchGenres() should update UI state with mapped genres`() = runTest {
+        val domainGenres = listOf(
+            entity.Genre(id = 1, name = "Action"),
+            entity.Genre(id = 2, name = "Drama")
+        )
+
+        coEvery { manageMovieUseCase.getMovieGenres() } returns domainGenres
+        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns emptyList()
+
+        filterViewModel = FilterViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+        filterViewModel.uiState.test {
+            val state = awaitItem()
+            val expected = domainGenres.map { it.toState() }
+
+            Truth.assertThat(state.allGenres).containsExactlyElementsIn(expected)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 
     private companion object {
         val genres = listOf(

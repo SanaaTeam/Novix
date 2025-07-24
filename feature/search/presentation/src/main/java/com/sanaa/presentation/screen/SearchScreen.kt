@@ -23,9 +23,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
-import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
-import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
@@ -41,20 +38,13 @@ import usecase.search.search_param.MediaFilters
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
-    filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
-    LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters: MediaFilters? ->
-            searchViewModel.onFilterApplied(filters)
-        }
-    }
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -79,26 +69,24 @@ fun SearchScreen(
 
         SearchScreenContent(
             uiState = uiState,
-            filterUiState = filterUiState,
             searchListener = searchViewModel,
-            filterListener = filterViewModel,
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
+            onFilterApplied = searchViewModel::onFilterApplied
 
-            )
+        )
     }
 }
 
 @Composable
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
-    filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
-    filterListener: FilterBottomSheetInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onFilterApplied: (MediaFilters?) -> Unit,
 ) {
 
     val dismissSheet: () -> Unit = {
@@ -135,7 +123,7 @@ fun SearchScreenContent(
                 text = uiState.searchQuery,
                 onTextChange = searchListener::onSearchQueryChanged,
                 onFilterClicked = { searchListener.onFilterClicked() },
-                isFilterButtonVisible = uiState.isFilterButtonVisible,
+                isFilterButtonVisible = uiState.isFilterVisible(),
             )
 
             AnimatedContent(uiState.searchQuery.isNotBlank()) {
@@ -165,8 +153,9 @@ fun SearchScreenContent(
             isVisible = uiState.showBottomSheet,
             dismissSheet = dismissSheet,
             filterUiState = filterUiState,
-            filterListener = filterListener
-        )
+            filterListener = filterListener,
+            onFilterApplied = onFilterApplied,
+            )
     }
 }
 
