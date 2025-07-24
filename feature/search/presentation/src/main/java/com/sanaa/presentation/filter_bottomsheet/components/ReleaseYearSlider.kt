@@ -31,7 +31,7 @@ fun CustomYearRangeSlider(
     steps: Int = (2025 - 1980) - 1,
 ) {
 
-    Column(modifier.fillMaxWidth().padding(top=24.dp)) {
+    Column(modifier.fillMaxWidth().padding(top=16.dp)) {
         BasicText(
             text = title,
             style = Theme.textStyle.title.small.copy(color = Theme.colors.title),

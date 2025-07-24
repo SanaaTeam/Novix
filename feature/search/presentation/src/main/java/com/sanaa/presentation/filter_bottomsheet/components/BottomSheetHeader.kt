@@ -29,7 +29,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         BasicText(
