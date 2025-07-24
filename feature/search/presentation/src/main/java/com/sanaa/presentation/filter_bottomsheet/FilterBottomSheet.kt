@@ -109,7 +109,7 @@ fun FilterBottomSheetContent(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
                         onRatingChanged = listener::onRatingChanged,
-                        modifier = Modifier.padding(bottom = 12.dp)
+                        modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
                     )
                 }
             }
@@ -130,7 +130,7 @@ private fun FilterActions(
     onClearClicked: () -> Unit,
 ) {
     Column(
-     modifier = Modifier.padding(top=12.dp),
+        modifier = Modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixPrimaryButton(
