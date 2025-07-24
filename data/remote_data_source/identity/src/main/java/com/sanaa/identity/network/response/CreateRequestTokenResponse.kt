@@ -8,6 +8,9 @@ data class CreateRequestTokenResponse(
     @SerialName("success")
     val isSuccess: Boolean,
 
+    @SerialName("status_code")
+    val statusCode: Int?,
+
     @SerialName("expires_at")
     val expiresAt: String,
 

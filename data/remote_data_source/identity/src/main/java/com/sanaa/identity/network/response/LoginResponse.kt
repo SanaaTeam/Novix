@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 
 data class LoginResponse(
     @SerialName("success")
-    val success: Boolean,
+    val isSuccess: Boolean,
 
     @SerialName("status_code")
     val statusCode: Int?,
