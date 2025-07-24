@@ -11,7 +11,7 @@ class SearchFeatureApiImpl : SearchFeatureApi, KoinComponent {
     private val navigator: SearchNavigatorApi by inject()
 
     @Composable
-    override fun SearchScreen() {
+    override fun SearchScreenApi() {
         SearchScreenUi(navigator = navigator)
     }
 }

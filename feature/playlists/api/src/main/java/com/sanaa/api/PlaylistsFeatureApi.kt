@@ -2,7 +2,7 @@ package com.sanaa.api
 
 import androidx.compose.runtime.Composable
 
-interface SearchFeatureApi {
+interface PlaylistsFeatureApi {
     @Composable
-    fun SearchScreenApi()
+    fun PlaylistsScreenApi()
 }

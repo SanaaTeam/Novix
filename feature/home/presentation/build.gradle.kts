@@ -9,13 +9,37 @@ android {
 
 dependencies {
     implementation(projects.designSystem)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.playlists.api)
 
-    implementation(libs.bundles.compose)
+
+    implementation(libs.androidx.material3.window.size.class1)
+    implementation(libs.androidx.material3.adaptive.navigation.suite)
+
+    implementation(libs.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.ui.compose.foundation)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(platform(libs.koin.bom))
+    implementation(libs.bundles.koin)
+
+    // Paging 3
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
+
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+
+    testImplementation(libs.turbine)
+    implementation(libs.kotlinx.datetime)
 }

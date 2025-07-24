@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
@@ -14,6 +15,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
     private val searchFeatureApi: SearchFeatureApi by inject()
+    private val homeFeatureApi: HomeFeatureApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +26,7 @@ class MainActivity : ComponentActivity() {
         Timber.d("MainActivity created")
 
         setContent {
-            searchFeatureApi.SearchScreen()
+            homeFeatureApi.HomeScreenApi()
         }
     }
 }
