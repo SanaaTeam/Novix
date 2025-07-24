@@ -4,9 +4,9 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
-import usecase.ManageMovieUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageMovieUseCase
 
 class MovieDetailsViewModel(
     private val movieId: Int,
@@ -19,34 +19,6 @@ class MovieDetailsViewModel(
 
     init {
         fetchMovieDetails(movieId)
-    }
-
-    private fun fetchMovieDetails(movieId: Int) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
-        tryToExecute(
-            callee = {
-                val movie = manageMovieDetails.getMovieDetails(movieId)
-                val cast = manageMovieDetails.getMovieCast(movieId)
-                val images = manageMovieDetails.getMovieImages(movieId)
-                val similar = manageMovieDetails.getSimilarMoviesByMovieId(movieId)
-                val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-                updateState {
-                    it.copy(
-                        movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
-                        cast = cast.map { actor -> actor.toActorUiModel() },
-                        similarMovies = similar.map { mv -> mv.toUiModel() },
-                        imagesUrls = images
-                    )
-                }
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false, errorMessage = null) }
-            },
-            onError = { exception ->
-                updateState { it.copy(isLoading = false, errorMessage = exception.message) }
-            },
-            dispatcher = defaultDispatcher
-        )
     }
 
     override fun onBackClick() {
@@ -88,4 +60,36 @@ class MovieDetailsViewModel(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
+
+    private fun fetchMovieDetails(movieId: Int) {
+        updateState { it.copy(isLoading = true, errorMessage = null) }
+        tryToExecute(
+            callee = { loadMovieDetails(movieId) },
+            onSuccess = {
+                updateState { it.copy(isLoading = false, errorMessage = null) }
+            },
+            onError = { exception ->
+                updateState { it.copy(isLoading = false, errorMessage = exception.message) }
+            },
+            dispatcher = defaultDispatcher
+        )
+    }
+
+    private suspend fun loadMovieDetails(movieId: Int) {
+        val movie = manageMovieDetails.getMovieDetails(movieId)
+        val cast = manageMovieDetails.getMovieCast(movieId)
+        val images = manageMovieDetails.getMovieImages(movieId)
+        val similar = manageMovieDetails.getSimilarMoviesByMovieId(movieId)
+        val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
+
+        updateState {
+            it.copy(
+                movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
+                cast = cast.map { actor -> actor.toActorUiModel() },
+                similarMovies = similar.map { mv -> mv.toUiModel() },
+                imagesUrls = images
+            )
+        }
+    }
+
 }
