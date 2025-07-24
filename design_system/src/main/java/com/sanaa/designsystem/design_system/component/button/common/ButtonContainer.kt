@@ -2,14 +2,17 @@ package com.sanaa.designsystem.design_system.component.button.common
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -38,30 +41,24 @@ internal fun ButtonContainer(
     shape: Shape = RoundedCornerShape(12.dp),
     content: @Composable RowScope.() -> Unit
 ) {
-
     val animatedIconTint by animateColorAsState(
         targetValue = if (isEnabled) iconTint else Theme.colors.onPrimaryHint
     )
-    val elementsArrangement =
-        if (icon != null || isLoading) Arrangement.spacedBy(8.dp) else Arrangement.Center
 
     Row(
         modifier = modifier
-            .height(height = 48.dp)
+            .height(48.dp)
             .clip(shape)
-            .background(
-                color = backgroundColor
-            )
-            .clickable(
-                enabled = isEnabled && !isLoading,
-                onClick = onClick
-            )
-            .padding(vertical = verticalPadding, horizontal = horizontalPadding),
+            .background(color = backgroundColor)
+            .clickable(enabled = isEnabled && !isLoading, onClick = onClick)
+            .padding(vertical = verticalPadding, horizontal = horizontalPadding)
+            .animateContentSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = elementsArrangement,
+        horizontalArrangement = Arrangement.Center
     ) {
         content()
 
+        Spacer(modifier = Modifier.width(8.dp))
         Crossfade(targetState = isLoading) { loading ->
             if (loading) {
                 AnimatedLoadingIndicator(
