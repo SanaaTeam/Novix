@@ -1,0 +1,37 @@
+package com.sanaa.presentation.navigation
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.login.LoginScreen
+import com.sanaa.presentation.screen.welcome.WelcomeScreen
+
+@Composable
+fun AuthNavHost() {
+    val navController = rememberNavController()
+
+    CompositionLocalProvider(LocalNavControllerProvider provides navController) {
+        NovixTheme(isDarkMode = isSystemInDarkTheme()) {
+            NavHost(
+                navController = navController,
+                startDestination = WelcomeRoute.PATTERN,
+                modifier = Modifier.background(Theme.colors.surface)
+            ) {
+                composable(WelcomeRoute.PATTERN) {
+                    WelcomeScreen()
+                }
+
+                composable(LoginRoute.PATTERN) {
+                    LoginScreen()
+                }
+            }
+        }
+    }
+}
