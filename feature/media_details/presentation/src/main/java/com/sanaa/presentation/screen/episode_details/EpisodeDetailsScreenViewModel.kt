@@ -3,10 +3,10 @@ package com.sanaa.presentation.screen.episode_details
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageEpisodeDetailsUseCase
+import usecase.ManageTvSeriesUseCase
 
 class EpisodeDetailsScreenViewModel(
     seriesId: Int,
@@ -16,42 +16,13 @@ class EpisodeDetailsScreenViewModel(
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : EpisodeDetailsInteractionListener,
-    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(EpisodeDetailsScreenUiState(), defaultDispatcher = dispatcher) {
+    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
+        EpisodeDetailsScreenUiState(),
+        defaultDispatcher = dispatcher
+    ) {
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-    }
-
-    private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
-        tryToExecute(
-            callee = {
-                updateState { it.copy(isLoading = true) }
-                val episode =
-                    manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
-                val guests = manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                    seriesId,
-                    seasonNumber,
-                    episodeNumber
-                )
-                val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-                val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-                updateState {
-                    it.copy(
-                        episode = episode.toEpisodeUiModel(),
-                        guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
-                        seriesId = seriesId,
-                        imagesUrl = images,
-                        trailerUrl = trailerUrl
-                    )
-                }
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = {
-                updateState { it.copy(error = it.error, isLoading = false) }
-            }
-        )
     }
 
     override fun onBackClick() {
@@ -80,5 +51,40 @@ class EpisodeDetailsScreenViewModel(
 
     override fun onRateClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
+    }
+
+    private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+        tryToExecute(
+            callee = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+            },
+            onError = {
+                updateState { it.copy(error = it.error, isLoading = false) }
+            }
+        )
+    }
+
+    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+
+        updateState { it.copy(isLoading = true) }
+        val episode =
+            manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
+        val guests = manageEpisodeDetails.getEpisodeGuestsOfHonor(
+            seriesId,
+            seasonNumber,
+            episodeNumber
+        )
+        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
+        val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+        updateState {
+            it.copy(
+                episode = episode.toEpisodeUiModel(),
+                guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
+                seriesId = seriesId,
+                imagesUrl = images,
+                trailerUrl = trailerUrl
+            )
+        }
     }
 }
