@@ -17,7 +17,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
-import com.sanaa.presentation.screen.welcome.components.WelcomeHero
+import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -69,7 +69,7 @@ fun WelcomeContent(
                 .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
         ) {
-            WelcomeHero(
+            WelcomeSection(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()

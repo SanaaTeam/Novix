@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.authentication.presentation.R
 
 @Composable
-fun WelcomeHero(modifier: Modifier = Modifier) {
+fun WelcomeSection(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomCenter
