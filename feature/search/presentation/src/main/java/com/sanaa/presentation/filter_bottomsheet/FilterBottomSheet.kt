@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
@@ -29,16 +31,23 @@ import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlide
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
+import org.koin.androidx.compose.koinViewModel
+import usecase.search.search_param.MediaFilters
 
 @Composable
 fun FilterBottomSheet(
     isVisible: Boolean,
     dismissSheet: () -> Unit,
-    filterUiState: FilterUiState,
-    filterListener: FilterBottomSheetInteractionsListener
+    onFilterApplied: (MediaFilters?) -> Unit,
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
-
+    val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
+    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(Unit) {
+        filterViewModel.filterResult.collect { filters ->
+            onFilterApplied(filters)
+        }
+    }
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = {
@@ -50,20 +59,23 @@ fun FilterBottomSheet(
 
     ) {
         FilterBottomSheetContent(
-            uiState = filterUiState,
-            listener = filterListener,
+            isVisible =isVisible,
             onDismissRequest = dismissSheet,
+            uiState = filterUiState,
+            listener = filterViewModel,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
+
     }
 }
 
 @Composable
 fun FilterBottomSheetContent(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit,
     uiState: FilterUiState,
     listener: FilterBottomSheetInteractionsListener,
-    onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {

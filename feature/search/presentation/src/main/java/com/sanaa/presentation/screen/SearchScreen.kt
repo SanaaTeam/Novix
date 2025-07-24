@@ -41,20 +41,13 @@ import usecase.search.search_param.MediaFilters
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
-    filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
-    LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters: MediaFilters? ->
-            searchViewModel.onFilterApplied(filters)
-        }
-    }
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -79,26 +72,23 @@ fun SearchScreen(
 
         SearchScreenContent(
             uiState = uiState,
-            filterUiState = filterUiState,
             searchListener = searchViewModel,
-            filterListener = filterViewModel,
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-
-            )
+            onFilterApplied = searchViewModel::onFilterApplied
+        )
     }
 }
 
 @Composable
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
-    filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
-    filterListener: FilterBottomSheetInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onFilterApplied: (MediaFilters?) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -163,10 +153,9 @@ fun SearchScreenContent(
 
     if (uiState.showBottomSheet) {
         FilterBottomSheet(
-            isVisible = uiState.showBottomSheet,
             dismissSheet = dismissSheet,
-            filterUiState = filterUiState,
-            filterListener = filterListener
+            isVisible = uiState.showBottomSheet,
+            onFilterApplied = onFilterApplied,
         )
     }
 }
