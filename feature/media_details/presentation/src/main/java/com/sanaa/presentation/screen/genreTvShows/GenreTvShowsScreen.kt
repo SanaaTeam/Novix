@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_categories
+package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -33,23 +33,27 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.component.cards.MediaPosterCard
 import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 
 @Composable
-fun MovieCategoriesScreen(
-    categoryId: Int,
-    categoryName: String?,
-    viewModel: MovieCategoriesViewModel = koinViewModel(parameters = { parametersOf(categoryId, categoryName) }),
+fun GenreTvShowsScreen(
+    genreId: Int,
+    genreName: String?,
+    viewModel: GenreTvShowsViewModel = koinViewModel(parameters = {
+        parametersOf(
+            genreId, genreName
+        )
+    }),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -57,16 +61,16 @@ fun MovieCategoriesScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                MovieCategoriesScreenEffects.NavigateBack -> navController.popBackStack()
-                is MovieCategoriesScreenEffects.NavigateToMovieDetails -> navController.navigate(
-                    MovieDetailsScreenRoute(effect.id).route()
+                GenreTvShowsEffects.NavigateBack -> navController.popBackStack()
+                is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
+                    SeriesDetailsScreenRoute(effect.id).route()
                 )
             }
         }
     }
 
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        MovieCategoriesScreenContent(
+        GenreTvShowsScreenContent(
             state = state.value, interactionListener = viewModel
         )
     }
@@ -74,9 +78,9 @@ fun MovieCategoriesScreen(
 }
 
 @Composable
-fun MovieCategoriesScreenContent(
-    state: MovieCategoriesScreenUiState,
-    interactionListener: MovieCategoriesScreenInteractionListener,
+fun GenreTvShowsScreenContent(
+    state: GenreTvShowsScreenUiState,
+    interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
 
     NovixScaffold(
@@ -90,7 +94,9 @@ fun MovieCategoriesScreenContent(
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
-                }, screenTitle = state.title.orEmpty(), modifier = Modifier
+                },
+                screenTitle = state.title.orEmpty(),
+                modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
@@ -117,18 +123,16 @@ fun MovieCategoriesScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
-                                state.movies,
-                                key = { item -> item.id }
-                            ) { movie ->
+                                state.tvShows, key = { item -> item.id }) { tvShow ->
                                 MediaPosterCard(
                                     boastImage = {
                                         RemoteBlurredHaramImageViewer(
-                                            imageUrl = movie.posterUrl.orEmpty(),
+                                            imageUrl = tvShow.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
                                             blurRadius = 150,
                                             haramThreshold = 0.2f,
                                             nonHaramThreshold = 0.7f,
-                                            contentDescription = movie.title,
+                                            contentDescription = tvShow.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                                             },
@@ -147,7 +151,7 @@ fun MovieCategoriesScreenContent(
                                         }
                                     },
                                     topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
-                                    onCardClick = { interactionListener.onMovieClick(movie.id) })
+                                    onCardClick = { interactionListener.onTvShowClick(tvShow.id) })
                             }
                         }
                     }

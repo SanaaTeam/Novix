@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_categories
+package com.sanaa.presentation.screen.genreMovies
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
@@ -6,15 +6,15 @@ import usecase.ManageMovieUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 
-class MovieCategoriesViewModel(
+class GenreMoviesViewModel(
     private val categoryId: Int,
     private val categoryName: String,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MovieCategoriesScreenUiState, MovieCategoriesScreenEffects>(
-    MovieCategoriesScreenUiState(),
+) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
+    GenreMoviesScreenUiState(),
     dispatcher
-), MovieCategoriesScreenInteractionListener {
+), GenreMoviesScreenInteractionListener {
     init {
         getListOfMoviesByCategory(categoryId)
     }
@@ -32,11 +32,11 @@ class MovieCategoriesViewModel(
     }
 
     override fun onBackClick() {
-        emitEffect(MovieCategoriesScreenEffects.NavigateBack)
+        emitEffect(GenreMoviesEffects.NavigateBack)
     }
 
     override fun onMovieClick(id: Int) {
-        emitEffect(MovieCategoriesScreenEffects.NavigateToMovieDetails(id))
+        emitEffect(GenreMoviesEffects.NavigateToMovieDetails(id))
     }
 
     private fun getListOfMoviesByCategory(categoryId: Int) {

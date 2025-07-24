@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.category
 
 import app.cash.turbine.test
-import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenEffects
-import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreenUiState
-import com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
+import com.sanaa.presentation.screen.genreMovies.GenreMoviesEffects
+import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreenUiState
+import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import entity.Genre
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
 class MovieCategoriesViewModelTest {
 
     private val testDispatcher = UnconfinedTestDispatcher()
-    private lateinit var viewModel: MovieCategoriesViewModel
+    private lateinit var viewModel: GenreMoviesViewModel
 
     private val manageMoviesDetailsUseCase: ManageMovieUseCase = mockk()
 
@@ -54,7 +54,7 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(
+        viewModel = GenreMoviesViewModel(
             category.id,
             category.name,
             manageMoviesDetailsUseCase
@@ -71,7 +71,7 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -86,12 +86,12 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onBackClick()
-            assertEquals(MovieCategoriesScreenEffects.NavigateBack, awaitItem())
+            assertEquals(GenreMoviesEffects.NavigateBack, awaitItem())
         }
     }
 
@@ -100,13 +100,13 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onMovieClick(10)
             assertEquals(
-                MovieCategoriesScreenEffects.NavigateToMovieDetails(10),
+                GenreMoviesEffects.NavigateToMovieDetails(10),
                 awaitItem()
             )
         }
@@ -122,7 +122,7 @@ class MovieCategoriesViewModelTest {
 
 
             viewModel =
-                MovieCategoriesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+                GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
 
             viewModel.state.test {
                 var currentState = awaitItem()
@@ -130,7 +130,7 @@ class MovieCategoriesViewModelTest {
                     currentState = awaitItem()
                 }
 
-                val expectedState = MovieCategoriesScreenUiState(
+                val expectedState = GenreMoviesScreenUiState(
                     title = null,
                     movies = emptyList(),
                     isLoading = false,

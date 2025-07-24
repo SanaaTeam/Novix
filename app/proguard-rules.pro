@@ -39,7 +39,7 @@
 -dontwarn com.sanaa.presentation.screen.SearchViewModel
 -dontwarn com.sanaa.presentation.screen.actor.ActorViewModel
 -dontwarn com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
--dontwarn com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
+-dontwarn com.sanaa.presentation.screen.genreMovies.MovieCategoriesViewModel
 -dontwarn com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
 -dontwarn com.sanaa.presentation.screen.review.ReviewViewModel
 -dontwarn com.sanaa.presentation.screen.series.SeriesViewModel
@@ -61,4 +61,4 @@
 -dontwarn com.sanaa.api.SearchFeatureApi
 -dontwarn com.sanaa.api.StartRoute
 -dontwarn com.sanaa.presentation.navigation.SearchFeatureApiImpl
--dontwarn com.sanaa.presentation.navigation.MediaDetailsApiImpl
+-dontwarn com.sanaa.presentation.api.MediaDetailsApiImpl

@@ -1,6 +1,6 @@
-package com.sanaa.presentation.screen.movie_categories
+package com.sanaa.presentation.screen.genreMovies
 
-interface MovieCategoriesScreenInteractionListener {
+interface GenreMoviesScreenInteractionListener {
     fun onSaveIconClick()
     fun onBackClick()
     fun onMovieClick(id: Int)
