@@ -5,12 +5,12 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.actor.toMovie
 import com.sanaa.vod.mapper.actor.toTvSeries
 import com.sanaa.vod.mapper.media.toEntity
-import repository.ActorRepository
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
+import repository.ActorRepository
 import java.net.UnknownHostException
 
 
@@ -57,8 +57,13 @@ class ActorRepositoryImpl(
             }.take(20)
         }
 
-    override suspend fun getTrendingActors(): List<Actor> {
-        return emptyList()
+
+    override suspend fun getTrendingActors(page: Int): List<Actor> {
+        safeCall("Failed to fetch Trending People ") {
+            return remoteDataSource.fetchTrendingPeople(1).map {
+                it.toDomain()
+            }
+        }
     }
 
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
