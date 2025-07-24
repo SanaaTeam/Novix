@@ -51,21 +51,26 @@ class MovieRepositoryImpl(
         }
 
 
-    override suspend fun getPopularMovies(page: Int): List<Movie> {
-        return emptyList()
-    }
+    override suspend fun getPopularMovies(page: Int): List<Movie> =
+        safeCall("Failed to fetch movie Popular") {
+            remote.fetchPopularMovies(page).map { it.toDomain() }
+        }
 
-    override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> {
-        return emptyList()
-    }
 
-    override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> {
-        return emptyList()
-    }
+    override suspend fun getTopRatedMovies(page: Int, genreId: String?): List<Movie> =
+        safeCall("Failed to fetch movie TopRated") {
+            remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
+        }
 
-    override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> {
-        return emptyList()
-    }
+    override suspend fun getUpcomingMovies(page: Int, genreId: String?): List<Movie> =
+        safeCall("Failed to fetch movie Upcoming") {
+            remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
+        }
+
+    override suspend fun getTrendingMovies(page: Int, genreId: String?): List<Movie> =
+        safeCall("Failed to fetch movie Trending") {
+            remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
+        }
 
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
