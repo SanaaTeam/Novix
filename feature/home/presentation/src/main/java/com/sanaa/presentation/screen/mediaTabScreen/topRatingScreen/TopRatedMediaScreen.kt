@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaWithTypeTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,8 +8,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.sanaa.api.StartRoute
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenEffect
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.screenContent.MediaWithTypeTabScreenContent
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
 import com.sanaa.presentation.state.MediaType
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,7 +26,7 @@ fun TopRatedMediaScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MediaWithTypeTabScreenEffect.NavigateToMediaDetails -> {
+                is MediaTabScreenEffect.NavigateToMediaDetails -> {
                     if (effect.mediaType == MediaType.MOVIE) {
                         onMediaClick(StartRoute.MOVIE, effect.id)
                     } else if (effect.mediaType == MediaType.TV_SHOW) {
@@ -34,12 +34,12 @@ fun TopRatedMediaScreen(
                     }
                 }
 
-                is MediaWithTypeTabScreenEffect.NavigateBack -> navController.popBackStack()
+                is MediaTabScreenEffect.NavigateBack -> navController.popBackStack()
             }
         }
     }
 
-    MediaWithTypeTabScreenContent(
+    MediaTabScreenContent(
         title = stringResource(R.string.top_rated),
         state = state.value,
         interactionListener = viewModel,

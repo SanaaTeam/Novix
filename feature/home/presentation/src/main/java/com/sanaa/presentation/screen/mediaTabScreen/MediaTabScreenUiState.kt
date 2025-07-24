@@ -1,10 +1,10 @@
-package com.sanaa.presentation.screen.mediaWithTypeTabScreen
+package com.sanaa.presentation.screen.mediaTabScreen
 
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 
-data class MediaWithTypeTabScreenUiState (
+data class MediaTabScreenUiState (
     val selectedMediaType: MediaType = MediaType.MOVIE,
     val movieList: List<MediaItem> = emptyList(),
     val tvShowList: List<MediaItem> = emptyList(),

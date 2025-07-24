@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaWithTypeTabScreen.screenContent
+package com.sanaa.presentation.screen.mediaTabScreen.screenContent
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -25,17 +25,17 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenUiState
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 
 @Composable
-fun MediaWithTypeTabScreenContent(
+fun MediaTabScreenContent(
     title: String,
-    state: MediaWithTypeTabScreenUiState,
-    interactionListener: MediaWithTypeTabScreenInteractionListener,
+    state: MediaTabScreenUiState,
+    interactionListener: MediaTabScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -101,11 +101,11 @@ fun MediaWithTypeTabScreenContent(
 
 @PreviewLightDark
 @Composable
-fun MediaWithTypeTabScreenContentPreview() {
+fun MediaTabScreenContentPreview() {
 
     var state by remember {
-        mutableStateOf<MediaWithTypeTabScreenUiState>(
-            MediaWithTypeTabScreenUiState(
+        mutableStateOf<MediaTabScreenUiState>(
+            MediaTabScreenUiState(
                 movieGenres = listOf(
                     GenreUiState(id = 1, name = "Action"),
                     GenreUiState(id = 2, name = "Drama"),
@@ -136,10 +136,10 @@ fun MediaWithTypeTabScreenContentPreview() {
         )
     }
     NovixTheme(isSystemInDarkTheme()) {
-        MediaWithTypeTabScreenContent(
+        MediaTabScreenContent(
             title = stringResource(R.string.top_rated),
             state = state,
-            interactionListener = object : MediaWithTypeTabScreenInteractionListener {
+            interactionListener = object : MediaTabScreenInteractionListener {
                 override fun onMediaTabSelection(mediaType: MediaType) {
                     state = state.copy(selectedMediaType = mediaType)
                 }

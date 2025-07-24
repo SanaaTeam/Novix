@@ -1,9 +1,9 @@
-package com.sanaa.presentation.screen.mediaWithTypeTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenEffect
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaWithTypeTabScreen.MediaWithTypeTabScreenUiState
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
@@ -16,10 +16,10 @@ class TopRatedMediaScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MediaWithTypeTabScreenUiState, MediaWithTypeTabScreenEffect>(
-    MediaWithTypeTabScreenUiState(),
+) : BaseViewModel<MediaTabScreenUiState, MediaTabScreenEffect>(
+    MediaTabScreenUiState(),
     dispatcher
-), MediaWithTypeTabScreenInteractionListener {
+), MediaTabScreenInteractionListener {
 
     init {
         fetchMovieGenres()
@@ -128,7 +128,7 @@ class TopRatedMediaScreenViewModel(
     }
 
     override fun onMediaClick(id: Int, mediaType: MediaType) {
-        emitEffect(MediaWithTypeTabScreenEffect.NavigateToMediaDetails(id, mediaType))
+        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaType))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
@@ -136,6 +136,6 @@ class TopRatedMediaScreenViewModel(
     }
 
     override fun onBackClick() {
-        emitEffect(MediaWithTypeTabScreenEffect.NavigateBack)
+        emitEffect(MediaTabScreenEffect.NavigateBack)
     }
 }

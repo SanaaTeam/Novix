@@ -1,9 +1,9 @@
-package com.sanaa.presentation.screen.mediaWithTypeTabScreen
+package com.sanaa.presentation.screen.mediaTabScreen
 
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 
-interface MediaWithTypeTabScreenInteractionListener {
+interface MediaTabScreenInteractionListener {
     fun onMediaTabSelection(mediaType: MediaType)
     fun onMovieGenreClick(id: Int?)
     fun onTvShowGenreClick(id: Int?)
