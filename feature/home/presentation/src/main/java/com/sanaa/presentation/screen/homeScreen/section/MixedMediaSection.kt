@@ -28,8 +28,8 @@ import com.sanaa.designsystem.design_system.component.section_header.InlineActio
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.R
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
@@ -95,7 +95,7 @@ fun MixedMediaSection(
         )
         HorizontalPager(
             state = pagerState,
-//            contentPadding = PaddingValues(start = 0.dp, end = 160.dp),
+            contentPadding = PaddingValues(start = 0.dp, end = 160.dp),
             pageSpacing = -170.dp,
             modifier = Modifier.fillMaxWidth()
         )
