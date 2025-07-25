@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component
+package com.sanaa.presentation.shared_component
 
 import android.annotation.SuppressLint
 import androidx.annotation.StringRes

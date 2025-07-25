@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component
+package com.sanaa.presentation.shared_component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -20,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,9 +33,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import kotlinx.coroutines.delay
 
-val boxContainerGradient = Brush.linearGradient(
-    colors = listOf(Color(0x00000000), Color(0xFF000000))
-)
+
 
 @Composable
 fun ImageSlider(
