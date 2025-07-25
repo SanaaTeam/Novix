@@ -1,18 +1,22 @@
 package com.sanaa.presentation.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavType
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.webview.ForgetPasswordWebViewRoute
-import com.sanaa.presentation.webview.SignUpWebViewRoute
-import com.sanaa.presentation.webview.SignUpWebViewScreen
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.login.LoginScreen
+import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
+import com.sanaa.presentation.webview.SignUpWebViewScreen
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
 
 @Composable
 fun AuthNavHost() {
@@ -22,8 +26,17 @@ fun AuthNavHost() {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {
             NavHost(
                 navController = navController,
-                startDestination = "signup?url=https://www.themoviedb.org/signup"
+                startDestination = WelcomeRoute.PATTERN,
+                modifier = Modifier.background(Theme.colors.surface)
             ) {
+                composable(WelcomeRoute.PATTERN) {
+                    WelcomeScreen()
+                }
+
+               composable(LoginRoute.PATTERN) {
+                    LoginScreen()
+                }
+
                 composable(
                     route = "signup?url={url}",
                     arguments = listOf(
@@ -33,7 +46,8 @@ fun AuthNavHost() {
                         }
                     )
                 ) { entry ->
-                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/signup"
+                    val url = entry.arguments?.getString("url") 
+                        ?: "https://www.themoviedb.org/signup"
                     SignUpWebViewScreen(url = url)
                 }
 
@@ -46,7 +60,8 @@ fun AuthNavHost() {
                         }
                     )
                 ) { entry ->
-                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/reset-password"
+                    val url = entry.arguments?.getString("url") 
+                        ?: "https://www.themoviedb.org/reset-password"
                     ResetPasswordWebViewScreen(url = url)
                 }
             }

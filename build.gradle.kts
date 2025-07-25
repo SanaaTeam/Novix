@@ -1,4 +1,3 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false
@@ -34,6 +33,7 @@ val excludedPackages = listOf(
     "**.dao.**",
     "**.dto.**",
     "**.db.**",
+    "**.util.**",
     "**.response.**",
     "exceptions.**",
     "com.sanaa.vod.mapper.*",
@@ -59,7 +59,13 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.series.components.**",
     "com.sanaa.presentation.screen.series.SeriesScreen*",
     "feature.media_details.api**",
-    "com.sanaa.presentation.cards.**"
+    "com.sanaa.presentation.cards.**",
+
+    "com.sanaa.presentation.screen.login.**",
+    "com.sanaa.presentation.screen.login.components.**",
+    "com.sanaa.presentation.screen.login_base.**",
+    "com.sanaa.presentation.screen.welcome.**",
+    "com.sanaa.presentation.screen.welcome.components.**"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
