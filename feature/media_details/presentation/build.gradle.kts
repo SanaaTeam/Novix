@@ -37,6 +37,5 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     // Paging 3
-    implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
 }
