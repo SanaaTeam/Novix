@@ -38,7 +38,7 @@ class FilterViewModelTest {
 
         filterViewModel.onYearRangeChanged(range)
 
-        filterViewModel.uiState.test {
+        filterViewModel.state.test {
             val item = awaitItem()
             val expected = FilterUiState(yearRange = range)
             Truth.assertThat(item.yearRange).isEqualTo(expected.yearRange)
@@ -51,7 +51,7 @@ class FilterViewModelTest {
 
         filterViewModel.onGenreSelected(genre)
 
-        filterViewModel.uiState.test {
+        filterViewModel.state.test {
             val item = awaitItem()
             val expected = FilterUiState(selectedGenres = setOf(genre).toMutableSet())
             Truth.assertThat(item.selectedGenres).isEqualTo(expected.selectedGenres)
@@ -65,7 +65,7 @@ class FilterViewModelTest {
         filterViewModel.onGenreSelected(genre)
         filterViewModel.onGenreSelected(genre)
 
-        filterViewModel.uiState.test {
+        filterViewModel.state.test {
             awaitItem()
             val expected = FilterUiState(selectedGenres = emptySet())
             Truth.assertThat(expected.selectedGenres).isEqualTo(emptySet<String>())
@@ -78,7 +78,7 @@ class FilterViewModelTest {
 
         filterViewModel.onRatingChanged(rate)
 
-        filterViewModel.uiState.test {
+        filterViewModel.state.test {
             val item = awaitItem()
             val expected = FilterUiState(imdbRating = rate)
             Truth.assertThat(expected.imdbRating).isEqualTo(item.imdbRating)
@@ -89,10 +89,10 @@ class FilterViewModelTest {
     fun `onClearFilters() should clear filter by set values to default when called`() = runTest {
         filterViewModel.onClearFilters()
 
-        filterViewModel.uiState.test {
+        filterViewModel.state.test {
             val item = awaitItem()
             val expected = FilterUiState(
-                allGenres = filterViewModel.uiState.value.allGenres,
+                allGenres = filterViewModel.state.value.allGenres,
                 isLoading = false,
             )
             Truth.assertThat(item).isEqualTo(expected)
@@ -169,23 +169,56 @@ class FilterViewModelTest {
                 cancelAndIgnoreRemainingEvents()
             }
         }
+
     @Test
-    fun `fetchGenres() should update UI state with mapped genres`() = runTest {
-        val domainGenres = listOf(
-            entity.Genre(id = 1, name = "Action"),
-            entity.Genre(id = 2, name = "Drama")
-        )
-
+    fun `fetchGenresByTab with MOVIE_INDEX should load movie genres`() = runTest {
+        val domainGenres = listOf(entity.Genre(1, "Action"))
         coEvery { manageMovieUseCase.getMovieGenres() } returns domainGenres
-        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns emptyList()
 
-        filterViewModel = FilterViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
-        filterViewModel.uiState.test {
-            val state = awaitItem()
-            val expected = domainGenres.map { it.toState() }
+        filterViewModel.fetchGenresByTab(FilterViewModel.MOVIE_INDEX)
 
-            Truth.assertThat(state.allGenres).containsExactlyElementsIn(expected)
+        filterViewModel.state.test {
+            val loadingState = awaitItem()
+            Truth.assertThat(loadingState.isLoading).isTrue()
+
+            val loadedState = awaitItem()
+            Truth.assertThat(loadedState.allGenres).isEqualTo(domainGenres.map { it.toState() })
+            Truth.assertThat(loadedState.isLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `fetchGenresByTab with TV_SHOW_INDEX should load TV genres`() = runTest {
+        val domainGenres = listOf(entity.Genre(2, "Comedy"))
+        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns domainGenres
+
+        filterViewModel.fetchGenresByTab(FilterViewModel.TV_SHOW_INDEX)
+
+        filterViewModel.state.test {
+            val loadingState = awaitItem()
+            Truth.assertThat(loadingState.isLoading).isTrue()
+
+            val loadedState = awaitItem()
+            Truth.assertThat(loadedState.allGenres).isEqualTo(domainGenres.map { it.toState() })
+            Truth.assertThat(loadedState.isLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onClearFilters() should emit cleared filter`() = runTest {
+        filterViewModel.onClearFilters()
+
+        filterViewModel.filterResult.test {
+            val item = awaitItem()
+            Truth.assertThat(item).isEqualTo(
+                MediaFilters(
+                    startYear = 1980,
+                    endYear = 2025,
+                    genres = emptyList(),
+                    imdbRating = 0f
+                )
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -207,4 +240,5 @@ class FilterViewModelTest {
             ),
         )
     }
+
 }
