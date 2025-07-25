@@ -155,11 +155,12 @@ fun GenreTvShowsScreenContent(
                             }
                         }
                     }
-                    if (state.showBottomSheet) {
-                        RequestToLoginBottomSheet(
-                            onDismiss = { interactionListener.onBottomSheetDismiss() },
-                            onLoginButtonClick = {/* navigate to login screen */ })
-                    }
+                    RequestToLoginBottomSheet(
+                        onDismiss = { interactionListener.onBottomSheetDismiss() },
+                        onLoginButtonClick = {/* navigate to login screen */ },
+                        isVisible = state.showBottomSheet
+                    )
+
                 }
             }
         }

@@ -33,8 +33,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.component.RemoteImagePlaceholder
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.component.cards.MediaPosterCard
@@ -49,7 +49,12 @@ import org.koin.core.parameter.parametersOf
 fun GenreMoviesScreen(
     categoryId: Int,
     categoryName: String?,
-    viewModel: GenreMoviesViewModel = koinViewModel(parameters = { parametersOf(categoryId, categoryName) }),
+    viewModel: GenreMoviesViewModel = koinViewModel(parameters = {
+        parametersOf(
+            categoryId,
+            categoryName
+        )
+    }),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -151,13 +156,11 @@ fun GenreMoviesScreenContent(
                             }
                         }
                     }
-                    if (state.showBottomSheet) {
-                        RequestToLoginBottomSheet(
-                            onDismiss = { interactionListener.onBottomSheetDismiss() },
-                            onLoginButtonClick = {/* navigate to login screen */ },
-                            isVisible = state.showBottomSheet
-                        )
-                    }
+                    RequestToLoginBottomSheet(
+                        onDismiss = { interactionListener.onBottomSheetDismiss() },
+                        onLoginButtonClick = {/* navigate to login screen */ },
+                        isVisible = state.showBottomSheet
+                    )
                 }
             }
         }
