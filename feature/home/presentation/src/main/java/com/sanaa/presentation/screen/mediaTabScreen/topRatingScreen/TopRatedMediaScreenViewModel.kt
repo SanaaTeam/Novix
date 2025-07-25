@@ -25,6 +25,7 @@ class TopRatedMediaScreenViewModel(
         fetchMovieGenres()
         fetchTvShowGenres()
         fetchMovies()
+        fetchTvShows()
     }
 
     private fun fetchMovies(genreId: Int? = null) {
@@ -132,7 +133,11 @@ class TopRatedMediaScreenViewModel(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        TODO("Not yet implemented")
+        updateState {
+            it.copy(
+                showBottomSheet = true
+            )
+        }
     }
 
     override fun onBackClick() {

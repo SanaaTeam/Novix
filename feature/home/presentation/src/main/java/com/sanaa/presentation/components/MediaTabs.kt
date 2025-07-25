@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -92,7 +93,7 @@ private fun TabButton(
                 .padding(horizontal = 24.dp)
                 .height(3.dp)
                 .fillMaxWidth(animatedLineWidthDp)
-                .background(Theme.colors.primary)
+                .background(Theme.colors.primary, RoundedCornerShape(100.dp))
                 .align(Alignment.BottomCenter)
         )
     }
