@@ -1,12 +1,12 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.ActorUiModel
-import usecase.search.search_param.SearchActorOutput
+import entity.Actor
 
-fun SearchActorOutput.toUiState(): ActorUiModel {
+fun Actor.toUiState(): ActorUiModel {
     return ActorUiModel(
-        id= this.id,
+        id = this.id,
         name = this.name,
-        imageUrl = this.profileImageUrl
+        imageUrl = this.imageUrl
     )
 }

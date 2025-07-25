@@ -1,22 +1,22 @@
 package repository
 
+import entity.Actor
+import entity.Movie
+import entity.TvSeries
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
 
 
 interface SearchRepository {
-    suspend fun searchActors(query: String, page: Int): List<SearchActorOutput>
+    suspend fun searchActors(query: String, page: Int): List<Actor>
     suspend fun searchMovies(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<SearchMovieOutput>
+    ): List<Movie>
 
     suspend fun searchTvShows(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<SearchTvSeriesOutput>
+    ): List<TvSeries>
 }
