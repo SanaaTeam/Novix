@@ -41,14 +41,16 @@ import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.MediaRatingChip
 import com.sanaa.presentation.components.chips.SaveIconChip
-import com.sanaa.presentation.model.MediaItem
+import com.sanaa.presentation.state.MediaItem
 import kotlin.math.absoluteValue
 
 @SuppressLint("RestrictedApi")
 @Composable
 fun PopularMediaSection(
     modifier: Modifier = Modifier,
-    mediaItems: List<MediaItem>
+    mediaItems: List<MediaItem>,
+    onMediaClick: (MediaItem) -> Unit,
+    onSaveIconClicked:(MediaItem)-> Unit
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
@@ -117,16 +119,20 @@ fun PopularMediaSection(
                         width = animatedWidth,
                         height = animatedHeight,
                         ratio = animatedWidth / animatedHeight,
-                        onCardClick = {},
+                        onCardClick = {
+                            onMediaClick(mediaItems[page])
+                        },
                         topLeftContent = {
                             SaveIconChip(
                                 isSaved = false,
-                                onClick = {}
+                                onClick = {
+                                    onSaveIconClicked(mediaItems[page])
+                                }
                             )
                         },
                         posterImage = {
                             RemoteBlurredHaramImageViewer(
-                                imageUrl = mediaItems[page].imageUrl,
+                                imageUrl = mediaItems[page].imageUrl.orEmpty(),
                                 modifier = Modifier,
                                 blurRadius = 150,
                                 haramThreshold = 0.2f,
@@ -188,7 +194,11 @@ fun PopularMediaSectionPreview(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PopularMediaSection(mediaItems = demoMediaList)
+            PopularMediaSection(
+                mediaItems = demoMediaList,
+                onMediaClick = {},
+                onSaveIconClicked = {}
+            )
         }
     }
 

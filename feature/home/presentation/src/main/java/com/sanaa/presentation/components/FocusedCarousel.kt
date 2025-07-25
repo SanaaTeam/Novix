@@ -31,7 +31,7 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
-import com.sanaa.presentation.model.MediaItem
+import com.sanaa.presentation.state.MediaItem
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -88,7 +88,7 @@ fun FocusedCarousel(
                     onCardClick = { /* Handle Click */ },
                     posterImage = {
                         RemoteBlurredHaramImageViewer(
-                            imageUrl = item.imageUrl,
+                            imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
                             blurRadius = 150,
                             haramThreshold = 0.2f,

@@ -43,9 +43,8 @@ import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
-import com.sanaa.presentation.model.MediaItem
-import com.sanaa.presentation.model.MediaType
-import kotlinx.coroutines.launch
+import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaType
 import kotlin.math.abs
 import kotlin.math.absoluteValue
 
@@ -112,8 +111,10 @@ val demoMediaList = listOf(
 fun MixedMediaSection(
     modifier: Modifier = Modifier,
     headerLabel: String,
-    mediaItems: List<MediaItem>
-) {
+    mediaItems: List<MediaItem>,
+    onMediaClick: (MediaItem) -> Unit,
+    onSaveIconClicked:(MediaItem) -> Unit
+    ) {
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -139,24 +140,30 @@ fun MixedMediaSection(
             contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
             maxSmallItemWidth = 74.dp,
             minSmallItemWidth = 74.dp
-        ) { index, isFocused ->
+        ) { page, isFocused ->
             val width = if (isFocused) 158.dp else 74.dp
             Box(
-                modifier = Modifier.height(210.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .height(210.dp)
+                    .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
                 MediaPosterCard(
                     width = 158.dp,
                     height = 210.dp,
                     topLeftContent = {
-                        SaveIconChip(onClick = {})
+                        SaveIconChip(
+                            onClick = {
+                                onSaveIconClicked(mediaItems[page])
+                            }
+                        )
                     },
                     onCardClick = {
-                        // Handle card click
+                        onMediaClick(mediaItems[page])
                     },
                     posterImage = {
                         RemoteBlurredHaramImageViewer(
-                            imageUrl = mediaItems[index].imageUrl,
+                            imageUrl = mediaItems[page].imageUrl.orEmpty(),
                             modifier = Modifier,
                             blurRadius = 150,
                             haramThreshold = 0.2f,
@@ -167,7 +174,7 @@ fun MixedMediaSection(
                             errorContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
-                            contentDescription = mediaItems[index].title,
+                            contentDescription = mediaItems[page].title,
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
@@ -196,7 +203,9 @@ fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
         ) {
             MixedMediaSection(
                 mediaItems = demoMediaList,
-                headerLabel = "Top Rating"
+                headerLabel = "Top Rating",
+                onMediaClick = {  },
+                onSaveIconClicked = {  }
             )
         }
 
