@@ -23,35 +23,6 @@ class SeriesViewModel(
         loadSeries()
     }
 
-    private fun loadSeries() {
-        tryToExecute(
-            callee = {
-                updateState { it.copy(isLoading = true) }
-                val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
-                val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
-                val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
-                val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-                val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-                updateState {
-                    it.copy(
-                        series = series.toSeriesUiModel(trailer),
-                        cast = cast.map { a -> a.toActorUiModel() },
-                        season = season.toSeasonUiModel(),
-                        images = images
-                    )
-                }
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState { state ->
-                    state.copy(error = e.message, isLoading = false)
-                }
-            }
-        )
-    }
-
     override fun onBackClicked() {
         emitEffect(SeriesScreenEffects.NavigateBack)
     }
@@ -67,11 +38,7 @@ class SeriesViewModel(
     override fun onSeasonNumberClicked(seasonNumber: Int) {
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
-            callee = {
-                updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
-                val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
-                updateState { it.copy(season = season.toSeasonUiModel()) }
-            },
+            callee = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
             }
@@ -104,5 +71,46 @@ class SeriesViewModel(
 
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
+    }
+
+    private fun loadSeries() {
+        tryToExecute(
+            callee = ::fetchSeriesDetails,
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+            },
+            onError = { e ->
+                updateState { state ->
+                    state.copy(error = e.message, isLoading = false)
+                }
+            }
+        )
+    }
+
+    private suspend fun fetchSeriesDetails() {
+        updateState { it.copy(isLoading = true) }
+
+        val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
+        val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
+        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
+        val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+
+        updateState {
+            it.copy(
+                series = series.toSeriesUiModel(trailer),
+                cast = cast.map { actor -> actor.toActorUiModel() },
+                season = season.toSeasonUiModel(),
+                images = images
+            )
+        }
+    }
+
+    private suspend fun fetchSeasonDetails(seasonNumber: Int) {
+        updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
+
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 }

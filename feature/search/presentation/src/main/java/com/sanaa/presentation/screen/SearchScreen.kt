@@ -5,12 +5,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,9 +22,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheetInteractionsListener
-import com.sanaa.presentation.filter_bottomsheet.FilterViewModel
-import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
@@ -37,27 +31,19 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
-    filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>(),
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
     val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
     val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
 
-    LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters: MediaFilters? ->
-            searchViewModel.onFilterApplied(filters)
-        }
-    }
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -81,35 +67,27 @@ fun SearchScreen(
     NovixTheme(isSystemInDarkTheme()) {
         SearchScreenContent(
             uiState = uiState,
-            filterUiState = filterUiState,
             searchListener = searchViewModel,
-            filterListener = filterViewModel,
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-
-            )
+            onFilterApplied = searchViewModel::onFilterApplied
+        )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
-    filterUiState: FilterUiState,
     searchListener: SearchScreenInteractionsListener,
-    filterListener: FilterBottomSheetInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
+    onFilterApplied: (MediaFilters?) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) searchListener.onBottomSheetDragged()
-        }
+        searchListener.onBottomSheetDragged()
     }
 
     NovixScaffold(topBar = {
@@ -141,7 +119,7 @@ fun SearchScreenContent(
                 text = uiState.searchQuery,
                 onTextChange = searchListener::onSearchQueryChanged,
                 onFilterClicked = { searchListener.onFilterClicked() },
-                isFilterButtonVisible = uiState.isFilterButtonVisible,
+                isFilterButtonVisible = uiState.isFilterVisible(),
             )
 
             AnimatedContent(uiState.searchQuery.isNotBlank()) {
@@ -167,7 +145,12 @@ fun SearchScreenContent(
     }
 
     if (uiState.showBottomSheet) {
-        FilterBottomSheet(dismissSheet, sheetState, filterUiState, filterListener)
+        FilterBottomSheet(
+            dismissSheet = dismissSheet,
+            isVisible = uiState.showBottomSheet,
+            onFilterApplied = onFilterApplied,
+            selectedTabIndex = uiState.selectedTabIndex
+        )
     }
 }
 

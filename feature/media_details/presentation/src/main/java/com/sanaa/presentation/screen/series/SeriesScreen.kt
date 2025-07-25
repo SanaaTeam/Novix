@@ -36,9 +36,9 @@ import com.sanaa.presentation.component.OverviewSection
 import com.sanaa.presentation.component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
-import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
@@ -92,7 +92,7 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        MovieCategoriesScreenRoute(it.category.id, it.category.name).route()
+                        GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
             }
@@ -223,7 +223,8 @@ fun SeriesScreenContent(
             )
         }
         if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet)
+            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showLoginBottomSheet)
         }
     }
 }
