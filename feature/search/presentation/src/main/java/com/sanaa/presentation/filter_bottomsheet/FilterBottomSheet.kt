@@ -147,6 +147,7 @@ fun FilterBottomSheetContent(
             }
         }
         FilterActions(
+            isApplyEnabled = uiState.hasUserSelectedFilters,
             onApplyClicked = {
                 listener.onApplyClicked()
                 onDismissRequest()
@@ -159,6 +160,7 @@ fun FilterBottomSheetContent(
 
 @Composable
 private fun FilterActions(
+    isApplyEnabled: Boolean,
     onApplyClicked: () -> Unit,
     onClearClicked: () -> Unit,
 ) {
@@ -171,7 +173,8 @@ private fun FilterActions(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            text = stringResource(R.string.apply)
+            text = stringResource(R.string.apply),
+            isEnabled = isApplyEnabled
         )
         NovixOutlinedButton(
             onClick = onClearClicked,
