@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.search.search_param.MediaFilters
@@ -20,10 +19,11 @@ class FilterViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<FilterUiState,Unit>(
+) : BaseViewModel<FilterUiState, Unit>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
-    private val _uiState = MutableStateFlow(FilterUiState())
+    private val _filterResult = MutableSharedFlow<MediaFilters?>()
+    val filterResult = _filterResult.asSharedFlow()
 
     init {
         fetchGenres()
@@ -35,24 +35,20 @@ class FilterViewModel(
                 val movieGenres = manageMovieUseCase.getMovieGenres()
                 val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
                 val genres = movieGenres.plus(tvShowGenres).toSet()
-                _uiState.update {
-                    it.copy(allGenres = genres.map { it.toState()})
+                //movie or tv series
+                updateState {
+                    it.copy(allGenres = genres.map { it.toState() })
                 }
             })
     }
 
 
-    val uiState = _uiState.asStateFlow()
-
-    private val _filterResult = MutableSharedFlow<MediaFilters?>()
-    val filterResult = _filterResult.asSharedFlow()
-
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        _uiState.update { it.copy(yearRange = newRange) }
+        updateState { it.copy(yearRange = newRange) }
     }
 
     override fun onGenreSelected(genre: GenreUiState) {
-        _uiState.update { currentState ->
+        updateState { currentState ->
             val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
                 if (contains(genre)) {
                     remove(genre)
@@ -65,11 +61,11 @@ class FilterViewModel(
     }
 
     override fun onRatingChanged(newRating: Int) {
-        _uiState.update { it.copy(imdbRating = newRating) }
+        updateState { it.copy(imdbRating = newRating) }
     }
 
     override fun onClearFilters() {
-        _uiState.update {
+        updateState {
             FilterUiState(allGenres = it.allGenres)
         }
     }
@@ -77,7 +73,7 @@ class FilterViewModel(
     override fun onApplyClicked() {
         tryToExecute(
             callee = {
-                val currentState = _uiState.value
+                val currentState = state.value
                 val mediaFilters = MediaFilters(
                     startYear = currentState.yearRange.start.toInt(),
                     endYear = currentState.yearRange.endInclusive.toInt(),

@@ -44,7 +44,7 @@ fun FilterBottomSheet(
     onFilterApplied: (MediaFilters?) -> Unit,
 ) {
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
+    val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters ->
             onFilterApplied(filters)
