@@ -21,9 +21,9 @@ import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.model.GenreUiState
-import com.sanaa.presentation.model.MediaItem
-import com.sanaa.presentation.model.MediaType
+import com.sanaa.presentation.state.GenreUiState
+import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaType
 
 @Composable
 fun MediaListSectionContent(

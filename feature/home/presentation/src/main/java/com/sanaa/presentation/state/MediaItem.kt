@@ -1,4 +1,4 @@
-package com.sanaa.presentation.model
+package com.sanaa.presentation.state
 
 data class MediaItem(
     val id: Int,

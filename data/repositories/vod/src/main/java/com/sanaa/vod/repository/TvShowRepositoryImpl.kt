@@ -69,13 +69,13 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
-    override suspend fun getTopRatedTvSeries(page: Int, genreId: String?): List<TvSeries> =
+    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries TopRated") {
             remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
         }
 
 
-    override suspend fun getTrendingTvSeries(page: Int, genreId: String?): List<TvSeries> =
+    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries Trending") {
             remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
         }
