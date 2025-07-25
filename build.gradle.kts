@@ -40,6 +40,7 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
     "com.sanaa.presentation.component.**",
+    "com.sanaa.presentation.shared_component.*",
     "com.sanaa.presentation.model.*",
     "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
