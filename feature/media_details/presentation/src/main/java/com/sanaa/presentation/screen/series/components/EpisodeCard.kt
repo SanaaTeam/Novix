@@ -23,8 +23,8 @@ import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.designsystem.R as RDesignSystem
-import com.sanaa.presentation.component.DotSeparator
-import com.sanaa.presentation.component.IconWithText
+import com.sanaa.presentation.shared_component.DotSeparator
+import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.model.EpisodeUiModel
 
 @Composable

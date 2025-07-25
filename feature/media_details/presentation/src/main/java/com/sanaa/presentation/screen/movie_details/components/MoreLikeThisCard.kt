@@ -12,9 +12,9 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.RemoteImagePlaceholder
-import com.sanaa.presentation.component.cards.MediaPosterCard
-import com.sanaa.presentation.component.cards.SaveIconChip
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.cards.MediaPosterCard
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import com.sanaa.presentation.model.MovieUiModel
 
 @Composable

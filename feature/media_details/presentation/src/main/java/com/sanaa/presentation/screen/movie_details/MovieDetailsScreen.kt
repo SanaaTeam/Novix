@@ -38,12 +38,12 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.DotSeparator
-import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.component.ImageSlider
-import com.sanaa.presentation.component.InfoSection
-import com.sanaa.presentation.component.OverviewSection
-import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.DotSeparator
+import com.sanaa.presentation.shared_component.IconWithText
+import com.sanaa.presentation.shared_component.ImageSlider
+import com.sanaa.presentation.shared_component.InfoSection
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.modifier.fillWidthOfParent
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -52,7 +52,7 @@ import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisCard
-import com.sanaa.presentation.screen.series.components.BottomContainer
+import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf

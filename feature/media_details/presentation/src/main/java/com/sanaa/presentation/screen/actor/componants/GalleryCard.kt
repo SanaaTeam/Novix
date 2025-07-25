@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 
 @Composable
 fun GalleryCard(
