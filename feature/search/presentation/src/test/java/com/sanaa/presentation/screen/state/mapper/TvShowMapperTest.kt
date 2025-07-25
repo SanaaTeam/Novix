@@ -2,14 +2,15 @@ package com.sanaa.presentation.screen.state.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import entity.TvSeries
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
-import usecase.search.search_param.SearchTvSeriesOutput
 
 class TvShowMapperTest {
     @Test
-    fun `toUiState should map SearchTvSeriesOutput to TvShowUiModel correctly`() {
+    fun `toUiState should map TvSeries to TvShowUiModel correctly`() {
         val tvSeries =
-            createSearchTvSeriesOutput(101, "Breaking Bad", "https://example.com/breaking.jpg")
+            createTvSeries(101, "Breaking Bad", "https://example.com/breaking.jpg")
 
         val result = tvSeries.toUiState()
 
@@ -19,15 +20,20 @@ class TvShowMapperTest {
     }
 
     companion object {
-        fun createSearchTvSeriesOutput(
+        fun createTvSeries(
             id: Int,
             title: String,
             posterUrl: String
-        ): SearchTvSeriesOutput {
-            return SearchTvSeriesOutput(
+        ): TvSeries {
+            return TvSeries(
                 id = id,
                 title = title,
-                posterImageUrl = posterUrl
+                posterImageUrl = posterUrl,
+                releaseDate = LocalDate(1970, 1, 1),
+                genres = emptyList(),
+                imdbRating = 10f,
+                overview = "",
+                seasonsCount = 0,
             )
         }
 

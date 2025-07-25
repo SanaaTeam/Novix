@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants.cards
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -10,11 +11,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,16 +44,15 @@ fun MediaRatingChip(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Icon(
+        Image(
             painter = painterResource(R.drawable.icon_star),
             contentDescription = null,
             modifier = Modifier.size(12.dp),
-            tint = Theme.colors.statusColors.yellowAccent
+            colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
         )
-        Text(
+        BasicText(
             text = rating,
-            style = Theme.textStyle.label.small,
-            color = Theme.colors.onPrimary
+            style = Theme.textStyle.label.small.copy(color = Theme.colors.onPrimary),
         )
     }
 }

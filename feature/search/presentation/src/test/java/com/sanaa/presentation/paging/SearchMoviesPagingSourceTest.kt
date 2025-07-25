@@ -6,6 +6,7 @@ import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import com.google.common.truth.Truth
 import com.sanaa.presentation.fake.FakeData
+import entity.Movie
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -13,8 +14,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSourceTest {
     private val searchMoviesUseCase: SearchUseCase = mockk(relaxed = true)
@@ -71,7 +70,7 @@ class SearchMoviesPagingSourceTest {
 
     @Test
     fun `load() should returns correct data when successful`() = runTest {
-        val mockData = FakeData.moviesOutput
+        val mockData = FakeData.dummyMovies
         val params = getPagingParams(key = null)
         coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
@@ -82,13 +81,13 @@ class SearchMoviesPagingSourceTest {
 
     @Test
     fun `load() should returns empty list when there is no data`() = runTest {
-        val mockData = FakeData.moviesOutput
+        val mockData = FakeData.dummyMovies
         val params = getPagingParams(key = 2)
         coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
 
         val page = result as LoadResult.Page
-        Truth.assertThat(page.data).isEqualTo(emptyList<SearchActorOutput>())
+        Truth.assertThat(page.data).isEqualTo(emptyList<Movie>())
     }
 
 
@@ -104,8 +103,8 @@ class SearchMoviesPagingSourceTest {
         anchorPosition: Int? = null,
         prevKey: Int? = null,
         nextKey: Int? = null,
-        data: List<SearchMovieOutput> = FakeData.moviesOutput,
-    ): PagingState<Int, SearchMovieOutput> {
+        data: List<Movie> = FakeData.dummyMovies,
+    ): PagingState<Int, Movie> {
         return PagingState(
             anchorPosition = anchorPosition,
             config = PagingConfig(pageSize = 10),

@@ -2,27 +2,28 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import entity.Movie
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchMovieOutput
 
 class SearchMoviesPagingSource(
     private val searchMoviesUseCase: SearchUseCase,
     private val query: String,
     private val filters: MediaFilters?
-) : PagingSource<Int, SearchMovieOutput>() {
+) : PagingSource<Int, Movie>() {
 
-    override fun getRefreshKey(state: PagingState<Int, SearchMovieOutput>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchMovieOutput> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         val page = params.key ?: STARTING_PAGE_INDEX
         return try {
-            val results = searchMoviesUseCase.searchMovies(query = query, page = page, filters = filters)
+            val results =
+                searchMoviesUseCase.searchMovies(query = query, page = page, filters = filters)
 
             LoadResult.Page(
                 data = results,

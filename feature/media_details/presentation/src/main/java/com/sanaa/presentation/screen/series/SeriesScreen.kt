@@ -223,7 +223,8 @@ fun SeriesScreenContent(
             )
         }
         if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet)
+            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showLoginBottomSheet)
         }
     }
 }

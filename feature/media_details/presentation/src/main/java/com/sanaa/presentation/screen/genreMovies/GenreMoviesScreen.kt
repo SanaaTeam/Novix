@@ -154,7 +154,9 @@ fun GenreMoviesScreenContent(
                     if (state.showBottomSheet) {
                         RequestToLoginBottomSheet(
                             onDismiss = { interactionListener.onBottomSheetDismiss() },
-                            onLoginButtonClick = {/* navigate to login screen */ })
+                            onLoginButtonClick = {/* navigate to login screen */ },
+                            isVisible = state.showBottomSheet
+                        )
                     }
                 }
             }
