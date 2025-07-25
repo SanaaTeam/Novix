@@ -36,18 +36,25 @@ import usecase.search.search_param.MediaFilters
 
 @Composable
 fun FilterBottomSheet(
-    isVisible: Boolean,
     dismissSheet: () -> Unit,
+    isVisible: Boolean,
     onFilterApplied: (MediaFilters?) -> Unit,
+    selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
-    val filterUiState by filterViewModel.uiState.collectAsStateWithLifecycle()
+    val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(selectedTabIndex) {
+        filterViewModel.fetchGenresByTab(selectedTabIndex)
+    }
+
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters ->
             onFilterApplied(filters)
         }
     }
+
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = {
@@ -59,7 +66,6 @@ fun FilterBottomSheet(
 
     ) {
         FilterBottomSheetContent(
-            isVisible =isVisible,
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
             listener = filterViewModel,
@@ -70,12 +76,12 @@ fun FilterBottomSheet(
     }
 }
 
+
 @Composable
 fun FilterBottomSheetContent(
-    isVisible: Boolean,
-    onDismissRequest: () -> Unit,
     uiState: FilterUiState,
     listener: FilterBottomSheetInteractionsListener,
+    onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
@@ -83,18 +89,8 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 24.dp
-            ),
+            .padding(16.dp),
     ) {
-
-        BottomSheetHeader(onCancelClicked = onDismissRequest)
-
-        AnimatedVisibility(visible = uiState.isLoading) {
-            WavyProgressIndicator()
-        }
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
@@ -103,8 +99,14 @@ fun FilterBottomSheetContent(
                     enabled = !isSliderDragging
                 ),
         ) {
+            BottomSheetHeader(onCancelClicked = onDismissRequest)
+
+            AnimatedVisibility(visible = uiState.isLoading) {
+                WavyProgressIndicator()
+            }
+
             AnimatedVisibility(visible = !uiState.isLoading) {
-                Column() {
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
@@ -120,13 +122,13 @@ fun FilterBottomSheetContent(
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged,
-                        modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+                        onRatingChanged = listener::onRatingChanged
                     )
                 }
             }
         }
         FilterActions(
+            isApplyEnabled = uiState.hasUserSelectedFilters,
             onApplyClicked = {
                 listener.onApplyClicked()
                 onDismissRequest()
@@ -136,13 +138,15 @@ fun FilterBottomSheetContent(
     }
 }
 
+
 @Composable
 private fun FilterActions(
+    isApplyEnabled: Boolean,
     onApplyClicked: () -> Unit,
     onClearClicked: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(top = 12.dp),
+        modifier = Modifier.padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixPrimaryButton(
@@ -150,7 +154,8 @@ private fun FilterActions(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            text = stringResource(R.string.apply)
+            text = stringResource(R.string.apply),
+            isEnabled = isApplyEnabled
         )
         NovixOutlinedButton(
             onClick = onClearClicked,
@@ -161,4 +166,3 @@ private fun FilterActions(
         )
     }
 }
-

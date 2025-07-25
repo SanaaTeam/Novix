@@ -150,6 +150,7 @@ fun SearchScreenContent(
             dismissSheet = dismissSheet,
             isVisible = uiState.showBottomSheet,
             onFilterApplied = onFilterApplied,
+            selectedTabIndex = uiState.selectedTabIndex
         )
     }
 }
