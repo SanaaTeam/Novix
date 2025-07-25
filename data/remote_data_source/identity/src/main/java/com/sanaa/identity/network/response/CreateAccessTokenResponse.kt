@@ -2,7 +2,7 @@ package com.sanaa.identity.network.response
 
 import kotlinx.serialization.SerialName
 
-data class CreateUserJsonWebTokenResponse(
+data class CreateAccessTokenResponse(
     @SerialName("success")
     val isSuccess: Boolean,
 

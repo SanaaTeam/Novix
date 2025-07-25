@@ -2,11 +2,11 @@ package com.sanaa.identity.network
 
 import com.sanaa.identity.network.postBody.CreateAccessTokenPostBody
 import com.sanaa.identity.network.postBody.LoginPostBody
+import com.sanaa.identity.network.response.CreateAccessTokenResponse
 import com.sanaa.identity.network.response.CreateGuestSessionResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse
-import com.sanaa.identity.network.response.CreateUserJsonWebTokenResponse
 import com.sanaa.identity.network.response.LoginResponse
-import com.sanaa.identity.network.response.RequestUserJsonWebTokenResponse
+import com.sanaa.identity.network.response.RequestAccessTokenResponse
 import com.sanaa.identity.network.response.ValidateKeyResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -31,10 +31,10 @@ interface AuthenticationApi {
     ): ValidateKeyResponse
 
     @POST("4/auth/request_token")
-    suspend fun requestUserAccessToken(): RequestUserJsonWebTokenResponse
+    suspend fun requestUserAccessToken(): RequestAccessTokenResponse
 
     @POST("4/auth/access_token")
     suspend fun createUserAccessToken(
         @Body body: CreateAccessTokenPostBody,
-    ): CreateUserJsonWebTokenResponse
+    ): CreateAccessTokenResponse
 }

@@ -32,4 +32,5 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
     implementation(libs.ktor.client.mock)
+    implementation(libs.slf4j.api)
 }

@@ -25,4 +25,5 @@ dependencies {
     // Koin dependencies
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+    implementation(libs.slf4j.api)
 }

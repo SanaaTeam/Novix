@@ -31,10 +31,11 @@ class AuthenticationServiceImpl(
     override suspend fun createUserAccessToken(requestToken: String) {
         val postBody = CreateAccessTokenPostBody(requestToken)
         val response = authenticationApi.createUserAccessToken(postBody)
-        if (response.isSuccess && response.accessToken != null)
+        if (response.isSuccess && response.accessToken != null) {
             preferencesManager.updateAuthorizationToken(response.accessToken)
-
-        throw InvalidTokenException(response.statusMessage)
+        } else {
+            throw InvalidTokenException(response.statusMessage)
+        }
     }
 
     override suspend fun createGuestSession() {
