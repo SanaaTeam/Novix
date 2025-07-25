@@ -54,16 +54,8 @@ class FilterViewModel(
 
     override fun onApplyClicked() {
         tryToExecute(
-            callee = {
-                val currentState = state.value
-                val mediaFilters = MediaFilters(
-                    startYear = currentState.yearRange.start.toInt(),
-                    endYear = currentState.yearRange.endInclusive.toInt(),
-                    genres = currentState.selectedGenres.map { it.toDomain() },
-                    imdbRating = currentState.imdbRating.toFloat()
-                )
-                _filterResult.emit(mediaFilters)
-            })
+            callee = ::emitSelectedFilters
+        )
     }
 
     fun fetchGenresByTab(tabIndex: Int) {
@@ -107,5 +99,16 @@ class FilterViewModel(
                 isLoading = false
             )
         }
+    }
+
+    private suspend fun emitSelectedFilters() {
+        val currentState = state.value
+        val mediaFilters = MediaFilters(
+            startYear = currentState.yearRange.start.toInt(),
+            endYear = currentState.yearRange.endInclusive.toInt(),
+            genres = currentState.selectedGenres.map { it.toDomain() },
+            imdbRating = currentState.imdbRating.toFloat()
+        )
+        _filterResult.emit(mediaFilters)
     }
 }
