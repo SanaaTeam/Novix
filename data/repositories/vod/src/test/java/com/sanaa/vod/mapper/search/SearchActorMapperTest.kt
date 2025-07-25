@@ -111,7 +111,8 @@ class SearchActorMapperTest {
         id = id,
         name = name,
         imagePath = imagePath,
-        language = language
+        language = language,
+        gender = null,
     )
 
     private fun createActorSearchDto(
@@ -121,6 +122,8 @@ class SearchActorMapperTest {
     ) = ActorSearchDto(
         id = id,
         name = name,
-        profileImagePath = profileImagePath
+        profileImagePath = profileImagePath,
+        gender = null,
+        knownForDepartment = null
     )
 }
