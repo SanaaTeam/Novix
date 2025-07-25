@@ -14,7 +14,6 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
 
     private lateinit var analytics: FirebaseAnalytics
-    private val searchFeatureApi: SearchFeatureApi by inject()
     private val homeFeatureApi: HomeFeatureApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
