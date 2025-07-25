@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details.components
+package com.sanaa.presentation.screen.movieDetails.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth

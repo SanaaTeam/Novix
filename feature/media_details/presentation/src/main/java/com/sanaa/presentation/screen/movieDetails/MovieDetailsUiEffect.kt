@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details
+package com.sanaa.presentation.screen.movieDetails
 
 sealed class MovieDetailsUiEffect {
     object NavigateBack : MovieDetailsUiEffect()

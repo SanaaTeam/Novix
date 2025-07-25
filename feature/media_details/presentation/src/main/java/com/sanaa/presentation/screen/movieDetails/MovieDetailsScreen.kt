@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details
+package com.sanaa.presentation.screen.movieDetails
 
 import android.app.Activity
 import android.content.Intent
@@ -51,7 +51,7 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.movie_details.components.MoreLikeThisCard
+import com.sanaa.presentation.screen.movieDetails.components.MoreLikeThisCard
 import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import org.koin.androidx.compose.koinViewModel

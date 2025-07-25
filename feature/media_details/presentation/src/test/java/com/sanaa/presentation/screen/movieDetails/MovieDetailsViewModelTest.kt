@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.movie_details
+package com.sanaa.presentation.screen.movieDetails
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
