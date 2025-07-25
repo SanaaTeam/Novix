@@ -282,7 +282,8 @@ fun MovieDetailsContent(
 
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
-                    onDismiss = { interactionListener.onDismissLoginBottomSheet() })
+                    onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+                    isVisible = state.showLoginBottomSheet)
             }
 
         }

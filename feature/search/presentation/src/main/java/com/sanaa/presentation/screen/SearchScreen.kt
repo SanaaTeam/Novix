@@ -4,12 +4,9 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +29,6 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
@@ -86,7 +82,6 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreenContent(
     uiState: SearchScreenUiState,
@@ -96,13 +91,9 @@ fun SearchScreenContent(
     actorsPagingData: LazyPagingItems<ActorUiModel>,
     onFilterApplied: (MediaFilters?) -> Unit,
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
 
     val dismissSheet: () -> Unit = {
-        scope.launch { sheetState.hide() }.invokeOnCompletion {
-            if (!sheetState.isVisible) searchListener.onBottomSheetDragged()
-        }
+        searchListener.onBottomSheetDragged()
     }
 
     Column {
@@ -141,8 +132,9 @@ fun SearchScreenContent(
     if (uiState.showBottomSheet) {
         FilterBottomSheet(
             dismissSheet = dismissSheet,
-            sheetState = sheetState,
+            isVisible = uiState.showBottomSheet,
             onFilterApplied = onFilterApplied,
+            selectedTabIndex = uiState.selectedTabIndex
         )
     }
 }
