@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="sign_up">حساب جديد</string>
     <string name="login">تسجيل الدخول</string>
+    <string name="reset_password">إعادة تعيين كلمة المرور</string>
     <string name="login_to_your_account">تسجيل الدخول إلى حسابك</string>
     <string name="user_name">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
