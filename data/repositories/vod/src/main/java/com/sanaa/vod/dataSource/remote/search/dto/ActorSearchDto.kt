@@ -5,13 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ActorSearchDto(
-    @SerialName("id")
-    val id: Int,
+    @SerialName("id") val id: Int,
+    @SerialName("name") val name: String?,
+    @SerialName("profile_path") val profileImagePath: String?,
+    @SerialName("known_for_department") val knownForDepartment: String?,
+    @SerialName("gender") val gender: Int?,
 
-    @SerialName("name")
-    val name: String?,
-
-    @SerialName("profile_path")
-    val profileImagePath: String?,
-
-)
+    )

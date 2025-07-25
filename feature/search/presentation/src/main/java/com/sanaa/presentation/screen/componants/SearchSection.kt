@@ -45,7 +45,7 @@ fun SearchSection(
     Row(
         modifier = Modifier
             .height(48.dp)
-            .padding(horizontal = 16.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -57,7 +57,7 @@ fun SearchSection(
                 onTextChange(newValue.text)
             },
             hint = stringResource(R.string.search_hint),
-            icon = painterResource(R.drawable.icon_empty_search),
+            icon = painterResource(R.drawable.icon_search),
             modifier = Modifier
                 .weight(1f)
 

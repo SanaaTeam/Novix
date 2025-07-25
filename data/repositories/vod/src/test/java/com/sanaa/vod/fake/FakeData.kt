@@ -10,19 +10,29 @@ import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
 
 object FakeData {
     val ActorsLocalDtoList = listOf(
-        ActorLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en"),
-        ActorLocalDto(id = 2, name = "Leonardo Leonardo", imagePath = "img", language = "en")
+        ActorLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en", gender = 0),
+        ActorLocalDto(
+            id = 2,
+            name = "Leonardo Leonardo",
+            imagePath = "img",
+            language = "en",
+            gender = 0
+        )
     )
     val ActorsRemoteDtoList = listOf(
         ActorSearchDto(
             id = 1,
             name = "Tom Hanks",
-            profileImagePath = "/path/to/image"
+            profileImagePath = "/path/to/image",
+            gender = 0,
+            knownForDepartment = "Acting"
         ),
         ActorSearchDto(
             id = 2,
             name = "sam",
-            profileImagePath = "/path/to/image"
+            profileImagePath = "/path/to/image",
+            gender = 0,
+            knownForDepartment = "Acting"
         ),
     )
     val actorSearchResponse = SearchResponse(

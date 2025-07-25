@@ -4,15 +4,12 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,26 +21,27 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import com.sanaa.presentation.screen.componants.WavyProgressIndicator
 import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FilterBottomSheet(
+    isVisible: Boolean,
     dismissSheet: () -> Unit,
-    sheetState: SheetState,
     onFilterApplied: (MediaFilters?) -> Unit,
     selectedTabIndex: Int
 ) {
+    var isSliderDragging by remember { mutableStateOf(false) }
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
@@ -60,10 +58,8 @@ fun FilterBottomSheet(
 
     FilterBottomSheetContent(
         dismissSheet = dismissSheet,
-        sheetState = sheetState,
         filterUiState = filterUiState,
         filterListener = filterViewModel,
-
         )
 }
 
@@ -71,36 +67,39 @@ fun FilterBottomSheet(
 @OptIn(ExperimentalMaterial3Api::class)
 fun FilterBottomSheetContent(
     dismissSheet: () -> Unit,
-    sheetState: SheetState,
     filterUiState: FilterUiState,
     filterListener: FilterBottomSheetInteractionsListener
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
 
-    ModalBottomSheet(
-        modifier = Modifier.statusBarsPadding(),
-        onDismissRequest = {
+    BaseBottomSheet(
+        isVisible = isVisible,
+        onDismiss = {
             if (!isSliderDragging) {
                 dismissSheet()
             }
-        }, sheetState = sheetState,
-        containerColor = Theme.colors.surface
+        },
+        modifier = Modifier.fillMaxHeight(0.85f)
+
     ) {
         FilterBottomSheetContent(
+            isVisible =isVisible,
+            onDismissRequest = dismissSheet,
             uiState = filterUiState,
             listener = filterListener,
-            onDismissRequest = dismissSheet,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
+
     }
 }
 
 @Composable
 fun FilterBottomSheetContent(
+    isVisible: Boolean,
+    onDismissRequest: () -> Unit,
     uiState: FilterUiState,
     listener: FilterBottomSheetInteractionsListener,
-    onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
@@ -108,8 +107,18 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                bottom = 24.dp
+            ),
     ) {
+
+        BottomSheetHeader(onCancelClicked = onDismissRequest)
+
+        AnimatedVisibility(visible = uiState.isLoading) {
+            WavyProgressIndicator()
+        }
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
@@ -118,14 +127,8 @@ fun FilterBottomSheetContent(
                     enabled = !isSliderDragging
                 ),
         ) {
-            BottomSheetHeader(onCancelClicked = onDismissRequest)
-
-            AnimatedVisibility(visible = uiState.isLoading) {
-                WavyProgressIndicator()
-            }
-
             AnimatedVisibility(visible = !uiState.isLoading) {
-                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column() {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
@@ -141,7 +144,8 @@ fun FilterBottomSheetContent(
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged
+                        onRatingChanged = listener::onRatingChanged,
+                        modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
                     )
                 }
             }
@@ -157,7 +161,6 @@ fun FilterBottomSheetContent(
     }
 }
 
-
 @Composable
 private fun FilterActions(
     isApplyEnabled: Boolean,
@@ -165,7 +168,7 @@ private fun FilterActions(
     onClearClicked: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(top = 24.dp),
+        modifier = Modifier.padding(top = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixPrimaryButton(
@@ -185,3 +188,4 @@ private fun FilterActions(
         )
     }
 }
+

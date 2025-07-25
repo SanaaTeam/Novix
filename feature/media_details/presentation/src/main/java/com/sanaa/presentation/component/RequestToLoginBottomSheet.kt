@@ -30,6 +30,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 @Composable
 fun RequestToLoginBottomSheet(
     modifier: Modifier = Modifier,
+    isVisible: Boolean,
     onDismiss: () -> Unit = {},
     onLoginButtonClick: () -> Unit = {},
     text: String = stringResource(R.string.request_login),
@@ -43,6 +44,7 @@ fun RequestToLoginBottomSheet(
         R.drawable.icon_users_light
     }
     BaseBottomSheet(
+        isVisible = isVisible,
         onDismiss = onDismiss,
         content = {
             Column(
@@ -93,7 +95,7 @@ private fun RequestToLoginBottomSheetPreview() {
         }
 
         if (showSheet.value) {
-            RequestToLoginBottomSheet(
+            RequestToLoginBottomSheet( isVisible = showSheet.value,
                 onDismiss = { showSheet.value = false }
             )
         }

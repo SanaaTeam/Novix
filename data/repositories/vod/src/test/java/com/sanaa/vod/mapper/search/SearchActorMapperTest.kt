@@ -12,22 +12,22 @@ class SearchActorMapperTest {
     @Test
     fun `should map correct id when ActorLocalDto has valid name`() {
         val dto = createActorLocalDto(id = 1)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(1)
     }
 
     @Test
     fun `should map correct name when ActorLocalDto has valid id`() {
         val dto = createActorLocalDto(name = "Tom Hanks")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.name).isEqualTo("Tom Hanks")
     }
 
     @Test
     fun `should map correct profileImageUrl when ActorLocalDto has valid profileImageUrl`() {
         val dto = createActorLocalDto(imagePath = "/tom.jpg")
-        val result = dto.toSearchOutput()
-        Truth.assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tom.jpg")
+        val result = dto.toEntity()
+        Truth.assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tom.jpg")
     }
 
     //ActorSearchDto to LocalDto
@@ -64,22 +64,22 @@ class SearchActorMapperTest {
     @Test
     fun `should map correct id when ActorSearchDto has valid id`() {
         val dto = createActorSearchDto(id = 3)
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.id).isEqualTo(3)
     }
 
     @Test
     fun `should map correct name when ActorSearchDto has valid name`() {
         val dto = createActorSearchDto(name = "Chris Evans")
-        val result = dto.toSearchOutput()
+        val result = dto.toEntity()
         Truth.assertThat(result.name).isEqualTo("Chris Evans")
     }
 
     @Test
     fun `should map profileImageUrl toSearchOutput correct  when ActorSearchDto has valid profileImageUrl`() {
         val dto = createActorSearchDto(profileImagePath = "/chris.jpg")
-        val result = dto.toSearchOutput()
-        Truth.assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
+        val result = dto.toEntity()
+        Truth.assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
     }
 
 
@@ -111,7 +111,8 @@ class SearchActorMapperTest {
         id = id,
         name = name,
         imagePath = imagePath,
-        language = language
+        language = language,
+        gender = null,
     )
 
     private fun createActorSearchDto(
@@ -121,6 +122,8 @@ class SearchActorMapperTest {
     ) = ActorSearchDto(
         id = id,
         name = name,
-        profileImagePath = profileImagePath
+        profileImagePath = profileImagePath,
+        gender = null,
+        knownForDepartment = null
     )
 }
