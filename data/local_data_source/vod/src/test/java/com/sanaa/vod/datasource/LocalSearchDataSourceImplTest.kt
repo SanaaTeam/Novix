@@ -157,7 +157,7 @@ class LocalSearchDataSourceImplTest {
         val query = "actor query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "actor"))
         val currentTimestamp = TimeUtils.getCurrentTimeStamp()
-        val actor = ActorLocalDto(123, "Actor Name", "", "en", currentTimestamp)
+        val actor = ActorLocalDto(123, "Actor Name", "", "en", currentTimestamp, 0)
 
         coEvery {
             searchDao.getSearchByQueryAndLanguage(query, "en")
@@ -186,7 +186,8 @@ class LocalSearchDataSourceImplTest {
                 name = "Actor",
                 imagePath = "",
                 language = "en",
-                timestamp = currentTimestamp
+                timestamp = currentTimestamp,
+                gender = 0
             )
         )
         val listOf3 = listOf(
@@ -265,19 +266,11 @@ class LocalSearchDataSourceImplTest {
         val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "tv query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "tv_series"))
-        val series =
-            listOf(
-                TvSeriesLocalDto(
-                    123,
-                    "Series1",
-                    "",
-                    "2002-10-10",
-                    null,
-                    8.1f,
-                    "en",
-                    currentTimestamp
-                )
+        val series = listOf(
+            TvSeriesLocalDto(
+                123, "Series1", "", "2002-10-10", null, 8.1f, "en", currentTimestamp
             )
+        )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(
             1, query, "en", currentTimestamp
@@ -334,6 +327,7 @@ class LocalSearchDataSourceImplTest {
             imagePath = "",
             language = "en",
             timestamp = currentTimestamp,
+            gender = 0
         )
         coEvery { actorDao.insertActor(actor) } returns Unit
 
@@ -371,8 +365,8 @@ class LocalSearchDataSourceImplTest {
         val limit = 20
         val offset = 40
         val expectedActors = listOf(
-            ActorLocalDto(1, "Tom Hanks", "img1", "en", System.currentTimeMillis()),
-            ActorLocalDto(2, "Tom Cruise", "img2", "en", System.currentTimeMillis())
+            ActorLocalDto(1, "Tom Hanks", "img1", "en", System.currentTimeMillis(), 0),
+            ActorLocalDto(2, "Tom Cruise", "img2", "en", System.currentTimeMillis(), 0)
         )
 
         coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns expectedActors
@@ -561,7 +555,7 @@ class LocalSearchDataSourceImplTest {
         val limit = 1000
         val offset = 0
         val largeResult = List(1000) { index ->
-            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis())
+            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis(), 0)
         }
 
         coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns largeResult
@@ -581,7 +575,7 @@ class LocalSearchDataSourceImplTest {
         val pageSize = 10
 
         val page1Actors = List(10) { index ->
-            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis())
+            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis(), 0)
         }
         val page2Actors = List(10) { index ->
             ActorLocalDto(
@@ -589,7 +583,8 @@ class LocalSearchDataSourceImplTest {
                 "Actor ${index + 10}",
                 "img${index + 10}",
                 "en",
-                System.currentTimeMillis()
+                System.currentTimeMillis(),
+                0
             )
         }
 

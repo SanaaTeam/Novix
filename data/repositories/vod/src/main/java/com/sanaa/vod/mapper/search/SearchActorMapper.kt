@@ -13,7 +13,7 @@ fun ActorLocalDto.toEntity(): Actor {
         imageUrl = getFullImageUrl(imagePath),
         region = null,
         lastShow = null,
-        gender = Actor.Gender.MALE,
+        gender = mapGender(gender),
         department = null,
         character = null,
         birthDate = null,
@@ -29,6 +29,7 @@ fun ActorSearchDto.toLocalDto(language: String): ActorLocalDto {
         name = name ?: "",
         imagePath = getFullImageUrl(profileImagePath),
         language = language,
+        gender = gender
     )
 }
 
@@ -39,8 +40,8 @@ fun ActorSearchDto.toEntity(): Actor {
         imageUrl = getFullImageUrl(profileImagePath),
         region = null,
         lastShow = null,
-        gender = Actor.Gender.MALE,
-        department = null,
+        gender = mapGender(gender),
+        department = knownForDepartment,
         character = null,
         birthDate = null,
         deathDate = null,
@@ -51,3 +52,7 @@ fun ActorSearchDto.toEntity(): Actor {
 
 internal fun getFullImageUrl(path: String?): String =
     if (path.isNullOrBlank()) "" else "${TMDB_IMAGE_BASE_URL}$path"
+
+fun mapGender(gender: Int?): Actor.Gender {
+    return if (gender == 1) Actor.Gender.FEMALE else Actor.Gender.MALE
+}
