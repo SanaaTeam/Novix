@@ -6,6 +6,7 @@ import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import com.google.common.truth.Truth
 import com.sanaa.presentation.fake.FakeData
+import entity.TvSeries
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -86,7 +87,7 @@ class SearchTvShowsPagingSourceTest {
         val result = searchTvShowsPagingSource.load(params)
 
         val page = result as LoadResult.Page
-        Truth.assertThat(page.data).isEqualTo(emptyList<SearchActorOutput>())
+        Truth.assertThat(page.data).isEqualTo(emptyList<TvSeries>())
     }
 
 
@@ -102,8 +103,8 @@ class SearchTvShowsPagingSourceTest {
         anchorPosition: Int? = null,
         prevKey: Int? = null,
         nextKey: Int? = null,
-        data: List<SearchTvSeriesOutput> = FakeData.tvShowsOutput,
-    ): PagingState<Int, SearchTvSeriesOutput> {
+        data: List<TvSeries> = FakeData.tvShowsOutput,
+    ): PagingState<Int, TvSeries> {
         return PagingState(
             anchorPosition = anchorPosition,
             config = PagingConfig(pageSize = 10),

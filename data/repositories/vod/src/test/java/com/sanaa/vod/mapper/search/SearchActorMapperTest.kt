@@ -27,7 +27,7 @@ class SearchActorMapperTest {
     fun `should map correct profileImageUrl when ActorLocalDto has valid profileImageUrl`() {
         val dto = createActorLocalDto(imagePath = "/tom.jpg")
         val result = dto.toEntity()
-        Truth.assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tom.jpg")
+        Truth.assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/tom.jpg")
     }
 
     //ActorSearchDto to LocalDto
@@ -79,7 +79,7 @@ class SearchActorMapperTest {
     fun `should map profileImageUrl toSearchOutput correct  when ActorSearchDto has valid profileImageUrl`() {
         val dto = createActorSearchDto(profileImagePath = "/chris.jpg")
         val result = dto.toEntity()
-        Truth.assertThat(result.profileImageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
+        Truth.assertThat(result.imageUrl).isEqualTo("https://image.tmdb.org/t/p/w500/chris.jpg")
     }
 
 

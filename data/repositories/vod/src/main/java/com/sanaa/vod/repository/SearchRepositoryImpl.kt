@@ -7,8 +7,8 @@ import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.mapper.search.toLocalDto
-import com.sanaa.vod.util.filterCashedMovies
-import com.sanaa.vod.util.filterCashedTvShows
+import com.sanaa.vod.util.filterCachedMovies
+import com.sanaa.vod.util.filterCachedTvShows
 import com.sanaa.vod.util.filterMovies
 import com.sanaa.vod.util.filterTvShows
 import com.sanaa.vod.util.safeCall
@@ -90,7 +90,7 @@ class SearchRepositoryImpl(
         cachedMedia: List<MovieLocalDto>,
     ): List<Movie> {
         return filters
-            ?.filterCashedMovies(cachedMedia)
+            ?.filterCachedMovies(cachedMedia)
             ?: cachedMedia.map { it.toEntity() }
     }
 
@@ -114,7 +114,7 @@ class SearchRepositoryImpl(
         cachedTvSeries: List<TvSeriesLocalDto>,
     ): List<TvSeries> {
         return filters
-            ?.filterCashedTvShows(cachedTvSeries)
+            ?.filterCachedTvShows(cachedTvSeries)
             ?: return cachedTvSeries.map { it.toEntity() }
     }
 }

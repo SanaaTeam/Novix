@@ -7,7 +7,6 @@ import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
-import java.time.format.DateTimeParseException
 
 fun MovieLocalDto.toEntity(): Movie {
     return Movie(
@@ -17,9 +16,7 @@ fun MovieLocalDto.toEntity(): Movie {
         genres = emptyList(),
         imdbRating = imdbRating,
         duration = null,
-        releaseDate = releaseDate?.takeIf { it.isNotBlank() }?.let {
-            LocalDate.parse(it)
-        } ?: LocalDate(1990, 1, 1),
+        releaseDate = parseReleaseDate(releaseDate),
         overview = null,
         trailerUrl = null,
     )
@@ -45,9 +42,7 @@ fun MovieSearchDto.toEntity(): Movie {
         genres = emptyList(),
         imdbRating = voteAverage,
         duration = null,
-        releaseDate = releaseDate?.takeIf { it.isNotBlank() }?.let {
-            LocalDate.parse(it)
-        } ?: LocalDate(1990, 1, 1),
+        releaseDate = parseReleaseDate(releaseDate),
         overview = null,
         trailerUrl = null,
     )
@@ -61,9 +56,7 @@ fun TvSeriesLocalDto.toEntity(): TvSeries {
         genres = emptyList(),
         imdbRating = imdbRating ?: 0f,
         overview = null,
-        releaseDate = releaseDate?.takeIf { it.isNotBlank() }?.let {
-            LocalDate.parse(it)
-        } ?: LocalDate(1990, 1, 1),
+        releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
     )
 }
@@ -88,9 +81,7 @@ fun TvShowSearchDto.toEntity(): TvSeries {
         genres = emptyList(),
         imdbRating = voteAverage ?: 0f,
         overview = null,
-        releaseDate = releaseDate?.takeIf { it.isNotBlank() }?.let {
-            LocalDate.parse(it)
-        } ?: LocalDate(1990, 1, 1),
+        releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
     )
 }

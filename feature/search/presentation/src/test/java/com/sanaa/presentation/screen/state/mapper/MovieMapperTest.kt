@@ -3,8 +3,10 @@ package com.sanaa.presentation.screen.state.mapper
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.MovieUiModel
+import entity.Movie
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
 class MovieMapperTest {
@@ -61,7 +63,14 @@ class MovieMapperTest {
 
     companion object {
         fun createSearchMovieOutput(id: Int, title: String, posterUrl: String) =
-            SearchMovieOutput(id = id, title = title, posterImageUrl = posterUrl)
+            Movie(
+                id = id, title = title, posterImageUrl = posterUrl, genres = emptyList(),
+                imdbRating = 0f,
+                duration = 1,
+                releaseDate = LocalDate(1970, 1, 1),
+                overview = "",
+                trailerUrl = ""
+            )
 
         fun createExpectedMovieUiModel(id: Int, title: String, imageUrl: String) =
             MovieUiModel(id = id, title = title, imageUrl = imageUrl, rating = "")

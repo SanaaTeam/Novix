@@ -109,7 +109,7 @@ class SearchRepositoryImplTest {
 
         // When
         val expected =
-            MoviesLocalDtoList.filter { it.releaseDate == 2025 }.map { it.toEntity() }
+            MoviesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() }
         val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
@@ -147,7 +147,7 @@ class SearchRepositoryImplTest {
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
             val expected = MoviesLocalDtoList
-                .filter { it.releaseDate == 2025 }.map { it.toEntity() }
+                .filter { it.releaseDate == "2025" }.map { it.toEntity() }
             val result = searchRepository.searchMovies(query, page, filters)
             assertThat(result).isEqualTo(expected)
         }

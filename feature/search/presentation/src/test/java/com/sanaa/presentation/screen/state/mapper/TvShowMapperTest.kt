@@ -2,6 +2,8 @@ package com.sanaa.presentation.screen.state.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import entity.TvSeries
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
@@ -22,11 +24,16 @@ class TvShowMapperTest {
             id: Int,
             title: String,
             posterUrl: String
-        ): SearchTvSeriesOutput {
-            return SearchTvSeriesOutput(
+        ): TvSeries {
+            return TvSeries(
                 id = id,
                 title = title,
-                posterImageUrl = posterUrl
+                posterImageUrl = posterUrl,
+                releaseDate = LocalDate(1970, 1, 1),
+                genres = emptyList(),
+                imdbRating = 10f,
+                overview = "",
+                seasonsCount = 0,
             )
         }
 
