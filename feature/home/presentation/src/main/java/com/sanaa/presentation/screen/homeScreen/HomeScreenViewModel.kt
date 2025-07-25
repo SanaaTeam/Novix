@@ -1,10 +1,8 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import com.sanaa.presentation.baseViewModel.BaseViewModel
-import com.sanaa.presentation.model.MediaItem
-import com.sanaa.presentation.model.MediaType
-import entity.Movie
-import entity.TvSeries
+import com.sanaa.presentation.mapper.movieToMedia
+import com.sanaa.presentation.mapper.tvShowToMedia
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
@@ -28,9 +26,9 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 val popularMovies = manageMovieUseCase
-                    .getPopularMovies(5).toMedia()
+                    .getPopularMovies(5).movieToMedia()
                 val popularTvSeries = manageTvSeriesUseCase
-                    .getPopularSeries(5, null).toMedia()
+                    .getPopularSeries(5).tvShowToMedia()
                 updateState {
                     it.copy(
                         popularMedia = (popularMovies + popularTvSeries).shuffled()
@@ -50,9 +48,9 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(10,null).toMedia()
+                    .getTopRatedMovies(10,null).movieToMedia()
                 val topRatedTvSeries = manageTvSeriesUseCase
-                    .getTopRatedTvSeries(10,null).toMedia()
+                    .getTopRatedTvSeries(10,null).tvShowToMedia()
                 updateState {
                     it.copy(
                         topRatingMedia = (topRatedMovies + topRatedTvSeries).shuffled()
@@ -72,9 +70,9 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 val watchedMovies = manageHistoryUseCase
-                    .getWatchedMoviesHistory(10,null).toMedia()
+                    .getWatchedMoviesHistory(10,null).movieToMedia()
                 val watchedTvSeries = manageHistoryUseCase
-                    .getWatchedSeriesHistory(10,null).toMedia()
+                    .getWatchedSeriesHistory(10,null).tvShowToMedia()
                 updateState {
                     it.copy(
                         continueWatchingMedia = (watchedMovies + watchedTvSeries).shuffled()
@@ -90,29 +88,5 @@ class HomeScreenViewModel(
         )
     }
 
-    companion object{
-        fun List<Movie>.toMedia(): List<MediaItem>{
-            return this.map {
-                MediaItem(
-                    id = it.id,
-                    title = it.title,
-                    imageUrl = it.posterImageUrl,
-                    rating = it.imdbRating,
-                    mediaType = MediaType.MOVIE
-                )
-            }
-        }
-        fun List<TvSeries>.toMedia(): List<MediaItem>{
-            return this.map {
-                MediaItem(
-                    id = it.id,
-                    title = it.title,
-                    imageUrl = it.posterImageUrl.orEmpty(),
-                    rating = it.imdbRating,
-                    mediaType = MediaType.TV_SHOW
-                )
-            }
-        }
-    }
 
 }

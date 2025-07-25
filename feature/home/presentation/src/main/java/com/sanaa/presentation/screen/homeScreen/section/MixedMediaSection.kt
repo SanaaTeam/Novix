@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.homeScreen.section
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -11,21 +12,30 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.section_header.InlineAction
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.slider.CarouselSlider
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -35,6 +45,8 @@ import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.model.MediaItem
 import com.sanaa.presentation.model.MediaType
+import kotlinx.coroutines.launch
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 val demoMediaList = listOf(
@@ -65,6 +77,34 @@ val demoMediaList = listOf(
         imageUrl = "",
         rating = 9.9f,
         mediaType = MediaType.TV_SHOW
+    ),
+    MediaItem(
+        id = 5,
+        title = "media 5",
+        imageUrl = "",
+        rating = 9.9f,
+        mediaType = MediaType.TV_SHOW
+    ),
+    MediaItem(
+        id = 6,
+        title = "media 6",
+        imageUrl = "",
+        rating = 9.9f,
+        mediaType = MediaType.TV_SHOW
+    ),
+    MediaItem(
+        id = 7,
+        title = "media 7",
+        imageUrl = "",
+        rating = 9.9f,
+        mediaType = MediaType.TV_SHOW
+    ),
+    MediaItem(
+        id = 8,
+        title = "media 8",
+        imageUrl = "",
+        rating = 9.9f,
+        mediaType = MediaType.TV_SHOW
     )
 )
 
@@ -75,12 +115,6 @@ fun MixedMediaSection(
     mediaItems: List<MediaItem>
 ) {
 
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { mediaItems.size })
-    val focusedWidth = 210.dp
-    val unFocusedWidth = 74.dp
-
-
-
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -89,56 +123,51 @@ fun MixedMediaSection(
             title = headerLabel,
             rightContent = {
                 InlineAction(
-                    onClick = {},
+                    onClick = {}
                 )
             }
         )
-        HorizontalPager(
-            state = pagerState,
-            contentPadding = PaddingValues(start = 0.dp, end = 160.dp),
-            pageSpacing = -170.dp,
-            modifier = Modifier.fillMaxWidth()
-        )
-        { page ->
 
-            val pageOffset =
-                ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
-                    .coerceIn(0f, 1f)
-            val animatedWidth by animateDpAsState(
-                targetValue = lerp(start = unFocusedWidth, stop = focusedWidth, 1f - pageOffset),
-                label = "animatedWidth"
-            )
+//        FocusedCarousel(
+//            mediaItems = mediaItems
+//        )
 
+        CarouselSlider(
+            itemsCount = mediaItems.size,
+            preferredItemWidth = 158.dp,
+            itemSpacing = 8.dp,
+            contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
+            maxSmallItemWidth = 74.dp,
+            minSmallItemWidth = 74.dp
+        ) { index, isFocused ->
+            val width = if (isFocused) 158.dp else 74.dp
             Box(
-                modifier = Modifier
-                    .width(animatedWidth)
-                    .height(210.dp),
-                contentAlignment = Alignment.BottomCenter
+                modifier = Modifier.height(210.dp).fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
                 MediaPosterCard(
-                    ratio = animatedWidth / 210.dp,
+                    width = 158.dp,
+                    height = 210.dp,
                     topLeftContent = {
-                        SaveIconChip(
-                            onClick = {}
-                        )
+                        SaveIconChip(onClick = {})
                     },
                     onCardClick = {
-
+                        // Handle card click
                     },
                     posterImage = {
                         RemoteBlurredHaramImageViewer(
-                            imageUrl = mediaItems[page].imageUrl,
+                            imageUrl = mediaItems[index].imageUrl,
                             modifier = Modifier,
                             blurRadius = 150,
                             haramThreshold = 0.2f,
                             nonHaramThreshold = 0.7f,
                             placeholderContent = {
-                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
                             errorContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
-                            contentDescription = mediaItems[page].title,
+                            contentDescription = mediaItems[index].title,
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
@@ -152,11 +181,10 @@ fun MixedMediaSection(
                     }
                 )
             }
-
-
         }
     }
 }
+
 
 
 @PreviewLightDark
@@ -174,3 +202,5 @@ fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
 
     }
 }
+
+

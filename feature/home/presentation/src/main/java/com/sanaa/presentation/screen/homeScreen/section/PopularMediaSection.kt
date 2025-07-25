@@ -21,26 +21,35 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.MediaRatingChip
 import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.presentation.model.MediaItem
 import kotlin.math.absoluteValue
 
 @SuppressLint("RestrictedApi")
 @Composable
-fun PopularMediaSection(modifier: Modifier = Modifier) {
+fun PopularMediaSection(
+    modifier: Modifier = Modifier,
+    mediaItems: List<MediaItem>
+) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 10 })
@@ -116,12 +125,29 @@ fun PopularMediaSection(modifier: Modifier = Modifier) {
                             )
                         },
                         posterImage = {
-                            Image(
-                                modifier = Modifier.fillMaxSize(),
-                                painter = painterResource(R.drawable.freman),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop
-                            )
+                            RemoteBlurredHaramImageViewer(
+                                imageUrl = mediaItems[page].imageUrl,
+                                modifier = Modifier,
+                                blurRadius = 150,
+                                haramThreshold = 0.2f,
+                                nonHaramThreshold = 0.7f,
+                                placeholderContent = {
+                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                },
+                                errorContent = {
+                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                },
+                                contentDescription = mediaItems[page].title,
+                            ) {
+                                OnBlurContent(
+                                    hintText = stringResource(R.string.unsuitable_image),
+                                    textStyle = Theme.textStyle.body.small.copy(
+                                        color = Color(0x99FFFFFF)
+                                    ),
+                                    iconSize = 24.dp,
+                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                )
+                            }
                         }
                     )
 
@@ -162,7 +188,7 @@ fun PopularMediaSectionPreview(modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            PopularMediaSection()
+            PopularMediaSection(mediaItems = demoMediaList)
         }
     }
 

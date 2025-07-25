@@ -33,9 +33,9 @@ import com.sanaa.presentation.components.chips.SaveIconChip
 @Composable
 fun MediaPosterCard(
     modifier: Modifier = Modifier,
-    ratio: Float = (158 / 210f),
     width: Dp = 158.dp,
     height: Dp = 210.dp,
+    ratio: Float = (width / height),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},

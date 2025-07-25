@@ -40,7 +40,7 @@ fun HomeScreenContent(
             modifier = Modifier.fillMaxSize().verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            PopularMediaSection()
+            PopularMediaSection(mediaItems = demoMediaList)
             WhatToWatchSection(
                 onMoviesClicked = {},
                 onTvShowsClicked = {},

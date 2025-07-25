@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.R
+import com.sanaa.feature.home.presentation.R
 
 @Composable
 fun WhatToWatchSection(
