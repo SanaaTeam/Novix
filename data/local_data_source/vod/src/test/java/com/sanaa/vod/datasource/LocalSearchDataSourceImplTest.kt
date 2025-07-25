@@ -75,10 +75,7 @@ class LocalSearchDataSourceImplTest {
         val itemType = "movie"
         val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val existingSearch = SearchLocalDto(
-            id = 42,
-            query = query,
-            language = "en",
-            timestamp = currentTimestamp
+            id = 42, query = query, language = "en", timestamp = currentTimestamp
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns existingSearch
@@ -120,10 +117,7 @@ class LocalSearchDataSourceImplTest {
         val expiredTimestamp =
             currentTimestamp - (LocalCachedSearchDataSourceImpl.CACHE_EXPIRATION_TIME + 1000)
         val expiredSearch = SearchLocalDto(
-            id = 1,
-            query = query,
-            language = "en",
-            timestamp = expiredTimestamp
+            id = 1, query = query, language = "en", timestamp = expiredTimestamp
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns expiredSearch
@@ -222,20 +216,18 @@ class LocalSearchDataSourceImplTest {
         val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "movie query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "movie"))
-        val movies =
-            listOf(MovieLocalDto(123, "Movie1", "", 2020, null, 7.5f, "en", currentTimestamp))
+        val movies = listOf(
+            MovieLocalDto(
+                123, "Movie1", "", "2002-10-10", null, 7.5f, "en", currentTimestamp
+            )
+        )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(
-            1,
-            query,
-            "en",
-            currentTimestamp
+            1, query, "en", currentTimestamp
         )
         coEvery {
             searchResultDao.getByQueryAndLanguage(
-                query,
-                "en",
-                "movie"
+                query, "en", "movie"
             )
         } returns cachedResults
         coEvery { movieDao.getFilteredMovies("123", 20, 0) } returns movies
@@ -274,7 +266,18 @@ class LocalSearchDataSourceImplTest {
         val query = "tv query"
         val cachedResults = listOf(SearchResultLocalDto(1, 123, "tv_series"))
         val series =
-            listOf(TvSeriesLocalDto(123, "Series1", "", 2020, null, 8.1f, "en", currentTimestamp))
+            listOf(
+                TvSeriesLocalDto(
+                    123,
+                    "Series1",
+                    "",
+                    "2002-10-10",
+                    null,
+                    8.1f,
+                    "en",
+                    currentTimestamp
+                )
+            )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(
             1, query, "en", currentTimestamp
@@ -309,7 +312,7 @@ class LocalSearchDataSourceImplTest {
             id = 1,
             title = "title",
             imagePath = "",
-            releaseYear = 10,
+            releaseDate = "2002-10-10",
             genres = null,
             imdbRating = 2.1f,
             language = "en",
@@ -346,7 +349,7 @@ class LocalSearchDataSourceImplTest {
             id = 1,
             title = "title",
             imagePath = "",
-            releaseYear = 10,
+            releaseDate = "2002-10-10",
             genres = null,
             imdbRating = 2.1f,
             language = "en",
@@ -467,17 +470,16 @@ class LocalSearchDataSourceImplTest {
                 1,
                 "Breaking Bad",
                 "img1",
-                2008,
+                releaseDate = "2002-10-10",
                 "18,80",
                 9.5f,
                 "en",
                 System.currentTimeMillis()
-            ),
-            TvSeriesLocalDto(
+            ), TvSeriesLocalDto(
                 2,
                 "Better Call Saul",
                 "img2",
-                2015,
+                releaseDate = "2002-10-10",
                 "18,80",
                 8.9f,
                 "en",
