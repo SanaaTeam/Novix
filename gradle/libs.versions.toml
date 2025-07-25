@@ -59,6 +59,7 @@ kotlinx-coroutines = "1.6.4"
 workRuntimeKtx = "2.10.2"
 turbine = "1.2.1"
 pagingCommonAndroid = "3.3.6"
+datastorePreferences = "1.1.7"
 
 
 [libraries]
@@ -162,6 +163,7 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 tensorflow-lite-task-vision = { module = "org.tensorflow:tensorflow-lite-task-vision", version.ref = "tensorflowLiteTaskVision" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 
 # Gradle Plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

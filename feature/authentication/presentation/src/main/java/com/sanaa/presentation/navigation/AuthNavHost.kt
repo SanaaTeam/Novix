@@ -4,10 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.navigation.NavType
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
@@ -26,10 +28,34 @@ fun AuthNavHost() {
             ) {
                 composable(WelcomeRoute.PATTERN) {
                     WelcomeScreen()
+                    }
+                composable(
+                    route = "signup?url={url}",
+                    arguments = listOf(
+                        navArgument("url") {
+                            type = NavType.StringType
+                            defaultValue = "https://www.themoviedb.org/signup"
+                        }
+                    )
+                ) { entry ->
+                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/signup"
+                    SignUpWebViewScreen(url = url)
                 }
 
                 composable(LoginRoute.PATTERN) {
                     LoginScreen()
+                    }
+                composable(
+                    route = "forget_password?url={url}",
+                    arguments = listOf(
+                        navArgument("url") {
+                            type = NavType.StringType
+                            defaultValue = "https://www.themoviedb.org/reset-password"
+                        }
+                    )
+                ) { entry ->
+                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/reset-password"
+                    ResetPasswordWebViewScreen(url = url)
                 }
             }
         }

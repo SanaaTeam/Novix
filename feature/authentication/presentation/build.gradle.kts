@@ -37,4 +37,13 @@ dependencies {
     testImplementation(libs.bundles.test.runtime)
 
     testImplementation(libs.turbine)
+
+    // Design System
+    implementation(projects.designSystem)
+
+    // Authentication API
+    implementation(projects.feature.authentication.api)
+
+    // Navigation
+    implementation(projects.feature.mediaDetails.api)
 }
