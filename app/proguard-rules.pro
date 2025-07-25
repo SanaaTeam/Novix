@@ -35,6 +35,7 @@
 -dontwarn com.sanaa.presentation.filter_bottomsheet.FilterViewModel
 -dontwarn com.sanaa.presentation.model.MediaTypeUiModel
 -dontwarn com.sanaa.presentation.navigation.AuthNavHostKt
+-dontwarn com.sanaa.presentation.navigation.DetailsNavHostKt
 -dontwarn com.sanaa.presentation.navigation.StartRoute
 -dontwarn com.sanaa.presentation.screen.SearchViewModel
 -dontwarn com.sanaa.presentation.screen.actor.ActorViewModel

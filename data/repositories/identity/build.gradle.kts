@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sanaa.data.repositories.vod"
+    namespace = "com.sanaa.identity"
 }
 
 dependencies {

@@ -11,7 +11,7 @@ val localProperties = Properties()
 localProperties.load(FileInputStream(rootProject.file("keys.properties")))
 
 android {
-    namespace = "com.sanaa.data.remotedatasource.identity"
+    namespace = "com.sanaa.identity"
 
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
@@ -25,7 +25,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":data:repositories:identity"))
+    implementation(projects.data.repositories.identity)
     implementation(projects.preferences)
     implementation(libs.retrofit)
     implementation(libs.okhttp)

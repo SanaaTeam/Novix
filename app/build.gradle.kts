@@ -58,9 +58,9 @@ dependencies {
     implementation(projects.feature.authentication.presentation)
     implementation(projects.preferences)
     implementation(projects.domain.identity)
-    implementation(project(":data:repositories:identity"))
-    implementation(project(":data:remote_data_source:identity"))
-    implementation(project(":data:local_data_source:identity"))
+    implementation(projects.data.remoteDataSource.identity)
+    implementation(projects.data.localDataSource.identity)
+    implementation(projects.data.repositories.identity)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

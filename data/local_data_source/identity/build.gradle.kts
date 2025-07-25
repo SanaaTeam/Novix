@@ -3,12 +3,12 @@ plugins {
     alias(libs.plugins.novix.android.library)
 }
 android {
-    namespace = "com.sanaa.data.localdatasource.identity"
+    namespace = "com.sanaa.identity"
 }
 
 dependencies {
-    implementation(project(":data:repositories:identity"))
-    implementation(projects.domain.vod)
+    implementation(projects.data.repositories.identity)
+    implementation(projects.domain.identity)
     implementation(projects.preferences)
 
     // Room dependencies
@@ -25,5 +25,6 @@ dependencies {
     // Koin dependencies
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
+
     implementation(libs.slf4j.api)
 }
