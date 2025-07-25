@@ -36,8 +36,8 @@ import usecase.search.search_param.MediaFilters
 
 @Composable
 fun FilterBottomSheet(
-    isVisible: Boolean,
     dismissSheet: () -> Unit,
+    isVisible: Boolean,
     onFilterApplied: (MediaFilters?) -> Unit,
     selectedTabIndex: Int
 ) {
@@ -45,7 +45,7 @@ fun FilterBottomSheet(
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect (selectedTabIndex){
+    LaunchedEffect(selectedTabIndex) {
         filterViewModel.fetchGenresByTab(selectedTabIndex)
     }
 
@@ -54,23 +54,6 @@ fun FilterBottomSheet(
             onFilterApplied(filters)
         }
     }
-
-
-    FilterBottomSheetContent(
-        dismissSheet = dismissSheet,
-        filterUiState = filterUiState,
-        filterListener = filterViewModel,
-        )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun FilterBottomSheetContent(
-    dismissSheet: () -> Unit,
-    filterUiState: FilterUiState,
-    filterListener: FilterBottomSheetInteractionsListener
-) {
-    var isSliderDragging by remember { mutableStateOf(false) }
 
     BaseBottomSheet(
         isVisible = isVisible,
@@ -83,10 +66,9 @@ fun FilterBottomSheetContent(
 
     ) {
         FilterBottomSheetContent(
-            isVisible =isVisible,
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
-            listener = filterListener,
+            listener = filterViewModel,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
@@ -94,12 +76,12 @@ fun FilterBottomSheetContent(
     }
 }
 
+
 @Composable
 fun FilterBottomSheetContent(
-    isVisible: Boolean,
-    onDismissRequest: () -> Unit,
     uiState: FilterUiState,
     listener: FilterBottomSheetInteractionsListener,
+    onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
@@ -107,18 +89,8 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 24.dp
-            ),
+            .padding(16.dp),
     ) {
-
-        BottomSheetHeader(onCancelClicked = onDismissRequest)
-
-        AnimatedVisibility(visible = uiState.isLoading) {
-            WavyProgressIndicator()
-        }
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
@@ -127,8 +99,14 @@ fun FilterBottomSheetContent(
                     enabled = !isSliderDragging
                 ),
         ) {
+            BottomSheetHeader(onCancelClicked = onDismissRequest)
+
+            AnimatedVisibility(visible = uiState.isLoading) {
+                WavyProgressIndicator()
+            }
+
             AnimatedVisibility(visible = !uiState.isLoading) {
-                Column() {
+                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
@@ -144,8 +122,7 @@ fun FilterBottomSheetContent(
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged,
-                        modifier = Modifier.padding(top = 24.dp, bottom = 12.dp)
+                        onRatingChanged = listener::onRatingChanged
                     )
                 }
             }
@@ -161,6 +138,7 @@ fun FilterBottomSheetContent(
     }
 }
 
+
 @Composable
 private fun FilterActions(
     isApplyEnabled: Boolean,
@@ -168,7 +146,7 @@ private fun FilterActions(
     onClearClicked: () -> Unit,
 ) {
     Column(
-        modifier = Modifier.padding(top = 12.dp),
+        modifier = Modifier.padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixPrimaryButton(
@@ -188,4 +166,3 @@ private fun FilterActions(
         )
     }
 }
-
