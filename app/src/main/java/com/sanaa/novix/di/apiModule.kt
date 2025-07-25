@@ -3,7 +3,8 @@ package com.sanaa.novix.di
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.presentation.navigation.MediaDetailsApiImpl
-import com.sanaa.presentation.api.SearchFeatureApiImpl
+import com.sanaa.presentation.navigation.SearchFeatureApiImpl
+import com.sanaa.presentation.AuthenticationApiImpl
 import org.koin.core.module.dsl.factoryOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
