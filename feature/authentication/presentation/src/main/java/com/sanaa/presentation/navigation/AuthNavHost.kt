@@ -14,6 +14,9 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
+import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
+import com.sanaa.presentation.webview.SignUpWebViewScreen
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
 
 @Composable
 fun AuthNavHost() {
@@ -28,7 +31,12 @@ fun AuthNavHost() {
             ) {
                 composable(WelcomeRoute.PATTERN) {
                     WelcomeScreen()
-                    }
+                }
+
+               composable(LoginRoute.PATTERN) {
+                    LoginScreen()
+                }
+
                 composable(
                     route = "signup?url={url}",
                     arguments = listOf(
@@ -38,13 +46,11 @@ fun AuthNavHost() {
                         }
                     )
                 ) { entry ->
-                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/signup"
+                    val url = entry.arguments?.getString("url") 
+                        ?: "https://www.themoviedb.org/signup"
                     SignUpWebViewScreen(url = url)
                 }
 
-                composable(LoginRoute.PATTERN) {
-                    LoginScreen()
-                    }
                 composable(
                     route = "forget_password?url={url}",
                     arguments = listOf(
@@ -54,7 +60,8 @@ fun AuthNavHost() {
                         }
                     )
                 ) { entry ->
-                    val url = entry.arguments?.getString("url") ?: "https://www.themoviedb.org/reset-password"
+                    val url = entry.arguments?.getString("url") 
+                        ?: "https://www.themoviedb.org/reset-password"
                     ResetPasswordWebViewScreen(url = url)
                 }
             }

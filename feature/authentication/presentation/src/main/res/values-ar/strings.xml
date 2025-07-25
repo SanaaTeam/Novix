@@ -1,64 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="sign_up">إنشاء حساب</string>
     <string name="login">تسجيل الدخول</string>
-    <string name="reset_password">إعادة تعيين كلمة المرور</string>
-    "<string name="view_reviews">عرض التقييمات</string>
-    <string name="seasons_count">%d مواسم</string>
-    <string name="overview">نظرة عامة</string>
-    <string name="read_more">اقرأ المزيد</string>
-    <string name="read_less">اقرأ أقل</string>
-    <string name="cast">الممثلون</string>
-    <string name="more_like_this">المزيد مثل هذا</string>
-    <string name="unsuitable_image">هذه الصورة غير مناسبة</string>
-    <string name="play_trailer"> مشاهدة الاعلان</string>
-    <string name="episodes_count">%d حلقات</string>
-    <string name="episode_number">الحلقة %d</string>
-    <string name="season_number">م%d</string>
-    <string name="m">%d د</string>
-    <string name="season">الموسم</string>
-    <string name="guest_of_honor">ضيوف الحلقة</string>
-    <string name="anonymous">مجهول</string>
-    <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
-    <string name="add_to_list">اضافة الى القائمة</string>"
-    <string name="login">تسجيل دخول</string>
-    <string name="reviews">مراجعات</string>"
-
-
-    // Genre
-    <string name="genres">الفئات</string>
-    <string name="genre_drama">دراما</string>
-    <string name="genre_comedy">كوميديا</string>
-    <string name="genre_adventure">مغامرة</string>
-    <string name="genre_action">أكشن</string>
-    <string name="genre_romance">رومانسي</string>
-    <string name="genre_fantasy">فانتازيا</string>
-    <string name="genre_science_fiction">خيال علمي</string>
-    <string name="genre_horror">رعب</string>
-    <string name="genre_crime">جريمة</string>
-    <string name="genre_animation">رسوم متحركة</string>
-    <string name="genre_documentary">وثائقي</string>
-    <string name="genre_thriller">إثارة</string>
-    <string name="genre_music">موسيقى</string>
-    <string name="genre_mystery">غموض</string>
-    <string name="genre_kids">أطفال</string>
-    <string name="genre_history">تاريخ</string>
-    <string name="genre_family">عائلي</string>
-    <string name="genre_war">حرب</string>
-    <string name="genre_talk">حوارات</string>
-    <string name="genre_soap">دراما طويلة</string>
-    <string name="genre_reality">واقعي</string>
-    <string name="genre_news">أخبار</string>
-    <string name="genre_tv_movie">أفلام تلفزيونية</string>
-    <string name="genre_western">غربي</string>
-    <string name="genre_war_and_politics">الحروب والسياسة</string>
-    <string name="genre_sci_fi_and_fantasy">خيال علمي وفانتازيا</string>
-    <string name="genre_action_and_adventure">أكشن ومغامرة</string>
-    <string name="gallery">المعرض</string>
-    <string name="actor_photos">صور الممثلين</string>
-    <string name="top_movie_picks">أفضل اختيارات الأفلام</string>
-    <string name="top_series_picks">أفضل اختيارات المسلسلات</string>
-
     <string name="login_to_your_account">تسجيل الدخول إلى حسابك</string>
     <string name="user_name">اسم المستخدم</string>
     <string name="password">كلمة المرور</string>
@@ -68,7 +10,7 @@
     <string name="app_icon">أيقونة التطبيق</string>
     <string name="onboarding_background">خلفية الإعداد</string>
     <string name="welcome_to_novix">مرحبًا بك في نوفكس</string>
-    <string name="discover_the_world_s_greatest_movies_and_series_search_watch_and_save_your_favourites_all_in_one_place">
+    <string name="onboarding_caption">
         اكتشف أعظم الأفلام والمسلسلات في العالم. ابحث، شاهد، واحفظ مفضلاتك في مكان واحد.
     </string>
     <string name="continue_as_guest">المتابعة كضيف</string>

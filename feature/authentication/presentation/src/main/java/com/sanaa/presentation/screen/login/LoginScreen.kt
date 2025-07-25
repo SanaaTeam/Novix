@@ -92,11 +92,11 @@ fun LoginContent(
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }
     ) {
-        Column(modifier = modifier.statusBarsPadding(top = 12.dp)) {
+        Column(modifier = modifier.statusBarsPadding()) {
             LoginTopBar(onBackClick = listener::onBackClicked)
 
             Column(
-                modifier = Modifier.padding(top = 12.dp, horizontal = 16.dp),
+                modifier = Modifier.padding(top = 12.dp, start = 16.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 LoginHeader()
