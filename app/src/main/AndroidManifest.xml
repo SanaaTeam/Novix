@@ -18,8 +18,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Novix">
+            android:theme="@style/Theme.StartingScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

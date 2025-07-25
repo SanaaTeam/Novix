@@ -1,9 +1,9 @@
 package com.sanaa.api
 
 import android.content.Context
+import androidx.compose.runtime.Composable
 
 interface AuthenticationApi {
-    fun launchLogin(context: Context)
-    fun launchSignup(context: Context)
-    fun launchResetPassword(context: Context)
+    @Composable
+    fun AuthenticationScreen(context: Context)
 } 

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class PreferencesManagerImpl(private val context: Context) : PreferencesManager {
     override val authorizationToken: Flow<String> = context.dataStore.data
-        .map { preferences -> preferences[AUTHORIZATION_TOKEN].toString() }
+        .map { preferences -> preferences[AUTHORIZATION_TOKEN] ?: "" }
 
     override suspend fun updateAuthorizationToken(value: String) {
         context.dataStore.edit { prefs ->
