@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.welcome.components
+ package com.sanaa.presentation.screen.welcome.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

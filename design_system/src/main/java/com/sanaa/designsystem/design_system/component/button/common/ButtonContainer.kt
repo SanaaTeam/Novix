@@ -58,19 +58,21 @@ internal fun ButtonContainer(
     ) {
         content()
 
-        Spacer(modifier = Modifier.width(8.dp))
         Crossfade(targetState = isLoading) { loading ->
             if (loading) {
                 AnimatedLoadingIndicator(
                     iconTint = iconTint,
-                    size = 20.dp
+                    size = 20.dp,
+                    modifier = Modifier.padding(start = 8.dp)
                 )
             } else if (icon != null) {
                 Icon(
                     painter = icon,
                     contentDescription = null,
                     tint = animatedIconTint,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .size(20.dp)
+                        .padding(start = 8.dp)
                 )
             }
         }

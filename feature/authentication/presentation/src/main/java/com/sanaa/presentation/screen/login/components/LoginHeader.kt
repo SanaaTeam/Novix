@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,11 +28,11 @@ fun LoginHeader() {
             contentDescription = stringResource(R.string.app_icon),
             modifier = Modifier.size(64.dp)
         )
-        Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.login_to_your_account),
             style = Theme.textStyle.title.medium,
-            color = Theme.colors.title
+            color = Theme.colors.title,
+            modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
