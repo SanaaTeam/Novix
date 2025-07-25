@@ -60,6 +60,7 @@ workRuntimeKtx = "2.10.2"
 turbine = "1.2.1"
 pagingCommonAndroid = "3.3.6"
 datastorePreferences = "1.1.7"
+coreSplashscreen = "1.0.1"
 
 
 [libraries]
@@ -67,6 +68,7 @@ datastorePreferences = "1.1.7"
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 # Lifecycle
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
