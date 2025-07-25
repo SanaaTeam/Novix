@@ -17,7 +17,7 @@ import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
 import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreen
+import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
 import com.sanaa.presentation.screen.movie_details.MovieDetailsScreen
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
 import com.sanaa.presentation.screen.review.ReviewsScreen

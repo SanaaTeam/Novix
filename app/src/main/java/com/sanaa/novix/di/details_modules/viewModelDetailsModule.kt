@@ -1,7 +1,7 @@
 package com.sanaa.novix.di.details_modules
 
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
+import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import com.sanaa.presentation.screen.review.ReviewViewModel

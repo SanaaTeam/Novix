@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.genreTvShows
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,7 +15,6 @@ class GenreTvShowsViewModel(
     GenreTvShowsScreenUiState(), dispatcher
 ), GenreTvShowsScreenInteractionListener {
     init {
-        Log.d("GenreTvShowsViewModel", "init")
         getTvShowsByGenreId(genreId)
     }
 

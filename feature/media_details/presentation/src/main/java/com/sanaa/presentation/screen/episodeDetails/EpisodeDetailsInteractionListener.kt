@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.episode_details
+package com.sanaa.presentation.screen.episodeDetails
 
 interface EpisodeDetailsInteractionListener {
     fun onBackClick()

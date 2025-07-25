@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.episode_details.components
+package com.sanaa.presentation.screen.episodeDetails.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.episode_details
+package com.sanaa.presentation.screen.episodeDetails
 
 import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.model.EpisodeUiModel

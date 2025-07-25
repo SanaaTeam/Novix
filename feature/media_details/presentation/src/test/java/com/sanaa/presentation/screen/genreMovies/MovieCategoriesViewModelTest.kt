@@ -1,9 +1,6 @@
-package com.sanaa.presentation.screen.category
+package com.sanaa.presentation.screen.genreMovies
 
 import app.cash.turbine.test
-import com.sanaa.presentation.screen.genreMovies.GenreMoviesEffects
-import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreenUiState
-import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import entity.Genre
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
