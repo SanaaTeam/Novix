@@ -46,9 +46,11 @@ fun FilterBottomSheet(
 ) {
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
+
     LaunchedEffect (selectedTabIndex){
         filterViewModel.fetchGenresByTab(selectedTabIndex)
     }
+
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters ->
             onFilterApplied(filters)

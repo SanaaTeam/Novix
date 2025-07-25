@@ -3,7 +3,6 @@ package com.sanaa.presentation.filter_bottomsheet
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
-import com.sanaa.presentation.screen.SearchViewModel
 import com.sanaa.presentation.screen.state.mapper.toDomain
 import com.sanaa.presentation.screen.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +20,7 @@ class FilterViewModel(
 ) : BaseViewModel<FilterUiState, Unit>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
+
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
 
@@ -50,7 +50,11 @@ class FilterViewModel(
         updateState {
             FilterUiState(allGenres = it.allGenres)
         }
+        tryToExecute(
+            callee = ::clearSelectedFilters
+        )
     }
+
 
     override fun onApplyClicked() {
         tryToExecute(
@@ -58,19 +62,47 @@ class FilterViewModel(
         )
     }
 
+
     fun fetchGenresByTab(tabIndex: Int) {
         when (tabIndex) {
-            SearchViewModel.MOVIE_INDEX -> fetchMovieGenres()
-            SearchViewModel.TV_SHOW_INDEX -> fetchTvShowGenres()
+            MOVIE_INDEX -> fetchMovieGenres()
+            TV_SHOW_INDEX -> fetchTvShowGenres()
         }
     }
 
     private fun fetchTvShowGenres() {
-
         updateState { it.copy(isLoading = true) }
         tryToExecute(
             callee = ::loadTvShowGenres
         )
+    }
+
+    private fun fetchMovieGenres() {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::loadMovieGenres
+        )
+    }
+
+    private suspend fun emitSelectedFilters() {
+        val currentState = state.value
+        val mediaFilters = MediaFilters(
+            startYear = currentState.yearRange.start.toInt(),
+            endYear = currentState.yearRange.endInclusive.toInt(),
+            genres = currentState.selectedGenres.map { it.toDomain() },
+            imdbRating = currentState.imdbRating.toFloat()
+        )
+        _filterResult.emit(mediaFilters)
+    }
+
+    private suspend fun clearSelectedFilters() {
+        val clearedFilter = MediaFilters(
+            startYear = 1980,
+            endYear = 2025,
+            genres = emptyList(),
+            imdbRating = 0f
+        )
+        _filterResult.emit(clearedFilter)
     }
 
     private suspend fun loadTvShowGenres() {
@@ -84,12 +116,6 @@ class FilterViewModel(
 
     }
 
-    private fun fetchMovieGenres() {
-        updateState { it.copy(isLoading = true) }
-        tryToExecute(
-            callee = ::loadMovieGenres
-        )
-    }
 
     private suspend fun loadMovieGenres() {
         val movieGenres = manageMovieUseCase.getMovieGenres()
@@ -101,14 +127,9 @@ class FilterViewModel(
         }
     }
 
-    private suspend fun emitSelectedFilters() {
-        val currentState = state.value
-        val mediaFilters = MediaFilters(
-            startYear = currentState.yearRange.start.toInt(),
-            endYear = currentState.yearRange.endInclusive.toInt(),
-            genres = currentState.selectedGenres.map { it.toDomain() },
-            imdbRating = currentState.imdbRating.toFloat()
-        )
-        _filterResult.emit(mediaFilters)
+
+    companion object {
+        const val MOVIE_INDEX = 0
+        const val TV_SHOW_INDEX = 1
     }
 }
