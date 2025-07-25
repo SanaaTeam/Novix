@@ -8,6 +8,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.domain.identity)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

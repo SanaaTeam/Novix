@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.login
 
 interface LoginScreenInteractionListener {
-    fun onUsernameChanged(value: String)
-    fun onPasswordChanged(value: String)
+    fun onUsernameChanged(newUsername: String)
+    fun onPasswordChanged(newPassword: String)
     fun onTogglePasswordVisibility()
     fun onLoginClicked()
     fun onForgotPasswordClicked()
