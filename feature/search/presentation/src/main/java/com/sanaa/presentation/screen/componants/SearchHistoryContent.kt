@@ -17,7 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -204,10 +204,9 @@ fun SectionHeader(
             .padding(horizontal = 16.dp)
             .padding(bottom = 12.dp)
     ) {
-        Text(
+        BasicText(
             text = title,
-            style = Theme.textStyle.label.medium,
-            color = Theme.colors.body,
+            style = Theme.textStyle.label.medium.copy(color = Theme.colors.body),
             modifier = Modifier.weight(1f)
         )
         NovixTextButton(
