@@ -160,6 +160,7 @@ fun SearchScreenContent(
             dismissSheet = dismissSheet,
             sheetState = sheetState,
             onFilterApplied = onFilterApplied,
+            selectedTabIndex = uiState.selectedTabIndex
         )
     }
 }

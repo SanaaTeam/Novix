@@ -3,14 +3,13 @@ package com.sanaa.presentation.filter_bottomsheet
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
+import com.sanaa.presentation.screen.SearchViewModel
 import com.sanaa.presentation.screen.state.mapper.toDomain
 import com.sanaa.presentation.screen.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.search.search_param.MediaFilters
@@ -24,23 +23,6 @@ class FilterViewModel(
 ), FilterBottomSheetInteractionsListener {
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
-
-    init {
-        fetchGenres()
-    }
-
-    private fun fetchGenres() {
-        tryToExecute(
-            callee = {
-                val movieGenres = manageMovieUseCase.getMovieGenres()
-                val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
-                val genres = movieGenres.plus(tvShowGenres).toSet()
-                //movie or tv series
-                updateState {
-                    it.copy(allGenres = genres.map { it.toState() })
-                }
-            })
-    }
 
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
@@ -82,5 +64,48 @@ class FilterViewModel(
                 )
                 _filterResult.emit(mediaFilters)
             })
+    }
+
+    fun fetchGenresByTab(tabIndex: Int) {
+        when (tabIndex) {
+            SearchViewModel.MOVIE_INDEX -> fetchMovieGenres()
+            SearchViewModel.TV_SHOW_INDEX -> fetchTvShowGenres()
+        }
+    }
+
+    private fun fetchTvShowGenres() {
+
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::loadTvShowGenres
+        )
+    }
+
+    private suspend fun loadTvShowGenres() {
+        val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
+        updateState {
+            it.copy(
+                allGenres = tvShowGenres.map { it.toState() },
+                isLoading = false
+            )
+        }
+
+    }
+
+    private fun fetchMovieGenres() {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::loadMovieGenres
+        )
+    }
+
+    private suspend fun loadMovieGenres() {
+        val movieGenres = manageMovieUseCase.getMovieGenres()
+        updateState {
+            it.copy(
+                allGenres = movieGenres.map { it.toState() },
+                isLoading = false
+            )
+        }
     }
 }

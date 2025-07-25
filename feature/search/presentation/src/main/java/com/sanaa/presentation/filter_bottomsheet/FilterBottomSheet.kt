@@ -42,14 +42,19 @@ fun FilterBottomSheet(
     dismissSheet: () -> Unit,
     sheetState: SheetState,
     onFilterApplied: (MediaFilters?) -> Unit,
+    selectedTabIndex: Int
 ) {
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect (selectedTabIndex){
+        filterViewModel.fetchGenresByTab(selectedTabIndex)
+    }
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters ->
             onFilterApplied(filters)
         }
     }
+
 
     FilterBottomSheetContent(
         dismissSheet = dismissSheet,
