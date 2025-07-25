@@ -107,9 +107,22 @@ data class ActorGalleryScreenRoute(val actorId: Int) : Destination {
 @Serializable
 data class MovieCategoriesScreenRoute(val categoryId: Int, val categoryName: String) : Destination {
     override fun route() = "movie/$categoryId/$categoryName"
+
     companion object {
         const val PATTERN = "movie/{categoryId}/{categoryName}"
         const val ARG_CATEGORY_ID = "categoryId"
         const val ARG_CATEGORY_NAME = "categoryName"
+    }
+}
+
+
+@Serializable
+data class GenreTvShowsScreenRoute(val genreId: Int, val genreName: String) : Destination {
+    override fun route() = "tv/$genreId/$genreName"
+
+    companion object {
+        const val PATTERN = "tv/{genreId}/{genreName}"
+        const val ARG_GENRE_ID = "genreId"
+        const val ARG_GENRE_NAME = "genreName"
     }
 }

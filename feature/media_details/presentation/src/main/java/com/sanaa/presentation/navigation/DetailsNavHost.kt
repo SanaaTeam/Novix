@@ -17,11 +17,12 @@ import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
 import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
-import com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreen
-import com.sanaa.presentation.screen.movie_categories.MovieCategoriesScreen
-import com.sanaa.presentation.screen.movie_details.MovieDetailsScreen
+import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
+import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
 import com.sanaa.presentation.screen.review.ReviewsScreen
 import com.sanaa.presentation.screen.series.SeriesScreen
+import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
 
 @Composable
 fun DetailsNavHost(startRoute: StartRoute, id: Int) {
@@ -157,15 +158,40 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                     route = MovieCategoriesScreenRoute.PATTERN,
                     arguments = listOf(
                         navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_ID) {
-                        type = NavType.IntType
-                    }, navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME) {
-                        type = NavType.StringType
-                    },
+                            type = NavType.IntType
+                        },
+                        navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME) {
+                            type = NavType.StringType
+                        },
                     )
                 ) {
-                    val categoryId = it.arguments!!.getInt(MovieCategoriesScreenRoute.ARG_CATEGORY_ID)
-                    val categoryName = it.arguments!!.getString(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME)
-                    MovieCategoriesScreen(categoryId = categoryId, categoryName = categoryName)
+                    val categoryId =
+                        it.arguments!!.getInt(MovieCategoriesScreenRoute.ARG_CATEGORY_ID)
+                    val categoryName =
+                        it.arguments!!.getString(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME)
+                    GenreMoviesScreen(categoryId = categoryId, categoryName = categoryName)
+                }
+
+                composable(
+                    route = GenreTvShowsScreenRoute.PATTERN,
+                    arguments = listOf(
+                        navArgument(GenreTvShowsScreenRoute.ARG_GENRE_ID) {
+                            type = NavType.IntType
+                        },
+                        navArgument(GenreTvShowsScreenRoute.ARG_GENRE_NAME) {
+                            type = NavType.StringType
+                        },
+                    )
+                ) { backStackEntry ->
+                    val genreId =
+                        backStackEntry.arguments!!.getInt(GenreTvShowsScreenRoute.ARG_GENRE_ID)
+                    val genreName =
+                        backStackEntry.arguments!!.getString(GenreTvShowsScreenRoute.ARG_GENRE_NAME)
+
+                    GenreTvShowsScreen(
+                        genreId = genreId,
+                        genreName = genreName.orEmpty()
+                    )
                 }
             }
         }
