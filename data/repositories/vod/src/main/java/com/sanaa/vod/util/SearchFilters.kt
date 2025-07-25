@@ -11,41 +11,57 @@ import usecase.search.search_param.MediaFilters
 
 internal fun MediaFilters.filterMovies(movies: List<MovieSearchDto>): List<Movie> {
     val filterGenreIds = genres.takeIf { it.isNotEmpty() }?.map { it.id }
+    val minRating = imdbRating
+    val start = startYear
+    val end = endYear
+
     return movies.filter { movie ->
         (filterGenreIds == null || byGenres(movie.genreIds, filterGenreIds)) &&
-                (byRate(movie.voteAverage, imdbRating)) &&
-                (byStartYear(movie.releaseDate, startYear)) &&
-                (byEndYear(movie.releaseDate, endYear))
+                (minRating == null || byRate(movie.voteAverage, minRating)) &&
+                (start == null || byStartYear(movie.releaseDate, start)) &&
+                (end == null || byEndYear(movie.releaseDate, end))
     }.map { it.toEntity() }
 }
 
 internal fun MediaFilters.filterCachedMovies(cachedMovies: List<MovieLocalDto>): List<Movie> {
     val filterGenreIds = genres.takeIf { it.isNotEmpty() }?.map { it.id }
+    val minRating = imdbRating
+    val start = startYear
+    val end = endYear
+
     return cachedMovies.filter { movie ->
         (filterGenreIds == null || byGenres(movie.genres, filterGenreIds)) &&
-                (byRate(movie.imdbRating, imdbRating)) &&
-                (byStartYear(movie.releaseDate, startYear)) &&
-                (byEndYear(movie.releaseDate, endYear))
+                (minRating == null || byRate(movie.imdbRating, minRating)) &&
+                (start == null || byStartYear(movie.releaseDate, start)) &&
+                (end == null || byEndYear(movie.releaseDate, end))
     }.map { it.toEntity() }
 }
 
 internal fun MediaFilters.filterTvShows(tvSeries: List<TvShowSearchDto>): List<TvSeries> {
     val filterGenreIds = genres.takeIf { it.isNotEmpty() }?.map { it.id }
+    val minRating = imdbRating
+    val start = startYear
+    val end = endYear
+
     return tvSeries.filter { tvShow ->
         (filterGenreIds == null || byGenres(tvShow.genreIds, filterGenreIds)) &&
-                (byRate(tvShow.voteAverage, imdbRating)) &&
-                (byStartYear(tvShow.releaseDate, startYear)) &&
-                (byEndYear(tvShow.releaseDate, endYear))
+                (minRating == null || byRate(tvShow.voteAverage, minRating)) &&
+                (start == null || byStartYear(tvShow.releaseDate, start)) &&
+                (end == null || byEndYear(tvShow.releaseDate, end))
     }.map { it.toEntity() }
 }
 
 internal fun MediaFilters.filterCachedTvShows(cachedTvSeries: List<TvSeriesLocalDto>): List<TvSeries> {
     val filterGenreIds = genres.takeIf { it.isNotEmpty() }?.map { it.id }
+    val minRating = imdbRating
+    val start = startYear
+    val end = endYear
+
     return cachedTvSeries.filter { tvShow ->
         (filterGenreIds == null || byGenres(tvShow.genres, filterGenreIds)) &&
-                (byRate(tvShow.imdbRating, imdbRating)) &&
-                (byStartYear(tvShow.releaseDate, startYear)) &&
-                (byEndYear(tvShow.releaseDate, endYear))
+                (minRating == null || byRate(tvShow.imdbRating, minRating)) &&
+                (start == null || byStartYear(tvShow.releaseDate, start)) &&
+                (end == null || byEndYear(tvShow.releaseDate, end))
     }.map { it.toEntity() }
 }
 
