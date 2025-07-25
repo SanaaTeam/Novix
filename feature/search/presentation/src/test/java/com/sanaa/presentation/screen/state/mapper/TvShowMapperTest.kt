@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test
 
 class TvShowMapperTest {
     @Test
-    fun `toUiState should map SearchTvSeriesOutput to TvShowUiModel correctly`() {
+    fun `toUiState should map TvSeries to TvShowUiModel correctly`() {
         val tvSeries =
-            createSearchTvSeriesOutput(101, "Breaking Bad", "https://example.com/breaking.jpg")
+            createTvSeries(101, "Breaking Bad", "https://example.com/breaking.jpg")
 
         val result = tvSeries.toUiState()
 
@@ -20,7 +20,7 @@ class TvShowMapperTest {
     }
 
     companion object {
-        fun createSearchTvSeriesOutput(
+        fun createTvSeries(
             id: Int,
             title: String,
             posterUrl: String

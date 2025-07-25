@@ -13,9 +13,9 @@ class MovieMapperTest {
 
 
     @Test
-    fun `toActorUiState should map SearchMovieOutput to MovieUiModel correctly`() {
+    fun `toActorUiState should map Movie to MovieUiModel correctly`() {
         val movieOutput =
-            createSearchMovieOutput(101, "The Matrix", "https://example.com/poster.jpg")
+            createMovie(101, "The Matrix", "https://example.com/poster.jpg")
 
         val result = movieOutput.toUiState()
 
@@ -25,10 +25,10 @@ class MovieMapperTest {
     }
 
     @Test
-    fun `List toActorUiState should map list of SearchMovieOutput to list of MovieUiModel`() {
+    fun `List toActorUiState should map list of Movie to list of MovieUiModel`() {
         val list = listOf(
-            createSearchMovieOutput(1, "Movie A", "url1"),
-            createSearchMovieOutput(2, "Movie B", "url2")
+            createMovie(1, "Movie A", "url1"),
+            createMovie(2, "Movie B", "url2")
         )
 
         val result = list.toUiState()
@@ -41,11 +41,11 @@ class MovieMapperTest {
     }
 
     @Test
-    fun `Flow toActorUiState should map flow of SearchMovieOutput to MovieUiModel`() = runTest {
+    fun `Flow toActorUiState should map flow of Movie to MovieUiModel`() = runTest {
         val flow = flowOf(
             listOf(
-                createSearchMovieOutput(10, "Movie X", "posterX"),
-                createSearchMovieOutput(20, "Movie Y", "posterY")
+                createMovie(10, "Movie X", "posterX"),
+                createMovie(20, "Movie Y", "posterY")
             )
         )
 
@@ -62,7 +62,7 @@ class MovieMapperTest {
     }
 
     companion object {
-        fun createSearchMovieOutput(id: Int, title: String, posterUrl: String) =
+        fun createMovie(id: Int, title: String, posterUrl: String) =
             Movie(
                 id = id, title = title, posterImageUrl = posterUrl, genres = emptyList(),
                 imdbRating = 0f,

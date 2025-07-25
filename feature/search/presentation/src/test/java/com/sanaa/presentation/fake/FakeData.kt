@@ -7,7 +7,7 @@ import entity.TvSeries
 import kotlinx.datetime.LocalDate
 
 object FakeData {
-    val actorOutputs: List<Actor> = listOf(
+    val dummyActors: List<Actor> = listOf(
         Actor(
             1,
             "Tom Hanks",
@@ -37,7 +37,7 @@ object FakeData {
         )
     )
 
-    val moviesOutput: List<Movie> = listOf(
+    val dummyMovies: List<Movie> = listOf(
         Movie(
             1,
             "IronMan1",
@@ -61,7 +61,7 @@ object FakeData {
         )
     )
 
-    val tvShowsOutput: List<TvSeries> = listOf(
+    val dummyTvSeries: List<TvSeries> = listOf(
         TvSeries(
             1,
             "Tom And Jerry",

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.Test
 class ActorMapperTest {
 
     @Test
-    fun `toUiState should map SearchActorOutput to ActorUiModel correctly`() {
-        val searchActorOutput = Actor(
+    fun `toUiState should map Actor to ActorUiModel correctly`() {
+        val dummyActor = Actor(
             id = 1,
             name = "Sanaa",
             imageUrl = "https://example.com/image.jpg",
@@ -26,7 +26,7 @@ class ActorMapperTest {
         )
 
 
-        val result = searchActorOutput.toUiState()
+        val result = dummyActor.toUiState()
 
 
         val expected = ActorUiModel(

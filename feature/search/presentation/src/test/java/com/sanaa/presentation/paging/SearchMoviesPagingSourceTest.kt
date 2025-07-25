@@ -70,7 +70,7 @@ class SearchMoviesPagingSourceTest {
 
     @Test
     fun `load() should returns correct data when successful`() = runTest {
-        val mockData = FakeData.moviesOutput
+        val mockData = FakeData.dummyMovies
         val params = getPagingParams(key = null)
         coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
@@ -81,7 +81,7 @@ class SearchMoviesPagingSourceTest {
 
     @Test
     fun `load() should returns empty list when there is no data`() = runTest {
-        val mockData = FakeData.moviesOutput
+        val mockData = FakeData.dummyMovies
         val params = getPagingParams(key = 2)
         coEvery { searchMoviesUseCase.searchMovies(query, 1, filters) } returns mockData
         val result = searchMoviesPagingSource.load(params)
@@ -103,7 +103,7 @@ class SearchMoviesPagingSourceTest {
         anchorPosition: Int? = null,
         prevKey: Int? = null,
         nextKey: Int? = null,
-        data: List<Movie> = FakeData.moviesOutput,
+        data: List<Movie> = FakeData.dummyMovies,
     ): PagingState<Int, Movie> {
         return PagingState(
             anchorPosition = anchorPosition,

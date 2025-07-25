@@ -52,13 +52,13 @@ class SearchUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns dummyMovie
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(dummyMovie)
         }
 
     @Test
@@ -70,13 +70,13 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns dummyMovie
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(dummyMovie)
         }
 
     @Test
@@ -120,13 +120,13 @@ class SearchUseCaseTest {
             val filters = null
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns searchTvShowsOutputList
+            } returns dummyTvShow
 
             // When
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchTvShowsOutputList)
+            assertThat(result).isEqualTo(dummyTvShow)
 
         }
 
@@ -139,14 +139,14 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns searchTvShowsOutputList
+            } returns dummyTvShow
 
 
             // When
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchTvShowsOutputList)
+            assertThat(result).isEqualTo(dummyTvShow)
         }
 
 
@@ -190,13 +190,13 @@ class SearchUseCaseTest {
             // Given
             val query = "Actor"
             val page = 1
-            coEvery { searchRepository.searchActors(query, page) } returns searchActorOutputList
+            coEvery { searchRepository.searchActors(query, page) } returns dummyActor
 
             // When
             val result = searchUseCase.searchActors(query, page)
 
             // Then
-            assertThat(result).isEqualTo(searchActorOutputList)
+            assertThat(result).isEqualTo(dummyActor)
         }
 
     @Test
@@ -217,7 +217,7 @@ class SearchUseCaseTest {
 
 
     private companion object {
-        private val searchActorOutputList = listOf(
+        private val dummyActor = listOf(
             Actor(
                 id = 1,
                 name = "title",
@@ -234,7 +234,7 @@ class SearchUseCaseTest {
             )
         )
 
-        private val searchMediaOutputList = listOf(
+        private val dummyMovie = listOf(
             Movie(
                 id = 1,
                 title = "title",
@@ -248,7 +248,7 @@ class SearchUseCaseTest {
             )
         )
 
-        val searchTvShowsOutputList = listOf(
+        val dummyTvShow = listOf(
             TvSeries(
                 id = 1,
                 title = "title",
