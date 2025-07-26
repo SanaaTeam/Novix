@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.ExpandableText
-import com.sanaa.presentation.component.IconWithText
+import com.sanaa.presentation.shared_component.ExpandableText
+import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable

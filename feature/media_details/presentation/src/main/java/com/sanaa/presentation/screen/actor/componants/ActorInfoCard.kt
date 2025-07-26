@@ -10,9 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.DotSeparator
-import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.component.InfoSection
+import com.sanaa.presentation.shared_component.DotSeparator
+import com.sanaa.presentation.shared_component.IconWithText
+import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
