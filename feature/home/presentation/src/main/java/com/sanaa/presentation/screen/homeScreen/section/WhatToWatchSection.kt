@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
@@ -39,25 +40,25 @@ fun WhatToWatchSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixSectionHeader(title = "What you want to watch?")
+        NovixSectionHeader(title = "")
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             WantToWatchCard(
-                label = "Movies",
+                label = stringResource(R.string.movies),
                 painter = painterResource(R.drawable.popcorns),
                 brush = Theme.colors.moviesCardGradient,
                 onClick = { onMoviesClicked() },
             )
             WantToWatchCard(
-                label = "Movies",
+                label = stringResource(R.string.tvshows),
                 painter = painterResource(R.drawable.move_role),
                 brush = Theme.colors.tvShowCardGradient,
                 onClick = { onTvShowsClicked() },
             )
             WantToWatchCard(
-                label = "Movies",
+                label = stringResource(R.string.people),
                 painter = painterResource(R.drawable.cenima_board),
                 brush = Theme.colors.peopleCardGradient,
                 onClick = { onPeopleClicked() },

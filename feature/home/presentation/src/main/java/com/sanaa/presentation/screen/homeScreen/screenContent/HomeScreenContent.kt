@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,11 +17,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
@@ -32,9 +35,9 @@ import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun HomeScreenContent(
-    modifier: Modifier = Modifier,
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
 ) {
@@ -44,8 +47,7 @@ fun HomeScreenContent(
             HomeTopBar(
                 modifier = Modifier.padding(top = 12.dp, start = 16.dp, bottom = 16.dp)
             )
-        }
-    ) {
+        }) {
         val scrollState = rememberScrollState()
         Column(
             modifier = Modifier
@@ -53,28 +55,20 @@ fun HomeScreenContent(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            PopularMediaSection(
-                mediaItems = state.popularMedia,
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id, it.mediaType)
-                },
-                onSaveIconClicked = {
-                    interactionListener.onSaveIconClick(it)
-                }
-            )
-            WhatToWatchSection(
-                onMoviesClicked = {
-                    interactionListener.onMoviesCardClicked()
-                },
-                onTvShowsClicked = {
-                    interactionListener.onTvShowsCardClicked()
-                },
-                onPeopleClicked = {
-                    interactionListener.onPeopleCardClicked()
-                }
-            )
+            PopularMediaSection(mediaItems = state.popularMedia, onMediaClick = {
+                interactionListener.onMediaClick(it.id, it.mediaType)
+            }, onSaveIconClicked = {
+                interactionListener.onSaveIconClick(it)
+            })
+            WhatToWatchSection(onMoviesClicked = {
+                interactionListener.onMoviesCardClicked()
+            }, onTvShowsClicked = {
+                interactionListener.onTvShowsCardClicked()
+            }, onPeopleClicked = {
+                interactionListener.onPeopleCardClicked()
+            })
             MixedMediaSection(
-                headerLabel = "Top Rating",
+                headerLabel = stringResource(R.string.top_rated),
                 mediaItems = state.topRatingMedia,
                 onMediaClick = {
                     interactionListener.onMediaClick(it.id, it.mediaType)
@@ -82,19 +76,17 @@ fun HomeScreenContent(
                 onSaveIconClicked = {
                     interactionListener.onSaveIconClick(it)
                 },
-                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() }
-            )
+                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
             if (state.continueWatchingMedia.isNotEmpty()) {
                 MixedMediaSection(
-                    headerLabel = "Continue watching",
+                    headerLabel = stringResource(R.string.continue_watching),
                     mediaItems = state.continueWatchingMedia,
                     onMediaClick = {
                         interactionListener.onMediaClick(it.id, it.mediaType)
                     },
                     onSaveIconClicked = {
                         interactionListener.onSaveIconClick(it)
-                    }
-                )
+                    })
             }
             NovixSectionHeader(
                 title = "Up Upcoming"
@@ -120,8 +112,8 @@ fun HomeScreenContent(
         }
 
     }
-}
 
+}
 
 @PreviewLightDark
 @Composable
@@ -132,14 +124,12 @@ fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
             title = "Movie 1",
             imageUrl = "https://example.com/image1.jpg",
             mediaType = MediaType.MOVIE,
-        ),
-        MediaItem(
+        ), MediaItem(
             id = 2,
             title = "Movie 2",
             imageUrl = "https://example.com/image2.jpg",
             mediaType = MediaType.MOVIE,
-        ),
-        MediaItem(
+        ), MediaItem(
             id = 3,
             title = "Movie 3",
             imageUrl = "https://example.com/image3.jpg",

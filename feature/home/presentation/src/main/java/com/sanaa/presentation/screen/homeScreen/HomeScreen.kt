@@ -22,8 +22,6 @@ import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     viewModel: HomeScreenViewModel = koinViewModel<HomeScreenViewModel>()
 ) {
 
@@ -87,7 +85,6 @@ fun HomeScreen(
                 HomeScreenContent(
                     state = state.value,
                     interactionListener = viewModel,
-                    modifier = modifier,
                 )
             }
         }
