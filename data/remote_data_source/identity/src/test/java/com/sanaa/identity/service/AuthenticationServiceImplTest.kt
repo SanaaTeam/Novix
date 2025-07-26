@@ -4,7 +4,7 @@ import com.google.common.truth.Truth
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.exceptions.InvalidTokenException
 import com.sanaa.identity.exceptions.ResponseException
-import com.sanaa.identity.network.AuthenticationApi
+import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.response.CreateAccessTokenResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse
 import com.sanaa.identity.network.response.LoginResponse
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.assertThrows
 import retrofit2.Response
 
 class AuthenticationServiceImplTest {
-    private val authenticationApi: AuthenticationApi = mockk(relaxed = true)
+    private val authenticationApi: AuthenticationApiService = mockk(relaxed = true)
     private val preferencesManager: PreferencesManager = mockk(relaxed = true)
     private lateinit var authenticationService: AuthenticationService
 

@@ -4,12 +4,12 @@ import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.exceptions.InvalidTokenException
 import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
 import com.sanaa.identity.exceptions.ResponseException
-import com.sanaa.identity.network.AuthenticationApi
+import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.CreateAccessTokenPostBody
 import com.sanaa.identity.network.body.LoginPostBody
 
 class AuthenticationServiceImpl(
-    private val authenticationApi: AuthenticationApi,
+    private val authenticationApi: AuthenticationApiService,
     private val preferencesManager: PreferencesManager,
 ) : AuthenticationService {
     override suspend fun login(userName: String, password: String) {

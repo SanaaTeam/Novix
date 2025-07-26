@@ -14,7 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
-interface AuthenticationApi {
+interface AuthenticationApiService {
     @GET("3/authentication/token/new")
     suspend fun createRequestToken(): Response<CreateRequestTokenResponse>
 
