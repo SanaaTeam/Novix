@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.cards.HomeTopBar
@@ -55,7 +56,7 @@ fun HomeScreenContent(
             PopularMediaSection(
                 mediaItems = state.popularMedia,
                 onMediaClick = {
-                    interactionListener.onMediaClick(it.id,it.mediaType)
+                    interactionListener.onMediaClick(it.id, it.mediaType)
                 },
                 onSaveIconClicked = {
                     interactionListener.onSaveIconClick(it)
@@ -76,21 +77,27 @@ fun HomeScreenContent(
                 headerLabel = "Top Rating",
                 mediaItems = state.topRatingMedia,
                 onMediaClick = {
-                    interactionListener.onMediaClick(it.id,it.mediaType)
+                    interactionListener.onMediaClick(it.id, it.mediaType)
                 },
                 onSaveIconClicked = {
                     interactionListener.onSaveIconClick(it)
-                }
+                },
+                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() }
             )
-            MixedMediaSection(
-                headerLabel = "Continue watching",
-                mediaItems = state.continueWatchingMedia,
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id,it.mediaType)
-                },
-                onSaveIconClicked = {
-                    interactionListener.onSaveIconClick(it)
-                }
+            if (state.continueWatchingMedia.isNotEmpty()) {
+                MixedMediaSection(
+                    headerLabel = "Continue watching",
+                    mediaItems = state.continueWatchingMedia,
+                    onMediaClick = {
+                        interactionListener.onMediaClick(it.id, it.mediaType)
+                    },
+                    onSaveIconClicked = {
+                        interactionListener.onSaveIconClick(it)
+                    }
+                )
+            }
+            NovixSectionHeader(
+                title = "Up Upcoming"
             )
             MediaListSectionContent(
                 genres = state.movieGenres,
@@ -100,7 +107,7 @@ fun HomeScreenContent(
                     interactionListener.onMovieGenreClick(it)
                 },
                 onMediaClick = {
-                    interactionListener.onMediaClick(it.id,it.mediaType)
+                    interactionListener.onMediaClick(it.id, it.mediaType)
                 },
                 onSaveIconClick = {
                     interactionListener.onSaveIconClick(it)
@@ -155,21 +162,22 @@ fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
             )
         )
     }
-    NovixTheme (isSystemInDarkTheme()){
+    NovixTheme(isSystemInDarkTheme()) {
         HomeScreenContent(
             state = state,
-            interactionListener = object : HomeScreenInteractionListener{
-                    override fun onMoviesCardClicked() {}
-                    override fun onTvShowsCardClicked() {}
-                    override fun onPeopleCardClicked() {}
-                    override fun onShowAllTopRatingClicked() {}
-                    override fun onShowAllContinueWatchingClicked() {}
-                    override fun onMovieGenreClick(id: Int?) {
-                        state = state.copy(movieSelectedGenreId = id)
-                    }
-                    override fun onMediaClick(id: Int, mediaType: MediaType) {}
-                    override fun onSaveIconClick(media: MediaItem) {}
-                },
+            interactionListener = object : HomeScreenInteractionListener {
+                override fun onMoviesCardClicked() {}
+                override fun onTvShowsCardClicked() {}
+                override fun onPeopleCardClicked() {}
+                override fun onShowAllTopRatingClicked() {}
+                override fun onShowAllContinueWatchingClicked() {}
+                override fun onMovieGenreClick(id: Int?) {
+                    state = state.copy(movieSelectedGenreId = id)
+                }
+
+                override fun onMediaClick(id: Int, mediaType: MediaType) {}
+                override fun onSaveIconClick(media: MediaItem) {}
+            },
         )
     }
 }

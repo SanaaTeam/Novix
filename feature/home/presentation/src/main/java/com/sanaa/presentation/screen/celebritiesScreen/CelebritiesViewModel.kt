@@ -1,21 +1,18 @@
 package com.sanaa.presentation.screen.celebritiesScreen
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.state.toUiState
+import usecase.ManageActorUseCase
 
-class CelebritiesViewModel : ViewModel(), CelebritiesScreenInteractionListener {
-    private val _state = MutableStateFlow(
-        CelebritiesScreenUiState(isLoading = false, celebrities = emptyList())
-    )
-    val state: StateFlow<CelebritiesScreenUiState> = _state
+class CelebritiesViewModel(
+    private val getActorsUseCase: ManageActorUseCase
+) : BaseViewModel<CelebritiesScreenUiState, CelebritiesScreenEffects>(
+    CelebritiesScreenUiState()
+), CelebritiesScreenInteractionListener {
 
-    private val _effect = MutableSharedFlow<CelebritiesScreenEffects>()
-    val effect: SharedFlow<CelebritiesScreenEffects> = _effect
+    init {
+        fetchActors()
+    }
 
     override fun onBackClick() {
         emitEffect(CelebritiesScreenEffects.NavigateBack)
@@ -25,9 +22,17 @@ class CelebritiesViewModel : ViewModel(), CelebritiesScreenInteractionListener {
         emitEffect(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
     }
 
-    private fun emitEffect(effect: CelebritiesScreenEffects) {
-        viewModelScope.launch {
-            _effect.emit(effect)
+    private fun fetchActors() {
+        tryToExecute(callee = {
+            updateState { it.copy(isLoading = true) }
+            getActorsUseCase.getTrendingActors(1)
+        }, onSuccess = { actors ->
+            updateState {
+                it.copy(
+                    celebrities = actors.map { it.toUiState() }, isLoading = false
+                )
+            }
         }
+        )
     }
 }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
@@ -14,15 +15,19 @@ import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
 import com.sanaa.presentation.state.MediaType
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 
 @Composable
 fun TopRatedMediaScreen(
-    onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: TopRatedMediaScreenViewModel = koinViewModel<TopRatedMediaScreenViewModel>(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    val detailsApi: MediaDetailsApi by inject(
+        MediaDetailsApi::class.java
+    )
 
     val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
@@ -30,9 +35,17 @@ fun TopRatedMediaScreen(
             when (effect) {
                 is MediaTabScreenEffect.NavigateToMediaDetails -> {
                     if (effect.mediaType == MediaType.MOVIE) {
-                        onMediaClick(StartRoute.MOVIE, effect.id)
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.MOVIE
+                        )
                     } else if (effect.mediaType == MediaType.TV_SHOW) {
-                        onMediaClick(StartRoute.SERIES, effect.id)
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.SERIES
+                        )
                     }
                 }
 

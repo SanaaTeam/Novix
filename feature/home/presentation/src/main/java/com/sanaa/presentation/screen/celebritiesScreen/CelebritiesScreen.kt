@@ -20,7 +20,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -34,14 +35,17 @@ import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.state.PersonUiState
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 
 @Composable
 fun CelebritiesScreen(
-    onActorClick: (Int) -> Unit,
     viewModel: CelebritiesViewModel = koinViewModel<CelebritiesViewModel>()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val detailsApi: MediaDetailsApi by inject(
+        MediaDetailsApi::class.java
+    )
 
     val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
@@ -50,16 +54,20 @@ fun CelebritiesScreen(
                 is CelebritiesScreenEffects.NavigateBack -> {
                     navController.popBackStack()
                 }
-                is CelebritiesScreenEffects.NavigateToActorDetails ->{
-                    onActorClick(effect.actorId)
+
+                is CelebritiesScreenEffects.NavigateToActorDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.actorId,
+                        startRoute = StartRoute.ACTOR
+                    )
                 }
             }
         }
     }
 
     CelebritiesContent(
-        state = state.value,
-        interactionListener = viewModel
+        state = state.value, interactionListener = viewModel
     )
 }
 
@@ -90,8 +98,7 @@ fun CelebritiesContent(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
                     targetState = state.isLoading to state.isNoInternetConnection,
@@ -100,7 +107,7 @@ fun CelebritiesContent(
                 ) { (loading, disconnected) ->
                     when {
                         disconnected -> {
-                            NetworkDisconnectionContact(TODO() )
+                            NetworkDisconnectionContact(TODO())
                         }
 
                         loading -> {
@@ -132,8 +139,7 @@ private fun Preview() {
         ) {
             CelebritiesContent(
                 state = CelebritiesScreenUiState(
-                    isLoading = false,
-                    celebrities = listOf(
+                    isLoading = false, celebrities = listOf(
                         PersonUiState(
                             id = 1,
                             name = "Jennifer Lawrence",
@@ -141,10 +147,7 @@ private fun Preview() {
                             imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 2,
-                            name = "Meryl Streep",
-                            character = null,
-                            imageUrl = String()
+                            id = 2, name = "Meryl Streep", character = null, imageUrl = String()
                         ),
                         PersonUiState(
                             id = 3,
@@ -153,84 +156,46 @@ private fun Preview() {
                             imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 4,
-                            name = "Emma Stone",
-                            character = null,
-                            imageUrl = String()
+                            id = 4, name = "Emma Stone", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 5,
-                            name = "Brad Pitt",
-                            character = null,
-                            imageUrl = String()
+                            id = 5, name = "Brad Pitt", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 6,
-                            name = "Tom Cruise",
-                            character = null,
-                            imageUrl = String()
+                            id = 6, name = "Tom Cruise", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 7,
-                            name = "Angelina Jolie",
-                            character = null,
-                            imageUrl = String()
+                            id = 7, name = "Angelina Jolie", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 8,
-                            name = "Brad Pitt",
-                            character = null,
-                            imageUrl = String()
+                            id = 8, name = "Brad Pitt", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 9,
-                            name = "Tom Cruise",
-                            character = null,
-                            imageUrl = String()
+                            id = 9, name = "Tom Cruise", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 10,
-                            name = "Angelina Jolie",
-                            character = null,
-                            imageUrl = String()
+                            id = 10, name = "Angelina Jolie", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 11,
-                            name = "Brad Pitt",
-                            character = null,
-                            imageUrl = String()
+                            id = 11, name = "Brad Pitt", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 12,
-                            name = "Tom Cruise",
-                            character = null,
-                            imageUrl = String()
+                            id = 12, name = "Tom Cruise", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 13,
-                            name = "Angelina Jolie",
-                            character = null,
-                            imageUrl = String()
+                            id = 13, name = "Angelina Jolie", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 14,
-                            name = "Brad Pitt",
-                            character = null,
-                            imageUrl = String()
+                            id = 14, name = "Brad Pitt", character = null, imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 15,
-                            name = "Tom Cruise",
-                            character = null,
-                            imageUrl = String()
+                            id = 15, name = "Tom Cruise", character = null, imageUrl = String()
                         ),
                     )
-                ),
-                interactionListener = object : CelebritiesScreenInteractionListener {
+                ), interactionListener = object : CelebritiesScreenInteractionListener {
                     override fun onBackClick() {}
                     override fun onActorClick(actorId: Int) {}
-                }
-            )
+                })
         }
     }
 }
