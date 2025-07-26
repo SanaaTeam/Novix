@@ -28,7 +28,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.R
+import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.ui_state.CelebritiesScreenUiState
 import com.sanaa.presentation.ui_state.PersonUiState
