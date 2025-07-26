@@ -3,7 +3,7 @@ package com.sanaa.presentation.base
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
-class BasePagingSource<T : Any>(
+class BasePagingSourceForHome<T : Any>(
     private val fetchItems: suspend (page: Int) -> List<T>
 ) : PagingSource<Int, T>() {
 

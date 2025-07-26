@@ -13,7 +13,7 @@ class BasePagingSourceTest {
 
     private val sampleData = listOf("A", "B", "C")
 
-    private var pagingSource = BasePagingSource { page: Int ->
+    private var pagingSource = BasePagingSourceForHome { page: Int ->
         when (page) {
             1 -> sampleData
             2 -> emptyList()
@@ -31,7 +31,7 @@ class BasePagingSourceTest {
 
     @BeforeEach
     fun setUp() {
-        pagingSource = BasePagingSource { page ->
+        pagingSource = BasePagingSourceForHome { page ->
             when (page) {
                 1 -> sampleData
                 else -> emptyList()
@@ -90,7 +90,8 @@ class BasePagingSourceTest {
 
     @Test
     fun `load() should return Error when exception is thrown`() = runTest {
-        val errorPagingSource = BasePagingSource<String> { throw RuntimeException("Failure") }
+        val errorPagingSource =
+            BasePagingSourceForHome<String> { throw RuntimeException("Failure") }
         val result = errorPagingSource.load(getPagingParams())
 
         assertThat(result).isInstanceOf(LoadResult.Error::class.java)
