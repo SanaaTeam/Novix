@@ -2,6 +2,7 @@ package com.sanaa.identity.service
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.exceptions.InvalidTokenException
+import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
 import com.sanaa.identity.network.AuthenticationApi
 import com.sanaa.identity.network.postBody.CreateAccessTokenPostBody
 import com.sanaa.identity.network.postBody.LoginPostBody
@@ -11,13 +12,16 @@ class AuthenticationServiceImpl(
     private val preferencesManager: PreferencesManager,
 ) : AuthenticationService {
     override suspend fun login(userName: String, password: String) {
-        val requestToken = authenticationApi.createRequestToken()
+        val requestToken = authenticationApi.createRequestToken().body()?.requestToken ?: ""
         val loginPostBody = LoginPostBody(
             username = userName,
             password = password,
-            request_token = requestToken.requestToken.orEmpty()
+            request_token = requestToken
         )
-        authenticationApi.login(loginPostBody)
+        val response = authenticationApi.login(loginPostBody)
+        if (response.isSuccessful.not()) {
+            throw InvalidUserOrPasswordException(userName)
+        }
     }
 
     override suspend fun requestUserAccessToken(): String {
@@ -40,5 +44,10 @@ class AuthenticationServiceImpl(
 
     override suspend fun createGuestSession() {
         authenticationApi.createGuestSession()
+    }
+
+    companion object {
+        const val INVALID_USERNAME_OR_PASSWORD = 30
+        const val EMAIL_NOT_VERIFIED_EXCEPTION = 32
     }
 }

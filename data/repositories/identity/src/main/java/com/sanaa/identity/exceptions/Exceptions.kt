@@ -2,8 +2,8 @@ package com.sanaa.identity.exceptions
 
 
 open class AuthenticationException(message: String?) : Exception(message ?: "Unknown Error")
-
 open class LoginErrorException(message: String?) : AuthenticationException(message)
+class ResponseException(message: String?) : Exception(message ?: "Unknown Error")
 
 class InvalidUserOrPasswordException(
     userName: String,

@@ -8,6 +8,7 @@ import com.sanaa.identity.network.response.CreateRequestTokenResponse
 import com.sanaa.identity.network.response.LoginResponse
 import com.sanaa.identity.network.response.RequestAccessTokenResponse
 import com.sanaa.identity.network.response.ValidateKeyResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.HeaderMap
@@ -15,12 +16,12 @@ import retrofit2.http.POST
 
 interface AuthenticationApi {
     @GET("3/authentication/token/new")
-    suspend fun createRequestToken(): CreateRequestTokenResponse
+    suspend fun createRequestToken(): Response<CreateRequestTokenResponse>
 
     @POST("3/authentication/token/validate_with_login")
     suspend fun login(
         @Body body: LoginPostBody,
-    ): LoginResponse
+    ): Response<LoginResponse>
 
     @GET("3/authentication/guest_session/new")
     suspend fun createGuestSession(): CreateGuestSessionResponse
