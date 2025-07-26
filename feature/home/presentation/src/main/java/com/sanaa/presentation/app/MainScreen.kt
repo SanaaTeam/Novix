@@ -26,12 +26,14 @@ import com.sanaa.tudee_assistant.presentation.navigation.PlayListScreenRoute
 import com.sanaa.tudee_assistant.presentation.navigation.SavedContentScreenRoute
 import com.sanaa.tudee_assistant.presentation.navigation.SearchScreenRoute
 import com.sanaa.tudee_assistant.presentation.navigation.UserProfileScreenRoute
-import kotlin.getValue
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun MainScreen() {
 
-//    private val searchFeatureApi: SearchFeatureApi by inject()
+    val searchFeatureApi: SearchFeatureApi by inject(
+        SearchFeatureApi::class.java
+    )
 
     val navController = rememberNavController()
     CompositionLocalProvider(LocalMainNavController provides navController) {
@@ -48,10 +50,13 @@ fun MainScreen() {
                     modifier = Modifier.padding(innerPadding)
                 ) {
                     composable<HomeScreenRoute> {
-                        HomeScreen()
+                        HomeScreen(
+                            onMediaClick = { route, id ->
+                            }
+                        )
                     }
                     composable<SearchScreenRoute> {
-//                        searchFeatureApi.SearchScreenApi()
+                        searchFeatureApi.SearchScreenApi()
                     }
                     composable<PlayListScreenRoute> {
 

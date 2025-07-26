@@ -30,8 +30,7 @@ fun NovixApp(
     Box {
         CompositionLocalProvider(LocalAppNavController provides appNavController) {
             AppNavigation(
-                startDestination = MainScreenRoute,
-                modifier = Modifier
+                startDestination = MainScreenRoute, modifier = Modifier
             )
         }
     }
@@ -44,9 +43,7 @@ private fun AppNavigation(
     modifier: Modifier = Modifier,
 ) {
     NavHost(
-        modifier = modifier,
-        navController = AppNavigation.app,
-        startDestination = startDestination
+        modifier = modifier, navController = AppNavigation.app, startDestination = startDestination
     ) {
         composable<MainScreenRoute> {
             MainScreen()
@@ -57,15 +54,20 @@ private fun AppNavigation(
         }
 
         composable<TrendingMoviesScreenRoute> {
-            TrendingMoviesScreen()
+            TrendingMoviesScreen(
+                onMediaClick = { startRoute, id ->
+                })
         }
 
         composable<TrendingTvShowsScreenRoute> {
-            TrendingTvShowsScreen()
+            TrendingTvShowsScreen(
+                onMediaClick = { startRoute, id ->
+                })
         }
 
         composable<TopRatedMediaScreenRoute> {
-            TopRatedMediaScreen()
+            TopRatedMediaScreen(onMediaClick = { startRoute, id ->
+            })
         }
     }
 }
