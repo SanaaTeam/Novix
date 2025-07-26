@@ -1,4 +1,4 @@
-package com.sanaa.identity.network.postBody
+package com.sanaa.identity.network.body
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

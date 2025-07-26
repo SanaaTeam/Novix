@@ -1,7 +1,7 @@
 package com.sanaa.identity.network
 
-import com.sanaa.identity.network.postBody.CreateAccessTokenPostBody
-import com.sanaa.identity.network.postBody.LoginPostBody
+import com.sanaa.identity.network.body.CreateAccessTokenPostBody
+import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateAccessTokenResponse
 import com.sanaa.identity.network.response.CreateGuestSessionResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse

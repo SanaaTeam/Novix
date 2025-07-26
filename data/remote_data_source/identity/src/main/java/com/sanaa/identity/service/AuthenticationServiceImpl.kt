@@ -5,8 +5,8 @@ import com.sanaa.identity.exceptions.InvalidTokenException
 import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
 import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApi
-import com.sanaa.identity.network.postBody.CreateAccessTokenPostBody
-import com.sanaa.identity.network.postBody.LoginPostBody
+import com.sanaa.identity.network.body.CreateAccessTokenPostBody
+import com.sanaa.identity.network.body.LoginPostBody
 
 class AuthenticationServiceImpl(
     private val authenticationApi: AuthenticationApi,
