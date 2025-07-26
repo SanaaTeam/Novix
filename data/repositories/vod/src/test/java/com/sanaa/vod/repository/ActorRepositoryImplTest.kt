@@ -205,7 +205,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getTrendingActors returns empty list`() = runTest {
-        val result = repository.getTrendingActors()
+        val result = repository.getTrendingActors(1)
 
         assertThat(result).isEmpty()
     }

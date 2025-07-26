@@ -126,7 +126,7 @@ fun GenreMoviesScreenContent(
                                 key = { item -> item.id }
                             ) { movie ->
                                 MediaPosterCard(
-                                    boastImage = {
+                                    posterImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),

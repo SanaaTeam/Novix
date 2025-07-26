@@ -1,4 +1,4 @@
-package com.sanaa.presentation.cards
+package com.sanaa.presentation.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,20 +20,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun ActorCard(
+fun PersonCard(
     actorName: String,
-    actorImage: Painter,
+    actorImage: String,
     modifier: Modifier = Modifier,
     onCardClick: () -> Unit = {},
     playedCharacter: String? = null,
@@ -87,7 +87,7 @@ fun ActorCard(
 
             )
             Image(
-                painter = actorImage,
+                painter = rememberAsyncImagePainter(actorImage),
                 contentDescription = actorName,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxWidth()
@@ -134,7 +134,7 @@ fun ActorCard(
 
 @PreviewLightDark
 @Composable
-private fun PreviewActorCard() {
+private fun PreviewPersonCard() {
     NovixTheme(isSystemInDarkTheme()) {
         Column(
             modifier = Modifier
@@ -143,14 +143,14 @@ private fun PreviewActorCard() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            ActorCard(
+            PersonCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                actorImage =String(),
                 playedCharacter = "Peter Parker"
             )
-            ActorCard(
+            PersonCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                actorImage = String(),
                 playedCharacter = null
             )
         }

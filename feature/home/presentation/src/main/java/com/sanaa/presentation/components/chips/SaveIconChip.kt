@@ -1,4 +1,4 @@
-package com.sanaa.presentation.cards
+package com.sanaa.presentation.components.chips
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image

@@ -123,7 +123,7 @@ private fun TopSeriesContent(
                                 key = { item -> item.id }
                             ) { series ->
                                 MediaPosterCard(
-                                    boastImage = {
+                                    posterImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = series.posterPath ?: "",
                                             modifier = Modifier.fillMaxSize(),

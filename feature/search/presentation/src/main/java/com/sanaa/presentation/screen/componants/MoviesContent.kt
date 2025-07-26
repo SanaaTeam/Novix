@@ -44,7 +44,7 @@ fun MoviesContent(
             if (movie != null) {
                 Log.d("MoviesContent", "Movie: $movie")
                 MediaPosterCard(
-                    boastImage = {
+                    PosterImage = {
                         RemoteBlurredHaramImageViewer(
                             imageUrl = movie.imageUrl,
                             modifier = Modifier.fillMaxWidth(),

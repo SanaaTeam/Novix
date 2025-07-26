@@ -233,9 +233,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getPopularSeries should return series when available`() = runTest {
         val expected = listOf(dummyTvSeries)
-        coEvery { tvSeriesRepository.getPopularSeries(1, dummyGenre.id) } returns expected
+        coEvery { tvSeriesRepository.getPopularSeries(1) } returns expected
 
-        val result = manageTvSeriesDetailsUseCase.getPopularSeries(1, dummyGenre.id)
+        val result = manageTvSeriesDetailsUseCase.getPopularSeries(1)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -243,14 +243,11 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getPopularSeries should throw when repository fails`() = runTest {
         coEvery {
-            tvSeriesRepository.getPopularSeries(
-                1,
-                dummyGenre.id
-            )
+            tvSeriesRepository.getPopularSeries(1)
         } throws RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageTvSeriesDetailsUseCase.getPopularSeries(1, dummyGenre.id)
+            manageTvSeriesDetailsUseCase.getPopularSeries(1)
         }
     }
 

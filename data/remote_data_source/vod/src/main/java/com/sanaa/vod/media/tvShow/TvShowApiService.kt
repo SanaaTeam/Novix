@@ -3,6 +3,7 @@ package com.sanaa.vod.media.tvShow
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
+import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
 import com.sanaa.vod.media.tvShow.response.TvShowGenresResponse
@@ -65,4 +66,32 @@ interface TvShowApiService {
     @GET("3/genre/tv/list")
     @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsGenres(): TvShowGenresResponse
+
+    @GET("tv/popular")
+    @Headers("Ignore-Language: true")
+    suspend fun getPopularTvShows(
+        @Query("page") page: Int
+    ): MovieApiResponse<TvShowDto>
+
+    @GET("discover/tv")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTrendingTvShows(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("release_date.gte") minDate: String? = null,
+        @Query("release_date.lte") maxDate: String? = null,
+    ): MovieApiResponse<TvShowDto>
+
+    @GET("discover/tv")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTopRatingTvShows(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("sort_by") sortBy: String = "vote_average.desc",
+        @Query("vote_count.gte") voteCountGte: Int = 100,
+    ): MovieApiResponse<TvShowDto>
+
 }

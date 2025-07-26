@@ -13,4 +13,6 @@ interface RemoteActorDataSource {
     suspend fun getActorMovies(actorId: Int): List<ActorCastCreditDto>
 
     suspend fun getActorTvShows(actorId: Int): List<ActorCastCreditDto>
+
+    suspend fun fetchTrendingPeople(page: Int): List<ActorDto>
 }

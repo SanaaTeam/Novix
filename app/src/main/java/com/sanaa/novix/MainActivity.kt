@@ -9,6 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,9 +20,7 @@ import timber.log.Timber
 
 class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
-    private val searchFeatureApi: SearchFeatureApi by inject()
-    private val mediaDetailsNavigator: MediaDetailsApi by inject()
-    private val authenticationApi: AuthenticationApi by inject()
+    private val homeFeatureApi: HomeFeatureApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -36,14 +35,7 @@ class MainActivity : ComponentActivity() {
             preferenceManager.authorizationToken.firstOrNull()
         }
         setContent {
-            if (TextUtils.isEmpty(token))
-                authenticationApi.AuthenticationScreen(this)
-            else
-                searchFeatureApi.SearchScreen(
-                    onMediaClick = { startRoute, id ->
-                        mediaDetailsNavigator.launch(this, startRoute, id)
-                    }
-                )
+            homeFeatureApi.HomeScreenApi()
         }
     }
 }

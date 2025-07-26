@@ -32,7 +32,7 @@ fun MediaPosterCard(
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
-    boastImage: @Composable () -> Unit = {}
+    posterImage: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -44,7 +44,7 @@ fun MediaPosterCard(
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
     ) {
-        boastImage()
+        posterImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -78,7 +78,7 @@ private fun PreviewMediaPosterCard() {
         ) {
             item {
                 MediaPosterCard(
-                    boastImage = {
+                    posterImage = {
                         Image(
                             painter = painterResource(R.drawable.icon_placeholder_light),
                             contentDescription = null,

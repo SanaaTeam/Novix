@@ -39,6 +39,45 @@ interface MovieApiService {
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieTrailerUrl(@Path("movie_id") id: Int): MovieApiResponse<VideoDto>
 
+    @GET("3/movie/popular")
+    @Headers("Ignore-Language: true")
+    suspend fun getPopularMovies(
+        @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
+
+    @GET("3/discover/movie")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTrendingMovies(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("sort_by") sortBy: String = "popularity.desc",
+        @Query("release_date.gte") minDate: String? = null,
+        @Query("release_date.lte") maxDate: String? = null,
+    ): MovieApiResponse<MovieDto>
+
+    @GET("3/discover/movie")
+    @Headers("Ignore-Language: true")
+    suspend fun fetchTopRatingMovies(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("sort_by") sortBy: String = "vote_average.desc",
+        @Query("vote_count.gte") voteCountGte: Int = 100,
+
+        ): MovieApiResponse<MovieDto>
+
+    @GET("3/discover/movie")
+    suspend fun fetchUpcomingMovies(
+        @Query("page") page: Int,
+        @Query("with_genres") withGenres: String? = null,
+        @Query("include_adult") includeAdult: Boolean = false,
+        @Query("include_video") includeVideo: Boolean = false,
+        @Query("with_release_type") releaseType: String = "2|3",
+        @Query("release_date.gte") minDate: String? = null,
+        @Query("release_date.lte") maxDate: String? = null
+    ): MovieApiResponse<MovieDto>
+
     @GET("3/genre/movie/list")
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>

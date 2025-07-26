@@ -64,4 +64,24 @@ class RemoteTvShowDataSourceImpl(
     override suspend fun getTvShowGenres(): List<GenreDto> {
         return apiService.fetchTvShowsGenres().genres
     }
+
+    override suspend fun fetchPopularTvShows(
+        page: Int,
+    ): List<TvShowDto> {
+        return apiService.getPopularTvShows(page).results
+    }
+
+    override suspend fun fetchTopRatedTvShows(
+        page: Int,
+        genreId: Int?
+    ): List<TvShowDto> {
+        return apiService.fetchTopRatingTvShows(page, genreId?.toString()).results
+    }
+
+    override suspend fun fetchTrendingTvShows(
+        page: Int,
+        genreId: Int?
+    ): List<TvShowDto> {
+        return apiService.fetchTrendingTvShows(page, genreId?.toString()).results
+    }
 }
