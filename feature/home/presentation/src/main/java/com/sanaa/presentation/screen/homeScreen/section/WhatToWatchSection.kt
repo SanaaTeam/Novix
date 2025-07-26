@@ -1,0 +1,135 @@
+package com.sanaa.presentation.screen.homeScreen.section
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.home.presentation.R
+
+@Composable
+fun WhatToWatchSection(
+    modifier: Modifier = Modifier,
+    onMoviesClicked: () -> Unit,
+    onTvShowsClicked: () -> Unit,
+    onPeopleClicked: () -> Unit
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        NovixSectionHeader(title = "")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+        ) {
+            WantToWatchCard(
+                label = stringResource(R.string.movies),
+                painter = painterResource(R.drawable.popcorns),
+                brush = Theme.colors.moviesCardGradient,
+                onClick = { onMoviesClicked() },
+            )
+            WantToWatchCard(
+                label = stringResource(R.string.tvshows),
+                painter = painterResource(R.drawable.move_role),
+                brush = Theme.colors.tvShowCardGradient,
+                onClick = { onTvShowsClicked() },
+            )
+            WantToWatchCard(
+                label = stringResource(R.string.people),
+                painter = painterResource(R.drawable.cenima_board),
+                brush = Theme.colors.peopleCardGradient,
+                onClick = { onPeopleClicked() },
+            )
+        }
+
+    }
+}
+
+
+@Composable
+fun WantToWatchCard(
+    modifier: Modifier = Modifier,
+    label: String,
+    painter: Painter,
+    brush: Brush,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .height(127.dp)
+            .width(104.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 12.dp)
+                .background(
+                    brush = brush,
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .align(Alignment.BottomCenter)
+                .clickable {
+                    onClick()
+                },
+        ) {
+            BasicText(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(8.dp),
+                text = label,
+                style = Theme.textStyle.title.medium.copy(color = Theme.colors.onPrimary),
+            )
+        }
+        Image(
+            modifier = Modifier
+                .height(64.dp)
+                .align(Alignment.TopStart)
+                .padding(start = 4.dp),
+            painter = painter,
+            contentDescription = null
+        )
+    }
+}
+
+
+@PreviewLightDark
+@Composable
+private fun WhatToWatchSectionPreview(modifier: Modifier = Modifier) {
+    NovixTheme(
+        isSystemInDarkTheme()
+    ) {
+        Column(
+            modifier.fillMaxSize()
+        ) {
+            WhatToWatchSection(
+                onMoviesClicked = {},
+                onTvShowsClicked = {},
+                onPeopleClicked = {}
+            )
+        }
+    }
+
+}

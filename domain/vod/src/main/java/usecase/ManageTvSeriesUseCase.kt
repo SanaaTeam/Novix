@@ -31,8 +31,8 @@ class ManageTvSeriesUseCase(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
-    suspend fun getPopularSeries(page: Int, genreId: Int?): List<TvSeries> {
-        return tvSeriesRepo.getPopularSeries(page, genreId)
+    suspend fun getPopularSeries(page: Int): List<TvSeries> {
+        return tvSeriesRepo.getPopularSeries(page)
     }
 
     suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {

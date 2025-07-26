@@ -49,10 +49,19 @@ dependencies {
     implementation(projects.data.remoteDataSource.vod)
     implementation(projects.data.localDataSource.vod)
     implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.playlists.api)
+    implementation(projects.feature.home.presentation)
+
+
     implementation(projects.feature.search.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.mediaDetails.presentation)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.userProfile.presentation)
+    implementation(projects.feature.playlists.presentation)
     implementation(projects.preferences)
 
     implementation(libs.androidx.core.ktx)

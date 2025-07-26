@@ -31,7 +31,7 @@ fun PosterCard(
         modifier = Modifier
             .width(158.dp)
             .height(210.dp),
-        boastImage = {
+        posterImage = {
             RemoteBlurredHaramImageViewer(
                 imageUrl = imageUrl ?: "",
                 modifier = Modifier.fillMaxWidth(),

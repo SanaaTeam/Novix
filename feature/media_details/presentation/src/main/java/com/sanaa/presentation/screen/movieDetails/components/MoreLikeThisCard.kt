@@ -28,7 +28,7 @@ fun MoreLikeThisCard(
     MediaPosterCard(
         modifier = modifier,
         onCardClick = onMovieClick,
-        boastImage = {
+        posterImage = {
             RemoteBlurredHaramImageViewer(
                 imageUrl = movie.posterUrl.orEmpty(),
                 modifier = Modifier.fillMaxWidth(),

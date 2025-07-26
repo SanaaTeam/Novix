@@ -1,4 +1,4 @@
-package com.sanaa.presentation.cards
+package com.sanaa.presentation.components.cards
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -21,30 +22,37 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.components.chips.MediaRatingChip
+import com.sanaa.presentation.components.chips.SaveIconChip
 
 @Composable
 fun MediaPosterCard(
     modifier: Modifier = Modifier,
+    width: Dp = 158.dp,
+    height: Dp = 210.dp,
+    ratio: Float = (width / height),
     onCardClick: () -> Unit = {},
     topRightContent: @Composable () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
-    boastImage: @Composable () -> Unit = {}
+    posterImage: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = modifier
             .aspectRatio(
-                ratio = (158 / 210f)
+                ratio = ratio
             )
-            .width(158.dp)
+            .width(width)
+            .height(height)
             .clip(RoundedCornerShape(12.dp))
             .background(Theme.colors.surface)
             .clickable(onClick = onCardClick)
     ) {
-        boastImage()
+        posterImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -78,7 +86,8 @@ private fun PreviewMovieSeriesPosterCard() {
         ) {
             item {
                 MediaPosterCard(
-                    boastImage = {
+                    modifier = Modifier,
+                    posterImage = {
                         Image(
                             painter = painterResource(R.drawable.icon_placeholder_light),
                             contentDescription = null,
