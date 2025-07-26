@@ -10,13 +10,13 @@ import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import repository.HistoryRepository
+import repository.SearchHistoryRepository
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
-) : HistoryRepository {
+) : SearchHistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
         errorMessage = "Failed to retrieve search history"

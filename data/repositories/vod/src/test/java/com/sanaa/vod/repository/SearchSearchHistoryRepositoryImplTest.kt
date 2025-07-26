@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import usecase.search.search_param.MediaType
 
-class SearchHistoryRepositoryImplTest {
+class SearchSearchHistoryRepositoryImplTest {
     private lateinit var repository: SearchHistoryRepositoryImpl
     private var localDataSource: LocalSearchHistoryDataSource = mockk(relaxed = true)
 
