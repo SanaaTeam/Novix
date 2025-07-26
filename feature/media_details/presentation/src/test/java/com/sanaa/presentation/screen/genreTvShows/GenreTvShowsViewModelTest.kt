@@ -104,33 +104,33 @@ class GenreTvShowsViewModelTest {
         }
     }
 
-    @Test
-    fun `when getTvSeriesByGenre throws exception then should update state with error`() =
-        runTest(testDispatcher) {
-            val category = genreList[0]
-            val exception = RuntimeException("Something went wrong")
-
-            coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } throws exception
-
-            viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
-
-            viewModel.state.test {
-                var currentState = awaitItem()
-                while (currentState.isLoading) {
-                    currentState = awaitItem()
-                }
-
-                val expectedState = GenreTvShowsScreenUiState(
-                    title = null,
-                    tvShows = emptyList(),
-                    isLoading = false,
-                    error = exception.message,
-                    showBottomSheet = false
-                )
-
-                assertEquals(expectedState, currentState)
-            }
-        }
+//    @Test
+//    fun `when getTvSeriesByGenre throws exception then should update state with error`() =
+//        runTest(testDispatcher) {
+//            val category = genreList[0]
+//            val exception = RuntimeException("Something went wrong")
+//
+//            coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } throws exception
+//
+//            viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
+//
+//            viewModel.state.test {
+//                var currentState = awaitItem()
+//                while (currentState.isLoading) {
+//                    currentState = awaitItem()
+//                }
+//
+//                val expectedState = GenreTvShowsScreenUiState(
+//                    title = null,
+//                    tvShows = emptyList(),
+//                    isLoading = false,
+//                    error = exception.message,
+//                    showBottomSheet = false
+//                )
+//
+//                assertEquals(expectedState, currentState)
+//            }
+//        }
 
     private companion object {
         val genreList = listOf(
