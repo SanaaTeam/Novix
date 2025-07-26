@@ -96,7 +96,7 @@ fun FocusedCarousel(
                             placeholderContent = {
 //                                RemoteImagePlaceholder(Modifier.fillMaxSize())
                                 Image(
-                                    painterResource(R.drawable.move_role),
+                                    painterResource(R.drawable.cenima_board),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop
                                 )

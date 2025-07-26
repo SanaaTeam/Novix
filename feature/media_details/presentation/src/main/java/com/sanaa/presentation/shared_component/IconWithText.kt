@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component
+package com.sanaa.presentation.shared_component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

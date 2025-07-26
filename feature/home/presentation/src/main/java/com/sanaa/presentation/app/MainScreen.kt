@@ -51,10 +51,7 @@ fun MainScreen() {
                     modifier = Modifier
                 ) {
                     composable<HomeScreenRoute> {
-                        HomeScreen(
-                            onMediaClick = { route, id ->
-                            }
-                        )
+                        HomeScreen()
                     }
                     composable<SearchScreenRoute> {
                         searchFeatureApi.SearchScreenApi()
@@ -106,9 +103,7 @@ private fun AppBottomNavBar(navController: NavController) {
 }
 
 private sealed class BottomNavItem(
-    val route: MainScreenRoutes,
-    val icon: Int,
-    val selectedIcon: Int
+    val route: MainScreenRoutes, val icon: Int, val selectedIcon: Int
 ) {
     object Home :
         BottomNavItem(HomeScreenRoute, R.drawable.icon_home, R.drawable.icon_home_selected)
@@ -116,20 +111,14 @@ private sealed class BottomNavItem(
     object Search :
         BottomNavItem(SearchScreenRoute, R.drawable.icon_search, R.drawable.icon_search_selected)
 
-    object Playlists :
-        BottomNavItem(
-            PlayListScreenRoute,
-            R.drawable.icon_category,
-            R.drawable.icon_category_selected
-        )
+    object Playlists : BottomNavItem(
+        PlayListScreenRoute, R.drawable.icon_category, R.drawable.icon_category_selected
+    )
 
     object Saved :
         BottomNavItem(SavedContentScreenRoute, R.drawable.icon_save, R.drawable.icon_save_selected)
 
-    object Profile :
-        BottomNavItem(
-            UserProfileScreenRoute,
-            R.drawable.icon_account,
-            R.drawable.icon_account_selected
-        )
+    object Profile : BottomNavItem(
+        UserProfileScreenRoute, R.drawable.icon_account, R.drawable.icon_account_selected
+    )
 }
