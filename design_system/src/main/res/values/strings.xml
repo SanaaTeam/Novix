@@ -1,4 +1,5 @@
 <resources>
+    <string name="novix">Novix</string>
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
     <string name="offline_note">Retry</string>
@@ -19,6 +20,7 @@
     <string name="search_hint">Search…</string>
     <string name="read_more">Read more</string>
     <string name="no_review">There is no review!</string>
+    <string name="rating">Rating</string>
     <string name="reviews">Reviews</string>
 
 
