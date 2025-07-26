@@ -1,5 +1,7 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
+import android.graphics.drawable.Icon
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,10 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,13 +29,12 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
+        BasicText(
             text = stringResource(R.string.filter),
-            style = Theme.textStyle.title.large,
-            color = Theme.colors.title
+            style = Theme.textStyle.title.large.copy(color = Theme.colors.title),
         )
         Box(
             modifier = Modifier
@@ -51,11 +52,11 @@ fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
                 .padding(8.dp)
 
         ) {
-            Icon(
+            Image(
                 painter = painterResource(R.drawable.cancel),
                 contentDescription = stringResource(R.string.cancel),
                 modifier = Modifier.size(16.dp),
-                tint = Theme.colors.title
+                colorFilter = ColorFilter.tint(Theme.colors.title)
             )
         }
     }

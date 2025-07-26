@@ -14,8 +14,8 @@ data class MovieLocalDto(
     val title: String,
     @ColumnInfo(name = "image_path")
     val imagePath: String?,
-    @ColumnInfo(name = "release_year")
-    val releaseYear: Int?,
+    @ColumnInfo(name = "release_date")
+    val releaseDate: String?,
     @ColumnInfo(name = "genres")
     val genres: String?,
     @ColumnInfo(name = "imdb_rating")

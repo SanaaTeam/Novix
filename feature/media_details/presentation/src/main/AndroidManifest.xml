@@ -4,7 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <application>
         <activity
-            android:name="com.sanaa.presentation.navigation.MediaDetailsActivity"
+            android:name="com.sanaa.presentation.api.MediaDetailsActivity"
             android:exported="false" />
     </application>
 

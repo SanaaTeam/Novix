@@ -3,6 +3,7 @@ package com.sanaa.novix.di
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchFeatureApi
+import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.presentation.api.AuthenticationApiImpl
 import com.sanaa.presentation.api.SearchFeatureApiImpl
 import com.sanaa.presentation.navigation.MediaDetailsApiImpl

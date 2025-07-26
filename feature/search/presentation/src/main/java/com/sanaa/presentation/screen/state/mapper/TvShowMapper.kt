@@ -1,13 +1,13 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.TvShowUiModel
-import usecase.search.search_param.SearchTvSeriesOutput
+import entity.TvSeries
 
-fun SearchTvSeriesOutput.toUiState(): TvShowUiModel {
+fun TvSeries.toUiState(): TvShowUiModel {
     return TvShowUiModel(
         id = this.id,
         title = this.title,
-        imageUrl = this.posterImageUrl,
+        imageUrl = this.posterImageUrl.orEmpty(),
         rating = ""
     )
 }
