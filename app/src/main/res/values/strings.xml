@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">Novix</string>
     <string name="unsuitable_image">Unsuitable image</string>
+    <string name="welcome_back">Welcome back</string>
+    <string name="enter_username_password_error">Please user name and password</string>
 </resources>

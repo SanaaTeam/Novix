@@ -2,16 +2,19 @@ package com.sanaa.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
-interface DestinationLogin {
-    fun route(): String
-}
+open class DestinationLogin
 
-@Serializable object WelcomeRoute : DestinationLogin {
-    override fun route() = "welcome"
-    const val PATTERN = "welcome"
-}
+@Serializable
+class WelcomeRoute : DestinationLogin()
 
-@Serializable object LoginRoute : DestinationLogin {
-    override fun route() = "login"
-    const val PATTERN = "login"
-}
+@Serializable
+object LoginRoute : DestinationLogin()
+
+@Serializable
+object SignUpRoute : DestinationLogin()
+
+@Serializable
+data class ApproveAccessToken(val requestToken: String) : DestinationLogin()
+
+@Serializable
+object ForgetPasswordRoute : DestinationLogin()

@@ -35,4 +35,7 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+
+    // Paging 3
+    implementation(libs.androidx.paging.compose)
 }

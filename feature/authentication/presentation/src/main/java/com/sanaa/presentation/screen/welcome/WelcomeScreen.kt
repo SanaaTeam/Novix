@@ -33,11 +33,12 @@ fun WelcomeScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                WelcomeScreenEffects.NavigateToLogin ->
-                    navController.navigate(LoginRoute.route())
+                WelcomeScreenEffects.NavigateToLogin -> {
+                    navController.navigate(LoginRoute)
+                }
 
                 WelcomeScreenEffects.ContinueAsGuest -> {
-                    // TODO: navigate into your home flow
+
                 }
 
                 WelcomeScreenEffects.ExitApp -> {
@@ -61,7 +62,7 @@ fun WelcomeScreen(
 fun WelcomeContent(
     onLoginClicked: () -> Unit,
     onContinueClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NovixScaffold(backgroundShapes = { NovixBackgroundShapes() }) {
         Column(

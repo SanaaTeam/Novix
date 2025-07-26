@@ -3,10 +3,13 @@ package com.sanaa.presentation.screen.login
 import com.sanaa.presentation.screen.login_base.BaseViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
+import service.StringProvider
+import usecase.LoginUseCase
 
 class LoginViewModel(
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val loginUseCase: LoginUseCase,
+    private val stringProvider: StringProvider,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
     LoginScreenInteractionListener {
 
@@ -30,8 +33,12 @@ class LoginViewModel(
 
         tryToExecute(
             callee = {
-                // TODO: replace stub with real login call
-                delay(800)
+                val userName = state.value.username
+                val password = state.value.password
+                if (userName.isNotBlank() && password.isNotBlank())
+                    loginUseCase.login(userName, password)
+                else
+                    throw Exception(stringProvider.enterUserNameAndPasswordError)
             },
             onSuccess = {
                 updateState { prev ->
@@ -39,7 +46,7 @@ class LoginViewModel(
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
                 emitEffect(LoginScreenEffects.NavigateToHome)
-                emitEffect(LoginScreenEffects.ShowSuccess(message = "Welcome back!"))
+                emitEffect(LoginScreenEffects.ShowSuccess(message = stringProvider.welcomeBack))
             },
             onError = { throwable ->
                 updateState { prev ->
@@ -64,9 +71,7 @@ class LoginViewModel(
     }
 
 
-    private fun updateStateAndRefreshSubmit(
-        transform: (LoginUiState) -> LoginUiState
-    ) {
+    private fun updateStateAndRefreshSubmit(transform: (LoginUiState) -> LoginUiState) {
         updateState { previous ->
             val updated = transform(previous)
             updated.copy(canSubmit = isSubmitAllowed(updated))

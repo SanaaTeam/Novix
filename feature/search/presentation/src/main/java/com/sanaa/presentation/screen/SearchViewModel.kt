@@ -19,6 +19,9 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
+import entity.Actor
+import entity.Movie
+import entity.TvSeries
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +39,6 @@ import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchViewModel(
     private val searchUseCase: SearchUseCase,
@@ -201,7 +201,6 @@ class SearchViewModel(
     }
 
 
-
     @OptIn(FlowPreview::class)
     private fun observeSearchQueryFlow(): Flow<String> {
         return state.map { it.searchQuery }.distinctUntilChanged().debounce(500L)
@@ -304,7 +303,7 @@ class SearchViewModel(
     private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createActorsPagingSource(query) },
-            mapper = SearchActorOutput::toUiState
+            mapper = Actor::toUiState
         )
     }
 
@@ -312,22 +311,22 @@ class SearchViewModel(
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource(query) },
-            mapper = SearchTvSeriesOutput::toUiState
+            mapper = TvSeries::toUiState
         )
     }
 
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource(query) },
-            mapper = SearchMovieOutput::toUiState
+            mapper = Movie::toUiState
         )
     }
 
-    private fun createActorsPagingSource(query: String): PagingSource<Int, SearchActorOutput> {
+    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
         return SearchActorsPagingSource(searchUseCase, query = query)
     }
 
-    private fun createTvShowsPagingSource(query: String): PagingSource<Int, SearchTvSeriesOutput> {
+    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return SearchTvShowsPagingSource(
             searchUseCase,
             query = query,
@@ -335,7 +334,7 @@ class SearchViewModel(
         )
     }
 
-    private fun createMoviesPagingSource(query: String): PagingSource<Int, SearchMovieOutput> {
+    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
         return SearchMoviesPagingSource(
             searchMoviesUseCase = searchUseCase,
             query = query,

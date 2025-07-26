@@ -1,17 +1,19 @@
 package com.sanaa.vod.search
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.search.SearchRemoteDataSourceImpl
-import com.sanaa.vod.search.SearchApiService
-import com.sanaa.vod.dataSource.remote.search.dto.*
+import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
+import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
+import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
+import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+
 class RemoteSearchDataSourceImplTest {
-    private lateinit var dataSource: SearchRemoteDataSourceImpl
+    private lateinit var dataSource: SearchRemoteDataSource
     private val apiService = mockk<SearchApiService>()
 
     @BeforeEach
@@ -53,7 +55,9 @@ class RemoteSearchDataSourceImplTest {
                 ActorSearchDto(
                     id = 1,
                     name = "Brad Pitt",
-                    profileImagePath = "/path/to/profile.jpg"
+                    profileImagePath = "/path/to/profile.jpg",
+                    gender = 1,
+                    knownForDepartment = "Acting"
                 )
             ),
             totalPages = 1,

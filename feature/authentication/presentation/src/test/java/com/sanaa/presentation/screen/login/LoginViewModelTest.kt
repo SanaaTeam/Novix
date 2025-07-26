@@ -2,25 +2,28 @@ package com.sanaa.presentation.screen.login
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.StringProvider
+import usecase.LoginUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
-
+    private val loginUseCase: LoginUseCase = mockk(relaxed = true)
+    private val stringProvider: StringProvider = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: LoginViewModel
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = LoginViewModel(testDispatcher)
+        viewModel = LoginViewModel(loginUseCase, stringProvider, ioDispatcher = testDispatcher)
     }
 
     @Test

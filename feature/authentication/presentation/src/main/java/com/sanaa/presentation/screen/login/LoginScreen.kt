@@ -20,7 +20,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.presentation.navigation.ApproveAccessToken
+import com.sanaa.presentation.navigation.ForgetPasswordRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.SignUpRoute
 import com.sanaa.presentation.screen.login.components.LoginActions
 import com.sanaa.presentation.screen.login.components.LoginHeader
 import com.sanaa.presentation.screen.login.components.LoginTopBar
@@ -33,11 +36,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = koinViewModel()
+    viewModel: LoginViewModel = koinViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
-
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
     BackHandler(onBack = viewModel::onBackClicked)
@@ -49,22 +51,28 @@ fun LoginScreen(
                     navController.popBackStack()
 
                 LoginScreenEffects.NavigateToHome -> {
-                    // TODO: navigate to home
+
+                }
+
+                is LoginScreenEffects.NavigateApproveAccessToken -> {
+                    navController.navigate(ApproveAccessToken(effect.requestToken))
                 }
 
                 LoginScreenEffects.NavigateToForgotPassword -> {
-                    // TODO: navigate to forgot password
+                    navController.navigate(ForgetPasswordRoute)
                 }
 
                 LoginScreenEffects.NavigateToCreateAccount -> {
-                    // TODO: navigate to create account
+                    navController.navigate(SignUpRoute)
                 }
 
-                is LoginScreenEffects.ShowError ->
+                is LoginScreenEffects.ShowError -> {
                     snack = SnackData(effect.message, isError = true)
+                }
 
-                is LoginScreenEffects.ShowSuccess ->
+                is LoginScreenEffects.ShowSuccess -> {
                     snack = SnackData(effect.message, isError = false)
+                }
             }
         }
     }
@@ -87,7 +95,7 @@ fun LoginScreen(
 fun LoginContent(
     state: LoginUiState,
     listener: LoginScreenInteractionListener,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }

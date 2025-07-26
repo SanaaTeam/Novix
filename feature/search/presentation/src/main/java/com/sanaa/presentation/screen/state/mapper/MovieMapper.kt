@@ -1,11 +1,11 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.MovieUiModel
+import entity.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import usecase.search.search_param.SearchMovieOutput
 
-fun SearchMovieOutput.toUiState(): MovieUiModel {
+fun Movie.toUiState(): MovieUiModel {
     return MovieUiModel(
         id = this.id,
         title = this.title,
@@ -14,5 +14,5 @@ fun SearchMovieOutput.toUiState(): MovieUiModel {
     )
 }
 
-fun List<SearchMovieOutput>.toUiState() = this.map { it.toUiState() }
-fun Flow<List<SearchMovieOutput>>.toUiState() = this.map { it.toUiState() }
+fun List<Movie>.toUiState() = this.map { it.toUiState() }
+fun Flow<List<Movie>>.toUiState() = this.map { it.toUiState() }

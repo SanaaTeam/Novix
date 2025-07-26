@@ -39,9 +39,9 @@
 -dontwarn com.sanaa.presentation.navigation.StartRoute
 -dontwarn com.sanaa.presentation.screen.SearchViewModel
 -dontwarn com.sanaa.presentation.screen.actor.ActorViewModel
--dontwarn com.sanaa.presentation.screen.episode_details.EpisodeDetailsScreenViewModel
--dontwarn com.sanaa.presentation.screen.movie_categories.MovieCategoriesViewModel
--dontwarn com.sanaa.presentation.screen.movie_details.MovieDetailsViewModel
+-dontwarn com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
+-dontwarn com.sanaa.presentation.screen.genreMovies.MovieCategoriesViewModel
+-dontwarn com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 -dontwarn com.sanaa.presentation.screen.review.ReviewViewModel
 -dontwarn com.sanaa.presentation.screen.series.SeriesViewModel
 -dontwarn com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
@@ -113,3 +113,4 @@
 
 # With R8 full mode generic signatures are stripped for classes that are not kept.
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
+-dontwarn com.sanaa.presentation.api.MediaDetailsApiImpl

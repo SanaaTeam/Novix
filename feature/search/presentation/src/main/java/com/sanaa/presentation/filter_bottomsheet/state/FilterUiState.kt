@@ -6,7 +6,12 @@ data class FilterUiState(
     val selectedGenres: Set<GenreUiState> = emptySet(),
     val imdbRating: Int = 0,
     val isLoading: Boolean = false,
-)
+
+){
+    val hasUserSelectedFilters: Boolean
+        get() = selectedGenres.isNotEmpty() || imdbRating > 0 || yearRange != 1980f..2025f
+
+}
 
 data class GenreUiState(
     val id: Int = 0,

@@ -49,11 +49,13 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.navigation.**",
     "com.sanaa.presentation.screen.actor.componants.**",
     "com.sanaa.presentation.screen.actor.screen.**",
-    "com.sanaa.presentation.screen.episode_details.components.**",
-    "com.sanaa.presentation.screen.episode_details.**",
-    "com.sanaa.presentation.screen.movie_details.components.**",
-    "com.sanaa.presentation.screen.movie_categories.**",
-    "com.sanaa.presentation.screen.movie_details.**",
+    "com.sanaa.presentation.screen.episodeDetails.components.**",
+    "com.sanaa.presentation.screen.episodeDetails.screen.**",
+    "com.sanaa.presentation.screen.episodeDetails.**",
+    "com.sanaa.presentation.screen.movieDetails.components.**",
+    "com.sanaa.presentation.screen.genreMovies.**",
+    "com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen*",
+    "com.sanaa.presentation.screen.movieDetails.**",
     "com.sanaa.presentation.screen.review.components.**",
     "com.sanaa.presentation.screen.review.ReviewsScreen*",
     "com.sanaa.presentation.screen.series.components.**",
@@ -65,7 +67,11 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.login.components.**",
     "com.sanaa.presentation.screen.login_base.**",
     "com.sanaa.presentation.screen.welcome.**",
-    "com.sanaa.presentation.screen.welcome.components.**"
+    "com.sanaa.presentation.screen.welcome.components.**",
+    "com.sanaa.presentation.webview.**",
+    "com.sanaa.presentation.modifier.**",
+    "com.sanaa.presentation.api.**",
+    "com.sanaa.novix.resourceProvider.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
