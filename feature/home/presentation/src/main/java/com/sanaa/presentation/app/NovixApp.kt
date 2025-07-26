@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sanaa.presentation.api.navigation.ActorsScreenRoute
 import com.sanaa.presentation.api.navigation.AppNavigation
 import com.sanaa.presentation.api.navigation.AppRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
@@ -50,8 +49,9 @@ private fun AppNavigation(
             MainScreen()
         }
 
-        composable<ActorsScreenRoute> {
-            CelebritiesScreen()
+        composable<TrendingPeopleScreenRoute> {
+            CelebritiesScreen(onActorClick = { id ->
+            })
         }
 
         composable<TrendingMoviesScreenRoute> {
@@ -66,9 +66,6 @@ private fun AppNavigation(
                 })
         }
 
-        composable<TrendingPeopleScreenRoute> {
-            CelebritiesScreen()
-        }
 
         composable<TopRatedMediaScreenRoute> {
             TopRatedMediaScreen(onMediaClick = { startRoute, id ->

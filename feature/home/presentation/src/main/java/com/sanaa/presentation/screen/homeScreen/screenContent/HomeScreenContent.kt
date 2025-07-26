@@ -16,10 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
@@ -73,7 +75,7 @@ fun HomeScreenContent(
                 }
             )
             MixedMediaSection(
-                headerLabel = "Top Rating",
+                headerLabel = stringResource(R.string.top_rated),
                 mediaItems = state.topRatingMedia,
                 onMediaClick = {
                     interactionListener.onMediaClick(it.id,it.mediaType)
@@ -83,7 +85,7 @@ fun HomeScreenContent(
                 }
             )
             MixedMediaSection(
-                headerLabel = "Continue watching",
+                headerLabel = stringResource(R.string.continue_watching),
                 mediaItems = state.continueWatchingMedia,
                 onMediaClick = {
                     interactionListener.onMediaClick(it.id,it.mediaType)

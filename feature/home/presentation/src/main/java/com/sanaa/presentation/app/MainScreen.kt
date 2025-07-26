@@ -1,7 +1,7 @@
 package com.sanaa.presentation.app
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -40,14 +40,15 @@ fun MainScreen() {
         NovixTheme(isSystemInDarkTheme()) {
             NovixScaffold(
                 bottomBar = {
-                    AppBottomNavBar(navController = navController)
-                }
-
+                    AppBottomNavBar(
+                        navController = navController
+                    )
+                }, modifier = Modifier.systemBarsPadding()
             ) { innerPadding ->
                 NavHost(
                     navController = navController,
                     startDestination = HomeScreenRoute,
-                    modifier = Modifier.padding(innerPadding)
+                    modifier = Modifier
                 ) {
                     composable<HomeScreenRoute> {
                         HomeScreen(

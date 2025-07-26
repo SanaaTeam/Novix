@@ -9,4 +9,7 @@
     <string name="movies">الافلام</string>
     <string name="tvshows">المسلسلات</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
+    <string name="people">لشخصيات</string>
+    <string name="continue_watching">متابعة المشاهدة</string>
+    <string name="what_you_want_to_watch">ماذا ترغب بمشاهدته؟</string>
 </resources>
