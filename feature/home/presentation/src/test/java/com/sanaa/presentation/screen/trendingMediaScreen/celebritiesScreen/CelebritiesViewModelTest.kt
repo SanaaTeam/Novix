@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.trendingMediaScreen.celebritiesScreen
 
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreenEffects
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesViewModel
+import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -19,7 +20,7 @@ class CelebritiesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: CelebritiesViewModel
-    private lateinit var manageActorUseCase: ManageActorUseCase
+    private var manageActorUseCase: ManageActorUseCase = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
