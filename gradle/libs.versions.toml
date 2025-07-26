@@ -61,6 +61,7 @@ turbine = "1.2.1"
 pagingCommonAndroid = "3.3.6"
 datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
+uiTestJunit4Android = "1.8.3"
 
 
 [libraries]
@@ -170,6 +171,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 # Gradle Plugins
 kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
