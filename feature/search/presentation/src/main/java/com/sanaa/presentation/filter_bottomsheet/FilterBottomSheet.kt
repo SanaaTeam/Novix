@@ -62,7 +62,6 @@ fun FilterBottomSheet(
                 dismissSheet()
             }
         },
-        modifier = Modifier.fillMaxHeight(0.85f)
 
     ) {
         FilterBottomSheetContent(

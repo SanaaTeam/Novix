@@ -32,10 +32,8 @@ import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.screen.episode_details.components.GuestsOfHonorComponent
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
-import com.sanaa.presentation.screen.series.components.BottomContainer
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
