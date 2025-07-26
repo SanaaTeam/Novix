@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.review
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
-import details.usecase.ManageMovieDetailsUseCase
-import details.usecase.ManageTvSeriesDetailsUseCase
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 import entity.Review
 import exceptions.NoNetworkException
 import io.mockk.coEvery
@@ -23,8 +23,8 @@ import org.junit.jupiter.api.Test
 class ReviewViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageMovieDetails: ManageMovieDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
+    private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ReviewViewModel
 
     private val mediaId = 101

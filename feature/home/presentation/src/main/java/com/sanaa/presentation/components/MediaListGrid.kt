@@ -22,13 +22,14 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
-import com.sanaa.presentation.model.MediaItem
-import com.sanaa.presentation.model.MediaType
+import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaType
 
 @Composable
 fun MediaListGrid(
     mediaList: List<MediaItem>,
     modifier: Modifier = Modifier,
+    isScrollEnabled: Boolean = true,
     onMediaClick: (MediaItem) -> Unit = {},
     onSaveIconClick: (MediaItem) -> Unit = {},
 ) {
@@ -37,7 +38,8 @@ fun MediaListGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        userScrollEnabled = isScrollEnabled
     ) {
         items (items = mediaList, key = { item -> item.id }) { media ->
             MediaPosterCard(

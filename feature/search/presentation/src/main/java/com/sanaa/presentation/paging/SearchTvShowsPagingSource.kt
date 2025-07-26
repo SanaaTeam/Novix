@@ -2,24 +2,24 @@ package com.sanaa.presentation.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import search.usecase.SearchUseCase
-import search.usecase.search_param.MediaFilters
-import search.usecase.search_param.SearchTvSeriesOutput
+import entity.TvSeries
+import usecase.search.SearchUseCase
+import usecase.search.search_param.MediaFilters
 
 class SearchTvShowsPagingSource(
     private val searchUseCase: SearchUseCase,
     private val query: String,
     private val filters: MediaFilters?,
-) : PagingSource<Int, SearchTvSeriesOutput>() {
+) : PagingSource<Int, TvSeries>() {
 
-    override fun getRefreshKey(state: PagingState<Int, SearchTvSeriesOutput>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, TvSeries>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
             val anchorPage = state.closestPageToPosition(anchorPosition)
             anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SearchTvSeriesOutput> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, TvSeries> {
         val page = params.key ?: STARTING_PAGE_INDEX
 
         return try {

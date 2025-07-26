@@ -6,13 +6,13 @@ import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import com.google.common.truth.Truth
 import com.sanaa.presentation.fake.FakeData
+import entity.Actor
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import search.usecase.SearchUseCase
-import search.usecase.search_param.SearchActorOutput
+import usecase.search.SearchUseCase
 
 class SearchActorsPagingSourceTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)
@@ -68,7 +68,7 @@ class SearchActorsPagingSourceTest {
 
     @Test
     fun `load() should returns correct data when successful`() = runTest {
-        val mockData = FakeData.actorOutputs
+        val mockData = FakeData.dummyActors
         val params = getPagingParams(key = null)
         coEvery { searchUseCase.searchActors(query, 1) } returns mockData
         val result = searchActorsPagingSource.load(params)
@@ -79,13 +79,13 @@ class SearchActorsPagingSourceTest {
 
     @Test
     fun `load() should returns empty list when there is no data`() = runTest {
-        val mockData = FakeData.actorOutputs
+        val mockData = FakeData.dummyActors
         val params = getPagingParams(key = 2)
         coEvery { searchUseCase.searchActors(query, 1) } returns mockData
         val result = searchActorsPagingSource.load(params)
 
         val page = result as LoadResult.Page
-        Truth.assertThat(page.data).isEqualTo(emptyList<SearchActorOutput>())
+        Truth.assertThat(page.data).isEqualTo(emptyList<Actor>())
     }
 
 
@@ -101,8 +101,8 @@ class SearchActorsPagingSourceTest {
         anchorPosition: Int? = null,
         prevKey: Int? = null,
         nextKey: Int? = null,
-        data: List<SearchActorOutput> = FakeData.actorOutputs,
-    ): PagingState<Int, SearchActorOutput> {
+        data: List<Actor> = FakeData.dummyActors,
+    ): PagingState<Int, Actor> {
         return PagingState(
             anchorPosition = anchorPosition,
             config = PagingConfig(pageSize = 10),

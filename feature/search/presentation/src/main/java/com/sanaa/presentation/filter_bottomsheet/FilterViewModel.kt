@@ -1,75 +1,135 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import com.sanaa.preferences.service.GenreLocalizer
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import entity.Genre
+import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
+import com.sanaa.presentation.screen.state.mapper.toDomain
+import com.sanaa.presentation.screen.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import search.usecase.search_param.MediaFilters
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
+import usecase.search.search_param.MediaFilters
 
 class FilterViewModel(
+    private val manageMovieUseCase: ManageMovieUseCase,
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val genreLocalizer: GenreLocalizer,
-) : BaseViewModel<FilterUiState>(
-    initialState = FilterUiState(),
-    defaultDispatcher = dispatcher
+) : BaseViewModel<FilterUiState, Unit>(
+    initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
-    private val _uiState = MutableStateFlow(FilterUiState(allGenres = Genre.entries.map {
-        genreLocalizer.getLocalizedName(it.name)
-    }))
-    val uiState = _uiState.asStateFlow()
 
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
 
+
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        _uiState.update { it.copy(yearRange = newRange) }
+        updateState { it.copy(yearRange = newRange) }
     }
 
-    override fun onGenreSelected(genre: String) {
-        _uiState.update { currentState ->
+    override fun onGenreSelected(genre: GenreUiState) {
+        updateState { currentState ->
             val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
-                if (contains(genre)) remove(genre) else add(genre)
+                if (contains(genre)) {
+                    remove(genre)
+                } else {
+                    add(genre)
+                }
             }
             currentState.copy(selectedGenres = newSelectedGenres)
         }
     }
 
     override fun onRatingChanged(newRating: Int) {
-        _uiState.update { it.copy(imdbRating = newRating) }
+        updateState { it.copy(imdbRating = newRating) }
     }
 
     override fun onClearFilters() {
-        _uiState.update {
+        updateState {
             FilterUiState(allGenres = it.allGenres)
         }
+        tryToExecute(
+            callee = ::clearSelectedFilters
+        )
     }
+
 
     override fun onApplyClicked() {
         tryToExecute(
-            callee = {
-                val currentState = _uiState.value
-                val mediaFilters = MediaFilters(
-                    startYear = currentState.yearRange.start.toInt(),
-                    endYear = currentState.yearRange.endInclusive.toInt(),
-                    genres = currentState.selectedGenres.toList().mapNotNull { genreName ->
-                        Genre.entries.find {
-                            it.name.equals(
-                                genreName,
-                                ignoreCase = true
-                            )
-                        }
-                    },
-                    imdbRating = currentState.imdbRating.toFloat()
-                )
-                _filterResult.emit(mediaFilters)
-            }
+            callee = ::emitSelectedFilters
         )
+    }
+
+
+    fun fetchGenresByTab(tabIndex: Int) {
+        when (tabIndex) {
+            MOVIE_INDEX -> fetchMovieGenres()
+            TV_SHOW_INDEX -> fetchTvShowGenres()
+        }
+    }
+
+    private fun fetchTvShowGenres() {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::loadTvShowGenres
+        )
+    }
+
+    private fun fetchMovieGenres() {
+        updateState { it.copy(isLoading = true) }
+        tryToExecute(
+            callee = ::loadMovieGenres
+        )
+    }
+
+    private suspend fun emitSelectedFilters() {
+        val currentState = state.value
+        val mediaFilters = MediaFilters(
+            startYear = currentState.yearRange.start.toInt(),
+            endYear = currentState.yearRange.endInclusive.toInt(),
+            genres = currentState.selectedGenres.map { it.toDomain() },
+            imdbRating = currentState.imdbRating.toFloat()
+        )
+        _filterResult.emit(mediaFilters)
+    }
+
+    private suspend fun clearSelectedFilters() {
+        val clearedFilter = MediaFilters(
+            startYear = 1980,
+            endYear = 2025,
+            genres = emptyList(),
+            imdbRating = 0f
+        )
+        _filterResult.emit(clearedFilter)
+    }
+
+    private suspend fun loadTvShowGenres() {
+        val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
+        updateState {
+            it.copy(
+                allGenres = tvShowGenres.map { it.toState() },
+                isLoading = false
+            )
+        }
+
+    }
+
+
+    private suspend fun loadMovieGenres() {
+        val movieGenres = manageMovieUseCase.getMovieGenres()
+        updateState {
+            it.copy(
+                allGenres = movieGenres.map { it.toState() },
+                isLoading = false
+            )
+        }
+    }
+
+
+    companion object {
+        const val MOVIE_INDEX = 0
+        const val TV_SHOW_INDEX = 1
     }
 }

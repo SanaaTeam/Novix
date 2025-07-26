@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.series
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import details.usecase.ManageTvSeriesDetailsUseCase
+import com.sanaa.presentation.model.GenreUiModel
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -10,7 +10,6 @@ import entity.Genre
 import entity.Season
 import entity.TvSeries
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -22,12 +21,13 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.ManageTvSeriesUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeriesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: SeriesViewModel
 
     private val seriesId = 42
@@ -81,6 +81,7 @@ class SeriesViewModelTest {
         viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails)
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
+
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
     }
 
@@ -98,7 +99,9 @@ class SeriesViewModelTest {
     @Test
     fun `onRateClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
+
         viewModel.onRateClicked()
+
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
@@ -120,11 +123,14 @@ class SeriesViewModelTest {
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappyViewModel()
-        val genre = Genre.ACTION
+        val genre = GenreUiModel(
+            id = 1,
+            name = "Drama"
+        )
         viewModel.onGenreClicked(genre)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre.name))
+                .isEqualTo(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -142,43 +148,22 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSeasonNumberClicked updates state when selecting new season`() = runTest {
-        // Arrange
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
         coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails,testDispatcher)
+        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, testDispatcher)
 
-        // Act
         viewModel.onSeasonNumberClicked(2)
-        advanceUntilIdle() // Wait for coroutine to complete
+        advanceUntilIdle()
 
-        // Assert
         with(viewModel.state.value) {
             assertThat(selectedSeason).isEqualTo(2)
             assertThat(season.episodes.first().seasonNumber).isEqualTo(2)
             assertThat(isLoadingEpisodes).isFalse()
         }
     }
-
-//    @Test
-//    fun `onPlayTrailerClicked emits PlayTrailer effect`() = runTest {
-//        // Inject dispatcher so init {} and emitEffect() run in test scope
-//        givenHappyViewModel(dispatcher = testDispatcher)
-//        advanceUntilIdle() // Wait for loadSeries()
-//
-//        viewModel.onPlayTrailerClicked()
-//        advanceUntilIdle() // Wait for emitEffect()
-//
-//        viewModel.effect.test {
-//            val effect = awaitItem()
-//            assertThat(effect).isEqualTo(
-//                SeriesScreenEffects.PlayTrailer(trailerUrl = dummyTrailer)
-//            )
-//            cancelAndIgnoreRemainingEvents()
-//        }
-//    }
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
@@ -190,18 +175,28 @@ class SeriesViewModelTest {
         viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher)
     }
 
-    companion object {
-        private val dummyTvSeries = TvSeries(
+    private companion object {
+        val genreList = listOf(
+            Genre(
+                id = 1,
+                name = "Drama"
+            ),
+            Genre(
+                id = 2,
+                name = "Action"
+            )
+        )
+        val dummyTvSeries = TvSeries(
             id = 42,
             title = "My Series",
             overview = "Overview",
             releaseDate = LocalDate.parse("2021-07-01"),
-            genres = listOf(Genre.DRAMA),
+            genres = genreList,
             imdbRating = 9.0f,
             posterImageUrl = "/series.jpg",
             seasonsCount = 2
         )
-        private val dummyCast = listOf(
+        val dummyCast = listOf(
             Actor(
                 id = 1,
                 imageUrl = "/actor1.jpg",
@@ -217,7 +212,7 @@ class SeriesViewModelTest {
                 biography = "Bio"
             )
         )
-        private val dummyEpisode = Episode(
+        val dummyEpisode = Episode(
             id = 10,
             title = "Ep One",
             number = 1,
@@ -228,21 +223,21 @@ class SeriesViewModelTest {
             releaseDate = null,
             stillImagePath = null
         )
-        private val dummySeason = Season(
+        val dummySeason = Season(
             id = 100,
             title = "Season 1",
             overview = "S1 overview",
             number = 1,
             episodes = listOf(dummyEpisode)
         )
-        private val dummySeason2 = Season(
+        val dummySeason2 = Season(
             id = 101,
             title = "Season 2",
             overview = "S2 overview",
             number = 2,
             episodes = listOf(dummyEpisode.copy(number = 1, seasonNumber = 2))
         )
-        private val dummyImages = listOf("/img1.jpg", "/img2.jpg")
-        private const val dummyTrailer = "http://trailer.url/video.mp4"
+        val dummyImages = listOf("/img1.jpg", "/img2.jpg")
+        const val dummyTrailer = "http://trailer.url/video.mp4"
     }
 }

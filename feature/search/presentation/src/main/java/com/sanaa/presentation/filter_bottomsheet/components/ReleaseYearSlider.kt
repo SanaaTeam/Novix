@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -14,8 +14,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.slider.YearSlider
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -29,17 +31,16 @@ fun CustomYearRangeSlider(
     steps: Int = (2025 - 1980) - 1,
 ) {
 
-    Column(modifier.fillMaxWidth()) {
-        Text(
+    Column(modifier.fillMaxWidth().padding(top=16.dp)) {
+        BasicText(
             text = title,
-            style = Theme.textStyle.title.small,
-            color = Theme.colors.title
+            style = Theme.textStyle.title.small.copy(color = Theme.colors.title),
         )
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, start = 3.dp, end = 3.dp),
+                .padding(top = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             YearTitle(value.start.toInt().toString())
@@ -59,10 +60,9 @@ fun CustomYearRangeSlider(
 
 @Composable
 private fun YearTitle(year: String) {
-    Text(
+    BasicText(
         text = year,
-        style = Theme.textStyle.label.small,
-        color = Theme.colors.body
+        style = Theme.textStyle.label.small.copy(color = Theme.colors.body),
     )
 }
 
@@ -78,7 +78,7 @@ fun CustomYearRangeSliderPreview() {
             .padding(16.dp)
     ) {
         CustomYearRangeSlider(
-            title = "Released year",
+            title = stringResource(com.sanaa.designsystem.R.string.released_year),
             value = sliderPosition,
             onValueChange = { newPosition ->
                 sliderPosition = newPosition
