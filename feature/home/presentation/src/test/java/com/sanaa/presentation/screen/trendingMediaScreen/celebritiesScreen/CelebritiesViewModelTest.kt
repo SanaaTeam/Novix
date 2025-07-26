@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
+import usecase.ManageActorUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -18,11 +19,12 @@ class CelebritiesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: CelebritiesViewModel
+    private lateinit var manageActorUseCase: ManageActorUseCase
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = CelebritiesViewModel()
+        viewModel = CelebritiesViewModel(manageActorUseCase)
     }
 
     @Test
