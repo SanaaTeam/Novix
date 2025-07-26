@@ -88,7 +88,8 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+        ,
     ) {
         Column(
             modifier = Modifier
