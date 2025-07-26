@@ -13,9 +13,9 @@ class AuthenticationServiceImpl(
     override suspend fun login(userName: String, password: String) {
         val requestToken = authenticationApi.createRequestToken()
         val loginPostBody = LoginPostBody(
-            userName = userName,
+            username = userName,
             password = password,
-            requestToken = requestToken.requestToken
+            request_token = requestToken.requestToken.orEmpty()
         )
         authenticationApi.login(loginPostBody)
     }

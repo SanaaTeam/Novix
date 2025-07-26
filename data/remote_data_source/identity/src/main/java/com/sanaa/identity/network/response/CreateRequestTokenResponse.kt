@@ -12,8 +12,8 @@ data class CreateRequestTokenResponse(
     val statusCode: Int?,
 
     @SerialName("expires_at")
-    val expiresAt: String,
+    val expiresAt: String?,
 
     @SerialName("request_token")
-    val requestToken: String,
+    val requestToken: String?,
 )

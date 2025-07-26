@@ -16,7 +16,7 @@ android {
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
         buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
-        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/\"")
     }
 
     buildFeatures {

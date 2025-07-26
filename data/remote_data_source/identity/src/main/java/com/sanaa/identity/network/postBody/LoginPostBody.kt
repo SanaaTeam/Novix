@@ -1,14 +1,16 @@
 package com.sanaa.identity.network.postBody
 
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class LoginPostBody(
     @SerialName("username")
-    val userName: String,
+    val username: String,
 
     @SerialName("password")
     val password: String,
 
     @SerialName("request_token")
-    val requestToken: String,
+    val request_token: String,
 )

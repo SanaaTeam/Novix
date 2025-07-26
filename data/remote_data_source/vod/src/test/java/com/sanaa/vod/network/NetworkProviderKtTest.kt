@@ -29,7 +29,7 @@ class NetworkProviderTest {
         val client = OkHttpClient.Builder().build()
         val baseUrl = "https://api.example.com/"
 
-        val retrofit: Retrofit = provideRetrofit(baseUrl, client, json)
+        val retrofit: Retrofit = provideRetrofit(baseUrl, client)
 
         assertThat(retrofit.baseUrl().toString()).isEqualTo(baseUrl)
         assertThat(retrofit.callFactory()).isSameInstanceAs(client)

@@ -16,5 +16,5 @@ data class LoginResponse(
     val expiresAt: String?,
 
     @SerialName("request_token")
-    val requestToken: String,
+    val requestToken: String?,
 )
