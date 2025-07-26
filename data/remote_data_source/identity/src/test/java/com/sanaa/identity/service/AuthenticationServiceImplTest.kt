@@ -13,6 +13,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import retrofit2.Response
 
 class AuthenticationServiceImplTest {
     private val authenticationApi: AuthenticationApi = mockk(relaxed = true)
@@ -55,7 +56,7 @@ class AuthenticationServiceImplTest {
         runTest {
             // Given
             val response = createRequestAccessTokenResponseResponse()
-            coEvery { authenticationApi.requestUserAccessToken() } returns response
+            coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
             // When
             authenticationService.requestUserAccessToken()
@@ -71,7 +72,7 @@ class AuthenticationServiceImplTest {
         val response = createRequestAccessTokenResponseResponse(
             isSuccess = true, requestToken = requestToken
         )
-        coEvery { authenticationApi.requestUserAccessToken() } returns response
+        coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
         // When
         val result = authenticationService.requestUserAccessToken()
@@ -84,7 +85,7 @@ class AuthenticationServiceImplTest {
     fun `requestUserAccessToken() should throw InvalidTokenException when response failed`() =
         runTest {
             val response = createRequestAccessTokenResponseResponse(isSuccess = false)
-            coEvery { authenticationApi.requestUserAccessToken() } returns response
+            coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
             assertThrows<InvalidTokenException> {
                 authenticationService.requestUserAccessToken()
@@ -98,7 +99,7 @@ class AuthenticationServiceImplTest {
             val response = createRequestAccessTokenResponseResponse(
                 isSuccess = true, requestToken = null
             )
-            coEvery { authenticationApi.requestUserAccessToken() } returns response
+            coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
             // When, Then
             assertThrows<InvalidTokenException> {
@@ -129,7 +130,7 @@ class AuthenticationServiceImplTest {
             // Given
             val requestToken = "test request token"
             val response = createRequestAccessTokenResponseResponse(isSuccess = false)
-            coEvery { authenticationApi.requestUserAccessToken() } returns response
+            coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
             assertThrows<InvalidTokenException> {
                 authenticationService.createUserAccessToken(requestToken)
