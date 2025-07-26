@@ -14,6 +14,9 @@ object TrendingMoviesScreenRoute : AppRoute()
 object TrendingTvShowsScreenRoute : AppRoute()
 
 @Serializable
+object TrendingPeopleScreenRoute : AppRoute()
+
+@Serializable
 object TopRatedMediaScreenRoute : AppRoute()
 
 @Serializable

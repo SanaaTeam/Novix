@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
 import com.sanaa.presentation.state.MediaType
@@ -19,11 +20,11 @@ import org.koin.androidx.compose.koinViewModel
 fun TopRatedMediaScreen(
     onMediaClick: (startRoute: StartRoute, id: Int) -> Unit,
     modifier: Modifier = Modifier,
-//    navController: NavController,
     viewModel: TopRatedMediaScreenViewModel = koinViewModel<TopRatedMediaScreenViewModel>(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
+    val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -36,7 +37,7 @@ fun TopRatedMediaScreen(
                 }
 
                 is MediaTabScreenEffect.NavigateBack -> {
-//                    navController.popBackStack()
+                    navController.popBackStack()
                 }
             }
         }

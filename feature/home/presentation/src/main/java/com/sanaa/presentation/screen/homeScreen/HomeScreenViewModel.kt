@@ -149,7 +149,7 @@ class HomeScreenViewModel(
     }
 
     override fun onTvShowsCardClicked() {
-        emitEffect(HomeScreenEffect.NavigateToTvSowsScreen)
+        emitEffect(HomeScreenEffect.NavigateToTvShowsScreen)
     }
 
     override fun onPeopleCardClicked() {
