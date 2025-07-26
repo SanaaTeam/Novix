@@ -3,8 +3,11 @@ package com.sanaa.identity.service
 import com.google.common.truth.Truth
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.exceptions.InvalidTokenException
+import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApi
 import com.sanaa.identity.network.response.CreateAccessTokenResponse
+import com.sanaa.identity.network.response.CreateRequestTokenResponse
+import com.sanaa.identity.network.response.LoginResponse
 import com.sanaa.identity.network.response.RequestAccessTokenResponse
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -30,6 +33,8 @@ class AuthenticationServiceImplTest {
         // Given
         val userName = "Novix User"
         val password = "password"
+        coEvery { authenticationApi.createRequestToken() } returns Response.success(CreateRequestTokenResponse(true, 1, "", "test request token"))
+        coEvery { authenticationApi.login(any()) } returns Response.success(LoginResponse(true, 1, "", "","test request token"))
 
         // When
         authenticationService.login(userName, password)
@@ -43,6 +48,8 @@ class AuthenticationServiceImplTest {
         // Given
         val userName = "Novix User"
         val password = "password"
+        coEvery { authenticationApi.createRequestToken() } returns Response.success(CreateRequestTokenResponse(true, 1, "", "test request token"))
+        coEvery { authenticationApi.login(any()) } returns Response.success(LoginResponse(true, 1, "", "","test request token"))
 
         // When
         authenticationService.login(userName, password)
@@ -87,7 +94,7 @@ class AuthenticationServiceImplTest {
             val response = createRequestAccessTokenResponseResponse(isSuccess = false)
             coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
-            assertThrows<InvalidTokenException> {
+            assertThrows<ResponseException> {
                 authenticationService.requestUserAccessToken()
             }
         }
@@ -102,7 +109,7 @@ class AuthenticationServiceImplTest {
             coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
 
             // When, Then
-            assertThrows<InvalidTokenException> {
+            assertThrows<ResponseException> {
                 authenticationService.requestUserAccessToken()
             }
         }
@@ -159,7 +166,7 @@ class AuthenticationServiceImplTest {
         authenticationService.createGuestSession()
 
         // Then
-        coVerify {  authenticationApi.createGuestSession() }
+        coVerify { authenticationApi.createGuestSession() }
     }
 
     private fun createRequestAccessTokenResponseResponse(
