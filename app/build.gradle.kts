@@ -49,6 +49,10 @@ dependencies {
     implementation(projects.data.remoteDataSource.vod)
     implementation(projects.data.localDataSource.vod)
     implementation(projects.feature.mediaDetails.api)
+
+    implementation(projects.feature.home.presentation)
+
+
     implementation(projects.feature.search.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
