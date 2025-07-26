@@ -52,6 +52,9 @@ dependencies {
     implementation(projects.feature.home.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
+    implementation(projects.feature.home.presentation)
+
+
     implementation(projects.feature.search.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
