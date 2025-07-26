@@ -1,6 +1,5 @@
 package com.sanaa.presentation.base
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
@@ -17,18 +16,18 @@ class BasePagingSource<T : Any>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: STARTING_PAGE_INDEX
-        Log.d("PagingSource", "Loading page: $page")
+        // Log.d("PagingSource", "Loading page: $page")
 
         return try {
             val items = fetchItems(page)
-            Log.d("PagingSource", "Fetched ${items.size} items for page: $page")
+            //   Log.d("PagingSource", "Fetched ${items.size} items for page: $page")
             LoadResult.Page(
                 data = items,
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page.minus(1),
                 nextKey = if (items.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
-            Log.e("PagingSource", "Error loading page: $page", e)
+            //    Log.e("PagingSource", "Error loading page: $page", e)
             LoadResult.Error(e)
         }
     }
