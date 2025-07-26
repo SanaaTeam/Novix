@@ -320,19 +320,19 @@ class SearchViewModel(
         )
     }
 
-    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
+    fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
         return BasePagingSource { page ->
             searchUseCase.searchActors(query = query, page = page)
         }
     }
 
-    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
+    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return BasePagingSource { page ->
             searchUseCase.searchTvShows(query = query, page = page, filters = state.value.filters)
         }
     }
 
-    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
+    fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             searchUseCase.searchMovies(query = query, page = page, filters = state.value.filters)
         }
