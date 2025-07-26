@@ -29,21 +29,30 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.state.PersonUiState
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun CelebritiesScreen() {
-    val viewModel: CelebritiesViewModel = viewModel()
+fun CelebritiesScreen(
+    onActorClick: (Int) -> Unit,
+    viewModel: CelebritiesViewModel = koinViewModel<CelebritiesViewModel>()
+) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
+    val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is CelebritiesScreenEffects.NavigateBack -> TODO()
-                is CelebritiesScreenEffects.NavigateToActorDetails -> TODO()
+                is CelebritiesScreenEffects.NavigateBack -> {
+                    navController.popBackStack()
+                }
+                is CelebritiesScreenEffects.NavigateToActorDetails ->{
+                    onActorClick(effect.actorId)
+                }
             }
         }
     }

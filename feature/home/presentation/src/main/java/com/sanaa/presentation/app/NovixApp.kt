@@ -15,6 +15,7 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoute
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
+import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
@@ -62,6 +63,10 @@ private fun AppNavigation(
 
         composable<TrendingTvShowsScreenRoute> {
             TrendingTvShowsScreen()
+        }
+
+        composable<TrendingPeopleScreenRoute> {
+            CelebritiesScreen()
         }
 
         composable<TopRatedMediaScreenRoute> {
