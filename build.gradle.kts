@@ -67,7 +67,11 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.login.components.**",
     "com.sanaa.presentation.screen.login_base.**",
     "com.sanaa.presentation.screen.welcome.**",
-    "com.sanaa.presentation.screen.welcome.components.**"
+    "com.sanaa.presentation.screen.welcome.components.**",
+    "com.sanaa.presentation.webview.**",
+    "com.sanaa.presentation.modifier.**",
+    "com.sanaa.presentation.api.**",
+    "com.sanaa.novix.resourceProvider.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
