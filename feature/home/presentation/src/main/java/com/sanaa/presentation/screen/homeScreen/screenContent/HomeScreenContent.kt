@@ -89,7 +89,7 @@ fun HomeScreenContent(
                     })
             }
             NovixSectionHeader(
-                title = "Up Upcoming"
+                title = stringResource(R.string.up_upcoming),
             )
             MediaListSectionContent(
                 genres = state.movieGenres,
