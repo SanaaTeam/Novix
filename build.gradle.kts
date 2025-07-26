@@ -86,6 +86,7 @@ val excludedPackages = listOf(
     "com.sanaa.vod.network.interceptor.**",
     "com.sanaa.vod.dataSource.remote.search.search.**",
     "com.sanaa.presentation.base.**",
+    "com.sanaa.presentation.filter_bottomsheet.state.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
