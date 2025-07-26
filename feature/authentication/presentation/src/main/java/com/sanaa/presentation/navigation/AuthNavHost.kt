@@ -41,7 +41,9 @@ fun AuthNavHost() {
 
                 composable(ApproveAccessToken::class) {
                     val requestToken = it.toRoute<ApproveAccessToken>().requestToken
-                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken")
+                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken"){
+                        // TODO Navigate to the home screen
+                    }
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->
