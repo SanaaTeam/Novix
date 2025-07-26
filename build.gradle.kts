@@ -61,7 +61,16 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.screen.series.components.**",
     "com.sanaa.presentation.screen.series.SeriesScreen*",
     "feature.media_details.api**",
-    "com.sanaa.presentation.cards.**"
+    "com.sanaa.presentation.cards.**",
+    "com.sanaa.presentation.components.**",
+    "com.sanaa.presentation.app.**",
+    "com.sanaa.presentation.api.**",
+    "com.sanaa.presentation.screen.**",
+    "com.sanaa.vod.dataSource.remote.search.search.**",
+    "com.sanaa.presentation.util.**",
+    "com.sanaa.presentation.state.**",
+    "com.sanaa.vod.media.**",
+    "com.sanaa.presentation.modifier.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")

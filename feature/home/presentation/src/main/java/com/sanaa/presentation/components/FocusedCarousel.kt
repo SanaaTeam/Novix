@@ -96,7 +96,7 @@ fun FocusedCarousel(
                             placeholderContent = {
 //                                RemoteImagePlaceholder(Modifier.fillMaxSize())
                                 Image(
-                                    painterResource(R.drawable.freman),
+                                    painterResource(R.drawable.move_role),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop
                                 )

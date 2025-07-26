@@ -20,12 +20,12 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import com.sanaa.tudee_assistant.presentation.navigation.HomeScreenRoute
-import com.sanaa.tudee_assistant.presentation.navigation.MainScreenRoutes
-import com.sanaa.tudee_assistant.presentation.navigation.PlayListScreenRoute
-import com.sanaa.tudee_assistant.presentation.navigation.SavedContentScreenRoute
-import com.sanaa.tudee_assistant.presentation.navigation.SearchScreenRoute
-import com.sanaa.tudee_assistant.presentation.navigation.UserProfileScreenRoute
+import com.sanaa.presentation.api.navigation.HomeScreenRoute
+import com.sanaa.presentation.api.navigation.MainScreenRoutes
+import com.sanaa.presentation.api.navigation.PlayListScreenRoute
+import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
+import com.sanaa.presentation.api.navigation.SearchScreenRoute
+import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable

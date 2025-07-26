@@ -1,4 +1,4 @@
-package com.sanaa.tudee_assistant.presentation.navigation
+package com.sanaa.presentation.api.navigation
 
 import kotlinx.serialization.Serializable
 
