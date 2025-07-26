@@ -1,16 +1,12 @@
-package com.sanaa.presentation.viewmodel
+package com.sanaa.presentation.screen.celebritiesScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sanaa.presentation.screen.CelebritiesScreenEffects
-import com.sanaa.presentation.screen.CelebritiesScreenInteractionListener
-import com.sanaa.presentation.ui_state.CelebritiesScreenUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 
 class CelebritiesViewModel : ViewModel(), CelebritiesScreenInteractionListener {
     private val _state = MutableStateFlow(

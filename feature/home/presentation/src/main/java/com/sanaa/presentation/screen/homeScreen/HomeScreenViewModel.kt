@@ -1,10 +1,6 @@
-package com.sanaa.presentation.screen.homeScreen.screen
+package com.sanaa.presentation.screen.homeScreen
 
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.screen.homeScreen.HomeScreenEffect
-import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
-import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState

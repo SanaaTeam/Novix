@@ -1,4 +1,6 @@
-package com.sanaa.presentation.ui_state
+package com.sanaa.presentation.screen.celebritiesScreen
+
+import com.sanaa.presentation.state.PersonUiState
 
 data class CelebritiesScreenUiState(
     val isLoading: Boolean = false,

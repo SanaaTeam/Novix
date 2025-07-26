@@ -1,6 +1,5 @@
-package com.sanaa.presentation.screen.homeScreen.screen
+package com.sanaa.presentation.screen.homeScreen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -10,8 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.screen.homeScreen.HomeScreenEffect
-import com.sanaa.presentation.screen.homeScreen.screen.HomeScreenViewModel
+import com.sanaa.presentation.screen.homeScreen.HomeScreenViewModel
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaType
 import org.koin.androidx.compose.koinViewModel

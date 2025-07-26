@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.celebritiesScreen
 
-import com.sanaa.presentation.screen.CelebritiesScreenEffects
-import com.sanaa.presentation.viewmodel.CelebritiesViewModel
+import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreenEffects
+import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
