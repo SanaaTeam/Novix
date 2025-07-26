@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class CelebritiesViewModel : ViewModel(), CelebritiesScreenInteractionListener {
     private val _state = MutableStateFlow(
-        CelebritiesScreenUiState(isLoading = false, people = emptyList())
+        CelebritiesScreenUiState(isLoading = false, celebrities = emptyList())
     )
     val state: StateFlow<CelebritiesScreenUiState> = _state
 

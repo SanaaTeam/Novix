@@ -14,7 +14,7 @@ import com.sanaa.presentation.components.cards.PersonCard
 
 @Composable
 fun PersonList(
-    people: List<PersonUiState>,
+    celebrities: List<PersonUiState>,
     onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
@@ -22,7 +22,7 @@ fun PersonList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(people, key = { it.id }) { person ->
+        items(celebrities, key = { it.id }) { person ->
             PersonCard(
             actorName = person.name,
             actorImage = person.imageUrl,

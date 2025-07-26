@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,19 +19,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.R
 import com.sanaa.presentation.components.lists.PersonList
-import com.sanaa.presentation.ui_state.PersonUiState
 import com.sanaa.presentation.ui_state.CelebritiesScreenUiState
+import com.sanaa.presentation.ui_state.PersonUiState
 import com.sanaa.presentation.viewmodel.CelebritiesViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -88,17 +87,25 @@ fun CelebritiesContent(
                 contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    targetState = state.isLoading,
+                    targetState = state.isLoading to state.isNoInternetConnection,
                     transitionSpec = { fadeIn() togetherWith fadeOut() },
                     contentAlignment = Alignment.Center
-                ) { loading ->
-                    if (loading) {
-                        NovixLoadingIndicator()
-                    } else {
-                        PersonList(
-                            people = state.people,
-                            onItemClick = interactionListener::onActorClick
-                        )
+                ) { (loading, disconnected) ->
+                    when {
+                        disconnected -> {
+                            NetworkDisconnectionContact(TODO() )
+                        }
+
+                        loading -> {
+                            NovixLoadingIndicator()
+                        }
+
+                        else -> {
+                            PersonList(
+                                celebrities = state.celebrities,
+                                onItemClick = interactionListener::onActorClick
+                            )
+                        }
                     }
                 }
             }
@@ -107,29 +114,106 @@ fun CelebritiesContent(
 }
 
 
-
 @PreviewLightDark
 @Composable
-private fun CelebritiesScreenContentPreview() {
+private fun Preview() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         Column(
             modifier = Modifier
-                .padding(vertical = 40.dp)
                 .background(Theme.colors.surface)
                 .fillMaxWidth()
         ) {
             CelebritiesContent(
                 state = CelebritiesScreenUiState(
                     isLoading = false,
-                    people = listOf(
+                    celebrities = listOf(
                         PersonUiState(
                             id = 1,
                             name = "Jennifer Lawrence",
                             character = null,
-                            imageUrl = String()                        ),
+                            imageUrl = String()
+                        ),
                         PersonUiState(
                             id = 2,
                             name = "Meryl Streep",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 3,
+                            name = "Scarlett Johansson",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 4,
+                            name = "Emma Stone",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 5,
+                            name = "Brad Pitt",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 6,
+                            name = "Tom Cruise",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 7,
+                            name = "Angelina Jolie",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 8,
+                            name = "Brad Pitt",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 9,
+                            name = "Tom Cruise",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 10,
+                            name = "Angelina Jolie",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 11,
+                            name = "Brad Pitt",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 12,
+                            name = "Tom Cruise",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 13,
+                            name = "Angelina Jolie",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 14,
+                            name = "Brad Pitt",
+                            character = null,
+                            imageUrl = String()
+                        ),
+                        PersonUiState(
+                            id = 15,
+                            name = "Tom Cruise",
                             character = null,
                             imageUrl = String()
                         ),
