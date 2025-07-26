@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component.cards
+package com.sanaa.presentation.shared_component.cards
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background

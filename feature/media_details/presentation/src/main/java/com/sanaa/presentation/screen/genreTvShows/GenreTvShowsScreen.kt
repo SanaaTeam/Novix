@@ -35,12 +35,12 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.component.RemoteImagePlaceholder
-import com.sanaa.presentation.component.RequestToLoginBottomSheet
-import com.sanaa.presentation.component.cards.MediaPosterCard
-import com.sanaa.presentation.component.cards.SaveIconChip
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.cards.MediaPosterCard
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

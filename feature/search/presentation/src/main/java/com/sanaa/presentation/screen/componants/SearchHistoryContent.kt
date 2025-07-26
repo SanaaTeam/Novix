@@ -43,7 +43,7 @@ fun SearchHistoryContent(
     recentViewed: List<RecentViewedUiModel> = emptyList(),
 ) {
     Box(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize().padding(top = 12.dp)
     ) {
         AnimatedContent(
             recentSearches.isEmpty() && recentViewed.isEmpty(),
@@ -80,7 +80,7 @@ private fun ContentState(
     recentSearches: List<RecentSearchUiModel>,
 ) {
     LazyColumn(
-        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp, top = 12.dp)
+        modifier = Modifier, contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         if (recentViewed.isNotEmpty()) {
             item {
