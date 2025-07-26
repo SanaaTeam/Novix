@@ -69,17 +69,21 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowVideosUrls(id).toDomain()
         }
 
-    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {
-        return emptyList()
-    }
+    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
+        safeCall("Failed to fetch TvSeries TopRated") {
+            remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
+        }
 
-    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> {
-        return emptyList()
-    }
 
-    override suspend fun getPopularSeries(page: Int, genreId: Int?): List<TvSeries> {
-        return emptyList()
-    }
+    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> =
+        safeCall("Failed to fetch TvSeries Trending") {
+            remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
+        }
+
+    override suspend fun getPopularSeries(page: Int): List<TvSeries> =
+        safeCall("Failed to fetch TvSeries Popular") {
+            remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }
+        }
 
     override suspend fun getSeriesGenres(): List<Genre> {
         return safeCall("Genres not found") {

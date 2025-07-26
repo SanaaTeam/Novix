@@ -1,9 +1,9 @@
 package usecase
 
-import repository.ActorRepository
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
+import repository.ActorRepository
 
 class ManageActorUseCase(
     private val actorRepo: ActorRepository
@@ -23,8 +23,8 @@ class ManageActorUseCase(
     suspend fun getProfileImages(id: Int): List<String> =
         actorRepo.getProfileImageUrls(id, IMAGE_COUNT)
 
-    suspend fun getTrendingActors(): List<Actor> {
-        return actorRepo.getTrendingActors()
+    suspend fun getTrendingActors(page: Int): List<Actor> {
+        return actorRepo.getTrendingActors(page)
     }
 
     private companion object {

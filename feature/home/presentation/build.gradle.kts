@@ -8,25 +8,24 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.domain.vod)
     implementation(projects.designSystem)
+    implementation(projects.imageViewer)
     implementation(projects.feature.home.api)
     implementation(projects.feature.search.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
 
-
-    implementation(libs.androidx.material3.window.size.class1)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
-
-    implementation(libs.material3)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.kotlinx.datetime)
+
+    androidTestImplementation(libs.androidx.junit)
+
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))

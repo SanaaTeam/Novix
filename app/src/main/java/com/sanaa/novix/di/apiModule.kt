@@ -4,11 +4,11 @@ import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
+import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.presentation.api.HomeFeatureApiImpl
 import com.sanaa.presentation.api.PlaylistsFeatureApiImpl
-import com.sanaa.presentation.navigation.MediaDetailsApiImpl
 import com.sanaa.presentation.api.SearchFeatureApiImpl
 import com.sanaa.presentation.api.SearchNavigatorApiImpl
 import com.sanaa.presentation.api.UserProfileFeatureApiImpl

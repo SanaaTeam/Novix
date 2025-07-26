@@ -258,7 +258,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries returns empty list`() = runTest {
         // Act
-        val result = repository.getPopularSeries(page = 1, genreId = 1)
+        val result = repository.getPopularSeries(page = 1)
 
         // Assert
         assertEquals(0, result.size)

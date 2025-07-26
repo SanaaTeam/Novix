@@ -26,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.sanaa.presentation.navigation.MediaDetailsActivity" />
+        <activity android:name="com.sanaa.presentation.api.MediaDetailsActivity" />
     </application>
 
 </manifest>
