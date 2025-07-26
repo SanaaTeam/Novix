@@ -8,9 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.api.AuthenticationApi
-import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.HomeFeatureApi
-import com.sanaa.api.SearchFeatureApi
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
@@ -21,6 +19,7 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     private lateinit var analytics: FirebaseAnalytics
     private val homeFeatureApi: HomeFeatureApi by inject()
+    private val authenticationApi: AuthenticationApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -35,7 +34,10 @@ class MainActivity : ComponentActivity() {
             preferenceManager.authorizationToken.firstOrNull()
         }
         setContent {
-            homeFeatureApi.HomeScreenApi()
+            if (TextUtils.isEmpty(token))
+                authenticationApi.AuthenticationScreen(this)
+            else
+                homeFeatureApi.HomeScreenApi()
         }
     }
 }

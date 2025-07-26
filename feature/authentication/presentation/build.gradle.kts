@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.domain.identity)
+    implementation(projects.feature.home.api)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

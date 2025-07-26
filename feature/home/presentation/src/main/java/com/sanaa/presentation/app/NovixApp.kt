@@ -29,7 +29,6 @@ import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.Tr
 fun NovixApp(
 
 ) {
-
     val appNavController = rememberNavController()
     Box {
         CompositionLocalProvider(LocalAppNavController provides appNavController) {

@@ -9,16 +9,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.sanaa.api.HomeFeatureApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun AuthNavHost() {
     val navController = rememberNavController()
+    val homeApi: HomeFeatureApi by inject(HomeFeatureApi::class.java)
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {
@@ -41,9 +44,12 @@ fun AuthNavHost() {
 
                 composable(ApproveAccessToken::class) {
                     val requestToken = it.toRoute<ApproveAccessToken>().requestToken
-                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken"){
-                        // TODO Navigate to the home screen
+                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken") {
+                        navController.navigate(HomeScreen)
                     }
+                }
+                composable(HomeScreen::class) {
+                    homeApi.HomeScreenApi()
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->

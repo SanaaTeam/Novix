@@ -18,3 +18,6 @@ data class ApproveAccessToken(val requestToken: String) : DestinationLogin()
 
 @Serializable
 object ForgetPasswordRoute : DestinationLogin()
+
+@Serializable
+object HomeScreen : DestinationLogin()
