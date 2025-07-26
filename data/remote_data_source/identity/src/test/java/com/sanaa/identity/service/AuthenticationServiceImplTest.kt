@@ -168,10 +168,10 @@ class AuthenticationServiceImplTest {
         statusMessage: String? = null,
     ): RequestAccessTokenResponse {
         return RequestAccessTokenResponse(
-            isSuccess = isSuccess,
-            statusCode = statusCode,
-            statusMessage = statusMessage,
-            requestToken = requestToken
+            success = isSuccess,
+            status_code = statusCode,
+            status_message = statusMessage,
+            request_token = requestToken
         )
     }
 

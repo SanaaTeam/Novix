@@ -15,7 +15,7 @@ import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 
 @Composable
-fun SignUpWebViewScreen(url: String) {
+fun WebViewScreen(url: String) {
     val navController = LocalNavControllerProvider.current
 
     Column(

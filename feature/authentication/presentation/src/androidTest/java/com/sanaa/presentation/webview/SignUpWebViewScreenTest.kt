@@ -19,7 +19,7 @@ class SignUpWebViewScreenTest {
     private fun setContentWithNavController(url: String, navController: NavController) {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalNavControllerProvider provides navController as NavHostController) {
-                SignUpWebViewScreen(url = url)
+                WebViewScreen(url = url)
             }
         }
     }

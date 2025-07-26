@@ -8,4 +8,8 @@ class LoginUseCase(
     suspend fun login(userName: String, password: String) {
         authenticationRepository.login(userName, password)
     }
+
+    suspend fun requestAccessToken(): String {
+        return authenticationRepository.requestAccessToken()
+    }
 }

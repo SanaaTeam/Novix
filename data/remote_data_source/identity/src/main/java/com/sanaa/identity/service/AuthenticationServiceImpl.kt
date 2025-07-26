@@ -3,6 +3,7 @@ package com.sanaa.identity.service
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.exceptions.InvalidTokenException
 import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
+import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApi
 import com.sanaa.identity.network.postBody.CreateAccessTokenPostBody
 import com.sanaa.identity.network.postBody.LoginPostBody
@@ -26,10 +27,15 @@ class AuthenticationServiceImpl(
 
     override suspend fun requestUserAccessToken(): String {
         val response = authenticationApi.requestUserAccessToken()
-        if (response.isSuccess && response.requestToken != null)
-            return response.requestToken
+        if (response.isSuccessful.not()) {
+            throw ResponseException(response.message())
+        }
 
-        throw InvalidTokenException(message = response.statusMessage)
+        val body = response.body()
+        if (body != null && body.success && body.request_token != null)
+            return body.request_token
+        else
+            throw ResponseException(body?.status_message)
     }
 
     override suspend fun createUserAccessToken(requestToken: String) {

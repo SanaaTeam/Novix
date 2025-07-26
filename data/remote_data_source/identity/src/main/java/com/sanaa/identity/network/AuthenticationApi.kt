@@ -32,7 +32,7 @@ interface AuthenticationApi {
     ): ValidateKeyResponse
 
     @POST("4/auth/request_token")
-    suspend fun requestUserAccessToken(): RequestAccessTokenResponse
+    suspend fun requestUserAccessToken(): Response<RequestAccessTokenResponse>
 
     @POST("4/auth/access_token")
     suspend fun createUserAccessToken(

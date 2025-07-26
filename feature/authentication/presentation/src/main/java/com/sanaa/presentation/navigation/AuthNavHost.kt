@@ -8,12 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
-import com.sanaa.presentation.webview.SignUpWebViewScreen
+import com.sanaa.presentation.webview.WebViewScreen
 
 @Composable
 fun AuthNavHost() {
@@ -35,7 +36,12 @@ fun AuthNavHost() {
                 }
 
                 composable(SignUpRoute::class) { entry ->
-                    SignUpWebViewScreen(url = "https://www.themoviedb.org/signup")
+                    WebViewScreen(url = "https://www.themoviedb.org/signup")
+                }
+
+                composable(ApproveAccessToken::class) {
+                    val requestToken = it.toRoute<ApproveAccessToken>().requestToken
+                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken")
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->
