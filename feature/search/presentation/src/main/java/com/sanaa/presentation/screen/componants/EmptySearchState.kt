@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
@@ -54,11 +53,15 @@ fun EmptySearchContent(
         }
         BasicText(
             text = text,
-            style = Theme.textStyle.body.small.copy(color = Theme.colors.body,),
+            style = Theme.textStyle.body.small.copy(
+                color = Theme.colors.body,
+                textAlign = TextAlign.Center
+            ),
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(horizontal = 48.dp)
+                .align(Alignment.CenterHorizontally)
         )
+
     }
 }
 

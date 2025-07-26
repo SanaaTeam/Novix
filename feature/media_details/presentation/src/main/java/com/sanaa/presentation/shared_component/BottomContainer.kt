@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series.components
+package com.sanaa.presentation.shared_component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
