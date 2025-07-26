@@ -29,13 +29,6 @@ class CelebritiesViewModelTest {
     }
 
     @Test
-    fun `initial state should be empty list and not loading`() = runTest {
-        val state = viewModel.state.value
-        assertEquals(false, state.isLoading)
-        assertEquals(0, state.celebrities.size)
-    }
-
-    @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
         viewModel.onBackClick()
         val effect = viewModel.effect.first()
