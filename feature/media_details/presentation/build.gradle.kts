@@ -16,18 +16,14 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     implementation(libs.material3)
     implementation(libs.kotlinx.datetime)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
 
-
-    implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.coil.compose)
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
@@ -39,4 +35,7 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+
+    // Paging 3
+    implementation(libs.androidx.paging.compose)
 }

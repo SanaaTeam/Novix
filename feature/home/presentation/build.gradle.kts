@@ -15,12 +15,21 @@ dependencies {
 
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
-    
+
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.material)
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.kotlinx.datetime)
+
+    androidTestImplementation(libs.androidx.junit)
+
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+
+    testImplementation(libs.turbine)
 }

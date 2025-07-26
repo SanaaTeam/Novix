@@ -1,20 +1,21 @@
 package usecase.search
 
 import com.google.common.truth.Truth.assertThat
+import entity.Actor
+import entity.Movie
+import entity.TvSeries
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.HistoryRepository
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
-import usecase.search.search_param.SearchActorOutput
-import usecase.search.search_param.SearchMovieOutput
-import usecase.search.search_param.SearchTvSeriesOutput
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -51,13 +52,13 @@ class SearchUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns dummyMovie
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(dummyMovie)
         }
 
     @Test
@@ -69,13 +70,13 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns searchMediaOutputList
+            } returns dummyMovie
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchMediaOutputList)
+            assertThat(result).isEqualTo(dummyMovie)
         }
 
     @Test
@@ -119,13 +120,13 @@ class SearchUseCaseTest {
             val filters = null
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns searchTvShowsOutputList
+            } returns dummyTvShow
 
             // When
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchTvShowsOutputList)
+            assertThat(result).isEqualTo(dummyTvShow)
 
         }
 
@@ -138,14 +139,14 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns searchTvShowsOutputList
+            } returns dummyTvShow
 
 
             // When
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(searchTvShowsOutputList)
+            assertThat(result).isEqualTo(dummyTvShow)
         }
 
 
@@ -189,13 +190,13 @@ class SearchUseCaseTest {
             // Given
             val query = "Actor"
             val page = 1
-            coEvery { searchRepository.searchActors(query, page) } returns searchActorOutputList
+            coEvery { searchRepository.searchActors(query, page) } returns dummyActor
 
             // When
             val result = searchUseCase.searchActors(query, page)
 
             // Then
-            assertThat(result).isEqualTo(searchActorOutputList)
+            assertThat(result).isEqualTo(dummyActor)
         }
 
     @Test
@@ -216,27 +217,47 @@ class SearchUseCaseTest {
 
 
     private companion object {
-        private val searchActorOutputList = listOf(
-            SearchActorOutput(
+        private val dummyActor = listOf(
+            Actor(
                 id = 1,
                 name = "title",
-                profileImageUrl = "imgUrl",
+                imageUrl = "",
+                region = null,
+                lastShow = null,
+                gender = Actor.Gender.MALE,
+                department = null,
+                character = null,
+                birthDate = null,
+                deathDate = null,
+                placeOfBirth = null,
+                biography = null,
             )
         )
 
-        private val searchMediaOutputList = listOf(
-            SearchMovieOutput(
+        private val dummyMovie = listOf(
+            Movie(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
+                genres = emptyList(),
+                imdbRating = 1f,
+                duration = 10,
+                releaseDate = LocalDate(1990, 10, 10),
+                overview = null,
+                trailerUrl = null,
             )
         )
 
-        val searchTvShowsOutputList = listOf(
-            SearchTvSeriesOutput(
+        val dummyTvShow = listOf(
+            TvSeries(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
+                overview = null,
+                releaseDate = LocalDate(1990, 10, 10),
+                genres = emptyList(),
+                imdbRating = 9f,
+                seasonsCount = 1,
             )
         )
     }

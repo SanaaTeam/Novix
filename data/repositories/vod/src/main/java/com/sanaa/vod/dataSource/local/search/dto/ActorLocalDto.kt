@@ -18,4 +18,7 @@ data class ActorLocalDto(
     val language: String,
     @ColumnInfo(name = "timestamp")
     val timestamp: Long = TimeUtils.getCurrentTimeStamp(),
-)
+    @ColumnInfo(name = "gender")
+    val gender: Int?,
+
+    )

@@ -79,7 +79,11 @@ class TrendingMoviesScreenViewModel(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        TODO("Not yet implemented")
+        updateState {
+            it.copy(
+                showBottomSheet = true
+            )
+        }
     }
 
     override fun onBackClick() {
