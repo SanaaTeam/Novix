@@ -32,6 +32,10 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.bundles.koin)
 
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+
     // Paging 3
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -40,5 +44,4 @@ dependencies {
     testImplementation(libs.bundles.test.runtime)
 
     testImplementation(libs.turbine)
-    implementation(libs.kotlinx.datetime)
 }

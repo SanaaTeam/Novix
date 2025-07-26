@@ -101,7 +101,7 @@ private sealed class BottomNavItem(
 ) {
     object Home : BottomNavItem("home", R.drawable.icon_home, R.drawable.icon_home_selected)
     object Search :
-        BottomNavItem("search", R.drawable.icon_empty_search, R.drawable.icon_search_selected)
+        BottomNavItem("search", R.drawable.icon_search, R.drawable.icon_search_selected)
 
     object Playlists :
         BottomNavItem("playlists", R.drawable.icon_category, R.drawable.icon_category_selected)

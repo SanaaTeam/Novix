@@ -125,7 +125,7 @@ fun GenreTvShowsScreenContent(
                             items(
                                 state.tvShows, key = { item -> item.id }) { tvShow ->
                                 MediaPosterCard(
-                                    boastImage = {
+                                    posterImage = {
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = tvShow.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
