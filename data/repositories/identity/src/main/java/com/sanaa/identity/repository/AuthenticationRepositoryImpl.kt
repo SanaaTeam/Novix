@@ -1,10 +1,10 @@
 package com.sanaa.identity.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
-import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.LoginPostBody
+import com.sanaa.identity.util.exceptions.ResponseException
+import com.sanaa.identity.util.wrapApiCall
 import repository.AuthenticationRepository
 
 class AuthenticationRepositoryImpl(
@@ -12,7 +12,7 @@ class AuthenticationRepositoryImpl(
     private val preferencesManager: PreferencesManager,
 ) : AuthenticationRepository {
 
-    override suspend fun login(userName: String, password: String) {
+    override suspend fun login(userName: String, password: String): Unit = wrapApiCall {
         val requestToken = authenticationApi.createRequestToken().body()?.requestToken ?: ""
         val loginPostBody = LoginPostBody(
             username = userName,
@@ -21,35 +21,30 @@ class AuthenticationRepositoryImpl(
         )
         val response = authenticationApi.login(loginPostBody)
         if (response.isSuccessful.not()) {
-            throw InvalidUserOrPasswordException(userName)
+            throw ResponseException(response.code())
         }
     }
 
-    override suspend fun requestAccessToken(): String {
+    override suspend fun requestAccessToken(): String = wrapApiCall {
         val response = authenticationApi.requestUserAccessToken()
         if (response.isSuccessful.not()) {
-            throw ResponseException(response.message())
+            throw ResponseException(response.code())
         }
 
         val body = response.body()
         if (body != null && body.success && body.request_token != null) {
             return body.request_token!!
         } else {
-            throw ResponseException(body?.status_message)
+            throw ResponseException(response.code())
         }
     }
 
-    override suspend fun createAccessToken() {
+    override suspend fun createAccessToken(requestToken: String) = wrapApiCall {
         val accessToken = requestAccessToken()
         preferencesManager.updateAuthorizationToken(accessToken)
     }
 
-    override suspend fun createGuestSession() {
+    override suspend fun createGuestSession(): Unit = wrapApiCall {
         authenticationApi.createGuestSession()
-    }
-
-    companion object {
-        const val INVALID_USERNAME_OR_PASSWORD = 30
-        const val EMAIL_NOT_VERIFIED_EXCEPTION = 32
     }
 }

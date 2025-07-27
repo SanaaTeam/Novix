@@ -1,6 +1,8 @@
 package com.sanaa.presentation.screen.login
 
 import com.sanaa.presentation.screen.login_base.BaseViewModel
+import exceptions.InvalidUserOrPasswordException
+import exceptions.NoInternetConnectionException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.StringProvider
@@ -48,14 +50,22 @@ class LoginViewModel(
                 }
                 emitEffect(LoginScreenEffects.NavigateApproveAccessToken(requestAccessToken))
             },
-            onError = { throwable ->
-                updateState { prev ->
-                    val updated = prev.copy(isLoading = false)
-                    updated.copy(canSubmit = isSubmitAllowed(updated))
-                }
-                emitEffect(LoginScreenEffects.ShowError(message = throwable.message.orEmpty()))
-            }
+            onError = ::onDataLoadError
         )
+    }
+
+    fun onDataLoadError(throwable: Throwable) {
+        updateState { prev ->
+            val updated = prev.copy(isLoading = false)
+            updated.copy(canSubmit = isSubmitAllowed(updated))
+        }
+
+        val message = when (throwable) {
+            is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
+            is NoInternetConnectionException -> stringProvider.noInternetConnectionError
+            else -> stringProvider.somethingWentWrongError
+        }
+        emitEffect(LoginScreenEffects.ShowError(message = message))
     }
 
     override fun onForgotPasswordClicked() {

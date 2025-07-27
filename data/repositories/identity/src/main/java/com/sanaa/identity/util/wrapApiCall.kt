@@ -1,13 +1,13 @@
 package com.sanaa.identity.util
 
-import com.sanaa.identity.util.exceptions.AuthenticationException
 import com.sanaa.identity.util.exceptions.ConnectionException
-import com.sanaa.identity.util.exceptions.InvalidUserOrPasswordException
 import com.sanaa.identity.util.exceptions.ParsingException
 import com.sanaa.identity.util.exceptions.ResponseException
 import com.sanaa.identity.util.exceptions.ServerErrorException
 import com.sanaa.identity.util.exceptions.TimeoutException
 import com.sanaa.identity.util.exceptions.UnknownDataSourceException
+import exceptions.AuthenticationException
+import exceptions.InvalidUserOrPasswordException
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
@@ -25,11 +25,10 @@ inline fun <T> wrapApiCall(block: () -> T): T {
     } catch (e: SerializationException) {
         throw ParsingException(message = "Parsing error")
     } catch (e: ResponseException) {
-        e.printStackTrace()
         if (e.errorCode == INVALID_USERNAME_OR_PASSWORD)
             throw InvalidUserOrPasswordException()
         else
-            throw AuthenticationException(message = e.message)
+            throw AuthenticationException(message = "Unknown error")
     } catch (e: Exception) {
         throw UnknownDataSourceException(message = "Unknown error")
     }
@@ -37,4 +36,3 @@ inline fun <T> wrapApiCall(block: () -> T): T {
 
 
 const val INVALID_USERNAME_OR_PASSWORD = 401
-const val EMAIL_NOT_VERIFIED_EXCEPTION = 32
