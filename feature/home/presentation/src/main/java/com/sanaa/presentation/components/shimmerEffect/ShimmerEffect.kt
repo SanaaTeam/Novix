@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.modifiers.shimmerEffect
 import kotlin.math.absoluteValue
 
@@ -87,6 +89,7 @@ fun PopularMediaSectionPlaceholder(
             width = 77.dp,
             height = 30.dp,
             cornerRadius = 8.dp,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
             borderColor = Color.Transparent,
         )
         HorizontalPager(
@@ -94,6 +97,7 @@ fun PopularMediaSectionPlaceholder(
             contentPadding = PaddingValues(horizontal = horizontalContentPadding),
             pageSpacing = pageSpacing,
             modifier = Modifier.fillMaxWidth(),
+            userScrollEnabled = false
         )
         { page ->
 
@@ -224,7 +228,7 @@ fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
 
 fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
 
-    item {
+    item(span = { GridItemSpan(maxLineSpan) }){
         PlaceholderWithShimmerEffect(
             width = 166.dp,
             height = 30.dp,
@@ -232,12 +236,12 @@ fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
             borderColor = Color.Transparent
         )
     }
-    item {
+    item(span = { GridItemSpan(maxLineSpan) }){
         LazyRow(
             modifier = modifier
-                .fillMaxWidth()
-                .height(210.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp),
+                .fillMaxWidth().fillWidthOfParent(16.dp)
+                .height(62.dp),
+            contentPadding = PaddingValues( vertical = 12.dp, horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             userScrollEnabled = false
@@ -254,7 +258,9 @@ fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
     }
 
     items(10) {
-        PlaceholderWithShimmerEffect()
+        PlaceholderWithShimmerEffect(
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
     }
 }
 
