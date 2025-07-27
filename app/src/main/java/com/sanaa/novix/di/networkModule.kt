@@ -42,7 +42,13 @@ val networkModule = module {
 
     single {
         OkHttpClient.Builder()
-            .addInterceptor(APIKeyInterceptor(BuildConfig.TMDB_API_KEY))
+            .addInterceptor(APIKeyInterceptor {
+                val preferencesManager: PreferencesManager = getKoin().get()
+                val token = runBlocking {
+                    preferencesManager.authorizationToken.firstOrNull()
+                }.orEmpty().ifBlank { BuildConfig.TMDB_API_KEY }
+                token.ifBlank { BuildConfig.TMDB_API_KEY }
+            })
             .addInterceptor(LanguageInterceptor(get()))
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
