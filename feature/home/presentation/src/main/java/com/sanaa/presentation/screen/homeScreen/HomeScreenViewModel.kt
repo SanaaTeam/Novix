@@ -4,21 +4,23 @@ import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
+import javax.inject.Inject
 
-class HomeScreenViewModel(
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val manageHistoryUseCase: ManageHistoryUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val manageHistoryUseCase: ManageHistoryUseCase
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
-    defaultDispatcher = dispatcher
+    defaultDispatcher = Dispatchers.IO
 ), HomeScreenInteractionListener {
+
     init {
         fetchPopularMediaData()
         fetchTopRatedMediaData()
@@ -26,6 +28,7 @@ class HomeScreenViewModel(
         fetchMovieGenres()
         fetchUpcomingMovies()
     }
+
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -36,7 +39,7 @@ class HomeScreenViewModel(
                     .getPopularSeries(5).map { it.toState() }
                 (popularMovies + popularTvSeries).shuffled()
             },
-            onSuccess = {popularMediaList->
+            onSuccess = { popularMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -45,22 +48,23 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
-    private fun fetchTopRatedMediaData(){
+
+    private fun fetchTopRatedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(10,null).map { it.toState() }
+                    .getTopRatedMovies(10, null).map { it.toState() }
                 val topRatedTvSeries = manageTvSeriesUseCase
-                    .getTopRatedTvSeries(10,null).map { it.toState() }
+                    .getTopRatedTvSeries(10, null).map { it.toState() }
                 (topRatedMovies + topRatedTvSeries).shuffled()
             },
-            onSuccess = { topRatedMediaList->
+            onSuccess = { topRatedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -69,22 +73,23 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
-    private fun fetchWatchedMediaData(){
+
+    private fun fetchWatchedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 val watchedMovies = manageHistoryUseCase
-                    .getWatchedMoviesHistory(10,null).map { it.toState() }
+                    .getWatchedMoviesHistory(10, null).map { it.toState() }
                 val watchedTvSeries = manageHistoryUseCase
-                    .getWatchedSeriesHistory(10,null).map { it.toState() }
+                    .getWatchedSeriesHistory(10, null).map { it.toState() }
                 (watchedMovies + watchedTvSeries).shuffled()
             },
-            onSuccess = { watchedMediaList->
+            onSuccess = { watchedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -93,11 +98,12 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
+
     private fun fetchMovieGenres() {
         tryToExecute(
             callee = {
@@ -118,6 +124,7 @@ class HomeScreenViewModel(
             }
         )
     }
+
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
             callee = {

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
@@ -7,18 +8,19 @@ import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
-class TopRatedMediaScreenViewModel(
+@HiltViewModel
+class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase
 ) : BaseViewModel<MediaTabScreenUiState, MediaTabScreenEffect>(
-    MediaTabScreenUiState(),
-    dispatcher
+    initialState = MediaTabScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), MediaTabScreenInteractionListener {
 
     init {

@@ -6,16 +6,17 @@ import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffe
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
+import javax.inject.Inject
 
-class TrendingMoviesScreenViewModel(
-    private val manageMovieUseCase: ManageMovieUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+@HiltViewModel
+class TrendingMoviesScreenViewModel @Inject constructor(
+    private val manageMovieUseCase: ManageMovieUseCase
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
-    TrendingMediaScreenUiState(),
-    dispatcher
+    initialState = TrendingMediaScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), MediaListScreenInteractionListener {
 
     init {

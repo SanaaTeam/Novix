@@ -2,12 +2,17 @@ package com.sanaa.presentation.screen.celebritiesScreen
 
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.toUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import usecase.ManageActorUseCase
+import javax.inject.Inject
 
-class CelebritiesViewModel(
+@HiltViewModel
+class CelebritiesViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase
 ) : BaseViewModel<CelebritiesScreenUiState, CelebritiesScreenEffects>(
-    CelebritiesScreenUiState()
+    initialState = CelebritiesScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), CelebritiesScreenInteractionListener {
 
     init {
