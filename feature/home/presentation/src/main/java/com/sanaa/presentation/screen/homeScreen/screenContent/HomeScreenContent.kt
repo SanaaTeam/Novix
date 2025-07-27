@@ -142,9 +142,6 @@ fun HomeScreenContent(
                     )
                 }
             }
-            if (state.isLoading) {
-                upcomingSectionPlaceholder()
-            } else {
                 upcomingSection(
                     upcomingMovies = state.upcomingMovies,
                     movieGenres = state.movieGenres,

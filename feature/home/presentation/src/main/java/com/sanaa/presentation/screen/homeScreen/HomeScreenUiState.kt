@@ -13,5 +13,6 @@ data class HomeScreenUiState(
     val movieSelectedGenreId: Int? = null,
     val isLoading : Boolean = false,
     val errorMessage: String? = null,
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val isLoadingUpcoming : Boolean = false,
 )

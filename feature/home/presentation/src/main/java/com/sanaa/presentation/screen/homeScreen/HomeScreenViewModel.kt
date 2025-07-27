@@ -127,7 +127,7 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 updateState {
-                    it.copy(isLoading = true, movieSelectedGenreId = genreId)
+                    it.copy(isLoadingUpcoming = true, movieSelectedGenreId = genreId)
                 }
                 manageMovieUseCase.getTrendingMovies(1, state.value.movieSelectedGenreId)
                     .map { it.toState() }
@@ -135,7 +135,7 @@ class HomeScreenViewModel(
             onSuccess = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoading = false,
+                        isLoadingUpcoming = false,
                         upcomingMovies = mediaList
                     )
                 }
