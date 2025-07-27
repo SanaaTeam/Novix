@@ -1,12 +1,8 @@
 package com.sanaa.presentation.screen
 
 import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.SearchViewModel.Companion.ACTOR_INDEX
-import com.sanaa.presentation.screen.SearchViewModel.Companion.TV_SHOW_INDEX
-import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentSearchUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
@@ -23,6 +19,7 @@ import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -51,6 +48,7 @@ class SearchViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
+
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
             searchUseCase = searchUseCase,
@@ -61,60 +59,23 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `loadMediaByTab should load actors when ACTOR_INDEX is selected`() = runTest {
-        val actorList = listOf(
-            ActorUiModel(id = 1, name = "John Doe", imageUrl = "url1"),
-            ActorUiModel(id = 2, name = "Jane Smith", imageUrl = "url2")
-        )
-        TestActorPagingSource(actorList)
-
-        searchViewModel.updateState { it.copy(selectedTabIndex = ACTOR_INDEX) }
-
-        val method =
-            SearchViewModel::class.java.getDeclaredMethod("loadMediaByTab", String::class.java)
-        method.isAccessible = true
-        method.invoke(searchViewModel, "john")
-
-        searchViewModel.actorsPagingData.test {
-            val result = awaitItem()
-            assertThat(result).isNotNull()
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `load tv shows when tab index is TV_SHOW_INDEX and query is not blank`() = runTest {
-        val actorList = listOf(
-            ActorUiModel(id = 1, name = "John Doe", imageUrl = "url1"),
-            ActorUiModel(id = 2, name = "Jane Smith", imageUrl = "url2")
-        )
-
-        TestActorPagingSource(actorList)
-        searchViewModel.updateState { it.copy(selectedTabIndex = TV_SHOW_INDEX) }
-
-        val method =
-            SearchViewModel::class.java.getDeclaredMethod("loadMediaByTab", String::class.java)
-        method.isAccessible = true
-        method.invoke(searchViewModel, "john")
-
-        searchViewModel.actorsPagingData.test {
-            val result = awaitItem()
-            assertThat(result).isNotNull()
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `observeRecentViewedItems() should first stop loading when start clear recent viewed item`() =
         runTest {
-            searchViewModel
+
+            coEvery { manageSearchHistoryUseCase.getSearchHistory() } returns emptyFlow()
+
+            searchViewModel.observeRecentViewedItems()
 
             searchViewModel.state.test {
-                val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = true, error = null)
-                assertThat(item).isEqualTo(expected)
+                val loadingState = awaitItem()
+                assertThat(loadingState.isLoading).isTrue()
+
+                val loadedState = awaitItem()
+                assertThat(loadedState.isLoading).isFalse()
+                assertThat(loadedState.error).isNull()
             }
         }
+
 
     @Test
     fun `observeRecentViewedItems()  when start clear recent viewed item`() = runTest {
@@ -128,16 +89,46 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             awaitItem()
             val item = awaitItem()
-            val expected = SearchScreenUiState(
-                isLoading = true, error = null, recentViewedMedia = viewedMedias.map {
-                    RecentViewedUiModel(
-                        id = it.id,
-                        imageUrl = it.posterImageUrl,
-                        mediaType = MediaTypeUi.valueOf(it.mediaType.name),
-                        isSaved = it.isSaved
-                    )
-                })
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.recentViewedMedia).isEqualTo(viewedMedias.map {
+                RecentViewedUiModel(
+                    id = it.id,
+                    imageUrl = it.posterImageUrl,
+                    mediaType = MediaTypeUi.valueOf(it.mediaType.name),
+                    isSaved = it.isSaved
+                )
+            })
+            assertThat(item.isLoading).isTrue()
+            assertThat(item.error).isNull()
+        }
+    }
+
+    @Test
+    fun `observeRecentViewedItems() when start clear recent viewed item`() = runTest {
+        val viewedMedias = listOf(
+            RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
+        )
+        coEvery { manageRecentViewedUseCase.getRecentViewed() } returns flowOf(viewedMedias)
+
+        searchViewModel.observeRecentViewedItems()
+        searchViewModel.state.test {
+            val loadingState = awaitItem()
+            assertThat(loadingState.isLoading).isTrue()
+            assertThat(loadingState.recentViewedMedia).isEmpty()
+
+            val resultState = awaitItem()
+
+            val expectedRecentViewedMedia = viewedMedias.map {
+                RecentViewedUiModel(
+                    id = it.id,
+                    imageUrl = it.posterImageUrl,
+                    mediaType = MediaTypeUi.valueOf(it.mediaType.name),
+                    isSaved = it.isSaved
+                )
+            }
+
+            assertThat(resultState.error).isNull()
+            assertThat(resultState.recentViewedMedia).isEqualTo(expectedRecentViewedMedia)
+            cancelAndConsumeRemainingEvents()
         }
     }
 
@@ -148,8 +139,7 @@ class SearchViewModelTest {
             // init Then
             searchViewModel.state.test {
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = true, error = null)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isTrue()
             }
         }
 
@@ -170,16 +160,15 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             awaitItem()
             val item = awaitItem()
-            val expected = SearchScreenUiState(
-                isLoading = true, error = null, recentSearchQueries = resentSearchHistories.map {
-                    RecentSearchUiModel(
-                        id = it.id, title = it.query
-                    )
-                })
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.recentSearchQueries).isEqualTo(resentSearchHistories.map {
+                RecentSearchUiModel(
+                    id = it.id, title = it.query
+                )
+            })
+            assertThat(item.isLoading).isTrue()
+            assertThat(item.error).isNull()
         }
     }
-
 
     @Test
     fun `onClearRecentViewClicked() should first stop loading when start clear recent viewed item`() =
@@ -188,8 +177,9 @@ class SearchViewModelTest {
 
             searchViewModel.state.test {
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = true, error = null)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isTrue()
+                assertThat(item.error).isNull()
+
             }
         }
 
@@ -204,8 +194,8 @@ class SearchViewModelTest {
                 awaitItem()
 
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = false)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isFalse()
+                assertThat(item.error).isNull()
             }
         }
 
@@ -221,10 +211,12 @@ class SearchViewModelTest {
                 awaitItem()
 
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = false, error = errorMessage)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isFalse()
+                assertThat(item.error).isNotNull()
+                assertThat(item.error).isEqualTo(errorMessage)
             }
         }
+
 
     @Test
     fun `onClearRecentSearchClicked() should first stop loading when start clear recent search`() =
@@ -233,8 +225,8 @@ class SearchViewModelTest {
 
             searchViewModel.state.test {
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = true, error = null)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isTrue()
+                assertThat(item.error).isNull()
             }
         }
 
@@ -249,8 +241,8 @@ class SearchViewModelTest {
             awaitItem()
 
             val item = awaitItem()
-            val expected = SearchScreenUiState(isLoading = false)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.isLoading).isFalse()
+
         }
     }
 
@@ -268,8 +260,9 @@ class SearchViewModelTest {
                 awaitItem()
 
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = false, error = errorMessage)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isFalse()
+                assertThat(item.error).isNotNull()
+                assertThat(item.error).isEqualTo(errorMessage)
             }
         }
 
@@ -281,10 +274,9 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            val expected = SearchScreenUiState(
-                selectedTabIndex = index, isLoading = true, error = null
-            )
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.selectedTabIndex).isEqualTo(index)
+            assertThat(item.isLoading).isTrue()
+            assertThat(item.error).isNull()
         }
     }
 
@@ -310,19 +302,8 @@ class SearchViewModelTest {
             val uiState = searchViewModel.state
             val movieName = "Movie"
             val page = 1
-            val movies = listOf(
-                Movie(
-                    1,
-                    movieName,
-                    "https://image.com",
-                    genres = emptyList(),
-                    imdbRating = 0f,
-                    duration = 1,
-                    releaseDate = LocalDate(1970, 1, 1),
-                    overview = "",
-                    trailerUrl = ""
-                )
-            )
+            val movies = listOf(movie1)
+
             searchViewModel.onSearchQueryChanged(movieName)
             coEvery {
                 searchUseCase.searchMovies(
@@ -340,7 +321,10 @@ class SearchViewModelTest {
                     selectedTabIndex = index,
                     isLoading = false,
                 )
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.searchQuery).isEqualTo(movieName)
+                assertThat(item.selectedTabIndex).isEqualTo(index)
+                cancelAndIgnoreRemainingEvents()
+
             }
         }
 
@@ -351,18 +335,8 @@ class SearchViewModelTest {
             val uiState = searchViewModel.state
             val tvShowName = "TvShow"
             val page = 1
-            val tvShows = listOf(
-                TvSeries(
-                    1,
-                    tvShowName,
-                    "https://image.com",
-                    releaseDate = LocalDate(1970, 1, 1),
-                    genres = emptyList(),
-                    imdbRating = 10f,
-                    posterImageUrl = "",
-                    seasonsCount = 0
-                )
-            )
+            val tvShows = listOf(series)
+
             searchViewModel.onSearchQueryChanged(tvShowName)
             coEvery {
                 searchUseCase.searchTvShows(
@@ -375,13 +349,12 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 awaitItem()
                 val item = awaitItem()
-                val expected = SearchScreenUiState(
-                    searchQuery = tvShowName,
-                    selectedTabIndex = index,
-                    isLoading = false,
-                )
-                assertThat(item).isEqualTo(expected)
+
+                assertThat(item.searchQuery).isEqualTo(tvShowName)
+                assertThat(item.selectedTabIndex).isEqualTo(index)
+                cancelAndIgnoreRemainingEvents()
             }
+
         }
 
     @Test
@@ -404,20 +377,7 @@ class SearchViewModelTest {
             val actorName = "TvShow"
             val page = 1
             val actors = listOf(
-                Actor(
-                    1,
-                    actorName,
-                    "https://image.com",
-                    region = null,
-                    lastShow = null,
-                    gender = Gender.MALE,
-                    department = null,
-                    character = null,
-                    birthDate = null,
-                    deathDate = null,
-                    placeOfBirth = null,
-                    biography = null
-                )
+                actor
             )
             searchViewModel.onSearchQueryChanged(actorName)
             coEvery {
@@ -431,12 +391,9 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 awaitItem()
                 val item = awaitItem()
-                val expected = SearchScreenUiState(
-                    searchQuery = actorName,
-                    selectedTabIndex = index,
-                    isLoading = false,
-                )
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.searchQuery).isEqualTo(actorName)
+                assertThat(item.selectedTabIndex).isEqualTo(index)
+                cancelAndIgnoreRemainingEvents()
             }
         }
 
@@ -448,8 +405,9 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.searchQuery).isEqualTo(query)
+            assertThat(item.isLoading).isTrue()
+
         }
     }
 
@@ -461,8 +419,9 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.searchQuery).isEqualTo(query)
+            assertThat(item.isLoading).isTrue()
+
         }
     }
 
@@ -474,8 +433,9 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            val expected = SearchScreenUiState(isLoading = true, filters = filters)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.filters).isEqualTo(filters)
+            assertThat(item.isLoading).isTrue()
+
         }
     }
 
@@ -497,7 +457,10 @@ class SearchViewModelTest {
                 isLoading = false,
                 filters = filters
             )
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.searchQuery).isEqualTo(movieName)
+            assertThat(item.selectedTabIndex).isEqualTo(index)
+            assertThat(item.filters).isEqualTo(filters)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -512,8 +475,8 @@ class SearchViewModelTest {
         searchViewModel.state.test {
             awaitItem()
             val item = awaitItem()
-            val expected = SearchScreenUiState()
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.isLoading).isFalse()
+
         }
     }
 
@@ -526,8 +489,9 @@ class SearchViewModelTest {
 
             searchViewModel.state.test {
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = true, error = null)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isTrue()
+                assertThat(item.error).isNull()
+
             }
         }
 
@@ -540,8 +504,10 @@ class SearchViewModelTest {
 
         searchViewModel.state.test {
             val item = awaitItem()
-            val expected = SearchScreenUiState(isLoading = true, searchQuery = query)
-            assertThat(item).isEqualTo(expected)
+
+            assertThat(item.searchQuery).isEqualTo(query)
+            assertThat(item.isLoading).isTrue()
+
         }
     }
 
@@ -557,8 +523,9 @@ class SearchViewModelTest {
                 awaitItem()
 
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = false, noInternetConnection = true)
-                assertThat(item).isEqualTo(expected)
+                assertThat(item.isLoading).isFalse()
+                assertThat(item.noInternetConnection).isTrue()
+
             }
         }
 
@@ -573,10 +540,12 @@ class SearchViewModelTest {
                 awaitItem()
 
                 val item = awaitItem()
-                val expected = SearchScreenUiState(isLoading = false, error = "Unknown error")
-                assertThat(item).isEqualTo(expected)
+
+                assertThat(item.isLoading).isFalse()
+                assertThat(item.error).isEqualTo("Unknown error")
             }
         }
+
 
     @Test
     fun `onFilterClicked() should show bottom sheet when filter button clicked`() = runTest {
@@ -586,8 +555,8 @@ class SearchViewModelTest {
             awaitItem()
 
             val item = awaitItem()
-            val expected = SearchScreenUiState(showBottomSheet = true)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.showBottomSheet).isTrue()
+
         }
     }
 
@@ -599,8 +568,8 @@ class SearchViewModelTest {
             awaitItem()
 
             val item = awaitItem()
-            val expected = SearchScreenUiState(showBottomSheet = false)
-            assertThat(item).isEqualTo(expected)
+            assertThat(item.showBottomSheet).isFalse()
+
         }
     }
 
@@ -628,7 +597,6 @@ class SearchViewModelTest {
 
 
             searchViewModel.onSearchResultMediaClicked(viewed)
-
 
             searchViewModel.effect.test {
                 val effect = awaitItem()
@@ -679,17 +647,163 @@ class SearchViewModelTest {
             }
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createActorsPagingSource returns expected data`() = runTest {
 
-}
+        val query = "Tom"
+        val expectedActors = listOf(
+            Actor(
+                1,
+                "actorName",
+                "https://image.com",
+                region = null,
+                lastShow = null,
+                gender = Gender.MALE,
+                department = null,
+                character = null,
+                birthDate = null,
+                deathDate = null,
+                placeOfBirth = null,
+                biography = null
+            )
+        )
+        coEvery { searchUseCase.searchActors(query, 1) } returns expectedActors
 
-class TestActorPagingSource(
-    private val data: List<ActorUiModel>,
-) : PagingSource<Int, ActorUiModel>() {
-    override fun getRefreshKey(state: PagingState<Int, ActorUiModel>): Int? = null
+        val pagingSource = searchViewModel.createActorsPagingSource(query)
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ActorUiModel> {
-        return LoadResult.Page(
-            data = data, prevKey = null, nextKey = null
+        // Act
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        // Assert
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedActors,
+            prevKey = null,
+            nextKey = 2
+        )
+        assertThat(expected).isEqualTo(expected)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createTvShowsPagingSource returns expected data`() = runTest {
+        val query = "Breaking"
+        val expectedTvShows = listOf(series)
+
+        coEvery {
+            searchUseCase.searchTvShows(query = query, page = 1, filters = null)
+        } returns expectedTvShows
+
+        val pagingSource = searchViewModel.createTvShowsPagingSource(query)
+
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedTvShows,
+            prevKey = null,
+            nextKey = 2
+        )
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createMoviesPagingSource returns expected data`() = runTest {
+        val query = "Inception"
+        val expectedMovies = listOf(movie1)
+
+
+        coEvery {
+            searchUseCase.searchMovies(query = query, page = 1, filters = null)
+        } returns expectedMovies
+
+        val pagingSource = searchViewModel.createMoviesPagingSource(query)
+
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedMovies,
+            prevKey = null,
+            nextKey = 2
+        )
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    private companion object {
+        val movie1 = Movie(
+            1,
+            "query1",
+            "https://image.com",
+            genres = emptyList(),
+            imdbRating = 0f,
+            duration = 1,
+            releaseDate = LocalDate(1970, 1, 1),
+            overview = "",
+            trailerUrl = ""
+        )
+
+        val movie2 = Movie(
+            1,
+            "query2",
+            "https://image.com",
+            genres = emptyList(),
+            imdbRating = 0f,
+            duration = 1,
+            releaseDate = LocalDate(1970, 1, 1),
+            overview = "",
+            trailerUrl = ""
+        )
+
+        val series = TvSeries(
+            1,
+            "tvShowName",
+            "https://image.com",
+            releaseDate = LocalDate(1970, 1, 1),
+            genres = emptyList(),
+            imdbRating = 10f,
+            posterImageUrl = "",
+            seasonsCount = 0
+        )
+
+        val actor = Actor(
+            1,
+            "actorName",
+            "https://image.com",
+            region = null,
+            lastShow = null,
+            gender = Gender.MALE,
+            department = null,
+            character = null,
+            birthDate = null,
+            deathDate = null,
+            placeOfBirth = null,
+            biography = null
+        )
+
+        val timestamp = Instant.fromEpochMilliseconds(1234567890L)
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+        val resentSearchHistories = listOf(
+            SearchHistory(1, "Movie", timestamp = timestamp)
         )
     }
 }

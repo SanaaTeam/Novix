@@ -7,10 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.sanaa.presentation.base.BasePagingSource
 import com.sanaa.presentation.base.BaseViewModel
-import com.sanaa.presentation.paging.SearchActorsPagingSource
-import com.sanaa.presentation.paging.SearchMoviesPagingSource
-import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -27,10 +25,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
@@ -47,15 +44,6 @@ class SearchViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
-
-    private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
-    val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
-
-    private val _tvShowsPagingData = MutableStateFlow<PagingData<TvShowUiModel>>(PagingData.empty())
-    val tvShowsPagingData: StateFlow<PagingData<TvShowUiModel>> = _tvShowsPagingData
-
-    private val _actorsPagingData = MutableStateFlow<PagingData<ActorUiModel>>(PagingData.empty())
-    val actorsPagingData: StateFlow<PagingData<ActorUiModel>> = _actorsPagingData
 
     init {
         observeSearchQueryChanges()
@@ -230,14 +218,11 @@ class SearchViewModel(
     }
 
     private fun clearSearchResults() {
-        _moviesPagingData.value = PagingData.empty()
-        _tvShowsPagingData.value = PagingData.empty()
-        _actorsPagingData.value = PagingData.empty()
         updateState {
             it.copy(
-                movies = emptyList(),
-                tvShows = emptyList(),
-                actors = emptyList(),
+                movies = flowOf(PagingData.empty()),
+                tvShows = flowOf(PagingData.empty()),
+                actors = flowOf(PagingData.empty()),
                 isLoading = false,
                 error = null
             )
@@ -255,18 +240,18 @@ class SearchViewModel(
 
 
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
-        _moviesPagingData.value = pagingData
+        updateState { it.copy(movies = flowOf(pagingData)) }
         setSuccessState()
     }
 
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
-        _tvShowsPagingData.value = pagingData
+        updateState { it.copy(tvShows = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
-        _actorsPagingData.value = pagingData
+        updateState { it.copy(actors = flowOf(pagingData)) }
         setSuccessState()
     }
 
@@ -322,24 +307,22 @@ class SearchViewModel(
         )
     }
 
-    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
-        return SearchActorsPagingSource(searchUseCase, query = query)
+    fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
+        return BasePagingSource { page ->
+            searchUseCase.searchActors(query = query, page = page)
+        }
     }
 
-    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
-        return SearchTvShowsPagingSource(
-            searchUseCase,
-            query = query,
-            filters = state.value.filters
-        )
+    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
+        return BasePagingSource { page ->
+            searchUseCase.searchTvShows(query = query, page = page, filters = state.value.filters)
+        }
     }
 
-    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
-        return SearchMoviesPagingSource(
-            searchMoviesUseCase = searchUseCase,
-            query = query,
-            filters = state.value.filters
-        )
+    fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
+        return BasePagingSource { page ->
+            searchUseCase.searchMovies(query = query, page = page, filters = state.value.filters)
+        }
     }
 
 
