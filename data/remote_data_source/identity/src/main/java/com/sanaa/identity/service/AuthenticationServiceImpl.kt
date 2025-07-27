@@ -1,18 +1,16 @@
 package com.sanaa.identity.service
 
-import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.identity.exceptions.InvalidTokenException
-import com.sanaa.identity.exceptions.InvalidUserOrPasswordException
-import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.CreateAccessTokenPostBody
 import com.sanaa.identity.network.body.LoginPostBody
+import com.sanaa.identity.util.exceptions.InvalidTokenException
+import com.sanaa.identity.util.exceptions.ResponseException
+import com.sanaa.identity.util.wrapApiCall
 
 class AuthenticationServiceImpl(
     private val authenticationApi: AuthenticationApiService,
-    private val preferencesManager: PreferencesManager,
 ) : AuthenticationService {
-    override suspend fun login(userName: String, password: String) {
+    override suspend fun login(userName: String, password: String) = wrapApiCall {
         val requestToken = authenticationApi.createRequestToken().body()?.requestToken ?: ""
         val loginPostBody = LoginPostBody(
             username = userName,
@@ -21,39 +19,35 @@ class AuthenticationServiceImpl(
         )
         val response = authenticationApi.login(loginPostBody)
         if (response.isSuccessful.not()) {
-            throw InvalidUserOrPasswordException(userName)
+            throw ResponseException(response.code())
         }
     }
 
-    override suspend fun requestUserAccessToken(): String {
+    override suspend fun requestUserAccessToken(): String = wrapApiCall {
         val response = authenticationApi.requestUserAccessToken()
         if (response.isSuccessful.not()) {
-            throw ResponseException(response.message())
+            throw ResponseException(response.code())
         }
 
         val body = response.body()
         if (body != null && body.success && body.request_token != null)
             return body.request_token
         else
-            throw ResponseException(body?.status_message)
+            throw ResponseException(response.code())
     }
 
-    override suspend fun createUserAccessToken(requestToken: String) {
+    override suspend fun createUserAccessToken(requestToken: String): String = wrapApiCall {
         val postBody = CreateAccessTokenPostBody(requestToken)
         val response = authenticationApi.createUserAccessToken(postBody)
         if (response.isSuccess && response.accessToken != null) {
-            preferencesManager.updateAuthorizationToken(response.accessToken)
+            response.accessToken
         } else {
             throw InvalidTokenException(response.statusMessage)
         }
     }
 
-    override suspend fun createGuestSession() {
+    override suspend fun createGuestSession(): Unit = wrapApiCall {
         authenticationApi.createGuestSession()
     }
 
-    companion object {
-        const val INVALID_USERNAME_OR_PASSWORD = 30
-        const val EMAIL_NOT_VERIFIED_EXCEPTION = 32
-    }
 }

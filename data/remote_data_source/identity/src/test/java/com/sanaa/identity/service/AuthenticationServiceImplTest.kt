@@ -1,14 +1,13 @@
 package com.sanaa.identity.service
 
 import com.google.common.truth.Truth
-import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.identity.exceptions.InvalidTokenException
-import com.sanaa.identity.exceptions.ResponseException
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.response.CreateAccessTokenResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse
 import com.sanaa.identity.network.response.LoginResponse
 import com.sanaa.identity.network.response.RequestAccessTokenResponse
+import com.sanaa.identity.util.exceptions.InvalidTokenException
+import com.sanaa.identity.util.exceptions.ResponseException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -20,12 +19,11 @@ import retrofit2.Response
 
 class AuthenticationServiceImplTest {
     private val authenticationApi: AuthenticationApiService = mockk(relaxed = true)
-    private val preferencesManager: PreferencesManager = mockk(relaxed = true)
     private lateinit var authenticationService: AuthenticationService
 
     @BeforeEach
     fun setUp() {
-        authenticationService = AuthenticationServiceImpl(authenticationApi, preferencesManager)
+        authenticationService = AuthenticationServiceImpl(authenticationApi)
     }
 
     @Test
@@ -33,8 +31,18 @@ class AuthenticationServiceImplTest {
         // Given
         val userName = "Novix User"
         val password = "password"
-        coEvery { authenticationApi.createRequestToken() } returns Response.success(CreateRequestTokenResponse(true, 1, "", "test request token"))
-        coEvery { authenticationApi.login(any()) } returns Response.success(LoginResponse(true, 1, "", "","test request token"))
+        coEvery { authenticationApi.createRequestToken() } returns Response.success(
+            CreateRequestTokenResponse(true, 1, "", "test request token")
+        )
+        coEvery { authenticationApi.login(any()) } returns Response.success(
+            LoginResponse(
+                true,
+                1,
+                "",
+                "",
+                "test request token"
+            )
+        )
 
         // When
         authenticationService.login(userName, password)
@@ -48,8 +56,18 @@ class AuthenticationServiceImplTest {
         // Given
         val userName = "Novix User"
         val password = "password"
-        coEvery { authenticationApi.createRequestToken() } returns Response.success(CreateRequestTokenResponse(true, 1, "", "test request token"))
-        coEvery { authenticationApi.login(any()) } returns Response.success(LoginResponse(true, 1, "", "","test request token"))
+        coEvery { authenticationApi.createRequestToken() } returns Response.success(
+            CreateRequestTokenResponse(true, 1, "", "test request token")
+        )
+        coEvery { authenticationApi.login(any()) } returns Response.success(
+            LoginResponse(
+                true,
+                1,
+                "",
+                "",
+                "test request token"
+            )
+        )
 
         // When
         authenticationService.login(userName, password)

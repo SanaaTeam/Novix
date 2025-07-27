@@ -16,8 +16,8 @@ class AuthenticationRepositoryImpl(
         return authenticationService.requestUserAccessToken()
     }
 
-    override suspend fun createAccessToken() {
-        val accessToken = authenticationService.requestUserAccessToken()
+    override suspend fun createAccessToken(requestToken: String) {
+        val accessToken = authenticationService.createUserAccessToken(requestToken)
         preferencesManager.updateAuthorizationToken(accessToken)
     }
 
