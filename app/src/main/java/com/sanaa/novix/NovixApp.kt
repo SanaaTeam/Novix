@@ -1,34 +1,27 @@
 package com.sanaa.novix
 
 import android.app.Application
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.sanaa.novix.di.appModule
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
-import org.koin.core.context.startKoin
+import dagger.hilt.android.HiltAndroidApp
+import jakarta.inject.Inject
 import timber.log.Timber
 
-class NovixApp : Application(), KoinComponent {
+@HiltAndroidApp
+class NovixApp : Application() {
+    @Inject
+    lateinit var crashlytics: FirebaseCrashlytics
+    @Inject
+    lateinit var timberTree: Timber.Tree
+    @Inject
+    lateinit var analytics: FirebaseAnalytics
 
     override fun onCreate() {
         super.onCreate()
-
-        startKoin {
-            androidContext(this@NovixApp)
-            modules(
-                appModule,
-            )
-        }
-
-        val crashlytics: FirebaseCrashlytics = get()
-        val tree: Timber.Tree = get()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(tree, Timber.DebugTree())
-        } else {
-            Timber.plant(tree)
-        }
+        if (BuildConfig.DEBUG)
+            Timber.plant(timberTree, Timber.DebugTree())
+        else
+            Timber.plant(timberTree)
 
         crashlytics.apply {
             isCrashlyticsCollectionEnabled = true

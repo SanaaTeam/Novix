@@ -4,23 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.api.HomeFeatureApi
-import com.sanaa.api.SearchFeatureApi
-import org.koin.android.ext.android.getKoin
-import org.koin.android.ext.android.inject
+import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 import timber.log.Timber
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private lateinit var analytics: FirebaseAnalytics
-    private val homeFeatureApi: HomeFeatureApi by inject()
+    @Inject
+    lateinit var homeFeatureApi: HomeFeatureApi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        analytics = getKoin().get()
 
         Timber.d("MainActivity created")
 
