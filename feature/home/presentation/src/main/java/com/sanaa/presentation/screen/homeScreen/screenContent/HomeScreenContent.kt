@@ -3,34 +3,32 @@ package com.sanaa.presentation.screen.homeScreen.screenContent
 import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.cards.HomeTopBar
+import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
 import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
+import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
@@ -41,43 +39,61 @@ fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
     NovixScaffold(
         topBar = {
             HomeTopBar(
-                modifier = Modifier.padding(top = 12.dp, start = 16.dp, bottom = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }) {
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = GridCells.Adaptive(minSize = 140.dp),
+            contentPadding = PaddingValues(
+                start = 16.dp, end = 16.dp, bottom = 12.dp
+            ),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PopularMediaSection(mediaItems = state.popularMedia, onMediaClick = {
-                interactionListener.onMediaClick(it.id, it.mediaType)
-            }, onSaveIconClicked = {
-                interactionListener.onSaveIconClick(it)
-            })
-            WhatToWatchSection(onMoviesClicked = {
-                interactionListener.onMoviesCardClicked()
-            }, onTvShowsClicked = {
-                interactionListener.onTvShowsCardClicked()
-            }, onPeopleClicked = {
-                interactionListener.onPeopleCardClicked()
-            })
-            MixedMediaSection(
-                headerLabel = stringResource(R.string.top_rated),
-                mediaItems = state.topRatingMedia,
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id, it.mediaType)
-                },
-                onSaveIconClicked = {
-                    interactionListener.onSaveIconClick(it)
-                },
-                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
-            if (state.continueWatchingMedia.isNotEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                PopularMediaSection(
+                    mediaItems = state.popularMedia, onMediaClick = {
+                        interactionListener.onMediaClick(it.id, it.mediaType)
+                    }, onSaveIconClicked = {
+                        interactionListener.onSaveIconClick(it)
+                    }, modifier = Modifier.fillWidthOfParent(16.dp)
+                )
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                WhatToWatchSection(
+                    onMoviesClicked = {
+                        interactionListener.onMoviesCardClicked()
+                    }, onTvShowsClicked = {
+                        interactionListener.onTvShowsCardClicked()
+                    }, onPeopleClicked = {
+                        interactionListener.onPeopleCardClicked()
+                    }, modifier = Modifier
+                        .fillWidthOfParent(16.dp)
+                        .padding(top = 8.dp)
+                )
+            }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                MixedMediaSection(
+                    headerLabel = stringResource(R.string.top_rated),
+                    modifier = Modifier
+                        .fillWidthOfParent(16.dp)
+                        .padding(
+                            top = 24.dp
+                        ),
+                    mediaItems = state.topRatingMedia,
+                    onMediaClick = {
+                        interactionListener.onMediaClick(it.id, it.mediaType)
+                    },
+                    onSaveIconClicked = {
+                        interactionListener.onSaveIconClick(it)
+                    },
+                    onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+            }
+
+            if (state.continueWatchingMedia.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
                 MixedMediaSection(
                     headerLabel = stringResource(R.string.continue_watching),
                     mediaItems = state.continueWatchingMedia,
@@ -86,34 +102,22 @@ fun HomeScreenContent(
                     },
                     onSaveIconClicked = {
                         interactionListener.onSaveIconClick(it)
-                    })
+                    },
+                    modifier = Modifier.fillWidthOfParent(16.dp),
+                )
             }
-            NovixSectionHeader(
-                title = stringResource(R.string.up_upcoming),
-            )
-            MediaListSectionContent(
-                genres = state.movieGenres,
-                mediaList = state.upcomingMovies,
-                selectedGenreId = state.movieSelectedGenreId,
-                onGenreClick = {
-                    interactionListener.onMovieGenreClick(it)
-                },
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id, it.mediaType)
-                },
-                onSaveIconClick = {
-                    interactionListener.onSaveIconClick(it)
-                },
-                isScrollEnabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(screenHeight.dp)
+            upcomingSection(
+                upcomingMovies = state.upcomingMovies,
+                movieGenres = state.movieGenres,
+                movieSelectedGenreId = state.movieSelectedGenreId,
+                onGenreClick = interactionListener::onMovieGenreClick,
+                onContinueWatchingClick = {},
+                onSaveIconClick = {}
             )
         }
-
     }
-
 }
+
 
 @PreviewLightDark
 @Composable

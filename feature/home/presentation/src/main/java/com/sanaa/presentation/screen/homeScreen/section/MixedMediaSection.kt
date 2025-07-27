@@ -120,7 +120,7 @@ fun MixedMediaSection(
             itemsCount = mediaItems.size,
             preferredItemWidth = 158.dp,
             itemSpacing = 8.dp,
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
             maxSmallItemWidth = 74.dp,
             minSmallItemWidth = 74.dp
         ) { page, isFocused ->
