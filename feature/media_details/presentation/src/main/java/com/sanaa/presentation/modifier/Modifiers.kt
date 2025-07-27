@@ -1,4 +1,4 @@
-package com.sanaa.presentation.modifier
+package com.sanaa.presentation.modifiers
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layout
