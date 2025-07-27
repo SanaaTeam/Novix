@@ -1,5 +1,6 @@
 package com.sanaa.identity.repository
 
+import android.util.Log
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.LoginPostBody
@@ -45,6 +46,13 @@ class AuthenticationRepositoryImpl(
     }
 
     override suspend fun createGuestSession(): Unit = wrapApiCall {
-        authenticationApi.createGuestSession()
+        val response = authenticationApi.createGuestSession()
+        if (response.isSuccess && response.guestSessionId != null) {
+            preferencesManager.updateAuthorizationToken(response.guestSessionId!!)
+            Log.d("GuestSession", "Guest Session ID: ${response.guestSessionId}")
+        } else {
+            throw ResponseException(response.statusCode ?: -1)
+        }
     }
+
 }
