@@ -1,5 +1,6 @@
 package com.sanaa.novix.di
 
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.novix.BuildConfig
 import com.sanaa.vod.network.interceptor.APIKeyInterceptor
 import com.sanaa.vod.network.interceptor.LanguageInterceptor
@@ -11,6 +12,8 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -42,7 +45,13 @@ val networkModule = module {
 
     single {
         OkHttpClient.Builder()
-            .addInterceptor(APIKeyInterceptor(BuildConfig.TMDB_API_KEY))
+            .addInterceptor(APIKeyInterceptor {
+                val preferencesManager: PreferencesManager = getKoin().get()
+                val token = runBlocking {
+                    preferencesManager.authorizationToken.firstOrNull()
+                }.orEmpty().ifBlank { BuildConfig.TMDB_API_KEY }
+                token.ifBlank { BuildConfig.TMDB_API_KEY }
+            })
             .addInterceptor(LanguageInterceptor(get()))
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY

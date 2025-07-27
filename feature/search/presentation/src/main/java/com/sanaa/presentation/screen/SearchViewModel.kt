@@ -25,10 +25,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
@@ -45,15 +44,6 @@ class SearchViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
     SearchScreenInteractionsListener {
-
-    private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
-    val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData
-
-    private val _tvShowsPagingData = MutableStateFlow<PagingData<TvShowUiModel>>(PagingData.empty())
-    val tvShowsPagingData: StateFlow<PagingData<TvShowUiModel>> = _tvShowsPagingData
-
-    private val _actorsPagingData = MutableStateFlow<PagingData<ActorUiModel>>(PagingData.empty())
-    val actorsPagingData: StateFlow<PagingData<ActorUiModel>> = _actorsPagingData
 
     init {
         observeSearchQueryChanges()
@@ -228,14 +218,11 @@ class SearchViewModel(
     }
 
     private fun clearSearchResults() {
-        _moviesPagingData.value = PagingData.empty()
-        _tvShowsPagingData.value = PagingData.empty()
-        _actorsPagingData.value = PagingData.empty()
         updateState {
             it.copy(
-                movies = emptyList(),
-                tvShows = emptyList(),
-                actors = emptyList(),
+                movies = flowOf(PagingData.empty()),
+                tvShows = flowOf(PagingData.empty()),
+                actors = flowOf(PagingData.empty()),
                 isLoading = false,
                 error = null
             )
@@ -253,18 +240,18 @@ class SearchViewModel(
 
 
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
-        _moviesPagingData.value = pagingData
+        updateState { it.copy(movies = flowOf(pagingData)) }
         setSuccessState()
     }
 
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
-        _tvShowsPagingData.value = pagingData
+        updateState { it.copy(tvShows = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
-        _actorsPagingData.value = pagingData
+        updateState { it.copy(actors = flowOf(pagingData)) }
         setSuccessState()
     }
 
