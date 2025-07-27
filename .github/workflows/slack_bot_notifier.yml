@@ -8,20 +8,12 @@ on:
 jobs:
   notify:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Load Slack user map
-        id: usermap
-        run: |
-          if [ -f .github/slack-user-map.json ]; then
-            echo "user_map=$(cat .github/slack-user-map.json | jq -c)" >> $GITHUB_OUTPUT
-          else
-            echo "user_map={}" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Get delayed PRs (older than 2 days)
+      - name: Get delayed PRs (open > 2 days)
         id: delayed_prs
         uses: actions/github-script@v7
         with:
@@ -44,15 +36,20 @@ jobs:
 
             core.setOutput("delayed", JSON.stringify(result));
 
-      - name: Notify Slack
+      - name: Notify Slack about delayed PRs
         if: steps.delayed_prs.outputs.delayed != '[]'
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          SLACK_USER_MAP: ${{ secrets.SLACK_USER_MAP }}
         run: |
-          delayed_prs='${{ steps.delayed_prs.outputs.delayed }}'
-          user_map='${{ steps.usermap.outputs.user_map }}'
+          echo "Parsing Slack user map"
+          user_map=$(echo "$SLACK_USER_MAP" | jq -c)
 
+          echo "Parsing delayed PRs"
+          delayed_prs='${{ steps.delayed_prs.outputs.delayed }}'
+
+          echo "Composing Slack blocks"
           blocks=$(jq -n \
             --argjson prs "$delayed_prs" \
             --argjson userMap "$user_map" \
@@ -62,7 +59,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text": ":warning: *Delayed Pull Request Alert*\nThe following PRs have been open for more than *2 days*:"
+                  "text": ":alarm_clock: *Delayed Pull Request Alert*\nThe following PRs have been open for more than *2 days*:"
                 }
               },
               { "type": "divider" }
@@ -86,6 +83,7 @@ jobs:
             }))
             ')
 
+          echo "Sending Slack notification..."
           curl -X POST https://slack.com/api/chat.postMessage \
             -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
             -H 'Content-type: application/json' \
