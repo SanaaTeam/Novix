@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
@@ -52,13 +54,12 @@ import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
 import kotlin.math.absoluteValue
 
-val bottomGradientColor = Brush.verticalGradient(
+val overLayGradientColor = Brush.verticalGradient(
     colors = listOf(
         Color(0x00000000), Color(0xB2000000), Color(0xCC000000)
     )
 )
 
-@SuppressLint("RestrictedApi", "ConfigurationScreenWidthHeight")
 @Composable
 fun PopularMediaSection(
     modifier: Modifier = Modifier,
@@ -66,144 +67,18 @@ fun PopularMediaSection(
     onMediaClick: (MediaItem) -> Unit,
     onSaveIconClicked: (MediaItem) -> Unit
 ) {
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
 
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 10 })
-
-    val focusedWidth = 188.dp
-    val focusedHeight = 244.dp
-
-    val unfocusedWidth = 132.dp
-    val unfocusedHeight = 210.dp
-
-    val horizontalContentPadding = ((screenWidth - focusedWidth) / 2)
-    val pageSpacing = (-12).dp
-
     Column(
         modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixSectionHeader(title = stringResource(R.string.popular))
-        HorizontalPager(
+        PopularMediaSectionPager(
             state = pagerState,
-            contentPadding = PaddingValues(horizontal = horizontalContentPadding),
-            pageSpacing = pageSpacing,
-            modifier = Modifier.fillMaxWidth(),
-        ) { page ->
-            val pageOffset =
-                ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue.coerceIn(
-                    0f, 1f
-                )
-
-            val animatedWidth by animateDpAsState(
-                targetValue = lerp(unfocusedWidth, focusedWidth, 1f - pageOffset),
-                label = "animatedWidth"
-            )
-            val animatedHeight by animateDpAsState(
-                targetValue = lerp(unfocusedHeight, focusedHeight, 1f - pageOffset),
-                label = "animatedHeight"
-            )
-
-            val rotation by animateFloatAsState(
-                targetValue = if (page == pagerState.currentPage) 0f
-                else if (page < pagerState.currentPage) -3f
-                else 3f, label = "rotation"
-            )
-
-            Box(
-                modifier = Modifier
-                    .width(focusedWidth)
-                    .height(focusedHeight),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Box(
-                    modifier = Modifier
-                        .width(animatedWidth)
-                        .height(animatedHeight)
-                        .graphicsLayer {
-                            rotationZ = rotation
-                        }, contentAlignment = Alignment.BottomCenter
-                ) {
-                    MediaPosterCard(
-                        width = animatedWidth,
-                        height = animatedHeight,
-                        ratio = animatedWidth / animatedHeight,
-                        onCardClick = {
-                            onMediaClick(mediaItems[page])
-                        },
-                        topLeftContent = {
-                            if (page == pagerState.currentPage) {
-                                SaveIconChip(
-                                    isSaved = false, onClick = {
-                                        onSaveIconClicked(mediaItems[page])
-                                    })
-                            }
-                        },
-                        posterImage = {
-                            RemoteBlurredHaramImageViewer(
-                                imageUrl = mediaItems[page].imageUrl.orEmpty(),
-                                modifier = Modifier,
-                                blurRadius = 150,
-                                haramThreshold = 0.2f,
-                                nonHaramThreshold = 0.7f,
-                                placeholderContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                                errorContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                                contentDescription = mediaItems[page].title,
-                            ) {
-                                OnBlurContent(
-                                    hintText = stringResource(R.string.unsuitable_image),
-                                    textStyle = Theme.textStyle.body.small.copy(
-                                        color = Color(0x99FFFFFF)
-                                    ),
-                                    iconSize = 24.dp,
-                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                                )
-                            }
-                        })
-                    Column(
-                        modifier = Modifier
-                            .clip(
-                                RoundedCornerShape(
-                                    bottomStart = 12.dp, bottomEnd = 12.dp
-                                )
-                            )
-                            .fillMaxWidth()
-                            .height(
-                                if (page == pagerState.currentPage) focusedHeight / 2 else unfocusedHeight
-                            )
-                            .align(Alignment.BottomCenter)
-                            .background(brush = bottomGradientColor),
-                        verticalArrangement = Arrangement.Bottom,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AnimatedVisibility(
-                            visible = pagerState.currentPage == page,
-                            enter = fadeIn(),
-                            exit = fadeOut()
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                verticalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                BasicText(
-                                    text = mediaItems[page].title,
-                                    style = Theme.textStyle.label.medium.copy(color = Theme.colors.onPrimary)
-                                )
-                                RatingChip(
-                                    rating = mediaItems[page].rating.toString()
-                                )
-                            }
-                        }
-                    }
-                }
-
-            }
-        }
+            mediaItems = mediaItems,
+            onMediaClick = onMediaClick,
+            onSaveIconClicked = onSaveIconClicked
+        )
         NovixCarouselDots(
             totalDots = 10,
             selectedIndex = pagerState.currentPage,
@@ -231,6 +106,155 @@ private fun RatingChip(
             text = rating, style = Theme.textStyle.label.small.copy(color = Theme.colors.onPrimary)
         )
 
+    }
+}
+
+
+@SuppressLint("ConfigurationScreenWidthHeight")
+@Composable
+private fun PopularMediaSectionPager(
+    state: PagerState,
+    mediaItems: List<MediaItem>,
+    onMediaClick: (MediaItem) -> Unit,
+    onSaveIconClicked: (MediaItem) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    val focusedWidth = 188.dp
+    val focusedHeight = 244.dp
+
+    val unfocusedWidth = 132.dp
+    val unfocusedHeight = 210.dp
+
+    val horizontalContentPadding = ((screenWidth - focusedWidth) / 2)
+    val pageSpacing = (-12).dp
+    HorizontalPager(
+        state = state,
+        contentPadding = PaddingValues(horizontal = horizontalContentPadding),
+        pageSpacing = pageSpacing,
+        modifier = modifier.fillMaxWidth(),
+    ) { page ->
+        val pageOffset =
+            ((state.currentPage - page) + state.currentPageOffsetFraction).absoluteValue.coerceIn(
+                0f, 1f
+            )
+
+        val animatedWidth by animateDpAsState(
+            targetValue = lerp(unfocusedWidth, focusedWidth, 1f - pageOffset),
+            label = "animatedWidth"
+        )
+        val animatedHeight by animateDpAsState(
+            targetValue = lerp(unfocusedHeight, focusedHeight, 1f - pageOffset),
+            label = "animatedHeight"
+        )
+
+        val rotation by animateFloatAsState(
+            targetValue = if (page == state.currentPage) 0f
+            else if (page < state.currentPage) -3f
+            else 3f, label = "rotation"
+        )
+
+        val overLayAnimatedBackgroundHeight by animateDpAsState(
+            targetValue = if (page == state.currentPage) focusedHeight / 2 else unfocusedHeight,
+            label = "overLayAnimatedBackgroundHeight"
+        )
+
+        val item = mediaItems[page]
+
+        Box(
+            modifier = Modifier
+                .width(focusedWidth)
+                .height(focusedHeight),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(animatedWidth)
+                    .height(animatedHeight)
+                    .graphicsLayer {
+                        rotationZ = rotation
+                        clip = true
+                        shape = RoundedCornerShape(12.dp)
+                    }, contentAlignment = Alignment.BottomCenter
+            ) {
+                MediaPosterCard(
+                    width = animatedWidth,
+                    height = animatedHeight,
+                    ratio = animatedWidth / animatedHeight,
+                    onCardClick = {
+                        onMediaClick(item)
+                    },
+                    topLeftContent = {
+                        if (page == state.currentPage) {
+                            SaveIconChip(
+                                isSaved = false, onClick = {
+                                    onSaveIconClicked(item)
+                                })
+                        }
+                    },
+                    posterImage = {
+                        RemoteBlurredHaramImageViewer(
+                            imageUrl = item.imageUrl.orEmpty(),
+                            modifier = Modifier,
+                            blurRadius = 150,
+                            haramThreshold = 0.2f,
+                            nonHaramThreshold = 0.7f,
+                            placeholderContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            errorContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            contentDescription = mediaItems[page].title,
+                        ) {
+                            OnBlurContent(
+                                hintText = stringResource(R.string.unsuitable_image),
+                                textStyle = Theme.textStyle.body.small.copy(color = Color(0x99FFFFFF)),
+                                iconSize = 24.dp,
+                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                            )
+                        }
+                    })
+                Column(
+                    modifier = Modifier
+                        .clip(
+                            RoundedCornerShape(
+                                bottomStart = 12.dp, bottomEnd = 12.dp
+                            )
+                        )
+                        .fillMaxWidth()
+                        .height(overLayAnimatedBackgroundHeight)
+                        .align(Alignment.BottomCenter)
+                        .background(brush = overLayGradientColor),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    AnimatedVisibility(
+                        visible = state.currentPage == page,
+                        enter = fadeIn(),
+                        exit = fadeOut()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                        ) {
+                            BasicText(
+                                text = item.title,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 2,
+                                style = Theme.textStyle.label.medium.copy(color = Theme.colors.onPrimary)
+                            )
+                            RatingChip(
+                                rating = item.rating.toString()
+                            )
+                        }
+                    }
+                }
+            }
+
+        }
     }
 }
 

@@ -137,28 +137,28 @@ val demoMediaList = listOf(
         id = 1,
         title = "media 1",
         imageUrl = "",
-        rating = 9.9f,
+        rating = " 9.9",
         mediaType = MediaType.MOVIE
     ),
     MediaItem(
         id = 2,
         title = "media 2",
         imageUrl = "",
-        rating = 9.9f,
+        rating = " 9.9",
         mediaType = MediaType.TV_SHOW
     ),
     MediaItem(
         id = 3,
         title = "media 3",
         imageUrl = "",
-        rating = 9.9f,
+        rating = " 9.9",
         mediaType = MediaType.MOVIE
     ),
     MediaItem(
         id = 4,
         title = "media 4",
         imageUrl = "",
-        rating = 9.9f,
+        rating = " 9.9",
         mediaType = MediaType.TV_SHOW
     ),
 )

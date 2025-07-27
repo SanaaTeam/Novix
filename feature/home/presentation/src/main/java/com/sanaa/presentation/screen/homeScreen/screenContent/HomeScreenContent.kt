@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
@@ -40,6 +41,7 @@ fun HomeScreenContent(
     interactionListener: HomeScreenInteractionListener,
 ) {
     NovixScaffold(
+        backgroundShapes = {},
         topBar = {
             HomeTopBar(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
@@ -111,9 +113,14 @@ fun HomeScreenContent(
                 movieGenres = state.movieGenres,
                 movieSelectedGenreId = state.movieSelectedGenreId,
                 onGenreClick = interactionListener::onMovieGenreClick,
-                onSaveIconClick = {}
+                onSaveIconClick = interactionListener::onSaveIconClick
             )
         }
+
+        RequestToLoginBottomSheet(
+            isVisible = state.showBottomSheet,
+            onDismiss = interactionListener::onDismissBottomSheet
+        )
     }
 }
 
@@ -170,6 +177,7 @@ fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
 
                 override fun onMediaClick(id: Int, mediaType: MediaType) {}
                 override fun onSaveIconClick(media: MediaItem) {}
+                override fun onDismissBottomSheet() {}
             },
         )
     }

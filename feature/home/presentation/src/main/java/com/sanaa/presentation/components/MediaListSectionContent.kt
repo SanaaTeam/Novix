@@ -85,21 +85,21 @@ private fun MediaListSectionContentPreview() {
             id = 1,
             title = "Movie 1",
             imageUrl = "",
-            rating = 8.5f,
+            rating = "9.9",
             mediaType = MediaType.MOVIE
         ),
         MediaItem(
             id = 2,
             title = "Movie 2",
             imageUrl = "",
-            rating = 7.0f,
+            rating = "9.9",
             mediaType = MediaType.MOVIE
         ),
         MediaItem(
             id = 3,
             title = "Tv Show 3",
             imageUrl = "",
-            rating = 9.0f,
+            rating = "9.9",
             mediaType = MediaType.TV_SHOW
         )
     )
