@@ -31,6 +31,11 @@ class GenreMoviesViewModel(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showBottomSheet = false) }
+        emitEffect(GenreMoviesEffects.NavigateToLogin)
+    }
+
     override fun onBackClick() {
         emitEffect(GenreMoviesEffects.NavigateBack)
     }

@@ -95,6 +95,13 @@ fun SeriesScreen(
                         GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
+
+                SeriesScreenEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -223,8 +230,11 @@ fun SeriesScreenContent(
             )
         }
         if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet,
-                isVisible = state.showLoginBottomSheet)
+            RequestToLoginBottomSheet(
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                isVisible = state.showLoginBottomSheet
+            )
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -66,6 +67,12 @@ fun GenreMoviesScreen(
                 is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsScreenRoute(effect.id).route()
                 )
+                GenreMoviesEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -158,7 +165,7 @@ fun GenreMoviesScreenContent(
                     }
                     RequestToLoginBottomSheet(
                         onDismiss = { interactionListener.onBottomSheetDismiss() },
-                        onLoginButtonClick = {/* navigate to login screen */ },
+                        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                         isVisible = state.showBottomSheet
                     )
                 }

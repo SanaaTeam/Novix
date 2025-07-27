@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -85,6 +86,13 @@ fun ActorScreen(
                     navController.navigate(
                         SeriesDetailsScreenRoute(effect.seriesId).route()
                     )
+                }
+
+                ActorScreenEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
                 }
             }
         }
@@ -205,6 +213,7 @@ private fun ActorScreenContent(
             RequestToLoginBottomSheet(
                 isVisible = state.showLoginBottomSheet,
                 onDismiss = listener::onDismissBottomSheet,
+                onLoginButtonClick = { listener.onLoginButtonClick() }
             )
         }
     }

@@ -16,6 +16,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgr
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
+import com.sanaa.presentation.navigation.HomeScreen
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection
 import org.koin.androidx.compose.koinViewModel
@@ -38,7 +39,7 @@ fun WelcomeScreen(
                 }
 
                 WelcomeScreenEffects.ContinueAsGuest -> {
-
+                    navController.navigate(HomeScreen)
                 }
 
                 WelcomeScreenEffects.ExitApp -> {
