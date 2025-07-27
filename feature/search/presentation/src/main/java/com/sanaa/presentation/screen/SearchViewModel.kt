@@ -7,10 +7,8 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
+import com.sanaa.presentation.base.BasePagingSource
 import com.sanaa.presentation.base.BaseViewModel
-import com.sanaa.presentation.paging.SearchActorsPagingSource
-import com.sanaa.presentation.paging.SearchMoviesPagingSource
-import com.sanaa.presentation.paging.SearchTvShowsPagingSource
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -322,24 +320,22 @@ class SearchViewModel(
         )
     }
 
-    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
-        return SearchActorsPagingSource(searchUseCase, query = query)
+    fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
+        return BasePagingSource { page ->
+            searchUseCase.searchActors(query = query, page = page)
+        }
     }
 
-    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
-        return SearchTvShowsPagingSource(
-            searchUseCase,
-            query = query,
-            filters = state.value.filters
-        )
+    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
+        return BasePagingSource { page ->
+            searchUseCase.searchTvShows(query = query, page = page, filters = state.value.filters)
+        }
     }
 
-    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
-        return SearchMoviesPagingSource(
-            searchMoviesUseCase = searchUseCase,
-            query = query,
-            filters = state.value.filters
-        )
+    fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
+        return BasePagingSource { page ->
+            searchUseCase.searchMovies(query = query, page = page, filters = state.value.filters)
+        }
     }
 
 
