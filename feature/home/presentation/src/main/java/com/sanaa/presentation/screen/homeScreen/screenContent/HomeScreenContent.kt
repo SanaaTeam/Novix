@@ -111,7 +111,6 @@ fun HomeScreenContent(
                 movieGenres = state.movieGenres,
                 movieSelectedGenreId = state.movieSelectedGenreId,
                 onGenreClick = interactionListener::onMovieGenreClick,
-                onContinueWatchingClick = {},
                 onSaveIconClick = {}
             )
         }

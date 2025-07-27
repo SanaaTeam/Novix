@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen.section
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +33,6 @@ fun LazyGridScope.upcomingSection(
     movieGenres: List<GenreUiState>,
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
-    onContinueWatchingClick: () -> Unit,
     onSaveIconClick: (item: MediaItem) -> Unit,
 ) {
     item(span = { GridItemSpan(maxLineSpan) }) {
@@ -58,7 +56,6 @@ fun LazyGridScope.upcomingSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
                 .fillWidthOfParent(16.dp)
-                .background(Theme.colors.surface)
 
         ) {
             item {
