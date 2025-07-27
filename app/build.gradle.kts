@@ -9,6 +9,8 @@ plugins {
     alias(libs.plugins.firebase.perf)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kover)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 val localProperties = Properties()
@@ -40,7 +42,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
@@ -53,8 +54,6 @@ dependencies {
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
     implementation(projects.feature.home.presentation)
-
-
     implementation(projects.feature.search.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
@@ -91,7 +90,6 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.bundles.koin)
 
-
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.cloudy)
@@ -100,4 +98,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.room)
 
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.hilt.lifecycle.viewmodel)
+    implementation(libs.androidx.hilt.navigation.compose)
 }

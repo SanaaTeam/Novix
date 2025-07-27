@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp) apply false
-
+    alias(libs.plugins.hilt.android) apply false
 }
 val excludedPackages = listOf(
     "*.R",
