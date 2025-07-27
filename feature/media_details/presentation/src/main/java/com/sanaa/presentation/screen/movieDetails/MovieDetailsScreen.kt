@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -54,14 +55,11 @@ import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
-    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
+    viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val effect by viewModel.effect.collectAsStateWithLifecycle(null)
@@ -283,7 +281,8 @@ fun MovieDetailsContent(
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet)
+                    isVisible = state.showLoginBottomSheet
+                )
             }
 
         }

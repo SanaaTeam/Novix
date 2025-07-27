@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -32,26 +33,23 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 
 @Composable
 fun SeriesScreen(
-    seriesId: Int,
-    viewModel: SeriesViewModel = koinViewModel(parameters = { parametersOf(seriesId) }),
+    viewModel: SeriesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -223,8 +221,10 @@ fun SeriesScreenContent(
             )
         }
         if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet,
-                isVisible = state.showLoginBottomSheet)
+            RequestToLoginBottomSheet(
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showLoginBottomSheet
+            )
         }
     }
 }

@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -26,9 +27,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.ImageSlider
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
@@ -43,14 +41,14 @@ import com.sanaa.presentation.screen.actor.componants.ActorInfoCard
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
 import com.sanaa.presentation.screen.actor.componants.MediaSection
 import com.sanaa.presentation.screen.actor.componants.PosterCard
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.sanaa.presentation.shared_component.ImageSlider
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 
 @Composable
 fun ActorScreen(
-    actorId: Int,
+    viewModel: ActorViewModel = hiltViewModel()
 ) {
-    val viewModel: ActorViewModel = koinViewModel(parameters = { parametersOf(actorId) })
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
 

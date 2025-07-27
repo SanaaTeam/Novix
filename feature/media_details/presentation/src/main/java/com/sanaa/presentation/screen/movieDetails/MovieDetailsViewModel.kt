@@ -1,21 +1,25 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 
-class MovieDetailsViewModel(
-    private val movieId: Int,
-    private val manageMovieDetails: ManageMovieUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val manageMovieDetails: ManageMovieUseCase
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
-    MovieDetailsUiState(),
-    dispatcher
+    initialState = MovieDetailsUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), MovieDetailsScreenInteractionListener {
+
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
 
     init {
         fetchMovieDetails(movieId)
@@ -91,5 +95,4 @@ class MovieDetailsViewModel(
             )
         }
     }
-
 }

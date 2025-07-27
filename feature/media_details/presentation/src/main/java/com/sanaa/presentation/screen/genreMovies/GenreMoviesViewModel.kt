@@ -1,20 +1,25 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 
-class GenreMoviesViewModel(
-    private val categoryId: Int,
-    private val categoryName: String,
-    private val manageMoviesDetailsUseCase: ManageMovieUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+@HiltViewModel
+class GenreMoviesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val manageMoviesDetailsUseCase: ManageMovieUseCase
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
-    GenreMoviesScreenUiState(),
-    dispatcher
+    initialState = GenreMoviesScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), GenreMoviesScreenInteractionListener {
+
+    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
+    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+
     init {
         getListOfMoviesByCategory(categoryId)
     }
@@ -40,7 +45,6 @@ class GenreMoviesViewModel(
     }
 
 
-
     private fun getListOfMoviesByCategory(categoryId: Int) {
         tryToExecute(
             callee = { fetchMovies(categoryId) },
@@ -56,6 +60,7 @@ class GenreMoviesViewModel(
             }
         )
     }
+
     private suspend fun fetchMovies(categoryId: Int) {
         updateState {
             it.copy(isLoading = true)

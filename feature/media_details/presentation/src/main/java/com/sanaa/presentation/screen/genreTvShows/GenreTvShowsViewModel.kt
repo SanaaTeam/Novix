@@ -1,19 +1,25 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
-class GenreTvShowsViewModel(
-    private val genreId: Int,
-    private val genreName: String,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+@HiltViewModel
+class GenreTvShowsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
-    GenreTvShowsScreenUiState(), dispatcher
+    initialState = GenreTvShowsScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
 ), GenreTvShowsScreenInteractionListener {
+
+    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
+    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+
     init {
         getTvShowsByGenreId(genreId)
     }

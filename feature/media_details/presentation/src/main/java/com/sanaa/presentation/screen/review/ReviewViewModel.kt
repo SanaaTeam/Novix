@@ -1,29 +1,32 @@
 package com.sanaa.presentation.screen.review
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.toReviewUiModel
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 
-class ReviewViewModel(
-    private val mediaId: Int,
-    private val mediaType: MediaTypeUiModel,
+@HiltViewModel
+class ReviewViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
-    defaultDispatcher = dispatcher
-),
-    ReviewScreenInteractionListener {
+    defaultDispatcher = Dispatchers.IO
+), ReviewScreenInteractionListener {
+
+    private val mediaId: Int = checkNotNull(savedStateHandle["mediaId"])
+    private val mediaType: MediaTypeUiModel = checkNotNull(savedStateHandle["mediaType"])
+
 
     init {
         fetchReviews(mediaId)
     }
-
 
     override fun onBackClick() {
         emitEffect(ReviewScreenEffects.NavigateBack)

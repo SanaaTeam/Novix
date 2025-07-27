@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -31,23 +32,20 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
-import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.cards.MediaPosterCard
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
 @Composable
 fun TopMoviesScreen(
-    actorId: Int,
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) },
+    viewModel: ActorViewModel = hiltViewModel(),
 ) {
     BackHandler(onBack = navigateBack)
 
