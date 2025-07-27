@@ -25,7 +25,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.data.repositories.identity)
     implementation(projects.preferences)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
