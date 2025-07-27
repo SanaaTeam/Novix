@@ -15,7 +15,10 @@ import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 
 @Composable
-fun ResetPasswordWebViewScreen(url: String) {
+fun ResetPasswordWebViewScreen(
+    url: String,
+    onTargetUrlReached: () -> Unit = {}
+) {
     val navController = LocalNavControllerProvider.current
 
     Column(
@@ -41,7 +44,8 @@ fun ResetPasswordWebViewScreen(url: String) {
             modifier = Modifier.fillMaxSize(),
             onBackPressed = {
                 navController.popBackStack()
-            }
+            },
+            onTargetUrlReached = onTargetUrlReached
         )
     }
 } 

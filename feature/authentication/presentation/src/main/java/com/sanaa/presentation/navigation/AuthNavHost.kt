@@ -39,7 +39,9 @@ fun AuthNavHost() {
                 }
 
                 composable(SignUpRoute::class) { entry ->
-                    WebViewScreen(url = "https://www.themoviedb.org/signup")
+                    WebViewScreen(url = "https://www.themoviedb.org/signup") {
+                        navController.navigate(LoginRoute)
+                    }
                 }
 
                 composable(ApproveAccessToken::class) {
@@ -53,7 +55,9 @@ fun AuthNavHost() {
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->
-                    ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password")
+                    ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password") {
+                        navController.navigate(LoginRoute)
+                    }
                 }
             }
         }

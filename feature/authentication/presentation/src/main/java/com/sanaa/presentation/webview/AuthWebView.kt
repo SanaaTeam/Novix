@@ -1,5 +1,6 @@
 package com.sanaa.presentation.webview
 
+import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -18,16 +19,20 @@ fun AuthWebView(
     onTargetUrlReached: () -> Unit = {},
 ) {
     val webViewRef = remember { mutableStateOf<WebView?>(null) }
+    val targetUrl = "https://www.themoviedb.org/auth/access/approve"
 
     AndroidView(
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
                 settings.domStorageEnabled = true
+
                 webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView?, url: String?) {
                         super.onPageFinished(view, url)
-                        if (url == "https://www.themoviedb.org/auth/access/approve") {
+                        Log.d("AuthWebView", "onPageFinished: $url")
+                        if (url.equals(targetUrl, ignoreCase = true)) {
+                            Log.d("AuthWebView", "Login success detected onPageFinished")
                             onTargetUrlReached()
                         }
                     }
@@ -37,12 +42,17 @@ fun AuthWebView(
                         request: WebResourceRequest?,
                     ): Boolean {
                         val requestedUrl = request?.url.toString()
-                        if (requestedUrl == "https://www.themoviedb.org/auth/access/approve") {
+                        Log.d("AuthWebView", "shouldOverrideUrlLoading: $requestedUrl")
+
+                        if (requestedUrl.equals(targetUrl, ignoreCase = true)) {
+                            Log.d("AuthWebView", "Login success detected in shouldOverrideUrlLoading")
                             onTargetUrlReached()
                         }
+
                         return false
                     }
                 }
+
                 loadUrl(webPageUrl)
                 webViewRef.value = this
             }
