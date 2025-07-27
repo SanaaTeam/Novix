@@ -7,5 +7,5 @@ sealed class ActorScreenEffects {
     data class NavigateToGallery(val actorId: Int) : ActorScreenEffects()
     data class NavigateToMovieDetails(val movieId: Int) : ActorScreenEffects()
     data class NavigateToSeriesDetails(val seriesId: Int) : ActorScreenEffects()
-
+    object NavigateToLogin : ActorScreenEffects()
 }

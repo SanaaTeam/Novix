@@ -35,7 +35,7 @@ android {
     defaultConfig {
         val apiKey = localProperties["TMDB_API_KEY"].toString()
         buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
-        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/\"")
     }
 }
 
@@ -56,17 +56,25 @@ dependencies {
 
 
     implementation(projects.feature.search.api)
+    implementation(projects.feature.authentication.api)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
+    implementation(projects.feature.authentication.presentation)
     implementation(projects.feature.mediaDetails.presentation)
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.userProfile.presentation)
     implementation(projects.feature.playlists.presentation)
+    implementation(projects.feature.authentication.presentation)
     implementation(projects.preferences)
+    implementation(projects.domain.identity)
+    implementation(projects.data.remoteDataSource.identity)
+    implementation(projects.data.localDataSource.identity)
+    implementation(projects.data.repositories.identity)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.core.splashscreen)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
@@ -99,5 +107,5 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.bundles.room)
-
+    implementation(libs.converter.gson)
 }

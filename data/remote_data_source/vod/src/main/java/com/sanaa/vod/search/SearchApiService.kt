@@ -9,19 +9,19 @@ import retrofit2.http.Query
 
 interface SearchApiService {
 
-    @GET("search/person")
+    @GET("3/search/person")
     suspend fun searchActors(
         @Query("query") query: String,
         @Query("page") page: Int
     ): SearchResponse<ActorSearchDto>
 
-    @GET("search/tv")
+    @GET("3/search/tv")
     suspend fun searchTvShows(
         @Query("query") query: String,
         @Query("page") page: Int
     ): SearchResponse<TvShowSearchDto>
 
-    @GET("search/movie")
+    @GET("3/search/movie")
     suspend fun searchMovies(
         @Query("query") query: String,
         @Query("page") page: Int

@@ -49,6 +49,11 @@ class EpisodeDetailsScreenViewModel(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
+    }
+
     override fun onRateClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
     }

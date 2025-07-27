@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -65,6 +66,12 @@ fun GenreTvShowsScreen(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )
+                GenreTvShowsEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -157,7 +164,7 @@ fun GenreTvShowsScreenContent(
                     }
                     RequestToLoginBottomSheet(
                         onDismiss = { interactionListener.onBottomSheetDismiss() },
-                        onLoginButtonClick = {/* navigate to login screen */ },
+                        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                         isVisible = state.showBottomSheet
                     )
 

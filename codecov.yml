@@ -11,6 +11,7 @@ ignore:
   - "**/R"
   - "**/R_*"
   - "**/di/**"
+  - "**/util/**"
   - "**/logging/**"
   - "**/BuildConfig*"
   - "**/Manifest*"
@@ -69,3 +70,9 @@ ignore:
   - "com/sanaa/presentation/state/**",
   - "com/sanaa/vod/media/**",
   - "com/sanaa/presentation/modifier/**",
+
+  - "com/sanaa/presentation/screen/login/**"
+  - "com/sanaa/presentation/screen/login/components/**"
+  - "com/sanaa/presentation/screen/login_base/**"
+  - "com/sanaa/presentation/screen/welcome/**"
+  - "com/sanaa/presentation/screen/welcome/components/**"
