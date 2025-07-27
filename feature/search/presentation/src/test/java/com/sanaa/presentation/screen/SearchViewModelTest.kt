@@ -51,6 +51,7 @@ class SearchViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
+
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
             searchUseCase = searchUseCase,
@@ -679,6 +680,131 @@ class SearchViewModelTest {
             }
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createActorsPagingSource returns expected data`() = runTest {
+
+        val query = "Tom"
+        val expectedActors = listOf(
+            Actor(
+                1,
+                "actorName",
+                "https://image.com",
+                region = null,
+                lastShow = null,
+                gender = Gender.MALE,
+                department = null,
+                character = null,
+                birthDate = null,
+                deathDate = null,
+                placeOfBirth = null,
+                biography = null
+            )
+        )
+        coEvery { searchUseCase.searchActors(query, 1) } returns expectedActors
+
+        val pagingSource = searchViewModel.createActorsPagingSource(query)
+
+        // Act
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        // Assert
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedActors,
+            prevKey = null,
+            nextKey = 2
+        )
+        assertThat(expected).isEqualTo(expected)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createTvShowsPagingSource returns expected data`() = runTest {
+        val query = "Breaking"
+        val expectedTvShows = listOf(
+            TvSeries(
+                1,
+                "tvShowName",
+                "https://image.com",
+                releaseDate = LocalDate(1970, 1, 1),
+                genres = emptyList(),
+                imdbRating = 10f,
+                posterImageUrl = "",
+                seasonsCount = 0
+            )
+        )
+
+
+        coEvery {
+            searchUseCase.searchTvShows(query = query, page = 1, filters = null)
+        } returns expectedTvShows
+
+        val pagingSource = searchViewModel.createTvShowsPagingSource(query)
+
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedTvShows,
+            prevKey = null,
+            nextKey = 2
+        )
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `createMoviesPagingSource returns expected data`() = runTest {
+        val query = "Inception"
+        val expectedMovies = listOf(
+            Movie(
+                1,
+                query,
+                "https://image.com",
+                genres = emptyList(),
+                imdbRating = 0f,
+                duration = 1,
+                releaseDate = LocalDate(1970, 1, 1),
+                overview = "",
+                trailerUrl = ""
+            )
+        )
+
+
+        coEvery {
+            searchUseCase.searchMovies(query = query, page = 1, filters = null)
+        } returns expectedMovies
+
+        val pagingSource = searchViewModel.createMoviesPagingSource(query)
+
+        val result = pagingSource.load(
+            PagingSource.LoadParams.Refresh(
+                key = 1,
+                loadSize = 20,
+                placeholdersEnabled = false
+            )
+        )
+
+        val expected = PagingSource.LoadResult.Page(
+            data = expectedMovies,
+            prevKey = null,
+            nextKey = 2
+        )
+
+        assertThat(result).isEqualTo(expected)
+    }
 
 }
 
