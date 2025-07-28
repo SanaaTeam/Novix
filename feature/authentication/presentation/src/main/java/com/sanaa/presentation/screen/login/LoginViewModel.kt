@@ -79,7 +79,6 @@ class LoginViewModel(
         emitEffect(LoginScreenEffects.NavigateBack)
     }
 
-
     private fun updateStateAndRefreshSubmit(transform: (LoginUiState) -> LoginUiState) {
         updateState { previous ->
             val updated = transform(previous)
