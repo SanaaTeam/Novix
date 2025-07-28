@@ -17,7 +17,6 @@ import entity.Movie
 import entity.TvSeries
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
-import timber.log.Timber
 
 class SearchRepositoryImpl(
     private val remoteDataSource: SearchRemoteDataSource,

@@ -4,7 +4,6 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.sanaa.novix.logging.CrashReportingTree
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import timber.log.Timber
 import com.sanaa.novix.BuildConfig
@@ -13,16 +12,18 @@ val loggingModule = module {
 
     single<FirebaseCrashlytics> { Firebase.crashlytics }
 
-    single<Timber.Tree>(named("crash")) { CrashReportingTree(get()) }
-
-    if (BuildConfig.DEBUG) {
-        single<Timber.Tree>(named("debug")) { Timber.DebugTree() }
+    single<Timber.Tree> {
+        if (BuildConfig.DEBUG) {
+            Timber.DebugTree()
+        } else {
+            CrashReportingTree(get())
+        }
     }
 
     single(createdAtStart = true) {
         object {
             init {
-                getKoin().getAll<Timber.Tree>().forEach(Timber::plant)
+                Timber.plant(get())
             }
         }
     }

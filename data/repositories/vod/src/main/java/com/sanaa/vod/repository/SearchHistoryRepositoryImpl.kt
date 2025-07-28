@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.map
 import repository.HistoryRepository
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
-import timber.log.Timber
 
 class SearchHistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
@@ -71,6 +70,10 @@ class SearchHistoryRepositoryImpl(
         exceptionProvider = ::FailedToDeleteException
     ) {
         local.deleteAllRecentViewed()
+    }
+
+    override suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> {
+        return emptyList()
     }
 
     override suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> {

@@ -14,9 +14,7 @@ class NovixApp : Application() {
 
         startKoin {
             androidContext(this@NovixApp)
-            modules(
-                appModule,
-            )
+            modules(appModule)
         }
 
         val crashlytics: FirebaseCrashlytics = getKoin().get()
