@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
@@ -31,7 +31,6 @@ import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlide
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
 @Composable
@@ -42,7 +41,7 @@ fun FilterBottomSheet(
     selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
-    val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
+    val filterViewModel: FilterViewModel = hiltViewModel()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(selectedTabIndex) {
@@ -63,7 +62,7 @@ fun FilterBottomSheet(
             }
         },
 
-    ) {
+        ) {
         FilterBottomSheetContent(
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
@@ -88,8 +87,7 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier

@@ -17,11 +17,11 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -37,14 +37,17 @@ import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
-    private val manageSearchHistoryUseCase: ManageHistoryUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
-    SearchScreenInteractionsListener {
+    private val manageSearchHistoryUseCase: ManageHistoryUseCase
+) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
+    SearchScreenUiState(),
+    Dispatchers.IO
+), SearchScreenInteractionsListener {
 
     private val _moviesPagingData = MutableStateFlow<PagingData<MovieUiModel>>(PagingData.empty())
     val moviesPagingData: StateFlow<PagingData<MovieUiModel>> = _moviesPagingData

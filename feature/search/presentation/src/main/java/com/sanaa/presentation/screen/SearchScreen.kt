@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -29,13 +30,12 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
     navigator: SearchNavigatorApi,
-    searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
+    searchViewModel: SearchViewModel = hiltViewModel(),
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
     val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
