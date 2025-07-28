@@ -13,8 +13,9 @@ import com.sanaa.vod.search.search_result.dao.SearchDao
 import com.sanaa.vod.search.search_result.dao.SearchResultDao
 import com.sanaa.vod.search.search_result.dao.SeriesDao
 import com.sanaa.vod.util.TimeUtils
+import javax.inject.Inject
 
-class LocalCachedSearchDataSourceImpl(
+class LocalCachedSearchDataSourceImpl @Inject constructor(
     private val searchDao: SearchDao,
     private val searchResultDao: SearchResultDao,
     private val actorDao: ActorDao,
