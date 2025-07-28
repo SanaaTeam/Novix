@@ -40,17 +40,18 @@ import com.sanaa.presentation.state.MediaType
 fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
+    modifier: Modifier = Modifier,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp
     NovixScaffold(
         topBar = {
             HomeTopBar(
-                modifier = Modifier.padding(top = 12.dp, start = 16.dp, bottom = 16.dp)
+                modifier = modifier.padding(top = 12.dp, start = 16.dp, bottom = 16.dp)
             )
         }) {
         val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -105,7 +106,7 @@ fun HomeScreenContent(
                     interactionListener.onSaveIconClick(it)
                 },
                 isScrollEnabled = true,
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .height(screenHeight.dp)
             )
@@ -167,6 +168,12 @@ fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
 
                 override fun onMediaClick(id: Int, mediaType: MediaType) {}
                 override fun onSaveIconClick(media: MediaItem) {}
+                override fun onLoading() {
+                    TODO("Not yet implemented")
+                }
+                override fun onRetryClick() {
+                    TODO("Not yet implemented")
+                }
             },
         )
     }

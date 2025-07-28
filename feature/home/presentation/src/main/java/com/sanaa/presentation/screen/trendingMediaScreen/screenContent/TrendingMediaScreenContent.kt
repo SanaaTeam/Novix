@@ -35,6 +35,8 @@ fun TrendingMediaScreenContent(
     state: TrendingMediaScreenUiState,
     interactionListener: MediaListScreenInteractionListener,
     modifier: Modifier = Modifier,
+    onLoading: () -> Unit,
+    onRetryClick: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(top = 12.dp),
@@ -116,7 +118,8 @@ fun TrendingMediaScreenContentPreview() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Theme.colors.surface)
-        )
+                .background(Theme.colors.surface),
+            { viewModel.onLoading() },
+        ) { viewModel.onRetryClick() }
     }
 }

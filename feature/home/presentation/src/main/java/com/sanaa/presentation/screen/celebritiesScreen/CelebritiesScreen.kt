@@ -127,7 +127,6 @@ fun CelebritiesContent(
     }
 }
 
-
 @PreviewLightDark
 @Composable
 private fun Preview() {
@@ -155,47 +154,14 @@ private fun Preview() {
                             character = null,
                             imageUrl = String()
                         ),
-                        PersonUiState(
-                            id = 4, name = "Emma Stone", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 5, name = "Brad Pitt", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 6, name = "Tom Cruise", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 7, name = "Angelina Jolie", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 8, name = "Brad Pitt", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 9, name = "Tom Cruise", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 10, name = "Angelina Jolie", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 11, name = "Brad Pitt", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 12, name = "Tom Cruise", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 13, name = "Angelina Jolie", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 14, name = "Brad Pitt", character = null, imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 15, name = "Tom Cruise", character = null, imageUrl = String()
-                        ),
                     )
                 ), interactionListener = object : CelebritiesScreenInteractionListener {
                     override fun onBackClick() {}
                     override fun onActorClick(actorId: Int) {}
-                })
+                    override fun onRetryClick() {}
+                    override fun onLoading() {}
+                }
+            )
         }
     }
 }

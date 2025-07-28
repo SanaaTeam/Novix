@@ -52,6 +52,8 @@ fun TrendingTvShowsScreen(
             state = state.value,
             interactionListener = viewModel,
             modifier = modifier,
+            onLoading = { viewModel.onLoading() },
+            onRetryClick = { viewModel.onRetryClick() },
         )
     }
 }

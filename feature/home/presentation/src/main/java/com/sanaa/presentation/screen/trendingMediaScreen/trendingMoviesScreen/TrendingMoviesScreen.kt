@@ -51,6 +51,8 @@ fun TrendingMoviesScreen(
             title = stringResource(R.string.trending_movies),
             state = state.value,
             interactionListener = viewModel,
+            onLoading = { viewModel.onLoading() },
+            onRetryClick = { viewModel.onRetryClick() },
             modifier = modifier,
         )
     }

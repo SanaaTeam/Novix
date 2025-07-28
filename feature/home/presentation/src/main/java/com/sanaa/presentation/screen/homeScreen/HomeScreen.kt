@@ -85,6 +85,9 @@ fun HomeScreen(
                 HomeScreenContent(
                     state = state.value,
                     interactionListener = viewModel,
+                    onLoading = { viewModel.onLoading() },
+                    onRetryClick = { viewModel.onRetryClick() },
+                    modifier = Modifier
                 )
             }
         }

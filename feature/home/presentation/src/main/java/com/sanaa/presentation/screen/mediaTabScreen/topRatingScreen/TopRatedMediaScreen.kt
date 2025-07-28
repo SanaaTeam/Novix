@@ -60,6 +60,8 @@ fun TopRatedMediaScreen(
             title = stringResource(R.string.top_rated),
             state = state.value,
             interactionListener = viewModel,
+            onLoading = { viewModel.onLoading() },
+            onRetryClick = { viewModel.onRetryClick() },
             modifier = modifier,
         )
     }

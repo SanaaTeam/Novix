@@ -89,4 +89,11 @@ class TrendingMoviesScreenViewModel(
     override fun onBackClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
     }
+    fun onRetryClick() {
+        fetchGenres()
+        fetchMedia()
+    }
+    fun onLoading() {
+        updateState { it.copy(isLoading = true) }
+    }
 }

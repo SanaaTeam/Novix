@@ -21,6 +21,12 @@ class CelebritiesViewModel(
     override fun onActorClick(actorId: Int) {
         emitEffect(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
     }
+    override fun onRetryClick() {
+        updateState { it.copy(isNoInternetConnection = false, isLoading = true) }
+    }
+    override fun onLoading() {
+        updateState { it.copy(isLoading = true, isNoInternetConnection = false) }
+    }
 
     private fun fetchActors() {
         tryToExecute(callee = {
@@ -30,9 +36,10 @@ class CelebritiesViewModel(
             updateState {
                 it.copy(
                     celebrities = actors.map { it.toUiState() }, isLoading = false
-                )
+
+                    )
+                }
             }
-        }
         )
     }
 }

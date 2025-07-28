@@ -143,4 +143,15 @@ class TopRatedMediaScreenViewModel(
     override fun onBackClick() {
         emitEffect(MediaTabScreenEffect.NavigateBack)
     }
+
+    fun onLoading() {
+        updateState { it.copy(isLoading = true) }
+
+    }
+    fun onRetryClick() {
+        fetchMovieGenres()
+        fetchTvShowGenres()
+        fetchMovies()
+        fetchTvShows()
+    }
 }
