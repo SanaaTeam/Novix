@@ -33,8 +33,6 @@ import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 fun MainScreen(
     homeFeatureApi: HomeFeatureApi,
     searchFeatureApi: SearchFeatureApi,
-    playlistsFeatureApi: PlaylistsFeatureApi,
-    userProfileFeatureApi: UserProfileFeatureApi
 ) {
     val navController = rememberNavController()
     CompositionLocalProvider(LocalMainNavController provides navController) {

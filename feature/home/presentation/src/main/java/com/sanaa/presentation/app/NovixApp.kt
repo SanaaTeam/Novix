@@ -34,8 +34,6 @@ import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.Tr
 fun NovixApp(
     homeFeatureApi        : HomeFeatureApi,
     searchFeatureApi      : SearchFeatureApi,
-    playlistsFeatureApi   : PlaylistsFeatureApi,
-    userProfileFeatureApi : UserProfileFeatureApi,
     mediaDetailsApi       : MediaDetailsApi
 ) {
 
@@ -45,8 +43,6 @@ fun NovixApp(
             AppNavigation(
                 homeFeatureApi        = homeFeatureApi,
                 searchFeatureApi      = searchFeatureApi,
-                playlistsFeatureApi   = playlistsFeatureApi,
-                userProfileFeatureApi = userProfileFeatureApi,
                 mediaDetailsApi       = mediaDetailsApi,
                 startDestination      = MainScreenRoute,
                 modifier              = Modifier
@@ -60,8 +56,6 @@ fun NovixApp(
 private fun AppNavigation(
     homeFeatureApi        : HomeFeatureApi,
     searchFeatureApi      : SearchFeatureApi,
-    playlistsFeatureApi   : PlaylistsFeatureApi,
-    userProfileFeatureApi : UserProfileFeatureApi,
     mediaDetailsApi       : MediaDetailsApi,
     startDestination      : AppRoute,
     modifier              : Modifier = Modifier
@@ -76,8 +70,6 @@ private fun AppNavigation(
                 MainScreen(
                     homeFeatureApi        = homeFeatureApi,
                     searchFeatureApi      = searchFeatureApi,
-                    playlistsFeatureApi   = playlistsFeatureApi,
-                    userProfileFeatureApi = userProfileFeatureApi
                 )
             }
 

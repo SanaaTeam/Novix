@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class HomeFeatureApiImpl @Inject constructor(
