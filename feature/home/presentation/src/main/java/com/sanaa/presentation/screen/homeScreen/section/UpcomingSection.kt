@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
@@ -31,7 +31,7 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 
 fun LazyGridScope.upcomingSection(
-    upcomingMovies: List<MediaItem>,
+    upcomingMovies: LazyPagingItems<MediaItem>,
     movieGenres: List<GenreUiState>,
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
@@ -80,8 +80,8 @@ fun LazyGridScope.upcomingSection(
             }
         }
     }
-    itemsIndexed(
-        upcomingMovies, key = { index, item -> item.id }) { index, item ->
+    items(upcomingMovies.itemCount) { index ->
+        val item = upcomingMovies[index] ?: return@items
         MediaPosterCard(
             onCardClick = {
                 onMovieClick(item.id, item.mediaType)

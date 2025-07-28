@@ -64,7 +64,7 @@ class CelebritiesViewModel(
         }
     }
 
-    fun createActorsPagingSource(): PagingSource<Int, Actor> {
+    private fun createActorsPagingSource(): PagingSource<Int, Actor> {
         return BasePagingSourceForHome { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }
