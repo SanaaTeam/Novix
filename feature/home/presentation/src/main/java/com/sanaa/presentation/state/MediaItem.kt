@@ -4,7 +4,7 @@ data class MediaItem(
     val id: Int,
     val title: String,
     val imageUrl: String?,
-    val rating: Float? = null,
+    val rating: String? = null,
     val mediaType: MediaType,
 )
 

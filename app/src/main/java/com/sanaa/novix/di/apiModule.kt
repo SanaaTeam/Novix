@@ -24,5 +24,4 @@ val apiModule = module {
     factory<HomeFeatureApi> { HomeFeatureApiImpl() }
     factory<PlaylistsFeatureApi> { PlaylistsFeatureApiImpl() }
     factory<UserProfileFeatureApi> { UserProfileFeatureApiImpl() }
-
 }

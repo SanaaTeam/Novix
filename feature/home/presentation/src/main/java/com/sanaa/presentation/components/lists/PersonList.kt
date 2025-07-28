@@ -7,14 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.presentation.state.PersonUiState
-import androidx.compose.foundation.lazy.items
+import androidx.paging.compose.LazyPagingItems
 import com.sanaa.presentation.components.cards.PersonCard
-
+import com.sanaa.presentation.state.PersonUiState
 
 @Composable
 fun PersonList(
-    celebrities: List<PersonUiState>,
+    persons: LazyPagingItems<PersonUiState>,
     onItemClick: (Int) -> Unit
 ) {
     LazyColumn(
@@ -22,13 +21,15 @@ fun PersonList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(celebrities, key = { it.id }) { person ->
-            PersonCard(
-            actorName = person.name,
-            actorImage = person.imageUrl,
-            playedCharacter = person.character,
-            onCardClick = { onItemClick(person.id) }
-        )
+        items(persons.itemCount) { index ->
+            persons[index]?.let { person ->
+                PersonCard(
+                    actorName = person.name,
+                    actorImage = person.imageUrl,
+                    playedCharacter = person.character,
+                    onCardClick = { onItemClick(person.id) }
+                )
+            }
         }
     }
 }

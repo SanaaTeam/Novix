@@ -8,22 +8,30 @@ class CrashReportingTree(
     private val crashlytics: FirebaseCrashlytics
 ) : Timber.Tree() {
 
-    override fun log(priority: Int, tag: String?, message: String, throwable: Throwable?) {
-        crashlytics.log("[$tag] $message")
+    override fun log(
+        priority: Int,
+        tag: String?,
+        message: String,
+        throwable: Throwable?
+    ) {
+        val level = priority.toReadableName()
+        val safeTag = tag ?: "NoTag"
+        crashlytics.log("[$level][$safeTag] $message")
 
-        when (priority) {
-            Log.ERROR, Log.WARN -> {
-                val ex = throwable ?: Exception(message)
-                crashlytics.recordException(ex)
-            }
+        if (priority >= Log.WARN && throwable != null) {
+            crashlytics.recordException(throwable)
         }
 
-        when (priority) {
-            Log.VERBOSE -> Log.v(tag, message, throwable)
-            Log.DEBUG -> Log.d(tag, message, throwable)
-            Log.INFO -> Log.i(tag, message, throwable)
-            Log.WARN -> Log.w(tag, message, throwable)
-            Log.ERROR -> Log.e(tag, message, throwable)
-        }
+        Log.println(priority, safeTag, message)
+        throwable?.let { Log.println(priority, safeTag, Log.getStackTraceString(it)) }
+    }
+
+    private fun Int.toReadableName(): String = when (this) {
+        Log.VERBOSE -> "VERBOSE"
+        Log.DEBUG -> "DEBUG"
+        Log.INFO -> "INFO"
+        Log.WARN -> "WARN"
+        Log.ERROR -> "ERROR"
+        else -> toString()
     }
 }
