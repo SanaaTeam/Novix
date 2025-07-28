@@ -5,17 +5,21 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.PersonUiState
-import com.sanaa.presentation.state.toUiState
+import com.sanaa.presentation.state.toState
 import entity.Actor
 import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageActorUseCase
 
 class CelebritiesViewModel(
-    private val getActorsUseCase: ManageActorUseCase
+    private val getActorsUseCase: ManageActorUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<CelebritiesScreenUiState, CelebritiesScreenEffects>(
-    CelebritiesScreenUiState()
+    CelebritiesScreenUiState(),
+    dispatcher
 ), CelebritiesScreenInteractionListener {
 
     init {
@@ -42,7 +46,7 @@ class CelebritiesViewModel(
     private fun loadActorsOperation(): Flow<PagingData<PersonUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createActorsPagingSource() },
-            mapper = Actor::toUiState
+            mapper = Actor::toState
         )
     }
 
@@ -54,13 +58,15 @@ class CelebritiesViewModel(
         if (e is NoNetworkException) updateState {
             it.copy(
                 isLoading = false,
-                isNoInternetConnection = true
+                isNoInternetConnection = true,
+                error = null
             )
         }
         else updateState {
             it.copy(
                 isLoading = false,
-                isNoInternetConnection = false
+                isNoInternetConnection = false,
+                error = e.message
             )
         }
     }
