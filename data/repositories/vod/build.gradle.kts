@@ -23,6 +23,8 @@ dependencies {
 
     androidTestImplementation(libs.androidx.junit)
 
+    implementation(libs.timber)
+
     implementation(libs.slf4j.api)
 }
 
