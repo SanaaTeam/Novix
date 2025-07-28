@@ -33,7 +33,7 @@ fun WebViewScreen(
             screenTitle = stringResource(R.string.sign_up),
             leftContent = {
                 TopBarClickableIcon(
-                    icon = painterResource(id = com.sanaa.designsystem.R.drawable.icon_cancel),
+                    icon = painterResource(id = R.drawable.icon_back),
                     onClick = { navController.popBackStack() },
                     contentDescription = "icon_cancel"
                 )
