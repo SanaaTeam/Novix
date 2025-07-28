@@ -16,7 +16,8 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideAnalytics(): FirebaseAnalytics = Firebase.analytics
+    fun provideAnalytics(): FirebaseAnalytics =
+        Firebase.analytics
 
     @Provides
     @Singleton

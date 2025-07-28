@@ -21,24 +21,24 @@ abstract class ApiModule {
     @Binds
     @Singleton
     abstract fun bindSearchFeatureApi(
-        impl: SearchFeatureApiImpl
+        searchFeatureApiImpl: SearchFeatureApiImpl
     ): SearchFeatureApi
 
     @Binds
     @Singleton
     abstract fun bindMediaDetailsApi(
-        impl: MediaDetailsApiImpl
+        mediaDetailsApiImpl: MediaDetailsApiImpl
     ): MediaDetailsApi
 
     @Binds
     @Singleton
     abstract fun bindHomeFeatureApi(
-        impl: HomeFeatureApiImpl
+        homeFeatureApiImpl: HomeFeatureApiImpl
     ): HomeFeatureApi
 
     @Binds
     @Singleton
     abstract fun bindSearchNavigatorApi(
-        impl: SearchNavigatorApiImpl
+        searchNavigatorApiImpl: SearchNavigatorApiImpl
     ): SearchNavigatorApi
 }

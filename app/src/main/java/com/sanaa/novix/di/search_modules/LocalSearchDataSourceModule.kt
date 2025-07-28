@@ -15,11 +15,11 @@ abstract class LocalSearchDataSourceModule {
 
     @Binds
     abstract fun bindLocalCachedSearchDataSource(
-        impl: LocalCachedSearchDataSourceImpl
+        localCachedSearchDataSourceImpl: LocalCachedSearchDataSourceImpl
     ): LocalCacheSearchDataSource
 
     @Binds
     abstract fun bindLocalSearchHistoryDataSource(
-        impl: LocalSearchHistoryDataSourceImpl
+        localSearchHistoryDataSourceImpl: LocalSearchHistoryDataSourceImpl
     ): LocalSearchHistoryDataSource
 }

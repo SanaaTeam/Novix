@@ -17,7 +17,7 @@ abstract class RemoteSearchDataSourceModule {
 
     @Binds
     abstract fun bindSearchRemoteDataSource(
-        impl: SearchRemoteDataSourceImpl
+        searchRemoteDataSourceImplementation: SearchRemoteDataSourceImpl
     ): SearchRemoteDataSource
 
     companion object {

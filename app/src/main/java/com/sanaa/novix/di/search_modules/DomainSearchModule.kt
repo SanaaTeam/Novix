@@ -9,24 +9,21 @@ import repository.SearchRepository
 import usecase.history.ManageHistoryUseCase
 import usecase.search.ManageRecentViewedUseCase
 import usecase.search.SearchUseCase
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DomainSearchModule {
 
     @Provides
-    @Singleton
     fun provideSearchUseCase(
         searchRepository: SearchRepository,
         searchHistoryRepository: HistoryRepository,
     ): SearchUseCase = SearchUseCase(
-        searchRepository,
-        searchHistoryRepository
+            searchRepository,
+            searchHistoryRepository
         )
 
     @Provides
-    @Singleton
     fun provideManageRecentViewedUseCase(
         historyRepository: HistoryRepository
     ): ManageRecentViewedUseCase =
@@ -35,7 +32,6 @@ object DomainSearchModule {
         )
 
     @Provides
-    @Singleton
     fun provideManageHistoryUseCase(
         historyRepository: HistoryRepository
     ): ManageHistoryUseCase =

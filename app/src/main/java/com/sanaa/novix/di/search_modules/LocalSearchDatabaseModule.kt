@@ -23,29 +23,35 @@ object LocalSearchDatabaseModule {
 
     @Provides
     @Singleton
-    fun provideAppDatabase(@ApplicationContext ctx: Context): AppDatabase =
-        Room.databaseBuilder(ctx, AppDatabase::class.java, "search_db")
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "search_db")
             .build()
 
     @Provides
-    fun provideSearchDao(db: AppDatabase): SearchDao = db.searchDao()
+    fun provideSearchDao(database: AppDatabase): SearchDao =
+        database.searchDao()
 
     @Provides
-    fun provideSearchResultDao(db: AppDatabase): SearchResultDao = db.searchResultDao()
+    fun provideSearchResultDao(database: AppDatabase): SearchResultDao =
+        database.searchResultDao()
 
     @Provides
-    fun provideActorDao(db: AppDatabase): ActorDao = db.actorDao()
+    fun provideActorDao(database: AppDatabase): ActorDao =
+        database.actorDao()
 
     @Provides
-    fun provideMovieDao(db: AppDatabase): MovieDao = db.movieDao()
+    fun provideMovieDao(database: AppDatabase): MovieDao =
+        database.movieDao()
 
     @Provides
-    fun provideSeriesDao(db: AppDatabase): SeriesDao = db.seriesDao()
+    fun provideSeriesDao(database: AppDatabase): SeriesDao =
+        database.seriesDao()
 
     @Provides
-    fun provideQueryDao(db: AppDatabase): QueryDao = db.queryDao()
+    fun provideQueryDao(database: AppDatabase): QueryDao =
+        database.queryDao()
 
     @Provides
-    fun provideRecentViewedDao(db: AppDatabase): RecentViewedDao = db.recentViewedDao()
-
+    fun provideRecentViewedDao(database: AppDatabase): RecentViewedDao =
+        database.recentViewedDao()
 }

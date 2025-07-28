@@ -7,10 +7,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import repository.ActorRepository
 import repository.MovieRepository
 import repository.TvSeriesRepository
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -19,18 +19,18 @@ abstract class RepositoryDetailsModule {
     @Binds
     @Singleton
     abstract fun bindMovieRepository(
-        impl: MovieRepositoryImpl
+        movieRepositoryImpl: MovieRepositoryImpl
     ): MovieRepository
 
     @Binds
     @Singleton
     abstract fun bindActorRepository(
-        impl: ActorRepositoryImpl
+        actorRepositoryImpl: ActorRepositoryImpl
     ): ActorRepository
 
     @Binds
     @Singleton
     abstract fun bindTvSeriesRepository(
-        impl: TvShowRepositoryImpl
+        tvShowRepositoryImpl: TvShowRepositoryImpl
     ): TvSeriesRepository
 }

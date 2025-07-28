@@ -26,8 +26,8 @@ object RemoteDetailsDataSourceModule {
 
     @Provides
     fun provideRemoteMovieDataSource(
-        api: MovieApiService
-    ): RemoteMovieDataSource = RemoteMovieDataSourceImpl(api)
+        movieApi: MovieApiService
+    ): RemoteMovieDataSource = RemoteMovieDataSourceImpl(movieApi)
 
     @Provides
     fun provideActorApiService(
@@ -36,8 +36,8 @@ object RemoteDetailsDataSourceModule {
 
     @Provides
     fun provideRemoteActorDataSource(
-        api: ActorApiService
-    ): RemoteActorDataSource = RemoteActorDataSourceImpl(api)
+        actorApi: ActorApiService
+    ): RemoteActorDataSource = RemoteActorDataSourceImpl(actorApi)
 
     @Provides
     fun provideTvShowApiService(
@@ -46,6 +46,6 @@ object RemoteDetailsDataSourceModule {
 
     @Provides
     fun provideRemoteTvShowDataSource(
-        api: TvShowApiService
-    ): RemoteTvShowDataSource = RemoteTvShowDataSourceImpl(api)
+        tvShowApi: TvShowApiService
+    ): RemoteTvShowDataSource = RemoteTvShowDataSourceImpl(tvShowApi)
 }

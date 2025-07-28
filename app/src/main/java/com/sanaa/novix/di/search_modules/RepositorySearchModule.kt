@@ -17,12 +17,12 @@ abstract class RepositorySearchModule {
     @Binds
     @Singleton
     abstract fun bindSearchRepository(
-        impl: SearchRepositoryImpl
+        searchRepositoryImpl: SearchRepositoryImpl
     ): SearchRepository
 
     @Binds
     @Singleton
     abstract fun bindHistoryRepository(
-        impl: SearchHistoryRepositoryImpl
+        searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl
     ): HistoryRepository
 }

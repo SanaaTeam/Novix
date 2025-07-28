@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import repository.ActorRepository
 import repository.MovieRepository
 import repository.TvSeriesRepository
@@ -23,19 +22,16 @@ object DomainDetailsModule {
     ): ManageActorUseCase = ManageActorUseCase(actorRepository)
 
     @Provides
-    @Singleton
     fun provideManageMovieUseCase(
         movieRepository: MovieRepository
     ): ManageMovieUseCase = ManageMovieUseCase(movieRepository)
 
     @Provides
-    @Singleton
     fun provideManageTvSeriesUseCase(
         tvSeriesRepository: TvSeriesRepository
     ): ManageTvSeriesUseCase = ManageTvSeriesUseCase(tvSeriesRepository)
 
     @Provides
-    @Singleton
     fun provideManageEpisodeDetailsUseCase(
         tvSeriesRepository: TvSeriesRepository
     ): ManageEpisodeDetailsUseCase = ManageEpisodeDetailsUseCase(tvSeriesRepository)
