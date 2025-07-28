@@ -18,12 +18,11 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.DotSeparator
-import com.sanaa.presentation.component.IconWithText
-import com.sanaa.presentation.component.ImageSlider
-import com.sanaa.presentation.component.InfoSection
-import com.sanaa.presentation.screen.movie_categories.toLocalizedString
-import entity.Genre
+import com.sanaa.presentation.shared_component.DotSeparator
+import com.sanaa.presentation.shared_component.IconWithText
+import com.sanaa.presentation.shared_component.ImageSlider
+import com.sanaa.presentation.shared_component.InfoSection
+import com.sanaa.presentation.model.GenreUiModel
 
 @Composable
 fun SeriesHeaderSection(
@@ -32,11 +31,11 @@ fun SeriesHeaderSection(
     season: String,
     airDate: String?,
     imagesUrl: List<String>,
-    genres: List<Genre>,
+    genres: List<GenreUiModel>,
     modifier: Modifier = Modifier,
     onReviewClicked: () -> Unit = {},
     showReviews: Boolean = true,
-    onGenreClicked: (Genre) -> Unit = {}
+    onGenreClicked: (GenreUiModel) -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -65,7 +64,7 @@ fun SeriesHeaderSection(
                     ) {
                         genres.forEachIndexed { index, genre ->
                             Text(
-                                text = genre.toLocalizedString(),
+                                text = genre.name,
                                 style = Theme.textStyle.label.small,
                                 color = Theme.colors.body,
                                 modifier = Modifier

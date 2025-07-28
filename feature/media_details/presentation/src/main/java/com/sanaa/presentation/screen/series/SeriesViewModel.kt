@@ -1,53 +1,26 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
-import details.usecase.ManageTvSeriesDetailsUseCase
-import entity.Genre
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.ManageTvSeriesUseCase
 
 class SeriesViewModel(
     private val seriesId: Int,
-    private val manageTvSeriesDetails: ManageTvSeriesDetailsUseCase,
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(initialState = SeriesScreenUiState(), defaultDispatcher = dispatcher),
+) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
+    initialState = SeriesScreenUiState(),
+    defaultDispatcher = dispatcher
+),
     SeriesScreenInteractionListener {
 
     init {
         loadSeries()
-    }
-
-    private fun loadSeries() {
-        tryToExecute(
-            callee = {
-                updateState { it.copy(isLoading = true) }
-                val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
-                val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
-                val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
-                val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-                val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-                updateState {
-                    it.copy(
-                        series = series.toSeriesUiModel(trailer),
-                        cast = cast.map { a -> a.toActorUiModel() },
-                        season = season.toSeasonUiModel(),
-                        images = images
-                    )
-                }
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = {e ->
-                updateState {state->
-                    state.copy(error = e.message, isLoading = false)
-                }
-            }
-        )
     }
 
     override fun onBackClicked() {
@@ -65,11 +38,7 @@ class SeriesViewModel(
     override fun onSeasonNumberClicked(seasonNumber: Int) {
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
-            callee = {
-                updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
-                val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
-                updateState { it.copy(season = season.toSeasonUiModel()) }
-            },
+            callee = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
             }
@@ -100,7 +69,48 @@ class SeriesViewModel(
         updateState { it.copy(showLoginBottomSheet = true) }
     }
 
-    override fun onGenreClicked(genre: Genre) {
-        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre.name))
+    override fun onGenreClicked(genre: GenreUiModel) {
+        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
+    }
+
+    private fun loadSeries() {
+        tryToExecute(
+            callee = ::fetchSeriesDetails,
+            onSuccess = {
+                updateState { it.copy(isLoading = false) }
+            },
+            onError = { e ->
+                updateState { state ->
+                    state.copy(error = e.message, isLoading = false)
+                }
+            }
+        )
+    }
+
+    private suspend fun fetchSeriesDetails() {
+        updateState { it.copy(isLoading = true) }
+
+        val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
+        val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
+        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
+        val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+
+        updateState {
+            it.copy(
+                series = series.toSeriesUiModel(trailer),
+                cast = cast.map { actor -> actor.toActorUiModel() },
+                season = season.toSeasonUiModel(),
+                images = images
+            )
+        }
+    }
+
+    private suspend fun fetchSeasonDetails(seasonNumber: Int) {
+        updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
+
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+
+        updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 }

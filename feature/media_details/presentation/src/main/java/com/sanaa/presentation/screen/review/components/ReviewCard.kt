@@ -19,14 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.ExpandableText
-import com.sanaa.presentation.component.IconWithText
+import com.sanaa.presentation.shared_component.ExpandableText
+import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable
@@ -44,8 +45,9 @@ fun ReviewCard(
             Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .border(1.dp, Theme.colors.stroke, RoundedCornerShape(8.dp)),
+                    .clip(shape = RoundedCornerShape(12.dp))
+                    .background(color = Theme.colors.iconBackgroundLow)
+                    .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp)),
 
                 contentAlignment = Alignment.Center
             ) {
@@ -54,7 +56,8 @@ fun ReviewCard(
                         model = review.avatarUrl,
                         contentDescription = review.authorName,
                         fallback = painterResource(R.drawable.user_avater),
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
                     )
                 } else {
                     Icon(
@@ -86,6 +89,7 @@ fun ReviewCard(
             review.rating?.let {
                 IconWithText(
                     text = review.rating,
+                    textColor = Theme.colors.title,
                     iconRes = R.drawable.icon_star,
                     contentDescription = review.rating,
                     tint = Theme.colors.statusColors.yellowAccent,
@@ -110,7 +114,7 @@ fun ReviewCard(
             text = review.createdDate,
             iconRes = R.drawable.icon_calender,
             contentDescription = review.createdDate,
-            tint = Theme.colors.hint
+            tint = Theme.colors.body
         )
     }
 

@@ -13,13 +13,12 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import search.repository.SearchHistoryRepository
-import search.usecase.ManageRecentViewedUseCase
-import search.usecase.ManageRecentViewedUseCase.RecentViewedMedia
-import search.usecase.search_param.MediaType
+import repository.HistoryRepository
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.search.search_param.MediaType
 
 class ManageRecentViewedUseCaseTest {
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var manageRecentViewedUseCase: ManageRecentViewedUseCase
 
     @BeforeEach

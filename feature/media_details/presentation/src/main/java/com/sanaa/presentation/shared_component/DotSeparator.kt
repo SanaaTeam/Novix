@@ -1,0 +1,26 @@
+package com.sanaa.presentation.shared_component
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.theme.Theme
+import androidx.compose.foundation.background
+import androidx.compose.ui.tooling.preview.Preview
+
+@Composable
+fun DotSeparator() {
+    Box(
+        modifier = Modifier
+            .size(3.dp)
+            .background(Theme.colors.body, CircleShape)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DotPrev() {
+    DotSeparator()
+}

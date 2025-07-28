@@ -33,15 +33,14 @@ val excludedPackages = listOf(
     "search.usecase.search_param.**",
     "**.dao.**",
     "**.dto.**",
+    "**.db.**",
     "**.response.**",
     "exceptions.**",
-
-    "com.sanaa.search.dataSource.*",
-    "com.sanaa.search.mapper.*",
-    "com.sanaa.search.repository.*",
+    "com.sanaa.vod.mapper.*",
     "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
     "com.sanaa.presentation.component.**",
+    "com.sanaa.presentation.shared_component.*",
     "com.sanaa.presentation.model.*",
     "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
@@ -51,17 +50,28 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.navigation.**",
     "com.sanaa.presentation.screen.actor.componants.**",
     "com.sanaa.presentation.screen.actor.screen.**",
-    "com.sanaa.presentation.screen.episode_details.components.**",
-    "com.sanaa.presentation.screen.episode_details.**",
-    "com.sanaa.presentation.screen.movie_details.components.**",
-    "com.sanaa.presentation.screen.movie_categories.**",
-    "com.sanaa.presentation.screen.movie_details.**",
+    "com.sanaa.presentation.screen.episodeDetails.components.**",
+    "com.sanaa.presentation.screen.episodeDetails.screen.**",
+    "com.sanaa.presentation.screen.episodeDetails.**",
+    "com.sanaa.presentation.screen.movieDetails.components.**",
+    "com.sanaa.presentation.screen.genreMovies.**",
+    "com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen*",
+    "com.sanaa.presentation.screen.movieDetails.**",
     "com.sanaa.presentation.screen.review.components.**",
     "com.sanaa.presentation.screen.review.ReviewsScreen*",
     "com.sanaa.presentation.screen.series.components.**",
     "com.sanaa.presentation.screen.series.SeriesScreen*",
     "feature.media_details.api**",
-    "com.sanaa.presentation.cards.**"
+    "com.sanaa.presentation.cards.**",
+    "com.sanaa.presentation.components.**",
+    "com.sanaa.presentation.app.**",
+    "com.sanaa.presentation.api.**",
+    "com.sanaa.presentation.screen.**",
+    "com.sanaa.vod.dataSource.remote.search.search.**",
+    "com.sanaa.presentation.util.**",
+    "com.sanaa.presentation.state.**",
+    "com.sanaa.vod.media.**",
+    "com.sanaa.presentation.modifier.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
@@ -82,45 +92,20 @@ allprojects {
 dependencies {
     kover(projects.preferences)
     kover(projects.app)
-    kover(projects.domain.authentication)
-    kover(projects.domain.savedContent)
+    kover(projects.data.repositories.vod)
+    kover(projects.data.remoteDataSource.vod)
+    kover(projects.data.localDataSource.vod)
     kover(projects.domain.vod)
-    kover(projects.domain.userProfile)
-    kover(projects.data.remoteDataSource.actors)
-    kover(projects.data.remoteDataSource.authentication)
-    kover(projects.data.remoteDataSource.movies)
-    kover(projects.data.remoteDataSource.savedContent)
-    kover(projects.data.remoteDataSource.search)
-    kover(projects.data.remoteDataSource.series)
-    kover(projects.data.remoteDataSource.userProfile)
-    kover(projects.data.localDataSource.actors)
-    kover(projects.data.localDataSource.authentication)
-    kover(projects.data.localDataSource.movies)
-    kover(projects.data.localDataSource.savedContent)
-    kover(projects.data.localDataSource.search)
-    kover(projects.data.localDataSource.series)
-    kover(projects.data.localDataSource.userProfile)
-    kover(projects.data.repositories.actors)
-    kover(projects.data.repositories.authentication)
-    kover(projects.data.repositories.movies)
-    kover(projects.data.repositories.savedContent)
-    kover(projects.data.repositories.search)
-    kover(projects.data.repositories.series)
-    kover(projects.data.repositories.userProfile)
     kover(projects.feature.authentication.api)
     kover(projects.feature.authentication.presentation)
     kover(projects.feature.home.api)
     kover(projects.feature.home.presentation)
     kover(projects.feature.userProfile.api)
     kover(projects.feature.userProfile.presentation)
-    kover(projects.feature.savedContent.api)
-    kover(projects.feature.savedContent.presentation)
     kover(projects.feature.playlists.api)
     kover(projects.feature.playlists.presentation)
     kover(projects.feature.search.api)
     kover(projects.feature.search.presentation)
     kover(projects.feature.mediaDetails.api)
     kover(projects.feature.mediaDetails.presentation)
-    kover(projects.feature.onboarding.api)
-    kover(projects.feature.onboarding.presentation)
 }

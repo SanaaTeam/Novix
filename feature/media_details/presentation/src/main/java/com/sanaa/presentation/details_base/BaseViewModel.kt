@@ -17,7 +17,7 @@ import kotlin.jvm.Throws
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
-    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    protected val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel() {
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }

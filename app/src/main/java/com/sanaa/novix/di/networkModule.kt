@@ -1,9 +1,9 @@
 package com.sanaa.novix.di
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.sanaa.movies.APIKeyInterceptor
-import com.sanaa.movies.LanguageInterceptor
 import com.sanaa.novix.BuildConfig
+import com.sanaa.vod.network.interceptor.LanguageInterceptor
+import com.sanaa.vod.network.provideOkHttpClient
+import com.sanaa.vod.network.provideRetrofit
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -13,9 +13,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
@@ -41,19 +38,17 @@ val networkModule = module {
         }
     }
 
-
     single {
-        OkHttpClient.Builder().addInterceptor(APIKeyInterceptor(BuildConfig.TMDB_API_KEY))
-            .addInterceptor(LanguageInterceptor(get()))
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            }).build()
+        provideOkHttpClient(
+            apiKey = BuildConfig.TMDB_API_KEY,
+            languageInterceptor = LanguageInterceptor(get())
+        )
     }
-
-
     single<Retrofit> {
-        Retrofit.Builder()
-            .addConverterFactory(get<Json>().asConverterFactory("application/json".toMediaType()))
-            .baseUrl(BuildConfig.TMDB_URL).client(get()).build()
+        provideRetrofit(
+            baseUrl = BuildConfig.TMDB_URL,
+            okHttpClient = get(),
+            json = get()
+        )
     }
 }

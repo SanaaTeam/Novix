@@ -6,11 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,11 +24,11 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun EmptySearchState(
+fun EmptySearchContent(
+    topIcon: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
-    topIcon: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -53,15 +51,17 @@ fun EmptySearchState(
             )
             topIcon()
         }
-        Text(
+        BasicText(
             text = text,
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            color = Theme.colors.body,
+            style = Theme.textStyle.body.small.copy(
+                color = Theme.colors.body,
+                textAlign = TextAlign.Center
+            ),
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(horizontal = 48.dp)
+                .align(Alignment.CenterHorizontally)
         )
+
     }
 }
 
@@ -69,7 +69,7 @@ fun EmptySearchState(
 @Composable
 fun EmptySearchStatePreview() {
     NovixTheme(isSystemInDarkTheme()) {
-        EmptySearchState(
+        EmptySearchContent(
             icon = painterResource(id = R.drawable.empty_search),
             text = stringResource(id = R.string.empty_search_message)
         )

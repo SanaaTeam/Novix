@@ -32,15 +32,15 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.component.OverviewSection
-import com.sanaa.presentation.component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
-import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.screen.series.components.BottomContainer
+import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
@@ -92,7 +92,7 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        MovieCategoriesScreenRoute(it.categoryId).route()
+                        GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
             }
@@ -112,7 +112,8 @@ fun SeriesScreenContent(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
         Box(
-            modifier = Modifier.navigationBarsPadding()
+            modifier = Modifier
+                .navigationBarsPadding()
                 .fillMaxSize()
         ) {
             NovixTopBar(
@@ -222,7 +223,8 @@ fun SeriesScreenContent(
             )
         }
         if (state.showLoginBottomSheet) {
-            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet)
+            RequestToLoginBottomSheet(onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showLoginBottomSheet)
         }
     }
 }

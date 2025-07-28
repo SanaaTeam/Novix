@@ -4,16 +4,14 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,46 +19,62 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import com.sanaa.presentation.screen.componants.WavyProgressIndicator
-
+import org.koin.androidx.compose.koinViewModel
+import usecase.search.search_param.MediaFilters
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun FilterBottomSheet(
     dismissSheet: () -> Unit,
-    sheetState: SheetState,
-    filterUiState: FilterUiState,
-    filterListener: FilterBottomSheetInteractionsListener
+    isVisible: Boolean,
+    onFilterApplied: (MediaFilters?) -> Unit,
+    selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
+    val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
+    val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
-    ModalBottomSheet(
-        modifier = Modifier.statusBarsPadding(),
-        onDismissRequest = {
+    LaunchedEffect(selectedTabIndex) {
+        filterViewModel.fetchGenresByTab(selectedTabIndex)
+    }
+
+    LaunchedEffect(Unit) {
+        filterViewModel.filterResult.collect { filters ->
+            onFilterApplied(filters)
+        }
+    }
+
+    BaseBottomSheet(
+        isVisible = isVisible,
+        onDismiss = {
             if (!isSliderDragging) {
                 dismissSheet()
             }
-        }, sheetState = sheetState,
-        containerColor = Theme.colors.surface
+        },
+
     ) {
         FilterBottomSheetContent(
-            uiState = filterUiState,
-            listener = filterListener,
             onDismissRequest = dismissSheet,
+            uiState = filterUiState,
+            listener = filterViewModel,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
+
     }
 }
+
 
 @Composable
 fun FilterBottomSheetContent(
@@ -74,7 +88,8 @@ fun FilterBottomSheetContent(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+        ,
     ) {
         Column(
             modifier = Modifier
@@ -113,6 +128,7 @@ fun FilterBottomSheetContent(
             }
         }
         FilterActions(
+            isApplyEnabled = uiState.hasUserSelectedFilters,
             onApplyClicked = {
                 listener.onApplyClicked()
                 onDismissRequest()
@@ -125,6 +141,7 @@ fun FilterBottomSheetContent(
 
 @Composable
 private fun FilterActions(
+    isApplyEnabled: Boolean,
     onApplyClicked: () -> Unit,
     onClearClicked: () -> Unit,
 ) {
@@ -137,7 +154,8 @@ private fun FilterActions(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
-            text = stringResource(R.string.apply)
+            text = stringResource(R.string.apply),
+            isEnabled = isApplyEnabled
         )
         NovixOutlinedButton(
             onClick = onClearClicked,

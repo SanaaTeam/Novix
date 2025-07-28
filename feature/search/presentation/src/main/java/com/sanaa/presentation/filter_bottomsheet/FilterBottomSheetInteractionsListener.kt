@@ -1,11 +1,11 @@
 package com.sanaa.presentation.filter_bottomsheet
 
-import entity.Genre
+import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
 
 interface FilterBottomSheetInteractionsListener {
     fun onApplyClicked()
     fun onClearFilters()
     fun onRatingChanged(newRating: Int)
-    fun onGenreSelected(genre: String)
+    fun onGenreSelected(genre: GenreUiState)
     fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>)
 }

@@ -11,14 +11,9 @@ dependencies {
     implementation(projects.designSystem)
     implementation(projects.domain.vod)
     implementation(projects.imageViewer)
-    implementation(projects.preferences)
     implementation(projects.feature.search.api)
     implementation(projects.feature.mediaDetails.api)
 
-    implementation(libs.androidx.material3.window.size.class1)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
-
-    implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)
