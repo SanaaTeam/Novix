@@ -59,7 +59,7 @@ class ActorRepositoryImpl(
 
     override suspend fun getTrendingActors(page: Int): List<Actor> {
         safeCall("Failed to fetch Trending People ") {
-            return remoteDataSource.fetchTrendingPeople(1).map {
+            return remoteDataSource.fetchTrendingPeople(page).map {
                 it.toDomain()
             }
         }
