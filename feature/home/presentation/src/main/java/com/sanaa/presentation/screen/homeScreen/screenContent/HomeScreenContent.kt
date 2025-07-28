@@ -146,7 +146,8 @@ fun HomeScreenContent(
                 movieGenres = state.movieGenres,
                 movieSelectedGenreId = state.movieSelectedGenreId,
                 onGenreClick = interactionListener::onMovieGenreClick,
-                onSaveIconClick = interactionListener::onSaveIconClick
+                onSaveIconClick = interactionListener::onSaveIconClick,
+                onMovieClick = interactionListener::onMediaClick,
             )
         }
     }

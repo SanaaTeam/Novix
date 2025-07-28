@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,6 +28,7 @@ import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaType
 
 fun LazyGridScope.upcomingSection(
     upcomingMovies: List<MediaItem>,
@@ -36,6 +36,7 @@ fun LazyGridScope.upcomingSection(
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
     onSaveIconClick: (item: MediaItem) -> Unit,
+    onMovieClick: (id: Int, mediaType: MediaType) -> Unit,
 ) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         NovixSectionHeader(
@@ -82,6 +83,9 @@ fun LazyGridScope.upcomingSection(
     itemsIndexed(
         upcomingMovies, key = { index, item -> item.id }) { index, item ->
         MediaPosterCard(
+            onCardClick = {
+                onMovieClick(item.id, item.mediaType)
+            },
             posterImage = {
                 RemoteBlurredHaramImageViewer(
                     imageUrl = item.imageUrl.orEmpty(),
