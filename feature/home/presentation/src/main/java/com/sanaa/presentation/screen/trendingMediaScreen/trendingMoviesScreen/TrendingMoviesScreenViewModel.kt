@@ -53,6 +53,9 @@ class TrendingMoviesScreenViewModel(
 
     override fun onGenreClick(id: Int?) {
         if (id != state.value.selectedGenreId) {
+            updateState {
+                it.copy(selectedGenreId = id)
+            }
             loadMovies()
         }
     }
