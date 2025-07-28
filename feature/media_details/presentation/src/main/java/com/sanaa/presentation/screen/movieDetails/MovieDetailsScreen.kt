@@ -152,8 +152,7 @@ fun MovieDetailsContent(
                 } else {
                     LazyVerticalGrid(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 112.dp),
+                            .fillMaxSize(),
                         columns = GridCells.Adaptive(minSize = 120.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         contentPadding = PaddingValues(horizontal = 16.dp)
@@ -277,8 +276,8 @@ fun MovieDetailsContent(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                onSetRateClicked = { interactionListener.onRateMovieClick() })
-
+                onSetRateClicked = { interactionListener.onRateMovieClick() }
+            )
 
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
