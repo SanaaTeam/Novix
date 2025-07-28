@@ -8,5 +8,6 @@ import kotlinx.coroutines.flow.flowOf
 data class CelebritiesScreenUiState(
     val isLoading: Boolean = false,
     val celebrities: Flow<PagingData<PersonUiState>> = flowOf(PagingData.empty()),
-    val isNoInternetConnection: Boolean = false
+    val isNoInternetConnection: Boolean = false,
+    val error: String? = null
 )
