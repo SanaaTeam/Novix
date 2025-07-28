@@ -67,13 +67,13 @@ interface TvShowApiService {
     @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsGenres(): TvShowGenresResponse
 
-    @GET("tv/popular")
+    @GET("3/tv/popular")
     @Headers("Ignore-Language: true")
     suspend fun getPopularTvShows(
         @Query("page") page: Int
     ): MovieApiResponse<TvShowDto>
 
-    @GET("discover/tv")
+    @GET("3/discover/tv")
     @Headers("Ignore-Language: true")
     suspend fun fetchTrendingTvShows(
         @Query("page") page: Int,
@@ -84,7 +84,7 @@ interface TvShowApiService {
         @Query("release_date.lte") maxDate: String? = null,
     ): MovieApiResponse<TvShowDto>
 
-    @GET("discover/tv")
+    @GET("3/discover/tv")
     @Headers("Ignore-Language: true")
     suspend fun fetchTopRatingTvShows(
         @Query("page") page: Int,

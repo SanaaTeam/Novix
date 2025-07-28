@@ -23,7 +23,7 @@ interface ActorApiService {
     @GET("3/person/{actor_id}/tv_credits")
     suspend fun fetchActorTvShows(@Path("actor_id") id: Int): ActorCastCreditsResponse
 
-    @GET("trending/person/day")
+    @GET("3/trending/person/day")
     @Headers("Ignore-Language: true")
     suspend fun fetchTrendingPeople(@Query("page") page: Int): PaginatedResponse<ActorDto>
 

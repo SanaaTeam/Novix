@@ -68,7 +68,7 @@ fun PopularMediaSection(
     onSaveIconClicked: (MediaItem) -> Unit
 ) {
 
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 10 })
+    val pagerState = rememberPagerState(pageCount = { mediaItems.size })
     Column(
         modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {

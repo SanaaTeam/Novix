@@ -25,7 +25,6 @@ import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
-import com.sanaa.presentation.components.shimmerEffect.upcomingSectionPlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
@@ -142,21 +141,20 @@ fun HomeScreenContent(
                     )
                 }
             }
-                upcomingSection(
-                    upcomingMovies = state.upcomingMovies,
-                    movieGenres = state.movieGenres,
-                    movieSelectedGenreId = state.movieSelectedGenreId,
-                    onGenreClick = interactionListener::onMovieGenreClick,
-                    onSaveIconClick = interactionListener::onSaveIconClick
-                )
-            }
+            upcomingSection(
+                upcomingMovies = state.upcomingMovies,
+                movieGenres = state.movieGenres,
+                movieSelectedGenreId = state.movieSelectedGenreId,
+                onGenreClick = interactionListener::onMovieGenreClick,
+                onSaveIconClick = interactionListener::onSaveIconClick
+            )
         }
-
-        RequestToLoginBottomSheet(
-            isVisible = state.showBottomSheet,
-            onDismiss = interactionListener::onDismissBottomSheet
-        )
     }
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet
+    )
 }
 
 
