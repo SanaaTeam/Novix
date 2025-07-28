@@ -20,6 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,7 +35,9 @@ import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import kotlinx.coroutines.delay
 
 
-
+val boxContainerGradient = Brush.verticalGradient(
+    colors = listOf( Color(0x00000000), Color(0xFF0D0608))
+)
 @Composable
 fun ImageSlider(
     images: List<String>,
