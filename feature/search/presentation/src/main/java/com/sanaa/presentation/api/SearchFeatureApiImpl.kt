@@ -3,8 +3,8 @@ package com.sanaa.presentation.api
 import androidx.compose.runtime.Composable
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.SearchNavigatorApi
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import com.sanaa.presentation.screen.SearchScreen as SearchScreenUi
 
 @Singleton
