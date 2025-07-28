@@ -12,8 +12,9 @@ import entity.Review
 import entity.Season
 import entity.TvSeries
 import repository.TvSeriesRepository
+import javax.inject.Inject
 
-class TvShowRepositoryImpl(
+class TvShowRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteTvShowDataSource
 ) : TvSeriesRepository {
 

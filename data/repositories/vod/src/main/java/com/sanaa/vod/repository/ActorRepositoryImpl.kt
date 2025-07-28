@@ -12,10 +12,10 @@ import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import repository.ActorRepository
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-
-class ActorRepositoryImpl(
-    private val remoteDataSource: RemoteActorDataSource,
+class ActorRepositoryImpl @Inject constructor(
+    private val remoteDataSource: RemoteActorDataSource
 ) : ActorRepository {
 
     override suspend fun getActorDetails(id: Int): Actor =
