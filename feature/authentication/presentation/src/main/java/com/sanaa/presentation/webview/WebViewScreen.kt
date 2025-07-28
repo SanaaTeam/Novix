@@ -26,7 +26,6 @@ fun WebViewScreen(
             .systemBarsPadding()
             .fillMaxSize()
             .testTag("auth_webview")
-
     ) {
         NovixTopBar(
             modifier = Modifier.fillMaxWidth(),

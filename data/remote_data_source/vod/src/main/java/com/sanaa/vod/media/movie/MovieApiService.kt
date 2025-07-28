@@ -14,38 +14,38 @@ import retrofit2.http.Query
 
 interface MovieApiService {
 
-    @GET("3/movie/{movie_id}")
+    @GET("movie/{movie_id}")
     suspend fun fetchMovieDetails(@Path("movie_id") id: Int): MovieDto
 
-    @GET("3/movie/{movie_id}/images")
+    @GET("movie/{movie_id}/images")
     @Headers("Ignore-Language: true")
     suspend fun fetchImagesUrl(@Path("movie_id") id: Int): MovieImagesResponse
 
-    @GET("3/movie/{movie_id}/credits")
+    @GET("movie/{movie_id}/credits")
     suspend fun fetchCast(@Path("movie_id") id: Int): MovieCastResponse
 
-    @GET("3/movie/{movie_id}/similar")
+    @GET("movie/{movie_id}/similar")
     @Headers("Ignore-Language: true")
     suspend fun fetchSimilarMoviesByMovieId(@Path("movie_id") id: Int): MovieApiResponse<MovieDto>
 
-    @GET("3/movie/{movie_id}/reviews")
+    @GET("movie/{movie_id}/reviews")
     suspend fun fetchReviewsByMovieId(@Path("movie_id") id: Int): MovieApiResponse<ReviewDto>
 
-    @GET("3/discover/movie")
+    @GET("discover/movie")
     @Headers("Ignore-Language: true")
     suspend fun fetchMoviesByCategory(@Query("with_genres") category: Int): MovieApiResponse<MovieDto>
 
-    @GET("3/movie/{movie_id}/videos")
+    @GET("movie/{movie_id}/videos")
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieTrailerUrl(@Path("movie_id") id: Int): MovieApiResponse<VideoDto>
 
-    @GET("3/movie/popular")
+    @GET("movie/popular")
     @Headers("Ignore-Language: true")
     suspend fun getPopularMovies(
         @Query("page") page: Int
     ): MovieApiResponse<MovieDto>
 
-    @GET("3/discover/movie")
+    @GET("discover/movie")
     @Headers("Ignore-Language: true")
     suspend fun fetchTrendingMovies(
         @Query("page") page: Int,
@@ -56,7 +56,7 @@ interface MovieApiService {
         @Query("release_date.lte") maxDate: String? = null,
     ): MovieApiResponse<MovieDto>
 
-    @GET("3/discover/movie")
+    @GET("discover/movie")
     @Headers("Ignore-Language: true")
     suspend fun fetchTopRatingMovies(
         @Query("page") page: Int,
@@ -67,7 +67,7 @@ interface MovieApiService {
 
         ): MovieApiResponse<MovieDto>
 
-    @GET("3/discover/movie")
+    @GET("discover/movie")
     suspend fun fetchUpcomingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -78,7 +78,7 @@ interface MovieApiService {
         @Query("release_date.lte") maxDate: String? = null
     ): MovieApiResponse<MovieDto>
 
-    @GET("3/genre/movie/list")
+    @GET("genre/movie/list")
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
 

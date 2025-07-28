@@ -15,7 +15,7 @@ data class CreateGuestSessionResponse(
     val expiresAt: String?,
 
     @SerialName("guest_session_id")
-    val guestSessionId: String?,
+    val guestSessionId: String,
 )
 
 

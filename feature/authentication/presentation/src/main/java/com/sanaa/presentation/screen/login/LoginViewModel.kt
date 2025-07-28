@@ -39,16 +39,15 @@ class LoginViewModel(
                 val password = state.value.password
                 if (userName.isNotBlank() && password.isNotBlank()) {
                     loginUseCase.login(userName, password)
-                    loginUseCase.requestAccessToken()
                 } else
                     throw Exception(stringProvider.enterUserNameAndPasswordError)
             },
-            onSuccess = { requestAccessToken ->
+            onSuccess = {
                 updateState { prev ->
                     val updated = prev.copy(isLoading = false)
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
-                emitEffect(LoginScreenEffects.NavigateApproveAccessToken(requestAccessToken))
+                emitEffect(LoginScreenEffects.NavigateToHome)
             },
             onError = ::onDataLoadError
         )

@@ -17,53 +17,53 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TvShowApiService {
-    @GET("3/tv/{tv_id}")
+    @GET("tv/{tv_id}")
     suspend fun fetchTvShowsDetails(@Path("tv_id") id: Int): TvShowDto
 
-    @GET("3/tv/{tv_id}/images")
+    @GET("tv/{tv_id}/images")
     @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsImages(@Path("tv_id") id: Int): TvShowImagesResponse
 
-    @GET("3/discover/tv")
+    @GET("discover/tv")
     suspend fun fetchTvShowsByCategory(@Query("with_genres") category: Int): GenreTvShowResponse
 
-    @GET("3/tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits")
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits")
     suspend fun fetchEpisodeGuestsOfHonor(
         @Path("tv_id") seriesId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): TvShowGuestOfStarsResponse
 
-    @GET("3/tv/{tv_id}/season/{season_number}/episode/{episode_number}")
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
     suspend fun fetchEpisodeDetails(
         @Path("tv_id") seriesId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): EpisodeDto
 
-    @GET("3/tv/{tv_id}/season/{season_number}")
+    @GET("tv/{tv_id}/season/{season_number}")
     suspend fun fetchSeasonDetails(
         @Path("tv_id") seriesId: Int, @Path("season_number") seasonNumber: Int
     ): SeasonDto
 
-    @GET("3/tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
+    @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
     suspend fun fetchEpisodeImages(
         @Path("tv_id") seriesId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): TvShowImagesResponse
 
-    @GET("3/tv/{tv_id}/videos")
+    @GET("tv/{tv_id}/videos")
     @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsVideos(@Path("tv_id") id: Int): TvShowVideosResponse
 
-    @GET("3/tv/{tv_id}/reviews")
+    @GET("tv/{tv_id}/reviews")
     suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int): TvShowReviewsResponse
 
-    @GET("3/tv/{tv_id}/credits")
+    @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse
 
-    @GET("3/genre/tv/list")
+    @GET("genre/tv/list")
     @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsGenres(): TvShowGenresResponse
 

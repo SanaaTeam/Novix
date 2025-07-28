@@ -50,6 +50,7 @@ fun AuthNavHost() {
                         navController.navigate(HomeScreen)
                     }
                 }
+
                 composable(HomeScreen::class) {
                     homeApi.HomeScreenApi()
                 }
