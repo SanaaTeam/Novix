@@ -54,13 +54,14 @@ class CelebritiesViewModel(
         if (e is NoNetworkException) updateState {
             it.copy(
                 isLoading = false,
+                isNoInternetConnection = true
             )
         }
         else updateState {
             it.copy(
                 isLoading = false,
-
-                )
+                isNoInternetConnection = false
+            )
         }
     }
 
