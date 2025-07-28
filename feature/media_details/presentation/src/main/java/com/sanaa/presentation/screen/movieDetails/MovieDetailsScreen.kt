@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -172,54 +173,65 @@ fun MovieDetailsContent(
                                         .padding(top = 208.dp)
                                         .padding(horizontal = 16.dp)
                                 ) {
-                                    Row(
+                                    FlowRow(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
                                         state.movieDetails.genres.forEachIndexed { index, genre ->
-                                            Text(
-                                                text = genre.name,
-                                                style = Theme.textStyle.label.small,
-                                                color = Theme.colors.body,
-                                                modifier = Modifier.clickable {
-                                                    interactionListener.onGenreClicked(genre)
-                                                })
-                                            if (index < state.movieDetails.genres.lastIndex) {
-                                                DotSeparator()
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                                modifier = Modifier.clickable { interactionListener.onGenreClicked(genre) }
+                                            ) {
+                                                Text(
+                                                    text = genre.name,
+                                                    style = Theme.textStyle.label.small,
+                                                    color = Theme.colors.body,
+                                                )
+                                                if (index < state.movieDetails.genres.lastIndex) {
+                                                    DotSeparator()
+                                                }
                                             }
                                         }
                                     }
-                                    Row(
+                                    FlowRow(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                        verticalAlignment = Alignment.CenterVertically
+                                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        modifier = Modifier.fillMaxWidth()
                                     ) {
-                                        state.movieDetails.rating?.let {
+                                        Row(
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            state.movieDetails.rating?.let {
+                                                IconWithText(
+                                                    iconRes = designR.drawable.star,
+                                                    contentDescription = null,
+                                                    textColor = Theme.colors.title,
+                                                    text = state.movieDetails.rating,
+                                                    tint = Theme.colors.statusColors.yellowAccent
+                                                )
+                                                DotSeparator()
+                                            }
+                                            state.movieDetails.duration?.let {
+                                                IconWithText(
+                                                    iconRes = R.drawable.icon_duration,
+                                                    contentDescription = null,
+                                                    text = stringResource(
+                                                        R.string.m, state.movieDetails.duration
+                                                    ),
+                                                    tint = Theme.colors.body
+                                                )
+                                                DotSeparator()
+                                            }
                                             IconWithText(
-                                                iconRes = designR.drawable.star,
+                                                iconRes = R.drawable.icon_calender,
                                                 contentDescription = null,
-                                                textColor = Theme.colors.title,
-                                                text = state.movieDetails.rating,
-                                                tint = Theme.colors.statusColors.yellowAccent
-                                            )
-                                            DotSeparator()
-                                        }
-                                        state.movieDetails.duration?.let {
-                                            IconWithText(
-                                                iconRes = R.drawable.icon_duration,
-                                                contentDescription = null,
-                                                text = stringResource(
-                                                    R.string.m, state.movieDetails.duration
-                                                ),
+                                                text = state.movieDetails.releaseDate,
                                                 tint = Theme.colors.body
                                             )
-                                            DotSeparator()
                                         }
-                                        IconWithText(
-                                            iconRes = R.drawable.icon_calender,
-                                            contentDescription = null,
-                                            text = state.movieDetails.releaseDate,
-                                            tint = Theme.colors.body
-                                        )
                                     }
                                     NovixTextButton(
                                         text = stringResource(id = R.string.view_reviews),
