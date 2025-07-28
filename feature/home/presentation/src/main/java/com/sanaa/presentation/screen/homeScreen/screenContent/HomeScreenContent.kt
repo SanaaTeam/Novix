@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
@@ -50,6 +51,14 @@ fun HomeScreenContent(
             )
         }) {
         val scrollState = rememberScrollState()
+
+        if (!state.errorMessage.isNullOrEmpty()) {
+            ErrorStateContent(
+                errorTitle = "Something went wrong",
+                errorMessage = state.errorMessage,
+                onRetryClick = interactionListener::onRetryClick)
+        }
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -168,12 +177,7 @@ fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
 
                 override fun onMediaClick(id: Int, mediaType: MediaType) {}
                 override fun onSaveIconClick(media: MediaItem) {}
-                override fun onLoading() {
-                    TODO("Not yet implemented")
-                }
-                override fun onRetryClick() {
-                    TODO("Not yet implemented")
-                }
+                override fun onRetryClick() {}
             },
         )
     }

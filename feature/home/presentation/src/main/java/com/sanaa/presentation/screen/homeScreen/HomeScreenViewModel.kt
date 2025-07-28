@@ -177,9 +177,7 @@ class HomeScreenViewModel(
     override fun onSaveIconClick(media: MediaItem) {
         TODO("Not yet implemented")
     }
-    override fun onLoading() {
-        updateState { it.copy(isLoading = true) }
-    }
+
     override fun onRetryClick(){
         fetchPopularMediaData()
         fetchTopRatedMediaData()

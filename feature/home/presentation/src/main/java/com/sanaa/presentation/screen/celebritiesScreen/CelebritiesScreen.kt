@@ -67,7 +67,8 @@ fun CelebritiesScreen(
     }
 
     CelebritiesContent(
-        state = state.value, interactionListener = viewModel
+        state = state.value,
+        interactionListener = viewModel
     )
 }
 
@@ -107,7 +108,7 @@ fun CelebritiesContent(
                 ) { (loading, disconnected) ->
                     when {
                         disconnected -> {
-                            NetworkDisconnectionContact(TODO())
+                            NetworkDisconnectionContact(interactionListener::onRetryClick)
                         }
 
                         loading -> {
@@ -126,6 +127,7 @@ fun CelebritiesContent(
         }
     }
 }
+
 
 @PreviewLightDark
 @Composable
@@ -146,7 +148,10 @@ private fun Preview() {
                             imageUrl = String()
                         ),
                         PersonUiState(
-                            id = 2, name = "Meryl Streep", character = null, imageUrl = String()
+                            id = 2,
+                            name = "Meryl Streep",
+                            character = null,
+                            imageUrl = String()
                         ),
                         PersonUiState(
                             id = 3,
@@ -159,7 +164,6 @@ private fun Preview() {
                     override fun onBackClick() {}
                     override fun onActorClick(actorId: Int) {}
                     override fun onRetryClick() {}
-                    override fun onLoading() {}
                 }
             )
         }

@@ -41,6 +41,8 @@ fun MediaTabScreenContent(
     state: MediaTabScreenUiState,
     interactionListener: MediaTabScreenInteractionListener,
     modifier: Modifier = Modifier,
+    onLoading: () -> Unit,
+    onRetryClick: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(top = 12.dp),
@@ -102,7 +104,6 @@ fun MediaTabScreenContent(
                     )
                 }
             }
-
         }
     }
 }
@@ -162,9 +163,11 @@ fun MediaTabScreenContentPreview() {
                 override fun onSaveIconClick(media: MediaItem) {}
                 override fun onBackClick() {}
             },
+            onLoading = {},
+            onRetryClick = {},
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Theme.colors.surface)
+                .background(Theme.colors.surface),
         )
     }
 }

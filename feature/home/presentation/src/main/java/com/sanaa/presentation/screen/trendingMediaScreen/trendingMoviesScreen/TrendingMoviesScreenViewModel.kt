@@ -14,7 +14,7 @@ class TrendingMoviesScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
-    TrendingMediaScreenUiState(),
+    TrendingMediaScreenUiState(ErrorStateContent = "Something went wrong"),
     dispatcher
 ), MediaListScreenInteractionListener {
 

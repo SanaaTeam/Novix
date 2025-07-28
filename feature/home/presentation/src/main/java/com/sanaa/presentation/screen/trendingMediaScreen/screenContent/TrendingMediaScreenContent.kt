@@ -35,8 +35,6 @@ fun TrendingMediaScreenContent(
     state: TrendingMediaScreenUiState,
     interactionListener: MediaListScreenInteractionListener,
     modifier: Modifier = Modifier,
-    onLoading: () -> Unit,
-    onRetryClick: () -> Unit,
 ) {
     Column(
         modifier = modifier.padding(top = 12.dp),
@@ -99,7 +97,11 @@ fun TrendingMediaScreenContentPreview() {
                         mediaType = MediaType.MOVIE,
                     )
                 ),
-                selectedGenreId = null
+                selectedGenreId = null,
+                isLoading = TODO(),
+                error = TODO(),
+                showBottomSheet = TODO(),
+                ErrorStateContent = TODO()
             )
         )
     }
@@ -119,7 +121,6 @@ fun TrendingMediaScreenContentPreview() {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Theme.colors.surface),
-            { viewModel.onLoading() },
-        ) { viewModel.onRetryClick() }
+        )
     }
 }

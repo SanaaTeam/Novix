@@ -79,14 +79,13 @@ fun HomeScreen(
 
     NovixTheme(isSystemInDarkTheme()) {
         AnimatedContent(
-            targetState = state.value.popularMedia.isNotEmpty(), label = "PopularMediaVisibility"
+            targetState = state.value.popularMedia.isNotEmpty(),
+            label = "PopularMediaVisibility"
         ) { hasContent ->
             if (hasContent) {
                 HomeScreenContent(
                     state = state.value,
                     interactionListener = viewModel,
-                    onLoading = { viewModel.onLoading() },
-                    onRetryClick = { viewModel.onRetryClick() },
                     modifier = Modifier
                 )
             }

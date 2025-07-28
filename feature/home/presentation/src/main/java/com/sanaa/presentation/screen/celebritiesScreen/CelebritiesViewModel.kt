@@ -21,24 +21,24 @@ class CelebritiesViewModel(
     override fun onActorClick(actorId: Int) {
         emitEffect(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
     }
+
     override fun onRetryClick() {
-        updateState { it.copy(isNoInternetConnection = false, isLoading = true) }
-    }
-    override fun onLoading() {
-        updateState { it.copy(isLoading = true, isNoInternetConnection = false) }
+        fetchActors()
     }
 
     private fun fetchActors() {
         tryToExecute(callee = {
-            updateState { it.copy(isLoading = true) }
+            updateState { it.copy(isLoading = true, isNoInternetConnection = false) }
             getActorsUseCase.getTrendingActors(1)
         }, onSuccess = { actors ->
             updateState {
                 it.copy(
                     celebrities = actors.map { it.toUiState() }, isLoading = false
-
-                    )
-                }
+                )
+            }
+        }
+            , onError = {
+                updateState { it.copy(isNoInternetConnection = true, isLoading = false) }
             }
         )
     }
