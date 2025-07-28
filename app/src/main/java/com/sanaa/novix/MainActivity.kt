@@ -30,11 +30,11 @@ class MainActivity : ComponentActivity() {
 
         Timber.d("MainActivity created")
         val preferenceManager: PreferencesManager = getKoin().get()
-        val token: String? = runBlocking {
-            preferenceManager.authorizationToken.firstOrNull()
+        val sessionId: String? = runBlocking {
+            preferenceManager.sessionId.firstOrNull()
         }
         setContent {
-            if (TextUtils.isEmpty(token))
+            if (TextUtils.isEmpty(sessionId))
                 authenticationApi.AuthenticationScreen(this)
             else
                 homeFeatureApi.HomeScreenApi()

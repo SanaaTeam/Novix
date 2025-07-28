@@ -48,7 +48,7 @@ val networkModule = module {
             .addInterceptor(APIKeyInterceptor {
                 val preferencesManager: PreferencesManager = getKoin().get()
                 val token = runBlocking {
-                    preferencesManager.authorizationToken.firstOrNull()
+                    preferencesManager.sessionId.firstOrNull()
                 }.orEmpty().ifBlank { BuildConfig.TMDB_API_KEY }
                 token.ifBlank { BuildConfig.TMDB_API_KEY }
             })

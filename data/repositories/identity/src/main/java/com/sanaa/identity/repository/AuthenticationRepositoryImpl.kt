@@ -42,13 +42,13 @@ class AuthenticationRepositoryImpl(
 
     override suspend fun createAccessToken(requestToken: String) = wrapApiCall {
         val accessToken = requestAccessToken()
-        preferencesManager.updateAuthorizationToken(accessToken)
+        preferencesManager.updateSessionId(accessToken)
     }
 
     override suspend fun createGuestSession(): Unit = wrapApiCall {
         val response = authenticationApi.createGuestSession()
         if (response.isSuccess && response.guestSessionId != null) {
-            preferencesManager.updateAuthorizationToken(response.guestSessionId!!)
+            preferencesManager.updateSessionId(response.guestSessionId!!)
             Log.d("GuestSession", "Guest Session ID: ${response.guestSessionId}")
         } else {
             throw ResponseException(response.statusCode ?: -1)

@@ -124,7 +124,7 @@ class AuthenticationRepositoryImplTest {
             val fakeToken = "fake_request_token_from_api"
             val response = createRequestUserAccessTokenResponse(isSuccess = true, requestToken = fakeToken)
             coEvery { authenticationApi.requestUserAccessToken() } returns Response.success(response)
-            coEvery { preferencesManager.updateAuthorizationToken(any()) } just runs
+            coEvery { preferencesManager.updateSessionId(any()) } just runs
 
             // When
             authenticationRepository.createAccessToken()
@@ -133,7 +133,7 @@ class AuthenticationRepositoryImplTest {
             // Verify it first requests the token
             coVerify(exactly = 1) { authenticationApi.requestUserAccessToken() }
             // Then verify it saves the *exact same token* to preferences
-            coVerify(exactly = 1) { preferencesManager.updateAuthorizationToken(fakeToken) }
+            coVerify(exactly = 1) { preferencesManager.updateSessionId(fakeToken) }
         }
 
     @Test
