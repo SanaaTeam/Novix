@@ -103,12 +103,13 @@ fun LoginContent(
         Column(modifier = modifier.statusBarsPadding()) {
             LoginTopBar(onBackClick = listener::onBackClicked)
 
+            LoginHeader()
+
             Column(
                 modifier = Modifier.padding(top = 12.dp, start = 16.dp, end = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                LoginHeader()
-                Spacer(Modifier.height(40.dp))
+                Spacer(Modifier.height(24.dp))
 
                 UsernameField(
                     value = state.username,
