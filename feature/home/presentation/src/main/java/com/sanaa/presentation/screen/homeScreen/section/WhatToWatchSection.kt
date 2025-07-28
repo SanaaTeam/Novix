@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,18 +29,30 @@ import com.sanaa.designsystem.design_system.component.section_header.NovixSectio
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.components.shimmerEffect.PlaceholderWithShimmerEffect
 
 @Composable
 fun WhatToWatchSection(
     modifier: Modifier = Modifier,
     onMoviesClicked: () -> Unit,
     onTvShowsClicked: () -> Unit,
-    onPeopleClicked: () -> Unit
+    onPeopleClicked: () -> Unit,
+    isLoading: Boolean = true
 ) {
     Column(
         modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixSectionHeader(title = stringResource(R.string.what_you_want_to_watch))
+        if (isLoading) {
+            PlaceholderWithShimmerEffect(
+                width = 166.dp,
+                height = 30.dp,
+                cornerRadius = 8.dp,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                borderColor = Color.Transparent,
+            )
+        } else {
+            NovixSectionHeader(title = stringResource(R.string.what_you_want_to_watch))
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()

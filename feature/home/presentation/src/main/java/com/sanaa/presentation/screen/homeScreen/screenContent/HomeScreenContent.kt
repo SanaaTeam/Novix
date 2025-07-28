@@ -23,6 +23,8 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
+import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
+import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
@@ -55,15 +57,22 @@ fun HomeScreenContent(
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                PopularMediaSection(
-                    mediaItems = state.popularMedia, onMediaClick = {
-                        interactionListener.onMediaClick(it.id, it.mediaType)
-                    }, onSaveIconClicked = {
-                        interactionListener.onSaveIconClick(it)
-                    }, modifier = Modifier.fillWidthOfParent(16.dp)
-                )
-            }
+            if (state.isLoading)
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    PopularMediaSectionPlaceholder(
+                        modifier = Modifier.fillWidthOfParent(16.dp)
+                    )
+                }
+            else
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    PopularMediaSection(
+                        mediaItems = state.popularMedia, onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        }, onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        }, modifier = Modifier.fillWidthOfParent(16.dp)
+                    )
+                }
             item(span = { GridItemSpan(maxLineSpan) }) {
                 WhatToWatchSection(
                     onMoviesClicked = {
@@ -74,39 +83,63 @@ fun HomeScreenContent(
                         interactionListener.onPeopleCardClicked()
                     }, modifier = Modifier
                         .fillWidthOfParent(16.dp)
-                        .padding(top = 8.dp)
+                        .padding(top = 8.dp),
+                    isLoading = state.isLoading
                 )
             }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                MixedMediaSection(
-                    headerLabel = stringResource(R.string.top_rated),
-                    modifier = Modifier
-                        .fillWidthOfParent(16.dp)
-                        .padding(
-                            top = 24.dp
-                        ),
-                    mediaItems = state.topRatingMedia,
-                    onMediaClick = {
-                        interactionListener.onMediaClick(it.id, it.mediaType)
-                    },
-                    onSaveIconClicked = {
-                        interactionListener.onSaveIconClick(it)
-                    },
-                    onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+            if (state.isLoading)
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MediaSliderSectionPlaceholder(
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp
+                            ),
+                    )
+                }
+            else {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MixedMediaSection(
+                        headerLabel = stringResource(R.string.top_rated),
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp
+                            ),
+                        mediaItems = state.topRatingMedia,
+                        onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        },
+                        onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        },
+                        onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+                }
             }
-
-            if (state.continueWatchingMedia.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
-                MixedMediaSection(
-                    headerLabel = stringResource(R.string.continue_watching),
-                    mediaItems = state.continueWatchingMedia,
-                    onMediaClick = {
-                        interactionListener.onMediaClick(it.id, it.mediaType)
-                    },
-                    onSaveIconClicked = {
-                        interactionListener.onSaveIconClick(it)
-                    },
-                    modifier = Modifier.fillWidthOfParent(16.dp),
-                )
+            if (state.isLoading) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MediaSliderSectionPlaceholder(
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp, bottom = 24.dp
+                            ),
+                    )
+                }
+            } else {
+                if (state.continueWatchingMedia.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
+                    MixedMediaSection(
+                        headerLabel = stringResource(R.string.continue_watching),
+                        mediaItems = state.continueWatchingMedia,
+                        onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        },
+                        onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        },
+                        modifier = Modifier.fillWidthOfParent(16.dp),
+                    )
+                }
             }
             upcomingSection(
                 upcomingMovies = state.upcomingMovies,
@@ -116,12 +149,12 @@ fun HomeScreenContent(
                 onSaveIconClick = interactionListener::onSaveIconClick
             )
         }
-
-        RequestToLoginBottomSheet(
-            isVisible = state.showBottomSheet,
-            onDismiss = interactionListener::onDismissBottomSheet
-        )
     }
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet
+    )
 }
 
 
