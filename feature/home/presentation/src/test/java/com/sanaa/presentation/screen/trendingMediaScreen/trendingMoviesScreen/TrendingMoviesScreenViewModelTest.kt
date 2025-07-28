@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
+import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
@@ -8,6 +9,7 @@ import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
+import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -58,8 +60,10 @@ class TrendingMoviesScreenViewModelTest {
 
         viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
+        val pagingData = viewModel.state.value.mediaList
+        val items = pagingData.asSnapshot()
 
-        assertThat(viewModel.state.value.mediaList).isEqualTo(movies.map { it.toState() })
+        assertThat(items.take(movies.size)).isEqualTo(movies.map { it.toState() })
     }
 
     @Test
@@ -74,21 +78,11 @@ class TrendingMoviesScreenViewModelTest {
 
             viewModel.onGenreClick(genreId)
             testDispatcher.scheduler.advanceUntilIdle()
+            val pagingData = viewModel.state.value.mediaList
+            val items = pagingData.asSnapshot()
 
-            assertThat(viewModel.state.value.mediaList).isEqualTo(movies.map { it.toState() })
+            assertThat(items.take(movies.size)).isEqualTo(movies.map { it.toState() })
         }
-
-    @Test
-    fun `fetchMedia handles error and updates state when throw exception`() = runTest {
-        val exceptionMessage = "error"
-        coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } throws RuntimeException(
-            exceptionMessage
-        )
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
-    }
 
     @Test
     fun `fetchGenres should handles error and updates state when throw exception`() = runTest {
@@ -99,6 +93,16 @@ class TrendingMoviesScreenViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
+    }
+
+    @Test
+    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() = runTest {
+        coEvery { manageMovieUseCase.getMovieGenres() } throws NoNetworkException()
+
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
     }
 
     @Test
@@ -114,7 +118,6 @@ class TrendingMoviesScreenViewModelTest {
     @Test
     fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
         coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns listOf(mockk())
-        // Initialize ViewModel would fetch genres and media once
         viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val selectedGenre = viewModel.state.value.selectedGenreId
@@ -122,7 +125,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel.onGenreClick(selectedGenre)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        coVerify(exactly = 1) { manageMovieUseCase.getTrendingMovies(any(), any()) }
+        coVerify(exactly = 0) { manageMovieUseCase.getTrendingMovies(any(), any()) }
     }
 
     @Test

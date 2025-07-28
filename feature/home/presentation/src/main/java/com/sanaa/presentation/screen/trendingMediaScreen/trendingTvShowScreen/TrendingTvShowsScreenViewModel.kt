@@ -43,11 +43,7 @@ class TrendingTvShowsScreenViewModel(
                     it.copy(genreList = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -105,7 +101,8 @@ class TrendingTvShowsScreenViewModel(
         else updateState {
             it.copy(
                 isLoading = false,
-                isNoInternetConnection = false
+                isNoInternetConnection = false,
+                error = e.message
             )
         }
     }
