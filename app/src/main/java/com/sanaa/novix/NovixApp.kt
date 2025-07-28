@@ -4,7 +4,7 @@ import android.app.Application
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
-import jakarta.inject.Inject
+import javax.inject.Inject
 import timber.log.Timber
 
 @HiltAndroidApp

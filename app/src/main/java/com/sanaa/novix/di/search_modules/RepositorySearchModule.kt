@@ -8,17 +8,20 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositorySearchModule {
 
     @Binds
+    @Singleton
     abstract fun bindSearchRepository(
         impl: SearchRepositoryImpl
     ): SearchRepository
 
     @Binds
+    @Singleton
     abstract fun bindHistoryRepository(
         impl: SearchHistoryRepositoryImpl
     ): HistoryRepository

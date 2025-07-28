@@ -7,7 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import com.sanaa.api.*
 import com.sanaa.presentation.app.NovixApp
 import dagger.hilt.android.AndroidEntryPoint
-import jakarta.inject.Inject
+import javax.inject.Inject
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -17,10 +17,7 @@ class MainActivity : ComponentActivity() {
     lateinit var homeFeatureApi: HomeFeatureApi
     @Inject
     lateinit var searchFeatureApi: SearchFeatureApi
-    @Inject
-    lateinit var playlistsFeatureApi: PlaylistsFeatureApi
-    @Inject
-    lateinit var userProfileFeatureApi: UserProfileFeatureApi
+
     @Inject
     lateinit var mediaDetailsApi: MediaDetailsApi
 
@@ -33,8 +30,6 @@ class MainActivity : ComponentActivity() {
             NovixApp(
                 homeFeatureApi = homeFeatureApi,
                 searchFeatureApi = searchFeatureApi,
-                playlistsFeatureApi = playlistsFeatureApi,
-                userProfileFeatureApi = userProfileFeatureApi,
                 mediaDetailsApi = mediaDetailsApi
             )
         }
