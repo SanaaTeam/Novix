@@ -24,7 +24,7 @@ class AuthenticationRepositoryImpl(
         if (response.isSuccessful.not()) {
             throw ResponseException(response.code())
         }
-        return response.body()?.requestToken ?: throw ResponseException(response.code())
+        return response.body()?.request_token ?: ""
     }
 
     private suspend fun tryLoginOrThrow(
@@ -49,13 +49,13 @@ class AuthenticationRepositoryImpl(
     }
 
     private suspend fun saveSession(it: CreateSessionResponse) {
-        preferencesManager.updateSessionId(it.sessionId)
+        preferencesManager.updateSessionId(it.session_id)
         preferencesManager.setIsGuest(false)
     }
 
     override suspend fun createGuestSession(): Unit = wrapApiCall {
         val response = authenticationApi.createGuestSession()
             .apply { if (isSuccessful.not()) throw ResponseException(code()) }
-        preferencesManager.updateSessionId(response.body()?.guestSessionId ?: "")
+        preferencesManager.updateSessionId(response.body()?.guest_session_id ?: "")
     }
 }

@@ -152,10 +152,10 @@ class AuthenticationRepositoryImplTest {
         requestToken: String? = "test_request_token"
     ): CreateRequestTokenResponse {
         return CreateRequestTokenResponse(
-            isSuccess = isSuccess,
-            statusCode = statusCode,
-            expiresAt = expiresAt,
-            requestToken = requestToken
+            success = isSuccess,
+            status_code = statusCode,
+            expires_at = expiresAt,
+            request_token = requestToken
         )
     }
 
@@ -167,11 +167,11 @@ class AuthenticationRepositoryImplTest {
         requestToken: String? = "test_request_token"
     ): LoginResponse {
         return LoginResponse(
-            isSuccess = isSuccess,
-            statusCode = statusCode,
-            statusMessage = statusMessage,
-            expiresAt = expiresAt,
-            requestToken = requestToken
+            success = isSuccess,
+            status_code = statusCode,
+            status_message = statusMessage,
+            expires_at = expiresAt,
+            request_token = requestToken
         )
     }
 

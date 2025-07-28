@@ -47,10 +47,7 @@ val networkModule = module {
         OkHttpClient.Builder()
             .addInterceptor(APIKeyInterceptor {
                 val preferencesManager: PreferencesManager = getKoin().get()
-                val token = runBlocking {
-                    preferencesManager.sessionId.firstOrNull()
-                }.orEmpty().ifBlank { BuildConfig.TMDB_API_KEY }
-                token.ifBlank { BuildConfig.TMDB_API_KEY }
+                runBlocking { preferencesManager.sessionId.firstOrNull() }
             })
             .addInterceptor(LanguageInterceptor(get()))
             .addInterceptor(HttpLoggingInterceptor().apply {

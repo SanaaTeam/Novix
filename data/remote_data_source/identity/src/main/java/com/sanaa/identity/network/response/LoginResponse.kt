@@ -6,17 +6,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginResponse(
     @SerialName("success")
-    val isSuccess: Boolean,
+    val success: Boolean,
 
     @SerialName("status_code")
-    val statusCode: Int?,
+    val status_code: Int?,
 
     @SerialName("status_message")
-    val statusMessage: String?,
+    val status_message: String?,
 
     @SerialName("expires_at")
-    val expiresAt: String?,
+    val expires_at: String?,
 
     @SerialName("request_token")
-    val requestToken: String?,
+    val request_token: String?,
 )
