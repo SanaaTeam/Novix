@@ -1,188 +1,194 @@
-//package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
-//
-//import androidx.paging.PagingData
-//import app.cash.turbine.test
-//import com.google.common.truth.Truth.assertThat
-//import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-//import com.sanaa.presentation.state.GenreUiState
-//import com.sanaa.presentation.state.MediaItem
-//import com.sanaa.presentation.state.MediaType
-//import entity.Genre
-//import entity.Movie
-//import entity.TvSeries
-//import exceptions.NoNetworkException
-//import io.mockk.coEvery
-//import io.mockk.mockk
-//import kotlinx.coroutines.Dispatchers
-//import kotlinx.coroutines.ExperimentalCoroutinesApi
-//import kotlinx.coroutines.flow.flowOf
-//import kotlinx.coroutines.test.StandardTestDispatcher
-//import kotlinx.coroutines.test.runTest
-//import kotlinx.coroutines.test.setMain
-//import kotlinx.datetime.LocalDate
-//import org.junit.jupiter.api.BeforeEach
-//import org.junit.jupiter.api.Test
-//import usecase.ManageMovieUseCase
-//import usecase.ManageTvSeriesUseCase
-//
-//@OptIn(ExperimentalCoroutinesApi::class)
-//class TopRatedMediaScreenViewModelTest {
-//
-//    private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-//    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
-//    private lateinit var viewModel: TopRatedMediaScreenViewModel
-//    private val testDispatcher = StandardTestDispatcher()
-//
-//    @BeforeEach
-//    fun setUp() {
-//        Dispatchers.setMain(testDispatcher)
-//        viewModel = TopRatedMediaScreenViewModel(
-//            manageMovieUseCase = manageMovieUseCase,
-//            manageTvSeriesUseCase = manageTvSeriesUseCase,
-//            dispatcher = testDispatcher
-//        )
-//    }
-//
-//    @Test
-//    fun `fetchMovieGenres updates state with genres`() = runTest {
-//        val genres = listOf(GenreUiState(1, "Action"))
-//        coEvery { manageMovieUseCase.getMovieGenres() } returns listOf(Genre(1, "Action"))
-//
-//        viewModel.fetchMovieGenres()
-//
-//        viewModel.state.test {
-//            awaitItem()
-//            val loadedState = awaitItem()
-//            assertThat(loadedState.movieGenres).isEqualTo(genres)
-//            assertThat(loadedState.isLoading).isFalse()
-//        }
-//    }
-//
-//    @Test
-//    fun `fetchTvShowGenres updates state with genres`() = runTest {
-//        val genres = listOf(GenreUiState(2, "Drama"))
-//        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns listOf(Genre(2, "Drama"))
-//
-//        viewModel.fetchTvShowGenres()
-//
-//        viewModel.state.test {
-//            awaitItem()
-//            val loadedState = awaitItem()
-//            assertThat(loadedState.tvShowGenres).isEqualTo(genres)
-//            assertThat(loadedState.isLoading).isFalse()
-//        }
-//    }
-//
-//    @Test
-//    fun `onMediaTabSelection updates selectedMediaType`() = runTest {
-//        val mediaType = MediaType.TV_SHOW
-//
-//        viewModel.onMediaTabSelection(mediaType)
-//
-//        viewModel.state.test {
-//            val item = awaitItem()
-//            assertThat(item.selectedMediaType).isEqualTo(mediaType)
-//        }
-//    }
-//
-//    @Test
-//    fun `onMovieGenreClick triggers fetchMovies`() = runTest {
-//        val genreId = 10
-//        val expectedFlow = flowOf(
-//            PagingData.from(
-//                listOf(
-//                    MediaItem(
-//                        id = 1,
-//                        title = "Movie",
-//                        "",
-//                        mediaType = MediaType.MOVIE
-//                    )
-//                )
-//            )
-//        )
-//        coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns listOf(
-//            Movie(
-//                1, "Movie", "", emptyList(), 0f, 0,
-//                LocalDate(1900, 10, 10), "", ""
-//            )
-//        )
-//
-//        viewModel.onMovieGenreClick(genreId)
-//
-//        viewModel.state.test {
-//            awaitItem()
-//            val state = awaitItem()
-//            assertThat(state.movieSelectedGenreId).isEqualTo(genreId)
-//        }
-//    }
-//
-//    @Test
-//    fun `onTvShowGenreClick triggers fetchTvShows`() = runTest {
-//        val genreId = 20
-//        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns listOf(
-//            TvSeries(
-//                1, "Show", "",
-//                LocalDate(1900, 10, 10), emptyList(), 0f, "", 0
-//            )
-//        )
-//
-//        viewModel.onTvShowGenreClick(genreId)
-//
-//        viewModel.state.test {
-//            awaitItem()
-//            val state = awaitItem()
-//            assertThat(state.tvShowSelectedGenreId).isEqualTo(genreId)
-//        }
-//    }
-//
-//    @Test
-//    fun `onBackClick emits NavigateBack effect`() = runTest {
-//        viewModel.onBackClick()
-//
-//        viewModel.effect.test {
-//            val effect = awaitItem()
-//            assertThat(effect).isEqualTo(MediaTabScreenEffect.NavigateBack)
-//        }
-//    }
-//
-//    @Test
-//    fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
-//        val id = 100
-//        val type = MediaType.MOVIE
-//
-//        viewModel.onMediaClick(id, type)
-//
-//        viewModel.effect.test {
-//            val effect = awaitItem()
-//            assertThat(effect).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(id, type))
-//        }
-//    }
-//
-//    @Test
-//    fun `onSaveIconClick shows bottom sheet`() = runTest {
-//        val media = MediaItem(
-//            1, "Title",
-//            imageUrl = "",
-//            rating = "",
-//            mediaType = MediaType.MOVIE
-//        )
-//
-//        viewModel.onSaveIconClick(media)
-//
-//        viewModel.state.test {
-//            val state = awaitItem()
-//            assertThat(state.showBottomSheet).isTrue()
-//        }
-//    }
-//
-//    @Test
-//    fun `onErrorLoadingData sets noInternetConnection for NoNetworkException`() = runTest {
-//        viewModel.onErrorLoadingData(NoNetworkException())
-//
-//        viewModel.state.test {
-//            val state = awaitItem()
-//            assertThat(state.isNoInternetConnection).isTrue()
-//            assertThat(state.isLoading).isFalse()
-//        }
-//    }
-//}
+package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+
+import androidx.paging.testing.asSnapshot
+import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.mapper.toState
+import entity.Genre
+import entity.Movie
+import entity.TvSeries
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
+
+@OptIn(ExperimentalCoroutinesApi::class)
+class TopRatedMediaScreenViewModelTest {
+
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var manageMovieUseCase: ManageMovieUseCase
+    private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
+    private lateinit var viewModel: TopRatedMediaScreenViewModel
+
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        manageMovieUseCase = mockk(relaxed = true)
+        manageTvSeriesUseCase = mockk(relaxed = true)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `init should fetch movie genres and update state`() = runTest {
+        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.movieGenres).isEqualTo(genres.map { it.toState() })
+    }
+
+    @Test
+    fun `init should fetch tv show genres and update state`() = runTest {
+        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns tvGenres
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.tvShowGenres).isEqualTo(tvGenres.map { it.toState() })
+    }
+
+    @Test
+    fun `fetchMovies should update media list with movies`() = runTest {
+        coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns movies
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.movieList
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(movies.size)).isEqualTo(movies.map { it.toState() })
+    }
+
+    @Test
+    fun `fetchTvShows should update media list with tv shows`() = runTest {
+        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns tvShows
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.tvShowList
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(tvShows.size)).isEqualTo(tvShows.map { it.toState() })
+    }
+
+    @Test
+    fun `onMovieGenreClick should fetch movies for selected genre`() = runTest {
+        val genreId = 2
+        coEvery { manageMovieUseCase.getTopRatedMovies(any(), genreId) } returns movies
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onMovieGenreClick(genreId)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.movieList
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(movies.size)).isEqualTo(movies.map { it.toState() })
+    }
+
+    @Test
+    fun `onTvShowGenreClick should fetch tv shows for selected genre`() = runTest {
+        val genreId = 3
+        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), genreId) } returns tvShows
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onTvShowGenreClick(genreId)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.tvShowList
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(tvShows.size)).isEqualTo(tvShows.map { it.toState() })
+    }
+
+    @Test
+    fun `fetchMovieGenres should set error message on failure`() = runTest {
+        val errorMsg = "error"
+        coEvery { manageMovieUseCase.getMovieGenres() } throws RuntimeException(errorMsg)
+
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.error).isEqualTo(errorMsg)
+    }
+
+    @Test
+    fun `onSaveIconClick should show bottom sheet`() = runTest {
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onSaveIconClick(media)
+
+        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onMediaClick should emit NavigateToMediaDetails`() = runTest {
+        val id = 10
+        val type = MediaType.MOVIE
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+
+        viewModel.onMediaClick(id, type)
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(id, type))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onBackClick should emit NavigateBack`() = runTest {
+        viewModel =
+            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+
+        viewModel.onBackClick()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateBack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private companion object {
+        val genres = listOf(Genre(1, "Action"), Genre(2, "Drama"))
+        val tvGenres = listOf(Genre(3, "Sci-Fi"))
+        val movies = listOf(
+            Movie(1, "Movie 1", "", emptyList(), 8f, 120, LocalDate(2020, 1, 1), "", ""),
+            Movie(2, "Movie 2", "", emptyList(), 9f, 110, LocalDate(2019, 1, 1), "", "")
+        )
+        val tvShows = listOf(
+            TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3),
+            TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2)
+        )
+        val media = MediaItem(1, "Media", "", mediaType = MediaType.MOVIE)
+    }
+}
