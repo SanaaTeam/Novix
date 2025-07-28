@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.novix.android.library)
+    alias(libs.plugins.hilt.android)
 }
 android {
     namespace = "com.sanaa.data.localdatasource.vod"
@@ -21,4 +22,7 @@ dependencies {
 
     // WorkManager for background cache cleanup
     implementation(libs.androidx.work.runtime.ktx)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

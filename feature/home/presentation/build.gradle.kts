@@ -34,8 +34,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -52,6 +50,5 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.lifecycle.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
 }

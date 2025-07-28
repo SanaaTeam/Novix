@@ -86,9 +86,7 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(platform(libs.koin.bom))
     implementation(libs.bundles.ktor)
-    implementation(libs.bundles.koin)
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
@@ -100,6 +98,5 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.lifecycle.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
 }
