@@ -76,6 +76,11 @@ fun SeriesHeaderSection(
                         }
                     }
                 }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -85,6 +90,7 @@ fun SeriesHeaderSection(
                         IconWithText(
                             iconRes = R.drawable.icon_star,
                             text = rating,
+                            textColor = Theme.colors.title,
                             contentDescription = rating,
                             tint = Theme.colors.statusColors.yellowAccent
                         )
@@ -107,7 +113,7 @@ fun SeriesHeaderSection(
                         contentDescription = season,
                         tint = Theme.colors.hint
                     )
-                }
+                }}
                 if (showReviews) {
                     NovixTextButton(
                         text = stringResource(R.string.view_reviews),
