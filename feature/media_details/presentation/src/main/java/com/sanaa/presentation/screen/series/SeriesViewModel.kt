@@ -7,7 +7,7 @@ import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
 

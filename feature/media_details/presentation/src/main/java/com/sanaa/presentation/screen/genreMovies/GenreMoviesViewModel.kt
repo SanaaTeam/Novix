@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 
