@@ -10,8 +10,8 @@ import repository.TvSeriesRepository
 class ManageTvSeriesUseCase(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
-    suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeries> =
-        tvSeriesRepo.getTvSeriesByGenre(genreId)
+    suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =
+        tvSeriesRepo.getTvSeriesByGenre(page, genreId)
 
     suspend fun getTvSeriesDetails(seriesId: Int): TvSeries =
         tvSeriesRepo.getTvSeriesDetails(seriesId)

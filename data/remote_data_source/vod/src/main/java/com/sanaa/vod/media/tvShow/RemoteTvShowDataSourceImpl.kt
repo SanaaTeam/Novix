@@ -32,8 +32,8 @@ class RemoteTvShowDataSourceImpl(
         apiService.fetchTvShowsImages(id).backdrops
     }
 
-    override suspend fun getTvShowsByGenre(genreId: Int): List<TvShowDto> = wrapApiCall {
-        apiService.fetchTvShowsByCategory(genreId).results
+    override suspend fun getTvShowsByGenre(page: Int, genreId: Int): List<TvShowDto> = wrapApiCall {
+        apiService.fetchTvShowsByCategory(page, genreId).results
     }
 
     override suspend fun getReviewsByTvShowId(id: Int): List<ReviewDto> = wrapApiCall {
