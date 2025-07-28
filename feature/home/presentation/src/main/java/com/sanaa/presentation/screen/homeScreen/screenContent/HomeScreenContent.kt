@@ -1,39 +1,31 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.MediaListSectionContent
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
+import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
+import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
+import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
 import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
-import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
@@ -41,133 +33,120 @@ fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
 ) {
-    val screenHeight = LocalConfiguration.current.screenHeightDp
+
+    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     NovixScaffold(
+        backgroundShapes = {},
         topBar = {
             HomeTopBar(
-                modifier = Modifier.padding(top = 12.dp, start = 16.dp, bottom = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }) {
-        val scrollState = rememberScrollState()
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-            verticalArrangement = Arrangement.spacedBy(24.dp)
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxSize(),
+            columns = GridCells.Adaptive(minSize = 140.dp),
+            contentPadding = PaddingValues(
+                start = 16.dp, end = 16.dp, bottom = 12.dp
+            ),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            PopularMediaSection(mediaItems = state.popularMedia, onMediaClick = {
-                interactionListener.onMediaClick(it.id, it.mediaType)
-            }, onSaveIconClicked = {
-                interactionListener.onSaveIconClick(it)
-            })
-            WhatToWatchSection(onMoviesClicked = {
-                interactionListener.onMoviesCardClicked()
-            }, onTvShowsClicked = {
-                interactionListener.onTvShowsCardClicked()
-            }, onPeopleClicked = {
-                interactionListener.onPeopleCardClicked()
-            })
-            MixedMediaSection(
-                headerLabel = stringResource(R.string.top_rated),
-                mediaItems = state.topRatingMedia,
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id, it.mediaType)
-                },
-                onSaveIconClicked = {
-                    interactionListener.onSaveIconClick(it)
-                },
-                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
-            if (state.continueWatchingMedia.isNotEmpty()) {
-                MixedMediaSection(
-                    headerLabel = stringResource(R.string.continue_watching),
-                    mediaItems = state.continueWatchingMedia,
-                    onMediaClick = {
-                        interactionListener.onMediaClick(it.id, it.mediaType)
-                    },
-                    onSaveIconClicked = {
-                        interactionListener.onSaveIconClick(it)
-                    })
+            if (state.isLoading)
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    PopularMediaSectionPlaceholder(
+                        modifier = Modifier.fillWidthOfParent(16.dp)
+                    )
+                }
+            else
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    PopularMediaSection(
+                        mediaItems = state.popularMedia, onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        }, onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        }, modifier = Modifier.fillWidthOfParent(16.dp)
+                    )
+                }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                WhatToWatchSection(
+                    onMoviesClicked = {
+                        interactionListener.onMoviesCardClicked()
+                    }, onTvShowsClicked = {
+                        interactionListener.onTvShowsCardClicked()
+                    }, onPeopleClicked = {
+                        interactionListener.onPeopleCardClicked()
+                    }, modifier = Modifier
+                        .fillWidthOfParent(16.dp)
+                        .padding(top = 8.dp),
+                    isLoading = state.isLoading
+                )
             }
-            NovixSectionHeader(
-                title = stringResource(R.string.up_upcoming),
-            )
-            MediaListSectionContent(
-                genres = state.movieGenres,
-                mediaList = state.upcomingMovies,
-                selectedGenreId = state.movieSelectedGenreId,
-                onGenreClick = {
-                    interactionListener.onMovieGenreClick(it)
-                },
-                onMediaClick = {
-                    interactionListener.onMediaClick(it.id, it.mediaType)
-                },
-                onSaveIconClick = {
-                    interactionListener.onSaveIconClick(it)
-                },
-                isScrollEnabled = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(screenHeight.dp)
+            if (state.isLoading)
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MediaSliderSectionPlaceholder(
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp
+                            ),
+                    )
+                }
+            else {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MixedMediaSection(
+                        headerLabel = stringResource(R.string.top_rated),
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp
+                            ),
+                        mediaItems = state.topRatingMedia,
+                        onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        },
+                        onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        },
+                        onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+                }
+            }
+            if (state.isLoading) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    MediaSliderSectionPlaceholder(
+                        modifier = Modifier
+                            .fillWidthOfParent(16.dp)
+                            .padding(
+                                top = 24.dp, bottom = 24.dp
+                            ),
+                    )
+                }
+            } else {
+                if (state.continueWatchingMedia.isNotEmpty()) item(span = { GridItemSpan(maxLineSpan) }) {
+                    MixedMediaSection(
+                        headerLabel = stringResource(R.string.continue_watching),
+                        mediaItems = state.continueWatchingMedia,
+                        onMediaClick = {
+                            interactionListener.onMediaClick(it.id, it.mediaType)
+                        },
+                        onSaveIconClicked = {
+                            interactionListener.onSaveIconClick(it)
+                        },
+                        modifier = Modifier.fillWidthOfParent(16.dp),
+                    )
+                }
+            }
+            upcomingSection(
+                upcomingMovies = upcomingMovies,
+                movieGenres = state.movieGenres,
+                movieSelectedGenreId = state.movieSelectedGenreId,
+                onGenreClick = interactionListener::onMovieGenreClick,
+                onSaveIconClick = interactionListener::onSaveIconClick,
+                onMovieClick = interactionListener::onMediaClick,
             )
         }
-
     }
 
-}
-
-@PreviewLightDark
-@Composable
-fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
-    val mediaList = listOf(
-        MediaItem(
-            id = 1,
-            title = "Movie 1",
-            imageUrl = "https://example.com/image1.jpg",
-            mediaType = MediaType.MOVIE,
-        ), MediaItem(
-            id = 2,
-            title = "Movie 2",
-            imageUrl = "https://example.com/image2.jpg",
-            mediaType = MediaType.MOVIE,
-        ), MediaItem(
-            id = 3,
-            title = "Movie 3",
-            imageUrl = "https://example.com/image3.jpg",
-            mediaType = MediaType.MOVIE,
-        )
+    RequestToLoginBottomSheet(
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet
     )
-    var state by remember {
-        mutableStateOf(
-            HomeScreenUiState(
-                popularMedia = mediaList,
-                topRatingMedia = mediaList,
-                continueWatchingMedia = mediaList,
-                upcomingMovies = mediaList,
-                movieGenres = listOf(
-                    GenreUiState(id = 1, name = "Action"),
-                    GenreUiState(id = 2, name = "Drama"),
-                    GenreUiState(id = 3, name = "Crime"),
-                ),
-                movieSelectedGenreId = null,
-            )
-        )
-    }
-    NovixTheme(isSystemInDarkTheme()) {
-        HomeScreenContent(
-            state = state,
-            interactionListener = object : HomeScreenInteractionListener {
-                override fun onMoviesCardClicked() {}
-                override fun onTvShowsCardClicked() {}
-                override fun onPeopleCardClicked() {}
-                override fun onShowAllTopRatingClicked() {}
-                override fun onShowAllContinueWatchingClicked() {}
-                override fun onMovieGenreClick(id: Int?) {
-                    state = state.copy(movieSelectedGenreId = id)
-                }
-
-                override fun onMediaClick(id: Int, mediaType: MediaType) {}
-                override fun onSaveIconClick(media: MediaItem) {}
-            },
-        )
-    }
 }

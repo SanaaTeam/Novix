@@ -1,11 +1,16 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
+import entity.Movie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -26,6 +31,7 @@ class HomeScreenViewModel(
         fetchMovieGenres()
         fetchUpcomingMovies()
     }
+
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -36,7 +42,7 @@ class HomeScreenViewModel(
                     .getPopularSeries(5).map { it.toState() }
                 (popularMovies + popularTvSeries).shuffled()
             },
-            onSuccess = {popularMediaList->
+            onSuccess = { popularMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -45,22 +51,23 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
-    private fun fetchTopRatedMediaData(){
+
+    private fun fetchTopRatedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(10,null).map { it.toState() }
+                    .getTopRatedMovies(10, null).map { it.toState() }
                 val topRatedTvSeries = manageTvSeriesUseCase
-                    .getTopRatedTvSeries(10,null).map { it.toState() }
+                    .getTopRatedTvSeries(10, null).map { it.toState() }
                 (topRatedMovies + topRatedTvSeries).shuffled()
             },
-            onSuccess = { topRatedMediaList->
+            onSuccess = { topRatedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -69,22 +76,23 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
-    private fun fetchWatchedMediaData(){
+
+    private fun fetchWatchedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 val watchedMovies = manageHistoryUseCase
-                    .getWatchedMoviesHistory(10,null).map { it.toState() }
+                    .getWatchedMoviesHistory(10, null).map { it.toState() }
                 val watchedTvSeries = manageHistoryUseCase
-                    .getWatchedSeriesHistory(10,null).map { it.toState() }
+                    .getWatchedSeriesHistory(10, null).map { it.toState() }
                 (watchedMovies + watchedTvSeries).shuffled()
             },
-            onSuccess = { watchedMediaList->
+            onSuccess = { watchedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
@@ -93,11 +101,12 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = {e->
+            onError = { e ->
                 updateState { it.copy(isLoading = false, errorMessage = e.message) }
             },
         )
     }
+
     private fun fetchMovieGenres() {
         tryToExecute(
             callee = {
@@ -118,26 +127,26 @@ class HomeScreenViewModel(
             }
         )
     }
-    private fun fetchUpcomingMovies(genreId: Int? = null) {
+
+    private fun fetchUpcomingMovies(
+        genreId: Int? = null
+    ) {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true, movieSelectedGenreId = genreId)
-                }
-                manageMovieUseCase.getTrendingMovies(1, state.value.movieSelectedGenreId)
-                    .map { it.toState() }
-            },
+            callee = { loadUpcomingMovies(genreId) },
             onSuccess = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoading = false,
+                        isLoadingUpcoming = false,
                         upcomingMovies = mediaList
                     )
                 }
             },
             onError = { exception ->
                 updateState {
-                    it.copy(errorMessage = exception.message, isLoading = false)
+                    it.copy(
+                        errorMessage = exception.message,
+                        isLoadingUpcoming = false
+                    )
                 }
             }
         )
@@ -166,6 +175,7 @@ class HomeScreenViewModel(
 
     override fun onMovieGenreClick(id: Int?) {
         if (id != state.value.movieSelectedGenreId) {
+            updateState { it.copy(movieSelectedGenreId = id) }
             fetchUpcomingMovies(id)
         }
     }
@@ -175,6 +185,35 @@ class HomeScreenViewModel(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        TODO("Not yet implemented")
+        updateState { it.copy(showBottomSheet = true) }
+    }
+
+    override fun onDismissBottomSheet() {
+        updateState { it.copy(showBottomSheet = false) }
+    }
+
+
+    private fun loadUpcomingMovies(
+        genreId: Int?
+    ): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = {
+                createUpcomingMoviesPagingDataSource(
+                    genreId = genreId
+                )
+            },
+            mapper = Movie::toState
+        )
+    }
+
+    private fun createUpcomingMoviesPagingDataSource(
+        genreId: Int?
+    ): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome { page ->
+            manageMovieUseCase.getUpcomingMovies(
+                page = page,
+                genreId = genreId
+            )
+        }
     }
 }
