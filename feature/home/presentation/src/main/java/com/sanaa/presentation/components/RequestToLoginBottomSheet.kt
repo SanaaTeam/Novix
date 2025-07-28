@@ -1,29 +1,24 @@
-package com.sanaa.presentation.shared_component
+package com.sanaa.presentation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.feature.home.presentation.R
 
 @Composable
 fun RequestToLoginBottomSheet(
@@ -55,7 +50,7 @@ fun RequestToLoginBottomSheet(
                     screenTitle = title,
                     rightContent = {
                         TopBarClickableIcon(
-                            icon = painterResource(id = R.drawable.icon_cancel),
+                            icon = painterResource(id = com.sanaa.designsystem.R.drawable.icon_cancel),
                             onClick = onDismiss
                         )
                     }
@@ -66,10 +61,9 @@ fun RequestToLoginBottomSheet(
                     contentDescription = "pleas login light",
                     modifier = Modifier.height(100.dp),
                 )
-                Text(
+                BasicText(
                     text = text,
-                    style = Theme.textStyle.body.small,
-                    color = Theme.colors.body,
+                    style = Theme.textStyle.body.small.copy(color = Theme.colors.body),
                     modifier = Modifier.padding(bottom = 24.dp, top = 12.dp)
                 )
                 NovixOutlinedButton(
@@ -82,23 +76,4 @@ fun RequestToLoginBottomSheet(
             }
         }
     )
-}
-
-
-@Preview(showBackground = true)
-@Composable
-private fun RequestToLoginBottomSheetPreview() {
-    val showSheet = remember { mutableStateOf(false) }
-    Box(modifier = Modifier.fillMaxSize()) {
-        androidx.compose.material3.Button(onClick = { showSheet.value = true }) {
-            Text(text = "Show Bottom Sheet")
-        }
-
-        if (showSheet.value) {
-            RequestToLoginBottomSheet(
-                isVisible = showSheet.value,
-                onDismiss = { showSheet.value = false }
-            )
-        }
-    }
 }

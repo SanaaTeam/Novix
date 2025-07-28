@@ -1,7 +1,15 @@
 package com.sanaa.presentation.screen.celebritiesScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.state.PersonUiState
 import com.sanaa.presentation.state.toUiState
+import entity.Actor
+import exceptions.NoNetworkException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageActorUseCase
 
 class CelebritiesViewModel(
@@ -11,7 +19,7 @@ class CelebritiesViewModel(
 ), CelebritiesScreenInteractionListener {
 
     init {
-        fetchActors()
+        loadActors()
     }
 
     override fun onBackClick() {
@@ -23,23 +31,47 @@ class CelebritiesViewModel(
     }
 
     override fun onRetryClick() {
-        fetchActors()
+        loadActors()
     }
 
-    private fun fetchActors() {
-        tryToExecute(callee = {
-            updateState { it.copy(isLoading = true, isNoInternetConnection = false) }
-            getActorsUseCase.getTrendingActors(1)
-        }, onSuccess = { actors ->
-            updateState {
-                it.copy(
-                    celebrities = actors.map { it.toUiState() }, isLoading = false
-                )
-            }
-        }
-            , onError = {
-                updateState { it.copy(isNoInternetConnection = true, isLoading = false) }
-            }
+
+    private fun loadActors() {
+        tryToCollect(
+            callee = { loadActorsOperation() },
+            onCollect = ::onActorsLoaded,
+            onError = ::onDataLoadError
         )
+    }
+
+    private fun loadActorsOperation(): Flow<PagingData<PersonUiState>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createActorsPagingSource() },
+            mapper = Actor::toUiState
+        )
+    }
+
+    private fun onActorsLoaded(pagingData: PagingData<PersonUiState>) {
+        updateState { it.copy(celebrities = flowOf(pagingData)) }
+    }
+
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = true
+            )
+        }
+        else updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = false
+            )
+        }
+    }
+
+    private fun createActorsPagingSource(): PagingSource<Int, Actor> {
+        return BasePagingSourceForHome { page ->
+            getActorsUseCase.getTrendingActors(page = page)
+        }
     }
 }

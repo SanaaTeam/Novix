@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -29,65 +31,6 @@ import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
-
-val demoMediaList = listOf(
-    MediaItem(
-        id = 1,
-        title = "media 1",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.MOVIE
-    ),
-    MediaItem(
-        id = 2,
-        title = "media 2",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    ),
-    MediaItem(
-        id = 3,
-        title = "media 3",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.MOVIE
-    ),
-    MediaItem(
-        id = 4,
-        title = "media 4",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    ),
-    MediaItem(
-        id = 5,
-        title = "media 5",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    ),
-    MediaItem(
-        id = 6,
-        title = "media 6",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    ),
-    MediaItem(
-        id = 7,
-        title = "media 7",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    ),
-    MediaItem(
-        id = 8,
-        title = "media 8",
-        imageUrl = "",
-        rating = 9.9f,
-        mediaType = MediaType.TV_SHOW
-    )
-)
 
 @Composable
 fun MixedMediaSection(
@@ -111,42 +54,36 @@ fun MixedMediaSection(
                 )
             }
         )
-
-//        FocusedCarousel(
-//            mediaItems = mediaItems
-//        )
-
-        CarouselSlider(
-            itemsCount = mediaItems.size,
-            preferredItemWidth = 158.dp,
-            itemSpacing = 8.dp,
-            contentPadding = PaddingValues(start = 8.dp, end = 8.dp),
-            maxSmallItemWidth = 74.dp,
-            minSmallItemWidth = 74.dp
-        ) { page, isFocused ->
-            val width = if (isFocused) 158.dp else 74.dp
-            Box(
-                modifier = Modifier
-                    .height(210.dp)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .wrapContentHeight()
+                .clip(RoundedCornerShape(12.dp))
+                .fillMaxWidth()
+        ) {
+            CarouselSlider(
+                items = mediaItems,
+                preferredItemWidth = 158.dp,
+                itemSpacing = 8.dp,
+                contentPadding = PaddingValues(0.dp),
+                maxSmallItemWidth = 74.dp,
+                minSmallItemWidth = 74.dp,
+            ) { item ->
                 MediaPosterCard(
-                    width = 158.dp,
                     height = 210.dp,
                     topLeftContent = {
                         SaveIconChip(
                             onClick = {
-                                onSaveIconClicked(mediaItems[page])
+                                onSaveIconClicked(item)
                             }
                         )
                     },
                     onCardClick = {
-                        onMediaClick(mediaItems[page])
+                        onMediaClick(item)
                     },
                     posterImage = {
                         RemoteBlurredHaramImageViewer(
-                            imageUrl = mediaItems[page].imageUrl.orEmpty(),
+                            imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
                             blurRadius = 150,
                             haramThreshold = 0.2f,
@@ -157,7 +94,7 @@ fun MixedMediaSection(
                             errorContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
-                            contentDescription = mediaItems[page].title,
+                            contentDescription = item.title,
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
@@ -194,4 +131,35 @@ fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
     }
 }
 
+
+val demoMediaList = listOf(
+    MediaItem(
+        id = 1,
+        title = "media 1",
+        imageUrl = "",
+        rating = " 9.9",
+        mediaType = MediaType.MOVIE
+    ),
+    MediaItem(
+        id = 2,
+        title = "media 2",
+        imageUrl = "",
+        rating = " 9.9",
+        mediaType = MediaType.TV_SHOW
+    ),
+    MediaItem(
+        id = 3,
+        title = "media 3",
+        imageUrl = "",
+        rating = " 9.9",
+        mediaType = MediaType.MOVIE
+    ),
+    MediaItem(
+        id = 4,
+        title = "media 4",
+        imageUrl = "",
+        rating = " 9.9",
+        mediaType = MediaType.TV_SHOW
+    ),
+)
 

@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -78,17 +76,10 @@ fun HomeScreen(
     }
 
     NovixTheme(isSystemInDarkTheme()) {
-        AnimatedContent(
-            targetState = state.value.popularMedia.isNotEmpty(),
-            label = "PopularMediaVisibility"
-        ) { hasContent ->
-            if (hasContent) {
-                HomeScreenContent(
-                    state = state.value,
-                    interactionListener = viewModel,
-                    modifier = Modifier
-                )
-            }
-        }
+
+        HomeScreenContent(
+            state = state.value,
+            interactionListener = viewModel,
+        )
     }
 }

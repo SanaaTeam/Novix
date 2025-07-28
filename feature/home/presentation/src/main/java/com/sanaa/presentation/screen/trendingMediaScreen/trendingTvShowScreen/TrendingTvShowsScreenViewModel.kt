@@ -1,51 +1,33 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
+import entity.TvSeries
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageTvSeriesUseCase
 
 class TrendingTvShowsScreenViewModel(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
-    TrendingMediaScreenUiState(ErrorStateContent = "Something went wrong"),
+    TrendingMediaScreenUiState(),
     dispatcher
 ), MediaListScreenInteractionListener {
 
     init {
         fetchGenres()
-        fetchMedia()
-    }
-
-    private fun fetchMedia(genreId: Int? = null) {
-        tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true, selectedGenreId = genreId)
-                }
-                val mediaList =
-                    manageTvSeriesUseCase.getTrendingTvSeries(1, state.value.selectedGenreId)
-                        .map { it.toState() }
-                updateState {
-                    it.copy(mediaList = mediaList)
-                }
-            }, onSuccess = {
-                updateState {
-                    it.copy(isLoading = false)
-                }
-            },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
-        )
+        loadTvShows()
     }
 
     private fun fetchGenres() {
@@ -61,17 +43,16 @@ class TrendingTvShowsScreenViewModel(
                     it.copy(genreList = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
     override fun onGenreClick(id: Int?) {
         if (id != state.value.selectedGenreId) {
-            fetchMedia(id)
+            updateState {
+                it.copy(selectedGenreId = id)
+            }
+            loadTvShows()
         }
     }
 
@@ -91,12 +72,47 @@ class TrendingTvShowsScreenViewModel(
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
     }
 
-    fun onRetryClick() {
-        fetchGenres()
-        fetchMedia()
+    private fun loadTvShows() {
+        tryToCollect(
+            callee = ::loadTvShowsOperation,
+            onCollect = ::onTvShowsLoaded,
+            onError = ::onDataLoadError
+        )
     }
 
-    fun onLoading() {
-        updateState { it.copy(isLoading = true) }
+    private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createTvShowsPagingSource() },
+            mapper = TvSeries::toState
+        )
+    }
+
+    private fun onTvShowsLoaded(pagingData: PagingData<MediaItem>) {
+        updateState { it.copy(mediaList = flowOf(pagingData)) }
+    }
+
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = true
+            )
+        }
+        else updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = false,
+                error = e.message
+            )
+        }
+    }
+
+    private fun createTvShowsPagingSource(): PagingSource<Int, TvSeries> {
+        return BasePagingSourceForHome { page ->
+            manageTvSeriesUseCase.getTrendingTvSeries(
+                page = page,
+                genreId = state.value.selectedGenreId
+            )
+        }
     }
 }

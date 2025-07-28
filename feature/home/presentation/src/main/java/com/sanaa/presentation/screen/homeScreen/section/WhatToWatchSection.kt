@@ -12,13 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,21 +29,34 @@ import com.sanaa.designsystem.design_system.component.section_header.NovixSectio
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.components.shimmerEffect.PlaceholderWithShimmerEffect
 
 @Composable
 fun WhatToWatchSection(
     modifier: Modifier = Modifier,
     onMoviesClicked: () -> Unit,
     onTvShowsClicked: () -> Unit,
-    onPeopleClicked: () -> Unit
+    onPeopleClicked: () -> Unit,
+    isLoading: Boolean = true
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixSectionHeader(title = "")
+        if (isLoading) {
+            PlaceholderWithShimmerEffect(
+                width = 166.dp,
+                height = 30.dp,
+                cornerRadius = 8.dp,
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp),
+                borderColor = Color.Transparent,
+            )
+        } else {
+            NovixSectionHeader(title = stringResource(R.string.what_you_want_to_watch))
+        }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
         ) {
             WantToWatchCard(
@@ -50,18 +64,21 @@ fun WhatToWatchSection(
                 painter = painterResource(R.drawable.popcorns),
                 brush = Theme.colors.moviesCardGradient,
                 onClick = { onMoviesClicked() },
+                modifier = Modifier.weight(1f)
             )
             WantToWatchCard(
                 label = stringResource(R.string.tvshows),
                 painter = painterResource(R.drawable.move_role),
                 brush = Theme.colors.tvShowCardGradient,
                 onClick = { onTvShowsClicked() },
+                modifier = Modifier.weight(1f)
             )
             WantToWatchCard(
                 label = stringResource(R.string.people),
                 painter = painterResource(R.drawable.cenima_board),
                 brush = Theme.colors.peopleCardGradient,
                 onClick = { onPeopleClicked() },
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -70,7 +87,7 @@ fun WhatToWatchSection(
 
 
 @Composable
-fun WantToWatchCard(
+private fun WantToWatchCard(
     modifier: Modifier = Modifier,
     label: String,
     painter: Painter,
@@ -80,20 +97,20 @@ fun WantToWatchCard(
     Box(
         modifier = modifier
             .height(127.dp)
-            .width(104.dp)
+            .fillMaxWidth()
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 12.dp)
+                .clip(
+                    RoundedCornerShape(12.dp)
+                )
                 .background(
                     brush = brush,
-                    shape = RoundedCornerShape(12.dp)
                 )
                 .align(Alignment.BottomCenter)
-                .clickable {
-                    onClick()
-                },
+                .clickable(onClick = onClick)
         ) {
             BasicText(
                 modifier = Modifier
@@ -124,11 +141,7 @@ private fun WhatToWatchSectionPreview(modifier: Modifier = Modifier) {
         Column(
             modifier.fillMaxSize()
         ) {
-            WhatToWatchSection(
-                onMoviesClicked = {},
-                onTvShowsClicked = {},
-                onPeopleClicked = {}
-            )
+            WhatToWatchSection(onMoviesClicked = {}, onTvShowsClicked = {}, onPeopleClicked = {})
         }
     }
 

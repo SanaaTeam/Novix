@@ -38,9 +38,9 @@ fun SearchScreen(
     searchViewModel: SearchViewModel = koinViewModel<SearchViewModel>(),
 ) {
     val uiState by searchViewModel.state.collectAsStateWithLifecycle()
-    val moviesPagingData = searchViewModel.moviesPagingData.collectAsLazyPagingItems()
-    val tvShowsPagingData = searchViewModel.tvShowsPagingData.collectAsLazyPagingItems()
-    val actorsPagingData = searchViewModel.actorsPagingData.collectAsLazyPagingItems()
+    val moviesPagingData = uiState.movies.collectAsLazyPagingItems()
+    val tvShowsPagingData = uiState.tvShows.collectAsLazyPagingItems()
+    val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {

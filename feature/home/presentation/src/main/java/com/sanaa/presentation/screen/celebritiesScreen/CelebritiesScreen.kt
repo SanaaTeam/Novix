@@ -4,8 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,8 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
@@ -27,12 +25,9 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
-import com.sanaa.presentation.state.PersonUiState
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.java.KoinJavaComponent.inject
@@ -77,6 +72,8 @@ fun CelebritiesContent(
     state: CelebritiesScreenUiState,
     interactionListener: CelebritiesScreenInteractionListener,
 ) {
+    val celebrities = state.celebrities.collectAsLazyPagingItems()
+
     NovixScaffold {
         Column(
             modifier = Modifier
@@ -117,7 +114,7 @@ fun CelebritiesContent(
 
                         else -> {
                             PersonList(
-                                celebrities = state.celebrities,
+                                persons = celebrities,
                                 onItemClick = interactionListener::onActorClick
                             )
                         }
@@ -129,43 +126,4 @@ fun CelebritiesContent(
 }
 
 
-@PreviewLightDark
-@Composable
-private fun Preview() {
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        Column(
-            modifier = Modifier
-                .background(Theme.colors.surface)
-                .fillMaxWidth()
-        ) {
-            CelebritiesContent(
-                state = CelebritiesScreenUiState(
-                    isLoading = false, celebrities = listOf(
-                        PersonUiState(
-                            id = 1,
-                            name = "Jennifer Lawrence",
-                            character = null,
-                            imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 2,
-                            name = "Meryl Streep",
-                            character = null,
-                            imageUrl = String()
-                        ),
-                        PersonUiState(
-                            id = 3,
-                            name = "Scarlett Johansson",
-                            character = null,
-                            imageUrl = String()
-                        ),
-                    )
-                ), interactionListener = object : CelebritiesScreenInteractionListener {
-                    override fun onBackClick() {}
-                    override fun onActorClick(actorId: Int) {}
-                    override fun onRetryClick() {}
-                }
-            )
-        }
-    }
-}
+
