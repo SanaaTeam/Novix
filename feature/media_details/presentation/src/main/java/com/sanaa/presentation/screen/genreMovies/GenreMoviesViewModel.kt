@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.genreMovies
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
@@ -54,8 +55,12 @@ class GenreMoviesViewModel(
                 }
             },
             onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
+                if (exception is NoNetworkException) {
+                    updateState { it.copy(noInternetConnection = true, isLoading = false, error = null) }
+                }else {
+                    updateState {
+                        it.copy(error = exception.message, isLoading = false)
+                    }
                 }
             }
         )

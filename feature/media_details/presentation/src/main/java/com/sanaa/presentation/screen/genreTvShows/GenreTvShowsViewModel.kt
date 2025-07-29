@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.genreTvShows
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
@@ -62,8 +63,13 @@ class GenreTvShowsViewModel(
                 it.copy(isLoading = false)
             }
         }, onError = { exception ->
-            updateState {
-                it.copy(error = exception.message, isLoading = false)
+            if (exception is NoNetworkException) {
+                updateState { it.copy(noInternetConnection = true, isLoading = false, error = null) }
+            }
+            else {
+                updateState {
+                    it.copy(error = exception.message, isLoading = false)
+                }
             }
         })
     }

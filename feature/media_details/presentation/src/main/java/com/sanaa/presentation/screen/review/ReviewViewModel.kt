@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.review
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.toReviewUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
@@ -40,7 +41,12 @@ class ReviewViewModel(
                 updateState { it.copy(isLoading = false) }
             },
             onError = { exception ->
-                updateState { it.copy(isLoading = false, error = exception.message) }
+                if (exception is NoNetworkException) {
+                    updateState { it.copy(noInternetConnection = true,isLoading = false, error = null) }
+                }
+                else {
+                    updateState { it.copy(isLoading = false, error = exception.message) }
+                }
             }
         )
     }
