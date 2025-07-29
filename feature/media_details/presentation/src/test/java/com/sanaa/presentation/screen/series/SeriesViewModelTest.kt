@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
@@ -78,7 +79,16 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
+        )
+
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            manageTvSeriesDetails
+        )
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -140,7 +150,17 @@ class SeriesViewModelTest {
     fun `loadSeries handles error correctly when use case fails`() = runTest {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } throws RuntimeException("Test failure")
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher = testDispatcher)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
+        )
+
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            manageTvSeriesDetails
+        )
+
         advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo("Test failure")
@@ -153,7 +173,16 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, testDispatcher)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
+        )
+
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            manageTvSeriesDetails
+        )
 
         viewModel.onSeasonNumberClicked(2)
         advanceUntilIdle()
@@ -172,7 +201,16 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
+        )
+
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            manageTvSeriesDetails
+        )
     }
 
     private companion object {

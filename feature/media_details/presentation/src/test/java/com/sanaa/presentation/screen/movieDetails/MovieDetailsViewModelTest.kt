@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
@@ -50,7 +51,14 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "movieId" to movieId
+            )
+        )
+
+        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails)
+
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -140,7 +148,13 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "movieId" to movieId
+            )
+        )
+
+        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails)
     }
 
     companion object {

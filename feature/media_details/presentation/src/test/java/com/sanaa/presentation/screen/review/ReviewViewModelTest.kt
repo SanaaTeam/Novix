@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.review
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
@@ -72,9 +73,15 @@ class ReviewViewModelTest {
 
         coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId) } throws NoNetworkException()
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to MediaTypeUiModel.SERIES.name
+            )
+        )
+
         viewModel = ReviewViewModel(
-            mediaId = mediaId,
-            mediaType = MediaTypeUiModel.SERIES,
+            savedStateHandle = savedStateHandle,
             manageMovieDetails = manageMovieDetails,
             manageTvSeriesDetails = manageTvSeriesDetails,
             dispatcher = testDispatcher
@@ -92,11 +99,18 @@ class ReviewViewModelTest {
             dummyReviews
         }
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to MediaTypeUiModel.SERIES.name
+            )
+        )
+
         viewModel = ReviewViewModel(
-            mediaId = mediaId,
-            mediaType = MediaTypeUiModel.MOVIE,
+            savedStateHandle = savedStateHandle,
             manageMovieDetails = manageMovieDetails,
-            manageTvSeriesDetails = manageTvSeriesDetails
+            manageTvSeriesDetails = manageTvSeriesDetails,
+            dispatcher = testDispatcher
         )
     }
 
@@ -107,11 +121,18 @@ class ReviewViewModelTest {
             coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId) } returns dummyReviews
         }
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "mediaId" to mediaId,
+                "mediaType" to MediaTypeUiModel.SERIES.name
+            )
+        )
+
         viewModel = ReviewViewModel(
-            mediaId = mediaId,
-            mediaType = type,
+            savedStateHandle = savedStateHandle,
             manageMovieDetails = manageMovieDetails,
-            manageTvSeriesDetails = manageTvSeriesDetails
+            manageTvSeriesDetails = manageTvSeriesDetails,
+            dispatcher = testDispatcher
         )
     }
 

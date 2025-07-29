@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import entity.Genre
 import io.mockk.clearAllMocks
@@ -51,11 +52,18 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to category.id,
+                "categoryName" to category.name
+            )
+        )
+
         viewModel = GenreMoviesViewModel(
-            category.id,
-            category.name,
+            savedStateHandle,
             manageMoviesDetailsUseCase
         )
+
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -68,7 +76,18 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to category.id,
+                "categoryName" to category.name
+            )
+        )
+
+        viewModel = GenreMoviesViewModel(
+            savedStateHandle,
+            manageMoviesDetailsUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -83,7 +102,18 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to category.id,
+                "categoryName" to category.name
+            )
+        )
+
+        viewModel = GenreMoviesViewModel(
+            savedStateHandle,
+            manageMoviesDetailsUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -97,7 +127,18 @@ class MovieCategoriesViewModelTest {
         val category = genreList[0]
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
 
-        viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to category.id,
+                "categoryName" to category.name
+            )
+        )
+
+        viewModel = GenreMoviesViewModel(
+            savedStateHandle,
+            manageMoviesDetailsUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -118,8 +159,17 @@ class MovieCategoriesViewModelTest {
             coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } throws exception
 
 
-            viewModel =
-                GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
+            val savedStateHandle = SavedStateHandle(
+                mapOf(
+                    "categoryId" to category.id,
+                    "categoryName" to category.name
+                )
+            )
+
+            viewModel = GenreMoviesViewModel(
+                savedStateHandle,
+                manageMoviesDetailsUseCase
+            )
 
             viewModel.state.test {
                 var currentState = awaitItem()
