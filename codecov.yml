@@ -74,6 +74,9 @@ ignore:
   - "com/sanaa/presentation/modifier/**",
 
   - "com/sanaa/presentation/screen/login/**"
+  - "**/network/**"
+  - "com/sanaa/identity/dataSoruce/local/dataStore/**"
+  - "**/util/**"
   - "com/sanaa/presentation/screen/login/components/**"
   - "com/sanaa/presentation/screen/login_base/**"
   - "com/sanaa/presentation/screen/welcome/**"
