@@ -58,7 +58,11 @@ fun SeriesHeaderSection(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                FlowRow {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
