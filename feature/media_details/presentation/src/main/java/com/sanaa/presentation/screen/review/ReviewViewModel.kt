@@ -5,10 +5,10 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.toReviewUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
@@ -21,8 +21,10 @@ class ReviewViewModel @Inject constructor(
 ), ReviewScreenInteractionListener {
 
     private val mediaId: Int = checkNotNull(savedStateHandle["mediaId"])
-    private val mediaType: MediaTypeUiModel = checkNotNull(savedStateHandle["mediaType"])
-
+    private val mediaType: MediaTypeUiModel = savedStateHandle
+        .get<String>("mediaType")
+        ?.let { MediaTypeUiModel.valueOf(it.uppercase()) }
+        ?: error("mediaType argument missing")
 
     init {
         fetchReviews(mediaId)
