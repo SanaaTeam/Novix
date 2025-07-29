@@ -57,6 +57,7 @@ import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
+import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
 @Composable
@@ -214,17 +215,24 @@ fun MovieDetailsContent(
                                                 )
                                                 DotSeparator()
                                             }
-                                            state.movieDetails.duration?.let {
+                                            state.movieDetails.duration?.let { duration ->
+                                                val hours = duration.inWholeHours
+                                                val minutes = (duration - hours.hours).inWholeMinutes
+
+                                                val durationText = buildString {
+                                                    if (hours > 0) append("$hours ${stringResource(R.string.hours_label)} ")
+                                                    if (minutes > 0) append("$minutes ${stringResource(R.string.minutes_label)}")
+                                                }.trim()
+
                                                 IconWithText(
                                                     iconRes = R.drawable.icon_duration,
                                                     contentDescription = null,
-                                                    text = stringResource(
-                                                        R.string.m, state.movieDetails.duration
-                                                    ),
+                                                    text = durationText,
                                                     tint = Theme.colors.body
                                                 )
                                                 DotSeparator()
                                             }
+
                                             IconWithText(
                                                 iconRes = R.drawable.icon_calender,
                                                 contentDescription = null,
@@ -265,7 +273,7 @@ fun MovieDetailsContent(
                                     text = stringResource(id = R.string.more_like_this),
                                     color = Theme.colors.title,
                                     style = Theme.textStyle.title.medium,
-                                    modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
+                                    modifier = Modifier.padding(bottom = 12.dp, top = 16.dp)
                                 )
                             }
 
