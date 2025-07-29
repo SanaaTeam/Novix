@@ -17,6 +17,11 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,11 +38,13 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 val boxContainerGradient = Brush.verticalGradient(
-    colors = listOf( Color(0x00000000), Color(0xFF0D0608))
+    colors = listOf(Color(0x00000000), Color(0xFF0D0608))
 )
+
 @Composable
 fun ImageSlider(
     images: List<String>,
@@ -46,17 +53,32 @@ fun ImageSlider(
 ) {
     val pagerState = rememberPagerState(pageCount = { images.size })
 
-    LaunchedEffect(images) {
+    var isUserInteracting by remember { mutableStateOf(false) }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.isScrollInProgress }
+            .distinctUntilChanged()
+            .collect { isScrolling ->
+                isUserInteracting = isScrolling
+            }
+    }
+
+    LaunchedEffect(pagerState, images.size) {
         while (images.size > 1) {
             delay(4000)
-            val nextPage = if (pagerState.currentPage < images.size - 1) {
-                pagerState.currentPage + 1
-            } else 0
-            pagerState.animateScrollToPage(
-                page = nextPage, animationSpec = tween(
-                    durationMillis = 600, easing = FastOutSlowInEasing
+
+            if (!isUserInteracting) {
+                val nextPage = if (pagerState.currentPage < images.size - 1) {
+                    pagerState.currentPage + 1
+                } else 0
+                pagerState.animateScrollToPage(
+                    page = nextPage,
+                    animationSpec = tween(
+                        durationMillis = 600,
+                        easing = FastOutSlowInEasing
+                    )
                 )
-            )
+            }
         }
     }
 
