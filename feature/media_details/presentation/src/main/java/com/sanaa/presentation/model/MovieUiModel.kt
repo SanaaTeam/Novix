@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Movie
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 
 data class MovieUiModel(
     val id: Int = 0,
@@ -25,8 +24,6 @@ data class MovieUiModel(
 fun Movie.toUiModel(
     isBookmarked: Boolean = false,
     trailerUrl: String? = null,
-    hourLabel: String = "h",
-    minuteLabel: String = "m"
 ): MovieUiModel {
     return MovieUiModel(
         id = id,
