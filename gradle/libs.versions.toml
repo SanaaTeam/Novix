@@ -4,6 +4,7 @@
 compileSdk = "35"
 converterGson = "3.0.0"
 gson = "2.13.1"
+kotlinxSerializationJson = "1.6.0"
 loggingInterceptor = "4.10.0"
 minSdk = "26"
 okhttp = "4.12.0"
@@ -97,6 +98,7 @@ androidx-material3-window-size-class1 = { module = "androidx.compose.material3:m
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 # Compose Related

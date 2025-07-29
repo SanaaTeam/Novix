@@ -1,5 +1,6 @@
 package com.sanaa.novix.di
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.novix.BuildConfig
 import com.sanaa.vod.network.interceptor.APIKeyInterceptor
@@ -15,11 +16,11 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 val networkModule = module {
     single {
@@ -55,23 +56,18 @@ val networkModule = module {
             })
             .build()
     }
-    //works with login
     single<Retrofit> {
+        val json = Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
+
+        val contentType = "application/json; charset=UTF-8".toMediaType()
+
         Retrofit.Builder()
             .baseUrl(BuildConfig.TMDB_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(json.asConverterFactory(contentType))
             .client(get())
             .build()
     }
-    //works with data
-    //single<Retrofit> {
-    //        val contentType = "application/json".toMediaType()
-    //        val json = get<Json>()
-    //
-    //        Retrofit.Builder()
-    //            .baseUrl(BuildConfig.TMDB_URL)
-    //            .addConverterFactory(json.asConverterFactory(contentType))
-    //            .client(get())
-    //            .build()
-    //    }
 }

@@ -13,7 +13,7 @@ data class TvShowDto(
     @SerialName("vote_average") val voteAverage: Float = 0f,
     @SerialName("number_of_seasons") val seasonsCount: Int = 0,
     @SerialName("genres") val genres: List<GenreDto> = emptyList(),
-    @SerialName("first_air_date") val firstAirDate: String = "",
+    @SerialName("first_air_date") val firstAirDate: String? = null,
     @SerialName("genre_ids") val genresId: List<Int>? = null,
     @SerialName("character") val character: String? = null,
     @SerialName("credit_id") val creditId: String? = null,

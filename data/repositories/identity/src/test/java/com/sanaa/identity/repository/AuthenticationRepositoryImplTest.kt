@@ -153,9 +153,9 @@ class AuthenticationRepositoryImplTest {
     ): CreateRequestTokenResponse {
         return CreateRequestTokenResponse(
             success = isSuccess,
-            status_code = statusCode,
-            expires_at = expiresAt,
-            request_token = requestToken
+            statusCode = statusCode,
+            expiresAt = expiresAt,
+            requestToken = requestToken
         )
     }
 

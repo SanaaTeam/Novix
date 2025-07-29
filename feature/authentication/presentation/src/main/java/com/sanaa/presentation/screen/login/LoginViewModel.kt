@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.login
 
+import android.util.Log
 import com.sanaa.presentation.screen.login_base.BaseViewModel
 import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
@@ -58,8 +59,12 @@ class LoginViewModel(
             val updated = prev.copy(isLoading = false)
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
-
+        Log.d(
+            "TAG",
+            "onDataLoadError: ${throwable}"
+        )
         val message = when (throwable) {
+
             is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
             is NoInternetConnectionException -> stringProvider.noInternetConnectionError
             else -> stringProvider.somethingWentWrongError
