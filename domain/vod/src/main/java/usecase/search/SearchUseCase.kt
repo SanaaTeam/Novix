@@ -6,8 +6,9 @@ import entity.TvSeries
 import repository.HistoryRepository
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
+import javax.inject.Inject
 
-class SearchUseCase(
+class SearchUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: HistoryRepository,
 ) {

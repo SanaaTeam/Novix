@@ -4,8 +4,9 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import repository.ActorRepository
+import javax.inject.Inject
 
-class ManageActorUseCase(
+class ManageActorUseCase @Inject constructor(
     private val actorRepo: ActorRepository
 ) {
     suspend fun getActorDetails(id: Int): Actor =
