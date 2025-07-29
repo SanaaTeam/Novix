@@ -7,5 +7,6 @@ data class ReviewScreenUiState(
     val isLoading: Boolean = false,
     val reviews: List<ReviewUiModel> = emptyList(),
     val error: String? = null,
+    val noInternetConnection: Boolean = false
 )
 

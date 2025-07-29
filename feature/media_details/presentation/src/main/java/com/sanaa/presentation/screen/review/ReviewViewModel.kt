@@ -29,6 +29,10 @@ class ReviewViewModel(
         emitEffect(ReviewScreenEffects.NavigateBack)
     }
 
+    override fun onRetryClicked() {
+        updateState { it.copy(error = null,noInternetConnection = false, isLoading = true) }
+        fetchReviews(mediaId)
+    }
     private fun fetchReviews(id: Int) {
         tryToExecute(
             callee = { loadReviews(id) },
