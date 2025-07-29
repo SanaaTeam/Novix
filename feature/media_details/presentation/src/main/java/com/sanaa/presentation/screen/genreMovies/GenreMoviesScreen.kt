@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -35,13 +35,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -90,7 +90,7 @@ fun GenreMoviesScreenContent(
     state: GenreMoviesScreenUiState,
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
-
+    val pagedMovies = state.movies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
@@ -129,9 +129,13 @@ fun GenreMoviesScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
-                                state.movies,
-                                key = { item -> item.id }
-                            ) { movie ->
+                                count = pagedMovies.itemCount,
+                                key = { index ->
+                                    val movie = pagedMovies[index]
+                                    "${index}-${movie?.id}"
+                                }
+                            ) { index ->
+                                val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredHaramImageViewer(

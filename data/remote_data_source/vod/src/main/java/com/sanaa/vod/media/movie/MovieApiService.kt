@@ -26,27 +26,33 @@ interface MovieApiService {
 
     @GET("movie/{movie_id}/similar")
     @Headers("Ignore-Language: true")
-    suspend fun fetchSimilarMoviesByMovieId(@Path("movie_id") id: Int): MovieApiResponse<MovieDto>
+    suspend fun fetchSimilarMoviesByMovieId(
+        @Path("movie_id") id: Int,
+        @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
 
     @GET("movie/{movie_id}/reviews")
-    suspend fun fetchReviewsByMovieId(@Path("movie_id") id: Int): MovieApiResponse<ReviewDto>
+    suspend fun fetchReviewsByMovieId(
+        @Path("movie_id") id: Int,
+        @Query("page") page: Int
+    ): MovieApiResponse<ReviewDto>
 
     @GET("discover/movie")
     @Headers("Ignore-Language: true")
-    suspend fun fetchMoviesByCategory(@Query("with_genres") category: Int): MovieApiResponse<MovieDto>
+    suspend fun fetchMoviesByCategory(
+        @Query("with_genres") category: Int, @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
 
     @GET("movie/{movie_id}/videos")
     @Headers("Ignore-Language: true")
     suspend fun fetchMovieTrailerUrl(@Path("movie_id") id: Int): MovieApiResponse<VideoDto>
 
     @GET("movie/popular")
-    @Headers("Ignore-Language: true")
     suspend fun getPopularMovies(
         @Query("page") page: Int
     ): MovieApiResponse<MovieDto>
 
     @GET("discover/movie")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTrendingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -57,7 +63,6 @@ interface MovieApiService {
     ): MovieApiResponse<MovieDto>
 
     @GET("discover/movie")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTopRatingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -79,7 +84,6 @@ interface MovieApiService {
     ): MovieApiResponse<MovieDto>
 
     @GET("genre/movie/list")
-    @Headers("Ignore-Language: true")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
 
 }

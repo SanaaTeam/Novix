@@ -24,7 +24,6 @@ interface ActorApiService {
     suspend fun fetchActorTvShows(@Path("actor_id") id: Int): ActorCastCreditsResponse
 
     @GET("trending/person/day")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTrendingPeople(@Query("page") page: Int): PaginatedResponse<ActorDto>
 
 }

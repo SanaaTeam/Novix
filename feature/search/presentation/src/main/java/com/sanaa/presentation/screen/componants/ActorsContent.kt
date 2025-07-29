@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import coil.compose.rememberAsyncImagePainter
 import com.sanaa.presentation.screen.componants.cards.ActorCard
 import com.sanaa.presentation.screen.state.ActorUiModel
 
@@ -31,10 +30,9 @@ fun ActorsContent(
             actors[index]?.let { actor ->
                 ActorCard(
                     actorName = actor.name,
-                    actorImage = rememberAsyncImagePainter(actor.imageUrl),
+                    imageUrl = actor.imageUrl,
                     playedCharacter = null,
                     onCardClick = { onActorClick(actor) }
-
                 )
             }
         }

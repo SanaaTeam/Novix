@@ -59,31 +59,31 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchSimilarMoviesByMovieId() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchSimilarMoviesByMovieId(1) } returns MovieApiResponse<MovieDto>(
+        coEvery { apiService.fetchSimilarMoviesByMovieId(1,1) } returns MovieApiResponse<MovieDto>(
             results = listOf(dummyMovie)
         )
-        val dto = dataSource.fetchSimilarMoviesByMovieId(1)
+        val dto = dataSource.fetchSimilarMoviesByMovieId(1,1)
 
         assertEquals(1, dto.size)
     }
 
     @Test
     fun `fetchReviewsByMovieId() should return list of reviews dto`() = runTest {
-        coEvery { apiService.fetchReviewsByMovieId(1) } returns MovieApiResponse<ReviewDto>(
+        coEvery { apiService.fetchReviewsByMovieId(1,1) } returns MovieApiResponse<ReviewDto>(
             results = dummyReviews
         )
 
-        val dto = dataSource.fetchReviewsByMovieId(1)
+        val dto = dataSource.fetchReviewsByMovieId(1,1)
 
         assertEquals(2, dto.size)
     }
 
     @Test
     fun `fetchMoviesByCategory() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchMoviesByCategory(1) } returns MovieApiResponse<MovieDto>(
+        coEvery { apiService.fetchMoviesByCategory(1,1) } returns MovieApiResponse<MovieDto>(
             results = listOf(dummyMovie)
         )
-        val dto = dataSource.fetchMoviesByCategory(1)
+        val dto = dataSource.fetchMoviesByCategory(1,1)
 
         assertEquals(1, dto.size)
     }
@@ -119,18 +119,20 @@ class MovieDetailsRemoteDataSourceImplTest {
     )
     val dummyActors = listOf<ActorDto>(
         ActorDto(
-            name = "A",
             id = 1,
+            name = "A",
         ), ActorDto(
-            name = "A",
-            id = 1,
+            id = 2,
+            name = "B",
         )
     )
     val dummyReviews = listOf<ReviewDto>(
         ReviewDto(
+            id = "1",
             author = "A",
             content = "A",
         ), ReviewDto(
+            id = "2",
             author = "A",
             content = "A",
         )
