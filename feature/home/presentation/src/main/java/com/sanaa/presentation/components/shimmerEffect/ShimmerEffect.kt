@@ -32,8 +32,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -100,6 +102,8 @@ fun PopularMediaSectionPlaceholder(
             userScrollEnabled = false
         )
         { page ->
+            val layoutDirection = LocalLayoutDirection.current
+            val isRtl = layoutDirection == LayoutDirection.Rtl
 
             val pageOffset =
                 ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
@@ -115,10 +119,11 @@ fun PopularMediaSectionPlaceholder(
             )
 
             val rotation by animateFloatAsState(
-                targetValue =
-                    if (page == pagerState.currentPage) 0f
-                    else if (page < pagerState.currentPage) -3f
-                    else 3f,
+                targetValue = when {
+                    page == pagerState.currentPage -> 0f
+                    page < pagerState.currentPage -> if (isRtl) 3f else -3f
+                    else -> if (isRtl) -3f else 3f
+                },
                 label = "rotation"
             )
 
@@ -228,7 +233,7 @@ fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
 
 fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
 
-    item(span = { GridItemSpan(maxLineSpan) }){
+    item(span = { GridItemSpan(maxLineSpan) }) {
         PlaceholderWithShimmerEffect(
             width = 166.dp,
             height = 30.dp,
@@ -236,12 +241,13 @@ fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
             borderColor = Color.Transparent
         )
     }
-    item(span = { GridItemSpan(maxLineSpan) }){
+    item(span = { GridItemSpan(maxLineSpan) }) {
         LazyRow(
             modifier = modifier
-                .fillMaxWidth().fillWidthOfParent(16.dp)
+                .fillMaxWidth()
+                .fillWidthOfParent(16.dp)
                 .height(62.dp),
-            contentPadding = PaddingValues( vertical = 12.dp, horizontal = 16.dp),
+            contentPadding = PaddingValues(vertical = 12.dp, horizontal = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             userScrollEnabled = false
