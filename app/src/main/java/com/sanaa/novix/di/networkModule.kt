@@ -55,6 +55,7 @@ val networkModule = module {
             })
             .build()
     }
+    //works with login
     single<Retrofit> {
         Retrofit.Builder()
             .baseUrl(BuildConfig.TMDB_URL)
@@ -62,4 +63,15 @@ val networkModule = module {
             .client(get())
             .build()
     }
+    //works with data
+    //single<Retrofit> {
+    //        val contentType = "application/json".toMediaType()
+    //        val json = get<Json>()
+    //
+    //        Retrofit.Builder()
+    //            .baseUrl(BuildConfig.TMDB_URL)
+    //            .addConverterFactory(json.asConverterFactory(contentType))
+    //            .client(get())
+    //            .build()
+    //    }
 }
