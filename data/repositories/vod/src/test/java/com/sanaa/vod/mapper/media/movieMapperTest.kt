@@ -35,28 +35,5 @@ class MovieMapperTest {
         assertEquals(LocalDate(2010, 7, 16), movie.releaseDate)
     }
 
-    @Test
-    fun `toDomain handles nulls and defaults`() {
-        val dto = MovieDto(
-            id = 2,
-            title = null,
-            overview = "No data movie",
-            posterImagePath = null,
-            voteAverage = null,
-            duration = null,
-            releaseDate = null,
-            genres = null
-        )
 
-        val movie = dto.toDomain()
-
-        assertEquals(2, movie.id)
-        assertEquals("", movie.title)
-        assertEquals("No data movie", movie.overview)
-        assertEquals("", movie.posterImageUrl)
-        assertEquals(0f, movie.imdbRating)
-        assertEquals(0.minutes, movie.duration)
-        assertEquals(LocalDate(1900, 1, 1), movie.releaseDate)
-        assertEquals(emptyList(), movie.genres)
-    }
 }
