@@ -119,18 +119,20 @@ class MovieDetailsRemoteDataSourceImplTest {
     )
     val dummyActors = listOf<ActorDto>(
         ActorDto(
-            name = "A",
             id = 1,
+            name = "A",
         ), ActorDto(
-            name = "A",
-            id = 1,
+            id = 2,
+            name = "B",
         )
     )
     val dummyReviews = listOf<ReviewDto>(
         ReviewDto(
+            id = "1",
             author = "A",
             content = "A",
         ), ReviewDto(
+            id = "2",
             author = "A",
             content = "A",
         )

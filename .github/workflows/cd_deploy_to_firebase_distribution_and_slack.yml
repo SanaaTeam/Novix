@@ -82,63 +82,14 @@ jobs:
           file: ${{ steps.sign_app.outputs.signedReleaseFile }}
           debug: true
 
-      - name: Notify Slack with APK
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-        run: |
-          FILE_PATH="${{ steps.sign_app.outputs.signedReleaseFile }}"
-          FILE_NAME=$(basename "$FILE_PATH")
-          CI_VERSION_NAME="${{ env.CI_VERSION_NAME }}"
-          
-          echo "📦 Uploading $FILE_NAME to Slack..."
-
-          # Upload APK to Slack
-          RESPONSE=$(curl -s -F file=@"$FILE_PATH" \
-            -F "initial_comment=🚀 New *Release APK* uploaded!" \
-            -F channels="$SLACK_CHANNEL_ID" \
-            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
-            https://slack.com/api/files.upload)
-
-          echo "✅ File uploaded to Slack"
-
-          FILE_ID=$(echo "$RESPONSE" | jq -r '.file.id')
-
-          echo "📩 Sending Slack block message..."
-
-          curl -s -X POST https://slack.com/api/chat.postMessage \
-            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
-            -H "Content-type: application/json" \
-            --data "{
-              \"channel\": \"$SLACK_CHANNEL_ID\",
-              \"text\": \"New APK Release\",
-              \"blocks\": [
-                {
-                  \"type\": \"header\",
-                  \"text\": {
-                    \"type\": \"plain_text\",
-                    \"text\": \"📲 New APK Build Released\"
-                  }
-                },
-                {
-                  \"type\": \"section\",
-                  \"text\": {
-                    \"type\": \"mrkdwn\",
-                    \"text\": \"A new signed APK was built and uploaded to Firebase Distribution and Slack.\n\n*Version:* \`$CI_VERSION_NAME\`\n*File:* \`$FILE_NAME\`.\"
-                  }
-                },
-                {
-                  \"type\": \"actions\",
-                  \"elements\": [
-                    {
-                      \"type\": \"button\",
-                      \"text\": {
-                        \"type\": \"plain_text\",
-                        \"text\": \"⬇️ Download APK\"
-                      },
-                      \"url\": \"https://files.slack.com/files-pri/${FILE_ID}/download\"
-                    }
-                  ]
-                }
-              ]
-            }"
+      - name: Upload APK to Slack
+        uses: MeilCli/slack-upload-file@v4.0.20
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          file_name: "app-release-${{ github.run_number }}.apk"
+          initial_comment: |
+            📲 *New APK Build Released*
+            *Version:* `1.0.${{ github.run_number }}`
+            *File:* `app-release-${{ github.run_number }}.apk`
