@@ -48,13 +48,11 @@ interface MovieApiService {
     suspend fun fetchMovieTrailerUrl(@Path("movie_id") id: Int): MovieApiResponse<VideoDto>
 
     @GET("movie/popular")
-    @Headers("Ignore-Language: true")
     suspend fun getPopularMovies(
         @Query("page") page: Int
     ): MovieApiResponse<MovieDto>
 
     @GET("discover/movie")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTrendingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -65,7 +63,6 @@ interface MovieApiService {
     ): MovieApiResponse<MovieDto>
 
     @GET("discover/movie")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTopRatingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -87,7 +84,6 @@ interface MovieApiService {
     ): MovieApiResponse<MovieDto>
 
     @GET("genre/movie/list")
-    @Headers("Ignore-Language: true")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
 
 }
