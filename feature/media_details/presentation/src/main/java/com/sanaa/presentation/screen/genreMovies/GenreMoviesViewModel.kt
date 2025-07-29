@@ -1,9 +1,16 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toUiModel
+import entity.Movie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
 
 class GenreMoviesViewModel(
@@ -16,7 +23,7 @@ class GenreMoviesViewModel(
     dispatcher
 ), GenreMoviesScreenInteractionListener {
     init {
-        getListOfMoviesByCategory(categoryId)
+        fetchMovies(categoryId)
     }
 
     override fun onSaveIconClick() {
@@ -39,34 +46,35 @@ class GenreMoviesViewModel(
         emitEffect(GenreMoviesEffects.NavigateToMovieDetails(id))
     }
 
+    private fun fetchMovies(categoryId: Int) {
+        tryToCollect(
 
-
-    private fun getListOfMoviesByCategory(categoryId: Int) {
-        tryToExecute(
-            callee = { fetchMovies(categoryId) },
-            onSuccess = {
-                updateState {
-                    it.copy(isLoading = false)
-                }
+            callee = {
+                loadMoviesByCategory(categoryId)
             },
-            onError = { exception ->
+            onCollect = { movies ->
                 updateState {
-                    it.copy(error = exception.message, isLoading = false)
+                    it.copy(movies = flowOf(movies), title = categoryName, isLoading = false)
                 }
             }
         )
     }
-    private suspend fun fetchMovies(categoryId: Int) {
-        updateState {
-            it.copy(isLoading = true)
-        }
-        val movies = manageMoviesDetailsUseCase.getMoviesByCategory(categoryId)
-        updateState {
-            it.copy(
-                title = categoryName, movies = movies.map { it ->
-                    it.toUiModel()
-                }
-            )
+
+    private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
+        updateState { it.copy(isLoading = true) }
+        return createPagingFlow(
+            pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
+            mapper = Movie::toUiModel
+
+        )
+    }
+
+
+    private fun createMoviesPagingDataSource(
+        genreId: Int
+    ): PagingSource<Int, Movie> {
+        return BasePagingSource { page ->
+            manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
         }
     }
 }

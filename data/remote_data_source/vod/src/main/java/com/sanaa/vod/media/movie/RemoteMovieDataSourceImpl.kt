@@ -33,8 +33,11 @@ class RemoteMovieDataSourceImpl(
     }
 
 
-    override suspend fun fetchMoviesByCategory(category: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchMoviesByCategory(category).results
+    override suspend fun fetchMoviesByCategory(category: Int, page: Int): List<MovieDto> = wrapApiCall {
+        apiService.fetchMoviesByCategory(
+            category = category,
+            page = page
+        ).results
     }
 
     override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> = wrapApiCall {

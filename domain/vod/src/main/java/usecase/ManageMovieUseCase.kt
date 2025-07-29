@@ -18,8 +18,8 @@ class ManageMovieUseCase(
     suspend fun getMovieImages(id: Int): List<String> =
         movieRepo.getImageUrls(id, IMAGE_COUNT)
 
-    suspend fun getMoviesByCategory(genreId: Int): List<Movie> =
-        movieRepo.getMoviesByCategory(genreId)
+    suspend fun getMoviesByCategory(genreId: Int, page: Int): List<Movie> =
+        movieRepo.getMoviesByCategory(genreId, page)
 
     suspend fun getMovieTrailer(id: Int): String? =
         movieRepo.getMovieTrailer(id)

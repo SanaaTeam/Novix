@@ -33,7 +33,9 @@ interface MovieApiService {
 
     @GET("discover/movie")
     @Headers("Ignore-Language: true")
-    suspend fun fetchMoviesByCategory(@Query("with_genres") category: Int): MovieApiResponse<MovieDto>
+    suspend fun fetchMoviesByCategory(
+        @Query("with_genres") category: Int, @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
 
     @GET("movie/{movie_id}/videos")
     @Headers("Ignore-Language: true")
