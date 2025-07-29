@@ -63,12 +63,12 @@ fun SeriesHeaderSection(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
+                    genres.forEachIndexed { index, genre ->
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
-                        genres.forEachIndexed { index, genre ->
                             Text(
                                 text = genre.name,
                                 style = Theme.textStyle.label.small,
