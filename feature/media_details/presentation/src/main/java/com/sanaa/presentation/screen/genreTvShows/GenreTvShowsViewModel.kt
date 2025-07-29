@@ -26,6 +26,12 @@ class GenreTvShowsViewModel(
         }
     }
 
+    override fun onRetryClicked() {
+        updateState { it.copy(noInternetConnection = false,
+            isLoading = true,
+            error = null) }
+        getTvShowsByGenreId(genreId)
+    }
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
     }

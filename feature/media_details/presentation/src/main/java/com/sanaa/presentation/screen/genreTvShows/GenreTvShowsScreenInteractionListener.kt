@@ -5,4 +5,5 @@ interface GenreTvShowsScreenInteractionListener {
     fun onBackClick()
     fun onTvShowClick(id: Int)
     fun onBottomSheetDismiss()
+    fun onRetryClicked()
 }
