@@ -59,10 +59,6 @@ class LoginViewModel(
             val updated = prev.copy(isLoading = false)
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
-        Log.d(
-            "TAG",
-            "onDataLoadError: ${throwable}"
-        )
         val message = when (throwable) {
 
             is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
