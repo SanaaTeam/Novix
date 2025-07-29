@@ -104,7 +104,6 @@ fun SeriesScreen(
     )
 
 }
-
 @Composable
 fun SeriesScreenContent(
     interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
@@ -151,78 +150,80 @@ fun SeriesScreenContent(
                         )
                     }
                 } else {
-             Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(
-                            state = rememberScrollState()
-                        )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(bottom = 112.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(
+                                state = rememberScrollState()
+                            )
                     ) {
-                        Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
-                        SeriesHeaderSection(
-                            title = state.series.title,
-                            rating = state.series.rating,
-                            season = stringResource(
-                                R.string.seasons_count, state.series.seasonsCount
-                            ),
-                            airDate = state.series.releaseDate,
-                            imagesUrl = state.images,
-                            genres = state.series.genres,
-                            onReviewClicked = {
-                                interactionListener.onViewReviewsClicked(
-                                    state.series.id
-                                )
-                            },
-                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
-                       if(state.series.overview.isNotEmpty()){
-                            OverviewSection(
-                                onReadMore = {},
-                                titleResId = R.string.overview,
-                                overview = it.toString(),
-                                modifier = Modifier.padding(
-                                    start = 16.dp, end = 16.dp, top = 16.dp
-                                )
-                            )
-                        }
+                        Column(
+                            modifier = Modifier.padding(bottom = 112.dp)
+                        ) {
+                            Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
+                            SeriesHeaderSection(
+                                title = state.series.title,
+                                rating = state.series.rating,
+                                season = stringResource(
+                                    R.string.seasons_count, state.series.seasonsCount
+                                ),
+                                airDate = state.series.releaseDate,
+                                imagesUrl = state.images,
+                                genres = state.series.genres,
+                                onReviewClicked = {
+                                    interactionListener.onViewReviewsClicked(
+                                        state.series.id
+                                    )
+                                },
+                                onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
 
-                        if (state.cast.isNotEmpty())
-                            CastComponent(
-                                casts = state.cast,
-                                onActorClicked = interactionListener::onActorClicked,
-                            )
-                        SeasonTap(
-                            onClick = interactionListener::onSeasonNumberClicked,
-                            seasonCounts = state.series.seasonsCount,
-                            currentSeason = state.selectedSeason,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        AnimatedContent(state.isLoadingEpisodes) {
-                            if (it) {
-                                Column(
-                                    modifier = Modifier
-                                        .heightIn(min = 300.dp)
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
-
-                                ) {
-                                    NovixLoadingIndicator()
-                                }
-                            } else {
-                                EpisodesContent(
-                                    episodes = state.season.episodes,
-                                    seriesId = state.series.id,
-                                    onEpisodeClick = interactionListener::onEpisodeClicked
+                            if (state.series.overview.isNotEmpty()) {
+                                OverviewSection(
+                                    onReadMore = {},
+                                    titleResId = R.string.overview,
+                                    overview = state.series.overview,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp, end = 16.dp, top = 16.dp
+                                    )
                                 )
                             }
-                        }
-                    }
 
+                            if (state.cast.isNotEmpty())
+                                CastComponent(
+                                    casts = state.cast,
+                                    onActorClicked = interactionListener::onActorClicked,
+                                )
+                            SeasonTap(
+                                onClick = interactionListener::onSeasonNumberClicked,
+                                seasonCounts = state.series.seasonsCount,
+                                currentSeason = state.selectedSeason,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
+                                if (isLoadingEpisodes) {
+                                    Column(
+                                        modifier = Modifier
+                                            .heightIn(min = 300.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                } else {
+                                    EpisodesContent(
+                                        episodes = state.season.episodes,
+                                        seriesId = state.series.id,
+                                        onEpisodeClick = interactionListener::onEpisodeClicked
+                                    )
+                                }
+                            }
+                        }
+
+                    }
                 }
-            }}
+            }
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.series.trailerUrl,
