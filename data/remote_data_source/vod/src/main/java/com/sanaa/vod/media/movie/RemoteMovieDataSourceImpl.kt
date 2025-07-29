@@ -21,20 +21,20 @@ class RemoteMovieDataSourceImpl(
     }
 
     override suspend fun fetchCast(id: Int): List<ActorDto> = wrapApiCall {
-        apiService.fetchCast(id).cast
+        apiService.fetchCast(id).cast.distinctBy { it.id }
     }
 
     override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchSimilarMoviesByMovieId(id).results
+        apiService.fetchSimilarMoviesByMovieId(id).results.distinctBy { it.id }
     }
 
     override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> = wrapApiCall {
-        apiService.fetchReviewsByMovieId(id).results
+        apiService.fetchReviewsByMovieId(id).results.distinctBy { it.id }
     }
 
 
     override suspend fun fetchMoviesByCategory(category: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchMoviesByCategory(category).results
+        apiService.fetchMoviesByCategory(category).results.distinctBy { it.id }
     }
 
     override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> = wrapApiCall {
@@ -48,14 +48,14 @@ class RemoteMovieDataSourceImpl(
     }
 
     override suspend fun fetchPopularMovies(page: Int): List<MovieDto> =
-        apiService.getPopularMovies(page).results
+        apiService.getPopularMovies(page).results.distinctBy { it.id }
 
     override suspend fun fetchTrendingMovies(page: Int, genreId: Int?): List<MovieDto> =
-        apiService.fetchTrendingMovies(page, genreId?.toString()).results
+        apiService.fetchTrendingMovies(page, genreId?.toString()).results.distinctBy { it.id }
 
     override suspend fun fetchTopRatedMovies(page: Int, genreId: Int?): List<MovieDto> =
-        apiService.fetchTopRatingMovies(page, genreId?.toString()).results
+        apiService.fetchTopRatingMovies(page, genreId?.toString()).results.distinctBy { it.id }
 
     override suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto> =
-        apiService.fetchUpcomingMovies(page, genreId?.toString()).results
+        apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
 }
