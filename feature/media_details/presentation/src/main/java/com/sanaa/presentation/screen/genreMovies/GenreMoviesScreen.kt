@@ -122,9 +122,10 @@ fun GenreMoviesScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
-                                pagedMovies.itemCount,
+                                count = pagedMovies.itemCount,
                                 key = { index ->
-                                    pagedMovies[index]?.id ?: index
+                                    val movie = pagedMovies[index]
+                                    "${index}-${movie?.id}"
                                 }
                             ) { index ->
                                 val movie = pagedMovies[index] ?: return@items

@@ -123,7 +123,13 @@ fun GenreTvShowsScreenContent(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            items(pagedTvShows.itemCount) { index ->
+                            items(
+                                count = pagedTvShows.itemCount,
+                                key = { index ->
+                                    val tvShow = pagedTvShows[index]
+                                    "${index}-${tvShow?.id}"
+                                }
+                            ) { index ->
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {

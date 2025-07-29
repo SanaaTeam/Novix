@@ -106,13 +106,13 @@ fun ReviewsScreenContent(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             items(
-                                pagedReviews.itemCount,
-                                key = {
-                                    pagedReviews[it]?.id.toString()
+                                count = pagedReviews.itemCount,
+                                key = { index ->
+                                    val review = pagedReviews[index]
+                                    "${index}-${review?.id}"
                                 }
                             ) { index ->
-                                val review = pagedReviews[index]
-                                review ?: return@items
+                                val review = pagedReviews[index] ?: return@items
                                 ReviewCard(review = review)
                             }
                         }

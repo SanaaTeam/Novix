@@ -261,8 +261,11 @@ fun MovieDetailsContent(
                             }
 
                             items(
-                                pagedSimilarMovies.itemCount,
-                                key = { it }
+                                count = pagedSimilarMovies.itemCount,
+                                key = { index ->
+                                    val movie = pagedSimilarMovies[index]
+                                    "${index}-${movie?.id}"
+                                }
                             ) { index ->
                                 val item = pagedSimilarMovies[index] ?: return@items
                                 MoreLikeThisCard(

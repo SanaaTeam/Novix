@@ -72,7 +72,7 @@ class HomeScreenViewModel(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        topRatingMedia = topRatedMediaList
+                        topRatingMedia = topRatedMediaList.take(10)
                     )
                 }
             },
