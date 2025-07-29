@@ -10,8 +10,8 @@ import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
-import timber.log.Timber
 import repository.ActorRepository
+import timber.log.Timber
 import java.net.UnknownHostException
 
 class ActorRepositoryImpl(
@@ -43,10 +43,6 @@ class ActorRepositoryImpl(
                 it.toMovie()
             }.take(20)
         }
-
-    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
-        return emptyList()
-    }
 
 
     override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
