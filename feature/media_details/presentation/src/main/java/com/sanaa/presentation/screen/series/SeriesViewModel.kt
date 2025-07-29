@@ -5,6 +5,7 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
@@ -42,6 +43,17 @@ class SeriesViewModel(
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
             }
+            , onError = {e ->
+                if(e is NoNetworkException){
+                    updateState { it.copy(noInternetConnection = true,
+                        isLoadingEpisodes = false) }
+                }
+                else {
+                    updateState { it.copy( error = e.message,
+                        noInternetConnection = false,
+                        isLoadingEpisodes = false) }
+                }
+            }
         )
     }
 
@@ -73,6 +85,16 @@ class SeriesViewModel(
         emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }
 
+    override fun onRetryLoadDetails() {
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
+        loadSeries()
+    }
     private fun loadSeries() {
         tryToExecute(
             callee = ::fetchSeriesDetails,
@@ -80,8 +102,14 @@ class SeriesViewModel(
                 updateState { it.copy(isLoading = false) }
             },
             onError = { e ->
-                updateState { state ->
-                    state.copy(error = e.message, isLoading = false)
+                if (e is NoNetworkException) {
+                    updateState { state ->
+                        state.copy(noInternetConnection = true, isLoading = false, error = null)
+                    }
+                } else {
+                    updateState { state ->
+                        state.copy(error = e.message, isLoading = false, noInternetConnection = false)
+                    }
                 }
             }
         )
