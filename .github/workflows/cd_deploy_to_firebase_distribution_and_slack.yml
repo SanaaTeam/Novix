@@ -1,4 +1,4 @@
-name: Build & upload to Firebase App Distribution
+name: Build & upload to Firebase App Distribution and notify Slack
 
 on:
   push:
@@ -23,6 +23,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Prepare google-services.json
         run: |
@@ -78,3 +81,64 @@ jobs:
           groups: testers
           file: ${{ steps.sign_app.outputs.signedReleaseFile }}
           debug: true
+
+      - name: Notify Slack with APK
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+        run: |
+          FILE_PATH="${{ steps.sign_app.outputs.signedReleaseFile }}"
+          FILE_NAME=$(basename "$FILE_PATH")
+          CI_VERSION_NAME="${{ env.CI_VERSION_NAME }}"
+          
+          echo "📦 Uploading $FILE_NAME to Slack..."
+
+          # Upload APK to Slack
+          RESPONSE=$(curl -s -F file=@"$FILE_PATH" \
+            -F "initial_comment=🚀 New *Release APK* uploaded!" \
+            -F channels="$SLACK_CHANNEL_ID" \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            https://slack.com/api/files.upload)
+
+          echo "✅ File uploaded to Slack"
+
+          FILE_ID=$(echo "$RESPONSE" | jq -r '.file.id')
+
+          echo "📩 Sending Slack block message..."
+
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer $SLACK_BOT_TOKEN" \
+            -H "Content-type: application/json" \
+            --data "{
+              \"channel\": \"$SLACK_CHANNEL_ID\",
+              \"text\": \"New APK Release\",
+              \"blocks\": [
+                {
+                  \"type\": \"header\",
+                  \"text\": {
+                    \"type\": \"plain_text\",
+                    \"text\": \"📲 New APK Build Released\"
+                  }
+                },
+                {
+                  \"type\": \"section\",
+                  \"text\": {
+                    \"type\": \"mrkdwn\",
+                    \"text\": \"A new signed APK was built and uploaded to Firebase Distribution and Slack.\n\n*Version:* \`$CI_VERSION_NAME\`\n*File:* \`$FILE_NAME\`.\"
+                  }
+                },
+                {
+                  \"type\": \"actions\",
+                  \"elements\": [
+                    {
+                      \"type\": \"button\",
+                      \"text\": {
+                        \"type\": \"plain_text\",
+                        \"text\": \"⬇️ Download APK\"
+                      },
+                      \"url\": \"https://files.slack.com/files-pri/${FILE_ID}/download\"
+                    }
+                  ]
+                }
+              ]
+            }"
