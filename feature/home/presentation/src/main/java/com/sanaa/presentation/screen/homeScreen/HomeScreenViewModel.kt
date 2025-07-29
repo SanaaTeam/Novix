@@ -62,9 +62,9 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(10, null).map { it.toState() }
+                    .getTopRatedMovies(1, null).map { it.toState() }
                 val topRatedTvSeries = manageTvSeriesUseCase
-                    .getTopRatedTvSeries(10, null).map { it.toState() }
+                    .getTopRatedTvSeries(1, null).map { it.toState() }
                 (topRatedMovies + topRatedTvSeries).shuffled()
             },
             onSuccess = { topRatedMediaList ->
