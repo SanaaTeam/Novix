@@ -9,11 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.cards.ActorCard
 import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.shared_component.cards.ActorCard
 
 @Composable
 fun GuestsOfHonorComponent(
@@ -36,9 +35,8 @@ fun GuestsOfHonorComponent(
         guests.forEach {
             ActorCard(
                 playedCharacter = it.character,
-                actorName = it.name, actorImage = rememberAsyncImagePainter(
-                    model = it.imageUrl,
-                ),
+                actorName = it.name,
+                imageUrl = it.imageUrl.orEmpty(),
                 modifier = Modifier
                     .fillMaxWidth(),
                 onCardClick = { onActorClick(it.id) }

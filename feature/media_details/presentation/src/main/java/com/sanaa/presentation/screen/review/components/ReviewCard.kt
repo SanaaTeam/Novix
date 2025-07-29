@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,16 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.model.ReviewUiModel
 import com.sanaa.presentation.shared_component.ExpandableText
 import com.sanaa.presentation.shared_component.IconWithText
-import com.sanaa.presentation.model.ReviewUiModel
 
 @Composable
 fun ReviewCard(
@@ -51,24 +50,41 @@ fun ReviewCard(
 
                 contentAlignment = Alignment.Center
             ) {
-                if (review.avatarUrl != null) {
-                    AsyncImage(
-                        model = review.avatarUrl,
-                        contentDescription = review.authorName,
-                        fallback = painterResource(R.drawable.user_avater),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Icon(
-                        painter = painterResource(R.drawable.user_avater),
-                        contentDescription = stringResource(R.string.anonymous),
-                        modifier = Modifier
-                            .size(28.dp),
-                        tint = Theme.colors.hint
+                RemoteBlurredHaramImageViewer(
+                    imageUrl = review.avatarUrl.orEmpty(),
+                    modifier = Modifier.fillMaxWidth(),
+                    blurRadius = 150,
+                    haramThreshold = 0.2f,
+                    nonHaramThreshold = 0.7f,
+                    contentDescription = review.authorName,
+                    placeholderContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.user_avater),
+                            contentDescription = stringResource(R.string.anonymous),
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.Center),
+                            tint = Theme.colors.hint
 
+                        )
+                    },
+                    errorContent = {
+                        Icon(
+                            painter = painterResource(R.drawable.user_avater),
+                            contentDescription = stringResource(R.string.anonymous),
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.Center),
+                            tint = Theme.colors.hint
+                        )
+                    },
+                ) {
+                    OnBlurContent(
+                        iconSize = 24.dp,
+                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                     )
                 }
+
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column {

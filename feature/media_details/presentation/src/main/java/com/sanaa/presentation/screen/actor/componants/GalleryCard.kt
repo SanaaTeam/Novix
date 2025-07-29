@@ -10,8 +10,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
@@ -38,7 +40,6 @@ fun GalleryCard(
             blurRadius = 150,
             haramThreshold = 0.2f,
             nonHaramThreshold = 0.7f,
-            isBlurEnabled = false,
             contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
             placeholderContent = {
                 RemoteImagePlaceholder(Modifier.fillMaxSize())
@@ -46,6 +47,11 @@ fun GalleryCard(
             errorContent = {
                 RemoteImagePlaceholder(Modifier.fillMaxSize())
             },
-        )
+        ) {
+            OnBlurContent(
+                iconSize = 24.dp,
+                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+            )
+        }
     }
 }

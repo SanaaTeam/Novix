@@ -25,10 +25,10 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun EmptySearchContent(
-    topIcon: @Composable () -> Unit = {},
-    modifier: Modifier = Modifier,
     icon: Painter,
     text: String,
+    modifier: Modifier = Modifier,
+    topIcon: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
