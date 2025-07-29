@@ -37,9 +37,9 @@ class HomeScreenViewModel(
         tryToExecute(
             callee = {
                 val popularMovies = manageMovieUseCase
-                    .getPopularMovies(5).map { it.toState() }
+                    .getPopularMovies(1).map { it.toState() }
                 val popularTvSeries = manageTvSeriesUseCase
-                    .getPopularSeries(5).map { it.toState() }
+                    .getPopularSeries(1).map { it.toState() }
                 (popularMovies + popularTvSeries).shuffled()
             },
             onSuccess = { popularMediaList ->
@@ -47,7 +47,7 @@ class HomeScreenViewModel(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        popularMedia = popularMediaList
+                        popularMedia = popularMediaList.take(10)
                     )
                 }
             },
