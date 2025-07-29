@@ -1,22 +1,20 @@
 package com.sanaa.identity.network.response
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
 
-@Serializable
 data class LoginResponse(
-    @SerialName("success")
+    @SerializedName("success")
     val success: Boolean,
 
-    @SerialName("status_code")
+    @SerializedName("status_code")
     val status_code: Int?,
 
-    @SerialName("status_message")
+    @SerializedName("status_message")
     val status_message: String?,
 
-    @SerialName("expires_at")
+    @SerializedName("expires_at")
     val expires_at: String?,
 
-    @SerialName("request_token")
-    val request_token: String?,
+    @SerializedName("request_token")
+    val requestToken: String?,
 )

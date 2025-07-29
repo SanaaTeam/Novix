@@ -171,7 +171,7 @@ class AuthenticationRepositoryImplTest {
             status_code = statusCode,
             status_message = statusMessage,
             expires_at = expiresAt,
-            request_token = requestToken
+            requestToken = requestToken
         )
     }
 

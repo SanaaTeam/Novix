@@ -4,7 +4,6 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.library)
-
 }
 
 val localProperties = Properties()
@@ -28,8 +27,9 @@ dependencies {
     implementation(projects.preferences)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
-    implementation(libs.bundles.ktor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.bundles.koin)
     implementation(libs.ktor.client.mock)
     implementation(libs.slf4j.api)
+    implementation(libs.converter.gson)
 }

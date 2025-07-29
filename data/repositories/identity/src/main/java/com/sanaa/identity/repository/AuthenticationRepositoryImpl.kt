@@ -35,7 +35,7 @@ class AuthenticationRepositoryImpl(
         val loginPostBody = LoginPostBody(
             username = userName,
             password = password,
-            request_token = requestToken
+            requestToken = requestToken
         )
         val response = authenticationApi.login(loginPostBody)
         if (response.isSuccessful.not())
