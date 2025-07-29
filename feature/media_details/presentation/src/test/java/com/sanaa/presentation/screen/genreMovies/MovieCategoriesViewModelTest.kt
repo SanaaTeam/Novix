@@ -7,6 +7,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -49,7 +50,7 @@ class MovieCategoriesViewModelTest {
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
         val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(),1) } returns emptyList()
 
         viewModel = GenreMoviesViewModel(
             category.id,
@@ -66,7 +67,7 @@ class MovieCategoriesViewModelTest {
     @Test
     fun `onBottomSheetDismiss should set showBottomSheet to false`() = runTest {
         val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(),1) } returns emptyList()
 
         viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
@@ -81,7 +82,7 @@ class MovieCategoriesViewModelTest {
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
         val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(),1) } returns emptyList()
 
         viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
@@ -95,7 +96,7 @@ class MovieCategoriesViewModelTest {
     @Test
     fun `onMovieClick should emit NavigateToMovieDetails effect`() = runTest {
         val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } returns emptyList()
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(),1) } returns emptyList()
 
         viewModel = GenreMoviesViewModel(category.id, category.name, manageMoviesDetailsUseCase)
         advanceUntilIdle()
@@ -115,7 +116,7 @@ class MovieCategoriesViewModelTest {
             val category = genreList[0]
             val exception = RuntimeException()
 
-            coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any()) } throws exception
+            coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(),1) } throws exception
 
 
             viewModel =
@@ -129,7 +130,7 @@ class MovieCategoriesViewModelTest {
 
                 val expectedState = GenreMoviesScreenUiState(
                     title = null,
-                    movies = emptyList(),
+                    movies = emptyFlow(),
                     isLoading = false,
                     error = exception.message,
                     showBottomSheet = false

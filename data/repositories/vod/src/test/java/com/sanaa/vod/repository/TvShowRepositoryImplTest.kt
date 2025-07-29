@@ -44,15 +44,15 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getReviewsByTvShowId returns list`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(1) } returns listOf(dummyReviewDto)
-        val result = repository.getTvSeriesReviews(1)
+        coEvery { remote.getReviewsByTvShowId(1,1) } returns listOf(dummyReviewDto)
+        val result = repository.getTvSeriesReviews(1,1)
         assertEquals("A", result.first().authorName)
     }
 
     @Test
     fun `getReviewsByTvShowId throws RetrievingDataFailureException`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999) }
+        coEvery { remote.getReviewsByTvShowId(any(),any()) } throws Exception()
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999,1) }
     }
 
     @Test
@@ -63,8 +63,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
-        coEvery { remote.getTvShowsByGenre(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1) }
+        coEvery { remote.getTvShowsByGenre(any(),1) } throws Exception()
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1,1) }
     }
 
     @Test
@@ -88,8 +88,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getReviewsByTvShowId throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1) }
+        coEvery { remote.getReviewsByTvShowId(any(),1) } throws ConnectionException()
+        assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1,1) }
     }
 
 
@@ -102,8 +102,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remote.getTvShowsByGenre(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1) }
+        coEvery { remote.getTvShowsByGenre(any(),1) } throws ConnectionException()
+        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1,1) }
     }
 
     @Test

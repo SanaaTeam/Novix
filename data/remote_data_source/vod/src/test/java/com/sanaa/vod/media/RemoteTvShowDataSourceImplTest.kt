@@ -50,9 +50,9 @@ class RemoteTvShowDataSourceImplTest {
 
     @Test
     fun `getTvShowsByGenre should return List of TvShowDto `() = runTest {
-        coEvery { apiService.fetchTvShowsByCategory(1) } returns dummyGenreTvShowResponse
+        coEvery { apiService.fetchTvShowsByCategory(1,1) } returns dummyGenreTvShowResponse
 
-        val result = remoteTvShowDataSource.getTvShowsByGenre(1)
+        val result = remoteTvShowDataSource.getTvShowsByGenre(1,1)
 
         assertThat(result.size == dummyGenreTvShowResponse.results.size)
 
@@ -60,9 +60,9 @@ class RemoteTvShowDataSourceImplTest {
 
     @Test
     fun `getReviewsByTvShowId should return List of ReviewDto `() = runTest {
-        coEvery { apiService.fetchTvShowsReviews(1) } returns dummyTvShowReviewsResponse
+        coEvery { apiService.fetchTvShowsReviews(1,1) } returns dummyTvShowReviewsResponse
 
-        val result = remoteTvShowDataSource.getReviewsByTvShowId(1)
+        val result = remoteTvShowDataSource.getReviewsByTvShowId(1,1)
 
         assertThat(result.size == dummyTvShowReviewsResponse.results.size)
 
