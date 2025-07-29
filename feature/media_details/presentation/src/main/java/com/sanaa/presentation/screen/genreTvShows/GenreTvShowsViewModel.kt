@@ -7,6 +7,7 @@ import com.sanaa.presentation.model.toSeriesUiModel
 import entity.TvSeries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageTvSeriesUseCase
 
 class GenreTvShowsViewModel(
@@ -42,27 +43,26 @@ class GenreTvShowsViewModel(
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
-        tryToCollect(
-            callee = { loadTvShowsByGenreId(genreId) },
-            onCollect = { pagingData ->
-                updateState { it.copy(tvShows = pagingData) }
+        tryToCollect(callee = { loadTvShowsByGenreId(genreId) }, onCollect = { tvShows ->
+            updateState {
+                it.copy(
+                    title = genreName, tvShows = flowOf(tvShows)
+                )
             }
-        )
+        })
     }
 
-    private fun loadTvShowsByGenreId(genreId: Int) =
-        createPagingFlow(
-            pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
-            mapper = TvSeries::toSeriesUiModel
-        )
+    private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
+        pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
+        mapper = TvSeries::toSeriesUiModel
+    )
 
     private fun createTvShowsPagingDataSource(
         genreId: Int
     ): PagingSource<Int, TvSeries> {
         return BasePagingSource { page ->
             manageTvSeriesUseCase.getTvSeriesByGenre(
-                genreId = genreId,
-                page = page
+                genreId = genreId, page = page
             )
         }
     }
