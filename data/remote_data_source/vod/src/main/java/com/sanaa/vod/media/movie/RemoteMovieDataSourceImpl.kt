@@ -1,5 +1,6 @@
 package com.sanaa.vod.media.movie
 
+import android.util.Log
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
@@ -47,8 +48,11 @@ class RemoteMovieDataSourceImpl(
         }
     }
 
-    override suspend fun fetchPopularMovies(page: Int): List<MovieDto> =
-        apiService.getPopularMovies(page).results
+    override suspend fun fetchPopularMovies(page: Int): List<MovieDto> {
+        val list =         apiService.getPopularMovies(page).results
+        Log.d("test99", "fetchPopularMovies: $list")
+        return list
+    }
 
     override suspend fun fetchTrendingMovies(page: Int, genreId: Int?): List<MovieDto> =
         apiService.fetchTrendingMovies(page, genreId?.toString()).results
