@@ -11,4 +11,5 @@ interface ActorsScreenInteractionListener {
 
     // TODO TAKE THE ID AND SAVE MOVIE
     fun onSaveClicked()
+    fun onRetryClicked()
 }

@@ -14,6 +14,7 @@ data class SeriesScreenUiState(
     val isLoadingEpisodes: Boolean = false,
     val error: String? = null,
     val selectedSeason: Int = 1,
+    val noInternetConnection: Boolean = false
 )
 
 

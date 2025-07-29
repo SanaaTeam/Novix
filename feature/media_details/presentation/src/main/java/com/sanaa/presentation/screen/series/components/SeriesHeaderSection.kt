@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.series.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -56,19 +58,27 @@ fun SeriesHeaderSection(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Bottom,
             ) {
-                FlowRow {
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    genres.forEachIndexed { index, genre ->
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.padding(bottom = 8.dp)
                     ) {
-                        genres.forEachIndexed { index, genre ->
                             Text(
                                 text = genre.name,
                                 style = Theme.textStyle.label.small,
                                 color = Theme.colors.body,
-                                modifier = Modifier
-                                    .clickable { onGenreClicked(genre) }
+                                modifier = Modifier.clickable(
+                                    indication = null,
+                                    interactionSource = remember { MutableInteractionSource() }
+                                ) {
+                                    onGenreClicked(genre)
+                                }
                             )
                             if (index != genres.lastIndex) {
                                 DotSeparator()
@@ -76,6 +86,11 @@ fun SeriesHeaderSection(
                         }
                     }
                 }
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -85,6 +100,7 @@ fun SeriesHeaderSection(
                         IconWithText(
                             iconRes = R.drawable.icon_star,
                             text = rating,
+                            textColor = Theme.colors.title,
                             contentDescription = rating,
                             tint = Theme.colors.statusColors.yellowAccent
                         )
@@ -107,7 +123,7 @@ fun SeriesHeaderSection(
                         contentDescription = season,
                         tint = Theme.colors.hint
                     )
-                }
+                }}
                 if (showReviews) {
                     NovixTextButton(
                         text = stringResource(R.string.view_reviews),

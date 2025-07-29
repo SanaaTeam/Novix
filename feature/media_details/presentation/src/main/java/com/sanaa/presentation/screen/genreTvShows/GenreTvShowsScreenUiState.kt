@@ -10,7 +10,8 @@ data class GenreTvShowsScreenUiState(
     val tvShows: Flow<PagingData<SeriesUiModel>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val noInternetConnection: Boolean = false
 )
 
 

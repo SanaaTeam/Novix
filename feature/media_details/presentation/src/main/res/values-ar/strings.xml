@@ -12,7 +12,7 @@
     <string name="episodes_count">%d حلقات</string>
     <string name="episode_number">الحلقة %d</string>
     <string name="season_number">م%d</string>
-    <string name="m">%d د</string>
+    <string name="m">%s د</string>
     <string name="season">الموسم</string>
     <string name="guest_of_honor">ضيوف الحلقة</string>
     <string name="anonymous">مجهول</string>
@@ -20,6 +20,8 @@
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
     <string name="reviews">مراجعات</string>"
+    <string name="hours_label">س</string>
+    <string name="minutes_label">د</string>
 
 
     // Genre

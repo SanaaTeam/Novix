@@ -8,7 +8,7 @@ fun TvShowDto.toEntity(): TvSeries {
     return TvSeries(
         id = id,
         title = name,
-        overview = overview,
+        overview = overview.toString(),
         posterImageUrl = buildPosterUrl(posterPath),
         imdbRating = voteAverage,
         releaseDate = LocalDate.parse(firstAirDate),

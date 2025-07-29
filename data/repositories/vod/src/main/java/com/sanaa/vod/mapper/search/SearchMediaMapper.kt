@@ -17,7 +17,7 @@ fun MovieLocalDto.toEntity(): Movie {
         imdbRating = imdbRating,
         duration = null,
         releaseDate = parseReleaseDate(releaseDate),
-        overview = null,
+        overview = "",
         trailerUrl = null,
     )
 }
@@ -43,7 +43,7 @@ fun MovieSearchDto.toEntity(): Movie {
         imdbRating = voteAverage,
         duration = null,
         releaseDate = parseReleaseDate(releaseDate),
-        overview = null,
+        overview = "",
         trailerUrl = null,
     )
 }
@@ -55,7 +55,7 @@ fun TvSeriesLocalDto.toEntity(): TvSeries {
         posterImageUrl = getFullImageUrl(imagePath),
         genres = emptyList(),
         imdbRating = imdbRating ?: 0f,
-        overview = null,
+        overview = "",
         releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
     )
@@ -80,7 +80,7 @@ fun TvShowSearchDto.toEntity(): TvSeries {
         posterImageUrl = getFullImageUrl(posterImagePath),
         genres = emptyList(),
         imdbRating = voteAverage ?: 0f,
-        overview = null,
+        overview = "",
         releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
     )

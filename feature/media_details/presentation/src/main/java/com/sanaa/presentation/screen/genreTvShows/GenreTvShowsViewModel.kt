@@ -5,6 +5,7 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import entity.TvSeries
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -30,6 +31,17 @@ class GenreTvShowsViewModel(
         }
     }
 
+    override fun onRetryClick() {
+        updateState {
+            it.copy(
+                noInternetConnection = false,
+                isLoading = true,
+                error = null
+            )
+        }
+        getTvShowsByGenreId(genreId)
+    }
+
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
     }
@@ -46,8 +58,22 @@ class GenreTvShowsViewModel(
         tryToCollect(callee = { loadTvShowsByGenreId(genreId) }, onCollect = { tvShows ->
             updateState {
                 it.copy(
-                    title = genreName, tvShows = flowOf(tvShows)
+                    title = genreName, tvShows = flowOf(tvShows), isLoading = false
                 )
+            }
+        }, onError = { exception ->
+            if (exception is NoNetworkException) {
+                updateState {
+                    it.copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } else {
+                updateState {
+                    it.copy(error = exception.message, isLoading = false)
+                }
             }
         })
     }

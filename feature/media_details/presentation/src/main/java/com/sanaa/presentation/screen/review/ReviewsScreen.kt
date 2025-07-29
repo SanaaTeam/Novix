@@ -21,6 +21,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
@@ -82,38 +83,45 @@ fun ReviewsScreenContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
-            AnimatedContent(
-                pagedReviews.loadState,
-                modifier = Modifier.align(Alignment.Center),
-                contentAlignment = Alignment.Center
-            ) {
-                if (it.refresh is LoadState.Loading) {
-                    NovixLoadingIndicator()
-                } else {
-                    if (isEmpty) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            EmptyReviewsContent()
-                        }
+            if (state.noInternetConnection) {
+                NetworkDisconnectionContact(
+                    onRetryClick = { interactionListener.onRetryClicked() },
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                AnimatedContent(
+                    pagedReviews.loadState,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (it.refresh is LoadState.Loading) {
+                        NovixLoadingIndicator()
                     } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            contentPadding = PaddingValues(vertical = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            items(
-                                count = pagedReviews.itemCount,
-                                key = { index ->
-                                    val review = pagedReviews[index]
-                                    "${index}-${review?.id}"
+                        if (isEmpty) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                EmptyReviewsContent()
+                            }
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 16.dp),
+                                contentPadding = PaddingValues(vertical = 12.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                items(
+                                    count = pagedReviews.itemCount,
+                                    key = { index ->
+                                        val review = pagedReviews[index]
+                                        "${index}-${review?.id}"
+                                    }
+                                ) { index ->
+                                    val review = pagedReviews[index] ?: return@items
+                                    ReviewCard(review = review)
                                 }
-                            ) { index ->
-                                val review = pagedReviews[index] ?: return@items
-                                ReviewCard(review = review)
                             }
                         }
                     }
