@@ -96,7 +96,8 @@ fun LoginContent(
     modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }
+        backgroundShapes = { NovixBackgroundShapes() },
+        topBar = { LoginTopBar(onBackClick = listener::onBackClicked) }
     ) {
         Column(
             modifier = modifier
@@ -105,8 +106,6 @@ fun LoginContent(
                     rememberScrollState()
                 )
         ) {
-            LoginTopBar(onBackClick = listener::onBackClicked)
-
             LoginHeader()
 
             Column(
