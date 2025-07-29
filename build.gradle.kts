@@ -73,6 +73,16 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.state.**",
     "com.sanaa.vod.media.**",
     "com.sanaa.presentation.modifier.**",
+    "dagger.hilt.**",
+    "hilt_aggregated_deps.**",
+    "**_Factory",
+    "**_HiltModules*",
+    "Hilt_*",
+    "**.di.**",
+    "com.sanaa.novix.Hilt_*",
+    "com.sanaa.novix.*_Factory",
+    "com.sanaa.novix.*_MembersInjector",
+    "com.sanaa.vod.util.*"
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
