@@ -25,6 +25,7 @@ fun LoginActions(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
+            .padding(top = 16.dp)
     ) {
         NovixPrimaryButton(
             text = stringResource(R.string.login),
@@ -35,7 +36,6 @@ fun LoginActions(
                 .align(Alignment.CenterHorizontally),
             isLoading = isLoading
         )
-        Spacer(Modifier.height(12.dp))
         Text(
             text = stringResource(R.string.forgot_password),
             style = Theme.textStyle.label.medium,

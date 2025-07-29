@@ -19,6 +19,7 @@ import com.sanaa.feature.authentication.presentation.R
 fun LoginHeader() {
     Column(
         modifier = Modifier.fillMaxWidth()
+            .padding(top=12.dp, start = 16.dp,end=16.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.app_icon),

@@ -43,7 +43,7 @@ fun PasswordTextField(
     iconDescription: String? = null
 ) {
     val visualTransformation =
-        if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
+        if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '*')
 
     Column(modifier = modifier) {
         NovixBasicTextField(
