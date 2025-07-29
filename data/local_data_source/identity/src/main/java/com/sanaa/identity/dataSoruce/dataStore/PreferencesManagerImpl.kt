@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.map
 
 class PreferencesManagerImpl(private val context: Context) : PreferencesManager {
     override val sessionId: Flow<String> = context.dataStore.data
-        .map { preferences -> preferences[SESSION_ID] ?: "" }
+        .map { preferences -> preferences[SESSION_ID].orEmpty() }
 
     override val isGuest: Flow<Boolean> = context.dataStore.data
-        .map { preferences -> preferences[IS_GUEST] ?: false }
+        .map { preferences -> preferences[IS_GUEST] == true }
 
     override suspend fun updateSessionId(value: String) {
         context.dataStore.edit { prefs ->

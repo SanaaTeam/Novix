@@ -85,6 +85,7 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.api.**",
     "com.sanaa.novix.resourceProvider.**",
     "com.sanaa.vod.network.interceptor.**",
+    "com.sanaa.identity.dataSoruce.dataStore.**",
     "com.sanaa.vod.dataSource.remote.search.search.**",
     "com.sanaa.presentation.base.**",
     "com.sanaa.presentation.filter_bottomsheet.state.**",
