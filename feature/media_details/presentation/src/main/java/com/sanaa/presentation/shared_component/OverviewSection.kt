@@ -126,7 +126,7 @@ fun ExpandableText(
                     withStyle(
                         Theme.textStyle.label.medium
                             .toSpanStyle()
-                            .copy(color = Theme.colors.primary, textDecoration = TextDecoration.Underline)
+                            .copy(color = Theme.colors.primary)
                     ) {
                         pushStringAnnotation(tag = READ_MORE_TAG, annotation = "read_more")
                         append(readMoreText)
@@ -138,7 +138,7 @@ fun ExpandableText(
                     withStyle(
                         Theme.textStyle.label.medium
                             .toSpanStyle()
-                            .copy(color = Theme.colors.primary, textDecoration = TextDecoration.Underline)
+                            .copy(color = Theme.colors.primary)
                     ) {
                         pushStringAnnotation(tag = READ_LESS_TAG, annotation = "read_less")
                         append(readLessText)
