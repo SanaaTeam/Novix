@@ -25,7 +25,10 @@ interface TvShowApiService {
     suspend fun fetchTvShowsImages(@Path("tv_id") id: Int): TvShowImagesResponse
 
     @GET("discover/tv")
-    suspend fun fetchTvShowsByCategory(@Query("with_genres") category: Int): GenreTvShowResponse
+    suspend fun fetchTvShowsByCategory(
+        @Query("with_genres") category: Int,
+        @Query("page") page: Int
+    ): GenreTvShowResponse
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits")
     suspend fun fetchEpisodeGuestsOfHonor(
@@ -58,7 +61,7 @@ interface TvShowApiService {
     suspend fun fetchTvShowsVideos(@Path("tv_id") id: Int): TvShowVideosResponse
 
     @GET("tv/{tv_id}/reviews")
-    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int): TvShowReviewsResponse
+    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int, @Query("page") page: Int): TvShowReviewsResponse
 
     @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse

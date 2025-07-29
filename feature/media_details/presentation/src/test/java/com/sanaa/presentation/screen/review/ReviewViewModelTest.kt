@@ -1,10 +1,10 @@
 package com.sanaa.presentation.screen.review
 
+import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
-import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import com.sanaa.presentation.model.toReviewUiModel
 import entity.Review
 import exceptions.NoNetworkException
 import io.mockk.coEvery
@@ -12,27 +12,48 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReviewViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private lateinit var manageMovieDetails: ManageMovieUseCase
+    private lateinit var manageTvSeriesDetails: ManageTvSeriesUseCase
     private lateinit var viewModel: ReviewViewModel
-
     private val mediaId = 101
+
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        manageMovieDetails = mockk(relaxed = true)
+        manageTvSeriesDetails = mockk(relaxed = true)
     }
 
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `onBackClick should emit NavigateBack`() = runTest {
+        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
+
+        viewModel.onBackClick()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(ReviewScreenEffects.NavigateBack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
     @Test
     fun `ReviewScreenInteractionListener calls onBackClick`() {
         var backClicked = false
@@ -48,32 +69,50 @@ class ReviewViewModelTest {
         listener.onBackClick()
         assertThat(backClicked).isTrue()
     }
-
     @Test
-    fun `onBackClick emits NavigateBack`() = runTest {
-        givenHappyViewModel(MediaTypeUiModel.MOVIE)
-        viewModel.onBackClick()
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ReviewScreenEffects.NavigateBack)
-            cancelAndIgnoreRemainingEvents()
-        }
+    fun `fetchReviews should update reviews for movies`() = runTest {
+        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, any()) } returns dummyReviews
+
+        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.reviews
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(dummyReviews.size)).isEqualTo(dummyReviews.map { it.toReviewUiModel() })
     }
 
     @Test
-    fun `fetchReviews returns empty list when no reviews found`() = runTest {
-        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId) } returns emptyList()
-        givenHappyViewModel(MediaTypeUiModel.MOVIE)
+    fun `fetchReviews should update reviews for tv series`() = runTest {
+        coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId, any()) } returns dummyReviews
 
-        assertThat(viewModel.state.value.reviews).isEmpty()
+        viewModel = givenHappyViewModel(MediaTypeUiModel.SERIES)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        val pagingData = viewModel.state.value.reviews
+        val items = pagingData.asSnapshot()
+        assertThat(items.take(dummyReviews.size)).isEqualTo(dummyReviews.map { it.toReviewUiModel() })
+    }
+
+    @Test
+    fun `fetchReviews should set isLoading to true during fetch`() = runTest {
+        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, any()) } coAnswers {
+            assertThat(viewModel.state.value.isLoading).isTrue()
+            dummyReviews
+        }
+
+        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
+        testDispatcher.scheduler.advanceUntilIdle()
         assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `fetchReviews handles NoNetworkException correctly`() = runTest {
-        val testDispatcher = StandardTestDispatcher(testScheduler)
-
-        coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId) } throws NoNetworkException()
+        coEvery {
+            manageTvSeriesDetails.getTvSeriesReviews(
+                mediaId,
+                any()
+            )
+        } throws NoNetworkException()
 
         viewModel = ReviewViewModel(
             mediaId = mediaId,
@@ -83,38 +122,17 @@ class ReviewViewModelTest {
             dispatcher = testDispatcher
         )
 
-        advanceUntilIdle()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
-    @Test
-    fun `fetchReviews sets isLoading to true during execution`() = runTest {
-        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId) } coAnswers {
-            assertThat(viewModel.state.value.isLoading).isTrue()
-            dummyReviews
-        }
-
-        viewModel = ReviewViewModel(
-            mediaId = mediaId,
-            mediaType = MediaTypeUiModel.MOVIE,
-            manageMovieDetails = manageMovieDetails,
-            manageTvSeriesDetails = manageTvSeriesDetails
-        )
-    }
-
-    private fun givenHappyViewModel(type: MediaTypeUiModel) {
-        if (type == MediaTypeUiModel.MOVIE) {
-            coEvery { manageMovieDetails.getReviewsByMovieId(mediaId) } returns dummyReviews
-        } else {
-            coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId) } returns dummyReviews
-        }
-
-        viewModel = ReviewViewModel(
+    private fun givenHappyViewModel(type: MediaTypeUiModel): ReviewViewModel {
+        return ReviewViewModel(
             mediaId = mediaId,
             mediaType = type,
             manageMovieDetails = manageMovieDetails,
-            manageTvSeriesDetails = manageTvSeriesDetails
+            manageTvSeriesDetails = manageTvSeriesDetails,
+            dispatcher = testDispatcher
         )
     }
 

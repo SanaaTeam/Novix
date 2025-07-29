@@ -21,8 +21,8 @@ class TvShowRepositoryImpl(
         remoteDataSource.getTvShowDetails(id).toEntity()
     }
 
-    override suspend fun getTvSeriesReviews(id: Int): List<Review> = safeCall("Reviews not found") {
-        remoteDataSource.getReviewsByTvShowId(id).map { it.toEntity() }
+    override suspend fun getTvSeriesReviews(id: Int, page: Int): List<Review> = safeCall("Reviews not found") {
+        remoteDataSource.getReviewsByTvShowId(id, page).map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String> =
@@ -30,9 +30,9 @@ class TvShowRepositoryImpl(
             remoteDataSource.getTvShowImageUrls(id).map { it.toEntity() }.take(count)
         }
 
-    override suspend fun getTvSeriesByGenre(genreId: Int): List<TvSeries> =
+    override suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =
         safeCall("Tv Series not found") {
-            remoteDataSource.getTvShowsByGenre(genreId).map { it.toEntity() }
+            remoteDataSource.getTvShowsByGenre(page, genreId).map { it.toEntity() }
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -121,6 +121,8 @@ fun MovieDetailsContent(
     state: MovieDetailsUiState,
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
+    val pagedSimilarMovies = state.similarMovies.collectAsLazyPagingItems()
+
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
         Box(
@@ -280,7 +282,7 @@ fun MovieDetailsContent(
                                 modifier = Modifier.fillWidthOfParent(16.dp)
                             )
                         }
-                        if (state.similarMovies.isNotEmpty()) {
+                        if (pagedSimilarMovies.itemCount > 0) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
                                 Text(
                                     text = stringResource(id = R.string.more_like_this),
@@ -290,9 +292,14 @@ fun MovieDetailsContent(
                                 )
                             }
 
-                            itemsIndexed(
-                                state.similarMovies,
-                                key = { index, item -> item.id }) { index, item ->
+                            items(
+                                count = pagedSimilarMovies.itemCount,
+                                key = { index ->
+                                    val movie = pagedSimilarMovies[index]
+                                    "${index}-${movie?.id}"
+                                }
+                            ) { index ->
+                                val item = pagedSimilarMovies[index] ?: return@items
                                 MoreLikeThisCard(
                                     movie = item,
                                     modifier = Modifier.padding(bottom = 12.dp),
@@ -315,7 +322,8 @@ fun MovieDetailsContent(
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet)
+                    isVisible = state.showLoginBottomSheet
+                )
             }
 
         }

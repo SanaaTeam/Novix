@@ -1,10 +1,13 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.paging.PagingData
 import com.sanaa.presentation.model.MovieUiModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
 data class GenreMoviesScreenUiState(
     val title: String? = null,
-    val movies: List<MovieUiModel> = emptyList(),
+    val movies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
     val error: String? = null,
     val showBottomSheet: Boolean = false,

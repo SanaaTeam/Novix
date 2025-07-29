@@ -102,7 +102,6 @@ fun ImageSlider(
                 blurRadius = 150,
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
-                isBlurEnabled = false,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
                 },

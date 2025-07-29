@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -18,6 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -58,8 +59,13 @@ fun ReviewsScreen(
 
 @Composable
 fun ReviewsScreenContent(
-    state: ReviewScreenUiState, interactionListener: ReviewScreenInteractionListener,
+    state: ReviewScreenUiState,
+    interactionListener: ReviewScreenInteractionListener,
 ) {
+    val pagedReviews = state.reviews.collectAsLazyPagingItems()
+    val isEmpty = pagedReviews.itemCount == 0
+
+
     NovixScaffold(
         topBar = {
             NovixTopBar(
@@ -77,44 +83,46 @@ fun ReviewsScreenContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
-            AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
-                modifier = Modifier.align(Alignment.Center),
-                contentAlignment = Alignment.Center
-            ) {
-                if (it) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryClicked() },
-                            modifier = Modifier.fillMaxSize()
-                        )
+            if (state.noInternetConnection) {
+                NetworkDisconnectionContact(
+                    onRetryClick = { interactionListener.onRetryClicked() },
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                AnimatedContent(
+                    pagedReviews.loadState,
+                    modifier = Modifier.align(Alignment.Center),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (it.refresh is LoadState.Loading) {
+                        NovixLoadingIndicator()
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            NovixLoadingIndicator()
-                        }
-                    }
-                } else {
-                    if (state.reviews.isNotEmpty()) {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp),
-                            contentPadding = PaddingValues(vertical = 12.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            items(
-                                state.reviews,
-                                key = { item -> item.id }
-                            ) { review ->
-                                ReviewCard(review = review)
+                        if (isEmpty) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                EmptyReviewsContent()
                             }
-                        }
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            EmptyReviewsContent()
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(horizontal = 16.dp),
+                                contentPadding = PaddingValues(vertical = 12.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                items(
+                                    count = pagedReviews.itemCount,
+                                    key = { index ->
+                                        val review = pagedReviews[index]
+                                        "${index}-${review?.id}"
+                                    }
+                                ) { index ->
+                                    val review = pagedReviews[index] ?: return@items
+                                    ReviewCard(review = review)
+                                }
+                            }
                         }
                     }
                 }

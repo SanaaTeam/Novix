@@ -1,10 +1,14 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import androidx.paging.PagingSource
+import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import entity.TvSeries
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageTvSeriesUseCase
 
 class GenreTvShowsViewModel(
@@ -28,11 +32,16 @@ class GenreTvShowsViewModel(
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false,
-            isLoading = true,
-            error = null) }
+        updateState {
+            it.copy(
+                noInternetConnection = false,
+                isLoading = true,
+                error = null
+            )
+        }
         getTvShowsByGenreId(genreId)
     }
+
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
     }
@@ -46,31 +55,41 @@ class GenreTvShowsViewModel(
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
-        tryToExecute(callee = {
-            updateState {
-                it.copy(isLoading = true)
-            }
-            val tvShows = manageTvSeriesUseCase.getTvSeriesByGenre(genreId)
+        tryToCollect(callee = { loadTvShowsByGenreId(genreId) }, onCollect = { tvShows ->
             updateState {
                 it.copy(
-                    title = genreName,
-                    tvShows = tvShows.map { it.toSeriesUiModel() },
-                    isLoading = false
+                    title = genreName, tvShows = flowOf(tvShows), isLoading = false
                 )
-            }
-        }, onSuccess = {
-            updateState {
-                it.copy(isLoading = false)
             }
         }, onError = { exception ->
             if (exception is NoNetworkException) {
-                updateState { it.copy(noInternetConnection = true, isLoading = false, error = null) }
-            }
-            else {
+                updateState {
+                    it.copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } else {
                 updateState {
                     it.copy(error = exception.message, isLoading = false)
                 }
             }
         })
+    }
+
+    private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
+        pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
+        mapper = TvSeries::toSeriesUiModel
+    )
+
+    private fun createTvShowsPagingDataSource(
+        genreId: Int
+    ): PagingSource<Int, TvSeries> {
+        return BasePagingSource { page ->
+            manageTvSeriesUseCase.getTvSeriesByGenre(
+                genreId = genreId, page = page
+            )
+        }
     }
 }
