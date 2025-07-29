@@ -107,6 +107,8 @@ fun MovieDetailsScreen(
                         ).route()
                     )
                 }
+
+                MovieDetailsUiEffect.NavigateToLogin -> TODO()
             }
         }
     }

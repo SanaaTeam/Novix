@@ -18,14 +18,14 @@ import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.api.navigation.LocalMainNavController
-import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import com.sanaa.presentation.api.navigation.HomeScreenRoute
+import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoutes
 import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
+import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import org.koin.java.KoinJavaComponent.inject
 
 @Composable
@@ -54,7 +54,7 @@ fun MainScreen() {
                         HomeScreen()
                     }
                     composable<SearchScreenRoute> {
-                        searchFeatureApi.SearchScreenApi()
+                      searchFeatureApi.SearchScreenApi()
                     }
                     composable<PlayListScreenRoute> {
 

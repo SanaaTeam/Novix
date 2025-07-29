@@ -47,6 +47,11 @@ class ActorViewModel(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(ActorScreenEffects.NavigateToLogin)
+    }
+
     override fun onSaveClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
     }

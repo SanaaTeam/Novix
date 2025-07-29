@@ -1,14 +1,25 @@
 package com.sanaa.vod.network.interceptor
 
+import com.sanaa.data.remotedatasource.vod.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class APIKeyInterceptor(private val apiKey: String) : Interceptor {
+class APIKeyInterceptor(val sessionId: () -> String?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val currentUrl = chain.request().url
-        val newUrl = currentUrl.newBuilder().addQueryParameter("api_key", apiKey).build()
-        val currentRequest = chain.request().newBuilder()
-        val newRequest = currentRequest.url(newUrl).build()
+        val originalRequest = chain.request()
+        val originalUrl = originalRequest.url
+
+        val newUrl = originalUrl.newBuilder()
+            .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
+            .build()
+
+        val newRequest = originalRequest.newBuilder()
+            .url(newUrl)
+            .apply {
+                sessionId()?.let { addHeader("session_id", it) }
+            }
+            .build()
+
         return chain.proceed(newRequest)
     }
 }

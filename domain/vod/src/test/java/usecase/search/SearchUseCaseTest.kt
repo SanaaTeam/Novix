@@ -13,14 +13,14 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.HistoryRepository
+import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
 import kotlin.time.Duration.Companion.minutes
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
-    private var searchHistoryRepository: HistoryRepository = mockk(relaxed = true)
+    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
     private lateinit var searchUseCase: SearchUseCase
 
     @BeforeEach

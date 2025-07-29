@@ -1,9 +1,11 @@
 package com.sanaa.novix.di
 
+import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
+import com.sanaa.presentation.api.AuthenticationApiImpl
 import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.UserProfileFeatureApi
@@ -17,10 +19,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 val apiModule = module {
+    factoryOf(::AuthenticationApiImpl) bind AuthenticationApi::class
     factoryOf(::SearchFeatureApiImpl) bind SearchFeatureApi::class
     factoryOf(::MediaDetailsApiImpl) bind MediaDetailsApi::class
     factory<SearchNavigatorApi> { SearchNavigatorApiImpl(get()) }
-
     factory<HomeFeatureApi> { HomeFeatureApiImpl() }
     factory<PlaylistsFeatureApi> { PlaylistsFeatureApiImpl() }
     factory<UserProfileFeatureApi> { UserProfileFeatureApiImpl() }

@@ -77,6 +77,11 @@ class SeriesViewModel(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(SeriesScreenEffects.NavigateToLogin)
+    }
+
     override fun onSaveSeriesClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
     }

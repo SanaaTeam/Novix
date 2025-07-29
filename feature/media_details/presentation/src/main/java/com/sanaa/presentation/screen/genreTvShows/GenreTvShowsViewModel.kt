@@ -46,6 +46,11 @@ class GenreTvShowsViewModel(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showBottomSheet = false) }
+        emitEffect(GenreTvShowsEffects.NavigateToLogin)
+    }
+
     override fun onBackClick() {
         emitEffect(GenreTvShowsEffects.NavigateBack)
     }

@@ -56,6 +56,11 @@ class MovieDetailsViewModel(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(MovieDetailsUiEffect.NavigateToLogin)
+    }
+
     override fun onActorCardClick(actorId: Int) {
         emitEffect(MovieDetailsUiEffect.NavigateToActorScreen(actorId))
     }

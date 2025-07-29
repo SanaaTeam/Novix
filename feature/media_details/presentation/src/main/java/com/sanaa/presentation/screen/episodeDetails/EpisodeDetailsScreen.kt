@@ -72,6 +72,13 @@ fun EpisodeDetailsScreen(
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
                 }
+
+                EpisodeDetailsEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -184,6 +191,7 @@ private fun EpisodeDetailsScreenContent(
                 RequestToLoginBottomSheet(
                     isVisible = state.showLoginBottomSheet,
                     onDismiss = interactionListener::onDismissBottomSheet,
+                    onLoginButtonClick = { interactionListener.onLoginButtonClick() }
                 )
             }
         }
