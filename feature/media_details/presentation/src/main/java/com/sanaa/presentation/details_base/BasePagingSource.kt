@@ -1,6 +1,5 @@
 package com.sanaa.presentation.details_base
 
-
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
