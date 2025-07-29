@@ -4,32 +4,20 @@ import android.app.Application
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.sanaa.novix.di.appModule
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.get
 import org.koin.core.context.startKoin
-import timber.log.Timber
+import org.koin.java.KoinJavaComponent.getKoin
 
-class NovixApp : Application(), KoinComponent {
+class NovixApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
 
         startKoin {
             androidContext(this@NovixApp)
-            modules(
-                appModule,
-            )
+            modules(appModule)
         }
 
-        val crashlytics: FirebaseCrashlytics = get()
-        val tree: Timber.Tree = get()
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(tree, Timber.DebugTree())
-        } else {
-            Timber.plant(tree)
-        }
-
+        val crashlytics: FirebaseCrashlytics = getKoin().get()
         crashlytics.apply {
             isCrashlyticsCollectionEnabled = true
             setUserId("user_${System.currentTimeMillis()}")

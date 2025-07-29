@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.sanaa.api.HomeFeatureApi
-import com.sanaa.api.SearchFeatureApi
 import org.koin.android.ext.android.getKoin
 import org.koin.android.ext.android.inject
 import timber.log.Timber

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen
 
+import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
@@ -8,6 +9,7 @@ import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.TvSeries
+import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -58,8 +60,10 @@ class TrendingTvShowsScreenViewModelTest {
 
         viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
+        val pagingData = viewModel.state.value.mediaList
+        val items = pagingData.asSnapshot()
 
-        assertThat(viewModel.state.value.mediaList).isEqualTo(tvShows.map { it.toState() })
+        assertThat(items.take(tvShows.size)).isEqualTo(tvShows.map { it.toState() })
     }
 
     @Test
@@ -74,21 +78,11 @@ class TrendingTvShowsScreenViewModelTest {
 
             viewModel.onGenreClick(genreId)
             testDispatcher.scheduler.advanceUntilIdle()
+            val pagingData = viewModel.state.value.mediaList
+            val items = pagingData.asSnapshot()
 
-            assertThat(viewModel.state.value.mediaList).isEqualTo(tvShows.map { it.toState() })
+            assertThat(items.take(tvShows.size)).isEqualTo(tvShows.map { it.toState() })
         }
-
-    @Test
-    fun `fetchMedia handles error and updates state when throw exception`() = runTest {
-        val exceptionMessage = "error"
-        coEvery { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) } throws RuntimeException(
-            exceptionMessage
-        )
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
-    }
 
     @Test
     fun `fetchGenres should handles error and updates state when throw exception`() = runTest {
@@ -99,6 +93,16 @@ class TrendingTvShowsScreenViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
+    }
+
+    @Test
+    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() = runTest {
+        coEvery { manageTvSeriesUseCase.getSeriesGenres() } throws NoNetworkException()
+
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
     }
 
     @Test
@@ -114,7 +118,6 @@ class TrendingTvShowsScreenViewModelTest {
     @Test
     fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
         coEvery { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) } returns listOf(mockk())
-        // Initialize ViewModel would fetch genres and media once
         viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val selectedGenre = viewModel.state.value.selectedGenreId
@@ -122,7 +125,7 @@ class TrendingTvShowsScreenViewModelTest {
         viewModel.onGenreClick(selectedGenre)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        coVerify(exactly = 1) { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) }
+        coVerify(exactly = 0) { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) }
     }
 
     @Test

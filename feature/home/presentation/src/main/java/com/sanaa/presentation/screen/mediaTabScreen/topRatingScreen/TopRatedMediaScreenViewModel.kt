@@ -1,14 +1,20 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
+import entity.Movie
+import entity.TvSeries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 
@@ -31,11 +37,7 @@ class TopRatedMediaScreenViewModel(
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
             callee = {
-                updateState {
-                    it.copy(isLoading = true, movieSelectedGenreId = genreId)
-                }
-                manageMovieUseCase.getTrendingMovies(1, state.value.movieSelectedGenreId)
-                    .map { it.toState() }
+                loadTopRatedMovies(genreId = genreId)
             }, onSuccess = { mediaList ->
                 updateState {
                     it.copy(movieList = mediaList, isLoading = false)
@@ -52,11 +54,7 @@ class TopRatedMediaScreenViewModel(
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
             callee = {
-                updateState {
-                    it.copy(isLoading = true, tvShowSelectedGenreId = genreId)
-                }
-                manageTvSeriesUseCase.getTopRatedTvSeries(1, state.value.tvShowSelectedGenreId)
-                    .map { it.toState() }
+                loadTopRatedTvSeries(genreId = genreId)
             }, onSuccess = { mediaList ->
                 updateState {
                     it.copy(tvShowList = mediaList, isLoading = false)
@@ -118,12 +116,14 @@ class TopRatedMediaScreenViewModel(
 
     override fun onMovieGenreClick(id: Int?) {
         if (id != state.value.movieSelectedGenreId) {
+            updateState { it.copy(movieSelectedGenreId = id) }
             fetchMovies(id)
         }
     }
 
     override fun onTvShowGenreClick(id: Int?) {
         if (id != state.value.tvShowSelectedGenreId) {
+            updateState { it.copy(tvShowSelectedGenreId = id) }
             fetchTvShows(id)
         }
     }
@@ -142,5 +142,57 @@ class TopRatedMediaScreenViewModel(
 
     override fun onBackClick() {
         emitEffect(MediaTabScreenEffect.NavigateBack)
+    }
+
+
+    private fun loadTopRatedMovies(
+        genreId: Int?
+    ): Flow<PagingData<MediaItem>> {
+        updateState { it.copy(isLoading = true) }
+        return createPagingFlow(
+            pagingSourceFactory = {
+                createMoviePagingDataSource(
+                    genreId = genreId
+                )
+            },
+            mapper = Movie::toState
+        )
+    }
+
+    private fun loadTopRatedTvSeries(
+        genreId: Int?
+    ): Flow<PagingData<MediaItem>> {
+        updateState { it.copy(isLoading = true) }
+        return createPagingFlow(
+            pagingSourceFactory = {
+                createTvShowPagingDataSource(
+                    genreId = genreId
+                )
+            },
+            mapper = TvSeries::toState
+        )
+    }
+
+
+    private fun createMoviePagingDataSource(
+        genreId: Int?
+    ): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome { page ->
+            manageMovieUseCase.getTopRatedMovies(
+                page = page,
+                genreId = genreId
+            )
+        }
+    }
+
+    private fun createTvShowPagingDataSource(
+        genreId: Int?
+    ): PagingSource<Int, TvSeries> {
+        return BasePagingSourceForHome { page ->
+            manageTvSeriesUseCase.getTopRatedTvSeries(
+                page = page,
+                genreId = genreId
+            )
+        }
     }
 }
