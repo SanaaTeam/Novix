@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -67,47 +68,44 @@ fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val effect by viewModel.effect.collectAsStateWithLifecycle(null)
-
+    val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is MovieDetailsUiEffect.OpenTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, effect.url?.toUri())
+                    context.startActivity(intent)
+                }
 
-    LaunchedEffect(effect) {
-        when (val e = effect) {
-            is MovieDetailsUiEffect.OpenTrailer -> {
-                val intent = Intent(Intent.ACTION_VIEW, e.url?.toUri())
-                navController.context.startActivity(intent)
-            }
+                is MovieDetailsUiEffect.NavigateBack -> {
+                    if (!navController.popBackStack()) {
+                        (navController.context as Activity).finish()
+                    }
+                }
 
-            is MovieDetailsUiEffect.NavigateBack -> {
-                if (!navController.popBackStack()) {
-                    (navController.context as Activity).finish()
+                is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
+                    navController.navigate(
+                        ReviewsScreenRoute(effect.movieId, MediaTypeParam.MOVIE).route()
+                    )
+                }
+
+                is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
+                    navController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                }
+
+                is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                    navController.navigate(ActorDetailsScreenRoute(effect.actorId).route())
+                }
+
+                is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
+                    navController.navigate(
+                        MovieCategoriesScreenRoute(
+                            effect.categoryId, effect.categoryName
+                        ).route()
+                    )
                 }
             }
-
-            is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
-                Log.d("TAG", "MovieDetailsScreen: ${e.movieId}")
-                navController.navigate(
-                    ReviewsScreenRoute(e.movieId, MediaTypeParam.MOVIE).route()
-                )
-            }
-
-            is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
-                navController.navigate(MovieDetailsScreenRoute(e.movieId).route())
-            }
-
-            is MovieDetailsUiEffect.NavigateToActorScreen -> {
-                navController.navigate(ActorDetailsScreenRoute(e.actorId).route())
-            }
-
-            is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
-                navController.navigate(
-                    MovieCategoriesScreenRoute(
-                        e.categoryId, e.categoryName
-                    ).route()
-                )
-            }
-
-            else -> Unit
         }
     }
     MovieDetailsContent(
