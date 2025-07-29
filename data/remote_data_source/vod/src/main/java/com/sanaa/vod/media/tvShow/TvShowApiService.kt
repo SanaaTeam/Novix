@@ -64,17 +64,14 @@ interface TvShowApiService {
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse
 
     @GET("genre/tv/list")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTvShowsGenres(): TvShowGenresResponse
 
     @GET("tv/popular")
-    @Headers("Ignore-Language: true")
     suspend fun getPopularTvShows(
         @Query("page") page: Int
     ): MovieApiResponse<TvShowDto>
 
     @GET("discover/tv")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTrendingTvShows(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -85,7 +82,6 @@ interface TvShowApiService {
     ): MovieApiResponse<TvShowDto>
 
     @GET("discover/tv")
-    @Headers("Ignore-Language: true")
     suspend fun fetchTopRatingTvShows(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
