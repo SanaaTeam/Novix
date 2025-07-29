@@ -21,6 +21,7 @@ abstract class RemoteSearchDataSourceModule {
     ): SearchRemoteDataSource
 
     companion object {
+
         @Provides
         @Singleton
         fun provideSearchApiService(retrofit: Retrofit): SearchApiService =

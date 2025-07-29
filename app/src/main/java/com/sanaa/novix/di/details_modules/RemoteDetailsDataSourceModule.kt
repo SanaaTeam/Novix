@@ -9,43 +9,51 @@ import com.sanaa.vod.media.movie.MovieApiService
 import com.sanaa.vod.media.movie.RemoteMovieDataSourceImpl
 import com.sanaa.vod.media.tvShow.RemoteTvShowDataSourceImpl
 import com.sanaa.vod.media.tvShow.TvShowApiService
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object RemoteDetailsDataSourceModule {
+abstract class RemoteDetailsDataSourceModule {
 
-    @Provides
-    fun provideMovieApiService(
-        retrofit: Retrofit
-    ): MovieApiService = retrofit.create(MovieApiService::class.java)
+    @Binds
+    @Singleton
+    abstract fun bindMovieRemoteDataSource(
+        dataSource: RemoteMovieDataSourceImpl
+    ): RemoteMovieDataSource
 
-    @Provides
-    fun provideRemoteMovieDataSource(
-        movieApi: MovieApiService
-    ): RemoteMovieDataSource = RemoteMovieDataSourceImpl(movieApi)
+    @Binds
+    @Singleton
+    abstract fun bindActorRemoteDataSource(
+        dataSource: RemoteActorDataSourceImpl
+    ): RemoteActorDataSource
 
-    @Provides
-    fun provideActorApiService(
-        retrofit: Retrofit
-    ): ActorApiService = retrofit.create(ActorApiService::class.java)
+    @Binds
+    @Singleton
+    abstract fun bindTvShowRemoteDataSource(
+        dataSource: RemoteTvShowDataSourceImpl
+    ): RemoteTvShowDataSource
 
-    @Provides
-    fun provideRemoteActorDataSource(
-        actorApi: ActorApiService
-    ): RemoteActorDataSource = RemoteActorDataSourceImpl(actorApi)
+    companion object {
 
-    @Provides
-    fun provideTvShowApiService(
-        retrofit: Retrofit
-    ): TvShowApiService = retrofit.create(TvShowApiService::class.java)
+        @Provides
+        @Singleton
+        fun provideMovieApiService(retrofit: Retrofit): MovieApiService =
+            retrofit.create(MovieApiService::class.java)
 
-    @Provides
-    fun provideRemoteTvShowDataSource(
-        tvShowApi: TvShowApiService
-    ): RemoteTvShowDataSource = RemoteTvShowDataSourceImpl(tvShowApi)
+        @Provides
+        @Singleton
+        fun provideActorApiService(retrofit: Retrofit): ActorApiService =
+            retrofit.create(ActorApiService::class.java)
+
+        @Provides
+        @Singleton
+        fun provideTvShowApiService(retrofit: Retrofit): TvShowApiService =
+            retrofit.create(TvShowApiService::class.java)
+    }
 }
