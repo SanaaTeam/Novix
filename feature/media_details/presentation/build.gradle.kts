@@ -24,6 +24,7 @@ dependencies {
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
