@@ -8,4 +8,5 @@ interface EpisodeDetailsInteractionListener {
     fun onSavedClick(seriesId: Int)
     fun onDismissBottomSheet()
     fun onRateClicked()
+    fun onRetryLoadDetails()
 }
