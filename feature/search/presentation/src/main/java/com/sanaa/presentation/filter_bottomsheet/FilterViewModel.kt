@@ -6,6 +6,7 @@ import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
 import com.sanaa.presentation.screen.state.mapper.toDomain
 import com.sanaa.presentation.screen.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,9 +19,10 @@ import javax.inject.Inject
 class FilterViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<FilterUiState, Unit>(
     initialState = FilterUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
 
     private val _filterResult = MutableSharedFlow<MediaFilters?>()

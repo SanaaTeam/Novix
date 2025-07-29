@@ -5,6 +5,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.toReviewUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -14,10 +15,11 @@ import javax.inject.Inject
 class ReviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), ReviewScreenInteractionListener {
 
     private val mediaId: Int = checkNotNull(savedStateHandle["mediaId"])

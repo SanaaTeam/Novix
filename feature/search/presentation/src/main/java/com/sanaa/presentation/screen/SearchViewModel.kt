@@ -22,6 +22,7 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -42,10 +43,11 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
-    private val manageSearchHistoryUseCase: ManageHistoryUseCase
+    private val manageSearchHistoryUseCase: ManageHistoryUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
-    Dispatchers.IO
+    dispatcher
 ), SearchScreenInteractionsListener {
 
     init {
