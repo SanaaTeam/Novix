@@ -11,4 +11,5 @@ data class MovieDetailsUiState(
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
     val showLoginBottomSheet: Boolean = false,
+    val noInternetConnection: Boolean = false,
 )
