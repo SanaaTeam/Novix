@@ -42,21 +42,19 @@ class GenreTvShowsViewModel(
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
-        tryToExecute(callee = {
-            loadTvShowsByGenreId(genreId)
-            },
-            onSuccess = {
+        tryToCollect(
+            callee = { loadTvShowsByGenreId(genreId) },
+            onCollect = { pagingData ->
+                updateState { it.copy(tvShows = pagingData) }
             }
         )
     }
 
-
-    private fun loadTvShowsByGenreId(genreId: Int) {
+    private fun loadTvShowsByGenreId(genreId: Int) =
         createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
             mapper = TvSeries::toSeriesUiModel
         )
-    }
 
     private fun createTvShowsPagingDataSource(
         genreId: Int

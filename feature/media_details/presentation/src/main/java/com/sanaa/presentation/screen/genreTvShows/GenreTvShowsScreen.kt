@@ -83,6 +83,7 @@ fun GenreTvShowsScreenContent(
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
 
+
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
