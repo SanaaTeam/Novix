@@ -80,9 +80,8 @@ class SearchRepositoryImpl(
         val movies = remoteDataSource.searchMovies(query, page).results.onEach {
             localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
         }
-        return filters
-            ?.filterMovies(movies)
-            ?: movies.map { it.toEntity() }
+        val filteredMovies= filters?.filterMovies(movies)
+        return filteredMovies?: movies.map { it.toEntity() }
     }
 
     private fun getMoviesFromCache(
