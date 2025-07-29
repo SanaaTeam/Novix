@@ -116,7 +116,7 @@ fun GenreTvShowsScreenContent(
                     if (it) {
                         if (state.noInternetConnection) {
                             NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClicked() },
+                                onRetryClick = { interactionListener.onRetryClick() },
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {

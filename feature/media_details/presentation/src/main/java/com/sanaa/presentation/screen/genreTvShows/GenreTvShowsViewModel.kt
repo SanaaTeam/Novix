@@ -31,7 +31,7 @@ class GenreTvShowsViewModel(
         }
     }
 
-    override fun onRetryClicked() {
+    override fun onRetryClick() {
         updateState {
             it.copy(
                 noInternetConnection = false,
