@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.ui.test.junit4.android)
+    implementation(libs.androidx.navigation.testing.android)
     testImplementation(libs.bundles.test)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)

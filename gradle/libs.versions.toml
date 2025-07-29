@@ -64,6 +64,7 @@ material3Android = "1.3.2"
 datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
 uiTestJunit4Android = "1.8.3"
+navigationTestingAndroid = "2.9.2"
 
 
 [libraries]
@@ -179,6 +180,7 @@ kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", v
 android-gradle-plugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
+androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

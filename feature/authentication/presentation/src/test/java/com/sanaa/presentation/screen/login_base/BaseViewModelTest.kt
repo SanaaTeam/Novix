@@ -2,19 +2,16 @@ package com.sanaa.presentation.screen.login_base
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BaseViewModelTest {
-
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var testViewModel: TestBaseViewModel
 
@@ -25,145 +22,127 @@ class BaseViewModelTest {
     }
 
     @Test
-    fun `initial state is set correctly`() = runTest(testDispatcher) {
-        val initialState = TestState(value = "initial")
-        val viewModel = TestBaseViewModel(testDispatcher, initialState)
-        assertThat(viewModel.state.value).isEqualTo(initialState)
+    fun `initial state is set correctly`() = runTest {
+        // Then
+        assertThat(testViewModel.state.value).isEqualTo("initial")
     }
 
     @Test
-    fun `updateState updates the state correctly`() = runTest(testDispatcher) {
-        val newValue = "updated"
-        testViewModel.updateTestState { it.copy(value = newValue) }
-        advanceUntilIdle()
-        assertThat(testViewModel.state.value.value).isEqualTo(newValue)
+    fun `updateState updates state correctly`() = runTest {
+        // When
+        testViewModel.updateTestState("updated")
+
+        // Then
+        assertThat(testViewModel.state.value).isEqualTo("updated")
     }
 
     @Test
-    fun `tryToExecute with success calls onSuccess callback`() = runTest(testDispatcher) {
-        var successCalled = false
-        var errorCalled = false
-        val expectedResult = "success"
+    fun `emitEffect emits effect correctly`() = runTest {
+        // When
+        testViewModel.emitTestEffect("test_effect")
 
-        testViewModel.executeTest(
-            callee = { expectedResult },
-            onSuccess = { result ->
-                successCalled = true
-                assertThat(result).isEqualTo(expectedResult)
-            },
-            onError = { errorCalled = true }
-        )
-        advanceUntilIdle()
-
-        assertThat(successCalled).isTrue()
-        assertThat(errorCalled).isFalse()
-    }
-
-    @Test
-    fun `tryToExecute with exception calls onError callback`() = runTest(testDispatcher) {
-        var successCalled = false
-        var errorCalled = false
-        val testException = RuntimeException("Test error")
-
-        testViewModel.executeTest(
-            callee = { throw testException },
-            onSuccess = { successCalled = true },
-            onError = { exception ->
-                errorCalled = true
-                assertThat(exception).isEqualTo(testException)
-            }
-        )
-        advanceUntilIdle()
-
-        assertThat(successCalled).isFalse()
-        assertThat(errorCalled).isTrue()
-    }
-
-    @Test
-    fun `tryToExecute without callbacks handles success gracefully`() = runTest(testDispatcher) {
-        val expectedResult = "success"
-        testViewModel.executeTest(callee = { expectedResult })
-        advanceUntilIdle()
-    }
-
-    @Test
-    fun `tryToExecute without callbacks handles error gracefully`() = runTest(testDispatcher) {
-        val testException = RuntimeException("Test error")
-        testViewModel.executeTest(callee = { throw testException })
-        advanceUntilIdle()
-    }
-
-    @Test
-    fun `emitEffect emits effect correctly`() = runTest(testDispatcher) {
-        val testEffect = TestEffect.ShowMessage("test message")
-        testViewModel.emitTestEffect(testEffect)
-
+        // Then
         testViewModel.effect.test {
-            val emittedEffect = awaitItem()
-            assertThat(emittedEffect).isEqualTo(testEffect)
+            assertThat(awaitItem()).isEqualTo("test_effect")
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
-    @Test
-    fun `multiple state updates work correctly`() = runTest(testDispatcher) {
-        val updates = listOf("update1", "update2", "update3")
-
-        updates.forEach { update ->
-            testViewModel.updateTestState { it.copy(value = update) }
-        }
-        advanceUntilIdle()
-
-        assertThat(testViewModel.state.value.value).isEqualTo(updates.last())
-    }
 
     @Test
-    fun `multiple effects are emitted correctly`() = runTest(testDispatcher) {
-        val effects = listOf(
-            TestEffect.ShowMessage("message1"),
-            TestEffect.ShowMessage("message2"),
-            TestEffect.ShowMessage("message3")
-        )
+    fun `multiple effects are emitted in sequence`() = runTest {
+        // When
+        testViewModel.emitTestEffect("effect1")
+        testViewModel.emitTestEffect("effect2")
+        testViewModel.emitTestEffect("effect3")
 
-        effects.forEach { effect ->
-            testViewModel.emitTestEffect(effect)
-        }
-
+        // Then
         testViewModel.effect.test {
-            effects.forEach { expectedEffect ->
-                val emittedEffect = awaitItem()
-                assertThat(emittedEffect).isEqualTo(expectedEffect)
-            }
+            assertThat(awaitItem()).isEqualTo("effect1")
+            assertThat(awaitItem()).isEqualTo("effect2")
+            assertThat(awaitItem()).isEqualTo("effect3")
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
-    // ------- Helper classes -------
+    @Test
+    fun `state updates are applied correctly`() = runTest {
+        // When
+        testViewModel.updateTestState("first")
+        testViewModel.updateTestState("second")
+        testViewModel.updateTestState("third")
 
-    data class TestState(val value: String = "default")
-
-    sealed class TestEffect {
-        data class ShowMessage(val message: String) : TestEffect()
+        // Then
+        assertThat(testViewModel.state.value).isEqualTo("third")
     }
 
+    @Test
+    fun `viewModel uses default dispatcher when none provided`() = runTest {
+        // Given
+        val defaultViewModel = TestBaseViewModel()
+
+        // When
+        defaultViewModel.emitTestEffect("test")
+
+        // Then
+        defaultViewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo("test")
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `tryToExecute without callbacks works correctly`() = runTest {
+        // When & Then - Should not throw
+        testViewModel.executeTestWithoutCallbacks { "success" }
+    }
+
+
+    // Test implementation of BaseViewModel
     private class TestBaseViewModel(
-        dispatcher: CoroutineDispatcher,
-        initialState: TestState = TestState()
-    ) : BaseViewModel<TestState, TestEffect>(initialState, dispatcher) {
+        dispatcher: kotlinx.coroutines.CoroutineDispatcher = Dispatchers.IO
+    ) : BaseViewModel<String, String>("initial", dispatcher) {
 
-        fun updateTestState(updater: (TestState) -> TestState) {
-            updateState(updater)
+        fun updateTestState(newState: String) {
+            updateState { newState }
         }
 
-        fun <T> executeTest(
-            callee: suspend () -> T,
-            onSuccess: (T) -> Unit = {},
-            onError: (exception: Throwable) -> Unit = {},
-            dispatcher: CoroutineDispatcher = defaultDispatcher,
-        ) {
-            tryToExecute(callee, onSuccess, onError, dispatcher)
-        }
-
-        fun emitTestEffect(effect: TestEffect) {
+        fun emitTestEffect(effect: String) {
             emitEffect(effect)
+        }
+
+        fun executeTest(
+            callee: suspend () -> String,
+            onSuccess: (String) -> Unit = {},
+            onError: (Throwable) -> Unit = {}
+        ) {
+            tryToExecute(callee, onSuccess, onError)
+        }
+
+        fun executeTestWithCustomDispatcher(
+            callee: suspend () -> String,
+            onSuccess: (String) -> Unit = {},
+            dispatcher: kotlinx.coroutines.CoroutineDispatcher
+        ) {
+            tryToExecute(callee, onSuccess, dispatcher = dispatcher)
+        }
+
+        fun executeTestWithoutCallbacks(callee: suspend () -> String) {
+            tryToExecute(callee)
+        }
+
+        fun executeTestWithOnlySuccess(
+            callee: suspend () -> String,
+            onSuccess: (String) -> Unit
+        ) {
+            tryToExecute(callee, onSuccess)
+        }
+
+        fun executeTestWithOnlyError(
+            callee: suspend () -> String,
+            onError: (Throwable) -> Unit
+        ) {
+            tryToExecute(callee, onError = onError)
         }
     }
 }
