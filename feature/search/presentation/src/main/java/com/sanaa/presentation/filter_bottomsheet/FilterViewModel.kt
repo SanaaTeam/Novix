@@ -24,6 +24,10 @@ class FilterViewModel(
     private val _filterResult = MutableSharedFlow<MediaFilters?>()
     val filterResult = _filterResult.asSharedFlow()
 
+    init {
+        fetchMovieGenres()
+        fetchTvShowGenres()
+    }
 
     override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
         updateState { it.copy(yearRange = newRange) }
@@ -48,7 +52,10 @@ class FilterViewModel(
 
     override fun onClearFilters() {
         updateState {
-            FilterUiState(allGenres = it.allGenres)
+            FilterUiState(
+                tvGenres = it.tvGenres,
+                movieGenres = it.movieGenres
+            )
         }
         tryToExecute(
             callee = ::clearSelectedFilters
@@ -60,14 +67,6 @@ class FilterViewModel(
         tryToExecute(
             callee = ::emitSelectedFilters
         )
-    }
-
-
-    fun fetchGenresByTab(tabIndex: Int) {
-        when (tabIndex) {
-            MOVIE_INDEX -> fetchMovieGenres()
-            TV_SHOW_INDEX -> fetchTvShowGenres()
-        }
     }
 
     private fun fetchTvShowGenres() {
@@ -109,7 +108,7 @@ class FilterViewModel(
         val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
         updateState {
             it.copy(
-                allGenres = tvShowGenres.map { it.toState() },
+                tvGenres = tvShowGenres.map { it.toState() },
                 isLoading = false
             )
         }
@@ -121,7 +120,7 @@ class FilterViewModel(
         val movieGenres = manageMovieUseCase.getMovieGenres()
         updateState {
             it.copy(
-                allGenres = movieGenres.map { it.toState() },
+                movieGenres = movieGenres.map { it.toState() },
                 isLoading = false
             )
         }

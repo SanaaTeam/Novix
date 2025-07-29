@@ -27,6 +27,7 @@ import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.filter_bottomsheet.FilterViewModel.Companion.MOVIE_INDEX
 import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
@@ -45,10 +46,6 @@ fun FilterBottomSheet(
     var isSliderDragging by remember { mutableStateOf(false) }
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(selectedTabIndex) {
-        filterViewModel.fetchGenresByTab(selectedTabIndex)
-    }
 
     LaunchedEffect(Unit) {
         filterViewModel.filterResult.collect { filters ->
@@ -69,6 +66,7 @@ fun FilterBottomSheet(
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
             listener = filterViewModel,
+            selectedTabIndex = selectedTabIndex,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
@@ -80,11 +78,17 @@ fun FilterBottomSheet(
 @Composable
 fun FilterBottomSheetContent(
     uiState: FilterUiState,
+    selectedTabIndex: Int,
     listener: FilterBottomSheetInteractionsListener,
     onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
+    val displayedGenres = if (selectedTabIndex == MOVIE_INDEX) {
+        uiState.movieGenres
+    } else {
+        uiState.tvGenres
+    }
     Column(
         modifier = Modifier
             .background(color = Theme.colors.surface)
@@ -118,7 +122,7 @@ fun FilterBottomSheetContent(
                         onDragStateChanged = onSliderDragStateChanged
                     )
                     GenreChips(
-                        genres = uiState.allGenres,
+                        genres = displayedGenres,
                         selectedGenres = uiState.selectedGenres,
                         onGenreSelected = listener::onGenreSelected,
                         animateWidth = false,

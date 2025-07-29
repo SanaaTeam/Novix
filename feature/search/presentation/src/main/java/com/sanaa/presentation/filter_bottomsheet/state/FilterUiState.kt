@@ -3,6 +3,8 @@ package com.sanaa.presentation.filter_bottomsheet.state
 data class FilterUiState(
     val yearRange: ClosedFloatingPointRange<Float> = 1850f..2025f,
     val allGenres: List<GenreUiState> = emptyList(),
+    val movieGenres: List<GenreUiState> = emptyList(),
+    val tvGenres: List<GenreUiState> = emptyList(),
     val selectedGenres: Set<GenreUiState> = emptySet(),
     val imdbRating: Int = 0,
     val isLoading: Boolean = false,
