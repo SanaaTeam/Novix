@@ -2,6 +2,7 @@ package com.sanaa.novix
 
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         val sessionId: String? = runBlocking {
             preferenceManager.sessionId.firstOrNull()
         }
+        Log.d("API_KEY_CHECK", "Key: ${BuildConfig.TMDB_API_KEY}")
         setContent {
             if (TextUtils.isEmpty(sessionId))
                 authenticationApi.AuthenticationScreen(this)
