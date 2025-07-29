@@ -166,7 +166,7 @@ private fun ActorScreenContent(
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier
-                                        .padding(16.dp)
+                                        .padding(start = 16.dp, end = 16.dp,top=16.dp)
                                         .fillMaxWidth()
                                 )
                             }
@@ -176,6 +176,7 @@ private fun ActorScreenContent(
                             MediaSection(
                                 title = stringResource(R.string.gallery),
                                 items = state.galleryImageUrls.take(10),
+                                modifier = Modifier.padding(top = 16.dp),
                                 onActionClick = listener::onViewAllGalleryClicked
                             ) { image ->
                                 GalleryCard(image)
