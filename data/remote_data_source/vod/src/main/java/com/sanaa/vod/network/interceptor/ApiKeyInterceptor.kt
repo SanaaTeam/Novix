@@ -20,9 +20,8 @@ class APIKeyInterceptor(val sessionId: () -> String?) : Interceptor {
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
 
-        // Add the v3 API key as a query parameter
         val newUrl = originalUrl.newBuilder()
-            .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY) // this should now be your v3 key
+            .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
             .build()
 
         val newRequest = originalRequest.newBuilder()
