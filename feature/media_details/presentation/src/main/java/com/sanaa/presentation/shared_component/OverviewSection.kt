@@ -5,7 +5,6 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -25,6 +24,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.foundation.text.ClickableText // Import ClickableText
 
 @Composable
 fun OverviewSection(
@@ -55,8 +56,6 @@ fun OverviewSection(
     }
 }
 
-
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ExpandableText(
@@ -75,6 +74,9 @@ fun ExpandableText(
     var hasOverflow by rememberSaveable { mutableStateOf(false) }
     var displayText by rememberSaveable { mutableStateOf(text) }
 
+    val READ_MORE_TAG = "read_more_tag"
+    val READ_LESS_TAG = "read_less_tag"
+
     BoxWithConstraints(
         modifier = modifier
             .animateContentSize(
@@ -83,10 +85,6 @@ fun ExpandableText(
                     easing = FastOutSlowInEasing
                 )
             )
-            .clickable(enabled = hasOverflow) {
-                isExpanded = !isExpanded
-                if (isExpanded) onReadMore?.invoke()
-            }
     ) {
         val maxWidthPx = with(LocalDensity.current) { maxWidth.toPx() }
 
@@ -121,35 +119,50 @@ fun ExpandableText(
             }
         }
 
-        Text(
-            text = buildAnnotatedString {
-                when {
-                    !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {
-                        append(displayText.removeSuffix(readMoreText))
-                        withStyle(
-                            Theme.textStyle.label.medium
-                                .toSpanStyle()
-                                .copy(color = Theme.colors.primary)
-                        ) {
-                            append(readMoreText)
-                        }
+        val annotatedString = buildAnnotatedString {
+            when {
+                !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {
+                    append(displayText.removeSuffix(readMoreText))
+                    withStyle(
+                        Theme.textStyle.label.medium
+                            .toSpanStyle()
+                            .copy(color = Theme.colors.primary, textDecoration = TextDecoration.Underline)
+                    ) {
+                        pushStringAnnotation(tag = READ_MORE_TAG, annotation = "read_more")
+                        append(readMoreText)
+                        pop()
                     }
-                    isExpanded && hasOverflow && displayText.endsWith(readLessText) -> {
-                        append(displayText.removeSuffix(readLessText))
-                        withStyle(
-                            Theme.textStyle.label.medium
-                                .toSpanStyle()
-                                .copy(color = Theme.colors.primary)
-                        ) {
-                            append(readLessText)
-                        }
-                    }
-                    else -> append(displayText)
                 }
-            },
+                isExpanded && hasOverflow && displayText.endsWith(readLessText) -> {
+                    append(displayText.removeSuffix(readLessText))
+                    withStyle(
+                        Theme.textStyle.label.medium
+                            .toSpanStyle()
+                            .copy(color = Theme.colors.primary, textDecoration = TextDecoration.Underline)
+                    ) {
+                        pushStringAnnotation(tag = READ_LESS_TAG, annotation = "read_less")
+                        append(readLessText)
+                        pop()
+                    }
+                }
+                else -> append(displayText)
+            }
+        }
+
+        ClickableText(
+            text = annotatedString,
             style = style.copy(color = color),
             maxLines = if (!isExpanded && hasOverflow) collapsedMaxLines else Int.MAX_VALUE,
-            overflow = TextOverflow.Clip
+            overflow = TextOverflow.Clip,
+            onClick = { offset ->
+                annotatedString.getStringAnnotations(offset, offset)
+                    .firstOrNull()?.let { span ->
+                        if (span.tag == READ_MORE_TAG || span.tag == READ_LESS_TAG) {
+                            isExpanded = !isExpanded
+                            if (isExpanded) onReadMore?.invoke()
+                        }
+                    }
+            }
         )
     }
 }
