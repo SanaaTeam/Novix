@@ -10,5 +10,6 @@ data class ReviewScreenUiState(
     val isLoading: Boolean = false,
     val reviews: Flow<PagingData<ReviewUiModel>> = flowOf(PagingData.empty()),
     val error: String? = null,
+    val noInternetConnection: Boolean = false
 )
 

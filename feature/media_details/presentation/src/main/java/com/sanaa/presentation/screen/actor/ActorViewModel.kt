@@ -56,7 +56,10 @@ class ActorViewModel(
         updateState { it.copy(showLoginBottomSheet = true) }
     }
 
-
+    override fun onRetryClicked() {
+        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        loadDetails()
+    }
     private fun loadDetails() {
         updateState { it.copy(isLoading = true) }
         tryToExecute(

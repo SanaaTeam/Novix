@@ -7,6 +7,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toUiModel
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,11 @@ class GenreMoviesViewModel(
     dispatcher
 ), GenreMoviesScreenInteractionListener {
     init {
+        fetchMovies(categoryId)
+    }
+
+    override fun onRetryClicked() {
+        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         fetchMovies(categoryId)
     }
 
@@ -60,6 +66,21 @@ class GenreMoviesViewModel(
             onCollect = { movies ->
                 updateState {
                     it.copy(movies = flowOf(movies), title = categoryName, isLoading = false)
+                }
+            },
+            onError = { exception ->
+                if (exception is NoNetworkException) {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                } else {
+                    updateState {
+                        it.copy(error = exception.message, isLoading = false)
+                    }
                 }
             }
         )

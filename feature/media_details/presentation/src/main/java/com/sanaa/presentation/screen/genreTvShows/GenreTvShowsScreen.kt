@@ -30,6 +30,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -115,11 +116,21 @@ fun GenreTvShowsScreenContent(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    targetState = state.isLoading,
+                    targetState = state.isLoading || state.noInternetConnection,
                     contentAlignment = Alignment.Center,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
-                    if (loading) {
-                        NovixLoadingIndicator()
+                    transitionSpec = { fadeIn() togetherWith fadeOut() })
+                {
+                    if (it) {
+                        if (state.noInternetConnection) {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryClick() },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NovixLoadingIndicator()
+                            }
+                        }
                     } else {
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),

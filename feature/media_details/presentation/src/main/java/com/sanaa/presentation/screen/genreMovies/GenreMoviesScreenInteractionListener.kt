@@ -5,5 +5,6 @@ interface GenreMoviesScreenInteractionListener {
     fun onBackClick()
     fun onMovieClick(id: Int)
     fun onBottomSheetDismiss()
+    fun onRetryClicked()
     fun onLoginButtonClick()
 }

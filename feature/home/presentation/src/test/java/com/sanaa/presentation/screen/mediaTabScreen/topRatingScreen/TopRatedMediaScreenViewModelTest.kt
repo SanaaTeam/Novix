@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopRatedMediaScreenViewModelTest {
@@ -182,8 +183,8 @@ class TopRatedMediaScreenViewModelTest {
         val genres = listOf(Genre(1, "Action"), Genre(2, "Drama"))
         val tvGenres = listOf(Genre(3, "Sci-Fi"))
         val movies = listOf(
-            Movie(1, "Movie 1", "", emptyList(), 8f, 120, LocalDate(2020, 1, 1), "", ""),
-            Movie(2, "Movie 2", "", emptyList(), 9f, 110, LocalDate(2019, 1, 1), "", "")
+            Movie(1, "Movie 1", "", emptyList(), 8f, 120.minutes, LocalDate(2020, 1, 1), "", ""),
+            Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "")
         )
         val tvShows = listOf(
             TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3),

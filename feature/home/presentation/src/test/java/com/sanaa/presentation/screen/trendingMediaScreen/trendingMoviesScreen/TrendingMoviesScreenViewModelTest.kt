@@ -24,6 +24,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageMovieUseCase
+import kotlin.time.Duration.Companion.minutes
 
 
 class TrendingMoviesScreenViewModelTest {
@@ -177,7 +178,7 @@ class TrendingMoviesScreenViewModelTest {
                 releaseDate = LocalDate(2008, 1, 20),
                 genres = emptyList(),
                 imdbRating = 9f,
-                duration = 1,
+                duration = 100.minutes,
                 trailerUrl = null,
             ),
             Movie(
@@ -188,7 +189,7 @@ class TrendingMoviesScreenViewModelTest {
                 releaseDate = LocalDate(2008, 1, 20),
                 genres = emptyList(),
                 imdbRating = 8f,
-                duration = 1,
+                duration = 100.minutes,
                 trailerUrl = null,
             )
         )

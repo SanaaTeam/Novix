@@ -54,7 +54,21 @@ class ReviewViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+    @Test
+    fun `ReviewScreenInteractionListener calls onBackClick`() {
+        var backClicked = false
+        val listener = object : ReviewScreenInteractionListener {
+            override fun onBackClick() {
+                backClicked = true
+            }
 
+            override fun onRetryClicked() {}
+
+        }
+
+        listener.onBackClick()
+        assertThat(backClicked).isTrue()
+    }
     @Test
     fun `fetchReviews should update reviews for movies`() = runTest {
         coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, any()) } returns dummyReviews

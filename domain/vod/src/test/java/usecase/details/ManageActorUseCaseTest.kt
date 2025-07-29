@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.ActorRepository
 import usecase.ManageActorUseCase
+import kotlin.time.Duration.Companion.minutes
 
 class ManageActorUseCaseTest {
 
@@ -172,7 +173,7 @@ class ManageActorUseCaseTest {
                 title = "Blockbuster One",
                 genres = listOf(action),
                 imdbRating = 8.6f,
-                duration = 137,
+                duration = 137.minutes,
                 releaseDate = LocalDate(2023, 5, 12),
                 overview = "A big summer action film."
             ), Movie(
@@ -181,7 +182,7 @@ class ManageActorUseCaseTest {
                 title = "Critically-Acclaimed Drama",
                 genres = listOf(drama),
                 imdbRating = 8.2f,
-                duration = 126,
+                duration = 126.minutes,
                 releaseDate = LocalDate(2022, 11, 3),
                 overview = "An award-winning character study."
             )

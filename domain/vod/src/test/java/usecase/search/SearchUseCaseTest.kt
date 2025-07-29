@@ -16,6 +16,7 @@ import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 import repository.SearchRepository
 import usecase.search.search_param.MediaFilters
+import kotlin.time.Duration.Companion.minutes
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
@@ -241,9 +242,9 @@ class SearchUseCaseTest {
                 posterImageUrl = "imageUrl",
                 genres = emptyList(),
                 imdbRating = 1f,
-                duration = 10,
+                duration = 10.minutes,
                 releaseDate = LocalDate(1990, 10, 10),
-                overview = null,
+                overview = "null",
                 trailerUrl = null,
             )
         )
@@ -253,7 +254,7 @@ class SearchUseCaseTest {
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",
-                overview = null,
+                overview = "",
                 releaseDate = LocalDate(1990, 10, 10),
                 genres = emptyList(),
                 imdbRating = 9f,

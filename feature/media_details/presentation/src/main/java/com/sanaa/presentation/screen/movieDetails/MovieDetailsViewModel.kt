@@ -9,6 +9,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -71,7 +72,16 @@ class MovieDetailsViewModel(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
-
+    override fun onRetryLoadDetails() {
+        updateState {
+            it.copy(
+                isLoading = true,
+                errorMessage = null,
+                noInternetConnection = false
+            )
+        }
+        fetchMovieDetails(movieId)
+    }
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -80,7 +90,11 @@ class MovieDetailsViewModel(
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
             onError = { exception ->
-                updateState { it.copy(isLoading = false, errorMessage = exception.message) }
+                if (exception is NoNetworkException) {
+                    updateState { it.copy(noInternetConnection = true, isLoading = false, errorMessage = null) }
+                } else {
+                    updateState { it.copy(isLoading = false, errorMessage = exception.message, noInternetConnection = false) }
+                }
             },
             dispatcher = defaultDispatcher
         )

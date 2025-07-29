@@ -22,6 +22,7 @@ import org.junit.jupiter.api.TestInstance
 import usecase.ManageMovieUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -132,7 +133,7 @@ class GenreMoviesViewModelTest {
                 posterImageUrl = "",
                 genres = emptyList(),
                 imdbRating = 8f,
-                duration = 120,
+                duration = 120.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2020, 1, 1),
                 overview = "",
             ),
@@ -142,7 +143,7 @@ class GenreMoviesViewModelTest {
                 posterImageUrl = "",
                 genres = emptyList(),
                 imdbRating = 7.5f,
-                duration = 110,
+                duration = 110.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2019, 1, 1),
                 overview = "",
             )

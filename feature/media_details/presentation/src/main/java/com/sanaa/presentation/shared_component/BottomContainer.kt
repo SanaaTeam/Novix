@@ -15,12 +15,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.feature.mediadetails.presentation.R
 
-val boxContainerGradient = Brush.verticalGradient(
-    colors = listOf( Color(0x00000000), Color(0xFF0D0608))
-)
+
 
 @Composable
 fun BottomContainer(
@@ -29,19 +28,16 @@ fun BottomContainer(
     onPlayTrailerClicked: () -> Unit = {},
     onSetRateClicked: () -> Unit = {}
 ) {
-    Box(
-        modifier = modifier
-    ) {
-        Box(
-            Modifier
-                .height(112.dp)
+        Row(
+            modifier = modifier
+                .zIndex(1f)
                 .fillMaxWidth()
                 .background(
-                    brush = boxContainerGradient
+                    brush = Brush.verticalGradient(
+                        colors = listOf(Color.Transparent, Color(0xFF0D0608))
+                    )
                 )
-        )
-        Row(
-            modifier = Modifier.padding(horizontal = 24.dp, vertical = 24.dp),
+                .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -58,4 +54,3 @@ fun BottomContainer(
             )
         }
     }
-}

@@ -8,6 +8,7 @@ import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.ReviewUiModel
 import com.sanaa.presentation.model.toReviewUiModel
 import entity.Review
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -34,6 +35,11 @@ class ReviewViewModel(
         emitEffect(ReviewScreenEffects.NavigateBack)
     }
 
+    override fun onRetryClicked() {
+        updateState { it.copy(error = null, noInternetConnection = false, isLoading = true) }
+        fetchReviews(mediaId)
+    }
+
     private fun fetchReviews(id: Int) {
         tryToCollect(
             callee = {
@@ -46,7 +52,20 @@ class ReviewViewModel(
                     )
                 }
             },
-            )
+            onError = { exception ->
+                if (exception is NoNetworkException) {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoading = false,
+                            error = null
+                        )
+                    }
+                } else {
+                    updateState { it.copy(isLoading = false, error = exception.message) }
+                }
+            }
+        )
     }
 
     private fun loadReviews(id: Int, mediaType: MediaTypeUiModel): Flow<PagingData<ReviewUiModel>> {
