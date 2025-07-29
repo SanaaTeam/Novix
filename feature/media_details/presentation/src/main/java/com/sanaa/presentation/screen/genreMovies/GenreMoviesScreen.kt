@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -83,7 +83,7 @@ fun GenreMoviesScreenContent(
     state: GenreMoviesScreenUiState,
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
-
+    val pagedMovies = state.movies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
     ) {
@@ -121,10 +121,14 @@ fun GenreMoviesScreenContent(
                             verticalArrangement = Arrangement.spacedBy(12.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(
-                                state.movies,
-                                key = { index, _ -> index }
-                            ) { _, movie ->
+                            items(
+                                count = pagedMovies.itemCount,
+                                key = { index ->
+                                    val movie = pagedMovies[index]
+                                    "${index}-${movie?.id}"
+                                }
+                            ) { index ->
+                                val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredHaramImageViewer(

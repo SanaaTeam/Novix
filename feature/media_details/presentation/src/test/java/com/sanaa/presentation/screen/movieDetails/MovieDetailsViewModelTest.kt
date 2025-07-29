@@ -47,7 +47,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
         viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
@@ -138,7 +138,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
         viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
     }
