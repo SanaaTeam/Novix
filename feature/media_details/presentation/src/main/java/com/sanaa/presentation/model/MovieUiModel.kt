@@ -8,7 +8,7 @@ import kotlin.time.Duration
 data class MovieUiModel(
     val id: Int = 0,
     val title: String = "",
-    val overview: String? = null,
+    val overview: String = "",
     val rating: String? = null,
     val releaseDate: String = "",
     val duration: Duration? = null,
@@ -28,7 +28,7 @@ fun Movie.toUiModel(
     return MovieUiModel(
         id = id,
         title = title,
-        overview = overview,
+        overview = overview.toString(),
         rating = String.format("%.1f", imdbRating),
         releaseDate = releaseDate.formatDateLocalizedDigits(),
         duration = duration,

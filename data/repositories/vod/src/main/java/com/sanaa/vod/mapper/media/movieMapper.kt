@@ -15,7 +15,7 @@ fun MovieDto.toDomain(): Movie {
         imdbRating = voteAverage ?: 0.0f,
         duration = duration?.minutes ,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview
+        overview = overview.toString()
     )
 }
 

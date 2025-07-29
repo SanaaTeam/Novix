@@ -256,7 +256,7 @@ fun MovieDetailsContent(
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            state.movieDetails.overview?.let {
+                            if (state.movieDetails.overview.isNotEmpty()){
                                 OverviewSection(
                                     overview = state.movieDetails.overview,
                                     onReadMore = { interactionListener.onReadMoreClick() },
