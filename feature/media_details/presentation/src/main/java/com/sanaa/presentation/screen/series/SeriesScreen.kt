@@ -177,11 +177,11 @@ fun SeriesScreenContent(
                                 )
                             },
                             onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
-                        state.series.overview?.let {
+                       if(state.series.overview.isNotEmpty()){
                             OverviewSection(
                                 onReadMore = {},
                                 titleResId = R.string.overview,
-                                overview = it,
+                                overview = it.toString(),
                                 modifier = Modifier.padding(
                                     start = 16.dp, end = 16.dp, top = 16.dp
                                 )
