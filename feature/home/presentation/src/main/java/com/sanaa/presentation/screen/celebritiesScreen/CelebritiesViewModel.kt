@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.celebritiesScreen
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.state.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import com.sanaa.presentation.base.BasePagingSourceForHome

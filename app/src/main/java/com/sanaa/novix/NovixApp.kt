@@ -9,19 +9,13 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class NovixApp : Application() {
-    @Inject
-    lateinit var crashlytics: FirebaseCrashlytics
-    @Inject
-    lateinit var timberTree: Timber.Tree
-    @Inject
-    lateinit var analytics: FirebaseAnalytics
+    @Inject lateinit var crashlytics: FirebaseCrashlytics
+    @Inject lateinit var timberTree: Timber.Tree
 
     override fun onCreate() {
         super.onCreate()
-        if (BuildConfig.DEBUG)
-            Timber.plant(timberTree, Timber.DebugTree())
-        else
-            Timber.plant(timberTree)
+
+        Timber.plant(timberTree)
 
         crashlytics.apply {
             isCrashlyticsCollectionEnabled = true
