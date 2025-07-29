@@ -7,7 +7,8 @@ data class GenreMoviesScreenUiState(
     val movies: List<MovieUiModel> = emptyList(),
     val isLoading: Boolean = false,
     val error: String? = null,
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val noInternetConnection: Boolean = false
 )
 
 

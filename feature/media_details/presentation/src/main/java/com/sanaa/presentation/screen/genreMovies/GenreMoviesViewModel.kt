@@ -19,6 +19,10 @@ class GenreMoviesViewModel(
         getListOfMoviesByCategory(categoryId)
     }
 
+    override fun onRetryClicked() {
+        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        getListOfMoviesByCategory(categoryId)
+    }
     override fun onSaveIconClick() {
         updateState {
             it.copy(
