@@ -1,6 +1,9 @@
 package com.sanaa.novix.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
+import com.sanaa.novix.BuildConfig
 import com.sanaa.novix.logging.CrashReportingTree
 import dagger.Module
 import dagger.Provides
@@ -15,6 +18,11 @@ object LoggingModule {
 
     @Provides
     @Singleton
-    fun provideTimberTree(crashlytics: FirebaseCrashlytics): Timber.Tree =
-        CrashReportingTree(crashlytics)
+    fun provideTimberTree(crashlytics: FirebaseCrashlytics): Timber.Tree {
+        return if (BuildConfig.DEBUG) {
+            Timber.DebugTree()
+        } else {
+            CrashReportingTree(crashlytics)
+        }
+    }
 }
