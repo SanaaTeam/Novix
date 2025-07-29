@@ -40,6 +40,9 @@ class ReviewViewModelTest {
             override fun onBackClick() {
                 backClicked = true
             }
+
+            override fun onRetryClicked() {}
+
         }
 
         listener.onBackClick()

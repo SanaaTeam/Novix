@@ -18,6 +18,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
@@ -160,7 +161,7 @@ class MovieDetailsViewModelTest {
             title = "Movie One",
             genres = genreList,
             imdbRating = 7.5f,
-            duration = 100,
+            duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
             overview = "Overview1"
         )
