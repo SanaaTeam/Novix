@@ -6,6 +6,7 @@ import entity.Genre
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
 
 class MovieMapperTest {
 
@@ -29,7 +30,7 @@ class MovieMapperTest {
         assertEquals("A mind-bending thriller", movie.overview)
         assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", movie.posterImageUrl)
         assertEquals(8.8f, movie.imdbRating)
-        assertEquals(148, movie.duration)
+        assertEquals(148.minutes, movie.duration)
         assertEquals(listOf(Genre(28, "Action"), Genre(12, "Adventure")), movie.genres)
         assertEquals(LocalDate(2010, 7, 16), movie.releaseDate)
     }
@@ -54,7 +55,7 @@ class MovieMapperTest {
         assertEquals("No data movie", movie.overview)
         assertEquals("", movie.posterImageUrl)
         assertEquals(0f, movie.imdbRating)
-        assertEquals(0, movie.duration)
+        assertEquals(0.minutes, movie.duration)
         assertEquals(LocalDate(1900, 1, 1), movie.releaseDate)
         assertEquals(emptyList(), movie.genres)
     }
