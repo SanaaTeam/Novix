@@ -1,4 +1,4 @@
-name: Build & upload to Firebase App Distribution
+name: Build & upload to Firebase App Distribution and notify Slack
 
 on:
   push:
@@ -23,6 +23,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Prepare google-services.json
         run: |
@@ -78,3 +81,16 @@ jobs:
           groups: testers
           file: ${{ steps.sign_app.outputs.signedReleaseFile }}
           debug: true
+
+      - name: Upload APK to Slack
+        uses: MeilCli/slack-upload-file@v4.0.20
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          file_name: "app-release-${{ github.run_number }}.apk"
+          thread_ts: ${{ secrets.SLACK_APK_MESSAGE_TS }}
+          initial_comment: |
+            📲 *New APK Build Released*
+            *Version:* `1.0.${{ github.run_number }}`
+            *File:* `app-release-${{ github.run_number }}.apk`

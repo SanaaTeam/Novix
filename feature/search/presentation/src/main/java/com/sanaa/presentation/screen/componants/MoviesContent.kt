@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,11 +15,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
-import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
+import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
@@ -42,7 +41,6 @@ fun MoviesContent(
         items(moviesPagingData.itemCount) { index ->
             val movie = moviesPagingData[index]
             if (movie != null) {
-                Log.d("MoviesContent", "Movie: $movie")
                 MediaPosterCard(
                     PosterImage = {
                         RemoteBlurredHaramImageViewer(

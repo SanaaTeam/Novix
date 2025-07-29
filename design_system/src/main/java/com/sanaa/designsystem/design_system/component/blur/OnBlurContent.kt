@@ -28,8 +28,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 @Composable
 fun OnBlurContent(
     icon: Painter,
-    hintText: String,
-    textStyle: TextStyle,
+    hintText: String? = null,
+    textStyle: TextStyle = Theme.textStyle.body.small.copy(color = Color(0x99FFFFFF)),
     iconSize: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -48,11 +48,12 @@ fun OnBlurContent(
             contentScale = ContentScale.Fit,
             colorFilter = ColorFilter.tint(Color(0x99FFFFFF)),
         )
-
-        Text(
-            text = hintText,
-            style = textStyle,
-        )
+        hintText?.let { hintText ->
+            Text(
+                text = hintText,
+                style = textStyle,
+            )
+        }
     }
 }
 
@@ -66,7 +67,7 @@ private fun PreviewOnBlurContent() {
                 color = Color(0x99FFFFFF)
             ),
             iconSize = 24.dp,
-            icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+            icon = painterResource(R.drawable.icon_eye_slash),
         )
     }
 }

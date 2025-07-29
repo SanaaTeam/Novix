@@ -30,19 +30,21 @@ class MovieRepositoryImpl(
             remote.fetchCast(id).map { it.toDomain() }
         }
 
-    override suspend fun getSimilarMoviesByMovieId(id: Int): List<Movie> =
+    override suspend fun getSimilarMoviesByMovieId(id: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch similar movies") {
-            remote.fetchSimilarMoviesByMovieId(id).map { it.toDomain() }
+            remote.fetchSimilarMoviesByMovieId(id, page).map { it.toDomain() }
         }
 
-    override suspend fun getReviewsByMovieId(id: Int): List<Review> =
+    override suspend fun getReviewsByMovieId(id: Int, page: Int): List<Review> =
         safeCall("Failed to fetch reviews") {
-            remote.fetchReviewsByMovieId(id).map { it.toEntity() }
+            remote.fetchReviewsByMovieId(id, page).map { it.toEntity() }
         }
 
-    override suspend fun getMoviesByCategory(genreId: Int): List<Movie> =
+    override suspend fun getMoviesByCategory(genreId: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(genreId).map { it.toDomain() }
+            remote.fetchMoviesByCategory(
+                genreId, page
+            ).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =

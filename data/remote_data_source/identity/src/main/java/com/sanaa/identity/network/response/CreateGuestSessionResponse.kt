@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateGuestSessionResponse(
     @SerialName("success")
-    val isSuccess: Boolean,
+    val success: Boolean,
 
     @SerialName("status_code")
     val statusCode: Int?,
@@ -15,7 +15,7 @@ data class CreateGuestSessionResponse(
     val expiresAt: String?,
 
     @SerialName("guest_session_id")
-    val guestSessionId: String?,
+    val guestSessionId: String,
 )
 
 

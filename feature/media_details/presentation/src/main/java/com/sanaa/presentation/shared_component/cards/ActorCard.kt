@@ -1,6 +1,5 @@
 package com.sanaa.presentation.shared_component.cards
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -9,6 +8,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,30 +20,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 
 @Composable
 fun ActorCard(
     actorName: String,
-    actorImage: Painter,
+    imageUrl: String,
     modifier: Modifier = Modifier,
     onCardClick: () -> Unit = {},
     playedCharacter: String? = null,
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val placeholderResId = if (isDarkTheme) {
-        R.drawable.icon_placeholder_dark
-    } else {
-        R.drawable.icon_placeholder_light
-    }
     Box(
         modifier = modifier
             .height(78.dp)
@@ -77,21 +71,25 @@ fun ActorCard(
                 .zIndex(10f),
             contentAlignment = Alignment.Center
         ) {
-
-
-            Image(
-                painter = painterResource(placeholderResId),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(56.dp)
-
-            )
-            Image(
-                painter = actorImage,
+            RemoteBlurredHaramImageViewer(
+                imageUrl = imageUrl,
+                modifier = Modifier.fillMaxWidth(),
+                blurRadius = 150,
+                haramThreshold = 0.2f,
+                nonHaramThreshold = 0.7f,
                 contentDescription = actorName,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxWidth()
-            )
+                placeholderContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+                errorContent = {
+                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                },
+            ) {
+                OnBlurContent(
+                    iconSize = 24.dp,
+                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                )
+            }
         }
         Column(
             modifier = Modifier
@@ -147,12 +145,12 @@ private fun PreviewActorCard() {
         ) {
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                imageUrl = "",
                 playedCharacter = "Peter Parker"
             )
             ActorCard(
                 actorName = "Lee Jung-jae",
-                actorImage = painterResource(R.drawable.icon_placeholder_light),
+                imageUrl = "",
                 playedCharacter = null
             )
         }

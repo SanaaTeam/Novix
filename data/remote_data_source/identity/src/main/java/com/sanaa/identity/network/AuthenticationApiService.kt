@@ -1,41 +1,27 @@
 package com.sanaa.identity.network
 
-import com.sanaa.identity.network.body.CreateAccessTokenPostBody
 import com.sanaa.identity.network.body.LoginPostBody
-import com.sanaa.identity.network.response.CreateAccessTokenResponse
 import com.sanaa.identity.network.response.CreateGuestSessionResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse
+import com.sanaa.identity.network.response.CreateSessionResponse
 import com.sanaa.identity.network.response.LoginResponse
-import com.sanaa.identity.network.response.RequestAccessTokenResponse
-import com.sanaa.identity.network.response.ValidateKeyResponse
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.HeaderMap
 import retrofit2.http.POST
 
 interface AuthenticationApiService {
-    @GET("3/authentication/token/new")
-    suspend fun createRequestToken(): Response<CreateRequestTokenResponse>
+    @GET("authentication/token/new")
+    suspend fun createRequestToken(): CreateRequestTokenResponse
 
-    @POST("3/authentication/token/validate_with_login")
+    @POST("authentication/token/validate_with_login")
     suspend fun login(
         @Body body: LoginPostBody,
-    ): Response<LoginResponse>
+    ): LoginResponse
 
-    @GET("3/authentication/guest_session/new")
+    @POST("authentication/session/new")
+    suspend fun createSession(@Body body: Map<String, String>): CreateSessionResponse
+
+    @GET("authentication/guest_session/new")
     suspend fun createGuestSession(): CreateGuestSessionResponse
 
-    @POST("3/authentication")
-    suspend fun validateKey(
-        @HeaderMap header: Map<String, String>,
-    ): ValidateKeyResponse
-
-    @POST("4/auth/request_token")
-    suspend fun requestUserAccessToken(): Response<RequestAccessTokenResponse>
-
-    @POST("4/auth/access_token")
-    suspend fun createUserAccessToken(
-        @Body body: CreateAccessTokenPostBody,
-    ): CreateAccessTokenResponse
 }

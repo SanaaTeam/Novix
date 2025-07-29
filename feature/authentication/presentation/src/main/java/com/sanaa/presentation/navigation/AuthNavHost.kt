@@ -8,7 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -39,25 +38,15 @@ fun AuthNavHost() {
                 }
 
                 composable(SignUpRoute::class) { entry ->
-                    WebViewScreen(url = "https://www.themoviedb.org/signup") {
-                        navController.navigate(LoginRoute)
-                    }
+                    WebViewScreen(url = "https://www.themoviedb.org/signup")
                 }
 
-                composable(ApproveAccessToken::class) {
-                    val requestToken = it.toRoute<ApproveAccessToken>().requestToken
-                    WebViewScreen(url = "https://www.themoviedb.org/auth/access?request_token=$requestToken") {
-                        navController.navigate(HomeScreen)
-                    }
-                }
-                composable(HomeScreen::class) {
+                composable(HomeScreenRoute::class) {
                     homeApi.HomeScreenApi()
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->
-                    ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password") {
-                        navController.navigate(LoginRoute)
-                    }
+                    ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password")
                 }
             }
         }

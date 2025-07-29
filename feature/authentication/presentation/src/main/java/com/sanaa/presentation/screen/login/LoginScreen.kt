@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.presentation.navigation.ApproveAccessToken
 import com.sanaa.presentation.navigation.ForgetPasswordRoute
+import com.sanaa.presentation.navigation.HomeScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SignUpRoute
 import com.sanaa.presentation.screen.login.components.LoginActions
@@ -51,11 +51,7 @@ fun LoginScreen(
                     navController.popBackStack()
 
                 LoginScreenEffects.NavigateToHome -> {
-
-                }
-
-                is LoginScreenEffects.NavigateApproveAccessToken -> {
-                    navController.navigate(ApproveAccessToken(effect.requestToken))
+                    navController.navigate(HomeScreenRoute)
                 }
 
                 LoginScreenEffects.NavigateToForgotPassword -> {

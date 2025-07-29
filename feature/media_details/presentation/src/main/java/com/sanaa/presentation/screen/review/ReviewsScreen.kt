@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -18,6 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
@@ -57,8 +58,13 @@ fun ReviewsScreen(
 
 @Composable
 fun ReviewsScreenContent(
-    state: ReviewScreenUiState, interactionListener: ReviewScreenInteractionListener,
+    state: ReviewScreenUiState,
+    interactionListener: ReviewScreenInteractionListener,
 ) {
+    val pagedReviews = state.reviews.collectAsLazyPagingItems()
+    val isEmpty = pagedReviews.itemCount == 0
+
+
     NovixScaffold(
         topBar = {
             NovixTopBar(
@@ -77,14 +83,21 @@ fun ReviewsScreenContent(
                 .navigationBarsPadding()
         ) {
             AnimatedContent(
-                state.isLoading,
+                pagedReviews.loadState,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
-                if (it) {
+                if (it.refresh is LoadState.Loading) {
                     NovixLoadingIndicator()
                 } else {
-                    if (state.reviews.isNotEmpty()) {
+                    if (isEmpty) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            EmptyReviewsContent()
+                        }
+                    } else {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -93,18 +106,15 @@ fun ReviewsScreenContent(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             items(
-                                state.reviews,
-                                key = { item -> item.id }
-                            ) { review ->
+                                count = pagedReviews.itemCount,
+                                key = { index ->
+                                    val review = pagedReviews[index]
+                                    "${index}-${review?.id}"
+                                }
+                            ) { index ->
+                                val review = pagedReviews[index] ?: return@items
                                 ReviewCard(review = review)
                             }
-                        }
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            EmptyReviewsContent()
                         }
                     }
                 }

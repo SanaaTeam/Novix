@@ -2,6 +2,10 @@ package com.sanaa.presentation.screen.login
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import exceptions.InvalidUserOrPasswordException
+import exceptions.NoInternetConnectionException
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,82 +32,53 @@ class LoginViewModelTest {
 
     @Test
     fun `onUsernameChanged updates username and clears error`() = runTest {
-        // Given
         val newUsername = "testuser"
-
-        // When
         viewModel.onUsernameChanged(newUsername)
-
-        // Then
         assertThat(viewModel.state.value.username).isEqualTo(newUsername)
         assertThat(viewModel.state.value.usernameError).isNull()
     }
 
     @Test
     fun `onPasswordChanged updates password and clears error`() = runTest {
-        // Given
         val newPassword = "testpassword"
-
-        // When
         viewModel.onPasswordChanged(newPassword)
-
-        // Then
         assertThat(viewModel.state.value.password).isEqualTo(newPassword)
         assertThat(viewModel.state.value.passwordError).isNull()
     }
 
     @Test
     fun `onTogglePasswordVisibility toggles password visibility`() = runTest {
-        // Given
         val initialVisibility = viewModel.state.value.isPasswordVisible
-
-        // When
         viewModel.onTogglePasswordVisibility()
-
-        // Then
         assertThat(viewModel.state.value.isPasswordVisible).isEqualTo(!initialVisibility)
     }
 
     @Test
     fun `canSubmit is false when username is empty`() = runTest {
-        // Given
         viewModel.onUsernameChanged("")
         viewModel.onPasswordChanged("password")
-
-        // Then
         assertThat(viewModel.state.value.canSubmit).isFalse()
     }
 
     @Test
     fun `canSubmit is false when password is empty`() = runTest {
-        // Given
         viewModel.onUsernameChanged("username")
         viewModel.onPasswordChanged("")
-
-        // Then
         assertThat(viewModel.state.value.canSubmit).isFalse()
     }
 
     @Test
     fun `canSubmit is true when both username and password are provided`() = runTest {
-        // Given
         viewModel.onUsernameChanged("username")
         viewModel.onPasswordChanged("password")
-
-        // Then
         assertThat(viewModel.state.value.canSubmit).isTrue()
     }
 
     @Test
     fun `onLoginClicked does nothing when canSubmit is false`() = runTest {
-        // Given
         viewModel.onUsernameChanged("")
         viewModel.onPasswordChanged("")
-
-        // When
         viewModel.onLoginClicked()
-
-        // Then
         assertThat(viewModel.state.value.isLoading).isFalse()
         viewModel.effect.test {
             expectNoEvents()
@@ -113,24 +88,16 @@ class LoginViewModelTest {
 
     @Test
     fun `onLoginClicked sets loading state when canSubmit is true`() = runTest {
-        // Given
         viewModel.onUsernameChanged("username")
         viewModel.onPasswordChanged("password")
-
-        // When
         viewModel.onLoginClicked()
-
-        // Then
         assertThat(viewModel.state.value.isLoading).isTrue()
         assertThat(viewModel.state.value.canSubmit).isFalse()
     }
 
     @Test
     fun `onForgotPasswordClicked emits NavigateToForgotPassword`() = runTest {
-        // When
         viewModel.onForgotPasswordClicked()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToForgotPassword)
             cancelAndIgnoreRemainingEvents()
@@ -139,10 +106,7 @@ class LoginViewModelTest {
 
     @Test
     fun `onCreateAccountClicked emits NavigateToCreateAccount`() = runTest {
-        // When
         viewModel.onCreateAccountClicked()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToCreateAccount)
             cancelAndIgnoreRemainingEvents()
@@ -151,15 +115,110 @@ class LoginViewModelTest {
 
     @Test
     fun `onBackClicked emits NavigateBack`() = runTest {
-        // When
         viewModel.onBackClicked()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
     }
-    //still we need onLoginClick field
 
-} 
+    @Test
+    fun `onLoginClicked with valid credentials calls loginUseCase and navigates to home`() = runTest {
+        val username = "testuser"
+        val password = "testpass"
+        viewModel.onUsernameChanged(username)
+        viewModel.onPasswordChanged(password)
+        viewModel.onLoginClicked()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToHome)
+            cancelAndIgnoreRemainingEvents()
+        }
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.canSubmit).isTrue()
+    }
+
+
+    @Test
+    fun `onDataLoadError handles NoInternetConnectionException`() = runTest {
+        val errorMessage = "No internet connection"
+        coEvery { stringProvider.noInternetConnectionError } returns errorMessage
+        val exception = NoInternetConnectionException()
+        viewModel.onDataLoadError(exception)
+
+        viewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
+            assertThat((effect as LoginScreenEffects.ShowError).message).isEqualTo(errorMessage)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onDataLoadError handles unknown exception`() = runTest {
+        val errorMessage = "Something went wrong"
+        coEvery { stringProvider.somethingWentWrongError } returns errorMessage
+        val exception = RuntimeException("Unknown error")
+        viewModel.onDataLoadError(exception)
+
+        viewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
+            assertThat((effect as LoginScreenEffects.ShowError).message).isEqualTo(errorMessage)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `initial state has correct default values`() = runTest {
+        assertThat(viewModel.state.value.username).isEmpty()
+        assertThat(viewModel.state.value.password).isEmpty()
+        assertThat(viewModel.state.value.usernameError).isNull()
+        assertThat(viewModel.state.value.passwordError).isNull()
+        assertThat(viewModel.state.value.isPasswordVisible).isFalse()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.canSubmit).isFalse()
+    }
+
+
+
+    @Test
+    fun `canSubmit is true after fixing invalid input`() = runTest {
+        viewModel.onUsernameChanged("")
+        viewModel.onPasswordChanged("")
+        viewModel.onLoginClicked()
+
+        viewModel.onUsernameChanged("username")
+        viewModel.onPasswordChanged("password")
+
+        assertThat(viewModel.state.value.canSubmit).isTrue()
+    }
+
+    @Test
+    fun `onLoginClicked allows retry after failure`() = runTest {
+        val username = "testuser"
+        val password = "wrongpass"
+        viewModel.onUsernameChanged(username)
+        viewModel.onPasswordChanged(password)
+
+        val errorMessage = "Invalid credentials"
+        coEvery { loginUseCase.login(username, password) } throws InvalidUserOrPasswordException()
+        coEvery { stringProvider.invalidUserNameAndPasswordError } returns errorMessage
+
+        viewModel.onLoginClicked()
+        viewModel.effect.test {
+            val effect = awaitItem()
+            assertThat(effect).isInstanceOf(LoginScreenEffects.ShowError::class.java)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        coEvery { loginUseCase.login(username, password) } returns Unit
+        viewModel.onLoginClicked()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToHome)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+}

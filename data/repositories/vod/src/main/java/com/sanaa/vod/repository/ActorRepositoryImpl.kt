@@ -11,8 +11,8 @@ import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import repository.ActorRepository
+import timber.log.Timber
 import java.net.UnknownHostException
-
 
 class ActorRepositoryImpl(
     private val remoteDataSource: RemoteActorDataSource,
@@ -37,17 +37,12 @@ class ActorRepositoryImpl(
             }
         }
 
-
     override suspend fun getActorTopMovies(id: Int): List<Movie> =
         safeCall("Failed to retrieve top movies for actor ID: $id") {
             remoteDataSource.getActorMovies(id).map {
                 it.toMovie()
             }.take(20)
         }
-
-    override suspend fun getActorTopTvSeries(id: Int): List<TvSeries> {
-        return emptyList()
-    }
 
 
     override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
@@ -69,10 +64,12 @@ class ActorRepositoryImpl(
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()
-        } catch (_: UnknownHostException) {
+        } catch (ex: UnknownHostException) {
+            Timber.w(ex, "No network while fetching actor data")
             throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
+        } catch (ex: Exception) {
+            Timber.e(ex, "Error fetching actor data")
+            throw RetrievingDataFailureException("$errorMessage: ${ex.message}")
         }
     }
 }

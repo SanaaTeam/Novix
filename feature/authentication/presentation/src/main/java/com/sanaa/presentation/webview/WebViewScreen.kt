@@ -15,10 +15,7 @@ import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 
 @Composable
-fun WebViewScreen(
-    url: String,
-    onTargetUrlReached: () -> Unit = {},
-) {
+fun WebViewScreen(url: String) {
     val navController = LocalNavControllerProvider.current
 
     Column(
@@ -26,7 +23,6 @@ fun WebViewScreen(
             .systemBarsPadding()
             .fillMaxSize()
             .testTag("auth_webview")
-
     ) {
         NovixTopBar(
             modifier = Modifier.fillMaxWidth(),
@@ -46,7 +42,6 @@ fun WebViewScreen(
             onBackPressed = {
                 navController.popBackStack()
             },
-            onTargetUrlReached = onTargetUrlReached
         )
     }
 }

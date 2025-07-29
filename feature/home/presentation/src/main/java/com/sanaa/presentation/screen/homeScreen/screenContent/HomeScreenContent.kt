@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,16 +9,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
@@ -32,9 +26,6 @@ import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
 import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
-import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
@@ -42,6 +33,8 @@ fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
 ) {
+
+    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = {},
         topBar = {
@@ -142,11 +135,12 @@ fun HomeScreenContent(
                 }
             }
             upcomingSection(
-                upcomingMovies = state.upcomingMovies,
+                upcomingMovies = upcomingMovies,
                 movieGenres = state.movieGenres,
                 movieSelectedGenreId = state.movieSelectedGenreId,
                 onGenreClick = interactionListener::onMovieGenreClick,
-                onSaveIconClick = interactionListener::onSaveIconClick
+                onSaveIconClick = interactionListener::onSaveIconClick,
+                onMovieClick = interactionListener::onMediaClick,
             )
         }
     }
@@ -155,63 +149,4 @@ fun HomeScreenContent(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet
     )
-}
-
-
-@PreviewLightDark
-@Composable
-fun HomeScreenContentPreview(modifier: Modifier = Modifier) {
-    val mediaList = listOf(
-        MediaItem(
-            id = 1,
-            title = "Movie 1",
-            imageUrl = "https://example.com/image1.jpg",
-            mediaType = MediaType.MOVIE,
-        ), MediaItem(
-            id = 2,
-            title = "Movie 2",
-            imageUrl = "https://example.com/image2.jpg",
-            mediaType = MediaType.MOVIE,
-        ), MediaItem(
-            id = 3,
-            title = "Movie 3",
-            imageUrl = "https://example.com/image3.jpg",
-            mediaType = MediaType.MOVIE,
-        )
-    )
-    var state by remember {
-        mutableStateOf(
-            HomeScreenUiState(
-                popularMedia = mediaList,
-                topRatingMedia = mediaList,
-                continueWatchingMedia = mediaList,
-                upcomingMovies = mediaList,
-                movieGenres = listOf(
-                    GenreUiState(id = 1, name = "Action"),
-                    GenreUiState(id = 2, name = "Drama"),
-                    GenreUiState(id = 3, name = "Crime"),
-                ),
-                movieSelectedGenreId = null,
-            )
-        )
-    }
-    NovixTheme(isSystemInDarkTheme()) {
-        HomeScreenContent(
-            state = state,
-            interactionListener = object : HomeScreenInteractionListener {
-                override fun onMoviesCardClicked() {}
-                override fun onTvShowsCardClicked() {}
-                override fun onPeopleCardClicked() {}
-                override fun onShowAllTopRatingClicked() {}
-                override fun onShowAllContinueWatchingClicked() {}
-                override fun onMovieGenreClick(id: Int?) {
-                    state = state.copy(movieSelectedGenreId = id)
-                }
-
-                override fun onMediaClick(id: Int, mediaType: MediaType) {}
-                override fun onSaveIconClick(media: MediaItem) {}
-                override fun onDismissBottomSheet() {}
-            },
-        )
-    }
 }

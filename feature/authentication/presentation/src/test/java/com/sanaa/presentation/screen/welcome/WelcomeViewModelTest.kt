@@ -24,16 +24,12 @@ class WelcomeViewModelTest {
 
     @Test
     fun `initial state should be Unit`() = runTest {
-        // Then
         assertThat(viewModel.state.value).isEqualTo(Unit)
     }
 
     @Test
     fun `onLoginClicked emits NavigateToLogin effect`() = runTest {
-        // When
         viewModel.onLoginClicked()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
@@ -42,10 +38,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `onContinueClicked emits ContinueAsGuest effect`() = runTest {
-        // When
         viewModel.onContinueClicked()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
             cancelAndIgnoreRemainingEvents()
@@ -54,10 +47,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `onExit emits ExitApp effect`() = runTest {
-        // When
         viewModel.onExit()
-
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ExitApp)
             cancelAndIgnoreRemainingEvents()
@@ -66,12 +56,10 @@ class WelcomeViewModelTest {
 
     @Test
     fun `multiple effects are emitted in sequence`() = runTest {
-        // When
         viewModel.onLoginClicked()
         viewModel.onContinueClicked()
         viewModel.onExit()
 
-        // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
@@ -81,18 +69,56 @@ class WelcomeViewModelTest {
     }
 
     @Test
+    fun `repeated onLoginClicked emits effect each time`() = runTest {
+        viewModel.onLoginClicked()
+        viewModel.onLoginClicked()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `effects can be collected multiple times`() = runTest {
+        viewModel.onContinueClicked()
+
+        // First collection
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        // Trigger again and collect again
+        viewModel.onContinueClicked()
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `state remains Unit after multiple repeated actions`() = runTest {
+        repeat(5) {
+            viewModel.onLoginClicked()
+            viewModel.onContinueClicked()
+            viewModel.onExit()
+        }
+
+        assertThat(viewModel.state.value).isEqualTo(Unit)
+    }
+
+    @Test
     fun `viewModel implements WelcomeScreenInteractionListener`() = runTest {
-        // Then
         assertThat(viewModel).isInstanceOf(WelcomeScreenInteractionListener::class.java)
     }
 
     @Test
     fun `viewModel uses provided dispatcher`() = runTest {
-        // Given
         val customDispatcher = StandardTestDispatcher()
         val customViewModel = WelcomeViewModel(customDispatcher)
 
-        // When & Then
         customViewModel.onLoginClicked()
         customViewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
@@ -102,13 +128,9 @@ class WelcomeViewModelTest {
 
     @Test
     fun `viewModel uses default dispatcher when none provided`() = runTest {
-        // Given
         val defaultViewModel = WelcomeViewModel()
 
-        // When
         defaultViewModel.onLoginClicked()
-
-        // Then
         defaultViewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
@@ -116,26 +138,8 @@ class WelcomeViewModelTest {
     }
 
     @Test
-    fun `state remains Unit after all interactions`() = runTest {
-        // Given
-        val initialState = viewModel.state.value
-
-        // When
-        viewModel.onLoginClicked()
-        viewModel.onContinueClicked()
-        viewModel.onExit()
-
-        // Then
-        assertThat(viewModel.state.value).isEqualTo(initialState)
-        assertThat(viewModel.state.value).isEqualTo(Unit)
-    }
-
-    @Test
     fun `effects are emitted immediately without delay`() = runTest {
-        // When
         viewModel.onLoginClicked()
-
-        // Then
         viewModel.effect.test {
             val effect = awaitItem()
             assertThat(effect).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
@@ -145,7 +149,6 @@ class WelcomeViewModelTest {
 
     @Test
     fun `all WelcomeScreenEffects are tested`() = runTest {
-        // When & Then - Test all effects
         viewModel.onLoginClicked()
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
@@ -164,4 +167,16 @@ class WelcomeViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-} 
+
+    @Test
+    fun `emitEffect works correctly on custom dispatcher`() = runTest {
+        val customDispatcher = StandardTestDispatcher()
+        val customViewModel = WelcomeViewModel(customDispatcher)
+
+        customViewModel.onExit()
+        customViewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ExitApp)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+}

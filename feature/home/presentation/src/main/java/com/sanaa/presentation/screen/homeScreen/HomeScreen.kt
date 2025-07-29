@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,7 @@ fun HomeScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     val effect: HomeScreenEffect? by viewModel.effect.collectAsStateWithLifecycle(null)
+    Log.d("stateTest", "HomeScreen: state:${state.value}")
 
     LaunchedEffect(effect) {
         when (effect) {

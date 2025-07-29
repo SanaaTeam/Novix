@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.login
 
+import android.util.Log
 import com.sanaa.presentation.screen.login_base.BaseViewModel
 import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
@@ -39,16 +40,15 @@ class LoginViewModel(
                 val password = state.value.password
                 if (userName.isNotBlank() && password.isNotBlank()) {
                     loginUseCase.login(userName, password)
-                    loginUseCase.requestAccessToken()
                 } else
                     throw Exception(stringProvider.enterUserNameAndPasswordError)
             },
-            onSuccess = { requestAccessToken ->
+            onSuccess = {
                 updateState { prev ->
                     val updated = prev.copy(isLoading = false)
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
-                emitEffect(LoginScreenEffects.NavigateApproveAccessToken(requestAccessToken))
+                emitEffect(LoginScreenEffects.NavigateToHome)
             },
             onError = ::onDataLoadError
         )
@@ -59,8 +59,12 @@ class LoginViewModel(
             val updated = prev.copy(isLoading = false)
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
-
+        Log.d(
+            "TAG",
+            "onDataLoadError: ${throwable}"
+        )
         val message = when (throwable) {
+
             is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
             is NoInternetConnectionException -> stringProvider.noInternetConnectionError
             else -> stringProvider.somethingWentWrongError
@@ -79,7 +83,6 @@ class LoginViewModel(
     override fun onBackClicked() {
         emitEffect(LoginScreenEffects.NavigateBack)
     }
-
 
     private fun updateStateAndRefreshSubmit(transform: (LoginUiState) -> LoginUiState) {
         updateState { previous ->

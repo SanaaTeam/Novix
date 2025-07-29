@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme

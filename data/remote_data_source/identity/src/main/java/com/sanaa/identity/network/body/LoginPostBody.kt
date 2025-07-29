@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class LoginPostBody(
     @SerialName("username")
-    val username: String,
+    val username: String? = null,
 
     @SerialName("password")
-    val password: String,
+    val password: String? = null,
 
     @SerialName("request_token")
-    val request_token: String,
+    val requestToken: String? = null
 )

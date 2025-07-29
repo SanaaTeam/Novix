@@ -97,9 +97,9 @@ class ManageMovieUseCaseTest {
     fun `getMoviesByCategory should return movies when available`() = runTest {
 
         val expected = listOf(mockk<Movie>(), mockk<Movie>())
-        coEvery { movieRepository.getMoviesByCategory(dummyGenre.id) } returns expected
+        coEvery { movieRepository.getMoviesByCategory(dummyGenre.id,1) } returns expected
 
-        val result = manageMovieDetailsUseCase.getMoviesByCategory(dummyGenre.id)
+        val result = manageMovieDetailsUseCase.getMoviesByCategory(dummyGenre.id,1)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -109,9 +109,9 @@ class ManageMovieUseCaseTest {
         val category = Genre(
             id = 1, name = "Action"
         )
-        coEvery { movieRepository.getMoviesByCategory(category.id) } returns emptyList()
+        coEvery { movieRepository.getMoviesByCategory(category.id,1) } returns emptyList()
 
-        val result = manageMovieDetailsUseCase.getMoviesByCategory(category.id)
+        val result = manageMovieDetailsUseCase.getMoviesByCategory(category.id,1)
 
         assertThat(result).isEmpty()
     }
@@ -121,12 +121,12 @@ class ManageMovieUseCaseTest {
         val category = Genre(
             id = 1, name = "Action"
         )
-        coEvery { movieRepository.getMoviesByCategory(category.id) } throws RetrievingDataFailureException(
+        coEvery { movieRepository.getMoviesByCategory(category.id,1) } throws RetrievingDataFailureException(
             "Error"
         )
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getMoviesByCategory(category.id)
+            manageMovieDetailsUseCase.getMoviesByCategory(category.id,1)
         }
     }
 
@@ -165,9 +165,9 @@ class ManageMovieUseCaseTest {
     fun `getReviewsByMovieId should return reviews when available`() = runTest {
         val movieId = 7
         val expected = listOf(mockk<Review>(), mockk<Review>())
-        coEvery { movieRepository.getReviewsByMovieId(movieId) } returns expected
+        coEvery { movieRepository.getReviewsByMovieId(movieId,1) } returns expected
 
-        val result = manageMovieDetailsUseCase.getReviewsByMovieId(movieId)
+        val result = manageMovieDetailsUseCase.getReviewsByMovieId(movieId,1)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -175,9 +175,9 @@ class ManageMovieUseCaseTest {
     @Test
     fun `getReviewsByMovieId should return empty list when none available`() = runTest {
         val movieId = 8
-        coEvery { movieRepository.getReviewsByMovieId(movieId) } returns emptyList()
+        coEvery { movieRepository.getReviewsByMovieId(movieId,1) } returns emptyList()
 
-        val result = manageMovieDetailsUseCase.getReviewsByMovieId(movieId)
+        val result = manageMovieDetailsUseCase.getReviewsByMovieId(movieId,1)
 
         assertThat(result).isEmpty()
     }
@@ -185,12 +185,12 @@ class ManageMovieUseCaseTest {
     @Test
     fun `getReviewsByMovieId should throw when repository fails`() = runTest {
         val movieId = 9
-        coEvery { movieRepository.getReviewsByMovieId(movieId) } throws RetrievingDataFailureException(
+        coEvery { movieRepository.getReviewsByMovieId(movieId,1) } throws RetrievingDataFailureException(
             "Error"
         )
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getReviewsByMovieId(movieId)
+            manageMovieDetailsUseCase.getReviewsByMovieId(movieId,1)
         }
     }
 
@@ -198,9 +198,9 @@ class ManageMovieUseCaseTest {
     fun `getSimilarMoviesByMovieId should return similar movies when available`() = runTest {
         val movieId = 10
         val expected = listOf(mockk<Movie>(), mockk<Movie>())
-        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } returns expected
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId,1) } returns expected
 
-        val result = manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId)
+        val result = manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId,1)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -208,9 +208,9 @@ class ManageMovieUseCaseTest {
     @Test
     fun `getSimilarMoviesByMovieId should return empty list when none available`() = runTest {
         val movieId = 11
-        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } returns emptyList()
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId,1) } returns emptyList()
 
-        val result = manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId)
+        val result = manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId,1)
 
         assertThat(result).isEmpty()
     }
@@ -218,12 +218,12 @@ class ManageMovieUseCaseTest {
     @Test
     fun `getSimilarMoviesByMovieId should throw when repository fails`() = runTest {
         val movieId = 12
-        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId) } throws RetrievingDataFailureException(
+        coEvery { movieRepository.getSimilarMoviesByMovieId(movieId,1) } throws RetrievingDataFailureException(
             "Error"
         )
 
         assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId)
+            manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId,1)
         }
     }
 

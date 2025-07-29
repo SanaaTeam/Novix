@@ -2,8 +2,10 @@ package com.sanaa.presentation.screen.homeScreen.section
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
@@ -26,6 +28,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,10 +38,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
@@ -52,6 +57,9 @@ import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.math.absoluteValue
 
 val overLayGradientColor = Brush.verticalGradient(
@@ -68,7 +76,7 @@ fun PopularMediaSection(
     onSaveIconClicked: (MediaItem) -> Unit
 ) {
 
-    val pagerState = rememberPagerState(pageCount = { mediaItems.size })
+    val pagerState = rememberPagerState(pageCount = { mediaItems.count() })
     Column(
         modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -80,7 +88,7 @@ fun PopularMediaSection(
             onSaveIconClicked = onSaveIconClicked
         )
         NovixCarouselDots(
-            totalDots = 10,
+            totalDots = mediaItems.size,
             selectedIndex = pagerState.currentPage,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             onDotClick = {})
@@ -128,6 +136,9 @@ private fun PopularMediaSectionPager(
 
     val horizontalContentPadding = ((screenWidth - focusedWidth) / 2)
     val pageSpacing = (-12).dp
+    val layoutDirection = LocalLayoutDirection.current
+    val isRtl = layoutDirection == LayoutDirection.Rtl
+
     HorizontalPager(
         state = state,
         contentPadding = PaddingValues(horizontal = horizontalContentPadding),
@@ -148,19 +159,34 @@ private fun PopularMediaSectionPager(
             label = "animatedHeight"
         )
 
+
         val rotation by animateFloatAsState(
-            targetValue = if (page == state.currentPage) 0f
-            else if (page < state.currentPage) -3f
-            else 3f, label = "rotation"
+            targetValue = when {
+                page == state.currentPage -> 0f
+                page < state.currentPage -> if (isRtl) 3f else -3f
+                else -> if (isRtl) -3f else 3f
+            },
+            label = "rotation"
         )
 
         val overLayAnimatedBackgroundHeight by animateDpAsState(
             targetValue = if (page == state.currentPage) focusedHeight / 2 else unfocusedHeight,
-            label = "overLayAnimatedBackgroundHeight"
-        )
+            label = "overLayAnimatedBackgroundHeight",
 
+            )
+
+        LaunchedEffect(Unit) {
+            if (mediaItems.size > 1) {
+                while (currentCoroutineContext().isActive) {
+                    delay(4000)
+                    val nextPage = if (state.currentPage < mediaItems.size - 1) {
+                        state.currentPage + 1
+                    } else 0
+                    state.animateScroll(nextPage)
+                }
+            }
+        }
         val item = mediaItems[page]
-
         Box(
             modifier = Modifier
                 .width(focusedWidth)
@@ -209,7 +235,11 @@ private fun PopularMediaSectionPager(
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
-                                textStyle = Theme.textStyle.body.small.copy(color = Color(0x99FFFFFF)),
+                                textStyle = Theme.textStyle.body.small.copy(
+                                    color = Color(
+                                        0x99FFFFFF
+                                    )
+                                ),
                                 iconSize = 24.dp,
                                 icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                             )
@@ -258,12 +288,23 @@ private fun PopularMediaSectionPager(
     }
 }
 
+suspend fun PagerState.animateScroll(page: Int) {
+    animateScrollToPage(
+        page = page,
+        animationSpec = tween(
+            durationMillis = 600,
+            easing = FastOutSlowInEasing
+        )
+    )
+}
+
 @PreviewLightDark
 @Composable
 fun PopularMediaSectionPreview(modifier: Modifier = Modifier) {
     NovixTheme(isSystemInDarkTheme()) {
         Column(
-            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             PopularMediaSection(
                 mediaItems = demoMediaList,

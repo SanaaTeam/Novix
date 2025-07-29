@@ -1,28 +1,36 @@
 package com.sanaa.vod.network.interceptor
 
+import com.sanaa.data.remotedatasource.vod.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class APIKeyInterceptor(
-    private val tokenProvider: () -> String,
-    private val fallbackApiKey: String
-) : Interceptor {
+//class APIKeyInterceptor(val sessionId: () -> String?) :
+//    Interceptor {
+//    override fun intercept(chain: Interceptor.Chain): Response {
+//        val originalRequest = chain.request()
+//        val newRequest = originalRequest.newBuilder()
+//
+//        sessionId()?.let { newRequest.addHeader("session_id", it) }
+//        newRequest.addHeader("Authorization", "Bearer ${BuildConfig.TMDB_API_KEY}")
+//        return chain.proceed(newRequest.build())
+//    }
+//}
+class APIKeyInterceptor(val sessionId: () -> String?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val token = tokenProvider().ifBlank { fallbackApiKey }
-
         val originalRequest = chain.request()
         val originalUrl = originalRequest.url
-        val requestBuilder = originalRequest.newBuilder()
 
-        if (token.startsWith("ey")) {
-            requestBuilder.addHeader("Authorization", "Bearer $token")
-        } else {
-            val newUrl = originalUrl.newBuilder()
-                .addQueryParameter("api_key", token)
-                .build()
-            requestBuilder.url(newUrl)
-        }
+        val newUrl = originalUrl.newBuilder()
+            .addQueryParameter("api_key", BuildConfig.TMDB_API_KEY)
+            .build()
 
-        return chain.proceed(requestBuilder.build())
+        val newRequest = originalRequest.newBuilder()
+            .url(newUrl)
+            .apply {
+                sessionId()?.let { addHeader("session_id", it) }
+            }
+            .build()
+
+        return chain.proceed(newRequest)
     }
 }

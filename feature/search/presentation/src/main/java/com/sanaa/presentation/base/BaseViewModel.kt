@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
@@ -61,6 +62,7 @@ abstract class BaseViewModel<T, E>(
                         onCollect(result)
                     }
             } catch (exception: Exception) {
+                Timber.w(exception, "Use-case failed")
                 onError(exception)
             }
         }

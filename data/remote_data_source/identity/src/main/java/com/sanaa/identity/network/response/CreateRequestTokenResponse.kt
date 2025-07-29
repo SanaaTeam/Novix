@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreateRequestTokenResponse(
     @SerialName("success")
-    val isSuccess: Boolean,
+    val success: Boolean = false,
 
     @SerialName("status_code")
-    val statusCode: Int?,
+    val statusCode: Int? = null,
 
     @SerialName("expires_at")
-    val expiresAt: String?,
+    val expiresAt: String? = null,
 
     @SerialName("request_token")
-    val requestToken: String?,
+    val requestToken: String? = null
 )
