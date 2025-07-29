@@ -38,10 +38,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
@@ -134,8 +136,8 @@ private fun PopularMediaSectionPager(
 
     val horizontalContentPadding = ((screenWidth - focusedWidth) / 2)
     val pageSpacing = (-12).dp
-
-
+    val layoutDirection = LocalLayoutDirection.current
+    val isRtl = layoutDirection == LayoutDirection.Rtl
 
     HorizontalPager(
         state = state,
@@ -157,10 +159,14 @@ private fun PopularMediaSectionPager(
             label = "animatedHeight"
         )
 
+
         val rotation by animateFloatAsState(
-            targetValue = if (page == state.currentPage) 0f
-            else if (page < state.currentPage) -3f
-            else 3f, label = "rotation"
+            targetValue = when {
+                page == state.currentPage -> 0f
+                page < state.currentPage -> if (isRtl) 3f else -3f
+                else -> if (isRtl) -3f else 3f
+            },
+            label = "rotation"
         )
 
         val overLayAnimatedBackgroundHeight by animateDpAsState(
