@@ -33,15 +33,15 @@ class RemoteTvShowDataSourceImpl(
     }
 
     override suspend fun getTvShowsByGenre(genreId: Int): List<TvShowDto> = wrapApiCall {
-        apiService.fetchTvShowsByCategory(genreId).results
+        apiService.fetchTvShowsByCategory(genreId).results.distinctBy { it.id }
     }
 
     override suspend fun getReviewsByTvShowId(id: Int): List<ReviewDto> = wrapApiCall {
-        apiService.fetchTvShowsReviews(id).results
+        apiService.fetchTvShowsReviews(id).results.distinctBy { it.id }
     }
 
     override suspend fun getTvShowCast(id: Int): List<ActorDto> = wrapApiCall {
-        apiService.fetchTvShowsCast(id).cast
+        apiService.fetchTvShowsCast(id).cast.distinctBy { it.id }
     }
 
     override suspend fun getEpisodeDetails(
@@ -59,29 +59,36 @@ class RemoteTvShowDataSourceImpl(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<ActorDto> = wrapApiCall {
         apiService.fetchEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber).guestStars
+            .distinctBy { it.id }
     }
 
     override suspend fun getTvShowGenres(): List<GenreDto> {
-        return apiService.fetchTvShowsGenres().genres
+        return apiService.fetchTvShowsGenres().genres.distinctBy { it.id }
     }
 
     override suspend fun fetchPopularTvShows(
         page: Int,
     ): List<TvShowDto> {
-        return apiService.getPopularTvShows(page).results
+        return apiService.getPopularTvShows(page).results.distinctBy { it.id }
     }
 
     override suspend fun fetchTopRatedTvShows(
         page: Int,
         genreId: Int?
     ): List<TvShowDto> {
-        return apiService.fetchTopRatingTvShows(page, genreId?.toString()).results
+        return apiService.fetchTopRatingTvShows(
+            page,
+            genreId?.toString()
+        ).results.distinctBy { it.id }
     }
 
     override suspend fun fetchTrendingTvShows(
         page: Int,
         genreId: Int?
     ): List<TvShowDto> {
-        return apiService.fetchTrendingTvShows(page, genreId?.toString()).results
+        return apiService.fetchTrendingTvShows(
+            page,
+            genreId?.toString()
+        ).results.distinctBy { it.id }
     }
 }
