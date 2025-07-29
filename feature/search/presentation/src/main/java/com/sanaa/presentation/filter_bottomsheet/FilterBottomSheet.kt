@@ -106,7 +106,7 @@ fun FilterBottomSheetContent(
             }
 
             AnimatedVisibility(visible = !uiState.isLoading) {
-                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
                         value = uiState.yearRange,
@@ -122,7 +122,8 @@ fun FilterBottomSheetContent(
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
                         currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged
+                        onRatingChanged = listener::onRatingChanged,
+                        modifier = Modifier.padding(top = 20.dp)
                     )
                 }
             }
