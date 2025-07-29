@@ -25,7 +25,7 @@ fun PersonList(
             persons[index]?.let { person ->
                 PersonCard(
                     actorName = person.name,
-                    actorImage = person.imageUrl,
+                    imageUrl = person.imageUrl,
                     playedCharacter = person.character,
                     onCardClick = { onItemClick(person.id) }
                 )
