@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 val boxContainerGradient = Brush.verticalGradient(
-    colors = listOf(Color(0x00000000), Color(0xFF0D0608))
+    colors = listOf(Color(0xFF0D0608),Color(0x00000000))
 )
 
 @Composable
