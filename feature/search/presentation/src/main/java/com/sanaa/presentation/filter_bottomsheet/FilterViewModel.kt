@@ -97,7 +97,7 @@ class FilterViewModel(
 
     private suspend fun clearSelectedFilters() {
         val clearedFilter = MediaFilters(
-            startYear = 1980,
+            startYear = 1850,
             endYear = 2025,
             genres = emptyList(),
             imdbRating = 0f

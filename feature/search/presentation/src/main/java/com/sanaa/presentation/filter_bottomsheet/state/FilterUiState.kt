@@ -1,7 +1,7 @@
 package com.sanaa.presentation.filter_bottomsheet.state
 
 data class FilterUiState(
-    val yearRange: ClosedFloatingPointRange<Float> = 1980f..2025f,
+    val yearRange: ClosedFloatingPointRange<Float> = 1850f..2025f,
     val allGenres: List<GenreUiState> = emptyList(),
     val selectedGenres: Set<GenreUiState> = emptySet(),
     val imdbRating: Int = 0,
@@ -9,7 +9,7 @@ data class FilterUiState(
 
 ){
     val hasUserSelectedFilters: Boolean
-        get() = selectedGenres.isNotEmpty() || imdbRating > 0 || yearRange != 1980f..2025f
+        get() = selectedGenres.isNotEmpty() || imdbRating > 0 || yearRange != 1850f..2025f
 
 }
 
