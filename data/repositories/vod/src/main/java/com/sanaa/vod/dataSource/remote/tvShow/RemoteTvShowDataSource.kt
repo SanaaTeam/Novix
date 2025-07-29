@@ -16,7 +16,7 @@ interface RemoteTvShowDataSource {
     suspend fun getTvShowSeasonDetails(seriesId: Int, seasonNumber: Int): SeasonDto
     suspend fun getTvShowImageUrls(id: Int): List<ImageDto>
     suspend fun getTvShowsByGenre(page:Int,genreId: Int): List<TvShowDto>
-    suspend fun getReviewsByTvShowId(id: Int): List<ReviewDto>
+    suspend fun getReviewsByTvShowId(id: Int, page: Int): List<ReviewDto>
     suspend fun getTvShowCast(id: Int): List<ActorDto>
     suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): EpisodeDto
     suspend fun getEpisodeImageUrls(

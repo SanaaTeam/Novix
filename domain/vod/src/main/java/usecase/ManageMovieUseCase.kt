@@ -24,11 +24,11 @@ class ManageMovieUseCase(
     suspend fun getMovieTrailer(id: Int): String? =
         movieRepo.getMovieTrailer(id)
 
-    suspend fun getReviewsByMovieId(movieId: Int): List<Review> =
-        movieRepo.getReviewsByMovieId(movieId)
+    suspend fun getReviewsByMovieId(movieId: Int, page: Int): List<Review> =
+        movieRepo.getReviewsByMovieId(movieId, page)
 
-    suspend fun getSimilarMoviesByMovieId(movieId: Int): List<Movie> =
-        movieRepo.getSimilarMoviesByMovieId(movieId)
+    suspend fun getSimilarMoviesByMovieId(movieId: Int, page: Int): List<Movie> =
+        movieRepo.getSimilarMoviesByMovieId(movieId, page)
 
     suspend fun getPopularMovies(page: Int): List<Movie> =
         movieRepo.getPopularMovies(page)

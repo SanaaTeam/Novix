@@ -21,8 +21,8 @@ class TvShowRepositoryImpl(
         remoteDataSource.getTvShowDetails(id).toEntity()
     }
 
-    override suspend fun getTvSeriesReviews(id: Int): List<Review> = safeCall("Reviews not found") {
-        remoteDataSource.getReviewsByTvShowId(id).map { it.toEntity() }
+    override suspend fun getTvSeriesReviews(id: Int, page: Int): List<Review> = safeCall("Reviews not found") {
+        remoteDataSource.getReviewsByTvShowId(id, page).map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String> =

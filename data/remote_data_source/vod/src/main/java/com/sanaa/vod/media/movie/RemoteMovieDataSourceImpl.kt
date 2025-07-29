@@ -24,21 +24,22 @@ class RemoteMovieDataSourceImpl(
         apiService.fetchCast(id).cast
     }
 
-    override suspend fun fetchSimilarMoviesByMovieId(id: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchSimilarMoviesByMovieId(id).results
+    override suspend fun fetchSimilarMoviesByMovieId(id: Int, page: Int): List<MovieDto> = wrapApiCall {
+        apiService.fetchSimilarMoviesByMovieId(id, page).results
     }
 
-    override suspend fun fetchReviewsByMovieId(id: Int): List<ReviewDto> = wrapApiCall {
-        apiService.fetchReviewsByMovieId(id).results
+    override suspend fun fetchReviewsByMovieId(id: Int, page: Int): List<ReviewDto> = wrapApiCall {
+        apiService.fetchReviewsByMovieId(id, page).results
     }
 
 
-    override suspend fun fetchMoviesByCategory(category: Int, page: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchMoviesByCategory(
-            category = category,
-            page = page
-        ).results
-    }
+    override suspend fun fetchMoviesByCategory(category: Int, page: Int): List<MovieDto> =
+        wrapApiCall {
+            apiService.fetchMoviesByCategory(
+                category = category,
+                page = page
+            ).results
+        }
 
     override suspend fun fetchMovieTrailerUrl(id: Int): List<VideoDto> = wrapApiCall {
         apiService.fetchMovieTrailerUrl(id).results

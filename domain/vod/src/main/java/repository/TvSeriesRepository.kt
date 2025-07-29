@@ -9,7 +9,7 @@ import entity.TvSeries
 
 interface TvSeriesRepository {
     suspend fun getTvSeriesDetails(id: Int): TvSeries
-    suspend fun getTvSeriesReviews(id: Int): List<Review>
+    suspend fun getTvSeriesReviews(id: Int, page: Int): List<Review>
     suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String>
     suspend fun getTvSeriesByGenre(page: Int,genreId: Int): List<TvSeries>
     suspend fun getTvSeriesCast(id: Int): List<Actor>

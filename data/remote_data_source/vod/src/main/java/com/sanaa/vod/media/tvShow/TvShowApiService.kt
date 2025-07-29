@@ -61,7 +61,7 @@ interface TvShowApiService {
     suspend fun fetchTvShowsVideos(@Path("tv_id") id: Int): TvShowVideosResponse
 
     @GET("tv/{tv_id}/reviews")
-    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int): TvShowReviewsResponse
+    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int, @Query("page") page: Int): TvShowReviewsResponse
 
     @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse

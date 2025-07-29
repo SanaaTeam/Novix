@@ -9,8 +9,8 @@ interface MovieRepository {
     suspend fun getMovieDetails(id: Int): Movie
     suspend fun getImageUrls(id: Int, count: Int): List<String>
     suspend fun getMovieCast(id: Int): List<Actor>
-    suspend fun getSimilarMoviesByMovieId(id: Int): List<Movie>
-    suspend fun getReviewsByMovieId(id: Int): List<Review>
+    suspend fun getSimilarMoviesByMovieId(id: Int, page: Int): List<Movie>
+    suspend fun getReviewsByMovieId(id: Int, page: Int): List<Review>
     suspend fun getMoviesByCategory(genreId: Int,page: Int): List<Movie>
     suspend fun getMovieTrailer(id: Int): String?
     suspend fun getPopularMovies(page: Int): List<Movie>

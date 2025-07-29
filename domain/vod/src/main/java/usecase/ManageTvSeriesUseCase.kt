@@ -22,8 +22,8 @@ class ManageTvSeriesUseCase(
     suspend fun getTvSeriesImages(seriesId: Int): List<String> =
         tvSeriesRepo.getTvSeriesImageUrls(seriesId, IMAGE_COUNT)
 
-    suspend fun getTvSeriesReviews(seriesId: Int): List<Review> =
-        tvSeriesRepo.getTvSeriesReviews(seriesId)
+    suspend fun getTvSeriesReviews(seriesId: Int, page: Int): List<Review> =
+        tvSeriesRepo.getTvSeriesReviews(seriesId, page)
 
     suspend fun getTvSeriesSeasonDetails(seriesId: Int, seasonNumber: Int): Season =
         tvSeriesRepo.getTvSeriesSeason(seriesId, seasonNumber)
