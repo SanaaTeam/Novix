@@ -33,6 +33,8 @@ dependencies {
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
 
+    implementation(libs.timber)
+
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 

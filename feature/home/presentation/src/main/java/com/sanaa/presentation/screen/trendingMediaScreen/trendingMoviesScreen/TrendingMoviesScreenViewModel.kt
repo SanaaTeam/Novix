@@ -1,51 +1,36 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingMoviesScreenViewModel @Inject constructor(
-    private val manageMovieUseCase: ManageMovieUseCase
+    private val manageMovieUseCase: ManageMovieUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), MediaListScreenInteractionListener {
 
     init {
         fetchGenres()
-        fetchMedia()
-    }
-
-    private fun fetchMedia(genreId: Int? = null) {
-        tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true, selectedGenreId = genreId)
-                }
-                val mediaList = manageMovieUseCase.getTrendingMovies(1, state.value.selectedGenreId)
-                    .map { it.toState() }
-                updateState {
-                    it.copy(mediaList = mediaList)
-                }
-            }, onSuccess = {
-                updateState {
-                    it.copy(isLoading = false)
-                }
-            },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
-        )
+        loadMovies()
     }
 
     private fun fetchGenres() {
@@ -61,17 +46,16 @@ class TrendingMoviesScreenViewModel @Inject constructor(
                     it.copy(genreList = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
     override fun onGenreClick(id: Int?) {
         if (id != state.value.selectedGenreId) {
-            fetchMedia(id)
+            updateState {
+                it.copy(selectedGenreId = id)
+            }
+            loadMovies()
         }
     }
 
@@ -89,5 +73,46 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onBackClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
+    }
+
+    private fun loadMovies() {
+        tryToCollect(
+            callee = ::loadMoviesOperation,
+            onCollect = ::onMoviesLoaded,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createMoviesPagingSource() },
+            mapper = Movie::toState
+        )
+    }
+
+    private fun onMoviesLoaded(pagingData: PagingData<MediaItem>) {
+        updateState { it.copy(mediaList = flowOf(pagingData)) }
+    }
+
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = true
+            )
+        }
+        else updateState {
+            it.copy(
+                isLoading = false,
+                isNoInternetConnection = false,
+                error = e.message
+            )
+        }
+    }
+
+    private fun createMoviesPagingSource(): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome { page ->
+            manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
+        }
     }
 }

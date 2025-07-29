@@ -1,11 +1,17 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.Movie
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -15,10 +21,11 @@ import javax.inject.Inject
 class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val manageHistoryUseCase: ManageHistoryUseCase
+    private val manageHistoryUseCase: ManageHistoryUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
 
     init {
@@ -125,26 +132,25 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun fetchUpcomingMovies(genreId: Int? = null) {
+    private fun fetchUpcomingMovies(
+        genreId: Int? = null
+    ) {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true, movieSelectedGenreId = genreId)
-                }
-                manageMovieUseCase.getTrendingMovies(1, state.value.movieSelectedGenreId)
-                    .map { it.toState() }
-            },
+            callee = { loadUpcomingMovies(genreId) },
             onSuccess = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoading = false,
+                        isLoadingUpcoming = false,
                         upcomingMovies = mediaList
                     )
                 }
             },
             onError = { exception ->
                 updateState {
-                    it.copy(errorMessage = exception.message, isLoading = false)
+                    it.copy(
+                        errorMessage = exception.message,
+                        isLoadingUpcoming = false
+                    )
                 }
             }
         )
@@ -173,6 +179,7 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onMovieGenreClick(id: Int?) {
         if (id != state.value.movieSelectedGenreId) {
+            updateState { it.copy(movieSelectedGenreId = id) }
             fetchUpcomingMovies(id)
         }
     }
@@ -182,6 +189,35 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        TODO("Not yet implemented")
+        updateState { it.copy(showBottomSheet = true) }
+    }
+
+    override fun onDismissBottomSheet() {
+        updateState { it.copy(showBottomSheet = false) }
+    }
+
+
+    private fun loadUpcomingMovies(
+        genreId: Int?
+    ): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = {
+                createUpcomingMoviesPagingDataSource(
+                    genreId = genreId
+                )
+            },
+            mapper = Movie::toState
+        )
+    }
+
+    private fun createUpcomingMoviesPagingDataSource(
+        genreId: Int?
+    ): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome { page ->
+            manageMovieUseCase.getUpcomingMovies(
+                page = page,
+                genreId = genreId
+            )
+        }
     }
 }

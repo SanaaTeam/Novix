@@ -10,12 +10,14 @@ import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
+import timber.log.Timber
 import repository.ActorRepository
 import java.net.UnknownHostException
 import javax.inject.Inject
 
+
 class ActorRepositoryImpl @Inject constructor(
-    private val remoteDataSource: RemoteActorDataSource
+    private val remoteDataSource: RemoteActorDataSource,
 ) : ActorRepository {
 
     override suspend fun getActorDetails(id: Int): Actor =
@@ -36,7 +38,6 @@ class ActorRepositoryImpl @Inject constructor(
                 it.toEntity()
             }
         }
-
 
     override suspend fun getActorTopMovies(id: Int): List<Movie> =
         safeCall("Failed to retrieve top movies for actor ID: $id") {
@@ -60,7 +61,7 @@ class ActorRepositoryImpl @Inject constructor(
 
     override suspend fun getTrendingActors(page: Int): List<Actor> {
         safeCall("Failed to fetch Trending People ") {
-            return remoteDataSource.fetchTrendingPeople(1).map {
+            return remoteDataSource.fetchTrendingPeople(page).map {
                 it.toDomain()
             }
         }
@@ -69,10 +70,12 @@ class ActorRepositoryImpl @Inject constructor(
     private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
         try {
             return block()
-        } catch (_: UnknownHostException) {
+        } catch (ex: UnknownHostException) {
+            Timber.w(ex, "No network while fetching actor data")
             throw NoNetworkException()
-        } catch (e: Exception) {
-            throw RetrievingDataFailureException("$errorMessage: ${e.message}")
+        } catch (ex: Exception) {
+            Timber.e(ex, "Error fetching actor data")
+            throw RetrievingDataFailureException("$errorMessage: ${ex.message}")
         }
     }
 }

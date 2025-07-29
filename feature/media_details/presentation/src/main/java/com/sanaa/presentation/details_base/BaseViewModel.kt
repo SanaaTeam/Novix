@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.jvm.Throws
 
 abstract class BaseViewModel<T, E>(
@@ -39,6 +40,7 @@ abstract class BaseViewModel<T, E>(
                 val result = callee()
                 onSuccess(result)
             } catch (exception: Exception) {
+                Timber.w(exception, "Use-case failed")
                 onError(exception)
             }
         }

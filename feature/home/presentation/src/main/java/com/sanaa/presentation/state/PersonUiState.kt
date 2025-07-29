@@ -9,7 +9,7 @@ data class PersonUiState(
     val imageUrl: String
 )
 
-fun Actor.toUiState() = PersonUiState(
+fun Actor.toState() = PersonUiState(
     id = id,
     name = name,
     character = character,
