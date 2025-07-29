@@ -9,13 +9,13 @@ data class CreateGuestSessionResponse(
     val success: Boolean,
 
     @SerialName("status_code")
-    val status_code: Int?,
+    val statusCode: Int?,
 
     @SerialName("expires_at")
-    val expires_at: String?,
+    val expiresAt: String?,
 
     @SerialName("guest_session_id")
-    val guest_session_id: String,
+    val guestSessionId: String,
 )
 
 
