@@ -13,9 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.HomeFeatureApi
-import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
-import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem

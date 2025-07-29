@@ -15,6 +15,7 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var homeFeatureApi: HomeFeatureApi
+
     @Inject
     lateinit var searchFeatureApi: SearchFeatureApi
 

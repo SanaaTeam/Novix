@@ -8,8 +8,9 @@ import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.util.wrapApiCall
+import javax.inject.Inject
 
-class RemoteMovieDataSourceImpl(
+class RemoteMovieDataSourceImpl @Inject constructor(
     private val apiService: MovieApiService,
 ) : RemoteMovieDataSource {
 
