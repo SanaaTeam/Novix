@@ -27,8 +27,8 @@ fun CustomYearRangeSlider(
     value: ClosedFloatingPointRange<Float>,
     onValueChange: (ClosedFloatingPointRange<Float>) -> Unit,
     onDragStateChanged: (isDragging: Boolean) -> Unit,
-    valueRange: ClosedFloatingPointRange<Float> = 1980f..2025f,
-    steps: Int = (2025 - 1980) - 1,
+    valueRange: ClosedFloatingPointRange<Float> = 1850f..2025f,
+    steps: Int = (2025 - 1850) - 1,
 ) {
 
     Column(modifier.fillMaxWidth().padding(top=16.dp)) {
@@ -40,7 +40,8 @@ fun CustomYearRangeSlider(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp),
+                .padding(top = 8.dp)
+            ,
             verticalAlignment = Alignment.CenterVertically
         ) {
             YearTitle(value.start.toInt().toString())
@@ -75,7 +76,7 @@ fun CustomYearRangeSliderPreview() {
     Column(
         modifier = Modifier
             .background(Theme.colors.surface)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
     ) {
         CustomYearRangeSlider(
             title = stringResource(com.sanaa.designsystem.R.string.released_year),

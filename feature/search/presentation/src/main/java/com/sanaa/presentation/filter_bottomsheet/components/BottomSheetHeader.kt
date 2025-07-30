@@ -1,6 +1,5 @@
 package com.sanaa.presentation.filter_bottomsheet.components
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,6 +38,7 @@ fun BottomSheetHeader(onCancelClicked: () -> Unit = {}) {
         )
         Box(
             modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
                 .background(
                     color = Theme.colors.iconBackgroundLow,
                     shape = RoundedCornerShape(8.dp)
