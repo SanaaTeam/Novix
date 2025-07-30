@@ -20,6 +20,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Error
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.tab.NovixTab
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -58,7 +59,7 @@ fun CategoryTabSection(
         when {
             uiState.isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    WavyProgressIndicator()
+                    NovixLoadingIndicator()
                 }
             }
 
@@ -87,7 +88,7 @@ fun CategoryTabContent(
     interactionsListener: SearchScreenInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
-    actorsPagingData: LazyPagingItems<ActorUiModel>,
+    actorsPagingData: LazyPagingItems<ActorUiModel>
 ) {
     val movieState = moviesPagingData.loadState.refresh
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
