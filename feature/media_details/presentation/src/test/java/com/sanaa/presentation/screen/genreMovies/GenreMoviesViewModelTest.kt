@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.sanaa.presentation.model.toUiModel
@@ -95,9 +96,15 @@ class GenreMoviesViewModelTest {
     fun `fetchMovies should update state with movies`() = runTest {
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns movies
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to genreList[0].id,
+                "categoryName" to genreList[0].name
+            )
+        )
+
         viewModel = GenreMoviesViewModel(
-            categoryId = genreList[0].id,
-            categoryName = genreList[0].name,
+            savedStateHandle = savedStateHandle,
             manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
             dispatcher = testDispatcher
         )
@@ -111,9 +118,16 @@ class GenreMoviesViewModelTest {
 
     private fun givenHappyViewModel() {
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns movies
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "categoryId" to genreList[0].id,
+                "categoryName" to genreList[0].name
+            )
+        )
+
         viewModel = GenreMoviesViewModel(
-            categoryId = genreList[0].id,
-            categoryName = genreList[0].name,
+            savedStateHandle = savedStateHandle,
             manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
             dispatcher = testDispatcher
         )
