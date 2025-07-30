@@ -213,52 +213,71 @@ class LocalSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getMoviesByQuery returns cached results`() = runTest {
+    fun `getMoviesByQuery returns cached results by ID if SearchResultLocalDto exists`() = runTest {
         val currentTimestamp = TimeUtils.getCurrentTimeStamp()
         val query = "movie query"
-        val cachedResults = listOf(SearchResultLocalDto(1, 123, "movie"))
-        val movies = listOf(
-            MovieLocalDto(
-                123, "Movie1", "", "2002-10-10", null, 7.5f, "en", currentTimestamp
-            )
+        val movieId = 123
+        val cachedResults = listOf(SearchResultLocalDto(1, movieId, "movie"))
+        val movie = MovieLocalDto(
+            movieId, "Movie1", "", "2002-10-10", null, 7.5f, "en", currentTimestamp
         )
 
         coEvery { searchDao.getSearchByQueryAndLanguage(query, "en") } returns SearchLocalDto(
             1, query, "en", currentTimestamp
         )
         coEvery {
-            searchResultDao.getByQueryAndLanguage(
-                query, "en", "movie"
-            )
+            searchResultDao.getByQueryAndLanguage(query, "en", "movie")
         } returns cachedResults
-        coEvery { movieDao.getFilteredMovies("123", 20, 0) } returns movies
+        coEvery { movieDao.getMovieById(movieId) } returns movie
+        coEvery { movieDao.getFilteredMovies(any(), any(), any()) } returns emptyList()
+
 
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, 20, 0)
 
-        assertEquals(movies, result)
+        assertEquals(listOf(movie), result)
+        coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, "en", "movie") }
+        coVerify(exactly = 1) { movieDao.getMovieById(movieId) }
+        coVerify(exactly = 0) { movieDao.getFilteredMovies(any(), any(), any()) }
     }
 
     @Test
-    fun `getMoviesByQuery returns direct movieDao results if no cached results`() = runTest {
+    fun `getMoviesByQuery returns direct movieDao results if no cached results in SearchResultDao`() = runTest {
         val query = "Movie"
-        val itemType = "movie"
-        val listOf = listOf(
-            SearchResultLocalDto(1, 1, itemType),
-            SearchResultLocalDto(1, 2, itemType),
-        )
-
-        coEvery {
-            searchDao.getSearchByQueryAndLanguage(query, "en")
-        } returns SearchLocalDto(1, query, "en", currentTimestamp)
+        val limit = 20
+        val offset = 0
         coEvery {
             searchResultDao.getByQueryAndLanguage(query, any(), any())
-        } returns listOf
-        coEvery {
-            movieDao.getFilteredMovies(any(), any(), any())
-        } returns movieList
+        } returns emptyList()
 
-        localCachedSearchDataSourceImpl.getMoviesByQuery(query, 20, 0)
-        coVerify { movieDao.getFilteredMovies(any(), any(), any()) }
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
+
+        val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
+
+        assertEquals(movieList, result)
+        coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
+        coVerify(exactly = 0) { movieDao.getMovieById(any()) }
+        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
+    }
+
+    @Test
+    fun `getMoviesByQuery returns direct movieDao results if ID based cached results are empty`() = runTest {
+        val query = "Movie"
+        val limit = 20
+        val offset = 0
+        val cachedResults = listOf(SearchResultLocalDto(1, 999, "movie"))
+        coEvery {
+            searchResultDao.getByQueryAndLanguage(query, any(), any())
+        } returns cachedResults
+        coEvery { movieDao.getMovieById(any()) } returns null
+
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
+
+        val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
+
+        assertEquals(movieList, result)
+        coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
+        coVerify(atLeast = 1) { movieDao.getMovieById(any()) }
+        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
     }
 
     @Test
