@@ -1,5 +1,10 @@
 package com.sanaa.presentation.screen.homeScreen.section
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -68,15 +73,21 @@ fun MixedMediaSection(
                 contentPadding = PaddingValues(0.dp),
                 maxSmallItemWidth = 74.dp,
                 minSmallItemWidth = 74.dp,
-            ) { item ->
+            ) { item, isFocused ->
                 MediaPosterCard(
                     height = 210.dp,
                     topLeftContent = {
-                        SaveIconChip(
-                            onClick = {
-                                onSaveIconClicked(item)
+                        Column {
+                            AnimatedVisibility(
+                                visible = isFocused,
+                                enter = slideInHorizontally() + fadeIn(),
+                                exit = slideOutHorizontally() + fadeOut()
+                            ) {
+                                SaveIconChip(
+                                    onClick = { onSaveIconClicked(item) }
+                                )
                             }
-                        )
+                        }
                     },
                     onCardClick = {
                         onMediaClick(item)

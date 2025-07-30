@@ -59,18 +59,18 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getSimilarMoviesByMovieId returns similar movies`() = runTest {
-        coEvery { remote.fetchSimilarMoviesByMovieId(1) } returns sampleSimilarDto
+        coEvery { remote.fetchSimilarMoviesByMovieId(1,1) } returns sampleSimilarDto
 
-        val result = repository.getSimilarMoviesByMovieId(1)
+        val result = repository.getSimilarMoviesByMovieId(1,1)
 
         assertThat(result.size).isEqualTo(2)
     }
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1) } returns listOf(sampleReviewDto)
+        coEvery { remote.fetchReviewsByMovieId(1,1) } returns listOf(sampleReviewDto)
 
-        val result = repository.getReviewsByMovieId(1)
+        val result = repository.getReviewsByMovieId(1,1)
 
         assertThat(result.first().authorName).isEqualTo("Critic A")
     }
@@ -91,9 +91,9 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMoviesByCategory should return list of MovieDto `() = runTest {
-        coEvery { remote.fetchMoviesByCategory(any()) } returns sampleSimilarDto
+        coEvery { remote.fetchMoviesByCategory(any(),any()) } returns sampleSimilarDto
 
-        val result = repository.getMoviesByCategory(1)
+        val result = repository.getMoviesByCategory(1,1)
 
         assertThat(result).isNotEmpty()
     }

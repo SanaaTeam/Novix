@@ -8,7 +8,7 @@ fun EpisodeDto.toEntity(): Episode {
     return Episode(
         id = id,
         title = name,
-        overview = overview,
+        overview = overview.toString(),
         seasonNumber = seasonNumber,
         number = episodeNumber,
         imdbRating = voteAverage,

@@ -10,7 +10,9 @@ interface MovieDetailsScreenInteractionListener {
     fun onSimilarMovieClick(movieId: Int)
     fun onRateMovieClick()
     fun onDismissLoginBottomSheet()
+    fun onLoginButtonClick()
     fun onActorCardClick(actorId: Int)
     fun onShowReviewsClick(movieId: Int)
     fun onGenreClicked(genre: GenreUiModel)
+    fun onRetryLoadDetails()
 }

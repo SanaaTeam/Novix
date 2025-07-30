@@ -5,6 +5,7 @@ import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
+import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -12,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class RemoteSearchDataSourceImplTest {
-    private lateinit var dataSource: SearchRemoteDataSourceImpl
+    private lateinit var dataSource: SearchRemoteDataSource
     private val apiService = mockk<SearchApiService>()
 
     @BeforeEach

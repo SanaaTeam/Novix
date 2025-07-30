@@ -12,11 +12,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.cards.ActorCard
 import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.shared_component.cards.ActorCard
 
 @Composable
 fun CastComponent(
@@ -42,7 +41,7 @@ fun CastComponent(
                 ActorCard(
                     actorName = cast.name,
                     playedCharacter = cast.character,
-                    actorImage = rememberAsyncImagePainter(cast.imageUrl),
+                    imageUrl = cast.imageUrl.orEmpty(),
                     modifier = Modifier.width(296.dp),
                     onCardClick = {
                         onActorClicked(cast.id)

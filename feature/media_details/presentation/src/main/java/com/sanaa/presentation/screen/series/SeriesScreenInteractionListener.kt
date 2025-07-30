@@ -13,4 +13,6 @@ interface SeriesScreenInteractionListener {
     fun onDismissRateBottomSheet()
     fun onSaveSeriesClicked()
     fun onGenreClicked(genre: GenreUiModel)
+    fun onRetryLoadDetails()
+    fun onLoginButtonClick()
 }

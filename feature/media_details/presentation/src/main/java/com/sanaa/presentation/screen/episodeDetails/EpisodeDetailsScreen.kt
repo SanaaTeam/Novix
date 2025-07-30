@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
@@ -71,6 +72,13 @@ fun EpisodeDetailsScreen(
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
                 }
+
+                EpisodeDetailsEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -110,14 +118,21 @@ private fun EpisodeDetailsScreenContent(
             )
 
             AnimatedContent(
-                state.isLoading,
+                targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
                 if (it) {
-                    NovixLoadingIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    if (state.noInternetConnection) {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            NovixLoadingIndicator()
+                        }
+                    }
                 } else {
                     Box(
                         modifier = Modifier
@@ -176,6 +191,7 @@ private fun EpisodeDetailsScreenContent(
                 RequestToLoginBottomSheet(
                     isVisible = state.showLoginBottomSheet,
                     onDismiss = interactionListener::onDismissBottomSheet,
+                    onLoginButtonClick = { interactionListener.onLoginButtonClick() }
                 )
             }
         }

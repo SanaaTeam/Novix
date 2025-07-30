@@ -3,14 +3,15 @@ package com.sanaa.presentation.model
 import android.annotation.SuppressLint
 import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.Movie
+import kotlin.time.Duration
 
 data class MovieUiModel(
     val id: Int = 0,
     val title: String = "",
-    val overview: String? = null,
+    val overview: String = "",
     val rating: String? = null,
     val releaseDate: String = "",
-    val duration: Int? = null,
+    val duration: Duration? = null,
     val posterUrls: List<String> = emptyList(),
     val genres: List<GenreUiModel> = emptyList(),
     val isBookmarked: Boolean = false,
@@ -22,12 +23,12 @@ data class MovieUiModel(
 @SuppressLint("DefaultLocale")
 fun Movie.toUiModel(
     isBookmarked: Boolean = false,
-    trailerUrl: String? = null
+    trailerUrl: String? = null,
 ): MovieUiModel {
     return MovieUiModel(
         id = id,
         title = title,
-        overview = overview,
+        overview = overview.toString(),
         rating = String.format("%.1f", imdbRating),
         releaseDate = releaseDate.formatDateLocalizedDigits(),
         duration = duration,

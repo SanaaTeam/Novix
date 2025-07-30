@@ -1,0 +1,96 @@
+name: Build & upload to Firebase App Distribution and notify Slack
+
+on:
+  push:
+    branches: [ main, development ]
+  workflow_dispatch:
+
+jobs:
+  distribute:
+    name: Distribute bundle to firebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          fetch-depth: 0
+
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Prepare google-services.json
+        run: |
+          # stop the build immediately if the secret is missing
+          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" ]; then
+            echo "::error ::GOOGLE_SERVICES_JSON_BASE64 secret missing – add it in repo settings"
+            exit 1
+          fi
+
+          # decode the secret into the standard location
+          echo "${{ secrets.GOOGLE_SERVICES_JSON_BASE64 }}" | base64 -d > app/google-services.json
+
+          # make sure the release variant can see it
+          mkdir -p app/src/release
+          cp app/google-services.json app/src/release/google-services.json
+
+          echo "✅ google-services.json written (size: $(wc -c < app/google-services.json) bytes)"
+
+      - name: Generate keys.properties
+        run: |
+          echo "TMDB_API_KEY=${{ secrets.TMDB_API_KEY }}" > keys.properties
+          cp keys.properties ./data/remote_data_source/vod/keys.properties
+
+
+      - name: Compute version for this run
+        run: |
+          echo "CI_VERSION_CODE=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "CI_VERSION_NAME=1.0.${{ github.run_number }}" >> "$GITHUB_ENV"
+
+      - name: Build signed APK
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: Show available build-tools
+        run: ls /usr/local/lib/android/sdk/build-tools/
+
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          alias: ${{ secrets.ANDROID_KEY_ALIAS }}
+          keyPassword: ${{ secrets.ANDROID_KEY_ALIAS_PASSWORD }}
+        env:
+          BUILD_TOOLS_VERSION: "34.0.0"
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          debug: true
+
+      - name: Upload APK to Slack
+        uses: MeilCli/slack-upload-file@v4.0.20
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          file_name: "app-release-${{ github.run_number }}.apk"
+          thread_ts: ${{ secrets.SLACK_APK_MESSAGE_TS }}
+          initial_comment: |
+            📲 *New APK Build Released*
+            *Version:* `1.0.${{ github.run_number }}`
+            *File:* `app-release-${{ github.run_number }}.apk`

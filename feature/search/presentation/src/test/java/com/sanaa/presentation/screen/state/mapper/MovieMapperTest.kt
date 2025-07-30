@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
+import kotlin.time.Duration.Companion.minutes
 
 class MovieMapperTest {
 
@@ -66,7 +67,7 @@ class MovieMapperTest {
             Movie(
                 id = id, title = title, posterImageUrl = posterUrl, genres = emptyList(),
                 imdbRating = 0f,
-                duration = 1,
+                duration = 100.minutes,
                 releaseDate = LocalDate(1970, 1, 1),
                 overview = "",
                 trailerUrl = ""

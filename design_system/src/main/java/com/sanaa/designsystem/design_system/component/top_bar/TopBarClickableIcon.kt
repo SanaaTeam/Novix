@@ -26,7 +26,9 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun TopBarClickableIcon(
     icon: Painter,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    contentDescription:String? = ""
+
 ) {
     Box(
         modifier = modifier

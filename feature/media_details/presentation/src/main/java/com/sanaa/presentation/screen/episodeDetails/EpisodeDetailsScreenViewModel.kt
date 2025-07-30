@@ -7,6 +7,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
+import exceptions.NoNetworkException
 
 class EpisodeDetailsScreenViewModel(
     seriesId: Int,
@@ -49,8 +50,18 @@ class EpisodeDetailsScreenViewModel(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
+    }
+
     override fun onRateClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
+    }
+
+    override fun onRetryLoadDetails() {
+        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        loadEpisode(state.value.seriesId, 0, 0)
     }
 
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
@@ -59,8 +70,15 @@ class EpisodeDetailsScreenViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = {
-                updateState { it.copy(error = it.error, isLoading = false) }
+            onError = {e ->
+                if (e is NoNetworkException) {
+                    updateState { it.copy(noInternetConnection = true,
+                        error = null,
+                        isLoading = false) }
+                }
+                else {
+                    updateState { it.copy(error = it.error, isLoading = false) }
+                }
             }
         )
     }

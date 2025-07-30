@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
@@ -86,6 +88,13 @@ fun ActorScreen(
                         SeriesDetailsScreenRoute(effect.seriesId).route()
                     )
                 }
+
+                ActorScreenEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -121,14 +130,21 @@ private fun ActorScreenContent(
             )
 
             AnimatedContent(
-                state.isLoading,
+                targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { loading ->
-                if (loading) {
-                    NovixLoadingIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+            ) {
+                if (it) {
+                    if (state.noInternetConnection) {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { listener.onRetryClicked() },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            NovixLoadingIndicator()
+                        }
+                    }
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -158,7 +174,7 @@ private fun ActorScreenContent(
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier
-                                        .padding(16.dp)
+                                        .padding(start = 16.dp, end = 16.dp,top=16.dp)
                                         .fillMaxWidth()
                                 )
                             }
@@ -168,6 +184,7 @@ private fun ActorScreenContent(
                             MediaSection(
                                 title = stringResource(R.string.gallery),
                                 items = state.galleryImageUrls.take(10),
+                                modifier = Modifier.padding(top = 16.dp),
                                 onActionClick = listener::onViewAllGalleryClicked
                             ) { image ->
                                 GalleryCard(image)
@@ -205,6 +222,7 @@ private fun ActorScreenContent(
             RequestToLoginBottomSheet(
                 isVisible = state.showLoginBottomSheet,
                 onDismiss = listener::onDismissBottomSheet,
+                onLoginButtonClick = { listener.onLoginButtonClick() }
             )
         }
     }

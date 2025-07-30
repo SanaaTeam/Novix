@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -68,7 +69,7 @@ fun NovixPrimaryButton(
     ) {
         text?.let {
             Text(
-                text = text,
+                text = it,
                 color = animateTextColor,
                 style = Theme.textStyle.label.large
             )
@@ -87,8 +88,8 @@ private fun PrimaryButtonPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false)
-            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = true)
+            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false, modifier = Modifier.fillMaxWidth())
+            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
             NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
             NovixPrimaryButton(
                 text = null,

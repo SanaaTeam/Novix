@@ -10,6 +10,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -49,9 +50,12 @@ fun NovixTextButton(
             text = text,
             style = Theme.textStyle.label.medium,
             modifier = modifier.clickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
                 enabled = isEnabled && !isLoading,
                 onClick = onClick
-            ),
+            )
+            ,
             color = animatedTextColor
         )
         AnimatedContent(
