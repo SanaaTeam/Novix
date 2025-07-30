@@ -40,7 +40,7 @@ import usecase.search.search_param.MediaFilters
 fun FilterBottomSheet(
     dismissSheet: () -> Unit,
     isVisible: Boolean,
-    onFilterApplied: (MediaFilters?) -> Unit,
+    onFilterApplied: (Int,MediaFilters?) -> Unit,
     selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
@@ -48,8 +48,10 @@ fun FilterBottomSheet(
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters ->
-            onFilterApplied(filters)
+        filterViewModel.filterResult.collect { (tabIndex, filters) ->
+            if (tabIndex == selectedTabIndex) {
+                onFilterApplied(tabIndex,filters)
+            }
         }
     }
 
@@ -61,7 +63,7 @@ fun FilterBottomSheet(
             }
         },
 
-    ) {
+        ) {
         FilterBottomSheetContent(
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
@@ -89,12 +91,18 @@ fun FilterBottomSheetContent(
     } else {
         uiState.tvGenres
     }
+
+    val filters = if (selectedTabIndex == MOVIE_INDEX) {
+        uiState.movieFilters
+    } else {
+        uiState.tvFilters
+    }
+
     Column(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier
@@ -107,8 +115,10 @@ fun FilterBottomSheetContent(
             BottomSheetHeader(onCancelClicked = onDismissRequest)
 
             AnimatedVisibility(visible = uiState.isLoading) {
-                Box(modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center){
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
                     WavyProgressIndicator()
                 }
 
@@ -117,32 +127,32 @@ fun FilterBottomSheetContent(
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
-                        value = uiState.yearRange,
-                        onValueChange = listener::onYearRangeChanged,
+                        value = filters.yearRange,
+                        onValueChange = { listener.onYearRangeChanged(selectedTabIndex, it) },
                         onDragStateChanged = onSliderDragStateChanged
                     )
                     GenreChips(
                         genres = displayedGenres,
-                        selectedGenres = uiState.selectedGenres,
-                        onGenreSelected = listener::onGenreSelected,
+                        selectedGenres = filters.selectedGenres,
+                        onGenreSelected = { listener.onGenreSelected(selectedTabIndex, it) },
                         animateWidth = true,
                     )
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
-                        currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged,
+                        currentRating = filters.imdbRating,
+                        onRatingChanged = { listener.onRatingChanged(selectedTabIndex, it) },
                         modifier = Modifier.padding(top = 20.dp)
                     )
                 }
             }
         }
         FilterActions(
-            isApplyEnabled = uiState.hasUserSelectedFilters,
+            isApplyEnabled = filters.hasUserSelectedFilters,
             onApplyClicked = {
-                listener.onApplyClicked()
+                listener.onApplyClicked(selectedTabIndex)
                 onDismissRequest()
             },
-            onClearClicked = listener::onClearFilters
+            onClearClicked = { listener.onClearFilters(selectedTabIndex) }
         )
     }
 }
