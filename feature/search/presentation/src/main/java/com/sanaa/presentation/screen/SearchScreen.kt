@@ -77,7 +77,9 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-            onFilterApplied = searchViewModel::onFilterApplied
+            onFilterApplied ={ tabIndex, filters ->
+                searchViewModel.onFilterApplied(tabIndex, filters)
+            }
         )
     }
 }
@@ -89,7 +91,7 @@ fun SearchScreenContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onFilterApplied: (MediaFilters?) -> Unit,
+    onFilterApplied: (Int, MediaFilters?) -> Unit,
 ) {
 
     val dismissSheet: () -> Unit = {

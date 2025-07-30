@@ -54,6 +54,7 @@ fun IMDbRatingSelector(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
+                .padding(horizontal = 8.dp)
                 .onSizeChanged { rowSize = it }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures(

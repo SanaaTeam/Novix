@@ -3,8 +3,8 @@ package com.sanaa.presentation.filter_bottomsheet
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.filter_bottomsheet.FilterViewModel.Companion.MOVIE_INDEX
 import com.sanaa.presentation.filter_bottomsheet.components.BottomSheetHeader
 import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlider
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
@@ -38,20 +40,18 @@ import usecase.search.search_param.MediaFilters
 fun FilterBottomSheet(
     dismissSheet: () -> Unit,
     isVisible: Boolean,
-    onFilterApplied: (MediaFilters?) -> Unit,
+    onFilterApplied: (Int,MediaFilters?) -> Unit,
     selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
     val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(selectedTabIndex) {
-        filterViewModel.fetchGenresByTab(selectedTabIndex)
-    }
-
     LaunchedEffect(Unit) {
-        filterViewModel.filterResult.collect { filters ->
-            onFilterApplied(filters)
+        filterViewModel.filterResult.collect { (tabIndex, filters) ->
+            if (tabIndex == selectedTabIndex) {
+                onFilterApplied(tabIndex,filters)
+            }
         }
     }
 
@@ -63,11 +63,12 @@ fun FilterBottomSheet(
             }
         },
 
-    ) {
+        ) {
         FilterBottomSheetContent(
             onDismissRequest = dismissSheet,
             uiState = filterUiState,
             listener = filterViewModel,
+            selectedTabIndex = selectedTabIndex,
             isSliderDragging = isSliderDragging,
             onSliderDragStateChanged = { isSliderDragging = it }
         )
@@ -79,17 +80,29 @@ fun FilterBottomSheet(
 @Composable
 fun FilterBottomSheetContent(
     uiState: FilterUiState,
+    selectedTabIndex: Int,
     listener: FilterBottomSheetInteractionsListener,
     onDismissRequest: () -> Unit,
     isSliderDragging: Boolean,
     onSliderDragStateChanged: (isDragging: Boolean) -> Unit,
 ) {
+    val displayedGenres = if (selectedTabIndex == MOVIE_INDEX) {
+        uiState.movieGenres
+    } else {
+        uiState.tvGenres
+    }
+
+    val filters = if (selectedTabIndex == MOVIE_INDEX) {
+        uiState.movieFilters
+    } else {
+        uiState.tvFilters
+    }
+
     Column(
         modifier = Modifier
             .background(color = Theme.colors.surface)
             .fillMaxWidth()
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
     ) {
         Column(
             modifier = Modifier
@@ -102,38 +115,44 @@ fun FilterBottomSheetContent(
             BottomSheetHeader(onCancelClicked = onDismissRequest)
 
             AnimatedVisibility(visible = uiState.isLoading) {
-                WavyProgressIndicator()
-            }
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    WavyProgressIndicator()
+                }
 
+            }
             AnimatedVisibility(visible = !uiState.isLoading) {
-                Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     CustomYearRangeSlider(
                         title = stringResource(R.string.released_year),
-                        value = uiState.yearRange,
-                        onValueChange = listener::onYearRangeChanged,
+                        value = filters.yearRange,
+                        onValueChange = { listener.onYearRangeChanged(selectedTabIndex, it) },
                         onDragStateChanged = onSliderDragStateChanged
                     )
                     GenreChips(
-                        genres = uiState.allGenres,
-                        selectedGenres = uiState.selectedGenres,
-                        onGenreSelected = listener::onGenreSelected,
-                        animateWidth = false,
+                        genres = displayedGenres,
+                        selectedGenres = filters.selectedGenres,
+                        onGenreSelected = { listener.onGenreSelected(selectedTabIndex, it) },
+                        animateWidth = true,
                     )
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
-                        currentRating = uiState.imdbRating,
-                        onRatingChanged = listener::onRatingChanged
+                        currentRating = filters.imdbRating,
+                        onRatingChanged = { listener.onRatingChanged(selectedTabIndex, it) },
+                        modifier = Modifier.padding(top = 20.dp)
                     )
                 }
             }
         }
         FilterActions(
-            isApplyEnabled = uiState.hasUserSelectedFilters,
+            isApplyEnabled = filters.hasUserSelectedFilters,
             onApplyClicked = {
-                listener.onApplyClicked()
+                listener.onApplyClicked(selectedTabIndex)
                 onDismissRequest()
             },
-            onClearClicked = listener::onClearFilters
+            onClearClicked = { listener.onClearFilters(selectedTabIndex) }
         )
     }
 }
