@@ -258,10 +258,7 @@ class SearchViewModel(
                 currentState.copy(
                     noInternetConnection = true,
                     isLoading = false,
-                    error = null,
-                    movies = flowOf(PagingData.empty()),
-                    tvShows = flowOf(PagingData.empty()),
-                    actors = flowOf(PagingData.empty())
+                    error = null
                 )
             } else {
                 val errorMessage = e.message ?: "An unexpected error occurred."
