@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -109,7 +110,7 @@ fun CategoryTabContent(
             if (movieRefreshState is LoadState.Error) {
                 ErrorState(movieRefreshState) { interactionsListener.retrySearch() }
             } else if (isMovieEmpty) {
-                NoSearchResultState()
+                NoSearchResultContent()
             } else {
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
@@ -124,7 +125,7 @@ fun CategoryTabContent(
             if (tvShowRefreshState is LoadState.Error) {
                 ErrorState(tvShowRefreshState) { interactionsListener.retrySearch() }
             } else if (isTvEmpty) {
-                NoSearchResultState()
+                NoSearchResultContent()
             } else {
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
@@ -139,7 +140,7 @@ fun CategoryTabContent(
             if (actorRefreshState is LoadState.Error) {
                 ErrorState(actorRefreshState) { interactionsListener.retrySearch() }
             } else if (isActorEmpty) {
-                NoSearchResultState()
+                NoSearchResultContent()
             } else {
                 ActorsContent(actorsPagingData, onActorClick = {
                     interactionsListener.onActorClicked(it.id)
@@ -171,9 +172,15 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
 }
 
 @Composable
-private fun NoSearchResultState() {
+private fun NoSearchResultContent() {
+    val isDarkTheme = isSystemInDarkTheme()
+    val iconRss =if (isDarkTheme)
+      R.drawable.ic_no_search_result_dark
+        else {
+      R.drawable.ic_no_search_result
+    }
     EmptySearchContent(
-        icon = painterResource(id = R.drawable.ic_no_search_result),
+        icon =painterResource(id = iconRss),
         text = stringResource(id = R.string.no_search_result_message)
     )
 }
