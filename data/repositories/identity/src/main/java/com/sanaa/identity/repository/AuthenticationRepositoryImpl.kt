@@ -1,6 +1,5 @@
 package com.sanaa.identity.repository
 
-import android.util.Log
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.dataSoruce.local.dto.UserDto
@@ -10,6 +9,7 @@ import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateSessionResponse
 import com.sanaa.identity.util.wrapApiCall
 import entity.User
+import exceptions.NoLoggedInUserException
 import repository.AuthenticationRepository
 
 class AuthenticationRepositoryImpl(
@@ -33,7 +33,6 @@ class AuthenticationRepositoryImpl(
                         username = account.username.orEmpty()
                     )
                 )
-
             }
         }
         Unit
@@ -47,10 +46,10 @@ class AuthenticationRepositoryImpl(
     override suspend fun getLoggedUser(): User {
         return userLocalDataSource.getLoggedUser()
             ?.toEntity()
-            ?: throw Exception("User not found")
+            ?: throw NoLoggedInUserException()
     }
 
-    override suspend fun isLoggedIn(): Boolean {
+    override suspend fun isLoggedIn(): Boolean = wrapApiCall {
         return userLocalDataSource.getLoggedUser() != null
     }
 
