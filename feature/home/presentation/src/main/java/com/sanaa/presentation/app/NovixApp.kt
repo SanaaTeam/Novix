@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchFeatureApi
@@ -31,22 +33,28 @@ import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.Tr
 fun NovixApp(
     homeFeatureApi: HomeFeatureApi,
     searchFeatureApi: SearchFeatureApi,
-    mediaDetailsApi: MediaDetailsApi
+    mediaDetailsApi: MediaDetailsApi,
+    authenticationApi: AuthenticationApi,
+    startWithAuth: Boolean
 ) {
     val appNavController = rememberNavController()
+    val context = LocalContext.current
     Box {
         CompositionLocalProvider(LocalAppNavController provides appNavController) {
-            AppNavigation(
-                homeFeatureApi = homeFeatureApi,
-                searchFeatureApi = searchFeatureApi,
-                mediaDetailsApi = mediaDetailsApi,
-                startDestination = MainScreenRoute,
-                modifier = Modifier
-            )
+            if (startWithAuth) {
+                authenticationApi.AuthenticationScreen(context = context)
+            } else {
+                AppNavigation(
+                    homeFeatureApi = homeFeatureApi,
+                    searchFeatureApi = searchFeatureApi,
+                    mediaDetailsApi = mediaDetailsApi,
+                    startDestination = MainScreenRoute,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
-
 
 @Composable
 private fun AppNavigation(
