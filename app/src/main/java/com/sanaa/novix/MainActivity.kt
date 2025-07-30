@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
         val sessionId: String? = runBlocking {
             preferenceManager.sessionId.firstOrNull()
         }
-        Log.d("API_KEY_CHECK", "Key: ${BuildConfig.TMDB_API_KEY}")
         setContent {
             if (TextUtils.isEmpty(sessionId))
                 authenticationApi.AuthenticationScreen(this)

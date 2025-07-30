@@ -1,24 +1,40 @@
 package com.sanaa.identity.repository
 
+import android.util.Log
+import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.identity.dataSoruce.local.dto.UserDto
+import com.sanaa.identity.dataSoruce.local.mapper.toEntity
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateSessionResponse
 import com.sanaa.identity.util.wrapApiCall
+import entity.User
 import repository.AuthenticationRepository
 
 class AuthenticationRepositoryImpl(
     private val api: AuthenticationApiService,
+    private val userLocalDataSource: LocalUserDataSource,
     private val preferences: PreferencesManager
 ) : AuthenticationRepository {
     override suspend fun login(userName: String, password: String) = wrapApiCall {
         api.createRequestToken().requestToken?.let { token ->
-            api.login(LoginPostBody(userName, password, token))
-                .takeIf { it.success }
-                ?.let {
-                    val session = api.createSession(mapOf("request_token" to token))
-                    saveSession(session)
-                }
+            api.login(LoginPostBody(userName, password, token)).takeIf { it.success }?.let {
+                val session = api.createSession(mapOf("request_token" to token))
+                saveSession(session)
+
+                val account = api.getAccountDetails(
+                    session.sessionId
+                )
+                userLocalDataSource.saveUser(
+                    UserDto(
+                        id = account.id,
+                        name = account.name.orEmpty(),
+                        username = account.username.orEmpty()
+                    )
+                )
+
+            }
         }
         Unit
     }
@@ -28,9 +44,18 @@ class AuthenticationRepositoryImpl(
         preferences.updateSessionId(response.guestSessionId)
     }
 
+    override suspend fun getLoggedUser(): User {
+        return userLocalDataSource.getLoggedUser()
+            ?.toEntity()
+            ?: throw Exception("User not found")
+    }
+
+    override suspend fun isLoggedIn(): Boolean {
+        return userLocalDataSource.getLoggedUser() != null
+    }
+
     private suspend fun saveSession(session: CreateSessionResponse) {
         preferences.updateSessionId(session.sessionId)
         preferences.setIsGuest(false)
     }
-
 }
