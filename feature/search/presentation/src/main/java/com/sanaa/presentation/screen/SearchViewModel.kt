@@ -73,8 +73,13 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(searchQuery)
     }
 
-    override fun onFilterApplied(filters: MediaFilters?) {
-        updateState { it.copy(filters = filters) }
+    override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
+        updateState { currentState ->
+            currentState.copy(
+                movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
+                tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
+            )
+        }
 
         val currentQuery = state.value.searchQuery
         loadMediaByTab(currentQuery)
@@ -320,13 +325,17 @@ class SearchViewModel @Inject constructor(
 
     fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return BasePagingSource { page ->
-            searchUseCase.searchTvShows(query = query, page = page, filters = state.value.filters)
+            searchUseCase.searchTvShows(query = query, page = page, filters = state.value.tvFilters)
         }
     }
 
     fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
-            searchUseCase.searchMovies(query = query, page = page, filters = state.value.filters)
+            searchUseCase.searchMovies(
+                query = query,
+                page = page,
+                filters = state.value.movieFilters
+            )
         }
     }
 
