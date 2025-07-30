@@ -61,10 +61,9 @@ fun CategoryTabSection(
                     WavyProgressIndicator()
                 }
             }
-
             uiState.noInternetConnection -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NetworkDisconnectionContact(onRetryClick = {})
+                    NetworkDisconnectionContact(onRetryClick = { interactionsListener.retrySearch() })
                 }
             }
 
@@ -89,23 +88,26 @@ fun CategoryTabContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-    val movieState = moviesPagingData.loadState.refresh
+    val movieRefreshState = moviesPagingData.loadState.refresh
+    val tvShowRefreshState = tvShowsPagingData.loadState.refresh
+    val actorRefreshState = actorsPagingData.loadState.refresh
+
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
-            movieState !is LoadState.Loading &&
-            movieState !is LoadState.Error
+            movieRefreshState !is LoadState.Loading &&
+            movieRefreshState !is LoadState.Error
 
     val isTvEmpty = tvShowsPagingData.itemCount == 0 &&
-            tvShowsPagingData.loadState.refresh !is LoadState.Loading &&
-            tvShowsPagingData.loadState.refresh !is LoadState.Error
+            tvShowRefreshState !is LoadState.Loading &&
+            tvShowRefreshState !is LoadState.Error
 
     val isActorEmpty = actorsPagingData.itemCount == 0 &&
-            actorsPagingData.loadState.refresh !is LoadState.Loading &&
-            actorsPagingData.loadState.refresh !is LoadState.Error
+            actorRefreshState !is LoadState.Loading &&
+            actorRefreshState !is LoadState.Error
 
     when (selectedTabIndex) {
         MOVIE_INDEX -> {
-            if (movieState is LoadState.Error) {
-                ErrorState(movieState) { interactionsListener.retrySearch() }
+            if (movieRefreshState is LoadState.Error) {
+                ErrorState(movieRefreshState) { interactionsListener.retrySearch() }
             } else if (isMovieEmpty) {
                 NoSearchResultState()
             } else {
@@ -119,7 +121,9 @@ fun CategoryTabContent(
         }
 
         TV_SHOW_INDEX -> {
-            if (isTvEmpty) {
+            if (tvShowRefreshState is LoadState.Error) {
+                ErrorState(tvShowRefreshState) { interactionsListener.retrySearch() }
+            } else if (isTvEmpty) {
                 NoSearchResultState()
             } else {
                 TvShowsContent(
@@ -132,7 +136,9 @@ fun CategoryTabContent(
         }
 
         ACTOR_INDEX -> {
-            if (isActorEmpty) {
+            if (actorRefreshState is LoadState.Error) {
+                ErrorState(actorRefreshState) { interactionsListener.retrySearch() }
+            } else if (isActorEmpty) {
                 NoSearchResultState()
             } else {
                 ActorsContent(actorsPagingData, onActorClick = {
@@ -144,7 +150,7 @@ fun CategoryTabContent(
 }
 
 @Composable
-private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
+private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit) {
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
@@ -152,14 +158,15 @@ private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
             .verticalScroll(scrollState),
         contentAlignment = Alignment.Center
     ) {
-        if (movieState.error is NoNetworkException)
+        if (loadStateError.error is NoNetworkException) {
             NetworkDisconnectionContact(onRetryClick = onRetryClick)
-        else
+        } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,
                 errorTitle = stringResource(R.string.error_general_title),
                 errorMessage = stringResource(R.string.error_general_message)
             )
+        }
     }
 }
 
