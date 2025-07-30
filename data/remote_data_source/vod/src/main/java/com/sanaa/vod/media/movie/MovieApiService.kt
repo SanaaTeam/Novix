@@ -52,7 +52,7 @@ interface MovieApiService {
         @Query("page") page: Int
     ): MovieApiResponse<MovieDto>
 
-    @GET("discover/movie")
+    @GET("trending/movie/week")
     suspend fun fetchTrendingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -62,7 +62,7 @@ interface MovieApiService {
         @Query("release_date.lte") maxDate: String? = null,
     ): MovieApiResponse<MovieDto>
 
-    @GET("discover/movie")
+    @GET("movie/top_rated")
     suspend fun fetchTopRatingMovies(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
