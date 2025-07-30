@@ -307,7 +307,7 @@ class SearchViewModelTest {
             searchViewModel.onSearchQueryChanged(movieName)
             coEvery {
                 searchUseCase.searchMovies(
-                    uiState.value.searchQuery, page = page, filters = uiState.value.filters
+                    uiState.value.searchQuery, page = page, filters = uiState.value.movieFilters
                 )
             } returns movies
 
@@ -340,7 +340,7 @@ class SearchViewModelTest {
             searchViewModel.onSearchQueryChanged(tvShowName)
             coEvery {
                 searchUseCase.searchTvShows(
-                    uiState.value.searchQuery, page = page, filters = uiState.value.filters
+                    uiState.value.searchQuery, page = page, filters = uiState.value.tvFilters
                 )
             } returns tvShows
 
@@ -426,43 +426,50 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onFilterApplied() should set state filters`() = runTest {
-        val filters = MediaFilters()
-
-        searchViewModel.onFilterApplied(filters)
-
-        searchViewModel.state.test {
-            val item = awaitItem()
-            assertThat(item.filters).isEqualTo(filters)
-            assertThat(item.isLoading).isTrue()
-
-        }
-    }
-
-    @Test
-    fun `onFilterApplied() should search movie when apply filters`() = runTest {
+    fun `onFilterApplied() should set movie filters when movie tab is active`() = runTest {
         val filters = MediaFilters()
         val index = SearchScreenUiState.MOVIE_INDEX
-        val movieName = "Movie"
-        searchViewModel.onSearchQueryChanged(movieName)
 
-        searchViewModel.onFilterApplied(filters)
+        searchViewModel.onFilterApplied(index, filters)
 
         searchViewModel.state.test {
-            awaitItem()
             val item = awaitItem()
-            val expected = SearchScreenUiState(
-                searchQuery = movieName,
-                selectedTabIndex = index,
-                isLoading = false,
-                filters = filters
-            )
-            assertThat(item.searchQuery).isEqualTo(movieName)
-            assertThat(item.selectedTabIndex).isEqualTo(index)
-            assertThat(item.filters).isEqualTo(filters)
+            assertThat(item.movieFilters).isEqualTo(filters)
+            assertThat(item.tvFilters).isNotEqualTo(filters)
             cancelAndIgnoreRemainingEvents()
         }
     }
+    @Test
+    fun `onFilterApplied() should set tv filters when tv tab is active`() = runTest {
+        val filters = MediaFilters()
+        val index = SearchScreenUiState.TV_SHOW_INDEX
+
+        searchViewModel.onFilterApplied(index, filters)
+
+        searchViewModel.state.test {
+            val item = awaitItem()
+            assertThat(item.tvFilters).isEqualTo(filters)
+            assertThat(item.movieFilters).isNotEqualTo(filters)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onFilterApplied() should trigger media loading with current query`() = runTest {
+        val filters = MediaFilters()
+        val query = "Inception"
+        val index = SearchScreenUiState.MOVIE_INDEX
+
+        searchViewModel.onSearchQueryChanged(query)
+        searchViewModel.onFilterApplied(index, filters)
+
+        searchViewModel.state.test {
+            val item = awaitItem()
+            assertThat(item.searchQuery).isEqualTo(query)
+            assertThat(item.movieFilters).isEqualTo(filters)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
 
     @Test
     fun `onSearchResultMediaClicked() should doing nothing right now`() = runTest {
