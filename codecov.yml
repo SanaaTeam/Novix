@@ -47,6 +47,7 @@ ignore:
 
   - "com/sanaa/presentation/navigation/**"
   - "**/proto/**"
+  - "**/mapper/**"
   - "com/sanaa/presentation/**"
   - "com/sanaa/presentation/screen/actor/componants/**"
   - "com/sanaa/presentation/screen/actor/screen/**"

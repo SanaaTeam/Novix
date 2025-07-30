@@ -92,6 +92,7 @@ val excludedPackages = listOf(
     "com.sanaa.vod.dataSource.remote.search.search.**",
     "com.sanaa.presentation.base.**",
     "**.util.**",
+    "**.mapper.**",
     "com.sanaa.presentation.filter_bottomsheet.state.**",
 )
 allprojects {
