@@ -8,10 +8,10 @@ fun TvShowDto.toEntity(): TvSeries {
     return TvSeries(
         id = id,
         title = name,
-        overview = overview,
+        overview = overview.toString(),
         posterImageUrl = buildPosterUrl(posterPath),
         imdbRating = voteAverage,
-        releaseDate = LocalDate.parse(firstAirDate),
+        releaseDate = firstAirDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
         genres = genres.map { it.toEntity() },
         seasonsCount = seasonsCount,
     )

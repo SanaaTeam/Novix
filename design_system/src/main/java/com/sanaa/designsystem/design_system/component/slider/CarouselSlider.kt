@@ -27,7 +27,7 @@ fun <T> CarouselSlider(
     itemSpacing: Dp = 8.dp,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     maskClipShape: Shape = RoundedCornerShape(12.dp),
-    content: @Composable (item: T) -> Unit,
+    content: @Composable (item: T, isFocused: Boolean) -> Unit,
 ) {
 
     val carouselState = rememberCarouselState { items.count() }
@@ -40,13 +40,14 @@ fun <T> CarouselSlider(
         contentPadding = contentPadding,
         modifier = modifier.fillMaxWidth()
     ) { index ->
+        val isFocused = carouselState.currentItem == index
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .maskClip(maskClipShape),
             contentAlignment = Alignment.Center
         ) {
-            content(items[index])
+            content(items[index], isFocused)
         }
     }
 }

@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,9 +44,25 @@ fun NovixTextField(
     readOnly: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
+    var internalValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue(text = value, selection = TextRange(value.length)))
+    }
+
+    LaunchedEffect(value) {
+        if (value != internalValue.text) {
+            internalValue = internalValue.copy(
+                text = value,
+                selection = TextRange(value.length)
+            )
+        }
+    }
+
     NovixTextField(
-        value = TextFieldValue(text = value),
-        onValueChange = { onValueChange(it.text) },
+        value = internalValue,
+        onValueChange = {
+            internalValue = it
+            onValueChange(it.text)
+        },
         modifier = modifier,
         hint = hint,
         icon = icon,
@@ -96,8 +114,7 @@ fun NovixTextField(
                 )
             }
             Box(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
                 if (value.text.isEmpty()) {
@@ -126,9 +143,7 @@ private fun PreviewNovixTextField() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixTextFieldLabel(
-                text = "Username",
-            )
+            NovixTextFieldLabel(text = "Username")
             NovixTextField(
                 value = text,
                 onValueChange = { text = it },
@@ -137,11 +152,7 @@ private fun PreviewNovixTextField() {
             NovixTextField(
                 value = text,
                 onValueChange = { text = it },
-            )
-            NovixTextField(
-                value = text,
-                onValueChange = { text = it },
-                hint = "Password",
+                hint = "Password"
             )
         }
     }

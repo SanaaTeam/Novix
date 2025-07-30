@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -26,10 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -58,6 +60,12 @@ fun GenreTvShowsScreen(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )
+                GenreTvShowsEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -75,6 +83,7 @@ fun GenreTvShowsScreenContent(
     state: GenreTvShowsScreenUiState,
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
+    val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
 
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() },
@@ -100,11 +109,21 @@ fun GenreTvShowsScreenContent(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    targetState = state.isLoading,
+                    targetState = state.isLoading || state.noInternetConnection,
                     contentAlignment = Alignment.Center,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() }) { loading ->
-                    if (loading) {
-                        NovixLoadingIndicator()
+                    transitionSpec = { fadeIn() togetherWith fadeOut() })
+                {
+                    if (it) {
+                        if (state.noInternetConnection) {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryClick() },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NovixLoadingIndicator()
+                            }
+                        }
                     } else {
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),
@@ -116,7 +135,13 @@ fun GenreTvShowsScreenContent(
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             items(
-                                state.tvShows, key = { item -> item.id }) { tvShow ->
+                                count = pagedTvShows.itemCount,
+                                key = { index ->
+                                    val tvShow = pagedTvShows[index]
+                                    "${index}-${tvShow?.id}"
+                                }
+                            ) { index ->
+                                val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredHaramImageViewer(
@@ -150,7 +175,7 @@ fun GenreTvShowsScreenContent(
                     }
                     RequestToLoginBottomSheet(
                         onDismiss = { interactionListener.onBottomSheetDismiss() },
-                        onLoginButtonClick = {/* navigate to login screen */ },
+                        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                         isVisible = state.showBottomSheet
                     )
 

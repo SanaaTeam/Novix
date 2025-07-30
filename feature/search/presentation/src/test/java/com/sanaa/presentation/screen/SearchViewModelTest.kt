@@ -37,6 +37,7 @@ import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
+import kotlin.time.Duration.Companion.minutes
 
 class SearchViewModelTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)
@@ -756,7 +757,7 @@ class SearchViewModelTest {
             "https://image.com",
             genres = emptyList(),
             imdbRating = 0f,
-            duration = 1,
+            duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
             trailerUrl = ""
@@ -768,7 +769,7 @@ class SearchViewModelTest {
             "https://image.com",
             genres = emptyList(),
             imdbRating = 0f,
-            duration = 1,
+            duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
             trailerUrl = ""

@@ -5,6 +5,7 @@ import entity.Actor.Gender
 import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
+import kotlin.time.Duration.Companion.minutes
 
 object FakeData {
     val dummyActors: List<Actor> = listOf(
@@ -44,7 +45,7 @@ object FakeData {
             "image.com",
             genres = emptyList(),
             imdbRating = 0f,
-            duration = 1,
+            duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
             trailerUrl = ""
@@ -54,7 +55,7 @@ object FakeData {
             "image.com",
             genres = emptyList(),
             imdbRating = 0f,
-            duration = 1,
+            duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
             trailerUrl = ""

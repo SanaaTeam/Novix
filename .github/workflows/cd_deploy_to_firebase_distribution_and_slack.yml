@@ -83,13 +83,13 @@ jobs:
           debug: true
 
       - name: Upload APK to Slack
-        uses: adrey/slack-file-upload-action@master
+        uses: MeilCli/slack-upload-file@v4.0.20
         with:
-          token: ${{ secrets.SLACK_BOT_TOKEN }}
-          path: ${{ steps.sign_app.outputs.signedReleaseFile }}
-          channel: ${{ secrets.SLACK_CHANNEL_ID }}
-          filename: "app-release-${{ github.run_number }}.apk"
-          filetype: apk
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          file_path: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          file_name: "app-release-${{ github.run_number }}.apk"
+          thread_ts: ${{ secrets.SLACK_APK_MESSAGE_TS }}
           initial_comment: |
             📲 *New APK Build Released*
             *Version:* `1.0.${{ github.run_number }}`

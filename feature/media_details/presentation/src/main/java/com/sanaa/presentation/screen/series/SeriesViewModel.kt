@@ -8,16 +8,19 @@ import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
 
 @HiltViewModel
 class SeriesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase
+    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
     initialState = SeriesScreenUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), SeriesScreenInteractionListener {
 
     private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
@@ -45,6 +48,17 @@ class SeriesViewModel @Inject constructor(
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
             }
+            , onError = {e ->
+                if(e is NoNetworkException){
+                    updateState { it.copy(noInternetConnection = true,
+                        isLoadingEpisodes = false) }
+                }
+                else {
+                    updateState { it.copy( error = e.message,
+                        noInternetConnection = false,
+                        isLoadingEpisodes = false) }
+                }
+            }
         )
     }
 
@@ -68,6 +82,11 @@ class SeriesViewModel @Inject constructor(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(SeriesScreenEffects.NavigateToLogin)
+    }
+
     override fun onSaveSeriesClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
     }
@@ -76,6 +95,16 @@ class SeriesViewModel @Inject constructor(
         emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }
 
+    override fun onRetryLoadDetails() {
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                noInternetConnection = false
+            )
+        }
+        loadSeries()
+    }
     private fun loadSeries() {
         tryToExecute(
             callee = ::fetchSeriesDetails,
@@ -83,8 +112,14 @@ class SeriesViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false) }
             },
             onError = { e ->
-                updateState { state ->
-                    state.copy(error = e.message, isLoading = false)
+                if (e is NoNetworkException) {
+                    updateState { state ->
+                        state.copy(noInternetConnection = true, isLoading = false, error = null)
+                    }
+                } else {
+                    updateState { state ->
+                        state.copy(error = e.message, isLoading = false, noInternetConnection = false)
+                    }
                 }
             }
         )

@@ -49,7 +49,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -73,7 +73,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onBottomSheetDismiss should set showBottomSheet to false`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -99,7 +99,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -124,7 +124,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onTvShowClick should emit NavigateToTvShowDetails effect`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
         val savedStateHandle = SavedStateHandle(
             mapOf(

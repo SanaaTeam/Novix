@@ -33,7 +33,6 @@ fun NovixApp(
     searchFeatureApi: SearchFeatureApi,
     mediaDetailsApi: MediaDetailsApi
 ) {
-
     val appNavController = rememberNavController()
     Box {
         CompositionLocalProvider(LocalAppNavController provides appNavController) {

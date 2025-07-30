@@ -25,13 +25,23 @@ interface MovieApiService {
     suspend fun fetchCast(@Path("movie_id") id: Int): MovieCastResponse
 
     @GET("movie/{movie_id}/similar")
-    suspend fun fetchSimilarMoviesByMovieId(@Path("movie_id") id: Int): MovieApiResponse<MovieDto>
+    @Headers("Ignore-Language: true")
+    suspend fun fetchSimilarMoviesByMovieId(
+        @Path("movie_id") id: Int,
+        @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
 
     @GET("movie/{movie_id}/reviews")
-    suspend fun fetchReviewsByMovieId(@Path("movie_id") id: Int): MovieApiResponse<ReviewDto>
+    suspend fun fetchReviewsByMovieId(
+        @Path("movie_id") id: Int,
+        @Query("page") page: Int
+    ): MovieApiResponse<ReviewDto>
 
     @GET("discover/movie")
-    suspend fun fetchMoviesByCategory(@Query("with_genres") category: Int): MovieApiResponse<MovieDto>
+    @Headers("Ignore-Language: true")
+    suspend fun fetchMoviesByCategory(
+        @Query("with_genres") category: Int, @Query("page") page: Int
+    ): MovieApiResponse<MovieDto>
 
     @GET("movie/{movie_id}/videos")
     @Headers("Ignore-Language: true")

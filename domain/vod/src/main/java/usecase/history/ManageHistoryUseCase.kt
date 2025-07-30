@@ -3,12 +3,12 @@ package usecase.history
 import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
-import repository.HistoryRepository
+import repository.SearchHistoryRepository
 import usecase.history.history_param.SearchHistory
 import javax.inject.Inject
 
 class ManageHistoryUseCase @Inject constructor(
-    private val historyRepo: HistoryRepository,
+    private val historyRepo: SearchHistoryRepository,
 ) {
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> =
         historyRepo.getSearchHistory(HISTORY_ITEM_LIMIT)

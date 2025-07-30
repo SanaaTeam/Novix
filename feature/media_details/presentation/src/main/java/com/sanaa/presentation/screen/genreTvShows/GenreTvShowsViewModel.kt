@@ -1,20 +1,27 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingSource
+import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.TvSeries
+import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
     initialState = GenreTvShowsScreenUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), GenreTvShowsScreenInteractionListener {
 
     private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
@@ -32,8 +39,24 @@ class GenreTvShowsViewModel @Inject constructor(
         }
     }
 
+    override fun onRetryClick() {
+        updateState {
+            it.copy(
+                noInternetConnection = false,
+                isLoading = true,
+                error = null
+            )
+        }
+        getTvShowsByGenreId(genreId)
+    }
+
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showBottomSheet = false) }
+        emitEffect(GenreTvShowsEffects.NavigateToLogin)
     }
 
     override fun onBackClick() {
@@ -45,26 +68,41 @@ class GenreTvShowsViewModel @Inject constructor(
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
-        tryToExecute(callee = {
-            updateState {
-                it.copy(isLoading = true)
-            }
-            val tvShows = manageTvSeriesUseCase.getTvSeriesByGenre(genreId)
+        tryToCollect(callee = { loadTvShowsByGenreId(genreId) }, onCollect = { tvShows ->
             updateState {
                 it.copy(
-                    title = genreName,
-                    tvShows = tvShows.map { it.toSeriesUiModel() },
-                    isLoading = false
+                    title = genreName, tvShows = flowOf(tvShows), isLoading = false
                 )
             }
-        }, onSuccess = {
-            updateState {
-                it.copy(isLoading = false)
-            }
         }, onError = { exception ->
-            updateState {
-                it.copy(error = exception.message, isLoading = false)
+            if (exception is NoNetworkException) {
+                updateState {
+                    it.copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } else {
+                updateState {
+                    it.copy(error = exception.message, isLoading = false)
+                }
             }
         })
+    }
+
+    private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
+        pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
+        mapper = TvSeries::toSeriesUiModel
+    )
+
+    private fun createTvShowsPagingDataSource(
+        genreId: Int
+    ): PagingSource<Int, TvSeries> {
+        return BasePagingSource { page ->
+            manageTvSeriesUseCase.getTvSeriesByGenre(
+                genreId = genreId, page = page
+            )
+        }
     }
 }

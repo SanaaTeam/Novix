@@ -33,7 +33,7 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     title = movieTitle.orEmpty(),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
-    duration = 0,
+    duration = null,
     releaseDate = toLocalDateOrNull(releaseDate ?: firstAirDate) ?: LocalDate(1900, 1, 1),
     overview = overview ?: ""
 )

@@ -41,9 +41,9 @@ class HomeScreenViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 val popularMovies = manageMovieUseCase
-                    .getPopularMovies(5).map { it.toState() }
+                    .getPopularMovies(1).map { it.toState() }
                 val popularTvSeries = manageTvSeriesUseCase
-                    .getPopularSeries(5).map { it.toState() }
+                    .getPopularSeries(1).map { it.toState() }
                 (popularMovies + popularTvSeries).shuffled()
             },
             onSuccess = { popularMediaList ->
@@ -51,7 +51,7 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        popularMedia = popularMediaList
+                        popularMedia = popularMediaList.take(10)
                     )
                 }
             },
@@ -66,9 +66,9 @@ class HomeScreenViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 val topRatedMovies = manageMovieUseCase
-                    .getTopRatedMovies(10, null).map { it.toState() }
+                    .getTopRatedMovies(1, null).map { it.toState() }
                 val topRatedTvSeries = manageTvSeriesUseCase
-                    .getTopRatedTvSeries(10, null).map { it.toState() }
+                    .getTopRatedTvSeries(1, null).map { it.toState() }
                 (topRatedMovies + topRatedTvSeries).shuffled()
             },
             onSuccess = { topRatedMediaList ->
@@ -76,7 +76,7 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        topRatingMedia = topRatedMediaList
+                        topRatingMedia = topRatedMediaList.take(10)
                     )
                 }
             },

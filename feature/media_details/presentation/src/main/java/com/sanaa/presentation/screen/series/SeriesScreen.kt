@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
@@ -93,6 +94,13 @@ fun SeriesScreen(
                         GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
+
+                SeriesScreenEffects.NavigateToLogin -> {
+                    // Launch authentication activity
+                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    navController.context.startActivity(intent)
+                }
             }
         }
     }
@@ -132,85 +140,93 @@ fun SeriesScreenContent(
             )
 
             AnimatedContent(
-                state.isLoading,
+                targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-
-            ) {
-                if (it) {
-                    NovixLoadingIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                } else Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .verticalScroll(
-                            state = rememberScrollState()
+            ) { shouldShowLoadingOrError ->
+                if (shouldShowLoadingOrError) {
+                    if (state.noInternetConnection) {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize()
                         )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(bottom = 112.dp)
+                    } else {
+                        NovixLoadingIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(
+                                state = rememberScrollState()
+                            )
                     ) {
-                        Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
-                        SeriesHeaderSection(
-                            title = state.series.title,
-                            rating = state.series.rating,
-                            season = stringResource(
-                                R.string.seasons_count, state.series.seasonsCount
-                            ),
-                            airDate = state.series.releaseDate,
-                            imagesUrl = state.images,
-                            genres = state.series.genres,
-                            onReviewClicked = {
-                                interactionListener.onViewReviewsClicked(
-                                    state.series.id
-                                )
-                            },
-                            onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
-                        state.series.overview?.let {
-                            OverviewSection(
-                                onReadMore = {},
-                                titleResId = R.string.overview,
-                                overview = it,
-                                modifier = Modifier.padding(
-                                    start = 16.dp, end = 16.dp, top = 16.dp
-                                )
-                            )
-                        }
+                        Column(
+                            modifier = Modifier.padding(bottom = 112.dp)
+                        ) {
+                            Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
+                            SeriesHeaderSection(
+                                title = state.series.title,
+                                rating = state.series.rating,
+                                season = stringResource(
+                                    R.string.seasons_count, state.series.seasonsCount
+                                ),
+                                airDate = state.series.releaseDate,
+                                imagesUrl = state.images,
+                                genres = state.series.genres,
+                                onReviewClicked = {
+                                    interactionListener.onViewReviewsClicked(
+                                        state.series.id
+                                    )
+                                },
+                                onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
 
-                        if (state.cast.isNotEmpty())
-                            CastComponent(
-                                casts = state.cast,
-                                onActorClicked = interactionListener::onActorClicked,
-                            )
-                        SeasonTap(
-                            onClick = interactionListener::onSeasonNumberClicked,
-                            seasonCounts = state.series.seasonsCount,
-                            currentSeason = state.selectedSeason,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                        AnimatedContent(state.isLoadingEpisodes) {
-                            if (it) {
-                                Column(
-                                    modifier = Modifier
-                                        .heightIn(min = 300.dp)
-                                        .fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.Center
+                            if (state.series.overview.isNotEmpty()) {
+                                OverviewSection(
+                                    onReadMore = {},
+                                    titleResId = R.string.overview,
+                                    overview = state.series.overview,
+                                    modifier = Modifier.padding(
+                                        start = 16.dp, end = 16.dp, top = 16.dp
+                                    )
+                                )
+                            }
 
-                                ) {
-                                    NovixLoadingIndicator()
+                            if (state.cast.isNotEmpty())
+                                CastComponent(
+                                    casts = state.cast,
+                                    onActorClicked = interactionListener::onActorClicked,
+                                )
+                            SeasonTap(
+                                onClick = interactionListener::onSeasonNumberClicked,
+                                seasonCounts = state.series.seasonsCount,
+                                currentSeason = state.selectedSeason,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                            AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
+                                if (isLoadingEpisodes) {
+                                    Column(
+                                        modifier = Modifier
+                                            .heightIn(min = 300.dp)
+                                            .fillMaxWidth(),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                } else {
+                                    EpisodesContent(
+                                        episodes = state.season.episodes,
+                                        seriesId = state.series.id,
+                                        onEpisodeClick = interactionListener::onEpisodeClicked
+                                    )
                                 }
-                            } else {
-                                EpisodesContent(
-                                    episodes = state.season.episodes,
-                                    seriesId = state.series.id,
-                                    onEpisodeClick = interactionListener::onEpisodeClicked
-                                )
                             }
                         }
                     }
-
                 }
             }
             BottomContainer(
@@ -223,6 +239,7 @@ fun SeriesScreenContent(
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
                 onDismiss = interactionListener::onDismissRateBottomSheet,
+                onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                 isVisible = state.showLoginBottomSheet
             )
         }

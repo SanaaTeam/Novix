@@ -9,7 +9,7 @@
     <string name="episode_number">Episode %d</string>
     <string name="season_number">S%d</string>
     <string name="cast">Cast</string>
-    <string name="m">%d m</string>
+    <string name="m">%s m</string>
     <string name="season">Season</string>
     <string name="guest_of_honor">Guest of Honor</string>
     <string name="reviews">Reviews</string>"
@@ -17,6 +17,8 @@
     <string name="request_login">Please login to save to list</string>
     <string name="add_to_list">Add to list</string>"
     <string name="login">Login</string>
+    <string name="hours_label">h</string>
+    <string name="minutes_label">m</string>
 
 
     <string name="genres">Genres</string>

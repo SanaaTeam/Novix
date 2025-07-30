@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,6 +38,9 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.cards.MediaPosterCard
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -110,10 +113,10 @@ private fun TopMoviesContent(
                                 12.dp
                             )
                         ) {
-                            items(
+                            itemsIndexed(
                                 state.topMovies,
-                                key = { item -> item.id }
-                            ) { movie ->
+                                key = { index, _ -> index }
+                            ) { _, movie ->
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredHaramImageViewer(

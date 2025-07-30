@@ -33,31 +33,36 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesByGenre should return list when available`() = runTest {
 
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } returns listOf(
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(1, dummyGenre.id) } returns listOf(
             dummyTvSeries
         )
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(1, dummyGenre.id)
         assertThat(result).isEqualTo(listOf(dummyTvSeries))
     }
 
     @Test
     fun `getTvSeriesByGenre should return empty list when none available`() = runTest {
 
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } returns emptyList()
+        coEvery { tvSeriesRepository.getTvSeriesByGenre(1, dummyGenre.id) } returns emptyList()
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(1, dummyGenre.id)
 
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getTvSeriesByGenre should throw when repository fails`() = runTest {
-        coEvery { tvSeriesRepository.getTvSeriesByGenre(dummyGenre.id) } throws RetrievingDataFailureException(
+        coEvery {
+            tvSeriesRepository.getTvSeriesByGenre(
+                1,
+                dummyGenre.id
+            )
+        } throws RetrievingDataFailureException(
             "Error"
         )
         assertThrows<RetrievingDataFailureException> {
 
-            manageTvSeriesDetailsUseCase.getTvSeriesByGenre(dummyGenre.id)
+            manageTvSeriesDetailsUseCase.getTvSeriesByGenre(1, dummyGenre.id)
         }
     }
 
@@ -151,30 +156,35 @@ class ManageTvSeriesUseCaseTest {
         val seriesId = 4
         val expected = listOf(mockk<Review>(), mockk<Review>())
 
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns expected
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns expected
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
-        coVerify { tvSeriesRepository.getTvSeriesReviews(seriesId) }
+        coVerify { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) }
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getTvSeriesReviews should return empty list when none available`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns emptyList()
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns emptyList()
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
         assertThat(result).isEmpty()
     }
 
     @Test
     fun `getTvSeriesReviews should throw when repository fails`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } throws NotFoundException("Error")
+        coEvery {
+            tvSeriesRepository.getTvSeriesReviews(
+                seriesId,
+                1
+            )
+        } throws NotFoundException("Error")
 
         assertThrows<NotFoundException> {
-            manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+            manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
         }
     }
 
@@ -366,9 +376,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct review id`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].id).isEqualTo("rev123")
     }
@@ -376,9 +386,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct authorName`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].authorName).isEqualTo("John Doe")
     }
@@ -386,9 +396,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct userHandle`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].userHandle).isEqualTo("@johnny")
     }
@@ -396,9 +406,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct avatarUrl`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].avatarUrl).isEqualTo("https://avatar.com/john.jpg")
     }
@@ -406,9 +416,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct rating`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].rating).isEqualTo(4.5f)
     }
@@ -416,9 +426,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct content`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].content).isEqualTo("Amazing series, highly recommended!")
     }
@@ -426,9 +436,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesReviews should return correct createdDate`() = runTest {
         val seriesId = 4
-        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId) } returns listOf(dummyReview)
+        coEvery { tvSeriesRepository.getTvSeriesReviews(seriesId, 1) } returns listOf(dummyReview)
 
-        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId)
+        val result = manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
 
         assertThat(result[0].createdDate).isEqualTo(LocalDate(2023, 5, 20))
     }

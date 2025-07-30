@@ -207,7 +207,7 @@ class SeriesViewModelTest {
             number = 1,
             seasonNumber = 1,
             imdbRating = 8.0f,
-            overview = null,
+            overview = "",
             durationMinutes = null,
             releaseDate = null,
             stillImagePath = null

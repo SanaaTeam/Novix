@@ -1,22 +1,31 @@
 package com.sanaa.presentation.screen.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import entity.Movie
+import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageMovieDetails: ManageMovieUseCase
+    private val manageMovieDetails: ManageMovieUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
-    defaultDispatcher = Dispatchers.IO
+    defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
 
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
@@ -53,6 +62,11 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(MovieDetailsUiEffect.NavigateToLogin)
+    }
+
     override fun onActorCardClick(actorId: Int) {
         emitEffect(MovieDetailsUiEffect.NavigateToActorScreen(actorId))
     }
@@ -64,7 +78,16 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
-
+    override fun onRetryLoadDetails() {
+        updateState {
+            it.copy(
+                isLoading = true,
+                errorMessage = null,
+                noInternetConnection = false
+            )
+        }
+        fetchMovieDetails(movieId)
+    }
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -73,25 +96,44 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
             onError = { exception ->
-                updateState { it.copy(isLoading = false, errorMessage = exception.message) }
+                if (exception is NoNetworkException) {
+                    updateState { it.copy(noInternetConnection = true, isLoading = false, errorMessage = null) }
+                } else {
+                    updateState { it.copy(isLoading = false, errorMessage = exception.message, noInternetConnection = false) }
+                }
             },
             dispatcher = defaultDispatcher
         )
+    }
+
+
+    private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
+        updateState { it.copy(isLoading = true) }
+        return createPagingFlow(
+            pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
+            mapper = Movie::toUiModel
+        )
+    }
+
+    private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
+        return BasePagingSource { page ->
+            manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
+        }
     }
 
     private suspend fun loadMovieDetails(movieId: Int) {
         val movie = manageMovieDetails.getMovieDetails(movieId)
         val cast = manageMovieDetails.getMovieCast(movieId)
         val images = manageMovieDetails.getMovieImages(movieId)
-        val similar = manageMovieDetails.getSimilarMoviesByMovieId(movieId)
+        val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
 
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { actor -> actor.toActorUiModel() },
-                similarMovies = similar.map { mv -> mv.toUiModel() },
-                imagesUrls = images
+                imagesUrls = images,
+                similarMovies = similar
             )
         }
     }
