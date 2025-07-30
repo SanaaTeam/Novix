@@ -21,13 +21,13 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import usecase.search.search_param.MediaType
 
-class SearchSearchHistoryRepositoryImplTest {
-    private lateinit var repository: SearchHistoryRepositoryImpl
+class HistoryRepositoryImplTest {
+    private lateinit var repository: HistoryRepositoryImpl
     private var localDataSource: LocalSearchHistoryDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        repository = SearchHistoryRepositoryImpl(localDataSource)
+        repository = HistoryRepositoryImpl(localDataSource)
     }
 
     @Test
@@ -210,16 +210,7 @@ class SearchSearchHistoryRepositoryImplTest {
     @Test
     fun `getWatchedMoviesHistory returns empty list`() = runTest {
         // Act
-        val result = repository.getWatchedMoviesHistory(page = 1, genreId = 1)
-
-        // Assert
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `getWatchedSeriesHistory returns empty list`() = runTest {
-        // Act
-        val result = repository.getWatchedSeriesHistory(1, null)
+        val result = repository.getWatchedMediaHistory(null, null)
 
         // Assert
         assertThat(result).isEmpty()

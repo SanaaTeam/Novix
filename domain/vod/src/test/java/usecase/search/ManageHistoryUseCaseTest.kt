@@ -15,24 +15,24 @@ import kotlinx.datetime.LocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 
 class ManageHistoryUseCaseTest {
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var historyRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var manageHistoryUseCase: ManageHistoryUseCase
 
     @BeforeEach
     fun setUp() {
-        manageHistoryUseCase = ManageHistoryUseCase(searchHistoryRepository)
+        manageHistoryUseCase = ManageHistoryUseCase(historyRepository)
     }
 
     @Test
     fun `getSearchHistory() should return history list when available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(
+            coEvery { historyRepository.getSearchHistory(any()) } returns flowOf(
                 SearchHistoryList
             )
 
@@ -47,7 +47,7 @@ class ManageHistoryUseCaseTest {
     fun `getSearchHistory() should return empty list when there are no search history available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getSearchHistory(any()) } returns flowOf(emptyList())
+            coEvery { historyRepository.getSearchHistory(any()) } returns flowOf(emptyList())
 
             // When
             val result = manageHistoryUseCase.getSearchHistory().single()
@@ -61,7 +61,7 @@ class ManageHistoryUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.getSearchHistory(any())
+                historyRepository.getSearchHistory(any())
             } throws RetrievingDataFailureException("Search History")
 
             // When, Then
@@ -82,7 +82,7 @@ class ManageHistoryUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.removeSearchHistoryById(id)
+                historyRepository.removeSearchHistoryById(id)
             }
         }
 
@@ -92,7 +92,7 @@ class ManageHistoryUseCaseTest {
             // Given
             val id = 1
             coEvery {
-                searchHistoryRepository.removeSearchHistoryById(id)
+                historyRepository.removeSearchHistoryById(id)
             } throws FailedToDeleteException("Search History")
 
             // When, Then
@@ -109,7 +109,7 @@ class ManageHistoryUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.clearSearchHistory()
+                historyRepository.clearSearchHistory()
             }
         }
 
@@ -118,7 +118,7 @@ class ManageHistoryUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.clearSearchHistory()
+                historyRepository.clearSearchHistory()
             } throws FailedToDeleteException("Search History")
 
             // When, Then
@@ -127,109 +127,11 @@ class ManageHistoryUseCaseTest {
             }
         }
 
-    @Test
-    fun `getWatchedMoviesHistory should return movies when available`() = runTest {
-        // Given
-        val expectedMovies = listOf(mockk<entity.Movie>())
-        coEvery {
-            searchHistoryRepository.getWatchedMoviesHistory(
-                1,
-                dummyGenre.id
-            )
-        } returns expectedMovies
-
-        // When
-        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
-
-        // Then
-        assertThat(result).isEqualTo(expectedMovies)
-    }
-
-    @Test
-    fun `getWatchedMoviesHistory should return empty list when none available`() = runTest {
-        // Given
-        coEvery {
-            searchHistoryRepository.getWatchedMoviesHistory(
-                1,
-                dummyGenre.id
-            )
-        } returns emptyList()
-
-        // When
-        val result = manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
-
-        // Then
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `getWatchedMoviesHistory should throw when repository fails`() = runTest {
-        // Given
-        coEvery {
-            searchHistoryRepository.getWatchedMoviesHistory(1, dummyGenre.id)
-        } throws RetrievingDataFailureException("Watched Movies")
-
-        // When, Then
-        assertThrows<RetrievingDataFailureException> {
-            manageHistoryUseCase.getWatchedMoviesHistory(1, dummyGenre.id)
-        }
-    }
-
-    @Test
-    fun `getWatchedSeriesHistory should return series when available`() = runTest {
-        // Given
-        val expectedSeries = listOf(mockk<entity.TvSeries>())
-        coEvery {
-            searchHistoryRepository.getWatchedSeriesHistory(
-                1,
-                dummyGenre.id
-            )
-        } returns expectedSeries
-
-        // When
-        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
-
-        // Then
-        assertThat(result).isEqualTo(expectedSeries)
-    }
-
-    @Test
-    fun `getWatchedSeriesHistory should return empty list when none available`() = runTest {
-        // Given
-        coEvery {
-            searchHistoryRepository.getWatchedSeriesHistory(
-                1,
-                dummyGenre.id
-            )
-        } returns emptyList()
-
-        // When
-        val result = manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
-
-        // Then
-        assertThat(result).isEmpty()
-    }
-
-    @Test
-    fun `getWatchedSeriesHistory should throw when repository fails`() = runTest {
-        // Given
-        coEvery {
-            searchHistoryRepository.getWatchedSeriesHistory(1, dummyGenre.id)
-        } throws RetrievingDataFailureException("Watched Series")
-
-        // When, Then
-        assertThrows<RetrievingDataFailureException> {
-            manageHistoryUseCase.getWatchedSeriesHistory(1, dummyGenre.id)
-        }
-    }
-
     companion object {
         private val SearchHistoryList = listOf(
             SearchHistory(1, "Search Query 1", timestamp = LocalDateTime.now()),
             SearchHistory(2, "Search Query 2", timestamp = LocalDateTime.now()),
         )
-        val dummyGenre = Genre(
-            id = 1, name = "Action"
-        )
+
     }
 }

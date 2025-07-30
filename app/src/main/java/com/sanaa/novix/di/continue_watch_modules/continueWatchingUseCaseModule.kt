@@ -1,8 +1,8 @@
 package com.sanaa.novix.di.continue_watch_modules
 
 import org.koin.dsl.module
-import usecase.continueWatch.ManageContinueWatchingUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 val continueWatchingUseCaseModule = module {
-    factory { ManageContinueWatchingUseCase(get()) }
+    factory { ManageWatchedMediaHistoryUseCase(get()) }
 }

@@ -4,19 +4,22 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
+import entity.MediaType
 import entity.Movie
 import entity.TvSeries
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
+import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase.MediaHistoryItem
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 
-class SearchHistoryRepositoryImpl(
+class HistoryRepositoryImpl(
     private val local: LocalSearchHistoryDataSource
-) : SearchHistoryRepository {
+) : HistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
         errorMessage = "Failed to retrieve search history"
@@ -72,11 +75,14 @@ class SearchHistoryRepositoryImpl(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> {
-        return emptyList()
+    override suspend fun addWatchedMediaHistory(media: MediaHistoryItem) {
+
     }
 
-    override suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> {
+    override suspend fun getWatchedMediaHistory(
+        mediaType: MediaType?,
+        genreId: Int?
+    ): List<ManageWatchedMediaHistoryUseCase.MediaHistoryItem> {
         return emptyList()
     }
 }
