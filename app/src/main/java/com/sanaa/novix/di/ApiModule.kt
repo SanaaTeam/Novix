@@ -1,9 +1,11 @@
 package com.sanaa.novix.di
 
+import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.SearchNavigatorApi
+import com.sanaa.presentation.api.AuthenticationApiImpl
 import com.sanaa.presentation.api.HomeFeatureApiImpl
 import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.presentation.api.SearchFeatureApiImpl
@@ -17,6 +19,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ApiModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthenticationApi(
+        authenticationApiImpl: AuthenticationApiImpl
+    ): AuthenticationApi
 
     @Binds
     @Singleton
