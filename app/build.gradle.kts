@@ -43,6 +43,7 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
+    implementation(libs.androidx.datastore)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(projects.data.repositories.vod)
