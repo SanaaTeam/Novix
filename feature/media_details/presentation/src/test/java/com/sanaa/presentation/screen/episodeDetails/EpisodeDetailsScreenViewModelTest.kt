@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import usecase.ManageEpisodeDetailsUseCase
@@ -89,9 +90,19 @@ class EpisodeDetailsScreenViewModelTest {
         coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber) } returns dummyGuests
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId, seasonNumber, episodeNumber,
-            manageEpisodeDetails, manageTvSeriesDetails
+            savedStateHandle,
+            manageEpisodeDetails,
+            manageTvSeriesDetails
         )
     }
 

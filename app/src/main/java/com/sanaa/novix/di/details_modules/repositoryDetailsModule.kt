@@ -3,15 +3,34 @@ package com.sanaa.novix.di.details_modules
 import com.sanaa.vod.repository.ActorRepositoryImpl
 import com.sanaa.vod.repository.MovieRepositoryImpl
 import com.sanaa.vod.repository.TvShowRepositoryImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import repository.ActorRepository
 import repository.MovieRepository
 import repository.TvSeriesRepository
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import javax.inject.Singleton
 
-val repositoryDetailsModule = module {
-    singleOf(::ActorRepositoryImpl) bind ActorRepository::class
-    singleOf(::MovieRepositoryImpl) bind MovieRepository::class
-    singleOf(::TvShowRepositoryImpl) bind TvSeriesRepository::class
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryDetailsModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindMovieRepository(
+        movieRepositoryImpl: MovieRepositoryImpl
+    ): MovieRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindActorRepository(
+        actorRepositoryImpl: ActorRepositoryImpl
+    ): ActorRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindTvSeriesRepository(
+        tvShowRepositoryImpl: TvShowRepositoryImpl
+    ): TvSeriesRepository
 }

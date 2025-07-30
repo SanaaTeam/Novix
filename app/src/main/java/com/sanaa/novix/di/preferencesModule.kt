@@ -2,8 +2,18 @@ package com.sanaa.novix.di
 
 import com.sanaa.preferences.DeviceLanguageProvider
 import com.sanaa.preferences.service.LanguageProvider
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-val preferencesModule = module {
-    single<LanguageProvider> { DeviceLanguageProvider() }
+@Module
+@InstallIn(SingletonComponent::class)
+object PreferencesModule {
+
+    @Provides
+    @Singleton
+    fun provideLanguageProvider(): LanguageProvider =
+        DeviceLanguageProvider()
 }

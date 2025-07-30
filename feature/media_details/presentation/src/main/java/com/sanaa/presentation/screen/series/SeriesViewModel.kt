@@ -1,24 +1,29 @@
 package com.sanaa.presentation.screen.series
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageTvSeriesUseCase
 
-class SeriesViewModel(
-    private val seriesId: Int,
+@HiltViewModel
+class SeriesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
     initialState = SeriesScreenUiState(),
     defaultDispatcher = dispatcher
-),
-    SeriesScreenInteractionListener {
+), SeriesScreenInteractionListener {
+
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
 
     init {
         loadSeries()

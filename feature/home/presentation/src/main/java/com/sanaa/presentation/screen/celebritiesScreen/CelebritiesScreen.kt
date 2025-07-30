@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
@@ -29,18 +30,14 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.koinViewModel
-import org.koin.java.KoinJavaComponent.inject
 
 
 @Composable
 fun CelebritiesScreen(
-    viewModel: CelebritiesViewModel = koinViewModel<CelebritiesViewModel>()
+    viewModel: CelebritiesViewModel = hiltViewModel(),
+    mediaDetailsApi: MediaDetailsApi
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val detailsApi: MediaDetailsApi by inject(
-        MediaDetailsApi::class.java
-    )
 
     val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
@@ -51,7 +48,7 @@ fun CelebritiesScreen(
                 }
 
                 is CelebritiesScreenEffects.NavigateToActorDetails -> {
-                    detailsApi.launch(
+                    mediaDetailsApi.launch(
                         context = navController.context,
                         id = effect.actorId,
                         startRoute = StartRoute.ACTOR
@@ -123,6 +120,3 @@ fun CelebritiesContent(
         }
     }
 }
-
-
-

@@ -10,8 +10,9 @@ import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.util.wrapApiCall
+import javax.inject.Inject
 
-class RemoteTvShowDataSourceImpl(
+class RemoteTvShowDataSourceImpl @Inject constructor(
     private val apiService: TvShowApiService,
 ) : RemoteTvShowDataSource {
 

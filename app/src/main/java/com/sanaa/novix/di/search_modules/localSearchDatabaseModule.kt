@@ -1,47 +1,57 @@
 package com.sanaa.novix.di.search_modules
 
+import android.content.Context
 import androidx.room.Room
-import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
-import com.sanaa.vod.search.search_history.LocalSearchHistoryDataSourceImpl
 import com.sanaa.vod.search.search_history.dao.QueryDao
 import com.sanaa.vod.search.search_history.dao.RecentViewedDao
-import com.sanaa.vod.search.search_result.LocalCachedSearchDataSourceImpl
 import com.sanaa.vod.search.search_result.dao.ActorDao
 import com.sanaa.vod.search.search_result.dao.MovieDao
 import com.sanaa.vod.search.search_result.dao.SearchDao
 import com.sanaa.vod.search.search_result.dao.SearchResultDao
 import com.sanaa.vod.search.search_result.dao.SeriesDao
 import com.sanaa.vod.search.search_result.db.AppDatabase
-import org.koin.android.ext.koin.androidContext
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
-import org.koin.dsl.module
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-val localSearchDatabaseModule = module {
-    single {
-        Room.databaseBuilder(
-            androidContext(),
-            AppDatabase::class.java,
-            "search_db"
-        ).build()
-    }
+@Module
+@InstallIn(SingletonComponent::class)
+object LocalSearchDatabaseModule {
 
-    single<SearchDao> { get<AppDatabase>().searchDao() }
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, "search_db")
+            .build()
 
-    single<SearchResultDao> { get<AppDatabase>().searchResultDao() }
+    @Provides
+    fun provideSearchDao(database: AppDatabase): SearchDao =
+        database.searchDao()
 
-    single<ActorDao> { get<AppDatabase>().actorDao() }
+    @Provides
+    fun provideSearchResultDao(database: AppDatabase): SearchResultDao =
+        database.searchResultDao()
 
-    single<MovieDao> { get<AppDatabase>().movieDao() }
+    @Provides
+    fun provideActorDao(database: AppDatabase): ActorDao =
+        database.actorDao()
 
-    single<SeriesDao> { get<AppDatabase>().seriesDao() }
+    @Provides
+    fun provideMovieDao(database: AppDatabase): MovieDao =
+        database.movieDao()
 
-    single<QueryDao> { get<AppDatabase>().queryDao() }
+    @Provides
+    fun provideSeriesDao(database: AppDatabase): SeriesDao =
+        database.seriesDao()
 
-    single<RecentViewedDao> { get<AppDatabase>().recentViewedDao() }
+    @Provides
+    fun provideQueryDao(database: AppDatabase): QueryDao =
+        database.queryDao()
 
-    singleOf(::LocalCachedSearchDataSourceImpl) bind LocalCacheSearchDataSource::class
-
-    singleOf(::LocalSearchHistoryDataSourceImpl) bind LocalSearchHistoryDataSource::class
+    @Provides
+    fun provideRecentViewedDao(database: AppDatabase): RecentViewedDao =
+        database.recentViewedDao()
 }

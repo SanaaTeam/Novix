@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import entity.Genre
 import io.mockk.clearAllMocks
@@ -50,7 +51,18 @@ class GenreTvShowsViewModelTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
-        viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "genreId" to category.id,
+                "genreName" to category.name
+            )
+        )
+
+        viewModel = GenreTvShowsViewModel(
+            savedStateHandle,
+            manageTvSeriesUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -63,7 +75,18 @@ class GenreTvShowsViewModelTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
-        viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "genreId" to category.id,
+                "genreName" to category.name
+            )
+        )
+
+        viewModel = GenreTvShowsViewModel(
+            savedStateHandle,
+            manageTvSeriesUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -78,7 +101,18 @@ class GenreTvShowsViewModelTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
-        viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "genreId" to category.id,
+                "genreName" to category.name
+            )
+        )
+
+        viewModel = GenreTvShowsViewModel(
+            savedStateHandle,
+            manageTvSeriesUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -92,7 +126,18 @@ class GenreTvShowsViewModelTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
 
-        viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "genreId" to category.id,
+                "genreName" to category.name
+            )
+        )
+
+        viewModel = GenreTvShowsViewModel(
+            savedStateHandle,
+            manageTvSeriesUseCase
+        )
+
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -103,34 +148,6 @@ class GenreTvShowsViewModelTest {
             )
         }
     }
-
-//    @Test
-//    fun `when getTvSeriesByGenre throws exception then should update state with error`() =
-//        runTest(testDispatcher) {
-//            val category = genreList[0]
-//            val exception = RuntimeException("Something went wrong")
-//
-//            coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any()) } throws exception
-//
-//            viewModel = GenreTvShowsViewModel(category.id, category.name, manageTvSeriesUseCase)
-//
-//            viewModel.state.test {
-//                var currentState = awaitItem()
-//                while (currentState.isLoading) {
-//                    currentState = awaitItem()
-//                }
-//
-//                val expectedState = GenreTvShowsScreenUiState(
-//                    title = null,
-//                    tvShows = emptyList(),
-//                    isLoading = false,
-//                    error = exception.message,
-//                    showBottomSheet = false
-//                )
-//
-//                assertEquals(expectedState, currentState)
-//            }
-//        }
 
     private companion object {
         val genreList = listOf(

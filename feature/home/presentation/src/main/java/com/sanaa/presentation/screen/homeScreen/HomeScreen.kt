@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -16,15 +17,13 @@ import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaType
-import org.koin.androidx.compose.koinViewModel
-import org.koin.java.KoinJavaComponent.inject
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel = koinViewModel<HomeScreenViewModel>()
+    viewModel: HomeScreenViewModel = hiltViewModel(),
+    mediaDetailsApi: MediaDetailsApi,
 ) {
 
-    val detailsApi: MediaDetailsApi by inject(MediaDetailsApi::class.java)
     val navController = LocalAppNavController.current
 
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -36,7 +35,7 @@ fun HomeScreen(
             is HomeScreenEffect.NavigateToMediaDetails -> {
                 when ((effect as HomeScreenEffect.NavigateToMediaDetails).mediaType) {
                     MediaType.MOVIE -> {
-                        detailsApi.launch(
+                        mediaDetailsApi.launch(
                             context = navController.context,
                             startRoute = StartRoute.MOVIE,
                             id = (effect as HomeScreenEffect.NavigateToMediaDetails).id
@@ -44,7 +43,7 @@ fun HomeScreen(
                     }
 
                     MediaType.TV_SHOW -> {
-                        detailsApi.launch(
+                        mediaDetailsApi.launch(
                             context = navController.context,
                             startRoute = StartRoute.SERIES,
                             id = (effect as HomeScreenEffect.NavigateToMediaDetails).id

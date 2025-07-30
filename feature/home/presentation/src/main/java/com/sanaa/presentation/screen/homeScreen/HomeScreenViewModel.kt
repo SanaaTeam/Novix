@@ -7,6 +7,7 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,8 +15,10 @@ import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
+import javax.inject.Inject
 
-class HomeScreenViewModel(
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageHistoryUseCase: ManageHistoryUseCase,
@@ -24,6 +27,7 @@ class HomeScreenViewModel(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
+
     init {
         fetchPopularMediaData()
         fetchTopRatedMediaData()

@@ -2,14 +2,15 @@ package com.sanaa.presentation.api
 
 import androidx.compose.runtime.Composable
 import com.sanaa.api.SearchFeatureApi
-import com.sanaa.presentation.screen.SearchScreen as SearchScreenUi
 import com.sanaa.api.SearchNavigatorApi
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
+import javax.inject.Inject
+import javax.inject.Singleton
+import com.sanaa.presentation.screen.SearchScreen as SearchScreenUi
 
-class SearchFeatureApiImpl : SearchFeatureApi, KoinComponent {
-    private val navigator: SearchNavigatorApi by inject()
-
+@Singleton
+class SearchFeatureApiImpl @Inject constructor(
+    private val navigator: SearchNavigatorApi
+) : SearchFeatureApi {
     @Composable
     override fun SearchScreenApi() {
         SearchScreenUi(navigator = navigator)

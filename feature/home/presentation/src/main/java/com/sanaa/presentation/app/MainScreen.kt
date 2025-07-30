@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
@@ -25,16 +26,12 @@ import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
-import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun MainScreen() {
-
-    val searchFeatureApi: SearchFeatureApi by inject(
-        SearchFeatureApi::class.java
-    )
-
+fun MainScreen(
+    homeFeatureApi: HomeFeatureApi,
+    searchFeatureApi: SearchFeatureApi,
+) {
     val navController = rememberNavController()
     CompositionLocalProvider(LocalMainNavController provides navController) {
         NovixTheme(isSystemInDarkTheme()) {
@@ -51,10 +48,10 @@ fun MainScreen() {
                     modifier = Modifier
                 ) {
                     composable<HomeScreenRoute> {
-                        HomeScreen()
+                        homeFeatureApi.HomeScreenApi()
                     }
                     composable<SearchScreenRoute> {
-                      searchFeatureApi.SearchScreenApi()
+                        searchFeatureApi.SearchScreenApi()
                     }
                     composable<PlayListScreenRoute> {
 

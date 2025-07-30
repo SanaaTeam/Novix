@@ -4,8 +4,11 @@ import android.content.Context
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SearchNavigatorApiImpl(
+@Singleton
+class SearchNavigatorApiImpl @Inject constructor(
     private val mediaDetailsApi: MediaDetailsApi
 ) : SearchNavigatorApi {
 

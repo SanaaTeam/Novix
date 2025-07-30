@@ -15,12 +15,10 @@ import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
-import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun AuthNavHost() {
+fun AuthNavHost(homeFeatureApi: HomeFeatureApi) {
     val navController = rememberNavController()
-    val homeApi: HomeFeatureApi by inject(HomeFeatureApi::class.java)
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {
@@ -37,15 +35,15 @@ fun AuthNavHost() {
                     LoginScreen()
                 }
 
-                composable(SignUpRoute::class) { entry ->
+                composable(SignUpRoute::class) {
                     WebViewScreen(url = "https://www.themoviedb.org/signup")
                 }
 
                 composable(HomeScreenRoute::class) {
-                    homeApi.HomeScreenApi()
+                    homeFeatureApi.HomeScreenApi()
                 }
 
-                composable(ForgetPasswordRoute::class) { entry ->
+                composable(ForgetPasswordRoute::class) {
                     ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password")
                 }
             }

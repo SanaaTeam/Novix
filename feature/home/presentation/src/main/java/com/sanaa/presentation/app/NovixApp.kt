@@ -1,15 +1,19 @@
 package com.sanaa.presentation.app
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.HomeFeatureApi
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.SearchFeatureApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.navigation.AppNavigation
@@ -27,23 +31,38 @@ import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.Tr
 
 @Composable
 fun NovixApp(
-
+    homeFeatureApi: HomeFeatureApi,
+    searchFeatureApi: SearchFeatureApi,
+    mediaDetailsApi: MediaDetailsApi,
+    authenticationApi: AuthenticationApi,
+    startWithAuth: Boolean
 ) {
     val appNavController = rememberNavController()
+    val context = LocalContext.current
     Box {
         CompositionLocalProvider(LocalAppNavController provides appNavController) {
-            AppNavigation(
-                startDestination = MainScreenRoute, modifier = Modifier
-            )
+            if (startWithAuth) {
+                authenticationApi.AuthenticationScreen(context = context)
+            } else {
+                AppNavigation(
+                    homeFeatureApi = homeFeatureApi,
+                    searchFeatureApi = searchFeatureApi,
+                    mediaDetailsApi = mediaDetailsApi,
+                    startDestination = MainScreenRoute,
+                    modifier = Modifier
+                )
+            }
         }
     }
 }
 
-
 @Composable
 private fun AppNavigation(
+    homeFeatureApi: HomeFeatureApi,
+    searchFeatureApi: SearchFeatureApi,
+    mediaDetailsApi: MediaDetailsApi,
     startDestination: AppRoute,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     NovixTheme(isSystemInDarkTheme()) {
         NavHost(
@@ -52,24 +71,26 @@ private fun AppNavigation(
             startDestination = startDestination,
         ) {
             composable<MainScreenRoute> {
-                MainScreen()
+                MainScreen(
+                    homeFeatureApi = homeFeatureApi,
+                    searchFeatureApi = searchFeatureApi,
+                )
             }
 
-
             composable<TrendingMoviesScreenRoute> {
-                TrendingMoviesScreen()
+                TrendingMoviesScreen(mediaDetailsApi = mediaDetailsApi)
             }
 
             composable<TrendingTvShowsScreenRoute> {
-                TrendingTvShowsScreen()
+                TrendingTvShowsScreen(mediaDetailsApi = mediaDetailsApi)
             }
 
             composable<TrendingPeopleScreenRoute> {
-                CelebritiesScreen()
+                CelebritiesScreen(mediaDetailsApi = mediaDetailsApi)
             }
 
             composable<TopRatedMediaScreenRoute> {
-                TopRatedMediaScreen()
+                TopRatedMediaScreen(mediaDetailsApi = mediaDetailsApi)
             }
         }
     }
