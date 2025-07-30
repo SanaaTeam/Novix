@@ -3,6 +3,7 @@ package com.sanaa.identity.dataSoruce.dataStore
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import com.sanaa.identity.dataSoruce.dataStore.mapper.UserSerializer
 import com.sanaa.identity.proto.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

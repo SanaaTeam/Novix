@@ -1,4 +1,4 @@
-package com.sanaa.identity.dataSoruce.dataStore
+package com.sanaa.identity.dataSoruce.dataStore.mapper
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
