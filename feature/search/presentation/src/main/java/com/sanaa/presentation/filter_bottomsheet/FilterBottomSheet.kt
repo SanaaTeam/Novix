@@ -125,7 +125,7 @@ fun FilterBottomSheetContent(
                         genres = displayedGenres,
                         selectedGenres = uiState.selectedGenres,
                         onGenreSelected = listener::onGenreSelected,
-                        animateWidth = false,
+                        animateWidth = true,
                     )
                     IMDbRatingSelector(
                         title = stringResource(R.string.imdb_rating),
