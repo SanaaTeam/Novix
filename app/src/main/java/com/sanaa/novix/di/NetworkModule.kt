@@ -1,11 +1,12 @@
 package com.sanaa.novix.di
 
 
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.novix.BuildConfig
 import com.sanaa.preferences.service.LanguageProvider
+import com.sanaa.vod.network.interceptor.APIKeyInterceptor
 import com.sanaa.vod.network.interceptor.LanguageInterceptor
-import com.sanaa.vod.network.provideOkHttpClient
-import com.sanaa.vod.network.provideRetrofit
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,8 +19,12 @@ import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
@@ -53,23 +58,38 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideApiKeyInterceptor(
+        preferencesManager: PreferencesManager
+    ): APIKeyInterceptor = APIKeyInterceptor {
+        runBlocking { preferencesManager.sessionId.firstOrNull() }
+    }
+
+    @Provides
+    @Singleton
     fun provideOkHttpClient(
+        apiKeyInterceptor: APIKeyInterceptor,
         languageInterceptor: LanguageInterceptor
     ): OkHttpClient =
-        provideOkHttpClient(
-            apiKey = BuildConfig.TMDB_API_KEY,
-            languageInterceptor = languageInterceptor
-        )
+        OkHttpClient.Builder()
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(languageInterceptor)
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .build()
 
     @Provides
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
         json: Json
-    ): Retrofit =
-        provideRetrofit(
-            baseUrl = BuildConfig.TMDB_URL,
-            okHttpClient = okHttpClient,
-            json = json
-        )
+    ): Retrofit {
+        val contentType = "application/json; charset=UTF-8".toMediaType()
+
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.TMDB_URL)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .client(okHttpClient)
+            .build()
+    }
 }

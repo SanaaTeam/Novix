@@ -1,10 +1,14 @@
 package com.sanaa.novix.resourceProvider
 
 import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
 import com.sanaa.novix.R
 import service.StringProvider
+import javax.inject.Inject
 
-class StringProviderImpl(private val context: Context) : StringProvider {
+class StringProviderImpl @Inject constructor(
+    @ApplicationContext private val context: Context
+) : StringProvider {
     override val welcomeBack: String
         get() = context.getString(R.string.welcome_back)
 
