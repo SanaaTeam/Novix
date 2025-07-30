@@ -3,6 +3,7 @@ package com.sanaa.presentation.filter_bottomsheet
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
 import com.sanaa.presentation.filter_bottomsheet.state.GenreUiState
+import com.sanaa.presentation.filter_bottomsheet.state.MediaTabFilters
 import com.sanaa.presentation.screen.state.mapper.toDomain
 import com.sanaa.presentation.screen.state.mapper.toState
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,54 +21,77 @@ class FilterViewModel(
 ) : BaseViewModel<FilterUiState, Unit>(
     initialState = FilterUiState(), defaultDispatcher = dispatcher
 ), FilterBottomSheetInteractionsListener {
+    var currentTabIndex = MOVIE_INDEX
 
-    private val _filterResult = MutableSharedFlow<MediaFilters?>()
+    private val _filterResult = MutableSharedFlow<Pair<Int, MediaFilters?>>()
     val filterResult = _filterResult.asSharedFlow()
 
-
-    override fun onYearRangeChanged(newRange: ClosedFloatingPointRange<Float>) {
-        updateState { it.copy(yearRange = newRange) }
+    init {
+        fetchMovieGenres()
+        fetchTvShowGenres()
     }
 
-    override fun onGenreSelected(genre: GenreUiState) {
+    override fun onYearRangeChanged(tabIndex: Int, newRange: ClosedFloatingPointRange<Float>) {
         updateState { currentState ->
-            val newSelectedGenres = currentState.selectedGenres.toMutableSet().apply {
-                if (contains(genre)) {
-                    remove(genre)
-                } else {
-                    add(genre)
-                }
+            val currentFilters =
+                if (tabIndex == MOVIE_INDEX) currentState.movieFilters else currentState.tvFilters
+            val updatedFilters = currentFilters.copy(yearRange = newRange)
+
+            currentState.copy(
+                movieFilters = if (tabIndex == MOVIE_INDEX) updatedFilters else currentState.movieFilters,
+                tvFilters = if (tabIndex == TV_SHOW_INDEX) updatedFilters else currentState.tvFilters
+            )
+        }
+    }
+
+    override fun onGenreSelected(tabIndex: Int, genre: GenreUiState) {
+        updateState { currentState ->
+            val currentFilters =
+                if (tabIndex == MOVIE_INDEX) currentState.movieFilters else currentState.tvFilters
+
+            val newSelectedGenres = currentFilters.selectedGenres.toMutableSet().apply {
+                if (contains(genre)) remove(genre) else add(genre)
             }
-            currentState.copy(selectedGenres = newSelectedGenres)
+
+            val newFilters = currentFilters.copy(selectedGenres = newSelectedGenres)
+
+            currentState.copy(
+                movieFilters = if (tabIndex == MOVIE_INDEX) newFilters else currentState.movieFilters,
+                tvFilters = if (tabIndex == TV_SHOW_INDEX) newFilters else currentState.tvFilters
+            )
         }
     }
 
-    override fun onRatingChanged(newRating: Int) {
-        updateState { it.copy(imdbRating = newRating) }
+    override fun onRatingChanged(tabIndex: Int, newRating: Int) {
+        updateState { currentState ->
+            val currentFilters =
+                if (tabIndex == MOVIE_INDEX) currentState.movieFilters else currentState.tvFilters
+            val updatedFilters = currentFilters.copy(imdbRating = newRating)
+
+            currentState.copy(
+                movieFilters = if (tabIndex == MOVIE_INDEX) updatedFilters else currentState.movieFilters,
+                tvFilters = if (tabIndex == TV_SHOW_INDEX) updatedFilters else currentState.tvFilters
+            )
+        }
     }
 
-    override fun onClearFilters() {
+    override fun onClearFilters(tabIndex: Int) {
         updateState {
-            FilterUiState(allGenres = it.allGenres)
+            FilterUiState(
+                tvGenres = it.tvGenres,
+                movieGenres = it.movieGenres
+            )
         }
         tryToExecute(
-            callee = ::clearSelectedFilters
+            callee = { clearSelectedFilters(tabIndex) }
         )
     }
 
 
-    override fun onApplyClicked() {
+    override fun onApplyClicked(tabIndex: Int) {
         tryToExecute(
-            callee = ::emitSelectedFilters
+            callee = { emitSelectedFilters(tabIndex) }
         )
-    }
-
-
-    fun fetchGenresByTab(tabIndex: Int) {
-        when (tabIndex) {
-            MOVIE_INDEX -> fetchMovieGenres()
-            TV_SHOW_INDEX -> fetchTvShowGenres()
-        }
     }
 
     private fun fetchTvShowGenres() {
@@ -84,32 +108,42 @@ class FilterViewModel(
         )
     }
 
-    private suspend fun emitSelectedFilters() {
+    private suspend fun emitSelectedFilters(tabIndex: Int) {
         val currentState = state.value
+        val currentFilters =
+            if (tabIndex == MOVIE_INDEX) currentState.movieFilters else currentState.tvFilters
+
         val mediaFilters = MediaFilters(
-            startYear = currentState.yearRange.start.toInt(),
-            endYear = currentState.yearRange.endInclusive.toInt(),
-            genres = currentState.selectedGenres.map { it.toDomain() },
-            imdbRating = currentState.imdbRating.toFloat()
+            startYear = currentFilters.yearRange.start.toInt(),
+            endYear = currentFilters.yearRange.endInclusive.toInt(),
+            genres = currentFilters.selectedGenres.map { it.toDomain() },
+            imdbRating = currentFilters.imdbRating.toFloat()
         )
-        _filterResult.emit(mediaFilters)
+        _filterResult.emit(tabIndex to mediaFilters)
     }
 
-    private suspend fun clearSelectedFilters() {
-        val clearedFilter = MediaFilters(
-            startYear = 1980,
+    private suspend fun clearSelectedFilters(tabIndex: Int) {
+        updateState { currentState ->
+            val clearedFilters = MediaTabFilters()
+            currentState.copy(
+                movieFilters = if (tabIndex == MOVIE_INDEX) clearedFilters else currentState.movieFilters,
+                tvFilters = if (tabIndex == TV_SHOW_INDEX) clearedFilters else currentState.tvFilters
+            )
+        }
+        val currentFilters = MediaFilters(
+            startYear = 1850,
             endYear = 2025,
             genres = emptyList(),
             imdbRating = 0f
         )
-        _filterResult.emit(clearedFilter)
+        _filterResult.emit(tabIndex to currentFilters)
     }
 
     private suspend fun loadTvShowGenres() {
         val tvShowGenres = manageTvSeriesUseCase.getSeriesGenres()
         updateState {
             it.copy(
-                allGenres = tvShowGenres.map { it.toState() },
+                tvGenres = tvShowGenres.map { it.toState() },
                 isLoading = false
             )
         }
@@ -121,7 +155,7 @@ class FilterViewModel(
         val movieGenres = manageMovieUseCase.getMovieGenres()
         updateState {
             it.copy(
-                allGenres = movieGenres.map { it.toState() },
+                movieGenres = movieGenres.map { it.toState() },
                 isLoading = false
             )
         }

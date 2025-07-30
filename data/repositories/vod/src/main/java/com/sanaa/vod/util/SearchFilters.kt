@@ -1,5 +1,6 @@
 package com.sanaa.vod.util
 
+import android.util.Log
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
@@ -82,13 +83,13 @@ private fun byEndYear(releaseDate: String?, year: Int): Boolean {
 private fun byRate(voteAverage: Float?, rating: Float): Boolean =
     voteAverage != null && voteAverage >= rating
 
-private fun byGenres(genreIds: List<Int>?, ids: List<Int>): Boolean =
-    genreIds?.any { it in ids } == true
+private fun byGenres(genreIds: List<Int>?, selectedGenres: List<Int>): Boolean =
+    selectedGenres.all{ it in genreIds.orEmpty() }
 
-private fun byGenres(genreIds: String?, ids: List<Int>): Boolean {
+private fun byGenres(genreIds: String?, selectedGenres: List<Int>): Boolean {
     val genreSet = genreIds
         ?.split(",")
         ?.mapNotNull { it.trim().toIntOrNull() }
         ?.toSet() ?: emptySet()
-    return ids.any { it in genreSet }
+    return selectedGenres.all { it in genreSet }
 }
