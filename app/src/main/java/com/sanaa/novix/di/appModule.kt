@@ -1,5 +1,6 @@
 package com.sanaa.novix.di
 
+import com.sanaa.novix.di.continue_watch_modules.continueWatchModule
 import com.sanaa.novix.di.details_modules.detailsModule
 import com.sanaa.novix.di.identity_modules.identityModule
 import com.sanaa.novix.di.search_modules.searchModule
@@ -8,6 +9,6 @@ import org.koin.dsl.module
 val appModule = module {
     includes(
         firebaseModule, loggingModule, apiModule, networkModule, preferencesModule,
-        detailsModule, searchModule, identityModule
+        detailsModule, searchModule, identityModule, continueWatchModule
     )
 }

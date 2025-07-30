@@ -12,7 +12,7 @@ import com.sanaa.vod.search.search_result.dao.MovieDao
 import com.sanaa.vod.search.search_result.dao.SearchDao
 import com.sanaa.vod.search.search_result.dao.SearchResultDao
 import com.sanaa.vod.search.search_result.dao.SeriesDao
-import com.sanaa.vod.search.search_result.db.AppDatabase
+import com.sanaa.vod.db.AppDatabase
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.bind
