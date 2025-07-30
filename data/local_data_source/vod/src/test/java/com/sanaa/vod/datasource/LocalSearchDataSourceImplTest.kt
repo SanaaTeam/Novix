@@ -433,27 +433,23 @@ class LocalSearchDataSourceImplTest {
     }
 
     @Test
-    fun `getMoviesByQuery shouldCallMovieDaoWithCorrectPaginationParameters`() = runTest {
+    fun `getMoviesByQuery should Call MovieDao With Correct Pagination Parameters When Fallback Is Used`() = runTest {
         // Given
         val query = "Batman"
         val limit = 20
         val offset = 20
-        val listOf = listOf(SearchResultLocalDto(1, 1, "movie"))
-        coEvery {
-            searchDao.getSearchByQueryAndLanguage(query, "en")
-        } returns SearchLocalDto(1, query, "en", currentTimestamp)
-        coEvery {
-            searchResultDao.getByQueryAndLanguage(query, any(), any())
-        } returns listOf
-        coEvery {
-            movieDao.getFilteredMovies(any(), any(), any())
-        } returns movieList
+
+        coEvery { searchResultDao.getByQueryAndLanguage(query, any(), any()) } returns emptyList()
+        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
 
         // When
-        localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
+        val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
 
         // Then
-        coVerify { movieDao.getFilteredMovies(any(), any(), any()) }
+        assertEquals(movieList, result)
+        coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
+        coVerify(exactly = 0) { movieDao.getMovieById(any()) }
+        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
     }
 
     @Test
