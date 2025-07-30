@@ -6,8 +6,9 @@ import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateSessionResponse
 import com.sanaa.identity.util.wrapApiCall
 import repository.AuthenticationRepository
+import javax.inject.Inject
 
-class AuthenticationRepositoryImpl(
+class AuthenticationRepositoryImpl @Inject constructor(
     private val api: AuthenticationApiService,
     private val preferences: PreferencesManager
 ) : AuthenticationRepository {

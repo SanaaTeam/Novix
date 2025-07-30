@@ -1,15 +1,17 @@
 package com.sanaa.presentation.screen.login
 
-import android.util.Log
 import com.sanaa.presentation.screen.login_base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.StringProvider
 import usecase.LoginUseCase
+import javax.inject.Inject
 
-class LoginViewModel(
+@HiltViewModel
+class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val stringProvider: StringProvider,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
