@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.feature.search.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
+    implementation(projects.feature.authentication.api)
 
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)

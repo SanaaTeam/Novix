@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.novix.android.library)
+    alias(libs.plugins.hilt.android)
 }
 android {
     namespace = "com.sanaa.identity"
@@ -27,4 +28,7 @@ dependencies {
     implementation(libs.bundles.koin)
 
     implementation(libs.slf4j.api)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }

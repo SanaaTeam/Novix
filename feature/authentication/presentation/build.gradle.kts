@@ -25,7 +25,6 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.hilt.lifecycle.viewmodel)
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(projects.feature.mediaDetails.api)
@@ -43,8 +42,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
 
     testImplementation(libs.bundles.test.runtime)
 
