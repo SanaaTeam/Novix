@@ -14,8 +14,9 @@ import entity.Season
 import entity.TvSeries
 import kotlinx.coroutines.flow.first
 import repository.TvSeriesRepository
+import javax.inject.Inject
 
-class TvShowRepositoryImpl(
+class TvShowRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteTvShowDataSource,
     private val preferences: PreferencesManager
 ) : TvSeriesRepository {

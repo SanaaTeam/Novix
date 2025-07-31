@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -16,6 +18,7 @@ dependencies {
     implementation(projects.feature.search.api)
     implementation(projects.feature.userProfile.api)
     implementation(projects.feature.playlists.api)
+    implementation(projects.feature.authentication.api)
 
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
@@ -32,8 +35,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
 
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -48,4 +49,8 @@ dependencies {
     testImplementation(libs.bundles.test.runtime)
 
     testImplementation(libs.turbine)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }

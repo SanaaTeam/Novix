@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -25,21 +26,13 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent
 import com.sanaa.presentation.screen.review.components.ReviewCard
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
-
 
 @Composable
 fun ReviewsScreen(
-    seriesId: Int,
-    mediaType: String?,
-    viewModel: ReviewViewModel = koinViewModel(parameters = {
-        parametersOf(seriesId, MediaTypeUiModel.valueOf(mediaType.orEmpty()))
-    }),
+    viewModel: ReviewViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current

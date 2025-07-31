@@ -7,8 +7,9 @@ import com.sanaa.identity.dataSoruce.local.dto.UserDto
 import com.sanaa.identity.proto.User
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class LocalUserDataSourceImpl(
+class LocalUserDataSourceImpl @Inject constructor(
     private val dataStore: DataStore<User>
 ) : LocalUserDataSource {
 

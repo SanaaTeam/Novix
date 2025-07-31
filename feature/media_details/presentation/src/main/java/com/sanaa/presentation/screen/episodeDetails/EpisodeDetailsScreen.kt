@@ -25,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -39,24 +40,18 @@ import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComp
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import kotlinx.coroutines.flow.collectLatest
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun EpisodeDetailsScreen(
-    seriesId: Int,
-    seasonNumber: Int,
-    episodeNumber: Int,
-    viewModel: EpisodeDetailsScreenViewModel = koinViewModel(parameters = {
-        parametersOf(
-            seriesId, seasonNumber, episodeNumber
-        )
-    }),
+    viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -110,8 +105,6 @@ fun EpisodeDetailsScreen(
             onDismiss = { snack = null }
         )
     }
-
-
 }
 
 @Composable
@@ -170,7 +163,7 @@ private fun EpisodeDetailsScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 112.dp)
+                                .padding(bottom = 104.dp)
                                 .align(Alignment.TopCenter)
                         ) {
                             SeriesHeaderSection(

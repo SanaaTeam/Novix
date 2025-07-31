@@ -7,8 +7,9 @@ import entity.Review
 import entity.Season
 import entity.TvSeries
 import repository.TvSeriesRepository
+import javax.inject.Inject
 
-class ManageTvSeriesUseCase(
+class ManageTvSeriesUseCase @Inject constructor(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
     suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =

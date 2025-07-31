@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import entity.Actor
@@ -113,10 +114,17 @@ class EpisodeDetailsScreenViewModelTest {
         } returns dummyGuests
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId,
-            seasonNumber,
-            episodeNumber,
+            savedStateHandle,
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
@@ -191,16 +199,23 @@ class EpisodeDetailsScreenViewModelTest {
         } throws NoNetworkException()
         coEvery { checkUserLogin.isLoggedIn() } returns false
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId,
-            seasonNumber,
-            episodeNumber,
+            savedStateHandle,
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
+
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.noInternetConnection).isTrue()

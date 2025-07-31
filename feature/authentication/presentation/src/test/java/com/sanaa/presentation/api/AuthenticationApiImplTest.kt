@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.HomeFeatureApi
 import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
@@ -25,6 +26,7 @@ class AuthenticationApiImplTest {
     @Test
     fun `AuthenticationApiImpl instantiation works`() {
         val apiImpl = AuthenticationApiImpl()
+
         assertThat(apiImpl).isNotNull()
         assertThat(apiImpl::class.java.simpleName).isEqualTo("AuthenticationApiImpl")
     }

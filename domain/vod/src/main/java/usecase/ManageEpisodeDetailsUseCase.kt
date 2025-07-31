@@ -2,9 +2,10 @@ package usecase
 
 import entity.Actor
 import entity.Episode
+import javax.inject.Inject
 import repository.TvSeriesRepository
 
-class ManageEpisodeDetailsUseCase(
+class ManageEpisodeDetailsUseCase @Inject constructor(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
     suspend fun getEpisodeDetails(id: Int, seasonNumber: Int, episodeNumber: Int): Episode =

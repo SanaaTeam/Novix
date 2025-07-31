@@ -29,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -53,13 +54,10 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun SeriesScreen(
-    seriesId: Int,
-    viewModel: SeriesViewModel = koinViewModel(parameters = { parametersOf(seriesId) }),
+    viewModel: SeriesViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -136,8 +134,6 @@ fun SeriesScreen(
             onDismiss = { snack = null }
         )
     }
-
-
 }
 
 @Composable
@@ -194,9 +190,8 @@ fun SeriesScreenContent(
                             )
                     ) {
                         Column(
-                            modifier = Modifier.padding(bottom = 112.dp)
+                            modifier = Modifier.padding(bottom = 104.dp)
                         ) {
-                            Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
                             SeriesHeaderSection(
                                 title = state.series.title,
                                 rating = state.series.rating,
@@ -256,7 +251,6 @@ fun SeriesScreenContent(
                                 }
                             }
                         }
-
                     }
                 }
             }
