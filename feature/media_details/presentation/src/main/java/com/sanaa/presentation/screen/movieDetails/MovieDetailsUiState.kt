@@ -14,5 +14,8 @@ data class MovieDetailsUiState(
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
     val showLoginBottomSheet: Boolean = false,
+    val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
+    val imdbRating: Int = 0,
+    val guestSessionId: String = ""
 )
