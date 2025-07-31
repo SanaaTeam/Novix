@@ -72,8 +72,6 @@ fun RecentSearchItem(
                 .size(16.dp)
         )
     }
-
-
 }
 
 @PreviewLightDark
