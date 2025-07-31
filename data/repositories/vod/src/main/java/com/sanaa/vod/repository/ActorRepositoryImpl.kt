@@ -5,14 +5,11 @@ import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.actor.toMovie
 import com.sanaa.vod.mapper.actor.toTvSeries
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
 import repository.ActorRepository
-import timber.log.Timber
-import java.net.UnknownHostException
 import javax.inject.Inject
 
 
@@ -60,18 +57,6 @@ class ActorRepositoryImpl @Inject constructor(
             return remoteDataSource.fetchTrendingPeople(page).map {
                 it.toDomain()
             }
-        }
-    }
-
-    private inline fun <T> safeCall(errorMessage: String, block: () -> T): T {
-        try {
-            return block()
-        } catch (ex: UnknownHostException) {
-            Timber.w(ex, "No network while fetching actor data")
-            throw NoNetworkException()
-        } catch (ex: Exception) {
-            Timber.e(ex, "Error fetching actor data")
-            throw RetrievingDataFailureException("$errorMessage: ${ex.message}")
         }
     }
 }
