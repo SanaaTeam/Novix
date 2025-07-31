@@ -17,7 +17,7 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
 import com.sanaa.presentation.state.MediaType
-import com.sanaa.presentation.util.HomeApiEntryPoint
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable

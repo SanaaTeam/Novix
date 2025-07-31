@@ -31,7 +31,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
-import com.sanaa.presentation.util.HomeApiEntryPoint
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 

@@ -10,7 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
-import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.LocalAppNavController
@@ -20,7 +19,7 @@ import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaType
-import com.sanaa.presentation.util.HomeApiEntryPoint
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable

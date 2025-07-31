@@ -28,7 +28,7 @@ import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import com.sanaa.presentation.util.HomeApiEntryPoint
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable

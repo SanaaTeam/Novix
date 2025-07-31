@@ -16,7 +16,7 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.AppNavigation
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
-import com.sanaa.presentation.util.HomeApiEntryPoint
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable

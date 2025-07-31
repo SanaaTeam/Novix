@@ -2,17 +2,14 @@ package com.sanaa.presentation.api
 
 import androidx.compose.runtime.Composable
 import com.sanaa.api.HomeFeatureApi
-import com.sanaa.api.MediaDetailsApi
-import com.sanaa.presentation.screen.homeScreen.HomeScreen
+import com.sanaa.presentation.app.NovixApp
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HomeFeatureApiImpl @Inject constructor(
-    private val mediaDetailsApi: MediaDetailsApi,
-) : HomeFeatureApi {
+class HomeFeatureApiImpl @Inject constructor() : HomeFeatureApi {
     @Composable
     override fun HomeScreenApi() {
-        HomeScreen(mediaDetailsApi = mediaDetailsApi)
+        NovixApp()
     }
 }
