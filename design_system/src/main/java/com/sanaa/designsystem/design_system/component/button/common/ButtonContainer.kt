@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 
+
 @Composable
 internal fun ButtonContainer(
     onClick: () -> Unit,
@@ -39,39 +40,55 @@ internal fun ButtonContainer(
     shape: Shape = RoundedCornerShape(12.dp),
     content: @Composable RowScope.() -> Unit
 ) {
+
     val animatedIconTint by animateColorAsState(
         targetValue = if (isEnabled) iconTint else Theme.colors.onPrimaryHint
     )
+    val elementsArrangement =
+        if (icon != null || isLoading) Arrangement.spacedBy(8.dp) else Arrangement.Center
 
     Row(
         modifier = modifier
-            .height(48.dp)
+            .height(height = 48.dp)
             .clip(shape)
-            .background(color = backgroundColor)
-            .clickable(enabled = isEnabled && !isLoading, onClick = onClick)
-            .padding(vertical = verticalPadding, horizontal = horizontalPadding)
-            .animateContentSize(),
+            .background(
+                color = backgroundColor
+            )
+            .clickable(
+                enabled = isEnabled && !isLoading,
+                onClick = onClick
+            )
+            .padding(vertical = verticalPadding, horizontal = horizontalPadding),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         content()
-
-        Crossfade(targetState = isLoading) { loading ->
-            if (loading) {
-                AnimatedLoadingIndicator(
-                    iconTint = iconTint,
-                    size = 20.dp,
-                    modifier = Modifier.padding(start = 8.dp)
-                )
-            } else if (icon != null) {
-                Icon(
-                    painter = icon,
-                    contentDescription = null,
-                    tint = animatedIconTint,
-                    modifier = Modifier
-                        .size(20.dp)
-                        .padding(start = 8.dp)
-                )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = elementsArrangement,
+        ) {
+            Crossfade(
+                targetState = isLoading,
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp
+                    ),
+            ) { loading ->
+                if (loading) {
+                    AnimatedLoadingIndicator(
+                        iconTint = iconTint,
+                        size = 20.dp,
+                    )
+                } else if (icon != null) {
+                    Icon(
+                        painter = icon,
+                        contentDescription = null,
+                        tint = animatedIconTint,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }

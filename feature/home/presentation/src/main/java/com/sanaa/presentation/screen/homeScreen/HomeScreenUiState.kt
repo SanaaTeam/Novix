@@ -18,4 +18,5 @@ data class HomeScreenUiState(
     val errorMessage: String? = null,
     val showBottomSheet: Boolean = false,
     val isLoadingUpcoming: Boolean = false,
+    val isNoInternet: Boolean = false,
 )

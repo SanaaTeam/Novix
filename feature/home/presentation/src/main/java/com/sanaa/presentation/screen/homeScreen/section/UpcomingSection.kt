@@ -15,9 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -25,6 +25,9 @@ import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.presentation.components.shimmerEffect.PlaceholderWithShimmerEffect
+import com.sanaa.presentation.components.shimmerEffect.upComingGenresLoadingPlaceholder
+import com.sanaa.presentation.components.shimmerEffect.upComingTitlePlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
@@ -32,54 +35,65 @@ import com.sanaa.presentation.state.MediaType
 
 fun LazyGridScope.upcomingSection(
     upcomingMovies: LazyPagingItems<MediaItem>,
+    isLoading: Boolean,
     movieGenres: List<GenreUiState>,
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
     onSaveIconClick: (item: MediaItem) -> Unit,
     onMovieClick: (id: Int, mediaType: MediaType) -> Unit,
 ) {
-    item(span = { GridItemSpan(maxLineSpan) }) {
-        SectionHeader(
-            title = stringResource(R.string.up_upcoming),
-            modifier = Modifier
-                .fillWidthOfParent(16.dp)
-                .padding(
-                    top = 24.dp, bottom = 12.dp
-                ),
-        )
+
+    if (isLoading) {
+        upComingTitlePlaceholder()
+    } else {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            SectionHeader(
+                title = stringResource(R.string.up_upcoming),
+                modifier = Modifier
+                    .fillWidthOfParent(16.dp)
+                    .padding(
+                        top = 24.dp, bottom = 12.dp
+                    ),
+            )
+        }
     }
 
-    stickyHeader {
-        LazyRow(
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                end = 16.dp,
-                bottom = 8.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillWidthOfParent(16.dp)
-                .background(color = Theme.colors.surface)
+    if (isLoading) {
+        upComingGenresLoadingPlaceholder()
+    } else {
+        stickyHeader {
+            LazyRow(
+                contentPadding = PaddingValues(
+                    start = 16.dp,
+                    end = 16.dp,
+                    bottom = 8.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier
+                    .fillWidthOfParent(16.dp)
+                    .background(color = Theme.colors.surface)
 
-        ) {
-            item {
-                ToggleableChip(
-                    text = stringResource(R.string.all),
-                    onClick = {
-                        onGenreClick(null)
-                    },
-                    isSelected = movieSelectedGenreId == null,
-                )
-            }
-            items(movieGenres, key = { it.id }) { genre ->
-                ToggleableChip(
-                    text = genre.name,
-                    onClick = { onGenreClick(genre.id) },
-                    isSelected = genre.id == movieSelectedGenreId,
-                )
+            ) {
+                item {
+                    ToggleableChip(
+                        text = stringResource(R.string.all),
+                        onClick = {
+                            onGenreClick(null)
+                        },
+                        isSelected = movieSelectedGenreId == null,
+                    )
+                }
+                items(movieGenres, key = { it.id }) { genre ->
+                    ToggleableChip(
+                        text = genre.name,
+                        onClick = { onGenreClick(genre.id) },
+                        isSelected = genre.id == movieSelectedGenreId,
+                    )
+                }
             }
         }
     }
+
     items(upcomingMovies.itemCount) { index ->
         val item = upcomingMovies[index] ?: return@items
         MediaPosterCard(
@@ -116,6 +130,15 @@ fun LazyGridScope.upcomingSection(
                 bottom = 12.dp
             )
         )
+    }
+    if (upcomingMovies.loadState.refresh is LoadState.Loading) {
+        items(10) {
+            PlaceholderWithShimmerEffect(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+            )
+        }
     }
 
 }

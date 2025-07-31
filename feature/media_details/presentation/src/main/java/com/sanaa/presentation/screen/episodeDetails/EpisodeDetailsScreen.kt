@@ -163,7 +163,7 @@ private fun EpisodeDetailsScreenContent(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(bottom = 112.dp)
+                                .padding(bottom = 104.dp)
                                 .align(Alignment.TopCenter)
                         ) {
                             SeriesHeaderSection(
