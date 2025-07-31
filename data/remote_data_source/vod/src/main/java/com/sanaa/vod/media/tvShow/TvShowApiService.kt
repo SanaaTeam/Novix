@@ -90,7 +90,7 @@ interface TvShowApiService {
         @Query("with_genres") withGenres: String? = null,
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("sort_by") sortBy: String = "vote_average.desc",
-        @Query("vote_count.gte") voteCountGte: Int = 100,
+        @Query("vote_count.gte") voteCountGte: Int = 300,
     ): MovieApiResponse<TvShowDto>
 
 }
