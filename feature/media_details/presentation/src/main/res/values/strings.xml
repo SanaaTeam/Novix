@@ -60,4 +60,6 @@
     <string name="select_how_much_you_like_it">Select how much you like it</string>
     <string name="submit">Submit</string>
     <string name="rate_it">Rate it</string>
+    <string name="submit_rating_successfully">Submit rating successfully</string>
+    <string name="submit_rating_failed">Submit rating failed</string>
 </resources>
