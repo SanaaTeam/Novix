@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,6 +8,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
@@ -29,7 +29,6 @@ fun HomeScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     val effect: HomeScreenEffect? by viewModel.effect.collectAsStateWithLifecycle(null)
-    Log.d("stateTest", "HomeScreen: state:${state.value}")
 
     LaunchedEffect(effect) {
         when (effect) {
@@ -70,7 +69,7 @@ fun HomeScreen(
             }
 
             HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                // TODO()
+                navController.navigate(ContinueWatchingMediaScreenRoute)
             }
 
             null -> {}

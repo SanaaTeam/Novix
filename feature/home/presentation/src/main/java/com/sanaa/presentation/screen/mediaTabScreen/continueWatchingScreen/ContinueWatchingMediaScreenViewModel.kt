@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase.MediaHistoryItem
 
 class ContinueWatchingMediaScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
@@ -157,7 +158,7 @@ class ContinueWatchingMediaScreenViewModel(
                     genreId = genreId
                 )
             },
-            mapper = Movie::toState
+            mapper = MediaHistoryItem::toState
         )
     }
 
@@ -171,17 +172,17 @@ class ContinueWatchingMediaScreenViewModel(
                     genreId = genreId
                 )
             },
-            mapper = TvSeries::toState
+            mapper = MediaHistoryItem::toState
         )
     }
 
 
     private fun createMoviePagingDataSource(
         genreId: Int?
-    ): PagingSource<Int, Movie> {
+    ): PagingSource<Int, MediaHistoryItem> {
         return BasePagingSourceForHome { page ->
-            manageMovieUseCase.getTopRatedMovies(
-                page = page,
+            manageWatchedMediaHistoryUseCase.getMediaHistory(
+                mediaType = entity.MediaType.MOVIE,
                 genreId = genreId
             )
         }
@@ -189,10 +190,10 @@ class ContinueWatchingMediaScreenViewModel(
 
     private fun createTvShowPagingDataSource(
         genreId: Int?
-    ): PagingSource<Int, TvSeries> {
+    ): PagingSource<Int, MediaHistoryItem> {
         return BasePagingSourceForHome { page ->
-            manageTvSeriesUseCase.getTopRatedTvSeries(
-                page = page,
+            manageWatchedMediaHistoryUseCase.getMediaHistory(
+                mediaType = entity.MediaType.TV_SERIES,
                 genreId = genreId
             )
         }

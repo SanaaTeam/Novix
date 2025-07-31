@@ -19,7 +19,7 @@ import org.koin.java.KoinJavaComponent.inject
 
 
 @Composable
-fun TopRatedMediaScreen(
+fun ContinueWatchingMediaScreen(
     modifier: Modifier = Modifier,
     viewModel: ContinueWatchingMediaScreenViewModel = koinViewModel<ContinueWatchingMediaScreenViewModel>(),
 ) {
@@ -55,9 +55,9 @@ fun TopRatedMediaScreen(
             }
         }
     }
-    NovixTheme(isSystemInDarkTheme()){
+    NovixTheme(isSystemInDarkTheme()) {
         MediaTabScreenContent(
-            title = stringResource(R.string.top_rated),
+            title = stringResource(R.string.continue_watching),
             state = state.value,
             interactionListener = viewModel,
             modifier = modifier,
