@@ -51,7 +51,6 @@ class SearchViewModel(
         observeRecentSearchHistory()
     }
 
-
     override fun onSearchQueryChanged(query: String) {
         updateState { it.copy(searchQuery = query) }
     }
@@ -60,9 +59,10 @@ class SearchViewModel(
         loadMediaByTab(state.value.searchQuery)
     }
 
+
+
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
-
         updateState { it.copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
@@ -75,11 +75,7 @@ class SearchViewModel(
                 tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
             )
         }
-
-        val currentQuery = state.value.searchQuery
-        loadMediaByTab(currentQuery)
     }
-
     override fun onActorClicked(id: Int) {
         emitEffect(SearchScreenEffects.NavigateToActorDetails(id))
     }
@@ -117,7 +113,6 @@ class SearchViewModel(
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
     }
-
 
     override fun onFilterClicked() {
         updateState { it.copy(showBottomSheet = true) }
@@ -193,7 +188,6 @@ class SearchViewModel(
         )
     }
 
-
     @OptIn(FlowPreview::class)
     private fun observeSearchQueryFlow(): Flow<String> {
         return state.map { it.searchQuery }.distinctUntilChanged().debounce(500L)
@@ -212,7 +206,6 @@ class SearchViewModel(
         return manageRecentViewedUseCase.getRecentViewed()
     }
 
-
     suspend fun getRecentSearchHistory(): Flow<List<SearchHistory>> {
         return manageSearchHistoryUseCase.getSearchHistory()
     }
@@ -229,7 +222,8 @@ class SearchViewModel(
                 tvShows = flowOf(PagingData.empty()),
                 actors = flowOf(PagingData.empty()),
                 isLoading = false,
-                error = null
+                error = null,
+                noInternetConnection = false
             )
         }
     }
@@ -243,12 +237,10 @@ class SearchViewModel(
         }
     }
 
-
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
         updateState { it.copy(movies = flowOf(pagingData)) }
         setSuccessState()
     }
-
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
         updateState { it.copy(tvShows = flowOf(pagingData)) }
@@ -260,24 +252,24 @@ class SearchViewModel(
         setSuccessState()
     }
 
-
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) updateState {
-            it.copy(
-                noInternetConnection = true,
-                isLoading = false,
-            )
-        }
-        else updateState {
-            it.copy(
-                isLoading = false,
-                error = e.message ?: "Unknown error",
-                noInternetConnection = false
-            )
+        updateState { currentState ->
+            if (e is NoNetworkException) {
+                currentState.copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    error = null
+                )
+            } else {
+                val errorMessage = e.message ?: "An unexpected error occurred."
+                currentState.copy(
+                    isLoading = false,
+                    error = errorMessage,
+                    noInternetConnection = false
+                )
+            }
         }
     }
-
-
     private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
         manageRecentViewedUseCase.addRecentViewed(
             RecentViewedMedia(
@@ -289,14 +281,12 @@ class SearchViewModel(
         )
     }
 
-
     private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createActorsPagingSource(query) },
             mapper = Actor::toUiState
         )
     }
-
 
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
         return createPagingFlow(
@@ -334,8 +324,7 @@ class SearchViewModel(
         }
     }
 
-
-    private fun <T : Any, R : Any> createPagingFlow(
+    fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
         mapper: (T) -> R
     ): Flow<PagingData<R>> {
@@ -346,7 +335,6 @@ class SearchViewModel(
         ).flow.map { pagingData ->
             pagingData.map(mapper)
         }.cachedIn(viewModelScope)
-
     }
 
     private fun setLoadingState() {

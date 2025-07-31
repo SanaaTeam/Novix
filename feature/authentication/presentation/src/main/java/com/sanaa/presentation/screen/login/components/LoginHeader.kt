@@ -16,7 +16,7 @@ import com.sanaa.feature.authentication.presentation.R
 
 
 @Composable
-fun LoginHeader() {
+fun LoginHeader(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier.fillMaxWidth()
             .padding(top=12.dp, start = 16.dp,end=16.dp)

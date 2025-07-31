@@ -44,7 +44,6 @@ fun MediaListGrid(
                     RemoteBlurredHaramImageViewer(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
-                        blurRadius = 150,
                         haramThreshold = 0.2f,
                         nonHaramThreshold = 0.7f,
                         contentDescription = media.title,
