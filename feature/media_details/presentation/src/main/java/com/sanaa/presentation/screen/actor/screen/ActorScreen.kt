@@ -20,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -45,14 +46,11 @@ import com.sanaa.presentation.screen.actor.componants.PosterCard
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ActorScreen(
-    actorId: Int,
+    viewModel: ActorViewModel = hiltViewModel()
 ) {
-    val viewModel: ActorViewModel = koinViewModel(parameters = { parametersOf(actorId) })
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
 

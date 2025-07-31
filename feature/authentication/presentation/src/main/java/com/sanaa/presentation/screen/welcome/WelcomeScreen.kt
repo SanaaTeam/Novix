@@ -13,19 +13,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.HomeScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
     onExit: () -> Unit = {},
-    viewModel: WelcomeViewModel = koinViewModel(),
+    viewModel: WelcomeViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
@@ -33,7 +34,6 @@ import com.sanaa.presentation.filter_bottomsheet.components.CustomYearRangeSlide
 import com.sanaa.presentation.filter_bottomsheet.components.GenreChips
 import com.sanaa.presentation.filter_bottomsheet.components.IMDbRatingSelector
 import com.sanaa.presentation.filter_bottomsheet.state.FilterUiState
-import org.koin.androidx.compose.koinViewModel
 import usecase.search.search_param.MediaFilters
 
 @Composable
@@ -44,7 +44,7 @@ fun FilterBottomSheet(
     selectedTabIndex: Int
 ) {
     var isSliderDragging by remember { mutableStateOf(false) }
-    val filterViewModel: FilterViewModel = koinViewModel<FilterViewModel>()
+    val filterViewModel: FilterViewModel = hiltViewModel()
     val filterUiState by filterViewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {

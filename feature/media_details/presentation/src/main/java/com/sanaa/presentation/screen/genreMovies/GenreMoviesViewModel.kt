@@ -1,11 +1,14 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,15 +17,19 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
 
-class GenreMoviesViewModel(
-    private val categoryId: Int,
-    private val categoryName: String,
+@HiltViewModel
+class GenreMoviesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
-    GenreMoviesScreenUiState(),
-    dispatcher
+    initialState = GenreMoviesScreenUiState(),
+    defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
+
+    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
+    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+
     init {
         fetchMovies(categoryId)
     }

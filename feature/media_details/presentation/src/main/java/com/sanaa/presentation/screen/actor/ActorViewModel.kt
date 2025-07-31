@@ -1,19 +1,25 @@
 package com.sanaa.presentation.screen.actor
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import com.sanaa.presentation.model.toUiModel
-import kotlinx.coroutines.CoroutineDispatcher
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageActorUseCase
 
-class ActorViewModel(
-    private val actorId: Int,
-    private val manageActorDetails: ManageActorUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(ActorScreenUiState(), dispatcher),
-    ActorsScreenInteractionListener {
+@HiltViewModel
+class ActorViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val manageActorDetails: ManageActorUseCase
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+    initialState = ActorScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
+), ActorsScreenInteractionListener {
+
+    private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
 
     init {
         loadDetails()

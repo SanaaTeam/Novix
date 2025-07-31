@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -34,14 +35,11 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun ActorGalleryScreen(
-    actorId: Int,
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = koinViewModel { parametersOf(actorId) },
+    viewModel: ActorViewModel = hiltViewModel(),
 ) {
     BackHandler(onBack = navigateBack)
 

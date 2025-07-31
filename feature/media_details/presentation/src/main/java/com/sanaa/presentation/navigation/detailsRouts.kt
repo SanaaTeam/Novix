@@ -43,14 +43,14 @@ data class MovieDetailsScreenRoute(val movieId: Int) : Destination {
 
 @Serializable
 data class ReviewsScreenRoute(
-    val seriesId: Int,
+    val mediaId: Int,
     val mediaType: MediaTypeParam
 ) : Destination {
-    override fun route(): String = "reviews/$seriesId/${mediaType.name}"
+    override fun route(): String = "reviews/$mediaId/${mediaType.name}"
 
     companion object {
-        const val PATTERN = "reviews/{seriesId}/{mediaType}"
-        const val ARG_SERIES_ID = "seriesId"
+        const val PATTERN = "reviews/{mediaId}/{mediaType}"
+        const val ARG_SERIES_ID = "mediaId"
         const val ARG_MEDIA_TYPE = "mediaType"
     }
 }
