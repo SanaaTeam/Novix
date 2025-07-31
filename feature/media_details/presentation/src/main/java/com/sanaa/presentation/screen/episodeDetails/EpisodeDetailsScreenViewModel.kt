@@ -3,16 +3,16 @@ package com.sanaa.presentation.screen.episodeDetails
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
-import exceptions.NoNetworkException
 
 class EpisodeDetailsScreenViewModel(
-    seriesId: Int,
-    seasonNumber: Int,
-    episodeNumber: Int,
+    private val seriesId: Int,
+    private val seasonNumber: Int,
+    private val episodeNumber: Int,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -56,7 +56,7 @@ class EpisodeDetailsScreenViewModel(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showRateBottomSheet = true) }
     }
 
     override fun onRetryLoadDetails() {
@@ -64,19 +64,46 @@ class EpisodeDetailsScreenViewModel(
         loadEpisode(state.value.seriesId, 0, 0)
     }
 
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissRateBottomSheet() {
+        updateState { it.copy(showRateBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        error = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }    }
+
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
             callee = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = {e ->
+            onError = { e ->
                 if (e is NoNetworkException) {
-                    updateState { it.copy(noInternetConnection = true,
-                        error = null,
-                        isLoading = false) }
-                }
-                else {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            error = null,
+                            isLoading = false
+                        )
+                    }
+                } else {
                     updateState { it.copy(error = it.error, isLoading = false) }
                 }
             }
@@ -104,5 +131,14 @@ class EpisodeDetailsScreenViewModel(
                 trailerUrl = trailerUrl
             )
         }
+    }
+
+    private suspend fun addRate() {
+        manageEpisodeDetails.addTvEpisodeRate(
+            seriesId = seriesId,
+            episodeNumber = episodeNumber,
+            seasonNumber = seasonNumber,
+            rating = state.value.imdbRating.toFloat()
+        )
     }
 }
