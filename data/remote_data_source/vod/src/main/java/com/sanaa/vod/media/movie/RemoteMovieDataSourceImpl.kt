@@ -66,8 +66,8 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun sendMovieRate(
         movieId: Int,
-        guestSessionId: String,
+        sessionId: String,
         rating: Float
-    ) = apiService.rateMovie(movieId = movieId, guestSessionId = guestSessionId, rating = MovieRateRequest(value = rating))
+    ) = apiService.rateMovie(movieId = movieId, sessionId = sessionId, rating = MovieRateRequest(value = rating))
 
 }

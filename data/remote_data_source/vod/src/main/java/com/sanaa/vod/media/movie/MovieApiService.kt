@@ -93,7 +93,7 @@ interface MovieApiService {
     @POST("movie/{movie_id}/rating")
     suspend fun rateMovie(
         @Path("movie_id") movieId: Int,
-        @Query("guest_session_id") guestSessionId: String,
+        @Query("session_id") sessionId: String,
         @Body rating: MovieRateRequest
     ): RatingResponse
 
