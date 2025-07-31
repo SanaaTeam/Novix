@@ -68,6 +68,11 @@ class RemoteMovieDataSourceImpl(
         movieId: Int,
         sessionId: String,
         rating: Float
-    ) = apiService.rateMovie(movieId = movieId, sessionId = sessionId, rating = MovieRateRequest(value = rating))
+    ) =
+        apiService.rateMovie(
+            movieId = movieId,
+            sessionId = sessionId,
+            rating = MovieRateRequest(value = rating)
+        )
 
 }
