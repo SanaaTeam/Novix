@@ -12,6 +12,10 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.presentation.screen.componants.cards.ActorCard
 import com.sanaa.presentation.screen.state.ActorUiModel
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.paging.LoadState
+import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 
 @Composable
 fun ActorsContent(
@@ -34,6 +38,19 @@ fun ActorsContent(
                     playedCharacter = null,
                     onCardClick = { onActorClick(actor) }
                 )
+            }
+        }
+
+        if (actors.loadState.append is LoadState.Loading) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    WavyProgressIndicator()
+                }
             }
         }
     }
