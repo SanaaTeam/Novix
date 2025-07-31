@@ -30,7 +30,7 @@ class ManageEpisodeDetailsUseCase(
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
-    ) {
+    ): String {
         return tvSeriesRepo.addTvEpisodeRate(
             seriesId = seriesId,
             seasonNumber = seasonNumber,
