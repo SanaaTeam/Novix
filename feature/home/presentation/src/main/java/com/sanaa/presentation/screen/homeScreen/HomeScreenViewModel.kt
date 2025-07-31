@@ -14,11 +14,12 @@ import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 class HomeScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val manageHistoryUseCase: ManageHistoryUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
@@ -86,11 +87,7 @@ class HomeScreenViewModel(
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
-                val watchedMovies = manageHistoryUseCase
-                    .getWatchedMoviesHistory(10, null).map { it.toState() }
-                val watchedTvSeries = manageHistoryUseCase
-                    .getWatchedSeriesHistory(10, null).map { it.toState() }
-                (watchedMovies + watchedTvSeries).shuffled()
+                manageWatchedMediaHistoryUseCase.getMediaHistory(null, null).map { it.toState() }
             },
             onSuccess = { watchedMediaList ->
                 updateState {
