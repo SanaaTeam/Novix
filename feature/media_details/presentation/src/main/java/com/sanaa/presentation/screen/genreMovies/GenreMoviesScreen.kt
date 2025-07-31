@@ -153,7 +153,6 @@ fun GenreMoviesScreenContent(
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
-                                            blurRadius = 150,
                                             haramThreshold = 0.2f,
                                             nonHaramThreshold = 0.7f,
                                             contentDescription = movie.title,

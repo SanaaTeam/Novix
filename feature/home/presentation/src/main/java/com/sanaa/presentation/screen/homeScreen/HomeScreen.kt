@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,7 +9,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
@@ -28,51 +28,52 @@ fun HomeScreen(
     val navController = LocalAppNavController.current
 
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val effect: HomeScreenEffect? by viewModel.effect.collectAsStateWithLifecycle(null)
+    Log.d("stateTest", "HomeScreen: state:${state.value}")
 
-    LaunchedEffect(effect) {
-        when (effect) {
-            is HomeScreenEffect.NavigateToMediaDetails -> {
-                when ((effect as HomeScreenEffect.NavigateToMediaDetails).mediaType) {
-                    MediaType.MOVIE -> {
-                        detailsApi.launch(
-                            context = navController.context,
-                            startRoute = StartRoute.MOVIE,
-                            id = (effect as HomeScreenEffect.NavigateToMediaDetails).id
-                        )
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is HomeScreenEffect.NavigateToMediaDetails -> {
+                    when (effect.mediaType) {
+                        MediaType.MOVIE -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.MOVIE,
+                                id = effect.id
+                            )
+                        }
 
-                    MediaType.TV_SHOW -> {
-                        detailsApi.launch(
-                            context = navController.context,
-                            startRoute = StartRoute.SERIES,
-                            id = (effect as HomeScreenEffect.NavigateToMediaDetails).id
-                        )
+                        MediaType.TV_SHOW -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.SERIES,
+                                id = effect.id
+                            )
+                        }
                     }
                 }
-            }
 
-            HomeScreenEffect.NavigateToMoviesScreen -> {
-                navController.navigate(TrendingMoviesScreenRoute)
-            }
+                HomeScreenEffect.NavigateToMoviesScreen -> {
+                    navController.navigate(TrendingMoviesScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToPeopleScreen -> {
-                navController.navigate(TrendingPeopleScreenRoute)
-            }
+                HomeScreenEffect.NavigateToPeopleScreen -> {
+                    navController.navigate(TrendingPeopleScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
-                navController.navigate(TopRatedMediaScreenRoute)
-            }
+                HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
+                    navController.navigate(TopRatedMediaScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToTvShowsScreen -> {
-                navController.navigate(TrendingTvShowsScreenRoute)
-            }
+                HomeScreenEffect.NavigateToTvShowsScreen -> {
+                    navController.navigate(TrendingTvShowsScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                navController.navigate(ContinueWatchingMediaScreenRoute)
-            }
+                HomeScreenEffect.NavigateToWatchedMediaScreen -> {
+                    // TODO()
+                }
 
-            null -> {}
+            }
         }
     }
 

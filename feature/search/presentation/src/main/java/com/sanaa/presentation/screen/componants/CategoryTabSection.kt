@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +21,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Error
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.tab.NovixTab
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
+import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -58,13 +60,12 @@ fun CategoryTabSection(
         when {
             uiState.isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    WavyProgressIndicator()
+                    NovixLoadingIndicator()
                 }
             }
-
             uiState.noInternetConnection -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NetworkDisconnectionContact(onRetryClick = {})
+                    NetworkDisconnectionContact(onRetryClick = { interactionsListener.retrySearch() })
                 }
             }
 
@@ -87,27 +88,30 @@ fun CategoryTabContent(
     interactionsListener: SearchScreenInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
-    actorsPagingData: LazyPagingItems<ActorUiModel>,
+    actorsPagingData: LazyPagingItems<ActorUiModel>
 ) {
-    val movieState = moviesPagingData.loadState.refresh
+    val movieRefreshState = moviesPagingData.loadState.refresh
+    val tvShowRefreshState = tvShowsPagingData.loadState.refresh
+    val actorRefreshState = actorsPagingData.loadState.refresh
+
     val isMovieEmpty = moviesPagingData.itemCount == 0 &&
-            movieState !is LoadState.Loading &&
-            movieState !is LoadState.Error
+            movieRefreshState !is LoadState.Loading &&
+            movieRefreshState !is LoadState.Error
 
     val isTvEmpty = tvShowsPagingData.itemCount == 0 &&
-            tvShowsPagingData.loadState.refresh !is LoadState.Loading &&
-            tvShowsPagingData.loadState.refresh !is LoadState.Error
+            tvShowRefreshState !is LoadState.Loading &&
+            tvShowRefreshState !is LoadState.Error
 
     val isActorEmpty = actorsPagingData.itemCount == 0 &&
-            actorsPagingData.loadState.refresh !is LoadState.Loading &&
-            actorsPagingData.loadState.refresh !is LoadState.Error
+            actorRefreshState !is LoadState.Loading &&
+            actorRefreshState !is LoadState.Error
 
     when (selectedTabIndex) {
         MOVIE_INDEX -> {
-            if (movieState is LoadState.Error) {
-                ErrorState(movieState) { interactionsListener.retrySearch() }
+            if (movieRefreshState is LoadState.Error) {
+                ErrorState(movieRefreshState) { interactionsListener.retrySearch() }
             } else if (isMovieEmpty) {
-                NoSearchResultState()
+                NoSearchResultContent()
             } else {
                 MoviesContent(
                     moviesPagingData = moviesPagingData,
@@ -119,8 +123,10 @@ fun CategoryTabContent(
         }
 
         TV_SHOW_INDEX -> {
-            if (isTvEmpty) {
-                NoSearchResultState()
+            if (tvShowRefreshState is LoadState.Error) {
+                ErrorState(tvShowRefreshState) { interactionsListener.retrySearch() }
+            } else if (isTvEmpty) {
+                NoSearchResultContent()
             } else {
                 TvShowsContent(
                     tvShowsPagingData = tvShowsPagingData,
@@ -132,8 +138,10 @@ fun CategoryTabContent(
         }
 
         ACTOR_INDEX -> {
-            if (isActorEmpty) {
-                NoSearchResultState()
+            if (actorRefreshState is LoadState.Error) {
+                ErrorState(actorRefreshState) { interactionsListener.retrySearch() }
+            } else if (isActorEmpty) {
+                NoSearchResultContent()
             } else {
                 ActorsContent(actorsPagingData, onActorClick = {
                     interactionsListener.onActorClicked(it.id)
@@ -144,7 +152,7 @@ fun CategoryTabContent(
 }
 
 @Composable
-private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
+private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit) {
     val scrollState = rememberScrollState()
     Box(
         modifier = Modifier
@@ -152,21 +160,28 @@ private fun ErrorState(movieState: LoadState.Error, onRetryClick: () -> Unit) {
             .verticalScroll(scrollState),
         contentAlignment = Alignment.Center
     ) {
-        if (movieState.error is NoNetworkException)
+        if (loadStateError.error is NoNetworkException) {
             NetworkDisconnectionContact(onRetryClick = onRetryClick)
-        else
+        } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,
                 errorTitle = stringResource(R.string.error_general_title),
                 errorMessage = stringResource(R.string.error_general_message)
             )
+        }
     }
 }
 
 @Composable
-private fun NoSearchResultState() {
+private fun NoSearchResultContent() {
+    val isDarkTheme = isSystemInDarkTheme()
+    val iconRss =if (isDarkTheme)
+      R.drawable.ic_no_search_result_dark
+        else {
+      R.drawable.ic_no_search_result
+    }
     EmptySearchContent(
-        icon = painterResource(id = R.drawable.ic_no_search_result),
+        icon =painterResource(id = iconRss),
         text = stringResource(id = R.string.no_search_result_message)
     )
 }

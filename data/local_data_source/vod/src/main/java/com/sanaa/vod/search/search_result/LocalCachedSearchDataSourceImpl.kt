@@ -107,14 +107,17 @@ class LocalCachedSearchDataSourceImpl(
         val cachedResults = getCachedResults(query, "movie")
 
         if (cachedResults.isNotEmpty()) {
-            return cachedResults.mapNotNull { result ->
-                movieDao.getFilteredMovies(query = result.itemId.toString(), limit, offset)
-                    .firstOrNull()
+            val moviesFromIds = cachedResults.mapNotNull { result ->
+                movieDao.getMovieById(result.itemId)
+            }
+            if (moviesFromIds.isNotEmpty()) {
+                return moviesFromIds
             }
         }
 
-        return emptyList()
+        return movieDao.getFilteredMovies(query = query, limit = limit, offset = offset)
     }
+
 
     override suspend fun getTvSeriesByQuery(
         query: String,

@@ -43,6 +43,7 @@ dependencies {
 
     implementation(libs.retrofit)
     implementation(libs.okhttp)
+    implementation(libs.androidx.datastore)
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(projects.data.repositories.vod)
@@ -102,7 +103,6 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.cloudy)
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)
