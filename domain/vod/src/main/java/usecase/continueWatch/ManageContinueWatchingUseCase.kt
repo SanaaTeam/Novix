@@ -1,5 +1,6 @@
 package usecase.continueWatch
 
+import entity.ContinuableMedia
 import entity.ContinueWatchingItem
 import entity.MediaType
 import kotlinx.coroutines.flow.Flow
@@ -12,18 +13,12 @@ class ManageContinueWatchingUseCase(
         return repository.getContinueWatchingList(username, CONTINUE_WATCHING_LIMIT)
     }
 
-    suspend fun addItem(
-        username: String,
-        mediaId: Int,
-        episodeId: Int? = null,
-        mediaType: MediaType
-    ) {
-        repository.addItem(
-            username = username,
-            mediaId = mediaId,
-            episodeId = episodeId,
-            mediaType = mediaType
+    suspend fun addItem(username: String, continuableMedia: ContinuableMedia, episodeId: Int? = null) {
+        val itemToSave = ContinueWatchingItem(
+            media = continuableMedia,
+            episodeId = episodeId
         )
+        repository.addItem(username, itemToSave)
     }
 
     companion object {
