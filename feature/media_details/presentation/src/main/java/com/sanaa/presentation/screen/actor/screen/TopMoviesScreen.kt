@@ -121,7 +121,6 @@ private fun TopMoviesContent(
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
-                                            blurRadius = 150,
                                             haramThreshold = 0.2f,
                                             nonHaramThreshold = 0.7f,
                                             contentDescription = movie.title,
