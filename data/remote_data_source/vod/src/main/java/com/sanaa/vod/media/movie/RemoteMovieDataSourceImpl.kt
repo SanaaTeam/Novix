@@ -4,6 +4,7 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
@@ -68,11 +69,13 @@ class RemoteMovieDataSourceImpl(
         movieId: Int,
         sessionId: String,
         rating: Float
-    ) =
-        apiService.rateMovie(
+    ) : RatingResponse {
+        val response = apiService.rateMovie(
             movieId = movieId,
             sessionId = sessionId,
             rating = MovieRateRequest(value = rating)
         )
+        return response
+    }
 
 }
