@@ -36,52 +36,52 @@ fun HomeScreen(
     }
 
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val effect: HomeScreenEffect? by viewModel.effect.collectAsStateWithLifecycle(null)
     Log.d("stateTest", "HomeScreen: state:${state.value}")
 
-    LaunchedEffect(effect) {
-        when (effect) {
-            is HomeScreenEffect.NavigateToMediaDetails -> {
-                when ((effect as HomeScreenEffect.NavigateToMediaDetails).mediaType) {
-                    MediaType.MOVIE -> {
-                        detailsApi.launch(
-                            context = navController.context,
-                            startRoute = StartRoute.MOVIE,
-                            id = (effect as HomeScreenEffect.NavigateToMediaDetails).id
-                        )
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is HomeScreenEffect.NavigateToMediaDetails -> {
+                    when (effect.mediaType) {
+                        MediaType.MOVIE -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.MOVIE,
+                                id = effect.id
+                            )
+                        }
 
-                    MediaType.TV_SHOW -> {
-                        detailsApi.launch(
-                            context = navController.context,
-                            startRoute = StartRoute.SERIES,
-                            id = (effect as HomeScreenEffect.NavigateToMediaDetails).id
-                        )
+                        MediaType.TV_SHOW -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.SERIES,
+                                id = effect.id
+                            )
+                        }
                     }
                 }
-            }
 
-            HomeScreenEffect.NavigateToMoviesScreen -> {
-                navController.navigate(TrendingMoviesScreenRoute)
-            }
+                HomeScreenEffect.NavigateToMoviesScreen -> {
+                    navController.navigate(TrendingMoviesScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToPeopleScreen -> {
-                navController.navigate(TrendingPeopleScreenRoute)
-            }
+                HomeScreenEffect.NavigateToPeopleScreen -> {
+                    navController.navigate(TrendingPeopleScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
-                navController.navigate(TopRatedMediaScreenRoute)
-            }
+                HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
+                    navController.navigate(TopRatedMediaScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToTvShowsScreen -> {
-                navController.navigate(TrendingTvShowsScreenRoute)
-            }
+                HomeScreenEffect.NavigateToTvShowsScreen -> {
+                    navController.navigate(TrendingTvShowsScreenRoute)
+                }
 
-            HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                // TODO()
-            }
+                HomeScreenEffect.NavigateToWatchedMediaScreen -> {
+                    // TODO()
+                }
 
-            null -> {}
+            }
         }
     }
 
