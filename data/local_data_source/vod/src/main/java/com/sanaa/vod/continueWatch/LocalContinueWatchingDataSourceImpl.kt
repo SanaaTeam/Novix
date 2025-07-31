@@ -12,11 +12,11 @@ class LocalContinueWatchingDataSourceImpl(
         continueWatchingDao.insertOrUpdate(item)
     }
 
-    override suspend fun getContinueWatchingList(limit: Int): List<ContinueWatchingLocalDto> {
-        return continueWatchingDao.getContinueWatchingList(limit)
+    override suspend fun getContinueWatchingList(username: String, limit: Int): List<ContinueWatchingLocalDto> {
+        return continueWatchingDao.getContinueWatchingList(username, limit)
     }
 
-    override suspend fun deleteItem(mediaId: Int) {
-        continueWatchingDao.deleteItem(mediaId)
+    override suspend fun deleteItem(mediaId: Int, username: String) {
+        continueWatchingDao.deleteItem(mediaId, username)
     }
 }

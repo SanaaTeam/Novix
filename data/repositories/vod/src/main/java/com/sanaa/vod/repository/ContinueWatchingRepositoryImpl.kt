@@ -7,6 +7,9 @@ import com.sanaa.vod.mapper.search.toEntity
 import entity.ContinuableMedia
 import entity.ContinueWatchingItem
 import entity.MediaType
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import repository.ContinueWatchingRepository
 
 class ContinueWatchingRepositoryImpl(
@@ -14,43 +17,42 @@ class ContinueWatchingRepositoryImpl(
     private val localCacheDataSource: LocalCacheSearchDataSource
 ) : ContinueWatchingRepository {
 
-    override suspend fun getContinueWatchingList(limit: Int): List<ContinueWatchingItem> {
+    override suspend fun getContinueWatchingList(username: String, limit: Int): List<ContinueWatchingItem> = coroutineScope {
+        val dtos = localContinueWatchingDataSource.getContinueWatchingList(username, limit)
 
-        return localContinueWatchingDataSource.getContinueWatchingList(limit).mapNotNull { dto ->
-            when (MediaType.valueOf(dto.mediaType)) {
-                MediaType.MOVIE -> {
-                    val movieDto = localCacheDataSource.getMoviesByQuery(
-                        query = dto.mediaId.toString(),
-                        limit = 1,
-                        offset = 0
-                    ).firstOrNull()
-
-                    movieDto?.let {
-                        ContinueWatchingItem(
-                            media = ContinuableMedia.MovieItem(it.toEntity())
-                        )
+        dtos.map { dto ->
+            async {
+                when (MediaType.valueOf(dto.mediaType)) {
+                    MediaType.MOVIE -> {
+                        localCacheDataSource.getMoviesByQuery(
+                            query = dto.mediaId.toString(),
+                            limit = 1,
+                            offset = 0
+                        ).firstOrNull()?.let { movieDto ->
+                            ContinueWatchingItem(
+                                media = ContinuableMedia.MovieItem(movieDto.toEntity())
+                            )
+                        }
                     }
-                }
-
-                MediaType.TV_SERIES -> {
-                    val seriesDto = localCacheDataSource.getTvSeriesByQuery(
-                        query = dto.mediaId.toString(),
-                        limit = 1,
-                        offset = 0
-                    ).firstOrNull()
-
-                    seriesDto?.let {
-                        ContinueWatchingItem(
-                            media = ContinuableMedia.TvSeriesItem(it.toEntity()),
-                            episodeId = dto.episodeId
-                        )
+                    MediaType.TV_SERIES -> {
+                        localCacheDataSource.getTvSeriesByQuery(
+                            query = dto.mediaId.toString(),
+                            limit = 1,
+                            offset = 0
+                        ).firstOrNull()?.let { seriesDto ->
+                            ContinueWatchingItem(
+                                media = ContinuableMedia.TvSeriesItem(seriesDto.toEntity()),
+                                episodeId = dto.episodeId
+                            )
+                        }
                     }
                 }
             }
-        }
+        }.awaitAll().filterNotNull()
     }
 
     override suspend fun addItem(
+        username: String,
         mediaId: Int,
         episodeId: Int?,
         mediaType: MediaType
@@ -58,12 +60,13 @@ class ContinueWatchingRepositoryImpl(
         val newItem = ContinueWatchingLocalDto(
             mediaId = mediaId,
             episodeId = episodeId,
-            mediaType = mediaType.name
+            mediaType = mediaType.name,
+            username = username
         )
         localContinueWatchingDataSource.addOrUpdateItem(newItem)
     }
 
-    override suspend fun removeItem(mediaId: Int) {
-        localContinueWatchingDataSource.deleteItem(mediaId)
+    override suspend fun removeItem(mediaId: Int, username: String) {
+        localContinueWatchingDataSource.deleteItem(mediaId, username)
     }
 }

@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class ContinueWatchingLocalDto(
     @PrimaryKey val mediaId: Int,
     val episodeId: Int?,
-    val mediaType: String
+    val mediaType: String,
+    val username: String
 )
