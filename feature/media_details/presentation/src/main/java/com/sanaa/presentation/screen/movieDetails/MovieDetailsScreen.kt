@@ -126,7 +126,7 @@ fun MovieDetailsScreen(
         }
     }
 
-    Box() {
+    Box{
         MovieDetailsContent(
             state = state, interactionListener = viewModel
         )
