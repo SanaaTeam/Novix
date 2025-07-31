@@ -1,6 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
@@ -22,12 +23,13 @@ import org.junit.jupiter.api.assertThrows
 class MovieRepositoryImplTest {
 
     private lateinit var repository: MovieRepositoryImpl
+    private val preferences: PreferencesManager = mockk()
     private val remote: RemoteMovieDataSource =
         mockk<RemoteMovieDataSource>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        repository = MovieRepositoryImpl(remote)
+        repository = MovieRepositoryImpl(remote, preferences)
     }
 
     @Test
@@ -59,18 +61,18 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getSimilarMoviesByMovieId returns similar movies`() = runTest {
-        coEvery { remote.fetchSimilarMoviesByMovieId(1,1) } returns sampleSimilarDto
+        coEvery { remote.fetchSimilarMoviesByMovieId(1, 1) } returns sampleSimilarDto
 
-        val result = repository.getSimilarMoviesByMovieId(1,1)
+        val result = repository.getSimilarMoviesByMovieId(1, 1)
 
         assertThat(result.size).isEqualTo(2)
     }
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1,1) } returns listOf(sampleReviewDto)
+        coEvery { remote.fetchReviewsByMovieId(1, 1) } returns listOf(sampleReviewDto)
 
-        val result = repository.getReviewsByMovieId(1,1)
+        val result = repository.getReviewsByMovieId(1, 1)
 
         assertThat(result.first().authorName).isEqualTo("Critic A")
     }
@@ -91,9 +93,9 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMoviesByCategory should return list of MovieDto `() = runTest {
-        coEvery { remote.fetchMoviesByCategory(any(),any()) } returns sampleSimilarDto
+        coEvery { remote.fetchMoviesByCategory(any(), any()) } returns sampleSimilarDto
 
-        val result = repository.getMoviesByCategory(1,1)
+        val result = repository.getMoviesByCategory(1, 1)
 
         assertThat(result).isNotEmpty()
     }
