@@ -70,7 +70,7 @@ class SeriesViewModel(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showRateBottomSheet = true) }
     }
 
     override fun onDismissRateBottomSheet() {
