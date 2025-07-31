@@ -11,17 +11,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,6 +20,7 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,14 +48,16 @@ import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
-val overLayGradientColor = Brush.verticalGradient(
+private val overLayGradientColor = Brush.verticalGradient(
     colors = listOf(
-        Color(0x00000000), Color(0xB2000000), Color(0xCC000000)
+        Color(0x00000000),
+        Color(0xB2000000),
+        Color(0xCC000000)
     )
 )
 
@@ -75,29 +68,55 @@ fun PopularMediaSection(
     onMediaClick: (MediaItem) -> Unit,
     onSaveIconClicked: (MediaItem) -> Unit
 ) {
+    val pagerState = rememberPagerState(pageCount = { mediaItems.size })
+    val coroutineScope = rememberCoroutineScope()        //  ← here
 
-    val pagerState = rememberPagerState(pageCount = { mediaItems.count() })
+    if (mediaItems.size > 1) {
+        LaunchedEffect(pagerState, mediaItems.size) {
+            while (isActive) {
+                delay(4_000)
+                val next = (pagerState.currentPage + 1) % pagerState.pageCount
+                pagerState.animateScrollToPage(
+                    page = next,
+                    animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                )
+            }
+        }
+    }
+
     Column(
-        modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         NovixSectionHeader(title = stringResource(R.string.popular))
+
         PopularMediaSectionPager(
             state = pagerState,
             mediaItems = mediaItems,
             onMediaClick = onMediaClick,
             onSaveIconClicked = onSaveIconClicked
         )
+
         NovixCarouselDots(
             totalDots = mediaItems.size,
             selectedIndex = pagerState.currentPage,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            onDotClick = {})
+            onDotClick = { index ->
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(
+                        page = index,
+                        animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing)
+                    )
+                }
+            }
+        )
     }
 }
 
 @Composable
 private fun RatingChip(
-    rating: String, modifier: Modifier = Modifier
+    rating: String,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -111,12 +130,11 @@ private fun RatingChip(
             colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
         )
         BasicText(
-            text = rating, style = Theme.textStyle.label.small.copy(color = Theme.colors.onPrimary)
+            text = rating,
+            style = Theme.textStyle.label.small.copy(color = Theme.colors.onPrimary)
         )
-
     }
 }
-
 
 @SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
@@ -136,8 +154,7 @@ private fun PopularMediaSectionPager(
 
     val horizontalContentPadding = ((screenWidth - focusedWidth) / 2)
     val pageSpacing = (-12).dp
-    val layoutDirection = LocalLayoutDirection.current
-    val isRtl = layoutDirection == LayoutDirection.Rtl
+    val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
     HorizontalPager(
         state = state,
@@ -146,47 +163,36 @@ private fun PopularMediaSectionPager(
         modifier = modifier.fillMaxWidth(),
     ) { page ->
         val pageOffset =
-            ((state.currentPage - page) + state.currentPageOffsetFraction).absoluteValue.coerceIn(
-                0f, 1f
-            )
+            ((state.currentPage - page) + state.currentPageOffsetFraction)
+                .absoluteValue
+                .coerceIn(0f, 1f)
 
         val animatedWidth by animateDpAsState(
             targetValue = lerp(unfocusedWidth, focusedWidth, 1f - pageOffset),
-            label = "animatedWidth"
+            label = "pagerWidth"
         )
         val animatedHeight by animateDpAsState(
             targetValue = lerp(unfocusedHeight, focusedHeight, 1f - pageOffset),
-            label = "animatedHeight"
+            label = "pagerHeight"
         )
-
-
         val rotation by animateFloatAsState(
             targetValue = when {
                 page == state.currentPage -> 0f
-                page < state.currentPage -> if (isRtl) 3f else -3f
-                else -> if (isRtl) -3f else 3f
+                page < state.currentPage  -> if (isRtl) 3f else -3f
+                else                      -> if (isRtl) -3f else 3f
             },
-            label = "rotation"
+            label = "pagerRotation"
+        )
+        val overLayHeight by animateDpAsState(
+            targetValue = if (page == state.currentPage)
+                focusedHeight / 2
+            else
+                unfocusedHeight,
+            label = "overlayHeight"
         )
 
-        val overLayAnimatedBackgroundHeight by animateDpAsState(
-            targetValue = if (page == state.currentPage) focusedHeight / 2 else unfocusedHeight,
-            label = "overLayAnimatedBackgroundHeight",
-
-            )
-
-        LaunchedEffect(Unit) {
-            if (mediaItems.size > 1) {
-                while (currentCoroutineContext().isActive) {
-                    delay(4000)
-                    val nextPage = if (state.currentPage < mediaItems.size - 1) {
-                        state.currentPage + 1
-                    } else 0
-                    state.animateScroll(nextPage)
-                }
-            }
-        }
         val item = mediaItems[page]
+
         Box(
             modifier = Modifier
                 .width(focusedWidth)
@@ -201,28 +207,26 @@ private fun PopularMediaSectionPager(
                         rotationZ = rotation
                         clip = true
                         shape = RoundedCornerShape(12.dp)
-                    }, contentAlignment = Alignment.BottomCenter
+                    },
+                contentAlignment = Alignment.BottomCenter
             ) {
                 MediaPosterCard(
                     width = animatedWidth,
                     height = animatedHeight,
-                    ratio = animatedWidth / animatedHeight,
-                    onCardClick = {
-                        onMediaClick(item)
-                    },
+                    ratio  = animatedWidth / animatedHeight,
+                    onCardClick = { onMediaClick(item) },
                     topLeftContent = {
                         if (page == state.currentPage) {
                             SaveIconChip(
-                                isSaved = false, onClick = {
-                                    onSaveIconClicked(item)
-                                })
+                                isSaved = false,
+                                onClick = { onSaveIconClicked(item) }
+                            )
                         }
                     },
                     posterImage = {
                         RemoteBlurredHaramImageViewer(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
-                            blurRadius = 150,
                             haramThreshold = 0.2f,
                             nonHaramThreshold = 0.7f,
                             placeholderContent = {
@@ -231,29 +235,27 @@ private fun PopularMediaSectionPager(
                             errorContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
-                            contentDescription = mediaItems[page].title,
+                            contentDescription = item.title,
                         ) {
                             OnBlurContent(
                                 hintText = stringResource(R.string.unsuitable_image),
                                 textStyle = Theme.textStyle.body.small.copy(
-                                    color = Color(
-                                        0x99FFFFFF
-                                    )
+                                    color = Color(0x99FFFFFF)
                                 ),
                                 iconSize = 24.dp,
-                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                icon = painterResource(
+                                    com.sanaa.designsystem.R.drawable.icon_eye_slash
+                                ),
                             )
                         }
-                    })
+                    }
+                )
+
                 Column(
                     modifier = Modifier
-                        .clip(
-                            RoundedCornerShape(
-                                bottomStart = 12.dp, bottomEnd = 12.dp
-                            )
-                        )
+                        .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
                         .fillMaxWidth()
-                        .height(overLayAnimatedBackgroundHeight)
+                        .height(overLayHeight)
                         .align(Alignment.BottomCenter)
                         .background(brush = overLayGradientColor),
                     verticalArrangement = Arrangement.Bottom,
@@ -274,33 +276,21 @@ private fun PopularMediaSectionPager(
                                 text = item.title,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 2,
-                                style = Theme.textStyle.label.medium.copy(color = Theme.colors.onPrimary)
+                                style = Theme.textStyle.label.medium
+                                    .copy(color = Theme.colors.onPrimary)
                             )
-                            RatingChip(
-                                rating = item.rating.toString()
-                            )
+                            RatingChip(rating = item.rating.toString())
                         }
                     }
                 }
             }
-
         }
     }
 }
 
-suspend fun PagerState.animateScroll(page: Int) {
-    animateScrollToPage(
-        page = page,
-        animationSpec = tween(
-            durationMillis = 600,
-            easing = FastOutSlowInEasing
-        )
-    )
-}
-
 @PreviewLightDark
 @Composable
-fun PopularMediaSectionPreview(modifier: Modifier = Modifier) {
+fun PopularMediaSectionPreview() {
     NovixTheme(isSystemInDarkTheme()) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -309,8 +299,8 @@ fun PopularMediaSectionPreview(modifier: Modifier = Modifier) {
             PopularMediaSection(
                 mediaItems = demoMediaList,
                 onMediaClick = {},
-                onSaveIconClicked = {})
+                onSaveIconClicked = {}
+            )
         }
     }
-
 }

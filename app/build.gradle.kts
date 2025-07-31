@@ -103,7 +103,6 @@ dependencies {
 
     implementation(libs.coil.compose)
     implementation(libs.androidx.navigation.compose)
-    implementation(libs.cloudy)
     implementation(libs.tensorflow.lite.task.vision)
 
     implementation(libs.kotlinx.serialization.json)

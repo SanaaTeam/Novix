@@ -4,6 +4,7 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
@@ -34,6 +35,15 @@ interface RemoteTvShowDataSource {
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun fetchTrendingTvShows(page: Int, genreId: Int?): List<TvShowDto>
+    suspend fun sendTvSeriesRate(seriesId: Int, sessionId: String, rating: Float): RatingResponse
+    suspend fun sendTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        sessionId: String,
+        rating: Float
+    ): RatingResponse
+
     suspend fun fetchWatchlistTvShows(
         page: Int,
         accountId: String,

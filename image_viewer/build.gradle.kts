@@ -7,7 +7,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    api(libs.coil.compose)
-    implementation(libs.cloudy)
+    implementation(libs.coil.compose)
     implementation(libs.tensorflow.lite.task.vision)
 }

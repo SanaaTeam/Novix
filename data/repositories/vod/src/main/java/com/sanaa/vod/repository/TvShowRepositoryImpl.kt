@@ -1,5 +1,6 @@
 package com.sanaa.vod.repository
 
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
@@ -11,10 +12,12 @@ import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
+import kotlinx.coroutines.flow.first
 import repository.TvSeriesRepository
 
 class TvShowRepositoryImpl(
-    private val remoteDataSource: RemoteTvShowDataSource
+    private val remoteDataSource: RemoteTvShowDataSource,
+    private val preferences: PreferencesManager
 ) : TvSeriesRepository {
 
     override suspend fun getTvSeriesDetails(id: Int): TvSeries = safeCall("Tv Series not found") {
@@ -72,7 +75,7 @@ class TvShowRepositoryImpl(
 
     override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries TopRated") {
-            remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
+            remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
         }
 
     override suspend fun getWatchlistTvShows(
@@ -88,7 +91,7 @@ class TvShowRepositoryImpl(
 
     override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries Trending") {
-            remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
+            remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
         }
 
     override suspend fun getPopularSeries(page: Int): List<TvSeries> =
@@ -99,6 +102,35 @@ class TvShowRepositoryImpl(
     override suspend fun getSeriesGenres(): List<Genre> {
         return safeCall("Genres not found") {
             remoteDataSource.getTvShowGenres().map { it.toEntity() }
+        }
+    }
+
+    override suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
+        return safeCall("Failed to add TV series rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.sendTvSeriesRate(
+                seriesId = seriesId,
+                sessionId = sessionId,
+                rating = rating
+            ).isSuccess
+        }
+    }
+
+    override suspend fun addTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        rating: Float
+    ): Boolean {
+        return safeCall("Failed to add TV episode rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.sendTvEpisodeRate(
+                seriesId = seriesId,
+                seasonNumber = seasonNumber,
+                episodeNumber = episodeNumber,
+                sessionId = sessionId,
+                rating = rating
+            ).isSuccess
         }
     }
 }

@@ -3,10 +3,8 @@ package com.sanaa.presentation.screen.login.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,8 +19,8 @@ fun SignupFooter(onCreateAccount: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 22.dp),
-        horizontalArrangement = Arrangement.Center,
+            .padding(bottom = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
@@ -30,7 +28,6 @@ fun SignupFooter(onCreateAccount: () -> Unit) {
             style = Theme.textStyle.body.small,
             color = Theme.colors.body
         )
-        Spacer(Modifier.width(4.dp))
         Text(
             text = stringResource(R.string.create_account),
             style = Theme.textStyle.label.medium,

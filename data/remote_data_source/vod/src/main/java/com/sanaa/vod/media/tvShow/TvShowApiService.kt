@@ -1,10 +1,13 @@
 package com.sanaa.vod.media.tvShow
 
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.media.actor.response.PaginatedResponse
+import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.media.movie.response.MovieApiResponse
+import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
 import com.sanaa.vod.media.tvShow.response.TvShowGenresResponse
@@ -12,9 +15,11 @@ import com.sanaa.vod.media.tvShow.response.TvShowGuestOfStarsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
 import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -63,10 +68,7 @@ interface TvShowApiService {
     suspend fun fetchTvShowsVideos(@Path("tv_id") id: Int): TvShowVideosResponse
 
     @GET("tv/{tv_id}/reviews")
-    suspend fun fetchTvShowsReviews(
-        @Path("tv_id") id: Int,
-        @Query("page") page: Int
-    ): TvShowReviewsResponse
+    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int, @Query("page") page: Int): TvShowReviewsResponse
 
     @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse
@@ -95,8 +97,25 @@ interface TvShowApiService {
         @Query("with_genres") withGenres: String? = null,
         @Query("include_adult") includeAdult: Boolean = false,
         @Query("sort_by") sortBy: String = "vote_average.desc",
-        @Query("vote_count.gte") voteCountGte: Int = 100,
+        @Query("vote_count.gte") voteCountGte: Int = 300,
     ): MovieApiResponse<TvShowDto>
+
+    @POST("tv/{series_id}/rating")
+    suspend fun rateTvSeries(
+        @Path("series_id") seriesId: Int,
+        @Query("session_id") sessionId: String,
+        @Body rating: TvShowRateRequest
+    ): RatingResponse
+
+    @POST("tv/{series_id}/season/{season_number}/episode/{episode_number}/rating")
+    suspend fun rateTvEpisode(
+        @Path("series_id") seriesId: Int,
+        @Path("season_number") seasonNumber: Int,
+        @Path("episode_number") episodeNumber: Int,
+        @Query("session_id") sessionId: String,
+        @Body rating: TvShowRateRequest
+    ): RatingResponse
+
 
     @GET("account/{account_id}/watchlist/tv")
     @Headers(

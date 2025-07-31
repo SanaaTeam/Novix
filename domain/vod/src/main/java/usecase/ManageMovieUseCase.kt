@@ -74,6 +74,10 @@ class ManageMovieUseCase(
         return movieRepo.getMovieGenres()
     }
 
+    suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
+        return movieRepo.addMovieRate(movieId = movieId, rating = rating)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }

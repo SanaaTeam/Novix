@@ -45,7 +45,6 @@ lifecycleViewmodelCompose = "2.8.3"
 material3 = "1.3.2"
 material3AdaptiveNavigationSuite = "1.4.0-alpha17"
 timber = "5.0.1"
-cloudy = "0.2.3"
 coilCompose = "2.6.0"
 tensorflowLiteTaskVision = "0.4.0"
 kover = "0.9.1"
@@ -107,7 +106,6 @@ kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-seri
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 # Compose Related
-cloudy = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 
 

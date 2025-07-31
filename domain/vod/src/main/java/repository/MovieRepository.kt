@@ -31,4 +31,5 @@ interface MovieRepository {
     )
 
     suspend fun getMovieGenres(): List<Genre>
+    suspend fun addMovieRate(movieId: Int, rating: Float): Boolean
 }
