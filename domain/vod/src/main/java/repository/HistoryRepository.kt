@@ -1,10 +1,10 @@
 package repository
 
-import entity.MediaType
+import entity.MediaHistoryItem
 import kotlinx.coroutines.flow.Flow
-import usecase.history.ManageWatchedMediaHistoryUseCase.MediaHistoryItem
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.search.search_param.MediaType
 
 interface HistoryRepository {
     suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>>

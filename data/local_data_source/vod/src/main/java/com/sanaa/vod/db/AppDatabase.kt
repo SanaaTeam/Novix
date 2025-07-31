@@ -2,8 +2,9 @@ package com.sanaa.vod.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.sanaa.vod.continueWatch.dao.WatchedMediaHistoryDao
+import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
-import com.sanaa.vod.dataSource.local.continueWatch.dto.ContinueWatchingLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
@@ -13,7 +14,6 @@ import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.search.search_history.dao.QueryDao
 import com.sanaa.vod.search.search_history.dao.RecentViewedDao
 import com.sanaa.vod.search.search_result.dao.ActorDao
-import com.sanaa.vod.continueWatch.dao.ContinueWatchingDao
 import com.sanaa.vod.search.search_result.dao.MovieDao
 import com.sanaa.vod.search.search_result.dao.SearchDao
 import com.sanaa.vod.search.search_result.dao.SearchResultDao
@@ -28,7 +28,8 @@ import com.sanaa.vod.search.search_result.dao.SeriesDao
         ActorLocalDto::class,
         QueryLocalDto::class,
         RecentViewedLocalDto::class,
-        ContinueWatchingLocalDto::class
+        WatchedMediaHistoryLocalDto::class,
+
     ],
     version = 1,
     exportSchema = false
@@ -41,5 +42,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun actorDao(): ActorDao
     abstract fun queryDao(): QueryDao
     abstract fun recentViewedDao(): RecentViewedDao
-    abstract fun continueWatchingDao(): ContinueWatchingDao
-} 
+    abstract fun watchedMediaHistoryDao(): WatchedMediaHistoryDao
+}

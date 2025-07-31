@@ -1,5 +1,6 @@
 package com.sanaa.vod.dataSource.local.search
 
+import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import kotlinx.coroutines.flow.Flow
@@ -12,4 +13,6 @@ interface LocalSearchHistoryDataSource {
     fun getAllRecentViewed(limit: Int): Flow<List<RecentViewedLocalDto>>
     suspend fun deleteAllRecentViewed()
     suspend fun deleteAllQueries()
+    suspend fun addWatchedMedia(item: WatchedMediaHistoryLocalDto)
+    suspend fun getWatchedMedia(mediaType: String?, genreId: Int?): List<WatchedMediaHistoryLocalDto>
 }

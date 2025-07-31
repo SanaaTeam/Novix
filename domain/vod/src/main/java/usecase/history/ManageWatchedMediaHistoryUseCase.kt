@@ -1,8 +1,8 @@
 package usecase.history
 
-import entity.Genre
-import entity.MediaType
+import entity.MediaHistoryItem
 import repository.HistoryRepository
+import usecase.search.search_param.MediaType
 
 class ManageWatchedMediaHistoryUseCase(
     private val repository: HistoryRepository
@@ -18,10 +18,4 @@ class ManageWatchedMediaHistoryUseCase(
         repository.addWatchedMediaHistory(mediaHistoryItem)
     }
 
-    data class MediaHistoryItem(
-        val id: Int,
-        val posterImageUrl: String,
-        val mediaType: MediaType,
-        val genres: List<Genre>
-    )
 }
