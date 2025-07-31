@@ -19,4 +19,7 @@ data class MovieDetailsUiState(
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
-)
+){
+    val hasUserSelectedRate: Boolean
+        get() =  imdbRating > 0
+}

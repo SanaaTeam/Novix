@@ -241,6 +241,7 @@ fun SeriesScreenContent(
         }
         if (state.showRateBottomSheet) {
             RateBottomSheet(
+                isRateSelected = state.hasUserSelectedRate,
                 imdbRating = state.imdbRating,
                 onDismiss = interactionListener::onDismissRateBottomSheet,
                 isVisible =state.showRateBottomSheet,
