@@ -341,12 +341,14 @@ class SearchViewModel(
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE, enablePlaceholders = false
-            ), pagingSourceFactory = pagingSourceFactory
+                pageSize = PAGE_SIZE, 
+                enablePlaceholders = false,
+                prefetchDistance = 4
+            ), 
+            pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
             pagingData.map(mapper)
         }.cachedIn(viewModelScope)
-
     }
 
     private fun setLoadingState() {
@@ -355,6 +357,10 @@ class SearchViewModel(
 
     private fun setSuccessState() {
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
+    }
+
+    private fun setErrorState(error: String) {
+        updateState { it.copy(isLoading = false, error = error, noInternetConnection = false) }
     }
 
     companion object {
