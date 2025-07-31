@@ -96,7 +96,6 @@ fun MixedMediaSection(
                         RemoteBlurredHaramImageViewer(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
-                            blurRadius = 150,
                             haramThreshold = 0.2f,
                             nonHaramThreshold = 0.7f,
                             placeholderContent = {
