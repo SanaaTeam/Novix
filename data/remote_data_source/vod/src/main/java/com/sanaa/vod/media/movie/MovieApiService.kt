@@ -97,4 +97,9 @@ interface MovieApiService {
         @Body rating: MovieRateRequest
     ): RatingResponse
 
+    @GET("account/{account_id}/rated/movies")
+    suspend fun getMovieRate(
+        @Path("account_id") accountId: Int,
+        @Query("session_id") sessionId: String,
+    ): MovieApiResponse<MovieDto>
 }
