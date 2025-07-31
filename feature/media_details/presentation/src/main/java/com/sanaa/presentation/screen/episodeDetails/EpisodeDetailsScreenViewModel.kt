@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.episodeDetails
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ class EpisodeDetailsScreenViewModel(
     private val seriesId: Int,
     private val seasonNumber: Int,
     private val episodeNumber: Int,
-    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -142,15 +143,20 @@ class EpisodeDetailsScreenViewModel(
     }
 
     private suspend fun addRate() {
-        manageEpisodeDetails.addTvEpisodeRate(
+        val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
             seriesId = seriesId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
+        if (isSendRateSuccess == 1) {
+            emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
+        } else {
+            emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
+        }
     }
 
-    private suspend fun getUserState(){
+    private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }

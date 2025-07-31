@@ -22,3 +22,8 @@ data class EpisodeDetailsScreenUiState(
     val hasUserSelectedRate: Boolean
         get() =  imdbRating > 0
 }
+
+data class EpisodeSnackData(
+    val message: String,
+    val isError: Boolean
+)

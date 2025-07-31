@@ -13,6 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +38,7 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -52,9 +57,12 @@ fun EpisodeDetailsScreen(
         )
     }),
 ) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+    var snack by remember { mutableStateOf<EpisodeSnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -74,6 +82,14 @@ fun EpisodeDetailsScreen(
                     context.startActivity(intent)
                 }
 
+                is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
+                    snack = EpisodeSnackData(message = submitRatingSuccessMsg, isError = false)
+                }
+
+                is EpisodeDetailsEffects.ShowErrorSnackBar -> {
+                    snack = EpisodeSnackData(submitRatingFailedMsg, isError = true)
+                }
+
                 EpisodeDetailsEffects.NavigateToLogin -> {
                     // Launch authentication activity
                     val intent =
@@ -84,10 +100,16 @@ fun EpisodeDetailsScreen(
             }
         }
     }
+    Box {
+        EpisodeDetailsScreenContent(
+            interactionListener = viewModel, state = state.value
+        )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 
-    EpisodeDetailsScreenContent(
-        interactionListener = viewModel, state = state.value
-    )
 
 }
 
