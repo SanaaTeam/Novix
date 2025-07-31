@@ -58,10 +58,6 @@ class MovieDetailsViewModel(
         }
 
     }
-    private suspend fun getUserState(){
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
-    }
 
     override fun onDismissLoginBottomSheet() {
         updateState { it.copy(showLoginBottomSheet = false) }
@@ -187,5 +183,10 @@ class MovieDetailsViewModel(
             movieId = movieId,
             rating = state.value.imdbRating.toFloat()
         )
+    }
+
+    private suspend fun getUserState(){
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 }

@@ -182,4 +182,8 @@ class SeriesViewModel(
             rating = state.value.imdbRating.toFloat()
         )
     }
+    private suspend fun getUserState(){
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
 }

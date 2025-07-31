@@ -6,6 +6,7 @@ import com.sanaa.presentation.model.toEpisodeUiModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
 
@@ -13,6 +14,7 @@ class EpisodeDetailsScreenViewModel(
     private val seriesId: Int,
     private val seasonNumber: Int,
     private val episodeNumber: Int,
+    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -56,7 +58,11 @@ class EpisodeDetailsScreenViewModel(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showRateBottomSheet = true) }
+        if (state.value.isUserLoggedIn) {
+            updateState { it.copy(showRateBottomSheet = true) }
+        } else {
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
     }
 
     override fun onRetryLoadDetails() {
@@ -86,7 +92,8 @@ class EpisodeDetailsScreenViewModel(
         )
         updateState {
             it.copy(showRateBottomSheet = false)
-        }    }
+        }
+    }
 
     private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
@@ -140,5 +147,10 @@ class EpisodeDetailsScreenViewModel(
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
+    }
+
+    private suspend fun getUserState(){
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 }
