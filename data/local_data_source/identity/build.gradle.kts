@@ -41,10 +41,6 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.protobuf.javalite)
 
-    // Koin dependencies
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
-
     implementation(libs.slf4j.api)
 
     implementation(libs.hilt.android)
