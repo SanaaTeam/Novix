@@ -17,10 +17,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
-import com.skydoves.cloudy.cloudy
+import com.sanaa.image_viewer.modifier.blurry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * A composable executes an [ImageRequest] asynchronously and
@@ -47,38 +51,50 @@ fun RemoteBlurredHaramImageViewer(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    blurRadius: Int = 20,
+    blurRadius: Dp = 10.dp,
     isBlurEnabled: Boolean = true,
     placeholderContent: @Composable () -> Unit = {},
     errorContent: @Composable () -> Unit = {},
     onSuccess: (() -> Unit)? = null,
     onError: (() -> Unit)? = null,
-    @FloatRange(from = 0.0, to = 1.0) haramThreshold: Float = 0.5f,
-    @FloatRange(from = 0.0, to = 1.0) nonHaramThreshold: Float = 0.5f,
+    @FloatRange(from = 0.0, to = 1.0) haramThreshold: Float = 0.2f,
+    @FloatRange(from = 0.0, to = 1.0) nonHaramThreshold: Float = 0.7f,
     onBlurContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
     val classifier = remember { TfLiteImageClassifier(context) }
 
     var bitmapToDisplay by remember { mutableStateOf<Bitmap?>(null) }
-    var isHaram by rememberSaveable { mutableStateOf(isBlurEnabled) }
+    var isHaram by rememberSaveable { mutableStateOf(false) }
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
 
     LaunchedEffect(imageUrl) {
-        val loader = ImageLoader(context)
-        val request = ImageRequest.Builder(context)
-            .data(imageUrl)
-            .allowHardware(false) // Required to get Bitmap from Drawable
-            .build()
+        requestState = RequestState.LOADING
 
-        val result = runCatching { loader.execute(request) }
-        result.onSuccess { success ->
-            val bitmap = (success.drawable as? BitmapDrawable)?.bitmap
-            if (bitmap != null) {
-                if (isBlurEnabled)
-                    isHaram =
-                        classifier.isInappropriateImage(bitmap, nonHaramThreshold, haramThreshold)
-                bitmapToDisplay = bitmap
+        val result = runCatching {
+            withContext(Dispatchers.IO) {
+                val loader = ImageLoader(context)
+                val request = ImageRequest.Builder(context)
+                    .data(imageUrl)
+                    .allowHardware(false) // Required to get Bitmap from Drawable
+                    .build()
+                val response = loader.execute(request)
+                val bitmap = (response.drawable as? BitmapDrawable)?.bitmap
+                if (bitmap != null) {
+                    val classificationResult = classifier.isInappropriateImage(
+                        bitmap,
+                        nonHaramThreshold,
+                        haramThreshold
+                    )
+                    Pair(bitmap, classificationResult)
+                } else null
+            }
+        }
+
+        result.onSuccess { pair ->
+            if (pair != null) {
+                bitmapToDisplay = pair.first
+                isHaram = pair.second
                 requestState = RequestState.SUCCESS
                 onSuccess?.invoke()
             } else {
@@ -90,28 +106,30 @@ fun RemoteBlurredHaramImageViewer(
             onError?.invoke()
         }
     }
-    Box(modifier = modifier) {
-        when (requestState) {
-            RequestState.LOADING -> {
-                placeholderContent()
-            }
 
+    Box(modifier = modifier.fillMaxSize()) {
+        when (requestState) {
+            RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
-                bitmapToDisplay?.let {
+                bitmapToDisplay?.let { bmp ->
                     Image(
-                        bitmap = it.asImageBitmap(),
-                        contentDescription = null,
+                        bitmap = bmp.asImageBitmap(),
+                        contentDescription = contentDescription,
                         modifier = Modifier
                             .fillMaxSize()
-                            .cloudy(radius = blurRadius, enabled = isHaram),
-                        contentScale = ContentScale.Crop,
+                            .blurry(
+                                isBlurForced = false,
+                                isImageSafe = !isHaram,
+                                blurRadius = blurRadius,
+                                isBlurEnabled = isBlurEnabled,
+                                bitmap = bmp
+                            ),
+                        contentScale = ContentScale.Crop
                     )
                 }
             }
 
-            RequestState.ERROR -> {
-                errorContent()
-            }
+            RequestState.ERROR -> errorContent()
         }
 
         if (requestState == RequestState.SUCCESS && isHaram && isBlurEnabled) {
