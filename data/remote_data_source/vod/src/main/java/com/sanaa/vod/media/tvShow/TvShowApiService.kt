@@ -74,7 +74,7 @@ interface TvShowApiService {
         @Query("page") page: Int
     ): MovieApiResponse<TvShowDto>
 
-    @GET("trending/tv/week")
+    @GET("discover/tv")
     suspend fun fetchTrendingTvShows(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
@@ -84,7 +84,7 @@ interface TvShowApiService {
         @Query("release_date.lte") maxDate: String? = null,
     ): MovieApiResponse<TvShowDto>
 
-    @GET("tv/top_rated")
+    @GET("discover/tv")
     suspend fun fetchTopRatingTvShows(
         @Query("page") page: Int,
         @Query("with_genres") withGenres: String? = null,
