@@ -58,6 +58,7 @@ import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -320,7 +321,15 @@ fun MovieDetailsContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
-
+            if (state.showRateBottomSheet) {
+                RateBottomSheet(
+                    imdbRating = state.imdbRating,
+                    onDismiss = interactionListener::onDismissRateBottomSheet,
+                    isVisible =state.showRateBottomSheet,
+                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                    onRatingChanged = interactionListener::onRatingChanged
+                )
+            }
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
