@@ -141,6 +141,7 @@ fun HomeScreenContent(
                 onGenreClick = interactionListener::onMovieGenreClick,
                 onSaveIconClick = interactionListener::onSaveIconClick,
                 onMovieClick = interactionListener::onMediaClick,
+                isLoading = state.isLoading
             )
         }
     }

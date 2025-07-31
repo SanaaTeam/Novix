@@ -11,6 +11,7 @@ import entity.Movie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -131,13 +132,12 @@ class HomeScreenViewModel(
     private fun fetchUpcomingMovies(
         genreId: Int? = null
     ) {
-        tryToExecute(
+        tryToCollect(
             callee = { loadUpcomingMovies(genreId) },
-            onSuccess = { mediaList ->
+            onCollect = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoadingUpcoming = false,
-                        upcomingMovies = mediaList
+                        upcomingMovies = flowOf(mediaList),
                     )
                 }
             },
@@ -145,7 +145,6 @@ class HomeScreenViewModel(
                 updateState {
                     it.copy(
                         errorMessage = exception.message,
-                        isLoadingUpcoming = false
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.celebritiesScreen
 
+import android.util.Log
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -69,6 +70,10 @@ class CelebritiesViewModel(
                 error = e.message
             )
         }
+    }
+
+    override fun onRetryClick() {
+        loadActors()
     }
 
     private fun createActorsPagingSource(): PagingSource<Int, Actor> {
