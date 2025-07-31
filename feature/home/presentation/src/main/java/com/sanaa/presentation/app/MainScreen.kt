@@ -5,14 +5,15 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
@@ -26,13 +27,23 @@ import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
+import com.sanaa.presentation.screen.homeScreen.HomeScreen
+import com.sanaa.presentation.util.HomeApiEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
-fun MainScreen(
-    homeFeatureApi: HomeFeatureApi,
-    searchFeatureApi: SearchFeatureApi,
-) {
+fun MainScreen() {
+
     val navController = rememberNavController()
+    val appContext = LocalContext.current.applicationContext
+
+    val searchFeatureApi: SearchFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .searchApi()
+    }
+
+
     CompositionLocalProvider(LocalMainNavController provides navController) {
         NovixTheme(isSystemInDarkTheme()) {
             NovixScaffold(
@@ -48,7 +59,7 @@ fun MainScreen(
                     modifier = Modifier
                 ) {
                     composable<HomeScreenRoute> {
-                        homeFeatureApi.HomeScreenApi()
+                        HomeScreen()
                     }
                     composable<SearchScreenRoute> {
                         searchFeatureApi.SearchScreenApi()

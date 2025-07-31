@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,17 +31,25 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
+import com.sanaa.presentation.util.HomeApiEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun CelebritiesScreen(
-    viewModel: CelebritiesViewModel = hiltViewModel(),
-    mediaDetailsApi: MediaDetailsApi
+    viewModel: CelebritiesViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-
     val navController = LocalAppNavController.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -48,7 +58,7 @@ fun CelebritiesScreen(
                 }
 
                 is CelebritiesScreenEffects.NavigateToActorDetails -> {
-                    mediaDetailsApi.launch(
+                    detailsApi.launch(
                         context = navController.context,
                         id = effect.actorId,
                         startRoute = StartRoute.ACTOR
