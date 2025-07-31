@@ -7,7 +7,6 @@ import com.sanaa.vod.dataSource.local.search.dto.SearchLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.SearchResultLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.fake.FakeData
-import com.sanaa.vod.fake.FakeData.currentTimestamp
 import com.sanaa.vod.fake.FakeData.movieList
 import com.sanaa.vod.search.search_result.LocalCachedSearchDataSourceImpl
 import com.sanaa.vod.search.search_result.dao.ActorDao
@@ -199,7 +198,7 @@ class LocalSearchDataSourceImplTest {
             searchDao.getSearchByQueryAndLanguage(query, "en")
         } returns SearchLocalDto(1, query, "en", FakeData.currentTimestamp)
         coEvery {
-            movieDao.getFilteredMovies(any(), any(), any())
+            movieDao.getPagedMoviesByIds(any(), any(), any())
         } returns movieList
         coEvery {
             searchResultDao.getByQueryAndLanguage(query, any(), any())
@@ -229,7 +228,7 @@ class LocalSearchDataSourceImplTest {
             searchResultDao.getByQueryAndLanguage(query, "en", "movie")
         } returns cachedResults
         coEvery { movieDao.getMovieById(movieId) } returns movie
-        coEvery { movieDao.getFilteredMovies(any(), any(), any()) } returns emptyList()
+        coEvery { movieDao.getPagedMoviesByIds(any(), any(), any()) } returns emptyList()
 
 
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, 20, 0)
@@ -237,7 +236,7 @@ class LocalSearchDataSourceImplTest {
         assertEquals(listOf(movie), result)
         coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, "en", "movie") }
         coVerify(exactly = 1) { movieDao.getMovieById(movieId) }
-        coVerify(exactly = 0) { movieDao.getFilteredMovies(any(), any(), any()) }
+        coVerify(exactly = 0) { movieDao.getPagedMoviesByIds(any(), any(), any()) }
     }
 
     @Test
@@ -249,14 +248,14 @@ class LocalSearchDataSourceImplTest {
             searchResultDao.getByQueryAndLanguage(query, any(), any())
         } returns emptyList()
 
-        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
+        coEvery { movieDao.getPagedMoviesByIds(query, limit, offset) } returns movieList
 
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
 
         assertEquals(movieList, result)
         coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
         coVerify(exactly = 0) { movieDao.getMovieById(any()) }
-        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
+        coVerify(exactly = 1) { movieDao.getPagedMoviesByIds(query, limit, offset) }
     }
 
     @Test
@@ -270,14 +269,14 @@ class LocalSearchDataSourceImplTest {
         } returns cachedResults
         coEvery { movieDao.getMovieById(any()) } returns null
 
-        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
+        coEvery { movieDao.getPagedMoviesByIds(query, limit, offset) } returns movieList
 
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
 
         assertEquals(movieList, result)
         coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
         coVerify(atLeast = 1) { movieDao.getMovieById(any()) }
-        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
+        coVerify(exactly = 1) { movieDao.getPagedMoviesByIds(query, limit, offset) }
     }
 
     @Test
@@ -299,7 +298,7 @@ class LocalSearchDataSourceImplTest {
                 query, "en", "tv_series"
             )
         } returns cachedResults
-        coEvery { seriesDao.getFilteredSeries("123", 20, 0) } returns series
+        coEvery { seriesDao.getPagedTvSeriesByIds("123", 20, 0) } returns series
 
         val result = localCachedSearchDataSourceImpl.getTvSeriesByQuery(query, 20, 0)
 
@@ -440,7 +439,7 @@ class LocalSearchDataSourceImplTest {
         val offset = 20
 
         coEvery { searchResultDao.getByQueryAndLanguage(query, any(), any()) } returns emptyList()
-        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns movieList
+        coEvery { movieDao.getPagedMoviesByIds(query, limit, offset) } returns movieList
 
         // When
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
@@ -449,7 +448,7 @@ class LocalSearchDataSourceImplTest {
         assertEquals(movieList, result)
         coVerify(exactly = 1) { searchResultDao.getByQueryAndLanguage(query, any(), any()) }
         coVerify(exactly = 0) { movieDao.getMovieById(any()) }
-        coVerify(exactly = 1) { movieDao.getFilteredMovies(query, limit, offset) }
+        coVerify(exactly = 1) { movieDao.getPagedMoviesByIds(query, limit, offset) }
     }
 
     @Test
@@ -459,7 +458,7 @@ class LocalSearchDataSourceImplTest {
         val limit = 20
         val offset = 0
 
-        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns emptyList()
+        coEvery { movieDao.getPagedMoviesByIds(query, limit, offset) } returns emptyList()
 
         // When
         val result = localCachedSearchDataSourceImpl.getMoviesByQuery(query, limit, offset)
@@ -496,14 +495,14 @@ class LocalSearchDataSourceImplTest {
             )
         )
 
-        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns expectedSeries
+        coEvery { seriesDao.getPagedTvSeriesByIds(query, limit, offset) } returns expectedSeries
 
         // When
         val result = localCachedSearchDataSourceImpl.getTvSeriesByQuery(query, limit, offset)
 
         // Then
         assertEquals(expectedSeries, result)
-        coVerify { seriesDao.getFilteredSeries(query, limit, offset) }
+        coVerify { seriesDao.getPagedTvSeriesByIds(query, limit, offset) }
     }
 
     @Test
@@ -513,14 +512,14 @@ class LocalSearchDataSourceImplTest {
         val limit = 20
         val offset = 0
 
-        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns emptyList()
+        coEvery { seriesDao.getPagedTvSeriesByIds(query, limit, offset) } returns emptyList()
 
         // When
         val result = localCachedSearchDataSourceImpl.getTvSeriesByQuery(query, limit, offset)
 
         // Then
         assertTrue(result.isEmpty())
-        coVerify { seriesDao.getFilteredSeries(query, limit, offset) }
+        coVerify { seriesDao.getPagedTvSeriesByIds(query, limit, offset) }
     }
 
     @Test
@@ -531,8 +530,8 @@ class LocalSearchDataSourceImplTest {
         val offset = 0
 
         coEvery { actorDao.getPagedActorsByQuery(query, limit, offset) } returns emptyList()
-        coEvery { movieDao.getFilteredMovies(query, limit, offset) } returns emptyList()
-        coEvery { seriesDao.getFilteredSeries(query, limit, offset) } returns emptyList()
+        coEvery { movieDao.getPagedMoviesByIds(query, limit, offset) } returns emptyList()
+        coEvery { seriesDao.getPagedTvSeriesByIds(query, limit, offset) } returns emptyList()
 
         // When
         val actorsResult =

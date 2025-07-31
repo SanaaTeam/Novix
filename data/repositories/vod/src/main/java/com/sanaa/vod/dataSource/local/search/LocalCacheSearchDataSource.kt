@@ -15,9 +15,9 @@ interface LocalCacheSearchDataSource {
     suspend fun cacheTvSeries(tvSeriesLocalDto: TvSeriesLocalDto)
 
     suspend fun getActorsByQuery(query: String): List<ActorLocalDto>
-    suspend fun getMoviesByQuery(query: String, limit: Int, offset: Int): Pair<Int, List<MovieLocalDto>>
-    suspend fun getTvSeriesByQuery(query: String, limit: Int, offset: Int): Pair<Int, List<TvSeriesLocalDto>>
+    suspend fun getMoviesByQuery(query: String, limit: Int, offset: Int): List<MovieLocalDto>
+    suspend fun getTvSeriesByQuery(query: String, limit: Int, offset: Int): List<TvSeriesLocalDto>
 
     suspend fun clearExpiredCache(expirationTime: Long)
-    suspend fun getPagedActorsByQuery(query: String, limit: Int, offset: Int): Pair<Int, List<ActorLocalDto>>
+    suspend fun getPagedActorsByQuery(query: String, limit: Int, offset: Int): List<ActorLocalDto>
 }

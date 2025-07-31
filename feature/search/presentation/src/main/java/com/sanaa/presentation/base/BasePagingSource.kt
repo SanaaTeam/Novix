@@ -33,7 +33,8 @@ class BasePagingSource<T : Any>(
             return LoadResult.Page(
                 data = accumulatedItems,
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page.minus(1),
-                nextKey = if (currentPage != totalPageNumber && accumulatedItems.size >= minItems) currentPage.plus(1) else null
+                nextKey = if (totalPageNumber != -1 || (currentPage != totalPageNumber && accumulatedItems.size >= minItems))
+                    currentPage.plus(1) else null
             )
         } catch (e: Exception) {
             return LoadResult.Error(e)

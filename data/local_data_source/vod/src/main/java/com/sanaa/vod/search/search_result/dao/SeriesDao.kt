@@ -12,20 +12,10 @@ interface SeriesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSeries(series: TvSeriesLocalDto)
 
-    @Query(
-        """
-        SELECT * FROM tv_series 
-        WHERE LOWER(title) LIKE '%' || LOWER(:query) || '%'
-        ORDER BY 
-            CASE 
-                WHEN LOWER(title) = LOWER(:query) THEN 1
-                WHEN LOWER(title) LIKE LOWER(:query) || '%' THEN 2
-                ELSE 3
-            END,
-            title ASC
-        LIMIT :limit OFFSET :offset
-        """
-    )
-    suspend fun getFilteredSeries(query: String, limit: Int, offset: Int): List<TvSeriesLocalDto>
-
+    @Query("SELECT * FROM tv_series WHERE id IN (:tvSeriesIds) LIMIT :limit OFFSET :offset")
+    suspend fun getPagedTvSeriesByIds(
+        tvSeriesIds: List<Int>,
+        limit: Int,
+        offset: Int
+    ): List<TvSeriesLocalDto>
 } 

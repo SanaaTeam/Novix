@@ -16,20 +16,11 @@ interface MovieDao {
     suspend fun getMovieById(movieId: Int): MovieLocalDto?
 
     @Query(
-        """
-        SELECT * FROM movie
-        WHERE (:query IS NULL OR LOWER(title) LIKE '%' || LOWER(:query) || '%')
-        ORDER BY
-            CASE
-                WHEN LOWER(title) = LOWER(:query) THEN 1
-                WHEN LOWER(title) LIKE LOWER(:query) || '%' THEN 2
-                ELSE 3
-            END,
-            title ASC
-        LIMIT :limit OFFSET :offset
-        """
+        " SELECT * FROM movie WHERE id IN (:moviesIds) LIMIT :limit OFFSET :offset"
     )
-    suspend fun getFilteredMovies(
-        query: String, limit: Int, offset: Int,
+    suspend fun getPagedMoviesByIds(
+        moviesIds: List<Int>,
+        limit: Int,
+        offset: Int
     ): List<MovieLocalDto>
 }

@@ -1,6 +1,5 @@
 package com.sanaa.vod.repository
 
-import android.util.Log
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
@@ -30,19 +29,24 @@ class SearchRepositoryImpl(
             val pageSize = 20
             val offset = (page - 1) * pageSize
 
-            val cachedActorsWithTotalPagesNumber =
-                localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset).also { Log.d("TAG", "searchTvShows: $it") }
-            if (cachedActorsWithTotalPagesNumber.second.isNotEmpty()) {
-                val actors = cachedActorsWithTotalPagesNumber.second.map { it.toEntity() }
+            val cachedActors =
+                localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset)
+            if (cachedActors.isNotEmpty()) {
+                val actors = cachedActors.map { it.toEntity() }
                 return SearchResult(
-                    totalPages = cachedActorsWithTotalPagesNumber.first,
+                    totalPages = -1,
                     results = actors
                 )
             } else {
                 val response = remoteDataSource.searchActors(query, page)
-                    val actors = response.results.onEach {
-                    val language = languageProvider.getCurrentLanguage()
+                val language = languageProvider.getCurrentLanguage()
+                val actors = response.results.onEach {
                     localCacheSearchDataSource.cacheActor(it.toLocalDto(language))
+                    localCacheSearchDataSource.cacheSearchResult(
+                        query = query,
+                        itemId = it.id,
+                        itemType = ACTOR_TYPE
+                    )
                 }.map { it.toEntity() }
 
                 return SearchResult(
@@ -62,12 +66,12 @@ class SearchRepositoryImpl(
 
         val cachedMedia = localCacheSearchDataSource.getMoviesByQuery(
             query, limit = pageSize, offset = offset
-        ).also { Log.d("TAG", "searchTvShows: $it") }
+        )
 
-        return if (cachedMedia.second.isNotEmpty()) {
+        return if (cachedMedia.isNotEmpty()) {
             SearchResult(
-                totalPages = cachedMedia.first,
-                results = getMoviesFromCache(filters, cachedMedia.second)
+                totalPages = -1,
+                results = getMoviesFromCache(filters, cachedMedia)
             )
         } else {
             getMoviesFromRemote(query, page, filters)
@@ -83,16 +87,14 @@ class SearchRepositoryImpl(
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
-        val cachedTvSeries = localCacheSearchDataSource.getTvSeriesByQuery(
-            query, limit = pageSize, offset = offset
-        ).also { Log.d("TAG", "searchTvShows: $it") }
-        return if (cachedTvSeries.second.isNotEmpty()){
+        val cachedTvSeries =
+            localCacheSearchDataSource.getTvSeriesByQuery(query, limit = pageSize, offset = offset)
+        return if (cachedTvSeries.isNotEmpty()) {
             SearchResult(
-                totalPages = cachedTvSeries.first,
-                results = getTvSeriesFromCache(filters, cachedTvSeries.second)
+                totalPages = -1,
+                results = getTvSeriesFromCache(filters, cachedTvSeries)
             )
-        }
-        else
+        } else
             getTvSeriesFromRemote(query, page, filters)
     }
 
@@ -103,6 +105,11 @@ class SearchRepositoryImpl(
     ): SearchResult<Movie> {
         val movies = remoteDataSource.searchMovies(query, page).results.onEach {
             localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
+            localCacheSearchDataSource.cacheSearchResult(
+                query = query,
+                itemId = it.id,
+                itemType = MOVIE_TYPE
+            )
         }
         val filteredMovies = filters?.filterMovies(movies)
 
@@ -127,9 +134,13 @@ class SearchRepositoryImpl(
         filters: MediaFilters?,
     ): SearchResult<TvSeries> {
         val tvSeries = remoteDataSource.searchTvShows(query, page).results.onEach {
-            localCacheSearchDataSource.cacheTvSeries(
-                it.toLocalDto(languageProvider.getCurrentLanguage())
+            localCacheSearchDataSource.cacheTvSeries(it.toLocalDto(languageProvider.getCurrentLanguage()))
+            localCacheSearchDataSource.cacheSearchResult(
+                query = query,
+                itemId = it.id,
+                itemType = TV_SHOW_TYPE
             )
+
         }
         val filteredTvSeries = filters
             ?.filterTvShows(tvSeries = tvSeries)
@@ -147,5 +158,11 @@ class SearchRepositoryImpl(
         return filters
             ?.filterCachedTvShows(cachedTvSeries)
             ?: return cachedTvSeries.map { it.toEntity() }
+    }
+
+    companion object {
+        const val ACTOR_TYPE = "actor"
+        const val MOVIE_TYPE = "movie"
+        const val TV_SHOW_TYPE = "tv_show"
     }
 }
