@@ -95,14 +95,14 @@ class TvShowRepositoryImpl(
         }
     }
 
-    override suspend fun addTvSeriesRate(seriesId: Int, rating: Float): String {
+    override suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Int {
         return safeCall("Failed to add TV series rate") {
             val sessionId = preferences.sessionId.first()
             remoteDataSource.sendTvSeriesRate(
                 seriesId = seriesId,
                 sessionId = sessionId,
                 rating = rating
-            ).statusMessage
+            ).statusCode
         }
     }
 
@@ -111,7 +111,7 @@ class TvShowRepositoryImpl(
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
-    ): String {
+    ): Int {
         return safeCall("Failed to add TV episode rate") {
             val sessionId = preferences.sessionId.first()
             remoteDataSource.sendTvEpisodeRate(
@@ -120,7 +120,7 @@ class TvShowRepositoryImpl(
                 episodeNumber = episodeNumber,
                 sessionId = sessionId,
                 rating = rating
-            ).statusMessage
+            ).statusCode
         }
     }
 }
