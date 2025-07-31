@@ -1,8 +1,8 @@
 package usecase
 
-import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
+import repository.TvSeriesRepository
 
 class ManageEpisodeDetailsUseCase(
     private val tvSeriesRepo: TvSeriesRepository
@@ -24,4 +24,18 @@ class ManageEpisodeDetailsUseCase(
         count: Int
     ): List<String> =
         tvSeriesRepo.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
+
+    suspend fun addTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        rating: Float
+    ): Boolean {
+        return tvSeriesRepo.addTvEpisodeRate(
+            seriesId = seriesId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            rating = rating
+        )
+    }
 }

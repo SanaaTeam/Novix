@@ -13,6 +13,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,13 +33,16 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RateBottomSheet
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -51,9 +58,12 @@ fun EpisodeDetailsScreen(
         )
     }),
 ) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -73,19 +83,34 @@ fun EpisodeDetailsScreen(
                     context.startActivity(intent)
                 }
 
+                is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
+                }
+
+                is EpisodeDetailsEffects.ShowErrorSnackBar -> {
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
+                }
+
                 EpisodeDetailsEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    val intent =
+                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
                 }
             }
         }
     }
+    Box {
+        EpisodeDetailsScreenContent(
+            interactionListener = viewModel, state = state.value
+        )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 
-    EpisodeDetailsScreenContent(
-        interactionListener = viewModel, state = state.value
-    )
 
 }
 
@@ -129,7 +154,10 @@ private fun EpisodeDetailsScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             NovixLoadingIndicator()
                         }
                     }
@@ -186,7 +214,16 @@ private fun EpisodeDetailsScreenContent(
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                 onSetRateClicked = interactionListener::onRateClicked
             )
-            // TODO USE REAL RATE BOTTOM SHEET AFTER LOGIN FEATURE DONE
+            if (state.showRateBottomSheet) {
+                RateBottomSheet(
+                    isRateSelected = state.hasUserSelectedRate,
+                    imdbRating = state.imdbRating,
+                    onDismiss = interactionListener::onDismissRateBottomSheet,
+                    isVisible = state.showRateBottomSheet,
+                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                    onRatingChanged = interactionListener::onRatingChanged
+                )
+            }
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     isVisible = state.showLoginBottomSheet,
