@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun <T> NovixSelectionComponent(
+fun <T> SelectionComponent(
     options: List<Option<T>>,
     selectedValue: T,
     onOptionSelected: (T) -> Unit,
@@ -55,7 +55,7 @@ private fun PreviewOptionsCard() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixSelectionComponent(
+            SelectionComponent(
                 options =
                     listOf(
                         Option("Option 1", "Option 1"),

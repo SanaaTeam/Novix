@@ -2,10 +2,10 @@ package com.sanaa.designsystem.design_system.component.button
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -20,42 +20,56 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.button.common.ButtonContainer
+import com.sanaa.designsystem.design_system.component.modifiers.innerShadow
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixOutlinedButton(
+fun PrimaryButton(
     text: String?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    textColor: Color = Theme.colors.primary,
     isEnabled: Boolean = true,
     isLoading: Boolean = false,
     icon: Painter? = null,
-    iconTint: Color = Theme.colors.primary
+    iconTint: Color = Theme.colors.onPrimary,
+    backgroundColor: Color = Theme.colors.primary,
+    textColor: Color = Theme.colors.onPrimary
 ) {
     val animateTextColor by animateColorAsState(
-        targetValue = if (isEnabled) textColor else Theme.colors.disable
+        targetValue = if (isEnabled) textColor else Theme.colors.onPrimaryHint
     )
-    val animatedBorderColor by animateColorAsState(
-        targetValue = if (isEnabled) Theme.colors.stroke else Theme.colors.disable,
+    val animatedBackgroundColor by animateColorAsState(
+        targetValue = if (isEnabled) backgroundColor else Theme.colors.disable,
     )
+    val animatedShadowColor by animateColorAsState(
+        targetValue = if (isEnabled) Color(0x1F0D0608) else Color.Transparent
+    )
+
     ButtonContainer(
-        modifier = modifier.border(
-            width = 1.dp,
-            color = animatedBorderColor,
-            shape = RoundedCornerShape(12.dp)
-        ),
+        modifier = modifier
+            .then(
+                if (isEnabled)
+                    Modifier.innerShadow(
+                        shape = RoundedCornerShape(12.dp),
+                        color = animatedShadowColor,
+                        blur = 12.dp,
+                        offsetX = 2.dp,
+                        offsetY = 4.dp,
+                    )
+                else Modifier
+            ),
         isLoading = isLoading,
         isEnabled = isEnabled,
-        backgroundColor = Color.Transparent,
+        backgroundColor = animatedBackgroundColor,
         icon = icon,
         iconTint = iconTint,
+        shape = RoundedCornerShape(12.dp),
         onClick = onClick,
     ) {
         text?.let {
             Text(
-                text = text,
+                text = it,
                 color = animateTextColor,
                 style = Theme.textStyle.label.large
             )
@@ -65,7 +79,7 @@ fun NovixOutlinedButton(
 
 @PreviewLightDark
 @Composable
-private fun PreviewOutlinedButton() {
+private fun PrimaryButtonPreview() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
         Column(
             modifier = Modifier
@@ -74,9 +88,15 @@ private fun PreviewOutlinedButton() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixOutlinedButton(text = "Watch", onClick = {}, isLoading = true)
-            NovixOutlinedButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
-            NovixOutlinedButton(
+            PrimaryButton(text = "Watch", onClick = {}, isLoading = false, modifier = Modifier.fillMaxWidth())
+            PrimaryButton(text = "Watch", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
+            PrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
+            PrimaryButton(
+                text = null,
+                onClick = {},
+                icon = painterResource(R.drawable.icon_plus)
+            )
+            PrimaryButton(
                 text = "Watch",
                 onClick = {},
                 icon = painterResource(R.drawable.icon_plus)

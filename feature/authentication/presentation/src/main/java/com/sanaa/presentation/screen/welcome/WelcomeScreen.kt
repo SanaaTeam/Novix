@@ -12,7 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.presentation.navigation.HomeScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -65,7 +65,7 @@ fun WelcomeContent(
     onContinueClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NovixScaffold(backgroundShapes = { NovixBackgroundShapes() }) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
             modifier = modifier
                 .navigationBarsPadding()

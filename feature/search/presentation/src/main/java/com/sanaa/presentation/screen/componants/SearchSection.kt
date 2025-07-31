@@ -21,8 +21,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
-import com.sanaa.designsystem.design_system.component.text_field.NovixTextField
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 
 
@@ -50,7 +50,7 @@ fun SearchSection(
         horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        NovixTextField(
+        TextField(
             value = textFieldValue,
             onValueChange = { newValue ->
                 textFieldValue = newValue
@@ -65,7 +65,7 @@ fun SearchSection(
         AnimatedVisibility(
             visible = isFilterButtonVisible,
         ) {
-            NovixPrimaryButton(
+            PrimaryButton(
                 text = null,
                 onClick = onFilterClicked,
                 icon = painterResource(R.drawable.icon_filter)

@@ -32,7 +32,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTextField(
+fun TextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -57,7 +57,7 @@ fun NovixTextField(
         }
     }
 
-    NovixTextField(
+    TextField(
         value = internalValue,
         onValueChange = {
             internalValue = it
@@ -75,7 +75,7 @@ fun NovixTextField(
 }
 
 @Composable
-fun NovixTextField(
+fun TextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,
@@ -87,7 +87,7 @@ fun NovixTextField(
     readOnly: Boolean = false,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    NovixBasicTextField(
+    BasicTextField(
         interactionSource = interactionSource,
         value = value,
         onValueChange = onValueChange,
@@ -143,13 +143,13 @@ private fun PreviewNovixTextField() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixTextFieldLabel(text = "Username")
-            NovixTextField(
+            TextFieldLabel(text = "Username")
+            TextField(
                 value = text,
                 onValueChange = { text = it },
                 icon = painterResource(R.drawable.icon_user)
             )
-            NovixTextField(
+            TextField(
                 value = text,
                 onValueChange = { text = it },
                 hint = "Password"

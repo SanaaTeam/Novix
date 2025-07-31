@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.MediaListSectionContent
@@ -38,7 +38,7 @@ fun MediaTabScreenContent(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
-        NovixTopBar(
+        TopBar(
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(id = R.drawable.icon_back),

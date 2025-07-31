@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
-import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.button.OutlinedButton
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.filter_bottomsheet.FilterViewModel.Companion.MOVIE_INDEX
@@ -168,7 +168,7 @@ private fun FilterActions(
         modifier = Modifier.padding(top = 24.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixPrimaryButton(
+        PrimaryButton(
             onClick = onApplyClicked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -176,7 +176,7 @@ private fun FilterActions(
             text = stringResource(R.string.apply),
             isEnabled = isApplyEnabled
         )
-        NovixOutlinedButton(
+        OutlinedButton(
             onClick = onClearClicked,
             modifier = Modifier
                 .fillMaxWidth()

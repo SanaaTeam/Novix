@@ -14,7 +14,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTextFieldLabel(
+fun TextFieldLabel(
     text: String,
     modifier: Modifier = Modifier
 ) {
@@ -37,7 +37,7 @@ private fun NovixTextFieldLabelPreview() {
                 .background(color = Theme.colors.surface)
                 .padding(16.dp)
         ) {
-            NovixTextFieldLabel(text = "Title")
+            TextFieldLabel(text = "Title")
         }
     }
 

@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MediaTypeUiModel
@@ -68,7 +68,7 @@ fun ReviewsScreenContent(
 
     NovixScaffold(
         topBar = {
-            NovixTopBar(
+            TopBar(
                 screenTitle = stringResource(id = R.string.reviews), leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
@@ -95,7 +95,7 @@ fun ReviewsScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     if (it.refresh is LoadState.Loading) {
-                        NovixLoadingIndicator()
+                        LoadingIndicator()
                     } else {
                         if (isEmpty) {
                             Box(

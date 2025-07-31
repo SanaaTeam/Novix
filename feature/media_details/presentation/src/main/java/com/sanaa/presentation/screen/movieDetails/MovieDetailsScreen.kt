@@ -35,12 +35,12 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.button.NovixTextButton
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.button.TextButton
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -149,14 +149,14 @@ fun MovieDetailsContent(
     val pagedSimilarMovies = state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }) {
+        backgroundShapes = { BackgroundShapes() }) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
 
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
@@ -186,7 +186,7 @@ fun MovieDetailsContent(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            NovixLoadingIndicator()
+                            LoadingIndicator()
                         }
                     }
                 } else {
@@ -291,7 +291,7 @@ fun MovieDetailsContent(
                                             )
                                         }
                                     }
-                                    NovixTextButton(
+                                    TextButton(
                                         text = stringResource(id = R.string.view_reviews),
                                         textColor = Theme.colors.primary,
                                         onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })

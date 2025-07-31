@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -39,7 +39,7 @@ fun LazyGridScope.upcomingSection(
     onMovieClick: (id: Int, mediaType: MediaType) -> Unit,
 ) {
     item(span = { GridItemSpan(maxLineSpan) }) {
-        NovixSectionHeader(
+        SectionHeader(
             title = stringResource(R.string.up_upcoming),
             modifier = Modifier
                 .fillWidthOfParent(16.dp)
@@ -63,7 +63,7 @@ fun LazyGridScope.upcomingSection(
 
         ) {
             item {
-                NovixToggleableChip(
+                ToggleableChip(
                     text = stringResource(R.string.all),
                     onClick = {
                         onGenreClick(null)
@@ -72,7 +72,7 @@ fun LazyGridScope.upcomingSection(
                 )
             }
             items(movieGenres, key = { it.id }) { genre ->
-                NovixToggleableChip(
+                ToggleableChip(
                     text = genre.name,
                     onClick = { onGenreClick(genre.id) },
                     isSelected = genre.id == movieSelectedGenreId,
