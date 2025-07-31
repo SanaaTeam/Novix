@@ -11,10 +11,13 @@ data class SeriesScreenUiState(
     val cast: List<ActorUiModel> = emptyList(),
     val images: List<String> = emptyList(),
     val showLoginBottomSheet: Boolean = false,
+    val showRateBottomSheet: Boolean = false,
     val isLoadingEpisodes: Boolean = false,
     val error: String? = null,
     val selectedSeason: Int = 1,
-    val noInternetConnection: Boolean = false
+    val noInternetConnection: Boolean = false,
+    val imdbRating: Int = 0,
+    val guestSessionId: String = ""
 )
 
 
