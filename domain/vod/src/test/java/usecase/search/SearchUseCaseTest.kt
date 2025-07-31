@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import repository.SearchHistoryRepository
 import repository.SearchRepository
+import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
 import kotlin.time.Duration.Companion.minutes
 
@@ -53,13 +54,13 @@ class SearchUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns dummyMovie
+            } returns movieSearchResult
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(dummyMovie)
+            assertThat(result).isEqualTo(movieSearchResult)
         }
 
     @Test
@@ -71,13 +72,13 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchMovies(query, page, filters)
-            } returns dummyMovie
+            } returns movieSearchResult
 
             // When
             val result = searchUseCase.searchMovies(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(dummyMovie)
+            assertThat(result).isEqualTo(movieSearchResult)
         }
 
     @Test
@@ -121,7 +122,7 @@ class SearchUseCaseTest {
             val filters = null
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns dummyTvShow
+            } returns tvShowSearchResult
 
             // When
             val result = searchUseCase.searchTvShows(query, page, filters)
@@ -140,7 +141,7 @@ class SearchUseCaseTest {
             val filters = MediaFilters()
             coEvery {
                 searchRepository.searchTvShows(query, page, filters)
-            } returns dummyTvShow
+            } returns tvShowSearchResult
 
 
             // When
@@ -191,13 +192,13 @@ class SearchUseCaseTest {
             // Given
             val query = "Actor"
             val page = 1
-            coEvery { searchRepository.searchActors(query, page) } returns dummyActor
+            coEvery { searchRepository.searchActors(query, page) } returns actorSearchResult
 
             // When
             val result = searchUseCase.searchActors(query, page)
 
             // Then
-            assertThat(result).isEqualTo(dummyActor)
+            assertThat(result).isEqualTo(actorSearchResult)
         }
 
     @Test
@@ -261,5 +262,10 @@ class SearchUseCaseTest {
                 seasonsCount = 1,
             )
         )
+
+        val actorSearchResult = SearchResult(totalPages = 1, results = dummyActor)
+        val movieSearchResult = SearchResult(totalPages = 1, results = dummyMovie)
+        val tvShowSearchResult = SearchResult(totalPages = 1, results = dummyTvShow)
+
     }
 }

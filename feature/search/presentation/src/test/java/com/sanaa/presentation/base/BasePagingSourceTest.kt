@@ -6,8 +6,8 @@ import androidx.paging.PagingSource.LoadResult
 import androidx.paging.PagingState
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SearchRepository.SearchResult
 
 class BasePagingSourceTest {
 
@@ -15,8 +15,8 @@ class BasePagingSourceTest {
 
     private var pagingSource = BasePagingSource { page: Int ->
         when (page) {
-            1 -> sampleData
-            2 -> emptyList()
+            1 -> SearchResult(1, sampleData)
+            2 -> SearchResult(2, emptyList())
             else -> throw RuntimeException("Unexpected page")
         }
     }
@@ -27,16 +27,6 @@ class BasePagingSourceTest {
             loadSize = 10,
             placeholdersEnabled = false
         )
-    }
-
-    @BeforeEach
-    fun setUp() {
-        pagingSource = BasePagingSource { page ->
-            when (page) {
-                1 -> sampleData
-                else -> emptyList()
-            }
-        }
     }
 
     @Test
@@ -75,16 +65,24 @@ class BasePagingSourceTest {
 
         assertThat(result.data).isEqualTo(sampleData)
         assertThat(result.prevKey).isEqualTo(null)
-        assertThat(result.nextKey).isEqualTo(2)
+        assertThat(result.nextKey).isEqualTo(null)
     }
 
     @Test
-    fun `load() should return Page with empty data`() = runTest {
-        val params = getPagingParams(key = 2)
+    fun `load() should return Page with data when first page returns empty list and there are available data in second page`() = runTest {
+        val pagingSource = BasePagingSource { page: Int ->
+            when (page) {
+                1 -> SearchResult(2, emptyList())
+                2 -> SearchResult(2, sampleData)
+                else -> throw RuntimeException("Unexpected page")
+            }
+        }
+        val params = getPagingParams(key = 1)
         val result = pagingSource.load(params) as LoadResult.Page
 
-        assertThat(result.data).isEmpty()
-        assertThat(result.prevKey).isEqualTo(1)
+
+        assertThat(result.data).isEqualTo(sampleData)
+        assertThat(result.prevKey).isEqualTo(null)
         assertThat(result.nextKey).isEqualTo(null)
     }
 
@@ -97,8 +95,8 @@ class BasePagingSourceTest {
         val error = result as LoadResult.Error
         assertThat(error.throwable.message).isEqualTo("Failure")
     }
-    // Helper methods
 
+    // Helper methods
 
     private fun getPageState(
         anchorPosition: Int? = null,

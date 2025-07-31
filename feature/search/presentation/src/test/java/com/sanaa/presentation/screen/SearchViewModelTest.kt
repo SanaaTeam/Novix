@@ -30,6 +30,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SearchRepository.SearchResult
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
@@ -303,7 +304,7 @@ class SearchViewModelTest {
             val uiState = searchViewModel.state
             val movieName = "Movie"
             val page = 1
-            val movies = listOf(movie1)
+            val movies = movieSearchResult
 
             searchViewModel.onSearchQueryChanged(movieName)
             coEvery {
@@ -317,11 +318,6 @@ class SearchViewModelTest {
             searchViewModel.state.test {
                 awaitItem()
                 val item = awaitItem()
-                val expected = SearchScreenUiState(
-                    searchQuery = movieName,
-                    selectedTabIndex = index,
-                    isLoading = false,
-                )
                 assertThat(item.searchQuery).isEqualTo(movieName)
                 assertThat(item.selectedTabIndex).isEqualTo(index)
                 cancelAndIgnoreRemainingEvents()
@@ -336,7 +332,7 @@ class SearchViewModelTest {
             val uiState = searchViewModel.state
             val tvShowName = "TvShow"
             val page = 1
-            val tvShows = listOf(series)
+            val tvShows = tvSeriesSearchResult
 
             searchViewModel.onSearchQueryChanged(tvShowName)
             coEvery {
@@ -377,9 +373,7 @@ class SearchViewModelTest {
             val uiState = searchViewModel.state
             val actorName = "TvShow"
             val page = 1
-            val actors = listOf(
-                actor
-            )
+            val actors = actorSearchResult
             searchViewModel.onSearchQueryChanged(actorName)
             coEvery {
                 searchUseCase.searchActors(
@@ -440,6 +434,7 @@ class SearchViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onFilterApplied() should set tv filters when tv tab is active`() = runTest {
         val filters = MediaFilters()
@@ -454,6 +449,7 @@ class SearchViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onFilterApplied() should trigger media loading with current query`() = runTest {
         val filters = MediaFilters()
@@ -640,24 +636,8 @@ class SearchViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `createActorsPagingSource returns expected data`() = runTest {
-
         val query = "Tom"
-        val expectedActors = listOf(
-            Actor(
-                1,
-                "actorName",
-                "https://image.com",
-                region = null,
-                lastShow = null,
-                gender = Gender.MALE,
-                department = null,
-                character = null,
-                birthDate = null,
-                deathDate = null,
-                placeOfBirth = null,
-                biography = null
-            )
-        )
+        val expectedActors = actorSearchResult
         coEvery { searchUseCase.searchActors(query, 1) } returns expectedActors
 
         val pagingSource = searchViewModel.createActorsPagingSource(query)
@@ -673,18 +653,18 @@ class SearchViewModelTest {
 
         // Assert
         val expected = PagingSource.LoadResult.Page(
-            data = expectedActors,
+            data = expectedActors.results,
             prevKey = null,
-            nextKey = 2
+            nextKey = null
         )
-        assertThat(expected).isEqualTo(expected)
+        assertThat(result).isEqualTo(expected)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `createTvShowsPagingSource returns expected data`() = runTest {
         val query = "Breaking"
-        val expectedTvShows = listOf(series)
+        val expectedTvShows = tvSeriesSearchResult
 
         coEvery {
             searchUseCase.searchTvShows(query = query, page = 1, filters = null)
@@ -701,9 +681,9 @@ class SearchViewModelTest {
         )
 
         val expected = PagingSource.LoadResult.Page(
-            data = expectedTvShows,
+            data = expectedTvShows.results,
             prevKey = null,
-            nextKey = 2
+            nextKey = null
         )
 
         assertThat(result).isEqualTo(expected)
@@ -713,7 +693,7 @@ class SearchViewModelTest {
     @Test
     fun `createMoviesPagingSource returns expected data`() = runTest {
         val query = "Inception"
-        val expectedMovies = listOf(movie1)
+        val expectedMovies = movieSearchResult
 
 
         coEvery {
@@ -731,16 +711,16 @@ class SearchViewModelTest {
         )
 
         val expected = PagingSource.LoadResult.Page(
-            data = expectedMovies,
+            data = expectedMovies.results,
             prevKey = null,
-            nextKey = 2
+            nextKey = null
         )
 
         assertThat(result).isEqualTo(expected)
     }
 
     private companion object {
-        val movie1 = Movie(
+        val dummyMovie = Movie(
             1,
             "query1",
             "https://image.com",
@@ -752,19 +732,7 @@ class SearchViewModelTest {
             trailerUrl = ""
         )
 
-        val movie2 = Movie(
-            1,
-            "query2",
-            "https://image.com",
-            genres = emptyList(),
-            imdbRating = 0f,
-            duration = 100.minutes,
-            releaseDate = LocalDate(1970, 1, 1),
-            overview = "",
-            trailerUrl = ""
-        )
-
-        val series = TvSeries(
+        val dummySeries = TvSeries(
             1,
             "tvShowName",
             "https://image.com",
@@ -775,7 +743,7 @@ class SearchViewModelTest {
             seasonsCount = 0
         )
 
-        val actor = Actor(
+        val dummyActor = Actor(
             1,
             "actorName",
             "https://image.com",
@@ -790,10 +758,8 @@ class SearchViewModelTest {
             biography = null
         )
 
-        val timestamp = Instant.fromEpochMilliseconds(1234567890L)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-        val resentSearchHistories = listOf(
-            SearchHistory(1, "Movie", timestamp = timestamp)
-        )
+        val actorSearchResult = SearchResult(totalPages = 1, results = listOf(dummyActor))
+        val movieSearchResult = SearchResult(totalPages = 1, results = listOf(dummyMovie))
+        val tvSeriesSearchResult = SearchResult(totalPages = 1, results = listOf(dummySeries))
     }
 }

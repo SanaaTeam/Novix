@@ -9,7 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class BasePagingSourceTest {
+class BasePagingSourceForHomeTest {
 
     private val sampleData = listOf("A", "B", "C")
 
@@ -81,6 +81,7 @@ class BasePagingSourceTest {
     @Test
     fun `load() should return Page with empty data`() = runTest {
         val params = getPagingParams(key = 2)
+        pagingSource.load(getPagingParams(key = 2))
         val result = pagingSource.load(params) as LoadResult.Page
 
         assertThat(result.data).isEmpty()
