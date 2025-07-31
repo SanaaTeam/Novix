@@ -46,6 +46,7 @@ import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.shared_component.RateBottomSheet
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -236,6 +237,15 @@ fun SeriesScreenContent(
                 trailerUrl = state.series.trailerUrl,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                 onSetRateClicked = interactionListener::onRateClicked
+            )
+        }
+        if (state.showRateBottomSheet) {
+            RateBottomSheet(
+                imdbRating = state.imdbRating,
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible =state.showRateBottomSheet,
+                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                onRatingChanged = interactionListener::onRatingChanged
             )
         }
         if (state.showLoginBottomSheet) {
