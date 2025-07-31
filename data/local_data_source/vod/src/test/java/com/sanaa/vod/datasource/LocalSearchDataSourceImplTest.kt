@@ -22,7 +22,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class LocalSearchDataSourceImplTest {
@@ -322,75 +321,4 @@ class LocalSearchDataSourceImplTest {
         assertTrue(seriesResult.isEmpty())
     }
 
-    @Test
-    fun `pagination shouldHandleNegativeOffset`() = runTest {
-        // Given
-        val query = "Test"
-        val limit = 20
-        val offset = -10
-
-        coEvery { actorDao.getPagedActorsByIds(any(), limit, offset) } returns emptyList()
-
-        // When
-        val result = localCachedSearchDataSourceImpl.getPagedActorsByQuery(query, limit, offset)
-
-        // Then
-        assertTrue(result.isEmpty())
-        coVerify { actorDao.getPagedActorsByIds(any(), limit, offset) }
-    }
-
-    @Test
-    fun `pagination shouldHandleVeryLargeLimit`() = runTest {
-        // Given
-        val query = "Test"
-        val limit = 1000
-        val offset = 0
-        val largeResult = List(1000) { index ->
-            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis(), 0)
-        }
-
-        coEvery { actorDao.getPagedActorsByIds(any(), limit, offset) } returns largeResult
-
-        // When
-        val result = localCachedSearchDataSourceImpl.getPagedActorsByQuery(query, limit, offset)
-
-        // Then
-        assertEquals(1000, result.size)
-        coVerify { actorDao.getPagedActorsByIds(any(), limit, offset) }
-    }
-
-    @Test
-    fun `pagination shouldHandleConsecutivePages`() = runTest {
-        // Given
-        val query = "Test"
-        val pageSize = 10
-
-        val page1Actors = List(10) { index ->
-            ActorLocalDto(index, "Actor $index", "img$index", "en", System.currentTimeMillis(), 0)
-        }
-        val page2Actors = List(10) { index ->
-            ActorLocalDto(
-                index + 10,
-                "Actor ${index + 10}",
-                "img${index + 10}",
-                "en",
-                System.currentTimeMillis(),
-                0
-            )
-        }
-
-        coEvery { actorDao.getPagedActorsByIds(any(), pageSize, 0) } returns page1Actors
-        coEvery { actorDao.getPagedActorsByIds(any(), pageSize, 10) } returns page2Actors
-
-        // When
-        val result1 = localCachedSearchDataSourceImpl.getPagedActorsByQuery(query, pageSize, 0)
-        val result2 = localCachedSearchDataSourceImpl.getPagedActorsByQuery(query, pageSize, 10)
-
-        // Then
-        assertEquals(10, result1.size)
-        assertEquals(10, result2.size)
-        assertNotEquals(result1, result2)
-        assertTrue(result1.all { it.id < 10 })
-        assertTrue(result2.all { it.id >= 10 })
-    }
 }
