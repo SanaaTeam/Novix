@@ -62,7 +62,6 @@ class LoginViewModel @Inject constructor(
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
         val message = when (throwable) {
-
             is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
             is NoInternetConnectionException -> stringProvider.noInternetConnectionError
             else -> stringProvider.somethingWentWrongError

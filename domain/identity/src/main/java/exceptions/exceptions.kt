@@ -9,4 +9,7 @@ class NoInternetConnectionException :
 class InvalidUserOrPasswordException :
     LoginErrorException("Invalid username and/or password: You did not provide a valid login.")
 
-class InvalidTokenException(message: String?) : AuthenticationException(message)
+class NoLoggedInUserException : AuthenticationException(
+    "No logged in user found."
+)
+

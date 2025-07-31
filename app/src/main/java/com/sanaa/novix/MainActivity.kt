@@ -6,45 +6,38 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.sanaa.api.*
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.HomeFeatureApi
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.presentation.app.NovixApp
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.getKoin
+import org.koin.android.ext.android.inject
 import timber.log.Timber
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    @Inject lateinit var homeFeatureApi: HomeFeatureApi
-    @Inject lateinit var searchFeatureApi: SearchFeatureApi
-    @Inject lateinit var mediaDetailsApi: MediaDetailsApi
-    @Inject lateinit var authenticationApi: AuthenticationApi
-    @Inject lateinit var preferencesManager: PreferencesManager
+    private lateinit var analytics: FirebaseAnalytics
+    private val homeFeatureApi: HomeFeatureApi by inject()
+    private val authenticationApi: AuthenticationApi by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        analytics = getKoin().get()
+
         Timber.d("MainActivity created")
-
+        val preferenceManager: PreferencesManager = getKoin().get()
         val sessionId: String? = runBlocking {
-            preferencesManager.sessionId.firstOrNull()
+            preferenceManager.sessionId.firstOrNull()
         }
-
-        Timber.d("Key: ${BuildConfig.TMDB_API_KEY}")
-
         setContent {
-            NovixApp(
-                homeFeatureApi = homeFeatureApi,
-                searchFeatureApi = searchFeatureApi,
-                mediaDetailsApi = mediaDetailsApi,
-                authenticationApi = authenticationApi,
-                startWithAuth = TextUtils.isEmpty(sessionId)
-            )
+            if (TextUtils.isEmpty(sessionId))
+                authenticationApi.AuthenticationScreen(this)
+            else
+                homeFeatureApi.HomeScreenApi()
         }
     }
 }

@@ -127,7 +127,6 @@ private fun TopSeriesContent(
                                         RemoteBlurredHaramImageViewer(
                                             imageUrl = series.posterPath ?: "",
                                             modifier = Modifier.fillMaxSize(),
-                                            blurRadius = 150,
                                             haramThreshold = 0.2f,
                                             nonHaramThreshold = 0.7f,
                                             contentDescription = series.title,

@@ -1,7 +1,10 @@
 package com.sanaa.identity.repository
 
+import com.google.common.truth.Truth.assertThat
+import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.identity.network.AuthenticationApiService
+import com.sanaa.identity.network.response.AccountDetailsResponse
 import com.sanaa.identity.network.response.CreateGuestSessionResponse
 import com.sanaa.identity.network.response.CreateRequestTokenResponse
 import com.sanaa.identity.network.response.CreateSessionResponse
@@ -18,40 +21,62 @@ import org.junit.jupiter.api.Test
 class AuthenticationRepositoryImplTest {
     val apiService = mockk<AuthenticationApiService>()
     val preferencesManager = mockk<PreferencesManager>()
+    val userLocalDataSource = mockk<LocalUserDataSource>()
     lateinit var repository: AuthenticationRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         repository = AuthenticationRepositoryImpl(
             api = apiService,
-            preferences = preferencesManager
+            preferences = preferencesManager,
+            userLocalDataSource = userLocalDataSource
         )
     }
 
     @Test
-    fun `login should call createRequestToken, login, createSession and save session`() = runTest {
-        val token = "test_token"
-        val sessionId = "session_123"
+    fun `login should call createRequestToken, login, createSession, save session and save user`() =
+        runTest {
+            val token = "test_token"
+            val sessionId = "session_123"
 
-        coEvery { apiService.createRequestToken() } returns CreateRequestTokenResponse(
-            success = true,
-            requestToken = token
-        )
+            val accountResponse = AccountDetailsResponse(
+                id = 100L,
+                name = "Novix User",
+                username = "novix"
+            )
 
-        coEvery { apiService.login(any()) } returns LoginResponse(success = true)
+            coEvery { apiService.createRequestToken() } returns CreateRequestTokenResponse(
+                success = true,
+                requestToken = token
+            )
 
-        coEvery { apiService.createSession(mapOf("request_token" to token)) } returns CreateSessionResponse(
-            success = true,
-            sessionId = sessionId
-        )
+            coEvery { apiService.login(any()) } returns LoginResponse(success = true)
 
-        coEvery { preferencesManager.updateSessionId(sessionId) } just runs
-        coEvery { preferencesManager.setIsGuest(false) } just runs
+            coEvery { apiService.createSession(mapOf("request_token" to token)) } returns CreateSessionResponse(
+                success = true,
+                sessionId = sessionId
+            )
 
-        repository.login("Novix", "password")
+            coEvery { apiService.getAccountDetails(sessionId) } returns accountResponse
 
-        coVerify(exactly = 1) { preferencesManager.updateSessionId(sessionId) }
-    }
+            coEvery { preferencesManager.updateSessionId(sessionId) } just runs
+            coEvery { preferencesManager.setIsGuest(false) } just runs
+            coEvery { userLocalDataSource.saveUser(any()) } just runs
+
+            repository.login("Novix", "password")
+
+            coVerify(exactly = 1) { preferencesManager.updateSessionId(sessionId) }
+            coVerify(exactly = 1) { preferencesManager.setIsGuest(false) }
+            coVerify(exactly = 1) {
+                userLocalDataSource.saveUser(
+                    withArg {
+                        assertThat(it.id).isEqualTo(100L)
+                        assertThat(it.username).isEqualTo("novix")
+                        assertThat(it.name).isEqualTo("Novix User")
+                    }
+                )
+            }
+        }
 
     @Test
     fun `createGuestSession should call api and save guest session ID`() = runTest {

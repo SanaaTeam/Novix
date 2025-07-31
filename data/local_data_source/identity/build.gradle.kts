@@ -2,9 +2,26 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.novix.android.library)
     alias(libs.plugins.hilt.android)
+    id("com.google.protobuf") version "0.9.4" // Add protobuf plugin
+
 }
 android {
     namespace = "com.sanaa.identity"
+}
+
+protobuf {
+    protoc {
+        artifact = "com.google.protobuf:protoc:3.25.3"
+    }
+    generateProtoTasks {
+        all().forEach { task ->
+            task.builtins {
+                create("java") {
+                    option("lite") // Use lite for Android
+                }
+            }
+        }
+    }
 }
 
 dependencies {
@@ -22,6 +39,7 @@ dependencies {
 
     // WorkManager for background cache cleanup
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.protobuf.javalite)
 
     // Koin dependencies
     implementation(platform(libs.koin.bom))
@@ -31,4 +49,6 @@ dependencies {
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
+
+    implementation(libs.androidx.datastore)
 }

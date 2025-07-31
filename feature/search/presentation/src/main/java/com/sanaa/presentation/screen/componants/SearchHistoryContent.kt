@@ -154,7 +154,6 @@ private fun MediaPoster(
             RemoteBlurredHaramImageViewer(
                 imageUrl = item.imageUrl,
                 modifier = Modifier.fillMaxWidth(),
-                blurRadius = 150,
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
                 placeholderContent = {
