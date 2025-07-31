@@ -10,4 +10,7 @@ interface EpisodeDetailsInteractionListener {
     fun onRateClicked()
     fun onLoginButtonClick()
     fun onRetryLoadDetails()
+    fun onRatingChanged(newRating: Int)
+    fun onDismissRateBottomSheet()
+    fun onSubmitRateBottomSheet()
 }
