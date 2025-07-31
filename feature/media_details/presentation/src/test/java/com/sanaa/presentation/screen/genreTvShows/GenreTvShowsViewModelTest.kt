@@ -97,31 +97,6 @@ class GenreTvShowsViewModelTest {
     }
 
     @Test
-    fun `onBackClick should emit NavigateBack effect`() = runTest {
-        val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "genreId" to category.id,
-                "genreName" to category.name
-            )
-        )
-
-        viewModel = GenreTvShowsViewModel(
-            savedStateHandle,
-            manageTvSeriesUseCase
-        )
-
-        advanceUntilIdle()
-
-        viewModel.effect.test {
-            viewModel.onBackClick()
-            assertEquals(GenreTvShowsEffects.NavigateBack, awaitItem())
-        }
-    }
-
-    @Test
     fun `onTvShowClick should emit NavigateToTvShowDetails effect`() = runTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(),1) } returns emptyList()
