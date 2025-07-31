@@ -6,6 +6,7 @@ import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
@@ -40,7 +41,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorDetails throws NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remoteDataSource.getActorDetails(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorDetails(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> {
             repository.getActorDetails(1)
@@ -59,7 +60,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getGalleryImages throws NoNetworkException when network is down`() = runTest {
-        coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorImages(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> {
             repository.getGalleryImageUrls(1)
@@ -68,7 +69,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopMovies throws NoNetworkException when network is down`() = runTest {
-        coEvery { remoteDataSource.getActorMovies(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorMovies(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> {
             repository.getActorTopMovies(1)
@@ -77,7 +78,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopTvShows throws NoNetworkException when network is down`() = runTest {
-        coEvery { remoteDataSource.getActorTvShows(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorTvShows(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> {
             repository.getActorTopTvShows(1)
@@ -116,7 +117,7 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getProfileImages propagates NoNetworkException on UnknownHostException`() = runTest {
-        coEvery { remoteDataSource.getActorImages(any()) } throws UnknownHostException()
+        coEvery { remoteDataSource.getActorImages(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> { repository.getProfileImageUrls(42, 1) }
     }
