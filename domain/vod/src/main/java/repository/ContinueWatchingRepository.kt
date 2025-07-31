@@ -2,9 +2,10 @@ package repository
 
 import entity.ContinueWatchingItem
 import entity.MediaType
+import kotlinx.coroutines.flow.Flow
 
 interface ContinueWatchingRepository {
-    suspend fun getContinueWatchingList(username: String, limit: Int): List<ContinueWatchingItem>
+    fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingItem>>
     suspend fun addItem(username: String, mediaId: Int, episodeId: Int?, mediaType: MediaType)
     suspend fun removeItem(mediaId: Int, username: String)
 }

@@ -7,9 +7,14 @@ import com.sanaa.vod.mapper.search.toEntity
 import entity.ContinuableMedia
 import entity.ContinueWatchingItem
 import entity.MediaType
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import repository.ContinueWatchingRepository
 
 class ContinueWatchingRepositoryImpl(
@@ -17,38 +22,31 @@ class ContinueWatchingRepositoryImpl(
     private val localCacheDataSource: LocalCacheSearchDataSource
 ) : ContinueWatchingRepository {
 
-    override suspend fun getContinueWatchingList(username: String, limit: Int): List<ContinueWatchingItem> = coroutineScope {
-        val dtos = localContinueWatchingDataSource.getContinueWatchingList(username, limit)
-
-        dtos.map { dto ->
-            async {
-                when (MediaType.valueOf(dto.mediaType)) {
-                    MediaType.MOVIE -> {
-                        localCacheDataSource.getMoviesByQuery(
-                            query = dto.mediaId.toString(),
-                            limit = 1,
-                            offset = 0
-                        ).firstOrNull()?.let { movieDto ->
-                            ContinueWatchingItem(
-                                media = ContinuableMedia.MovieItem(movieDto.toEntity())
-                            )
-                        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingItem>> {
+        return localContinueWatchingDataSource.getContinueWatchingList(username, limit)
+            .flatMapLatest { media ->
+                if (media.isEmpty()) {
+                    return@flatMapLatest flowOf(emptyList())
+                }
+                flow {
+                    val items = coroutineScope {
+                        media.map { dto ->
+                            async {
+                                when (MediaType.valueOf(dto.mediaType)) {
+                                    MediaType.MOVIE -> localCacheDataSource.getMoviesByQuery(dto.mediaId.toString(), 1, 0).firstOrNull()?.let {
+                                        ContinueWatchingItem(media = ContinuableMedia.MovieItem(it.toEntity()))
+                                    }
+                                    MediaType.TV_SERIES -> localCacheDataSource.getTvSeriesByQuery(dto.mediaId.toString(), 1, 0).firstOrNull()?.let {
+                                        ContinueWatchingItem(media = ContinuableMedia.TvSeriesItem(it.toEntity()), episodeId = dto.episodeId)
+                                    }
+                                }
+                            }
+                        }.awaitAll().filterNotNull()
                     }
-                    MediaType.TV_SERIES -> {
-                        localCacheDataSource.getTvSeriesByQuery(
-                            query = dto.mediaId.toString(),
-                            limit = 1,
-                            offset = 0
-                        ).firstOrNull()?.let { seriesDto ->
-                            ContinueWatchingItem(
-                                media = ContinuableMedia.TvSeriesItem(seriesDto.toEntity()),
-                                episodeId = dto.episodeId
-                            )
-                        }
-                    }
+                    emit(items)
                 }
             }
-        }.awaitAll().filterNotNull()
     }
 
     override suspend fun addItem(

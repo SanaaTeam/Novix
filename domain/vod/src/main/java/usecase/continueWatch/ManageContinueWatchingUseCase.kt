@@ -2,13 +2,13 @@ package usecase.continueWatch
 
 import entity.ContinueWatchingItem
 import entity.MediaType
+import kotlinx.coroutines.flow.Flow
 import repository.ContinueWatchingRepository
 
 class ManageContinueWatchingUseCase(
     private val repository: ContinueWatchingRepository
 ) {
-
-    suspend fun getContinueWatchingList(username: String): List<ContinueWatchingItem> {
+    fun getContinueWatchingList(username: String): Flow<List<ContinueWatchingItem>> {
         return repository.getContinueWatchingList(username, CONTINUE_WATCHING_LIMIT)
     }
 

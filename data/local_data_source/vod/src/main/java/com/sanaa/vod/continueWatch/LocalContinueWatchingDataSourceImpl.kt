@@ -3,6 +3,7 @@ package com.sanaa.vod.continueWatch
 import com.sanaa.vod.continueWatch.dao.ContinueWatchingDao
 import com.sanaa.vod.dataSource.local.continueWatch.LocalContinueWatchingDataSource
 import com.sanaa.vod.dataSource.local.continueWatch.dto.ContinueWatchingLocalDto
+import kotlinx.coroutines.flow.Flow
 
 class LocalContinueWatchingDataSourceImpl(
     private val continueWatchingDao: ContinueWatchingDao
@@ -12,7 +13,7 @@ class LocalContinueWatchingDataSourceImpl(
         continueWatchingDao.insertOrUpdate(item)
     }
 
-    override suspend fun getContinueWatchingList(username: String, limit: Int): List<ContinueWatchingLocalDto> {
+    override fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingLocalDto>> {
         return continueWatchingDao.getContinueWatchingList(username, limit)
     }
 
