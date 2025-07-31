@@ -7,11 +7,9 @@ import com.sanaa.api.HomeFeatureApi
 import com.sanaa.presentation.navigation.AuthNavHost
 import javax.inject.Inject
 
-class AuthenticationApiImpl @Inject constructor(
-    private val homeFeatureApi: HomeFeatureApi,
-) : AuthenticationApi {
+class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
     @Composable
     override fun AuthenticationScreen(context: Context) {
-        AuthNavHost(homeFeatureApi)
+        AuthNavHost()
     }
 }

@@ -15,7 +15,6 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
-import com.sanaa.presentation.util.HomeApiEntryPoint
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
 import dagger.hilt.android.EntryPointAccessors
@@ -27,7 +26,7 @@ fun AuthNavHost() {
 
     val homeApi: HomeFeatureApi = remember {
         EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .fromApplication(appContext, AuthApiEntryPoint::class.java)
             .homeApi()
     }
 

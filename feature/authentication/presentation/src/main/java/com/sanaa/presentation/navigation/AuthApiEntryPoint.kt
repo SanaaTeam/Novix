@@ -1,4 +1,4 @@
-package com.sanaa.presentation.util
+package com.sanaa.presentation.navigation
 
 import com.sanaa.api.HomeFeatureApi
 import dagger.hilt.EntryPoint
@@ -7,6 +7,6 @@ import dagger.hilt.components.SingletonComponent
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
-interface HomeApiEntryPoint {
+interface AuthApiEntryPoint {
     fun homeApi(): HomeFeatureApi
 }
