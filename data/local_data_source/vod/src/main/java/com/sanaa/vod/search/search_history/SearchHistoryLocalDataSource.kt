@@ -8,6 +8,7 @@ import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.search.search_history.dao.QueryDao
 import com.sanaa.vod.search.search_history.dao.RecentViewedDao
 import kotlinx.coroutines.flow.Flow
+import usecase.search.search_param.MediaType
 
 class LocalSearchHistoryDataSourceImpl(
     private val queryDao: QueryDao,
@@ -44,14 +45,16 @@ class LocalSearchHistoryDataSourceImpl(
     override suspend fun deleteAllQueries() {
         queryDao.deleteAllQueries()
     }
+
     override suspend fun addWatchedMedia(item: WatchedMediaHistoryLocalDto) {
         watchedMediaHistoryDao.insert(item)
     }
 
     override suspend fun getWatchedMedia(
-        mediaType: String?,
+        username: String,
+        mediaType: MediaType?,
         genreId: Int?
     ): List<WatchedMediaHistoryLocalDto> {
-        return watchedMediaHistoryDao.getHistory(mediaType, genreId?.toString())
+        return watchedMediaHistoryDao.getHistory(username, mediaType?.name, genreId?.toString())
     }
 }

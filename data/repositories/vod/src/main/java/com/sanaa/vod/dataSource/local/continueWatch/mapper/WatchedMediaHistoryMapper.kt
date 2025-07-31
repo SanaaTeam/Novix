@@ -5,10 +5,12 @@ import entity.Genre
 import entity.MediaHistoryItem
 import usecase.search.search_param.MediaType
 
-fun MediaHistoryItem.toDto(): WatchedMediaHistoryLocalDto {
-    val genresString = this.genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
+fun MediaHistoryItem.toDto(username: String): WatchedMediaHistoryLocalDto {
+    val genresString =
+        this.genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
     return WatchedMediaHistoryLocalDto(
         id = this.id,
+        username = username,
         posterImageUrl = this.posterImageUrl,
         mediaType = this.mediaType.name,
         genres = genresString

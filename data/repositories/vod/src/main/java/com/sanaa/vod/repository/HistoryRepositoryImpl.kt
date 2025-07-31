@@ -74,20 +74,22 @@ class HistoryRepositoryImpl(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun addWatchedMediaHistory(media: MediaHistoryItem) = safeCall(
-        errorMessage = "Failed to add watched media history",
-        exceptionProvider = ::FailedToAddException
-    ) {
-        local.addWatchedMedia(media.toDto())
-    }
+    override suspend fun addWatchedMediaHistory(username: String, media: MediaHistoryItem) =
+        safeCall(
+            errorMessage = "Failed to add watched media history for user $username",
+            exceptionProvider = ::FailedToAddException
+        ) {
+            local.addWatchedMedia(media.toDto(username))
+        }
 
     override suspend fun getWatchedMediaHistory(
+        username: String,
         mediaType: MediaType?,
         genreId: Int?
     ): List<MediaHistoryItem> = safeCall(
-        errorMessage = "Failed to retrieve watched media history"
+        errorMessage = "Failed to retrieve watched media history for user $username"
     ) {
-        val watchedHistoryDtos = local.getWatchedMedia(mediaType?.name, genreId)
+        val watchedHistoryDtos = local.getWatchedMedia(username, mediaType, genreId)
         watchedHistoryDtos.map { it.toEntity() }
     }
 }

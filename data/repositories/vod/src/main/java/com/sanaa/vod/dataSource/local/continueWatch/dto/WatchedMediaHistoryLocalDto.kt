@@ -2,14 +2,15 @@ package com.sanaa.vod.dataSource.local.continueWatch.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import com.sanaa.vod.util.TimeUtils
 
-@Entity(tableName = "watched_media_history")
+@Entity(tableName = "watched_media_history", primaryKeys = ["id", "username"])
 data class WatchedMediaHistoryLocalDto(
-    @PrimaryKey
     @ColumnInfo(name = "id")
     val id: Int,
+
+    @ColumnInfo(name = "username")
+    val username: String,
 
     @ColumnInfo(name = "poster_image_url")
     val posterImageUrl: String,

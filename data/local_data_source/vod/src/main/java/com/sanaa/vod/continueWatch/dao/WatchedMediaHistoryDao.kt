@@ -15,10 +15,11 @@ interface WatchedMediaHistoryDao {
     @Query(
         """
         SELECT * FROM watched_media_history
-        WHERE (:mediaType IS NULL OR media_type = :mediaType)
+        WHERE username = :username
+        AND (:mediaType IS NULL OR media_type = :mediaType)
         AND (:genreIdStr IS NULL OR genres LIKE '%,' || :genreIdStr || ',%')
         ORDER BY timestamp DESC
     """
     )
-    suspend fun getHistory(mediaType: String?, genreIdStr: String?): List<WatchedMediaHistoryLocalDto>
+    suspend fun getHistory(username: String, mediaType: String?, genreIdStr: String?): List<WatchedMediaHistoryLocalDto>
 }
