@@ -13,7 +13,7 @@ data class MovieDetailsUiState(
     val similarMovies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
-    val showLoginBottomSheet: Boolean = false,
+    val showLoginBottomSheetToAddToList: Boolean = false,
     val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
@@ -25,7 +25,7 @@ data class MovieDetailsUiState(
         get() =  imdbRating > 0
 }
 
-data class MovieSnackData(
+data class SnackData(
     val message: String,
     val isError: Boolean
 )

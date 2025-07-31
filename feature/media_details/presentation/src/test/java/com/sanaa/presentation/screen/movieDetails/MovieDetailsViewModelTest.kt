@@ -71,9 +71,9 @@ class MovieDetailsViewModelTest {
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
         viewModel.onRateMovieClick()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
     }
 
     @Test
@@ -81,7 +81,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
     }
 
     @Test
@@ -156,10 +156,10 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
         givenHappy()
-        viewModel.updateState { it.copy(showLoginBottomSheet = true) }
+        viewModel.updateState { it.copy(showLoginBottomSheetToAddToList = true) }
         viewModel.onLoginButtonClick()
 
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
 
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)

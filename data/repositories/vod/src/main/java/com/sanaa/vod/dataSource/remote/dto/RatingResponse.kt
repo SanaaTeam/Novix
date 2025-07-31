@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RatingResponse(
+    @SerialName("success")
+    val isSuccess: Boolean,
     @SerialName("status_code")
     val statusCode: Int,
     @SerialName("status_message")

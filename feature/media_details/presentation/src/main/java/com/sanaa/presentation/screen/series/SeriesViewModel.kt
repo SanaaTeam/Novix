@@ -5,7 +5,6 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +13,7 @@ import usecase.ManageTvSeriesUseCase
 
 class SeriesViewModel(
     private val seriesId: Int,
-    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -46,16 +45,22 @@ class SeriesViewModel(
             callee = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
-            }
-            , onError = {e ->
-                if(e is NoNetworkException){
-                    updateState { it.copy(noInternetConnection = true,
-                        isLoadingEpisodes = false) }
-                }
-                else {
-                    updateState { it.copy( error = e.message,
-                        noInternetConnection = false,
-                        isLoadingEpisodes = false) }
+            }, onError = { e ->
+                if (e is NoNetworkException) {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoadingEpisodes = false
+                        )
+                    }
+                } else {
+                    updateState {
+                        it.copy(
+                            error = e.message,
+                            noInternetConnection = false,
+                            isLoadingEpisodes = false
+                        )
+                    }
                 }
             }
         )
@@ -74,9 +79,9 @@ class SeriesViewModel(
     }
 
     override fun onRateClicked() {
-        if (state.value.isUserLoggedIn){
+        if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
-        }else{
+        } else {
             updateState { it.copy(showLoginBottomSheet = true) }
         }
     }
@@ -112,7 +117,8 @@ class SeriesViewModel(
         )
         updateState {
             it.copy(showRateBottomSheet = false)
-        }    }
+        }
+    }
 
     override fun onSaveSeriesClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
@@ -132,6 +138,7 @@ class SeriesViewModel(
         }
         loadSeries()
     }
+
     private fun loadSeries() {
         tryToExecute(
             callee = ::fetchSeriesDetails,
@@ -145,7 +152,11 @@ class SeriesViewModel(
                     }
                 } else {
                     updateState { state ->
-                        state.copy(error = e.message, isLoading = false, noInternetConnection = false)
+                        state.copy(
+                            error = e.message,
+                            isLoading = false,
+                            noInternetConnection = false
+                        )
                     }
                 }
             }
@@ -178,18 +189,20 @@ class SeriesViewModel(
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
+
     private suspend fun addRate() {
-        val isSendRateSuccess =    manageTvSeriesDetails.addTvSeriesRate(
+        val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
             seriesId = seriesId,
             rating = state.value.imdbRating.toFloat()
         )
-        if (isSendRateSuccess == 1) {
+        if (isSendRateSuccess) {
             emitEffect(SeriesScreenEffects.ShowSuccessSnackBar)
         } else {
             emitEffect(SeriesScreenEffects.ShowErrorSnackBar)
         }
     }
-    private suspend fun getUserState(){
+
+    private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }

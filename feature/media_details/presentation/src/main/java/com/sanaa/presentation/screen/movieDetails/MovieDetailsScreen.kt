@@ -77,7 +77,7 @@ fun MovieDetailsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
-    var snack by remember { mutableStateOf<MovieSnackData?>(null) }
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -114,11 +114,11 @@ fun MovieDetailsScreen(
                     )
                 }
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> {
-                    snack = MovieSnackData(message = submitRatingSuccessMsg, isError = false)
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
 
                 is MovieDetailsUiEffect.ShowErrorSnackBar -> {
-                    snack = MovieSnackData(submitRatingFailedMsg, isError = true)
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
                 MovieDetailsUiEffect.NavigateToLogin -> TODO()
@@ -363,10 +363,10 @@ fun MovieDetailsContent(
                     onRatingChanged = interactionListener::onRatingChanged
                 )
             }
-            if (state.showLoginBottomSheet) {
+            if (state.showLoginBottomSheetToAddToList) {
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet
+                    isVisible = state.showLoginBottomSheetToAddToList
                 )
             }
         }

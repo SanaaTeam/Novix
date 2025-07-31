@@ -36,6 +36,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
@@ -62,7 +63,7 @@ fun EpisodeDetailsScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
-    var snack by remember { mutableStateOf<EpisodeSnackData?>(null) }
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -83,11 +84,11 @@ fun EpisodeDetailsScreen(
                 }
 
                 is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
-                    snack = EpisodeSnackData(message = submitRatingSuccessMsg, isError = false)
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
 
                 is EpisodeDetailsEffects.ShowErrorSnackBar -> {
-                    snack = EpisodeSnackData(submitRatingFailedMsg, isError = true)
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {

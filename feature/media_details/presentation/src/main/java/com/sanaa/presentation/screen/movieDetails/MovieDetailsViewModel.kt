@@ -44,7 +44,7 @@ class MovieDetailsViewModel(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = true) }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -55,17 +55,17 @@ class MovieDetailsViewModel(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState { it.copy(showLoginBottomSheetToAddToList = true) }
         }
 
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -168,7 +168,6 @@ class MovieDetailsViewModel(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
@@ -180,11 +179,12 @@ class MovieDetailsViewModel(
     }
 
     private suspend fun addRate() {
+        val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
             movieId = movieId,
-            rating = state.value.imdbRating.toFloat()
+            rating = rating.toFloat()
         )
-        if (isSendRateSuccess == 1) {
+        if (isSendRateSuccess) {
             emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
         } else {
             emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)

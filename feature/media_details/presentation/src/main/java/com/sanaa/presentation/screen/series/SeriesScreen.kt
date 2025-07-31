@@ -43,6 +43,7 @@ import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
@@ -62,7 +63,7 @@ fun SeriesScreen(
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
-    var snack by remember { mutableStateOf<SeriesSnackData?>(null) }
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
@@ -107,11 +108,11 @@ fun SeriesScreen(
                 }
 
                 is SeriesScreenEffects.ShowSuccessSnackBar -> {
-                    snack = SeriesSnackData(message = submitRatingSuccessMsg, isError = false)
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
 
                 is SeriesScreenEffects.ShowErrorSnackBar -> {
-                    snack = SeriesSnackData(submitRatingFailedMsg, isError = true)
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
                 SeriesScreenEffects.NavigateToLogin -> {

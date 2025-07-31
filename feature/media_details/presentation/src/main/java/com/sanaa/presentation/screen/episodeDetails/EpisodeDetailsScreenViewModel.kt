@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.episodeDetails
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -149,7 +148,7 @@ class EpisodeDetailsScreenViewModel(
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
-        if (isSendRateSuccess == 1) {
+        if (isSendRateSuccess) {
             emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
         } else {
             emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
