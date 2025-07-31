@@ -1,8 +1,8 @@
 package usecase
 
-import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
+import repository.TvSeriesRepository
 
 class ManageEpisodeDetailsUseCase(
     private val tvSeriesRepo: TvSeriesRepository
@@ -30,7 +30,7 @@ class ManageEpisodeDetailsUseCase(
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
-    ): String {
+    ): Int {
         return tvSeriesRepo.addTvEpisodeRate(
             seriesId = seriesId,
             seasonNumber = seasonNumber,
