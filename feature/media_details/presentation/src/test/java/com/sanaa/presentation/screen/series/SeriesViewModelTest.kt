@@ -162,6 +162,7 @@ class SeriesViewModelTest {
             assertThat(isLoadingEpisodes).isFalse()
         }
     }
+
     @Test
     fun `onPlayTrailerClicked emits PlayTrailer`() = runTest {
         givenHappyViewModel()
@@ -172,6 +173,7 @@ class SeriesViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onRateClicked sets showRateBottomSheet true when user is logged in`() = runTest {
         coEvery { checkUserLogin.isLoggedIn() } returns true
@@ -180,6 +182,7 @@ class SeriesViewModelTest {
         viewModel.onRateClicked()
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
+
     @Test
     fun `onDismissRateBottomSheet sets showRateBottomSheet to false`() = runTest {
         givenHappyViewModel()
@@ -195,6 +198,7 @@ class SeriesViewModelTest {
         viewModel.onDismissLoginBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
+
     @Test
     fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
         givenHappyViewModel()
@@ -208,10 +212,13 @@ class SeriesViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
         val errorMsg = "Failed to rate"
-        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } throws RuntimeException(errorMsg)
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } throws RuntimeException(
+            errorMsg
+        )
         givenHappyViewModel()
 
         viewModel.onRatingChanged(6)
@@ -223,9 +230,10 @@ class SeriesViewModelTest {
             assertThat(showRateBottomSheet).isFalse()
         }
     }
+
     @Test
     fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
-        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } returns 1
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } returns true
         givenHappyViewModel()
 
         viewModel.onRatingChanged(8)
