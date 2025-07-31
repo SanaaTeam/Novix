@@ -76,7 +76,7 @@ fun RemoteBlurredHaramImageViewer(
                 val loader = ImageLoader(context)
                 val request = ImageRequest.Builder(context)
                     .data(imageUrl)
-                    .allowHardware(false)
+                    .allowHardware(false) // Required to get Bitmap from Drawable
                     .build()
                 val response = loader.execute(request)
                 val bitmap = (response.drawable as? BitmapDrawable)?.bitmap
