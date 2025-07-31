@@ -5,11 +5,13 @@ import com.sanaa.vod.mapper.actor.getFullImageUrl
 import com.sanaa.vod.mapper.actor.toDomain
 import com.sanaa.vod.mapper.media.toDomain
 import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.mapper.media.toRequestBody
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
+import entity.WatchlistInfo
 import repository.MovieRepository
 
 class MovieRepositoryImpl(
@@ -73,6 +75,35 @@ class MovieRepositoryImpl(
         safeCall("Failed to fetch movie Trending") {
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
+
+    override suspend fun getWatchlistMovies(
+        page: Int,
+        accountId: String,
+        authorization: String,
+    ): List<Movie> {
+        return safeCall("Failed to fetch movie Watchlist") {
+            remote.fetchWatchlistMovies(
+                page = page,
+                accountId = accountId,
+                authorization = authorization
+            ).map { it.toDomain() }
+        }
+    }
+
+    override suspend fun addToWatchlist(
+        accountId: String,
+        authorization: String,
+        info: WatchlistInfo
+    ) {
+        safeCall("Failed to fetch add Watchlist") {
+
+
+            val requestBody = info
+            remote.addToWatchlist(accountId, authorization, requestBody.toRequestBody())
+
+        }
+    }
+
 
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {

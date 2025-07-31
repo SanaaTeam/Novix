@@ -4,11 +4,17 @@ import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistActionDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistRequestBody
+import com.sanaa.vod.media.actor.response.PaginatedResponse
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -85,5 +91,27 @@ interface MovieApiService {
 
     @GET("genre/movie/list")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
+
+    @GET("account/{account_id}/watchlist/movies")
+    @Headers(
+        "Ignore-Language: true",
+        "accept: application/json"
+    )
+    suspend fun fetchWatchlistMovies(
+        @Header("Authorization") authorization: String,
+        @Path("account_id") accountId: String,
+        @Query("page") page: Int,
+        @Query("sort_by") sortBy: String = "created_at.asc",
+    ): PaginatedResponse<MovieDto>
+
+    @Headers(
+        "accept: application/json",
+    )
+    @POST("account/{account_id}/watchlist")
+    suspend fun addToWatchlist(
+        @Header("Authorization") authorization: String,
+        @Path("account_id") accountId: String,
+        @Body body: WatchlistRequestBody
+    ): WatchlistActionDto
 
 }

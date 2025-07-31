@@ -43,6 +43,16 @@ class ManageTvSeriesUseCase(
         return tvSeriesRepo.getTrendingTvSeries(page, genreId)
     }
 
+    suspend fun getWatchlistTvShows(
+        page: Int, accountId: String, authorization: String
+    ): List<TvSeries> {
+        return tvSeriesRepo.getWatchlistTvShows(
+            page = page,
+            accountId = accountId,
+            authorization = authorization
+        )
+    }
+
     suspend fun getSeriesGenres(): List<Genre> {
         return tvSeriesRepo.getSeriesGenres()
     }

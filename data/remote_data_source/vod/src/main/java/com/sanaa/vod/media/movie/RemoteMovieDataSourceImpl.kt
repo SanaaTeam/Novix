@@ -6,6 +6,8 @@ import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistActionDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistRequestBody
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.util.wrapApiCall
 
@@ -24,9 +26,10 @@ class RemoteMovieDataSourceImpl(
         apiService.fetchCast(id).cast.distinctBy { it.id }
     }
 
-    override suspend fun fetchSimilarMoviesByMovieId(id: Int, page: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchSimilarMoviesByMovieId(id, page).results.distinctBy { it.id }
-    }
+    override suspend fun fetchSimilarMoviesByMovieId(id: Int, page: Int): List<MovieDto> =
+        wrapApiCall {
+            apiService.fetchSimilarMoviesByMovieId(id, page).results.distinctBy { it.id }
+        }
 
     override suspend fun fetchReviewsByMovieId(id: Int, page: Int): List<ReviewDto> = wrapApiCall {
         apiService.fetchReviewsByMovieId(id, page).results.distinctBy { it.id }
@@ -62,4 +65,29 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto> =
         apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
+
+    override suspend fun fetchWatchlistMovies(
+        page: Int,
+        accountId: String,
+        authorization: String,
+    ): List<MovieDto> =
+        apiService.fetchWatchlistMovies(
+            page = page,
+            accountId = accountId,
+            authorization = authorization
+        ).results
+
+    override suspend fun addToWatchlist(
+        accountId: String,
+        authorization: String,
+        body: WatchlistRequestBody
+    ): WatchlistActionDto {
+        return apiService.addToWatchlist(
+            accountId = accountId,
+            authorization = authorization,
+            body = body
+        )
+    }
+
+
 }

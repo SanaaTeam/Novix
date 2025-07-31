@@ -4,6 +4,7 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
+import entity.WatchlistInfo
 import repository.MovieRepository
 
 class ManageMovieUseCase(
@@ -41,6 +42,33 @@ class ManageMovieUseCase(
 
     suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
         movieRepo.getUpcomingMovies(page, genreId)
+
+    suspend fun getWatchlistMovies(
+        page: Int, accountId: String, authorization: String,
+    ): List<Movie> =
+        movieRepo.getWatchlistMovies(
+            page = page,
+            accountId = accountId,
+            authorization = authorization
+        )
+
+    suspend fun addToWatchlist(
+        accountId: String,
+        authorization: String,
+        watchlistInfo: WatchlistInfo
+    ) {
+        movieRepo.addToWatchlist(
+            accountId = accountId,
+            authorization = authorization,
+            body = watchlistInfo.copy(
+                mediaType = watchlistInfo.mediaType,
+                mediaId = watchlistInfo.mediaId,
+                watchlist = watchlistInfo.watchlist
+            )
+
+        )
+
+    }
 
     suspend fun getMovieGenres(): List<Genre> {
         return movieRepo.getMovieGenres()
