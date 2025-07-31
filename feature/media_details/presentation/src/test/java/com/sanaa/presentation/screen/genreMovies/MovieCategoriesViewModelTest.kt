@@ -150,45 +150,6 @@ class MovieCategoriesViewModelTest {
         }
     }
 
-//    @Test
-//    fun `when getMoviesByCategory throws exception then should update state with error`() =
-//        runTest(testDispatcher) {
-//            val category = genreList[0]
-//            val exception = RuntimeException()
-//
-//            coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), 1) } throws exception
-//
-//
-//            val savedStateHandle = SavedStateHandle(
-//                mapOf(
-//                    "categoryId" to category.id,
-//                    "categoryName" to category.name
-//                )
-//            )
-//
-//            viewModel = GenreMoviesViewModel(
-//                savedStateHandle,
-//                manageMoviesDetailsUseCase
-//            )
-//
-//            viewModel.state.test {
-//                var currentState = awaitItem()
-//                while (currentState.isLoading) {
-//                    currentState = awaitItem()
-//                }
-//
-//                val expectedState = GenreMoviesScreenUiState(
-//                    title = null,
-//                    movies = emptyList(),
-//                    isLoading = false,
-//                    error = exception.message,
-//                    showBottomSheet = false
-//                )
-//
-//                assertEquals(expectedState, currentState)
-//            }
-//        }
-
     private companion object {
         val genreList = listOf(
             Genre(

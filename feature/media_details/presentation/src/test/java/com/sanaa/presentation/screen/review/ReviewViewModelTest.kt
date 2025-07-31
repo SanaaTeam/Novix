@@ -1,20 +1,12 @@
 package com.sanaa.presentation.screen.review
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.paging.testing.asSnapshot
-import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.model.toReviewUiModel
 import entity.Review
-import exceptions.NoNetworkException
-import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
@@ -44,18 +36,6 @@ class ReviewViewModelTest {
         Dispatchers.resetMain()
     }
 
-//    @Test
-//    fun `onBackClick should emit NavigateBack`() = runTest {
-//        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
-//
-//        viewModel.onBackClick()
-//
-//        viewModel.effect.test {
-//            assertThat(awaitItem()).isEqualTo(ReviewScreenEffects.NavigateBack)
-//            cancelAndIgnoreRemainingEvents()
-//        }
-//    }
-
     @Test
     fun `ReviewScreenInteractionListener calls onBackClick`() {
         var backClicked = false
@@ -71,113 +51,6 @@ class ReviewViewModelTest {
         listener.onBackClick()
         assertThat(backClicked).isTrue()
     }
-
-//    @Test
-//    fun `fetchReviews should update reviews for movies`() = runTest {
-//        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, any()) } returns dummyReviews
-//
-//        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
-//        testDispatcher.scheduler.advanceUntilIdle()
-//
-//        val pagingData = viewModel.state.value.reviews
-//        val items = pagingData.asSnapshot()
-//        assertThat(items.take(dummyReviews.size)).isEqualTo(dummyReviews.map { it.toReviewUiModel() })
-//    }
-
-//    @Test
-//    fun `fetchReviews should update reviews for tv series`() = runTest {
-//        coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId, any()) } returns dummyReviews
-//
-//        viewModel = givenHappyViewModel(MediaTypeUiModel.SERIES)
-//        testDispatcher.scheduler.advanceUntilIdle()
-//
-//        val pagingData = viewModel.state.value.reviews
-//        val items = pagingData.asSnapshot()
-//        assertThat(items.take(dummyReviews.size)).isEqualTo(dummyReviews.map { it.toReviewUiModel() })
-//    }
-
-//    @Test
-//    fun `fetchReviews should set isLoading to true during fetch`() = runTest {
-//        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, any()) } coAnswers {
-//            assertThat(viewModel.state.value.isLoading).isTrue()
-//            dummyReviews
-//        }
-//
-//        viewModel = givenHappyViewModel(MediaTypeUiModel.MOVIE)
-//        testDispatcher.scheduler.advanceUntilIdle()
-//        assertThat(viewModel.state.value.isLoading).isFalse()
-//    }
-
-//    @Test
-//    fun `fetchReviews handles NoNetworkException correctly`() = runTest {
-//        coEvery {
-//            manageTvSeriesDetails.getTvSeriesReviews(
-//                mediaId,
-//                any()
-//            )
-//        } throws NoNetworkException()
-//
-//        val savedStateHandle = SavedStateHandle(
-//            mapOf(
-//                "mediaId" to mediaId,
-//                "mediaType" to MediaTypeUiModel.SERIES.name
-//            )
-//        )
-//
-//        viewModel = ReviewViewModel(
-//            savedStateHandle = savedStateHandle,
-//            manageMovieDetails = manageMovieDetails,
-//            manageTvSeriesDetails = manageTvSeriesDetails,
-//            dispatcher = testDispatcher
-//        )
-//
-//        testDispatcher.scheduler.advanceUntilIdle()
-//        assertThat(viewModel.state.value.isLoading).isFalse()
-//    }
-
-//    @Test
-//    fun `fetchReviews sets isLoading to true during execution`() = runTest {
-//        coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, 1) } coAnswers {
-//            assertThat(viewModel.state.value.isLoading).isTrue()
-//            dummyReviews
-//        }
-//
-//        val savedStateHandle = SavedStateHandle(
-//            mapOf(
-//                "mediaId" to mediaId,
-//                "mediaType" to MediaTypeUiModel.SERIES.name
-//            )
-//        )
-//
-//        viewModel = ReviewViewModel(
-//            savedStateHandle = savedStateHandle,
-//            manageMovieDetails = manageMovieDetails,
-//            manageTvSeriesDetails = manageTvSeriesDetails,
-//            dispatcher = testDispatcher
-//        )
-//    }
-
-//    private fun givenHappyViewModel(type: MediaTypeUiModel) {
-//        if (type == MediaTypeUiModel.MOVIE) {
-//            coEvery { manageMovieDetails.getReviewsByMovieId(mediaId, 1) } returns dummyReviews
-//        } else {
-//            coEvery { manageTvSeriesDetails.getTvSeriesReviews(mediaId, 1) } returns dummyReviews
-//        }
-//
-//        val savedStateHandle = SavedStateHandle(
-//            mapOf(
-//                "mediaId" to mediaId,
-//                "mediaType" to MediaTypeUiModel.SERIES.name
-//            )
-//        )
-//
-//        viewModel = ReviewViewModel(
-//            savedStateHandle = savedStateHandle,
-//            manageMovieDetails = manageMovieDetails,
-//            manageTvSeriesDetails = manageTvSeriesDetails,
-//            dispatcher = testDispatcher
-//        )
-//    }
 
     companion object {
         private val dummyReviews = listOf(

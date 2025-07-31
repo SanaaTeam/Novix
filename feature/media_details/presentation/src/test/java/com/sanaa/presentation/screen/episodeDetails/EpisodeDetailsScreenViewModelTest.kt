@@ -109,8 +109,8 @@ class EpisodeDetailsScreenViewModelTest {
 
         viewModel = EpisodeDetailsScreenViewModel(
             savedStateHandle,
-            manageEpisodeDetails,
             checkUserLogin,
+            manageEpisodeDetails,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
@@ -182,8 +182,8 @@ class EpisodeDetailsScreenViewModelTest {
 
         viewModel = EpisodeDetailsScreenViewModel(
             savedStateHandle,
-            manageEpisodeDetails,
             checkUserLogin,
+            manageEpisodeDetails,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
