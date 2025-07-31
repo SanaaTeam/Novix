@@ -66,7 +66,7 @@ class RemoteMovieDataSourceImpl(
     override suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto> =
         apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
 
-    override suspend fun fetchMoviesRate(accountId: Int, sessionId: String): List<MovieDto> =
+    override suspend fun fetchMoviesRate(accountId: Long, sessionId: String): List<MovieDto> =
         wrapApiCall {
             apiService.fetchMovieRate(accountId, sessionId).results
         }

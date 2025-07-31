@@ -14,12 +14,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 
 class MovieDetailsViewModel(
     private val movieId: Int,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val getUser: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),
@@ -168,12 +170,16 @@ class MovieDetailsViewModel(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
+        val userId = getUser.getLoggedInUser().id
+        val ratedMovies = manageMovieDetails.getMoviesRate(userId)
+        val currentMovieRating = ratedMovies.find { it.id == movieId }?.rating ?: 0
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 imagesUrls = images,
-                similarMovies = similar
+                similarMovies = similar,
+                imdbRating = currentMovieRating
             )
         }
     }

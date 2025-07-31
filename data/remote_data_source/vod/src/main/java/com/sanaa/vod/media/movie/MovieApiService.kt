@@ -99,7 +99,7 @@ interface MovieApiService {
 
     @GET("account/{account_id}/rated/movies")
     suspend fun fetchMovieRate(
-        @Path("account_id") accountId: Int,
+        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<MovieDto>
 }

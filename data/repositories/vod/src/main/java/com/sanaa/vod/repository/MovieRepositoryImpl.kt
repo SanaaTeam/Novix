@@ -77,6 +77,14 @@ class MovieRepositoryImpl(
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
+    override suspend fun getMoviesRate(accountId: Long): List<Movie> {
+        return safeCall("Failed to fetch movie Rate") {
+            val sessionId = preferences.sessionId.first()
+            remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
+                .map { it.toDomain() }
+        }
+    }
+
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
             remote.fetchMovieGenres().map { it.toEntity() }
