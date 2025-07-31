@@ -265,7 +265,7 @@ fun SeriesScreenContent(
             RateBottomSheet(
                 isRateSelected = state.hasUserSelectedRate,
                 imdbRating = state.imdbRating,
-                onDismiss = interactionListener::onDismissRateBottomSheet,
+                onDismiss = interactionListener::onDismissAnyBottomSheet,
                 isVisible = state.showRateBottomSheet,
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                 onRatingChanged = interactionListener::onRatingChanged
@@ -273,7 +273,7 @@ fun SeriesScreenContent(
         }
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
-                onDismiss = interactionListener::onDismissRateBottomSheet,
+                onDismiss = interactionListener::onDismissAnyBottomSheet,
                 onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                 isVisible = state.showLoginBottomSheet
             )
