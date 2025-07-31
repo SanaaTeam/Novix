@@ -82,19 +82,15 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun fetchWatchlistMovies(
         page: Int,
-        accountId: String,
     ): List<MovieDto> =
         apiService.fetchWatchlistMovies(
             page = page,
-            accountId = accountId,
         ).results
 
     override suspend fun addToWatchlist(
-        accountId: String,
         body: WatchlistRequestBody
     ): WatchlistActionDto {
         return apiService.addToWatchlist(
-            accountId = accountId,
             body = body
         )
     }

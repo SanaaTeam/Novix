@@ -80,24 +80,19 @@ class MovieRepositoryImpl(
 
     override suspend fun getWatchlistMovies(
         page: Int,
-        accountId: String,
     ): List<Movie> {
         return safeCall("Failed to fetch movie Watchlist") {
             remote.fetchWatchlistMovies(
                 page = page,
-                accountId = accountId,
             ).map { it.toDomain() }
         }
     }
 
     override suspend fun addToWatchlist(
-        accountId: String,
         info: WatchlistInfo
     ) {
         safeCall("Failed to fetch add Watchlist") {
-
-            val requestBody = info
-            remote.addToWatchlist(accountId, requestBody.toRequestBody())
+            remote.addToWatchlist(info.toRequestBody())
 
         }
     }

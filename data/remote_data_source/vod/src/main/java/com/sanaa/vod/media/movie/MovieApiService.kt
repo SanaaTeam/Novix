@@ -96,14 +96,12 @@ interface MovieApiService {
     @POST("movie/{movie_id}/rating")
     suspend fun rateMovie(
         @Path("movie_id") movieId: Int,
-        //   @Query("session_id") sessionId: String,
         @Body rating: MovieRateRequest
     ): RatingResponse
 
     @GET("account/{account_id}/watchlist/movies")
     @Headers("Ignore-Language: true")
     suspend fun fetchWatchlistMovies(
-        @Path("account_id") accountId: String,
         @Query("page") page: Int,
         @Query("sort_by") sortBy: String = "created_at.asc",
     ): PaginatedResponse<MovieDto>
@@ -111,7 +109,6 @@ interface MovieApiService {
     @Headers("accept: application/json")
     @POST("account/{account_id}/watchlist")
     suspend fun addToWatchlist(
-        @Path("account_id") accountId: String,
         @Body body: WatchlistRequestBody
     ): WatchlistActionDto
 
