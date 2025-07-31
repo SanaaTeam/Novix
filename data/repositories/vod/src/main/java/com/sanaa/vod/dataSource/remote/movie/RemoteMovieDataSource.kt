@@ -23,20 +23,8 @@ interface RemoteMovieDataSource {
     suspend fun fetchTrendingMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchTopRatedMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto>
-    suspend fun sendMovieRate(movieId: Int, sessionId: String, rating: Float): RatingResponse
-    suspend fun fetchWatchlistMovies(
-        page: Int,
-        accountId: String,
-        authorization: String,
-
-        ): List<MovieDto>
-
-    suspend fun addToWatchlist(
-        accountId: String,
-        authorization: String,
-        body: WatchlistRequestBody
-
-    ): WatchlistActionDto
-
+    suspend fun sendMovieRate(movieId: Int, rating: Float): RatingResponse
+    suspend fun fetchWatchlistMovies(page: Int, accountId: String): List<MovieDto>
+    suspend fun addToWatchlist(accountId: String, body: WatchlistRequestBody): WatchlistActionDto
 
 }

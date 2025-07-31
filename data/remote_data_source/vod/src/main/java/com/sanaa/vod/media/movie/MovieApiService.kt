@@ -14,7 +14,6 @@ import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -97,28 +96,21 @@ interface MovieApiService {
     @POST("movie/{movie_id}/rating")
     suspend fun rateMovie(
         @Path("movie_id") movieId: Int,
-        @Query("session_id") sessionId: String,
+        //   @Query("session_id") sessionId: String,
         @Body rating: MovieRateRequest
     ): RatingResponse
 
     @GET("account/{account_id}/watchlist/movies")
-    @Headers(
-        "Ignore-Language: true",
-        "accept: application/json"
-    )
+    @Headers("Ignore-Language: true")
     suspend fun fetchWatchlistMovies(
-        @Header("Authorization") authorization: String,
         @Path("account_id") accountId: String,
         @Query("page") page: Int,
         @Query("sort_by") sortBy: String = "created_at.asc",
     ): PaginatedResponse<MovieDto>
 
-    @Headers(
-        "accept: application/json",
-    )
+    @Headers("accept: application/json")
     @POST("account/{account_id}/watchlist")
     suspend fun addToWatchlist(
-        @Header("Authorization") authorization: String,
         @Path("account_id") accountId: String,
         @Body body: WatchlistRequestBody
     ): WatchlistActionDto

@@ -44,30 +44,19 @@ class ManageMovieUseCase(
         movieRepo.getUpcomingMovies(page, genreId)
 
     suspend fun getWatchlistMovies(
-        page: Int, accountId: String, authorization: String,
+        page: Int, accountId: String
     ): List<Movie> =
-        movieRepo.getWatchlistMovies(
-            page = page,
-            accountId = accountId,
-            authorization = authorization
-        )
+        movieRepo.getWatchlistMovies(page = page, accountId = accountId)
 
-    suspend fun addToWatchlist(
-        accountId: String,
-        authorization: String,
-        watchlistInfo: WatchlistInfo
-    ) {
+    suspend fun addToWatchlist(accountId: String, watchlistInfo: WatchlistInfo) {
         movieRepo.addToWatchlist(
             accountId = accountId,
-            authorization = authorization,
             body = watchlistInfo.copy(
                 mediaType = watchlistInfo.mediaType,
                 mediaId = watchlistInfo.mediaId,
                 watchlist = watchlistInfo.watchlist
             )
-
         )
-
     }
 
     suspend fun getMovieGenres(): List<Genre> {

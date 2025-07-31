@@ -70,12 +70,10 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun sendMovieRate(
         movieId: Int,
-        sessionId: String,
         rating: Float
-    ) : RatingResponse {
+    ): RatingResponse {
         val response = apiService.rateMovie(
             movieId = movieId,
-            sessionId = sessionId,
             rating = MovieRateRequest(value = rating)
         )
         return response
@@ -85,22 +83,18 @@ class RemoteMovieDataSourceImpl(
     override suspend fun fetchWatchlistMovies(
         page: Int,
         accountId: String,
-        authorization: String,
     ): List<MovieDto> =
         apiService.fetchWatchlistMovies(
             page = page,
             accountId = accountId,
-            authorization = authorization
         ).results
 
     override suspend fun addToWatchlist(
         accountId: String,
-        authorization: String,
         body: WatchlistRequestBody
     ): WatchlistActionDto {
         return apiService.addToWatchlist(
             accountId = accountId,
-            authorization = authorization,
             body = body
         )
     }

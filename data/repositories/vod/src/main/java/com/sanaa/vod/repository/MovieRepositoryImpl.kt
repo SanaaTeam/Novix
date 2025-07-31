@@ -12,7 +12,6 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import kotlinx.coroutines.flow.first
 import entity.WatchlistInfo
 import repository.MovieRepository
 
@@ -82,27 +81,23 @@ class MovieRepositoryImpl(
     override suspend fun getWatchlistMovies(
         page: Int,
         accountId: String,
-        authorization: String,
     ): List<Movie> {
         return safeCall("Failed to fetch movie Watchlist") {
             remote.fetchWatchlistMovies(
                 page = page,
                 accountId = accountId,
-                authorization = authorization
             ).map { it.toDomain() }
         }
     }
 
     override suspend fun addToWatchlist(
         accountId: String,
-        authorization: String,
         info: WatchlistInfo
     ) {
         safeCall("Failed to fetch add Watchlist") {
 
-
             val requestBody = info
-            remote.addToWatchlist(accountId, authorization, requestBody.toRequestBody())
+            remote.addToWatchlist(accountId, requestBody.toRequestBody())
 
         }
     }
@@ -116,10 +111,8 @@ class MovieRepositoryImpl(
 
     override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return safeCall("Failed to add movie rate") {
-            val sessionId = preferences.sessionId.first()
             remote.sendMovieRate(
                 movieId = movieId,
-                sessionId = sessionId,
                 rating = rating
             ).isSuccess
         }
