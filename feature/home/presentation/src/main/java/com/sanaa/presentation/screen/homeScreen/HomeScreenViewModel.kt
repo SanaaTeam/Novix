@@ -9,9 +9,11 @@ import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -55,9 +57,7 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -80,9 +80,7 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -105,9 +103,7 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -124,35 +120,23 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(movieGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(errorMessage = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
     private fun fetchUpcomingMovies(
         genreId: Int? = null
     ) {
-        tryToExecute(
+        tryToCollect(
             callee = { loadUpcomingMovies(genreId) },
-            onSuccess = { mediaList ->
+            onCollect = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoadingUpcoming = false,
-                        upcomingMovies = mediaList
+                        upcomingMovies = flowOf(mediaList),
                     )
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        errorMessage = exception.message,
-                        isLoadingUpcoming = false
-                    )
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -196,6 +180,15 @@ class HomeScreenViewModel @Inject constructor(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onRetryClick() {
+        updateState { it.copy(isNoInternet = false) }
+        fetchPopularMediaData()
+        fetchTopRatedMediaData()
+        fetchWatchedMediaData()
+        fetchMovieGenres()
+        fetchUpcomingMovies()
+    }
+
 
     private fun loadUpcomingMovies(
         genreId: Int?
@@ -218,6 +211,14 @@ class HomeScreenViewModel @Inject constructor(
                 page = page,
                 genreId = genreId
             )
+        }
+    }
+
+
+    private fun onErrorLoadingData(e: Throwable) {
+        when (e) {
+            is NoNetworkException -> updateState { it.copy(isNoInternet = true, isLoading = false) }
+            else -> updateState { it.copy(errorMessage = e.message, isLoading = false) }
         }
     }
 }

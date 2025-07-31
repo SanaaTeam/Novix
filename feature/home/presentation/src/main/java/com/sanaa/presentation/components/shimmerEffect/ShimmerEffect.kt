@@ -231,16 +231,8 @@ fun MediaSliderSectionPlaceholder(modifier: Modifier = Modifier) {
     }
 }
 
-fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
 
-    item(span = { GridItemSpan(maxLineSpan) }) {
-        PlaceholderWithShimmerEffect(
-            width = 166.dp,
-            height = 30.dp,
-            cornerRadius = 8.dp,
-            borderColor = Color.Transparent
-        )
-    }
+fun LazyGridScope.upComingGenresLoadingPlaceholder(modifier: Modifier = Modifier) {
     item(span = { GridItemSpan(maxLineSpan) }) {
         LazyRow(
             modifier = modifier
@@ -262,6 +254,19 @@ fun LazyGridScope.upcomingSectionPlaceholder(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+fun LazyGridScope.upComingTitlePlaceholder(modifier: Modifier = Modifier) {
+
+    item(span = { GridItemSpan(maxLineSpan) }) {
+        PlaceholderWithShimmerEffect(
+            width = 166.dp,
+            height = 30.dp,
+            cornerRadius = 8.dp,
+            borderColor = Color.Transparent
+        )
+    }
+
 
     items(10) {
         PlaceholderWithShimmerEffect(

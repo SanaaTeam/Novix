@@ -113,6 +113,7 @@ fun MovieDetailsScreen(
                         ).route()
                     )
                 }
+
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
@@ -126,7 +127,7 @@ fun MovieDetailsScreen(
         }
     }
 
-    Box{
+    Box {
         MovieDetailsContent(
             state = state, interactionListener = viewModel
         )
@@ -197,7 +198,9 @@ fun MovieDetailsContent(
                             .fillMaxSize(),
                         columns = GridCells.Adaptive(minSize = 120.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                        contentPadding = PaddingValues(
+                            start = 16.dp, end = 16.dp, bottom = 100.dp
+                        )
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Box(modifier = Modifier.fillWidthOfParent(16.dp)) {

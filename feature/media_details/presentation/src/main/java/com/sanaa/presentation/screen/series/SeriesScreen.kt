@@ -190,9 +190,8 @@ fun SeriesScreenContent(
                             )
                     ) {
                         Column(
-                            modifier = Modifier.padding(bottom = 112.dp)
+                            modifier = Modifier.padding(bottom = 104.dp)
                         ) {
-                            Log.d("TAG", "SeriesScreenContent: ${state.series.genres}")
                             SeriesHeaderSection(
                                 title = state.series.title,
                                 rating = state.series.rating,
