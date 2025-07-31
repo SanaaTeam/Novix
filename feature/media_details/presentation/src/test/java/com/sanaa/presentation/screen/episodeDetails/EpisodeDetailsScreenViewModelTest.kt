@@ -17,11 +17,13 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
@@ -83,6 +85,11 @@ class EpisodeDetailsScreenViewModelTest {
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
+    @Test fun `onRatingChanged updates rating`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRatingChanged(4)
+        assertThat(viewModel.state.value.imdbRating).isEqualTo(4)
+    }
 
     private fun givenHappyViewModel() {
         coEvery { manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber) } returns dummyEpisode
@@ -90,8 +97,13 @@ class EpisodeDetailsScreenViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId, seasonNumber, episodeNumber,
-            manageEpisodeDetails, manageTvSeriesDetails
+            seriesId,
+            seasonNumber,
+            episodeNumber,
+            checkUserLogin,
+            manageEpisodeDetails,
+            manageTvSeriesDetails,
+            dispatcher = testDispatcher
         )
     }
 

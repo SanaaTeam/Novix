@@ -18,11 +18,12 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
@@ -51,7 +52,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails,checkUserLogin)
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -141,7 +142,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails,checkUserLogin)
     }
 
     companion object {
