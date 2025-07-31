@@ -86,7 +86,7 @@ fun CelebritiesContent(
                         onClick = interactionListener::onBackClick
                     )
                 },
-                screenTitle = stringResource(id = R.string.people),
+                screenTitle = stringResource(id = R.string.trending_people),
                 modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
