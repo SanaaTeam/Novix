@@ -63,8 +63,4 @@ class ContinueWatchingRepositoryImpl(
         )
         localContinueWatchingDataSource.addOrUpdateItem(newItem)
     }
-
-    override suspend fun removeItem(mediaId: Int, username: String) {
-        localContinueWatchingDataSource.deleteItem(mediaId, username)
-    }
 }

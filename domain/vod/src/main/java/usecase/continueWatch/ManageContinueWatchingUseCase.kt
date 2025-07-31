@@ -26,10 +26,6 @@ class ManageContinueWatchingUseCase(
         )
     }
 
-    suspend fun removeItem(username: String, mediaId: Int) {
-        repository.removeItem(mediaId, username)
-    }
-
     companion object {
         private const val CONTINUE_WATCHING_LIMIT = 15
     }

@@ -6,5 +6,4 @@ import kotlinx.coroutines.flow.Flow
 interface LocalContinueWatchingDataSource {
     suspend fun addOrUpdateItem(item: ContinueWatchingLocalDto)
     fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingLocalDto>>
-    suspend fun deleteItem(mediaId: Int, username: String)
 }

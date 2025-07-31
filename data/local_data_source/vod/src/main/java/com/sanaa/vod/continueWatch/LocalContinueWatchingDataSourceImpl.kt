@@ -16,8 +16,4 @@ class LocalContinueWatchingDataSourceImpl(
     override fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingLocalDto>> {
         return continueWatchingDao.getContinueWatchingList(username, limit)
     }
-
-    override suspend fun deleteItem(mediaId: Int, username: String) {
-        continueWatchingDao.deleteItem(mediaId, username)
-    }
 }
