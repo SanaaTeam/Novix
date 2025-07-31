@@ -19,7 +19,7 @@ import usecase.ManageMovieUseCase
 class MovieDetailsViewModel(
     private val movieId: Int,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),
@@ -28,6 +28,7 @@ class MovieDetailsViewModel(
 
     init {
         fetchMovieDetails(movieId)
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClick() {
@@ -51,9 +52,9 @@ class MovieDetailsViewModel(
     }
 
     override fun onRateMovieClick() {
-        if (state.value.isUserLoggedIn){
+        if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
-        }else{
+        } else {
             updateState { it.copy(showLoginBottomSheet = true) }
         }
 
@@ -185,7 +186,7 @@ class MovieDetailsViewModel(
         )
     }
 
-    private suspend fun getUserState(){
+    private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }

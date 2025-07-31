@@ -26,6 +26,7 @@ class EpisodeDetailsScreenViewModel(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClick() {

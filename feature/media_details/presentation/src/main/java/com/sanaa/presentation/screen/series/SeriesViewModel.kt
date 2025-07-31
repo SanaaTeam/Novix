@@ -24,6 +24,7 @@ class SeriesViewModel(
 
     init {
         loadSeries()
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClicked() {
