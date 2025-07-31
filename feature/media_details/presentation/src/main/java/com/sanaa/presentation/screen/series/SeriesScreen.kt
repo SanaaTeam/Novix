@@ -50,15 +50,10 @@ import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun SeriesScreen(
