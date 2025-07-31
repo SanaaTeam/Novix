@@ -5,27 +5,35 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.*
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.foundation.text.ClickableText // Import ClickableText
 
 @Composable
 fun OverviewSection(
@@ -56,6 +64,7 @@ fun OverviewSection(
     }
 }
 
+
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun ExpandableText(
@@ -74,9 +83,6 @@ fun ExpandableText(
     var hasOverflow by rememberSaveable { mutableStateOf(false) }
     var displayText by rememberSaveable { mutableStateOf(text) }
 
-    val READ_MORE_TAG = "read_more_tag"
-    val READ_LESS_TAG = "read_less_tag"
-
     BoxWithConstraints(
         modifier = modifier
             .animateContentSize(
@@ -85,6 +91,14 @@ fun ExpandableText(
                     easing = FastOutSlowInEasing
                 )
             )
+            .clickable(
+                enabled = hasOverflow,
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ) {
+                isExpanded = !isExpanded
+                if (isExpanded) onReadMore?.invoke()
+            }
     ) {
         val maxWidthPx = with(LocalDensity.current) { maxWidth.toPx() }
 
@@ -119,50 +133,37 @@ fun ExpandableText(
             }
         }
 
-        val annotatedString = buildAnnotatedString {
-            when {
-                !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {
-                    append(displayText.removeSuffix(readMoreText))
-                    withStyle(
-                        Theme.textStyle.label.medium
-                            .toSpanStyle()
-                            .copy(color = Theme.colors.primary)
-                    ) {
-                        pushStringAnnotation(tag = READ_MORE_TAG, annotation = "read_more")
-                        append(readMoreText)
-                        pop()
-                    }
-                }
-                isExpanded && hasOverflow && displayText.endsWith(readLessText) -> {
-                    append(displayText.removeSuffix(readLessText))
-                    withStyle(
-                        Theme.textStyle.label.medium
-                            .toSpanStyle()
-                            .copy(color = Theme.colors.primary)
-                    ) {
-                        pushStringAnnotation(tag = READ_LESS_TAG, annotation = "read_less")
-                        append(readLessText)
-                        pop()
-                    }
-                }
-                else -> append(displayText)
-            }
-        }
-
-        ClickableText(
-            text = annotatedString,
-            style = style.copy(color = color),
-            maxLines = if (!isExpanded && hasOverflow) collapsedMaxLines else Int.MAX_VALUE,
-            overflow = TextOverflow.Clip,
-            onClick = { offset ->
-                annotatedString.getStringAnnotations(offset, offset)
-                    .firstOrNull()?.let { span ->
-                        if (span.tag == READ_MORE_TAG || span.tag == READ_LESS_TAG) {
-                            isExpanded = !isExpanded
-                            if (isExpanded) onReadMore?.invoke()
+        Text(
+            text = buildAnnotatedString {
+                when {
+                    !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {
+                        append(displayText.removeSuffix(readMoreText))
+                        withStyle(
+                            Theme.textStyle.label.medium
+                                .toSpanStyle()
+                                .copy(color = Theme.colors.primary)
+                        ) {
+                            append(readMoreText)
                         }
                     }
-            }
+
+                    isExpanded && hasOverflow && displayText.endsWith(readLessText) -> {
+                        append(displayText.removeSuffix(readLessText))
+                        withStyle(
+                            Theme.textStyle.label.medium
+                                .toSpanStyle()
+                                .copy(color = Theme.colors.primary)
+                        ) {
+                            append(readLessText)
+                        }
+                    }
+
+                    else -> append(displayText)
+                }
+            },
+            style = style.copy(color = color),
+            maxLines = if (!isExpanded && hasOverflow) collapsedMaxLines else Int.MAX_VALUE,
+            overflow = TextOverflow.Clip
         )
     }
 }
