@@ -7,6 +7,7 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
 
@@ -14,6 +15,7 @@ class EpisodeDetailsScreenViewModel(
     private val seriesId: Int,
     private val seasonNumber: Int,
     private val episodeNumber: Int,
+    private val getUser: GetLoggedInUserUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
@@ -130,13 +132,19 @@ class EpisodeDetailsScreenViewModel(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+        val userId = getUser.getLoggedInUser().id
+        val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
+        val currentEpisodesRating = ratedEpisodes.find {
+            it.seasonNumber == seasonNumber && it.number == episodeNumber
+        }?.rating ?: 0
         updateState {
             it.copy(
                 episode = episode.toEpisodeUiModel(),
                 guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
                 seriesId = seriesId,
                 imagesUrl = images,
-                trailerUrl = trailerUrl
+                trailerUrl = trailerUrl,
+                imdbRating = currentEpisodesRating
             )
         }
     }

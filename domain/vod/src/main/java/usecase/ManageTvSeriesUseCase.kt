@@ -1,6 +1,7 @@
 package usecase
 
 import entity.Actor
+import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
@@ -45,6 +46,14 @@ class ManageTvSeriesUseCase(
 
     suspend fun getSeriesGenres(): List<Genre> {
         return tvSeriesRepo.getSeriesGenres()
+    }
+
+    suspend fun getSeriesRate(accountId: Long): List<TvSeries> {
+        return tvSeriesRepo.getSeriesRate(accountId)
+    }
+
+    suspend fun getEpisodesRate(accountId: Long): List<Episode> {
+        return tvSeriesRepo.getEpisodesRate(accountId)
     }
 
     suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {

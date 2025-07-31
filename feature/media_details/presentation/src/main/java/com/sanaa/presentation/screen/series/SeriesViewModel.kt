@@ -9,11 +9,13 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
 
 class SeriesViewModel(
     private val seriesId: Int,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val getUser: GetLoggedInUserUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -171,13 +173,16 @@ class SeriesViewModel(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-
+        val userId = getUser.getLoggedInUser().id
+        val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
+        val currentSeriesRating = ratedSeries.find { it.id == seriesId }?.rating ?: 0
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
-                images = images
+                images = images,
+                imdbRating = currentSeriesRating
             )
         }
     }

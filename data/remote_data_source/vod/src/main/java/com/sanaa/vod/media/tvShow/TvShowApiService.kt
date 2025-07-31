@@ -118,13 +118,13 @@ interface TvShowApiService {
 
     @GET("{account/{account_id}/rated/tv")
     suspend fun fetchTvShowRate(
-        @Path("account_id") accountId: Int,
+        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<TvShowDto>
 
     @GET("{account/{account_id}/rated/tv/episodes")
     suspend fun fetchEpisodesRate(
-        @Path("account_id") accountId: Int,
+        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<EpisodeDto>
 }
