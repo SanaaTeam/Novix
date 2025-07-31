@@ -4,6 +4,7 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 
@@ -20,4 +21,5 @@ interface RemoteMovieDataSource {
     suspend fun fetchTrendingMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchTopRatedMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto>
+    suspend fun sendMovieRate(movieId: Int, guestSessionId: String, rating: Float): RatingResponse
 }
