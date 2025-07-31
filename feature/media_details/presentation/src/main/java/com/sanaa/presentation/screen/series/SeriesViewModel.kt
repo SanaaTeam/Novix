@@ -74,13 +74,37 @@ class SeriesViewModel(
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showRateBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
         updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(SeriesScreenEffects.NavigateToLogin)
     }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissLoginBottomSheet() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        error = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }    }
 
     override fun onSaveSeriesClicked() {
         updateState { it.copy(showLoginBottomSheet = true) }
@@ -145,5 +169,11 @@ class SeriesViewModel(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
+    }
+    private suspend fun addRate() {
+        manageTvSeriesDetails.addTvSeriesRate(
+            seriesId = seriesId,
+            rating = state.value.imdbRating.toFloat()
+        )
     }
 }
