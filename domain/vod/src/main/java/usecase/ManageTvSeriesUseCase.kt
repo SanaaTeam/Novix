@@ -47,7 +47,7 @@ class ManageTvSeriesUseCase(
         return tvSeriesRepo.getSeriesGenres()
     }
 
-    suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Int {
+    suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
         return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
     }
 
