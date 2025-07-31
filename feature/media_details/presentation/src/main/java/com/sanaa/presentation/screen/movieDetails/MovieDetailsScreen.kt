@@ -22,7 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -56,6 +58,7 @@ import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -69,9 +72,12 @@ fun MovieDetailsScreen(
     movieId: Int,
     viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
 ) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -107,14 +113,30 @@ fun MovieDetailsScreen(
                         ).route()
                     )
                 }
+                is MovieDetailsUiEffect.ShowSuccessSnackBar -> {
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
+                }
+
+                is MovieDetailsUiEffect.ShowErrorSnackBar -> {
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
+                }
 
                 MovieDetailsUiEffect.NavigateToLogin -> TODO()
             }
         }
     }
-    MovieDetailsContent(
-        state = state, interactionListener = viewModel
-    )
+
+    Box() {
+        MovieDetailsContent(
+            state = state, interactionListener = viewModel
+        )
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
+
 
 }
 
@@ -123,6 +145,7 @@ fun MovieDetailsContent(
     state: MovieDetailsUiState,
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
+
     val pagedSimilarMovies = state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
@@ -346,7 +369,6 @@ fun MovieDetailsContent(
                     isVisible = state.showLoginBottomSheet
                 )
             }
-
         }
 
     }

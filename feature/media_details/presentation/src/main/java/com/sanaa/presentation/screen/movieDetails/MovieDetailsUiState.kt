@@ -19,7 +19,14 @@ data class MovieDetailsUiState(
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
+    val isRatingSubmitted: Boolean = false,
+    val showSnackBar: Boolean = false
 ){
     val hasUserSelectedRate: Boolean
         get() =  imdbRating > 0
 }
+
+data class SnackData(
+    val message: String,
+    val isError: Boolean
+)

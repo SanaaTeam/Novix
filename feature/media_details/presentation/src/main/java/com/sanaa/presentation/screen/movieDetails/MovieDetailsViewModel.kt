@@ -180,10 +180,15 @@ class MovieDetailsViewModel(
     }
 
     private suspend fun addRate() {
-       val massage = manageMovieDetails.addMovieRate(
+        val isSendRateSuccess = manageMovieDetails.addMovieRate(
             movieId = movieId,
             rating = state.value.imdbRating.toFloat()
         )
+        if (isSendRateSuccess == 1) {
+            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+        } else {
+            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+        }
     }
 
     private suspend fun getUserState() {
