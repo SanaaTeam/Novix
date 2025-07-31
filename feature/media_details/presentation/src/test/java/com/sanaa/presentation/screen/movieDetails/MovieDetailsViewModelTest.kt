@@ -18,11 +18,12 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
@@ -48,10 +49,10 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails, checkUserLogin)
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -70,9 +71,9 @@ class MovieDetailsViewModelTest {
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
         viewModel.onRateMovieClick()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
     }
 
     @Test
@@ -80,7 +81,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
     }
 
     @Test
@@ -123,25 +124,100 @@ class MovieDetailsViewModelTest {
         givenHappy()
         val genre =
             GenreUiModel(
-            id = 1,
-            name = "Drama"
-        )
+                id = 1,
+                name = "Drama"
+            )
 
         viewModel.onGenreClicked(genre)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
+                .isEqualTo(
+                    MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(
+                        genre.id,
+                        genre.name
+                    )
+                )
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+
+    @Test
+    fun `onRateMovieClick shows rate bottom sheet if user is logged in`() = runTest {
+        coEvery { checkUserLogin.isLoggedIn() } returns true
+        givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onRateMovieClick()
+
+        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
+        givenHappy()
+        viewModel.updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        viewModel.onLoginButtonClick()
+
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onRatingChanged updates the rating`() = runTest {
+        givenHappy()
+        viewModel.onRatingChanged(8)
+        assertThat(viewModel.state.value.imdbRating).isEqualTo(8)
+    }
+
+    @Test
+    fun `onDismissRateBottomSheet sets sheet to false`() = runTest {
+        givenHappy()
+        viewModel.updateState { it.copy(showRateBottomSheet = true) }
+        viewModel.onDismissRateBottomSheet()
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onSubmitRateBottomSheet sets errorMessage on exception`() = runTest {
+        val error = RuntimeException("Something went wrong")
+        coEvery { manageMovieDetails.addMovieRate(any(), any()) } throws error
+        givenHappy()
+
+        viewModel.onSubmitRateBottomSheet()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.errorMessage).isEqualTo("Something went wrong")
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onRetryLoadDetails updates state and retries fetch`() = runTest {
+        givenHappy()
+        viewModel.onRetryLoadDetails()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.errorMessage).isNull()
+        assertThat(viewModel.state.value.noInternetConnection).isFalse()
+    }
+
 
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(
+            movieId,
+            manageMovieDetails,
+            checkUserLogin,
+            dispatcher = testDispatcher
+        )
     }
 
     companion object {

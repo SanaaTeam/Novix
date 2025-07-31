@@ -12,5 +12,7 @@ sealed class SeriesScreenEffects {
     object NavigateBack : SeriesScreenEffects()
     data class PlayTrailer(val trailerUrl: String?) : SeriesScreenEffects()
     data class NavigateToMovieCategoriesScreen(val category: GenreUiModel) : SeriesScreenEffects()
+    data object  ShowErrorSnackBar : SeriesScreenEffects()
+    data object ShowSuccessSnackBar : SeriesScreenEffects()
     object NavigateToLogin : SeriesScreenEffects()
 }
