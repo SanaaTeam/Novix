@@ -8,6 +8,7 @@ import usecase.ManageTvSeriesUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
+import exceptions.NoNetworkException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -18,11 +19,13 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
@@ -84,6 +87,11 @@ class EpisodeDetailsScreenViewModelTest {
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
+    @Test fun `onRatingChanged updates rating`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRatingChanged(4)
+        assertThat(viewModel.state.value.imdbRating).isEqualTo(4)
+    }
 
     private fun givenHappyViewModel() {
         coEvery { manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber) } returns dummyEpisode
@@ -102,8 +110,88 @@ class EpisodeDetailsScreenViewModelTest {
         viewModel = EpisodeDetailsScreenViewModel(
             savedStateHandle,
             manageEpisodeDetails,
-            manageTvSeriesDetails
+            checkUserLogin,
+            manageTvSeriesDetails,
+            dispatcher = testDispatcher
         )
+    }
+
+    @Test
+    fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
+        givenHappyViewModel()
+        viewModel.onSavedClick(seriesId)
+        viewModel.onLoginButtonClick()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(EpisodeDetailsEffects.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onRateClicked when user is logged in shows RateBottomSheet`() = runTest {
+        coEvery { checkUserLogin.isLoggedIn() } returns true
+        givenHappyViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
+        viewModel.onRateClicked()
+        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
+    }
+    @Test
+    fun `onSubmitRateBottomSheet hides sheet and calls addRate`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRatingChanged(7)
+        viewModel.onSubmitRateBottomSheet()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+    @Test
+    fun `onSubmitRateBottomSheet handles error properly`() = runTest {
+        val errorMessage = "Rating failed"
+        coEvery {
+            manageEpisodeDetails.addTvEpisodeRate(any(), any(), any(), any())
+        } throws RuntimeException(errorMessage)
+
+        givenHappyViewModel()
+        viewModel.onRatingChanged(5)
+        viewModel.onSubmitRateBottomSheet()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertThat(viewModel.state.value.error).isEqualTo(errorMessage)
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+    @Test
+    fun `onRetryLoadDetails reloads episode and resets flags`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRetryLoadDetails()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertThat(viewModel.state.value.noInternetConnection).isFalse()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.error).isNull()
+    }
+    @Test
+    fun `loadEpisode handles NoNetworkException`() = runTest {
+        coEvery { manageEpisodeDetails.getEpisodeDetails(any(), any(), any()) } throws NoNetworkException()
+        coEvery { checkUserLogin.isLoggedIn() } returns false
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
+        viewModel = EpisodeDetailsScreenViewModel(
+            savedStateHandle,
+            manageEpisodeDetails,
+            checkUserLogin,
+            manageTvSeriesDetails,
+            dispatcher = testDispatcher
+        )
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.noInternetConnection).isTrue()
+        assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
     companion object {

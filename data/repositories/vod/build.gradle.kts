@@ -12,6 +12,7 @@ android {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+    implementation(projects.data.repositories.identity)
 
     implementation(libs.ktor.serialization.kotlinx.json)
 

@@ -7,15 +7,17 @@ import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class SeriesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -27,6 +29,7 @@ class SeriesViewModel @Inject constructor(
 
     init {
         loadSeries()
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClicked() {
@@ -47,16 +50,22 @@ class SeriesViewModel @Inject constructor(
             callee = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
-            }
-            , onError = {e ->
-                if(e is NoNetworkException){
-                    updateState { it.copy(noInternetConnection = true,
-                        isLoadingEpisodes = false) }
-                }
-                else {
-                    updateState { it.copy( error = e.message,
-                        noInternetConnection = false,
-                        isLoadingEpisodes = false) }
+            }, onError = { e ->
+                if (e is NoNetworkException) {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoadingEpisodes = false
+                        )
+                    }
+                } else {
+                    updateState {
+                        it.copy(
+                            error = e.message,
+                            noInternetConnection = false,
+                            isLoadingEpisodes = false
+                        )
+                    }
                 }
             }
         )
@@ -75,16 +84,45 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        if (state.value.isUserLoggedIn) {
+            updateState { it.copy(showRateBottomSheet = true) }
+        } else {
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showRateBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
         updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(SeriesScreenEffects.NavigateToLogin)
+    }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissLoginBottomSheet() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        error = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
     }
 
     override fun onSaveSeriesClicked() {
@@ -105,6 +143,7 @@ class SeriesViewModel @Inject constructor(
         }
         loadSeries()
     }
+
     private fun loadSeries() {
         tryToExecute(
             callee = ::fetchSeriesDetails,
@@ -118,7 +157,11 @@ class SeriesViewModel @Inject constructor(
                     }
                 } else {
                     updateState { state ->
-                        state.copy(error = e.message, isLoading = false, noInternetConnection = false)
+                        state.copy(
+                            error = e.message,
+                            isLoading = false,
+                            noInternetConnection = false
+                        )
                     }
                 }
             }
@@ -150,5 +193,22 @@ class SeriesViewModel @Inject constructor(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
+    }
+
+    private suspend fun addRate() {
+        val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
+            seriesId = seriesId,
+            rating = state.value.imdbRating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            emitEffect(SeriesScreenEffects.ShowSuccessSnackBar)
+        } else {
+            emitEffect(SeriesScreenEffects.ShowErrorSnackBar)
+        }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 }

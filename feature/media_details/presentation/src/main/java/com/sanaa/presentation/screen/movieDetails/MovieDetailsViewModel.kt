@@ -16,12 +16,14 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -32,6 +34,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClick() {
@@ -47,7 +50,7 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = true) }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -55,15 +58,20 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onRateMovieClick() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        if (state.value.isUserLoggedIn) {
+            updateState { it.copy(showRateBottomSheet = true) }
+        } else {
+            updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        }
+
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -78,6 +86,7 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
+
     override fun onRetryLoadDetails() {
         updateState {
             it.copy(
@@ -88,6 +97,32 @@ class MovieDetailsViewModel @Inject constructor(
         }
         fetchMovieDetails(movieId)
     }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissRateBottomSheet() {
+        updateState { it.copy(showRateBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        errorMessage = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
+    }
+
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -97,9 +132,21 @@ class MovieDetailsViewModel @Inject constructor(
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
-                    updateState { it.copy(noInternetConnection = true, isLoading = false, errorMessage = null) }
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
                 } else {
-                    updateState { it.copy(isLoading = false, errorMessage = exception.message, noInternetConnection = false) }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message,
+                            noInternetConnection = false
+                        )
+                    }
                 }
             },
             dispatcher = defaultDispatcher
@@ -127,7 +174,6 @@ class MovieDetailsViewModel @Inject constructor(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
@@ -136,5 +182,23 @@ class MovieDetailsViewModel @Inject constructor(
                 similarMovies = similar
             )
         }
+    }
+
+    private suspend fun addRate() {
+        val rating = state.value.imdbRating
+        val isSendRateSuccess = manageMovieDetails.addMovieRate(
+            movieId = movieId,
+            rating = rating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+        } else {
+            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+        }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 }

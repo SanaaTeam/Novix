@@ -48,6 +48,9 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.getSeriesGenres()
     }
 
+    suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
+        return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
+    }
 
     private companion object {
         const val IMAGE_COUNT = 10
