@@ -4,9 +4,11 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.util.wrapApiCall
 
 class RemoteMovieDataSourceImpl(
@@ -62,4 +64,18 @@ class RemoteMovieDataSourceImpl(
 
     override suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto> =
         apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
+
+    override suspend fun sendMovieRate(
+        movieId: Int,
+        sessionId: String,
+        rating: Float
+    ) : RatingResponse {
+        val response = apiService.rateMovie(
+            movieId = movieId,
+            sessionId = sessionId,
+            rating = MovieRateRequest(value = rating)
+        )
+        return response
+    }
+
 }

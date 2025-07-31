@@ -15,4 +15,7 @@ interface MovieDetailsScreenInteractionListener {
     fun onShowReviewsClick(movieId: Int)
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
+    fun onRatingChanged(newRating: Int)
+    fun onDismissRateBottomSheet()
+    fun onSubmitRateBottomSheet()
 }

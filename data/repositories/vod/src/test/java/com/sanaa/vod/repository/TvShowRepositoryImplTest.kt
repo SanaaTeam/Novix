@@ -1,6 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
@@ -28,12 +29,13 @@ import kotlin.test.assertEquals
 class TvShowRepositoryImplTest {
 
     private lateinit var repository: TvSeriesRepository
+    private val preferences: PreferencesManager = mockk()
     private val remote: RemoteTvShowDataSource = mockk(relaxed = true)
 
 
     @BeforeEach
     fun setup() {
-        repository = TvShowRepositoryImpl(remote)
+        repository = TvShowRepositoryImpl(remote, preferences)
     }
 
     @Test
@@ -44,15 +46,15 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getReviewsByTvShowId returns list`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(1,1) } returns listOf(dummyReviewDto)
-        val result = repository.getTvSeriesReviews(1,1)
+        coEvery { remote.getReviewsByTvShowId(1, 1) } returns listOf(dummyReviewDto)
+        val result = repository.getTvSeriesReviews(1, 1)
         assertEquals("A", result.first().authorName)
     }
 
     @Test
     fun `getReviewsByTvShowId throws RetrievingDataFailureException`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(any(),any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999,1) }
+        coEvery { remote.getReviewsByTvShowId(any(), any()) } throws Exception()
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999, 1) }
     }
 
     @Test
@@ -63,8 +65,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
-        coEvery { remote.getTvShowsByGenre(any(),1) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1,1) }
+        coEvery { remote.getTvShowsByGenre(any(), 1) } throws Exception()
+        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1, 1) }
     }
 
     @Test
@@ -88,8 +90,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getReviewsByTvShowId throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remote.getReviewsByTvShowId(any(),1) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1,1) }
+        coEvery { remote.getReviewsByTvShowId(any(), 1) } throws ConnectionException()
+        assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1, 1) }
     }
 
 
@@ -102,8 +104,8 @@ class TvShowRepositoryImplTest {
 
     @Test
     fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remote.getTvShowsByGenre(any(),1) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1,1) }
+        coEvery { remote.getTvShowsByGenre(any(), 1) } throws ConnectionException()
+        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1, 1) }
     }
 
     @Test
