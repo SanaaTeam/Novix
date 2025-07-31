@@ -29,13 +29,14 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RateBottomSheet
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -75,7 +76,8 @@ fun EpisodeDetailsScreen(
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    val intent =
+                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
                 }
@@ -129,7 +131,10 @@ private fun EpisodeDetailsScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             NovixLoadingIndicator()
                         }
                     }
@@ -186,7 +191,15 @@ private fun EpisodeDetailsScreenContent(
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                 onSetRateClicked = interactionListener::onRateClicked
             )
-            // TODO USE REAL RATE BOTTOM SHEET AFTER LOGIN FEATURE DONE
+            if (state.showRateBottomSheet) {
+                RateBottomSheet(
+                    imdbRating = state.imdbRating,
+                    onDismiss = interactionListener::onDismissRateBottomSheet,
+                    isVisible = state.showRateBottomSheet,
+                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                    onRatingChanged = interactionListener::onRatingChanged
+                )
+            }
             if (state.showLoginBottomSheet) {
                 RequestToLoginBottomSheet(
                     isVisible = state.showLoginBottomSheet,
