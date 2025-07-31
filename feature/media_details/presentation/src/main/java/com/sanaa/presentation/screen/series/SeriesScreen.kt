@@ -17,6 +17,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,20 +37,21 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
-import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
 import com.sanaa.presentation.screen.series.components.SeasonTap
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -55,6 +60,9 @@ fun SeriesScreen(
     seriesId: Int,
     viewModel: SeriesViewModel = koinViewModel(parameters = { parametersOf(seriesId) }),
 ) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
+    var snack by remember { mutableStateOf<SeriesSnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
@@ -98,20 +106,39 @@ fun SeriesScreen(
                     )
                 }
 
+                is SeriesScreenEffects.ShowSuccessSnackBar -> {
+                    snack = SeriesSnackData(message = submitRatingSuccessMsg, isError = false)
+                }
+
+                is SeriesScreenEffects.ShowErrorSnackBar -> {
+                    snack = SeriesSnackData(submitRatingFailedMsg, isError = true)
+                }
+
                 SeriesScreenEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    val intent =
+                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
                 }
             }
         }
     }
-    SeriesScreenContent(
-        interactionListener = viewModel, state = state.value
-    )
+
+    Box {
+        SeriesScreenContent(
+            interactionListener = viewModel, state = state.value
+        )
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
+
 
 }
+
 @Composable
 fun SeriesScreenContent(
     interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
@@ -244,7 +271,7 @@ fun SeriesScreenContent(
                 isRateSelected = state.hasUserSelectedRate,
                 imdbRating = state.imdbRating,
                 onDismiss = interactionListener::onDismissRateBottomSheet,
-                isVisible =state.showRateBottomSheet,
+                isVisible = state.showRateBottomSheet,
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                 onRatingChanged = interactionListener::onRatingChanged
             )

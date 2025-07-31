@@ -5,6 +5,7 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -178,10 +179,15 @@ class SeriesViewModel(
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
     private suspend fun addRate() {
-        manageTvSeriesDetails.addTvSeriesRate(
+        val isSendRateSuccess =    manageTvSeriesDetails.addTvSeriesRate(
             seriesId = seriesId,
             rating = state.value.imdbRating.toFloat()
         )
+        if (isSendRateSuccess == 1) {
+            emitEffect(SeriesScreenEffects.ShowSuccessSnackBar)
+        } else {
+            emitEffect(SeriesScreenEffects.ShowErrorSnackBar)
+        }
     }
     private suspend fun getUserState(){
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
