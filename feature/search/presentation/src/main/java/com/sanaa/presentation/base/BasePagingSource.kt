@@ -2,9 +2,10 @@ package com.sanaa.presentation.base
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import repository.SearchRepository.SearchResult
 
 class BasePagingSource<T : Any>(
-    private val fetchItems: suspend (page: Int) -> List<T>
+    private val fetchItems: suspend (page: Int) -> SearchResult<T>
 ) : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
@@ -16,19 +17,26 @@ class BasePagingSource<T : Any>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: STARTING_PAGE_INDEX
-        //  Log.d("PagingSource", "Loading page: $page")
+        val minItems = 20
+        val accumulatedItems = mutableListOf<T>()
+        var currentPage = page
+        var totalPageNumber: Int? = null
 
-        return try {
-            val items = fetchItems(page)
-            //  Log.d("PagingSource", "Fetched ${items.size} items for page: $page")
-            LoadResult.Page(
-                data = items,
+        try {
+            do {
+                val response = fetchItems(currentPage)
+                totalPageNumber = response.totalPages
+                accumulatedItems.addAll(response.results)
+                if (accumulatedItems.size >= minItems || currentPage == response.totalPages) break
+                currentPage++
+            } while (true)
+            return LoadResult.Page(
+                data = accumulatedItems,
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page.minus(1),
-                nextKey = if (items.isEmpty()) null else page.plus(1)
+                nextKey = if (currentPage != totalPageNumber && accumulatedItems.size >= minItems) currentPage.plus(1) else null
             )
         } catch (e: Exception) {
-            //    Log.e("PagingSource", "Error loading page: $page", e)
-            LoadResult.Error(e)
+            return LoadResult.Error(e)
         }
     }
 

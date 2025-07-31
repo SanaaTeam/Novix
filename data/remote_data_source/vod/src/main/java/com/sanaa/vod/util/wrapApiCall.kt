@@ -14,14 +14,14 @@ suspend inline fun <T> wrapApiCall(block: suspend () -> T): T {
     return try {
         block()
     } catch (e: UnknownHostException) {
-        throw ConnectionException(message = "No internet connection")
+        throw ConnectionException(message = "No internet connection: ${e.message}")
     } catch (e: SocketTimeoutException) {
-        throw TimeoutException(message = "Request timed out")
+        throw TimeoutException(message = "Request timed out: ${e.message}")
     } catch (e: HttpException) {
-        throw ServerErrorException(message = "Server error")
+        throw ServerErrorException(message = "Server error: ${e.message}")
     } catch (e: SerializationException) {
-        throw ParsingException(message = "Parsing error")
+        throw ParsingException(message = "Parsing error: ${e.message}")
     } catch (e: Exception) {
-        throw UnknownDataSourceException(message = "Unknown error")
+        throw UnknownDataSourceException(message = "Unknown error: ${e.message}")
     }
 }

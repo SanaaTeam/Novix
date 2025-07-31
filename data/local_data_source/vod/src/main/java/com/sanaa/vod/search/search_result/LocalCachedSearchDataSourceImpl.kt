@@ -1,5 +1,6 @@
 package com.sanaa.vod.search.search_result
 
+import android.util.Log
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
 import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
@@ -83,8 +84,18 @@ class LocalCachedSearchDataSourceImpl(
         query: String,
         limit: Int,
         offset: Int,
-    ): List<ActorLocalDto> {
-        return actorDao.getPagedActorsByQuery(query, limit, offset)
+    ): Pair<Int, List<ActorLocalDto>> {
+        val cachedResults = getCachedResults(query, "actor").also { Log.d("TAG", "getCachedResults: $it") }
+
+        if (cachedResults.isNotEmpty()) {
+            val actorsFromIds = cachedResults.mapNotNull { result ->
+                actorDao.getPagedActorsByQuery(query, limit, offset).firstOrNull()
+            }
+            val totalPages = cachedResults.size / limit
+            return Pair(totalPages, actorsFromIds)
+        } else {
+            return Pair(0, emptyList())
+        }
     }
 
     override suspend fun getActorsByQuery(query: String): List<ActorLocalDto> {
@@ -95,7 +106,6 @@ class LocalCachedSearchDataSourceImpl(
                 actorDao.getActorsByQuery(result.itemId.toString()).firstOrNull()
             }
         }
-
         return emptyList()
     }
 
@@ -103,19 +113,18 @@ class LocalCachedSearchDataSourceImpl(
         query: String,
         limit: Int,
         offset: Int,
-    ): List<MovieLocalDto> {
+    ): Pair<Int, List<MovieLocalDto>> {
         val cachedResults = getCachedResults(query, "movie")
 
         if (cachedResults.isNotEmpty()) {
             val moviesFromIds = cachedResults.mapNotNull { result ->
                 movieDao.getMovieById(result.itemId)
             }
-            if (moviesFromIds.isNotEmpty()) {
-                return moviesFromIds
-            }
+            val totalPages = cachedResults.size / limit
+            return Pair(totalPages, moviesFromIds)
+        } else {
+            return Pair(0, emptyList())
         }
-
-        return movieDao.getFilteredMovies(query = query, limit = limit, offset = offset)
     }
 
 
@@ -123,16 +132,19 @@ class LocalCachedSearchDataSourceImpl(
         query: String,
         limit: Int,
         offset: Int,
-    ): List<TvSeriesLocalDto> {
+    ): Pair<Int, List<TvSeriesLocalDto>> {
         val cachedResults = getCachedResults(query, "tv_series")
 
         if (cachedResults.isNotEmpty()) {
-            return cachedResults.mapNotNull { result ->
+            val tvSeriesFromIds = cachedResults.mapNotNull { result ->
                 seriesDao.getFilteredSeries(query = result.itemId.toString(), limit, offset)
                     .firstOrNull()
             }
+                val totalPages = cachedResults.size / limit
+                return Pair(totalPages, tvSeriesFromIds)
+        } else {
+            return Pair(0, emptyList())
         }
-        return seriesDao.getFilteredSeries(query = query, limit = limit, offset = offset)
     }
 
     override suspend fun clearExpiredCache(expirationTime: Long) {

@@ -1,5 +1,6 @@
 package com.sanaa.vod.repository
 
+import android.util.Log
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
@@ -16,6 +17,7 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import repository.SearchRepository
+import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
 
 class SearchRepositoryImpl(
@@ -23,51 +25,73 @@ class SearchRepositoryImpl(
     private val localCacheSearchDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,
 ) : SearchRepository {
-    override suspend fun searchActors(query: String, page: Int): List<Actor> = safeCall(query) {
-        val pageSize = 20
-        val offset = (page - 1) * pageSize
+    override suspend fun searchActors(query: String, page: Int): SearchResult<Actor> =
+        safeCall(query) {
+            val pageSize = 20
+            val offset = (page - 1) * pageSize
 
-        val cachedActors = localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset)
-        if (cachedActors.isNotEmpty()) {
-            cachedActors.map { it.toEntity() }
-        } else {
-            remoteDataSource.searchActors(query, page).results.onEach {
-                val language = languageProvider.getCurrentLanguage()
-                localCacheSearchDataSource.cacheActor(it.toLocalDto(language))
-            }.map { it.toEntity() }
+            val cachedActorsWithTotalPagesNumber =
+                localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset).also { Log.d("TAG", "searchTvShows: $it") }
+            if (cachedActorsWithTotalPagesNumber.second.isNotEmpty()) {
+                val actors = cachedActorsWithTotalPagesNumber.second.map { it.toEntity() }
+                return SearchResult(
+                    totalPages = cachedActorsWithTotalPagesNumber.first,
+                    results = actors
+                )
+            } else {
+                val response = remoteDataSource.searchActors(query, page)
+                    val actors = response.results.onEach {
+                    val language = languageProvider.getCurrentLanguage()
+                    localCacheSearchDataSource.cacheActor(it.toLocalDto(language))
+                }.map { it.toEntity() }
+
+                return SearchResult(
+                    totalPages = response.totalPages,
+                    results = actors
+                )
+            }
         }
-    }
 
     override suspend fun searchMovies(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<Movie> = safeCall(query) {
+    ): SearchResult<Movie> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
         val cachedMedia = localCacheSearchDataSource.getMoviesByQuery(
             query, limit = pageSize, offset = offset
-        )
-        if (cachedMedia.isNotEmpty())
-            getMoviesFromCache(filters, cachedMedia)
-        else
+        ).also { Log.d("TAG", "searchTvShows: $it") }
+
+        return if (cachedMedia.second.isNotEmpty()) {
+            SearchResult(
+                totalPages = cachedMedia.first,
+                results = getMoviesFromCache(filters, cachedMedia.second)
+            )
+        } else {
             getMoviesFromRemote(query, page, filters)
+        }
+
     }
 
     override suspend fun searchTvShows(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<TvSeries> = safeCall(query) {
+    ): SearchResult<TvSeries> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
 
         val cachedTvSeries = localCacheSearchDataSource.getTvSeriesByQuery(
             query, limit = pageSize, offset = offset
-        )
-        if (cachedTvSeries.isNotEmpty())
-            getTvSeriesFromCache(filters, cachedTvSeries)
+        ).also { Log.d("TAG", "searchTvShows: $it") }
+        return if (cachedTvSeries.second.isNotEmpty()){
+            SearchResult(
+                totalPages = cachedTvSeries.first,
+                results = getTvSeriesFromCache(filters, cachedTvSeries.second)
+            )
+        }
         else
             getTvSeriesFromRemote(query, page, filters)
     }
@@ -76,12 +100,16 @@ class SearchRepositoryImpl(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<Movie> {
+    ): SearchResult<Movie> {
         val movies = remoteDataSource.searchMovies(query, page).results.onEach {
             localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
         }
-        val filteredMovies= filters?.filterMovies(movies)
-        return filteredMovies?: movies.map { it.toEntity() }
+        val filteredMovies = filters?.filterMovies(movies)
+
+        return SearchResult(
+            totalPages = remoteDataSource.searchMovies(query, page).totalPages,
+            results = filteredMovies ?: movies.map { it.toEntity() }
+        )
     }
 
     private fun getMoviesFromCache(
@@ -97,15 +125,19 @@ class SearchRepositoryImpl(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<TvSeries> {
+    ): SearchResult<TvSeries> {
         val tvSeries = remoteDataSource.searchTvShows(query, page).results.onEach {
             localCacheSearchDataSource.cacheTvSeries(
                 it.toLocalDto(languageProvider.getCurrentLanguage())
             )
         }
-        return filters
+        val filteredTvSeries = filters
             ?.filterTvShows(tvSeries = tvSeries)
-            ?: return tvSeries.map { it.toEntity() }
+            ?: tvSeries.map { it.toEntity() }
+        return SearchResult(
+            totalPages = remoteDataSource.searchMovies(query, page).totalPages,
+            results = filteredTvSeries
+        )
     }
 
     private fun getTvSeriesFromCache(

@@ -9,17 +9,17 @@ data class TvShowSearchDto(
     val id: Int,
 
     @SerialName("name")
-    val name: String?,
+    val name: String? = null,
 
     @SerialName("poster_path")
-    val posterImagePath: String?,
+    val posterImagePath: String? = null,
 
     @SerialName("first_air_date")
-    val releaseDate: String?,
+    val releaseDate: String? = null,
 
     @SerialName("vote_average")
-    val voteAverage: Float?,
+    val voteAverage: Float? = null,
 
     @SerialName("genre_ids")
-    val genreIds: List<Int>?
+    val genreIds: List<Int>? = null
  )

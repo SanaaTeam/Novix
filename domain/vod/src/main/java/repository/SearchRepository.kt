@@ -7,16 +7,21 @@ import usecase.search.search_param.MediaFilters
 
 
 interface SearchRepository {
-    suspend fun searchActors(query: String, page: Int): List<Actor>
+    suspend fun searchActors(query: String, page: Int): SearchResult<Actor>
     suspend fun searchMovies(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<Movie>
+    ): SearchResult<Movie>
 
     suspend fun searchTvShows(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<TvSeries>
+    ): SearchResult<TvSeries>
+
+    data class SearchResult<T>(
+        val totalPages: Int,
+        val results: List<T>
+    )
 }

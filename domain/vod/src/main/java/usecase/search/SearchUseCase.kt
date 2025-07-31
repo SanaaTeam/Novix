@@ -5,18 +5,19 @@ import entity.Movie
 import entity.TvSeries
 import repository.SearchHistoryRepository
 import repository.SearchRepository
+import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
 
 class SearchUseCase(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {
-    suspend fun searchMovies(query: String, page: Int, filters: MediaFilters?): List<Movie> {
+    suspend fun searchMovies(query: String, page: Int, filters: MediaFilters?): SearchResult<Movie> {
         searchHistoryRepository.addSearchHistory(query)
         return searchRepository.searchMovies(query, page, filters)
     }
 
-    suspend fun searchActors(query: String, page: Int): List<Actor> {
+    suspend fun searchActors(query: String, page: Int): SearchResult<Actor> {
         searchHistoryRepository.addSearchHistory(query)
         return searchRepository.searchActors(query, page)
     }
@@ -25,7 +26,7 @@ class SearchUseCase(
         query: String,
         page: Int,
         filters: MediaFilters?,
-    ): List<TvSeries> {
+    ): SearchResult<TvSeries> {
         searchHistoryRepository.addSearchHistory(query)
         return searchRepository.searchTvShows(query, page, filters)
     }
