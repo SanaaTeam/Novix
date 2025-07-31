@@ -49,7 +49,7 @@ class ContinueWatchingRepositoryImpl(
             }
     }
 
-    override suspend fun addItem(username: String, item: ContinueWatchingItem) {
+    override suspend fun addMedia(username: String, item: ContinueWatchingItem) {
         val mediaId = when (item.media) {
             is ContinuableMedia.MovieItem -> (item.media as ContinuableMedia.MovieItem).movie.id
             is ContinuableMedia.TvSeriesItem -> (item.media as ContinuableMedia.TvSeriesItem).series.id
@@ -65,6 +65,6 @@ class ContinueWatchingRepositoryImpl(
             mediaType = mediaType.name,
             username = username
         )
-        localContinueWatchingDataSource.addOrUpdateItem(newItemDto)
+        localContinueWatchingDataSource.addOrUpdateMedia(newItemDto)
     }
 }

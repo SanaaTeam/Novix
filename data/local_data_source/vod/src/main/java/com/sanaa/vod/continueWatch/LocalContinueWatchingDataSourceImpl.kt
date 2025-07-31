@@ -9,8 +9,8 @@ class LocalContinueWatchingDataSourceImpl(
     private val continueWatchingDao: ContinueWatchingDao
 ) : LocalContinueWatchingDataSource {
 
-    override suspend fun addOrUpdateItem(item: ContinueWatchingLocalDto) {
-        continueWatchingDao.insertOrUpdate(item)
+    override suspend fun addOrUpdateMedia(continueWatchingDto: ContinueWatchingLocalDto) {
+        continueWatchingDao.insertOrUpdateMedia(continueWatchingDto)
     }
 
     override fun getContinueWatchingList(username: String, limit: Int): Flow<List<ContinueWatchingLocalDto>> {

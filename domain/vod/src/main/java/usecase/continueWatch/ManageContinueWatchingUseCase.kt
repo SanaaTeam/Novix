@@ -2,7 +2,6 @@ package usecase.continueWatch
 
 import entity.ContinuableMedia
 import entity.ContinueWatchingItem
-import entity.MediaType
 import kotlinx.coroutines.flow.Flow
 import repository.ContinueWatchingRepository
 
@@ -18,7 +17,7 @@ class ManageContinueWatchingUseCase(
             media = continuableMedia,
             episodeId = episodeId
         )
-        repository.addItem(username, itemToSave)
+        repository.addMedia(username, itemToSave)
     }
 
     companion object {
