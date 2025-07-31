@@ -359,14 +359,9 @@ class SearchViewModel(
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
-    private fun setErrorState(error: String) {
-        updateState { it.copy(isLoading = false, error = error, noInternetConnection = false) }
-    }
-
     companion object {
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
-        const val ACTOR_INDEX = 2
     }
 }
