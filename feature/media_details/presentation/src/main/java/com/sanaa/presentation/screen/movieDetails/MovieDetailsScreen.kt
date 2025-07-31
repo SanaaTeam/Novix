@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.movieDetails
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -160,7 +159,10 @@ fun MovieDetailsContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             NovixLoadingIndicator()
                         }
                     }
@@ -235,11 +237,18 @@ fun MovieDetailsContent(
                                             }
                                             state.movieDetails.duration?.let { duration ->
                                                 val hours = duration.inWholeHours
-                                                val minutes = (duration - hours.hours).inWholeMinutes
+                                                val minutes =
+                                                    (duration - hours.hours).inWholeMinutes
 
                                                 val durationText = buildString {
                                                     if (hours > 0) append("$hours ${stringResource(R.string.hours_label)} ")
-                                                    if (minutes > 0) append("$minutes ${stringResource(R.string.minutes_label)}")
+                                                    if (minutes > 0) append(
+                                                        "$minutes ${
+                                                            stringResource(
+                                                                R.string.minutes_label
+                                                            )
+                                                        }"
+                                                    )
                                                 }.trim()
 
                                                 IconWithText(
@@ -268,7 +277,7 @@ fun MovieDetailsContent(
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            if (state.movieDetails.overview.isNotEmpty()){
+                            if (state.movieDetails.overview.isNotEmpty()) {
                                 OverviewSection(
                                     overview = state.movieDetails.overview,
                                     onReadMore = { interactionListener.onReadMoreClick() },
@@ -326,7 +335,7 @@ fun MovieDetailsContent(
                     isRateSelected = state.hasUserSelectedRate,
                     imdbRating = state.imdbRating,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible =state.showRateBottomSheet,
+                    isVisible = state.showRateBottomSheet,
                     onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                     onRatingChanged = interactionListener::onRatingChanged
                 )

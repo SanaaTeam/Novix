@@ -179,7 +179,7 @@ class MovieDetailsViewModel(
     }
 
     private suspend fun addRate() {
-        manageMovieDetails.addMovieRate(
+       val massage = manageMovieDetails.addMovieRate(
             movieId = movieId,
             rating = state.value.imdbRating.toFloat()
         )

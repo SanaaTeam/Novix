@@ -46,7 +46,7 @@ class ManageMovieUseCase(
         return movieRepo.getMovieGenres()
     }
 
-    suspend fun addMovieRate(movieId: Int, rating: Float) {
+    suspend fun addMovieRate(movieId: Int, rating: Float):String {
         return movieRepo.addMovieRate(movieId = movieId, rating = rating)
     }
 
