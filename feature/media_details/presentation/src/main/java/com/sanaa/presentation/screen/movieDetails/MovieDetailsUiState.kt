@@ -25,7 +25,7 @@ data class MovieDetailsUiState(
         get() =  imdbRating > 0
 }
 
-data class SnackData(
+data class MovieSnackData(
     val message: String,
     val isError: Boolean
 )
