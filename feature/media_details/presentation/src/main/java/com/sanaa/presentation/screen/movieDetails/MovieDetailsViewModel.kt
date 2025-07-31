@@ -49,7 +49,7 @@ class MovieDetailsViewModel(
     }
 
     override fun onRateMovieClick() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showRateBottomSheet = true) }
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -72,6 +72,7 @@ class MovieDetailsViewModel(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
+
     override fun onRetryLoadDetails() {
         updateState {
             it.copy(
@@ -82,6 +83,32 @@ class MovieDetailsViewModel(
         }
         fetchMovieDetails(movieId)
     }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissRateBottomSheet() {
+        updateState { it.copy(showRateBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        errorMessage = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
+    }
+
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -91,9 +118,21 @@ class MovieDetailsViewModel(
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
-                    updateState { it.copy(noInternetConnection = true, isLoading = false, errorMessage = null) }
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
                 } else {
-                    updateState { it.copy(isLoading = false, errorMessage = exception.message, noInternetConnection = false) }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message,
+                            noInternetConnection = false
+                        )
+                    }
                 }
             },
             dispatcher = defaultDispatcher
@@ -130,5 +169,12 @@ class MovieDetailsViewModel(
                 similarMovies = similar
             )
         }
+    }
+
+    private suspend fun addRate() {
+        manageMovieDetails.addMovieRate(
+            movieId = movieId,
+            rating = state.value.imdbRating.toFloat()
+        )
     }
 }
