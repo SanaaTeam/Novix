@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.BasicText
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -38,7 +40,9 @@ fun RecentSearchItem(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .clickable(
-                    onClick = onRecentSearchItemClicked
+                    onClick = onRecentSearchItemClicked,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() }
                 )
                 .padding(horizontal = 16.dp, vertical = 12.dp)
                 .weight(1f)
@@ -53,14 +57,17 @@ fun RecentSearchItem(
                 text = text,
                 style = Theme.textStyle.body.medium.copy(color = Theme.colors.title),
 
-            )
+                )
         }
         Image(
             painter = painterResource(id = R.drawable.icon_cancel),
             contentDescription = null,
             colorFilter = ColorFilter.tint(Theme.colors.hint),
             modifier = Modifier
-                .clickable(onClick = onDeleteClicked)
+                .clickable(
+                    onClick = onDeleteClicked,
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() })
                 .padding(16.dp)
                 .size(16.dp)
         )
