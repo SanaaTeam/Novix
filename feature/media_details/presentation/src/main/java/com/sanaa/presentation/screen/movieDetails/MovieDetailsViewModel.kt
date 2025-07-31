@@ -13,11 +13,13 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 
 class MovieDetailsViewModel(
     private val movieId: Int,
     private val manageMovieDetails: ManageMovieUseCase,
+    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),
@@ -49,7 +51,16 @@ class MovieDetailsViewModel(
     }
 
     override fun onRateMovieClick() {
-        updateState { it.copy(showRateBottomSheet = true) }
+        if (state.value.isUserLoggedIn){
+            updateState { it.copy(showRateBottomSheet = true) }
+        }else{
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
+
+    }
+    private suspend fun getUserState(){
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 
     override fun onDismissLoginBottomSheet() {

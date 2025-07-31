@@ -17,5 +17,6 @@ data class MovieDetailsUiState(
     val showRateBottomSheet: Boolean = false,
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
-    val guestSessionId: String = ""
+    val guestSessionId: String = "",
+    val isUserLoggedIn: Boolean = false,
 )
