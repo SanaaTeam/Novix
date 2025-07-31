@@ -3,11 +3,14 @@
 # Project Config
 compileSdk = "35"
 converterGson = "3.0.0"
+datastore = "1.1.7"
+datastoreVersion = "1.1.1"
 gson = "2.13.1"
 kotlinxSerializationJson = "1.6.0"
 loggingInterceptor = "4.10.0"
 minSdk = "26"
 okhttp = "4.12.0"
+protobufJavalite = "3.25.5"
 retrofit = "2.9.0"
 retrofit2KotlinxSerializationConverter = "1.0.0"
 slf4jApi = "2.0.17"
@@ -75,6 +78,8 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 # Lifecycle
+androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
+androidx-datastore-v111 = { module = "androidx.datastore:datastore", version.ref = "datastoreVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
@@ -150,6 +155,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 # Test
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
+protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
 # junit

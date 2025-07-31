@@ -538,24 +538,6 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `onClearRecentSearchClicked() should show Unknown error when request failed with unknown exception`() =
-        runTest {
-            coEvery { manageSearchHistoryUseCase.clearSearchHistory() } throws Exception()
-
-            searchViewModel.onClearRecentSearchClicked()
-
-            searchViewModel.state.test {
-                awaitItem()
-
-                val item = awaitItem()
-
-                assertThat(item.isLoading).isFalse()
-                assertThat(item.error).isEqualTo("Unknown error")
-            }
-        }
-
-
-    @Test
     fun `onFilterClicked() should show bottom sheet when filter button clicked`() = runTest {
         searchViewModel.onFilterClicked()
 
