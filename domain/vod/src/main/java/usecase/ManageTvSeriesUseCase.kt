@@ -46,8 +46,22 @@ class ManageTvSeriesUseCase(
     suspend fun getSeriesGenres(): List<Genre> {
         return tvSeriesRepo.getSeriesGenres()
     }
-
-
+    suspend fun addTvSeriesRate(seriesId: Int, rating: Float) {
+        return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
+    }
+    suspend fun addTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        rating: Float
+    ) {
+        return tvSeriesRepo.addTvEpisodeRate(
+            seriesId = seriesId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            rating = rating
+        )
+    }
     private companion object {
         const val IMAGE_COUNT = 10
     }
