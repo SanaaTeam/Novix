@@ -83,10 +83,10 @@ class MovieRepositoryImpl(
         }
     }
 
-    override suspend fun addMovieRate(movieId: Int, rating: Float) {
+    override suspend fun addMovieRate(movieId: Int, rating: Float): String {
         return safeCall("Failed to add movie rate"){
             val sessionId = preferences.sessionId.first()
-            remote.sendMovieRate(movieId = movieId, sessionId = sessionId, rating = rating)
+            remote.sendMovieRate(movieId = movieId, sessionId = sessionId, rating = rating).statusMessage
         }
     }
 }
