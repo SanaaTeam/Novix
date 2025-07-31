@@ -8,10 +8,12 @@ import com.sanaa.presentation.model.toSeriesUiModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 
 class SeriesViewModel(
     private val seriesId: Int,
+    private val checkUserLogin : CheckIfUserIsLoggedInUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -70,7 +72,11 @@ class SeriesViewModel(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showRateBottomSheet = true) }
+        if (state.value.isUserLoggedIn){
+            updateState { it.copy(showRateBottomSheet = true) }
+        }else{
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
     }
 
     override fun onDismissRateBottomSheet() {

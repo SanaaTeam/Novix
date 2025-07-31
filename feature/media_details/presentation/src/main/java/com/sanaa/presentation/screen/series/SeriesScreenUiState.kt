@@ -17,7 +17,8 @@ data class SeriesScreenUiState(
     val selectedSeason: Int = 1,
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
-    val guestSessionId: String = ""
-)
+    val guestSessionId: String = "",
+    val isUserLoggedIn: Boolean = false
+    )
 
 
