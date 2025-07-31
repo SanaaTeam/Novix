@@ -14,8 +14,9 @@ import entity.Movie
 import entity.Review
 import entity.WatchlistInfo
 import repository.MovieRepository
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
+class MovieRepositoryImpl @Inject constructor(
     private val remote: RemoteMovieDataSource,
     private val preferences: PreferencesManager
 ) : MovieRepository {

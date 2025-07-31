@@ -3,23 +3,26 @@ package com.sanaa.presentation.screen.celebritiesScreen
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.PersonUiState
 import com.sanaa.presentation.state.toState
 import entity.Actor
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageActorUseCase
+import javax.inject.Inject
 
-class CelebritiesViewModel(
+@HiltViewModel
+class CelebritiesViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<CelebritiesScreenUiState, CelebritiesScreenEffects>(
-    CelebritiesScreenUiState(),
-    dispatcher
+    initialState = CelebritiesScreenUiState(),
+    defaultDispatcher = dispatcher
 ), CelebritiesScreenInteractionListener {
 
     init {

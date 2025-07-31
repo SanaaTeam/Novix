@@ -6,8 +6,9 @@ import entity.Movie
 import entity.Review
 import entity.WatchlistInfo
 import repository.MovieRepository
+import javax.inject.Inject
 
-class ManageMovieUseCase(
+class ManageMovieUseCase @Inject constructor(
     private val movieRepo: MovieRepository
 ) {
     suspend fun getMovieDetails(id: Int): Movie =

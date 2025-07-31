@@ -3,8 +3,9 @@ package usecase.search
 import kotlinx.coroutines.flow.Flow
 import repository.SearchHistoryRepository
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class ManageRecentViewedUseCase(
+class ManageRecentViewedUseCase @Inject constructor(
     private val historyRepo: SearchHistoryRepository,
 ) {
     suspend fun addRecentViewed(item: RecentViewedMedia) = historyRepo.addRecentViewedMedia(item)

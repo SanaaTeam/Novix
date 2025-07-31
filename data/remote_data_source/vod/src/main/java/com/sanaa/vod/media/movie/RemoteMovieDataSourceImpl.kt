@@ -12,8 +12,9 @@ import com.sanaa.vod.dataSource.remote.dto.WatchlistRequestBody
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.util.wrapApiCall
+import javax.inject.Inject
 
-class RemoteMovieDataSourceImpl(
+class RemoteMovieDataSourceImpl @Inject constructor(
     private val apiService: MovieApiService,
 ) : RemoteMovieDataSource {
 
