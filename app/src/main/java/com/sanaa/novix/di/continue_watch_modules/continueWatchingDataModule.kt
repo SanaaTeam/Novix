@@ -8,5 +8,7 @@ import org.koin.dsl.module
 val continueWatchingDataModule = module {
     single { get<AppDatabase>().continueWatchingDao() }
 
-    single<LocalContinueWatchingDataSource> { LocalContinueWatchingDataSourceImpl(get()) }
+    single<LocalContinueWatchingDataSource> {
+        LocalContinueWatchingDataSourceImpl(get(), get(), get())
+    }
 }
