@@ -8,6 +8,7 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaType
 import com.sanaa.presentation.state.mapper.toState
 import entity.Movie
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -52,9 +53,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -77,9 +76,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -102,9 +99,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -121,11 +116,7 @@ class HomeScreenViewModel(
                     it.copy(movieGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(errorMessage = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -141,13 +132,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        errorMessage = exception.message,
-                    )
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -191,6 +176,15 @@ class HomeScreenViewModel(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onRetryClick() {
+        updateState { it.copy(isNoInternet = false) }
+        fetchPopularMediaData()
+        fetchTopRatedMediaData()
+        fetchWatchedMediaData()
+        fetchMovieGenres()
+        fetchUpcomingMovies()
+    }
+
 
     private fun loadUpcomingMovies(
         genreId: Int?
@@ -213,6 +207,14 @@ class HomeScreenViewModel(
                 page = page,
                 genreId = genreId
             )
+        }
+    }
+
+
+    private fun onErrorLoadingData(e: Throwable) {
+        when (e) {
+            is NoNetworkException -> updateState { it.copy(isNoInternet = true, isLoading = false) }
+            else -> updateState { it.copy(errorMessage = e.message, isLoading = false) }
         }
     }
 }
