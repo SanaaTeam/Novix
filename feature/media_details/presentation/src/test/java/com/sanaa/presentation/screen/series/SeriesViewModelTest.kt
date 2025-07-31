@@ -162,6 +162,79 @@ class SeriesViewModelTest {
             assertThat(isLoadingEpisodes).isFalse()
         }
     }
+    @Test
+    fun `onPlayTrailerClicked emits PlayTrailer`() = runTest {
+        givenHappyViewModel()
+        advanceUntilIdle()
+        viewModel.onPlayTrailerClicked()
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.PlayTrailer(dummyTrailer))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onRateClicked sets showRateBottomSheet true when user is logged in`() = runTest {
+        coEvery { checkUserLogin.isLoggedIn() } returns true
+        givenHappyViewModel()
+        advanceUntilIdle()
+        viewModel.onRateClicked()
+        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
+    }
+    @Test
+    fun `onDismissRateBottomSheet sets showRateBottomSheet to false`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRateClicked()
+        viewModel.onDismissRateBottomSheet()
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onDismissLoginBottomSheet sets showLoginBottomSheet to false`() = runTest {
+        givenHappyViewModel()
+        viewModel.onSaveSeriesClicked()
+        viewModel.onDismissLoginBottomSheet()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+    }
+    @Test
+    fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
+        givenHappyViewModel()
+        viewModel.onSaveSeriesClicked()
+        viewModel.onLoginButtonClick()
+
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+    @Test
+    fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
+        val errorMsg = "Failed to rate"
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } throws RuntimeException(errorMsg)
+        givenHappyViewModel()
+
+        viewModel.onRatingChanged(6)
+        viewModel.onSubmitRateBottomSheet()
+        advanceUntilIdle()
+
+        with(viewModel.state.value) {
+            assertThat(error).isEqualTo(errorMsg)
+            assertThat(showRateBottomSheet).isFalse()
+        }
+    }
+    @Test
+    fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } returns 1
+        givenHappyViewModel()
+
+        viewModel.onRatingChanged(8)
+        viewModel.onSubmitRateBottomSheet()
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
