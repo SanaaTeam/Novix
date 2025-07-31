@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.actors
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
@@ -110,7 +111,10 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummySeries
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-        viewModel = ActorViewModel(actorId, manageActorDetailsUseCase)
+
+        val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
+
+        viewModel = ActorViewModel(savedStateHandle, manageActorDetailsUseCase)
     }
 
     companion object {

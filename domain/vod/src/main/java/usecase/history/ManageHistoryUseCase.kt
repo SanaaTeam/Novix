@@ -5,8 +5,9 @@ import entity.TvSeries
 import kotlinx.coroutines.flow.Flow
 import repository.SearchHistoryRepository
 import usecase.history.history_param.SearchHistory
+import javax.inject.Inject
 
-class ManageHistoryUseCase(
+class ManageHistoryUseCase @Inject constructor(
     private val historyRepo: SearchHistoryRepository,
 ) {
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> =

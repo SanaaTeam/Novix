@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -29,8 +31,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
 
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
@@ -43,5 +43,9 @@ dependencies {
     // Paging 3
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
     testImplementation(libs.androidx.paging.testing)
 }

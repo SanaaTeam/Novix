@@ -28,7 +28,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.bundles.koin)
     implementation(libs.ktor.client.mock)
     implementation(libs.slf4j.api)
     implementation(libs.converter.gson)

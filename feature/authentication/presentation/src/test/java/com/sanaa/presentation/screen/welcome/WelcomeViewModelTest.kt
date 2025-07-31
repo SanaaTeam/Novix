@@ -2,24 +2,19 @@ package com.sanaa.presentation.screen.welcome
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WelcomeViewModelTest {
 
-    private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: WelcomeViewModel
 
     @BeforeEach
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
-        viewModel = WelcomeViewModel(testDispatcher)
+        viewModel = WelcomeViewModel()
     }
 
     @Test
@@ -116,8 +111,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `viewModel uses provided dispatcher`() = runTest {
-        val customDispatcher = StandardTestDispatcher()
-        val customViewModel = WelcomeViewModel(customDispatcher)
+        val customViewModel = WelcomeViewModel()
 
         customViewModel.onLoginClicked()
         customViewModel.effect.test {
@@ -170,8 +164,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `emitEffect works correctly on custom dispatcher`() = runTest {
-        val customDispatcher = StandardTestDispatcher()
-        val customViewModel = WelcomeViewModel(customDispatcher)
+        val customViewModel = WelcomeViewModel()
 
         customViewModel.onExit()
         customViewModel.effect.test {

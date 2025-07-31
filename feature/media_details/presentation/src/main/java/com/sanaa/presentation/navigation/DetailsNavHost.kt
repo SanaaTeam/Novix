@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,16 +14,23 @@ import androidx.navigation.navArgument
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
 import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
+import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
+import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
+import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
+import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
+import com.sanaa.presentation.screen.review.ReviewViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
 import com.sanaa.presentation.screen.series.SeriesScreen
-import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
+import com.sanaa.presentation.screen.series.SeriesViewModel
 
 @Composable
 fun DetailsNavHost(startRoute: StartRoute, id: Int) {
@@ -31,6 +39,7 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
         StartRoute.MOVIE -> MovieDetailsScreenRoute(id).route()
         StartRoute.ACTOR -> ActorDetailsScreenRoute(id).route()
     }
+
     val navController = rememberNavController()
 
     CompositionLocalProvider(
@@ -43,19 +52,23 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                 modifier = Modifier.background(Theme.colors.surface)
             ) {
 
-                // Series Routs
+                // ──── Series ───────────────────────────────────────────────────────────
                 composable(
                     route = SeriesDetailsScreenRoute.PATTERN,
-                    arguments = listOf(navArgument(SeriesDetailsScreenRoute.ARG_SERIES_ID) {
-                        type = NavType.IntType
-                    })
-                ) { entry ->
-                    val seriesId = entry.arguments!!.getInt(SeriesDetailsScreenRoute.ARG_SERIES_ID)
-                    SeriesScreen(seriesId = seriesId)
+                    arguments = listOf(
+                        navArgument(SeriesDetailsScreenRoute.ARG_SERIES_ID) {
+                            type = NavType.IntType
+                        }
+                    )
+                ) {
+                    val seriesViewModel: SeriesViewModel = hiltViewModel()
+                    SeriesScreen(viewModel = seriesViewModel)
                 }
 
+                // ──── Episodes ─────────────────────────────────────────────────────────
                 composable(
-                    route = EpisodeDetailsScreenRoute.PATTERN, arguments = listOf(
+                    route = EpisodeDetailsScreenRoute.PATTERN,
+                    arguments = listOf(
                         navArgument(EpisodeDetailsScreenRoute.ARG_SERIES_ID) {
                             type = NavType.IntType
                         },
@@ -64,31 +77,22 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                         },
                         navArgument(EpisodeDetailsScreenRoute.ARG_EPISODE_NUMBER) {
                             type = NavType.IntType
-                        },
+                        }
                     )
-                ) { entry ->
-                    val seriesId = entry.arguments!!.getInt(EpisodeDetailsScreenRoute.ARG_SERIES_ID)
-                    val seasonNumber =
-                        entry.arguments!!.getInt(EpisodeDetailsScreenRoute.ARG_SEASON_NUMBER)
-                    val episodeNumber =
-                        entry.arguments!!.getInt(EpisodeDetailsScreenRoute.ARG_EPISODE_NUMBER)
-                    EpisodeDetailsScreen(
-                        seriesId = seriesId,
-                        seasonNumber = seasonNumber,
-                        episodeNumber = episodeNumber
-                    )
+                ) {
+                    val episodeViewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
+                    EpisodeDetailsScreen(viewModel = episodeViewModel)
                 }
 
-
-                // Actor Routs
+                // ──── Actors ───────────────────────────────────────────────────────────
                 composable(
                     route = ActorDetailsScreenRoute.PATTERN,
                     arguments = listOf(navArgument(ActorDetailsScreenRoute.ARG_ACTOR_ID) {
                         type = NavType.IntType
                     })
-                ) { entry ->
-                    val actorId = entry.arguments!!.getInt(ActorDetailsScreenRoute.ARG_ACTOR_ID)
-                    ActorScreen(actorId = actorId)
+                ) {
+                    val actorViewModel: ActorViewModel = hiltViewModel()
+                    ActorScreen(viewModel = actorViewModel)
                 }
 
                 composable(
@@ -96,10 +100,12 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                     arguments = listOf(navArgument(TopMoviesScreenRoute.ARG_ACTOR_ID) {
                         type = NavType.IntType
                     })
-                ) { entry ->
-                    val actorId = entry.arguments!!.getInt(TopMoviesScreenRoute.ARG_ACTOR_ID)
+                ) {
+                    val actorViewModel: ActorViewModel = hiltViewModel()
                     TopMoviesScreen(
-                        actorId = actorId, navigateBack = { navController.popBackStack() })
+                        viewModel = actorViewModel,
+                        navigateBack = { navController.popBackStack() }
+                    )
                 }
 
                 composable(
@@ -107,10 +113,12 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                     arguments = listOf(navArgument(TopSeriesScreenRoute.ARG_ACTOR_ID) {
                         type = NavType.IntType
                     })
-                ) { entry ->
-                    val actorId = entry.arguments!!.getInt(TopSeriesScreenRoute.ARG_ACTOR_ID)
+                ) {
+                    val actorViewModel: ActorViewModel = hiltViewModel()
                     TopSeriesScreen(
-                        actorId = actorId, navigateBack = { navController.popBackStack() })
+                        viewModel = actorViewModel,
+                        navigateBack = { navController.popBackStack() }
+                    )
                 }
 
                 composable(
@@ -118,42 +126,38 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                     arguments = listOf(navArgument(ActorGalleryScreenRoute.ARG_ACTOR_ID) {
                         type = NavType.IntType
                     })
-                ) { entry ->
-                    val actorId = entry.arguments!!.getInt(ActorGalleryScreenRoute.ARG_ACTOR_ID)
+                ) {
+                    val actorViewModel: ActorViewModel = hiltViewModel()
                     ActorGalleryScreen(
-                        actorId = actorId, navigateBack = { navController.popBackStack() })
-                }
-
-
-                // Review Routs
-                composable(
-                    route = ReviewsScreenRoute.PATTERN,
-                    arguments = listOf(navArgument(ReviewsScreenRoute.ARG_SERIES_ID) {
-                        type = NavType.IntType
-                    })
-                ) { entry ->
-                    val seriesId = entry.arguments!!.getInt(ReviewsScreenRoute.ARG_SERIES_ID)
-                    val mediaType = entry.arguments!!.getString(ReviewsScreenRoute.ARG_MEDIA_TYPE)
-                    ReviewsScreen(
-                        seriesId = seriesId,
-                        mediaType = mediaType
+                        viewModel = actorViewModel,
+                        navigateBack = { navController.popBackStack() }
                     )
                 }
 
+                // ──── Reviews ──────────────────────────────────────────────────────────
+                composable(
+                    route = ReviewsScreenRoute.PATTERN,
+                    arguments = listOf(
+                        navArgument(ReviewsScreenRoute.ARG_SERIES_ID) { type = NavType.IntType },
+                        navArgument(ReviewsScreenRoute.ARG_MEDIA_TYPE) { type = NavType.StringType }
+                    )
+                ) {
+                    val reviewViewModel: ReviewViewModel = hiltViewModel()
+                    ReviewsScreen(viewModel = reviewViewModel)
+                }
 
-                // Movie routs
+                // ──── Movies ───────────────────────────────────────────────────────────
                 composable(
                     route = MovieDetailsScreenRoute.PATTERN,
                     arguments = listOf(navArgument(MovieDetailsScreenRoute.ARG_MOVIE_ID) {
                         type = NavType.IntType
                     })
-                )
-                {
-                    val movieId = it.arguments!!.getInt(MovieDetailsScreenRoute.ARG_MOVIE_ID)
-                    MovieDetailsScreen(movieId = movieId)
+                ) {
+                    val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
+                    MovieDetailsScreen(viewModel = movieDetailsViewModel)
                 }
 
-                // category
+                // ──── Categories ───────────────────────────────────────────────────────
                 composable(
                     route = MovieCategoriesScreenRoute.PATTERN,
                     arguments = listOf(
@@ -162,14 +166,11 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                         },
                         navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME) {
                             type = NavType.StringType
-                        },
+                        }
                     )
                 ) {
-                    val categoryId =
-                        it.arguments!!.getInt(MovieCategoriesScreenRoute.ARG_CATEGORY_ID)
-                    val categoryName =
-                        it.arguments!!.getString(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME)
-                    GenreMoviesScreen(categoryId = categoryId, categoryName = categoryName)
+                    val genreMoviesViewModel: GenreMoviesViewModel = hiltViewModel()
+                    GenreMoviesScreen(viewModel = genreMoviesViewModel)
                 }
 
                 composable(
@@ -180,18 +181,11 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
                         },
                         navArgument(GenreTvShowsScreenRoute.ARG_GENRE_NAME) {
                             type = NavType.StringType
-                        },
+                        }
                     )
-                ) { backStackEntry ->
-                    val genreId =
-                        backStackEntry.arguments!!.getInt(GenreTvShowsScreenRoute.ARG_GENRE_ID)
-                    val genreName =
-                        backStackEntry.arguments!!.getString(GenreTvShowsScreenRoute.ARG_GENRE_NAME)
-
-                    GenreTvShowsScreen(
-                        genreId = genreId,
-                        genreName = genreName.orEmpty()
-                    )
+                ) {
+                    val genreTvShowsViewModel: GenreTvShowsViewModel = hiltViewModel()
+                    GenreTvShowsScreen(viewModel = genreTvShowsViewModel)
                 }
             }
         }

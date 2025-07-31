@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.map
 import repository.SearchHistoryRepository
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import javax.inject.Inject
 
-class SearchHistoryRepositoryImpl(
+class SearchHistoryRepositoryImpl @Inject constructor(
     private val local: LocalSearchHistoryDataSource
 ) : SearchHistoryRepository {
 

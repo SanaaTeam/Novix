@@ -10,8 +10,10 @@ import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import repository.ActorRepository
+import javax.inject.Inject
 
-class ActorRepositoryImpl(
+
+class ActorRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteActorDataSource,
 ) : ActorRepository {
 
