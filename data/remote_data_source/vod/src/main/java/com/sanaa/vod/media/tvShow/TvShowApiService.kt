@@ -104,6 +104,7 @@ interface TvShowApiService {
         @Query("session_id") sessionId: String,
         @Body rating: TvShowRateRequest
     ): RatingResponse
+
     @POST("tv/{series_id}/season/{season_number}/episode/{episode_number}/rating")
     suspend fun rateTvEpisode(
         @Path("series_id") seriesId: Int,
