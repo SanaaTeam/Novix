@@ -128,7 +128,7 @@ class SearchUseCaseTest {
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(dummyTvShow)
+            assertThat(result).isEqualTo(tvShowSearchResult)
 
         }
 
@@ -148,7 +148,7 @@ class SearchUseCaseTest {
             val result = searchUseCase.searchTvShows(query, page, filters)
 
             // Then
-            assertThat(result).isEqualTo(dummyTvShow)
+            assertThat(result).isEqualTo(tvShowSearchResult)
         }
 
 
