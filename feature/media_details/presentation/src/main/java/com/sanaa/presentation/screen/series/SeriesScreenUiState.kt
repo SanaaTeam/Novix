@@ -19,12 +19,9 @@ data class SeriesScreenUiState(
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false
-){
+) {
     val hasUserSelectedRate: Boolean
-        get() =  imdbRating > 0
+        get() = imdbRating > 0
 }
-data class SeriesSnackData(
-    val message: String,
-    val isError: Boolean
-)
+
 
