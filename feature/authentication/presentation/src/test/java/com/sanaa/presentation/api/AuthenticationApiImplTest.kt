@@ -19,15 +19,13 @@ class AuthenticationApiImplTest {
 
     @Test
     fun `AuthenticationApiImpl implements AuthenticationApi interface`() {
-        val mockHomeApi = mockk<HomeFeatureApi>()
-        val apiImpl = AuthenticationApiImpl(mockHomeApi)
+        val apiImpl = AuthenticationApiImpl()
         assertThat(apiImpl).isInstanceOf(AuthenticationApi::class.java)
     }
 
     @Test
     fun `AuthenticationApiImpl instantiation works`() {
-        val mockHomeApi = mockk<HomeFeatureApi>()
-        val apiImpl = AuthenticationApiImpl(mockHomeApi)
+        val apiImpl = AuthenticationApiImpl()
 
         assertThat(apiImpl).isNotNull()
         assertThat(apiImpl::class.java.simpleName).isEqualTo("AuthenticationApiImpl")
@@ -35,16 +33,14 @@ class AuthenticationApiImplTest {
 
     @Test
     fun `AuthenticationApiImpl can be cast to AuthenticationApi`() {
-        val mockHomeApi = mockk<HomeFeatureApi>()
-        val apiImpl = AuthenticationApiImpl(mockHomeApi)
+        val apiImpl = AuthenticationApiImpl()
         val castedApi = apiImpl as AuthenticationApi
         assertThat(castedApi).isEqualTo(apiImpl)
     }
 
     @Test
     fun `AuthenticationApiImpl AuthenticationScreen method exists and matches interface`() {
-        val mockHomeApi = mockk<HomeFeatureApi>()
-        val apiImpl = AuthenticationApiImpl(mockHomeApi)
+        val apiImpl = AuthenticationApiImpl()
         val interfaceMethod = AuthenticationApi::class.java.getMethod("AuthenticationScreen", Context::class.java)
         val implementationMethod = apiImpl::class.java.getMethod("AuthenticationScreen", Context::class.java)
 
@@ -54,8 +50,7 @@ class AuthenticationApiImplTest {
 
     @Test
     fun `AuthenticationScreen composable can be called without crashing`() {
-        val mockHomeApi = mockk<HomeFeatureApi>()
-        val apiImpl = AuthenticationApiImpl(mockHomeApi)
+        val apiImpl = AuthenticationApiImpl()
         val mockContext = mockk<Context>()
 
         composeTestRule.setContent {
