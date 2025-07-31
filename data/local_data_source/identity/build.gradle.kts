@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.novix.android.library)
+    alias(libs.plugins.hilt.android)
     id("com.google.protobuf") version "0.9.4" // Add protobuf plugin
 
 }
@@ -40,12 +41,10 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.protobuf.javalite)
 
-    // Koin dependencies
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
-
     implementation(libs.slf4j.api)
 
-    implementation(libs.androidx.datastore)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 
+    implementation(libs.androidx.datastore)
 }

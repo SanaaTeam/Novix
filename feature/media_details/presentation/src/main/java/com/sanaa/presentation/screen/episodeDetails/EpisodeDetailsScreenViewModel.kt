@@ -1,28 +1,33 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
-class EpisodeDetailsScreenViewModel(
-    private val seriesId: Int,
-    private val seasonNumber: Int,
-    private val episodeNumber: Int,
+@HiltViewModel
+class EpisodeDetailsScreenViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : EpisodeDetailsInteractionListener,
-    BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
-        EpisodeDetailsScreenUiState(),
-        defaultDispatcher = dispatcher
-    ) {
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
+    initialState = EpisodeDetailsScreenUiState(),
+    defaultDispatcher = dispatcher
+), EpisodeDetailsInteractionListener {
+
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)

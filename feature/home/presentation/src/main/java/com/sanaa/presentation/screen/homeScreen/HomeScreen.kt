@@ -5,6 +5,9 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -16,16 +19,21 @@ import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaType
-import org.koin.androidx.compose.koinViewModel
-import org.koin.java.KoinJavaComponent.inject
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel = koinViewModel<HomeScreenViewModel>()
+    viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-
-    val detailsApi: MediaDetailsApi by inject(MediaDetailsApi::class.java)
     val navController = LocalAppNavController.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     Log.d("stateTest", "HomeScreen: state:${state.value}")

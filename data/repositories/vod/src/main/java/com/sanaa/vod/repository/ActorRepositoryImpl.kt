@@ -13,8 +13,10 @@ import exceptions.RetrievingDataFailureException
 import repository.ActorRepository
 import timber.log.Timber
 import java.net.UnknownHostException
+import javax.inject.Inject
 
-class ActorRepositoryImpl(
+
+class ActorRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteActorDataSource,
 ) : ActorRepository {
 

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -8,6 +9,8 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -16,15 +19,18 @@ import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 
-class MovieDetailsViewModel(
-    private val movieId: Int,
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
-    MovieDetailsUiState(),
-    dispatcher
+    initialState = MovieDetailsUiState(),
+    defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
+
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
 
     init {
         fetchMovieDetails(movieId)

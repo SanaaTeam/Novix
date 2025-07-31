@@ -1,12 +1,11 @@
 package com.sanaa.presentation.screen.welcome
 
 import com.sanaa.presentation.screen.login_base.BaseViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class WelcomeViewModel(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<Unit, WelcomeScreenEffects>(Unit),
+@HiltViewModel
+class WelcomeViewModel @Inject constructor() : BaseViewModel<Unit, WelcomeScreenEffects>(Unit),
     WelcomeScreenInteractionListener {
 
     override fun onLoginClicked() = emitEffect(WelcomeScreenEffects.NavigateToLogin)

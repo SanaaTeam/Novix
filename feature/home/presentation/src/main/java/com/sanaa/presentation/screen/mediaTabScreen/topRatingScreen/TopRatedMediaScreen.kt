@@ -3,8 +3,11 @@ package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -14,22 +17,24 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.screenContent.MediaTabScreenContent
 import com.sanaa.presentation.state.MediaType
-import org.koin.androidx.compose.koinViewModel
-import org.koin.java.KoinJavaComponent.inject
-
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun TopRatedMediaScreen(
     modifier: Modifier = Modifier,
-    viewModel: TopRatedMediaScreenViewModel = koinViewModel<TopRatedMediaScreenViewModel>(),
+    viewModel: TopRatedMediaScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-
-    val detailsApi: MediaDetailsApi by inject(
-        MediaDetailsApi::class.java
-    )
-
     val navController = LocalAppNavController.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -55,7 +60,7 @@ fun TopRatedMediaScreen(
             }
         }
     }
-    NovixTheme(isSystemInDarkTheme()){
+    NovixTheme(isSystemInDarkTheme()) {
         MediaTabScreenContent(
             title = stringResource(R.string.top_rated),
             state = state.value,
