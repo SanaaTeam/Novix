@@ -31,6 +31,8 @@ interface RemoteTvShowDataSource {
     ): List<ActorDto>
 
     suspend fun getTvShowGenres(): List<GenreDto>
+    suspend fun getTvShowRate(accountId: Int, sessionId: String): List<TvShowDto>
+    suspend fun getEpisodesRate(accountId: Int, sessionId: String): List<EpisodeDto>
 
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>

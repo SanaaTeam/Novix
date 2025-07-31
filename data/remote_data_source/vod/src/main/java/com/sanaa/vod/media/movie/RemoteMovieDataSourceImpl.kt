@@ -26,9 +26,10 @@ class RemoteMovieDataSourceImpl(
         apiService.fetchCast(id).cast.distinctBy { it.id }
     }
 
-    override suspend fun fetchSimilarMoviesByMovieId(id: Int, page: Int): List<MovieDto> = wrapApiCall {
-        apiService.fetchSimilarMoviesByMovieId(id, page).results.distinctBy { it.id }
-    }
+    override suspend fun fetchSimilarMoviesByMovieId(id: Int, page: Int): List<MovieDto> =
+        wrapApiCall {
+            apiService.fetchSimilarMoviesByMovieId(id, page).results.distinctBy { it.id }
+        }
 
     override suspend fun fetchReviewsByMovieId(id: Int, page: Int): List<ReviewDto> = wrapApiCall {
         apiService.fetchReviewsByMovieId(id, page).results.distinctBy { it.id }
@@ -65,11 +66,16 @@ class RemoteMovieDataSourceImpl(
     override suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto> =
         apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
 
+    override suspend fun fetchMoviesRate(accountId: Int, sessionId: String): List<MovieDto> =
+        wrapApiCall {
+            apiService.fetchMovieRate(accountId, sessionId).results
+        }
+
     override suspend fun sendMovieRate(
         movieId: Int,
         sessionId: String,
         rating: Float
-    ) : RatingResponse {
+    ): RatingResponse {
         val response = apiService.rateMovie(
             movieId = movieId,
             sessionId = sessionId,

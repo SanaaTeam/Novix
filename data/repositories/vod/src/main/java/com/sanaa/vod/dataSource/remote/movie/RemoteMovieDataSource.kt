@@ -21,5 +21,6 @@ interface RemoteMovieDataSource {
     suspend fun fetchTrendingMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchTopRatedMovies(page: Int, genreId: Int?): List<MovieDto>
     suspend fun fetchUpcomingMovies(page: Int, genreId: Int?): List<MovieDto>
+    suspend fun fetchMoviesRate(accountId: Int, sessionId: String): List<MovieDto>
     suspend fun sendMovieRate(movieId: Int, sessionId: String, rating: Float): RatingResponse
 }

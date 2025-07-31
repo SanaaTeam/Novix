@@ -71,6 +71,16 @@ class RemoteTvShowDataSourceImpl(
         return apiService.fetchTvShowsGenres().genres.distinctBy { it.id }
     }
 
+    override suspend fun getTvShowRate(accountId: Int, sessionId: String): List<TvShowDto> =
+        wrapApiCall {
+            apiService.fetchTvShowRate(accountId = accountId, sessionId = sessionId).results
+        }
+
+    override suspend fun getEpisodesRate(accountId: Int, sessionId: String): List<EpisodeDto> =
+        wrapApiCall {
+            apiService.fetchEpisodesRate(sessionId = sessionId, accountId = accountId).results
+        }
+
     override suspend fun fetchPopularTvShows(
         page: Int,
     ): List<TvShowDto> {
