@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -64,8 +63,10 @@ fun GenreTvShowsScreen(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )
+
                 GenreTvShowsEffects.NavigateToLogin -> {
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    val intent =
+                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
                 }
@@ -123,7 +124,10 @@ fun GenreTvShowsScreenContent(
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NovixLoadingIndicator()
                             }
                         }
@@ -139,7 +143,9 @@ fun GenreTvShowsScreenContent(
                         ) {
                             items(
                                 count = pagedTvShows.itemCount,
-                                key = pagedTvShows.itemKey { it.id }
+                                key = { index ->
+                                    "${index}_${pagedTvShows[index]?.id}"
+                                }
                             ) { index ->
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
