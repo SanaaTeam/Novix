@@ -1,6 +1,9 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,11 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthenticationApi
 import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -46,6 +51,7 @@ import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
+    authApi: AuthenticationApi,
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
@@ -201,7 +207,24 @@ fun HomeScreenContent(
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
 
+    val context = LocalContext.current
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {result ->
+        when(result.resultCode){
+            AuthenticationApi.RESULT_LOGGED_WITH_SESSION_ID -> {
+                Log.d("test99", "HomeScreenContent: logged in with session id ")
+            }
+            AuthenticationApi.RESULT_LOGGED_AS_GUEST -> {
+                Log.d("test99", "HomeScreenContent: logged in guest ")
+            }
+        }
+    }
     RequestToLoginBottomSheet(
-        isVisible = state.showBottomSheet, onDismiss = interactionListener::onDismissBottomSheet
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet,
+        onLoginButtonClick = {
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
     )
 }
