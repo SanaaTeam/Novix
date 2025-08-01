@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
@@ -8,13 +9,16 @@ import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 
 @HiltViewModel
 class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageActorDetails: ManageActorUseCase
-) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+    private val manageActorDetails: ManageActorUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase
+    ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
@@ -22,9 +26,20 @@ class ActorViewModel @Inject constructor(
     private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
 
     init {
+        updateUserLoggingStatus()
         loadDetails()
     }
 
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn
+                )
+            }
+        }
+    }
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
     }
@@ -59,7 +74,9 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onSaveClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        if (!state.value.userIsLoggedIn){
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
     }
 
     override fun onRetryClicked() {

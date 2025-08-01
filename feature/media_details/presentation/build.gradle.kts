@@ -10,6 +10,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.domain.identity)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)

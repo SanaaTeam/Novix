@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -11,6 +12,8 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
 
@@ -18,6 +21,7 @@ import javax.inject.Inject
 class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
     initialState = GenreTvShowsScreenUiState(),
@@ -28,14 +32,28 @@ class GenreTvShowsViewModel @Inject constructor(
     private val genreName: String = checkNotNull(savedStateHandle["genreName"])
 
     init {
+        updateUserLoggingStatus()
         getTvShowsByGenreId(genreId)
     }
 
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn
+                )
+            }
+        }
+    }
+
     override fun onSaveIconClick() {
-        updateState {
-            it.copy(
-                showBottomSheet = true
-            )
+        if (!state.value.userIsLoggedIn) {
+            updateState {
+                it.copy(
+                    showBottomSheet = true
+                )
+            }
         }
     }
 

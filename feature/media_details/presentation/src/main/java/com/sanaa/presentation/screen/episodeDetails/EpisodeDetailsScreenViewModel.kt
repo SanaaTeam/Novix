@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
@@ -9,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -36,6 +38,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         loadEpisode(seriesId, seasonNumber, episodeNumber)
         tryToExecute(callee = ::getUserState)
     }
+
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
