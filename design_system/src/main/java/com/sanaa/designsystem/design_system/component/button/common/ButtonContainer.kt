@@ -71,10 +71,7 @@ internal fun ButtonContainer(
                 targetState = isLoading,
                 modifier = Modifier
                     .animateContentSize()
-                    .padding(
-                        start = 4.dp,
-                        end = 4.dp
-                    ),
+                    .padding(),
             ) { loading ->
                 if (loading) {
                     AnimatedLoadingIndicator(
