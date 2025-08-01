@@ -48,8 +48,8 @@ class ActorViewModelTest {
     @Test
     fun `onTopMoviesClicked emits NavigateToTopMovies`() = runTest {
         givenHappyViewModel()
-        viewModel.onTopMoviesClicked()
         viewModel.effect.test {
+            viewModel.onTopMoviesClicked()
             assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTopMovies(actorId))
             cancelAndIgnoreRemainingEvents()
         }
