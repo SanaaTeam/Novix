@@ -48,11 +48,7 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
                     it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = { ::onLoadDataError }
         )
     }
 
@@ -65,11 +61,7 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
                     it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = { ::onLoadDataError }
         )
     }
 
@@ -86,11 +78,8 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
                     it.copy(movieGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = { ::onLoadDataError }
+
         )
     }
 
@@ -107,11 +96,7 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
                     it.copy(tvShowGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = { ::onLoadDataError }
         )
     }
 
@@ -165,6 +150,15 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
             mediaType = MediaType.MOVIE,
             username = user.username
         )
+    }
+
+    private fun onLoadDataError(exception: Throwable) {
+        updateState {
+            it.copy(
+                error = exception.message,
+                isLoading = false
+            )
+        }
     }
 
     private suspend fun loadWatchedHistoryTvSeries(
