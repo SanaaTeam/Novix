@@ -7,9 +7,7 @@ import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
 import com.sanaa.api.AuthenticationApi
-import com.sanaa.api.HomeFeatureApi
 import com.sanaa.presentation.navigation.AuthNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -26,12 +24,23 @@ class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
 @AndroidEntryPoint
 class AuthActivity : ComponentActivity(){
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         setContent {
-            AuthNavHost()
+            AuthNavHost(
+                onAuthResult = { code:Int->
+                    finishWithResultCode(code)
+                }
+            )
         }
+    }
+
+
+
+    fun finishWithResultCode(code: Int){
+        setResult(code)
+        finish()
     }
 }
