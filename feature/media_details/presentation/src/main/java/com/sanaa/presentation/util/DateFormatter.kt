@@ -1,5 +1,7 @@
 package com.sanaa.presentation.util
 
+import android.content.Context
+import android.os.Build
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
@@ -20,6 +22,13 @@ fun Int.toLocalizedDigits(locale: Locale): String {
         return this.toString().map { arabicDigits[it - '0'] }.joinToString("")
     }
     return this.toString()
+}
+fun getCurrentLocale(context: Context): Locale {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        context.resources.configuration.locales[0]
+    } else {
+        context.resources.configuration.locale
+    }
 }
 
 fun LocalDate.formatDateLocalizedDigits(locale: Locale = Locale.getDefault()): String {

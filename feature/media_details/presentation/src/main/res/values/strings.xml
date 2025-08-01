@@ -62,4 +62,5 @@
     <string name="rate_it">Rate it</string>
     <string name="submit_rating_successfully">Submit rating successfully</string>
     <string name="submit_rating_failed">Submit rating failed</string>
+    <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>
 </resources>

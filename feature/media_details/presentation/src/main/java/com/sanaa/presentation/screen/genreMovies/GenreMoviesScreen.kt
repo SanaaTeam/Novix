@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +28,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -60,7 +64,6 @@ fun GenreMoviesScreen(
                     MovieDetailsScreenRoute(effect.id).route()
                 )
                 GenreMoviesEffects.NavigateToLogin -> {
-                    // Launch authentication activity
                     val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
@@ -76,6 +79,7 @@ fun GenreMoviesScreen(
     }
 
 }
+
 
 @Composable
 fun GenreMoviesScreenContent(
@@ -133,10 +137,7 @@ fun GenreMoviesScreenContent(
                         ) {
                             items(
                                 count = pagedMovies.itemCount,
-                                key = { index ->
-                                    val movie = pagedMovies[index]
-                                    "${index}-${movie?.id}"
-                                }
+                                key = pagedMovies.itemKey { it.id }
                             ) { index ->
                                 val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(
@@ -167,6 +168,19 @@ fun GenreMoviesScreenContent(
                                     topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
                                     onCardClick = { interactionListener.onMovieClick(movie.id) })
                             }
+
+                            if (pagedMovies.loadState.append is LoadState.Loading) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                }
+                            }
                         }
                     }
                     RequestToLoginBottomSheet(
@@ -179,5 +193,3 @@ fun GenreMoviesScreenContent(
         }
     }
 }
-
-

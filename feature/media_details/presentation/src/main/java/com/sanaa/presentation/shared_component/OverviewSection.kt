@@ -54,7 +54,7 @@ fun OverviewSection(
 
         ExpandableText(
             text = overview,
-            style = Theme.textStyle.body.medium,
+            style = Theme.textStyle.body.small,
             color = Theme.colors.body,
             collapsedMaxLines = collapsedMaxLines,
             readMoreText = " ${stringResource(R.string.read_more)}",
