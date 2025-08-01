@@ -1,6 +1,5 @@
 package com.sanaa.presentation.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -22,7 +21,6 @@ fun NovixAnimatedSnackBarHost(
     onDismiss: () -> Unit,
     durationMillis: Long = 2500
 ) {
-    Log.d("NovixAnimatedSnackBarHost", "data: $data")
     AnimatedVisibility(
         visible = data != null,
         enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
