@@ -13,8 +13,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,8 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -43,19 +48,11 @@ import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 
 @Composable
 fun GenreTvShowsScreen(
-    genreId: Int,
-    genreName: String?,
-    viewModel: GenreTvShowsViewModel = koinViewModel(parameters = {
-        parametersOf(
-            genreId, genreName
-        )
-    }),
+    viewModel: GenreTvShowsViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -68,7 +65,6 @@ fun GenreTvShowsScreen(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )
                 GenreTvShowsEffects.NavigateToLogin -> {
-                    // Launch authentication activity
                     val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
@@ -143,10 +139,7 @@ fun GenreTvShowsScreenContent(
                         ) {
                             items(
                                 count = pagedTvShows.itemCount,
-                                key = { index ->
-                                    val tvShow = pagedTvShows[index]
-                                    "${index}-${tvShow?.id}"
-                                }
+                                key = pagedTvShows.itemKey { it.id }
                             ) { index ->
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
@@ -177,6 +170,19 @@ fun GenreTvShowsScreenContent(
                                     topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
                                     onCardClick = { interactionListener.onTvShowClick(tvShow.id) })
                             }
+
+                            if (pagedTvShows.loadState.append is LoadState.Loading) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                }
+                            }
                         }
                     }
                     RequestToLoginBottomSheet(
@@ -184,11 +190,8 @@ fun GenreTvShowsScreenContent(
                         onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                         isVisible = state.showBottomSheet
                     )
-
                 }
             }
         }
     }
 }
-
-

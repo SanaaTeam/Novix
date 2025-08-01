@@ -2,13 +2,17 @@ package com.sanaa.vod.media.movie
 
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -86,4 +90,16 @@ interface MovieApiService {
     @GET("genre/movie/list")
     suspend fun fetchMovieGenres(): MovieApiResponse<GenreDto>
 
+    @POST("movie/{movie_id}/rating")
+    suspend fun rateMovie(
+        @Path("movie_id") movieId: Int,
+        @Query("session_id") sessionId: String,
+        @Body rating: MovieRateRequest
+    ): RatingResponse
+
+    @GET("account/{account_id}/rated/movies")
+    suspend fun fetchMovieRate(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+    ): MovieApiResponse<MovieDto>
 }

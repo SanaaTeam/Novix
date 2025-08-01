@@ -19,6 +19,7 @@ fun MovieLocalDto.toEntity(): Movie {
         releaseDate = parseReleaseDate(releaseDate),
         overview = "",
         trailerUrl = null,
+        rating = null
     )
 }
 
@@ -45,6 +46,7 @@ fun MovieSearchDto.toEntity(): Movie {
         releaseDate = parseReleaseDate(releaseDate),
         overview = "",
         trailerUrl = null,
+        rating = null
     )
 }
 
@@ -58,6 +60,7 @@ fun TvSeriesLocalDto.toEntity(): TvSeries {
         overview = "",
         releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
+        rating = null
     )
 }
 
@@ -83,6 +86,7 @@ fun TvShowSearchDto.toEntity(): TvSeries {
         overview = "",
         releaseDate = parseReleaseDate(releaseDate),
         seasonsCount = 0,
+        rating = null
     )
 }
 

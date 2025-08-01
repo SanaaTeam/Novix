@@ -1,5 +1,6 @@
 package com.sanaa.vod.repository
 
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
 import com.sanaa.vod.mapper.actor.getFullImageUrl
 import com.sanaa.vod.mapper.actor.toDomain
@@ -10,10 +11,13 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
+import kotlinx.coroutines.flow.first
 import repository.MovieRepository
+import javax.inject.Inject
 
-class MovieRepositoryImpl(
-    private val remote: RemoteMovieDataSource
+class MovieRepositoryImpl @Inject constructor(
+    private val remote: RemoteMovieDataSource,
+    private val preferences: PreferencesManager
 ) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Movie =
         safeCall("Failed to fetch movie details") {
@@ -74,9 +78,28 @@ class MovieRepositoryImpl(
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
+    override suspend fun getMoviesRate(accountId: Long): List<Movie> {
+        return safeCall("Failed to fetch movie Rate") {
+            val sessionId = preferences.sessionId.first()
+            remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
+                .map { it.toDomain() }
+        }
+    }
+
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
             remote.fetchMovieGenres().map { it.toEntity() }
+        }
+    }
+
+    override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
+        return safeCall("Failed to add movie rate") {
+            val sessionId = preferences.sessionId.first()
+            remote.sendMovieRate(
+                movieId = movieId,
+                sessionId = sessionId,
+                rating = rating
+            ).isSuccess
         }
     }
 }

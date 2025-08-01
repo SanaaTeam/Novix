@@ -246,6 +246,7 @@ class SearchUseCaseTest {
                 releaseDate = LocalDate(1990, 10, 10),
                 overview = "null",
                 trailerUrl = null,
+                rating = 0
             )
         )
 
@@ -259,6 +260,7 @@ class SearchUseCaseTest {
                 genres = emptyList(),
                 imdbRating = 9f,
                 seasonsCount = 1,
+                rating = 0
             )
         )
     }

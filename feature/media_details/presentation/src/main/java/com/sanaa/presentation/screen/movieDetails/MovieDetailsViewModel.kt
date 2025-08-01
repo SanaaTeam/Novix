@@ -1,11 +1,14 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
@@ -15,23 +18,29 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
-class MovieDetailsViewModel(
-    private val movieId: Int,
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
-    MovieDetailsUiState(),
-    dispatcher
+    initialState = MovieDetailsUiState(),
+    defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
+
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
 
     init {
         fetchMovieDetails(movieId)
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClick() {
@@ -47,7 +56,7 @@ class MovieDetailsViewModel(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = true) }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -55,15 +64,19 @@ class MovieDetailsViewModel(
     }
 
     override fun onRateMovieClick() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        if (state.value.isUserLoggedIn) {
+            updateState { it.copy(showRateBottomSheet = true) }
+        } else {
+            updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        }
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -88,6 +101,31 @@ class MovieDetailsViewModel(
             )
         }
         fetchMovieDetails(movieId)
+    }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissRateBottomSheet() {
+        updateState { it.copy(showRateBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        errorMessage = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
     }
 
     private fun fetchMovieDetails(movieId: Int) {
@@ -122,8 +160,7 @@ class MovieDetailsViewModel(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { it.copy(isLoading = true) }
-        return createPagingFlow(
+             return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = Movie::toUiModel
         )
@@ -141,6 +178,9 @@ class MovieDetailsViewModel(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
+        val userId = getLoggedInUserUseCase.getLoggedInUser().id
+        val ratedMovies = manageMovieDetails.getMoviesRate(userId)
+        val currentMovieRating = ratedMovies.find { it.id == movieId }?.rating ?: 0
 
         addMovieToHistory(movie)
         updateState {
@@ -148,9 +188,28 @@ class MovieDetailsViewModel(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 imagesUrls = images,
-                similarMovies = similar
+                similarMovies = similar,
+                imdbRating = currentMovieRating
             )
         }
+    }
+
+    private suspend fun addRate() {
+        val rating = state.value.imdbRating
+        val isSendRateSuccess = manageMovieDetails.addMovieRate(
+            movieId = movieId,
+            rating = rating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+        } else {
+            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+        }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 
     private suspend fun addMovieToHistory(movie: Movie) {

@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.movieDetails
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -23,7 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
@@ -57,21 +59,25 @@ import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
+import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
+import com.sanaa.presentation.util.getCurrentLocale
+import com.sanaa.presentation.util.toLocalizedDigits
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
-    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
+    viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
+    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
+    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -108,13 +114,30 @@ fun MovieDetailsScreen(
                     )
                 }
 
+                is MovieDetailsUiEffect.ShowSuccessSnackBar -> {
+                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
+                }
+
+                is MovieDetailsUiEffect.ShowErrorSnackBar -> {
+                    snack = SnackData(submitRatingFailedMsg, isError = true)
+                }
+
                 MovieDetailsUiEffect.NavigateToLogin -> TODO()
             }
         }
     }
-    MovieDetailsContent(
-        state = state, interactionListener = viewModel
-    )
+
+    Box {
+        MovieDetailsContent(
+            state = state, interactionListener = viewModel
+        )
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
+
 
 }
 
@@ -123,7 +146,10 @@ fun MovieDetailsContent(
     state: MovieDetailsUiState,
     interactionListener: MovieDetailsScreenInteractionListener,
 ) {
+
     val pagedSimilarMovies = state.similarMovies.collectAsLazyPagingItems()
+    val context = LocalContext.current
+    val locale = remember { getCurrentLocale(context) }
 
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
@@ -159,7 +185,10 @@ fun MovieDetailsContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             NovixLoadingIndicator()
                         }
                     }
@@ -169,7 +198,9 @@ fun MovieDetailsContent(
                             .fillMaxSize(),
                         columns = GridCells.Adaptive(minSize = 120.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                        contentPadding = PaddingValues(
+                            start = 16.dp, end = 16.dp, bottom = 100.dp
+                        )
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Box(modifier = Modifier.fillWidthOfParent(16.dp)) {
@@ -234,12 +265,14 @@ fun MovieDetailsContent(
                                             }
                                             state.movieDetails.duration?.let { duration ->
                                                 val hours = duration.inWholeHours
-                                                val minutes = (duration - hours.hours).inWholeMinutes
+                                                val minutes =
+                                                    (duration - hours.hours).inWholeMinutes
 
                                                 val durationText = buildString {
-                                                    if (hours > 0) append("$hours ${stringResource(R.string.hours_label)} ")
-                                                    if (minutes > 0) append("$minutes ${stringResource(R.string.minutes_label)}")
+                                                    if (hours > 0) append("${hours.toInt().toLocalizedDigits(locale)}${stringResource(R.string.hours_label)} ")
+                                                    if (minutes > 0) append("${minutes.toInt().toLocalizedDigits(locale)}${stringResource(R.string.minutes_label)}")
                                                 }.trim()
+
 
                                                 IconWithText(
                                                     iconRes = R.drawable.icon_duration,
@@ -267,7 +300,7 @@ fun MovieDetailsContent(
                         }
 
                         item(span = { GridItemSpan(maxLineSpan) }) {
-                            if (state.movieDetails.overview.isNotEmpty()){
+                            if (state.movieDetails.overview.isNotEmpty()) {
                                 OverviewSection(
                                     overview = state.movieDetails.overview,
                                     onReadMore = { interactionListener.onReadMoreClick() },
@@ -290,24 +323,30 @@ fun MovieDetailsContent(
                                     text = stringResource(id = R.string.more_like_this),
                                     color = Theme.colors.title,
                                     style = Theme.textStyle.title.medium,
-                                    modifier = Modifier.padding(bottom = 12.dp, top = 16.dp)
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
                                 )
                             }
-
-                            items(
-                                count = pagedSimilarMovies.itemCount,
-                                key = { index ->
-                                    val movie = pagedSimilarMovies[index]
-                                    "${index}-${movie?.id}"
-                                }
-                            ) { index ->
+                            items(pagedSimilarMovies.itemCount) { index ->
                                 val item = pagedSimilarMovies[index] ?: return@items
+
                                 MoreLikeThisCard(
                                     movie = item,
                                     modifier = Modifier.padding(bottom = 12.dp),
                                     onBookmarkClick = { interactionListener.onBookmarkClick(item.id) },
                                     onMovieClick = { interactionListener.onSimilarMovieClick(item.id) },
                                 )
+                            }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                if (pagedSimilarMovies.loadState.append is androidx.paging.LoadState.Loading) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                }
                             }
                         }
                     }
@@ -320,14 +359,22 @@ fun MovieDetailsContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
-
-            if (state.showLoginBottomSheet) {
-                RequestToLoginBottomSheet(
-                    onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet
+            if (state.showRateBottomSheet) {
+                RateBottomSheet(
+                    isRateSelected = state.hasUserSelectedRate,
+                    imdbRating = state.imdbRating,
+                    onDismiss = interactionListener::onDismissRateBottomSheet,
+                    isVisible = state.showRateBottomSheet,
+                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                    onRatingChanged = interactionListener::onRatingChanged
                 )
             }
-
+            if (state.showLoginBottomSheetToAddToList) {
+                RequestToLoginBottomSheet(
+                    onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+                    isVisible = state.showLoginBottomSheetToAddToList
+                )
+            }
         }
 
     }

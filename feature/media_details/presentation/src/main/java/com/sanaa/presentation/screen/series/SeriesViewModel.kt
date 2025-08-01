@@ -1,22 +1,28 @@
 package com.sanaa.presentation.screen.series
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toSeasonUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
-class SeriesViewModel(
-    private val seriesId: Int,
+@HiltViewModel
+class SeriesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val getUser: GetLoggedInUserUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
@@ -24,11 +30,13 @@ class SeriesViewModel(
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
     initialState = SeriesScreenUiState(),
     defaultDispatcher = dispatcher
-),
-    SeriesScreenInteractionListener {
+), SeriesScreenInteractionListener {
+
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
 
     init {
         loadSeries()
+        tryToExecute(callee = ::getUserState)
     }
 
     override fun onBackClicked() {
@@ -83,16 +91,54 @@ class SeriesViewModel(
     }
 
     override fun onRateClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        if (state.value.isUserLoggedIn) {
+            updateState { it.copy(showRateBottomSheet = true) }
+        } else {
+            updateState { it.copy(showLoginBottomSheet = true) }
+        }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { it.copy(showRateBottomSheet = false) }
+    }
+
+    override fun onDismissAnyBottomSheet() {
+        updateState {
+            it.copy(
+                showRateBottomSheet  = false,
+                showLoginBottomSheet = false
+            )
+        }
     }
 
     override fun onLoginButtonClick() {
         updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(SeriesScreenEffects.NavigateToLogin)
+    }
+
+    override fun onRatingChanged(newRating: Int) {
+        updateState { it.copy(imdbRating = newRating) }
+    }
+
+    override fun onDismissLoginBottomSheet() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(
+            callee = ::addRate,
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        error = exception.message,
+                        showRateBottomSheet = false
+                    )
+                }
+            }
+        )
+        updateState {
+            it.copy(showRateBottomSheet = false)
+        }
     }
 
     override fun onSaveSeriesClicked() {
@@ -146,6 +192,9 @@ class SeriesViewModel(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+        val userId = getUser.getLoggedInUser().id
+        val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
+        val currentSeriesRating = ratedSeries.find { it.id == seriesId }?.rating ?: 0
 
         addTvSeriesToHistory(series)
         updateState {
@@ -153,7 +202,8 @@ class SeriesViewModel(
                 series = series.toSeriesUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
-                images = images
+                images = images,
+                imdbRating = currentSeriesRating
             )
         }
     }
@@ -164,6 +214,23 @@ class SeriesViewModel(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
+    }
+
+    private suspend fun addRate() {
+        val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
+            seriesId = seriesId,
+            rating = state.value.imdbRating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            emitEffect(SeriesScreenEffects.ShowSuccessSnackBar)
+        } else {
+            emitEffect(SeriesScreenEffects.ShowErrorSnackBar)
+        }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 
     private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {

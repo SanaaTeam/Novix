@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -26,16 +28,22 @@ import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import org.koin.java.KoinJavaComponent.inject
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun MainScreen() {
 
-    val searchFeatureApi: SearchFeatureApi by inject(
-        SearchFeatureApi::class.java
-    )
-
     val navController = rememberNavController()
+    val appContext = LocalContext.current.applicationContext
+
+    val searchFeatureApi: SearchFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .searchApi()
+    }
+
+
     CompositionLocalProvider(LocalMainNavController provides navController) {
         NovixTheme(isSystemInDarkTheme()) {
             NovixScaffold(
@@ -54,7 +62,7 @@ fun MainScreen() {
                         HomeScreen()
                     }
                     composable<SearchScreenRoute> {
-                      searchFeatureApi.SearchScreenApi()
+                        searchFeatureApi.SearchScreenApi()
                     }
                     composable<PlayListScreenRoute> {
 

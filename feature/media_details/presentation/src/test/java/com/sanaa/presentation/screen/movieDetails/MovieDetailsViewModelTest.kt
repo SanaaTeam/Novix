@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
@@ -17,14 +18,16 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.GetLoggedInUserUseCase
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
-
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
+    private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
@@ -56,14 +59,13 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        viewModel = MovieDetailsViewModel(
-            movieId,
-            manageMovieDetails,
-            manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            testDispatcher
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "movieId" to movieId
+            )
         )
 
+        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, manageWatchedMediaHistoryUseCase, getUser)
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -82,9 +84,9 @@ class MovieDetailsViewModelTest {
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
         viewModel.onRateMovieClick()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
     }
 
     @Test
@@ -92,7 +94,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
     }
 
     @Test
@@ -152,18 +154,91 @@ class MovieDetailsViewModelTest {
         }
     }
 
+
+    @Test
+    fun `onRateMovieClick shows rate bottom sheet if user is logged in`() = runTest {
+        coEvery { checkUserLogin.isLoggedIn() } returns true
+        givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onRateMovieClick()
+
+        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
+        givenHappy()
+        viewModel.updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        viewModel.onLoginButtonClick()
+
+        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onRatingChanged updates the rating`() = runTest {
+        givenHappy()
+        viewModel.onRatingChanged(8)
+        assertThat(viewModel.state.value.imdbRating).isEqualTo(8)
+    }
+
+    @Test
+    fun `onDismissRateBottomSheet sets sheet to false`() = runTest {
+        givenHappy()
+        viewModel.updateState { it.copy(showRateBottomSheet = true) }
+        viewModel.onDismissRateBottomSheet()
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onSubmitRateBottomSheet sets errorMessage on exception`() = runTest {
+        val error = RuntimeException("Something went wrong")
+        coEvery { manageMovieDetails.addMovieRate(any(), any()) } throws error
+        givenHappy()
+
+        viewModel.onSubmitRateBottomSheet()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.errorMessage).isEqualTo("Something went wrong")
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onRetryLoadDetails updates state and retries fetch`() = runTest {
+        givenHappy()
+        viewModel.onRetryLoadDetails()
+        testDispatcher.scheduler.advanceUntilIdle()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.errorMessage).isNull()
+        assertThat(viewModel.state.value.noInternetConnection).isFalse()
+    }
+
+
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "movieId" to movieId
+            )
+        )
+
         viewModel = MovieDetailsViewModel(
-            movieId,
+            savedStateHandle,
             manageMovieDetails,
+            checkUserLogin,
             manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            testDispatcher
+            getUser,
+            dispatcher = testDispatcher
         )
     }
 
@@ -186,7 +261,8 @@ class MovieDetailsViewModelTest {
             imdbRating = 7.5f,
             duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
-            overview = "Overview1"
+            overview = "Overview1",
+            rating = 0
         )
         private val dummyCast = listOf(
             Actor(

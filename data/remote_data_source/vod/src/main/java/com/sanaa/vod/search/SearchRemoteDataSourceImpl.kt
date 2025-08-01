@@ -6,8 +6,9 @@ import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
 import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
 import com.sanaa.vod.util.wrapApiCall
+import javax.inject.Inject
 
-class SearchRemoteDataSourceImpl(
+class SearchRemoteDataSourceImpl @Inject constructor(
     private val searchApiService: SearchApiService,
 ) : SearchRemoteDataSource {
 

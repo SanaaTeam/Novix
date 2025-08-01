@@ -9,8 +9,9 @@ import com.sanaa.vod.search.search_history.dao.QueryDao
 import com.sanaa.vod.search.search_history.dao.RecentViewedDao
 import kotlinx.coroutines.flow.Flow
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class LocalSearchHistoryDataSourceImpl(
+class LocalSearchHistoryDataSourceImpl @Inject constructor(
     private val queryDao: QueryDao,
     private val recentViewedDao: RecentViewedDao,
     private val watchedMediaHistoryDao: WatchedMediaHistoryDao

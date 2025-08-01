@@ -33,7 +33,7 @@ abstract class BaseViewModel<T, E>(
     private val _effect = MutableSharedFlow<E>()
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
-    protected fun updateState(updater: (T) -> T) {
+    internal fun updateState(updater: (T) -> T) {
         _state.update(updater)
     }
 
@@ -84,6 +84,7 @@ abstract class BaseViewModel<T, E>(
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
+                prefetchDistance = 4,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = pagingSourceFactory

@@ -11,8 +11,9 @@ import com.sanaa.identity.util.wrapApiCall
 import entity.User
 import exceptions.NoLoggedInUserException
 import repository.AuthenticationRepository
+import javax.inject.Inject
 
-class AuthenticationRepositoryImpl(
+class AuthenticationRepositoryImpl @Inject constructor(
     private val api: AuthenticationApiService,
     private val userLocalDataSource: LocalUserDataSource,
     private val preferences: PreferencesManager

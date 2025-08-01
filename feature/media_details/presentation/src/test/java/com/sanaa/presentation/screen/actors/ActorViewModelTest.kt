@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.actors
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
@@ -19,7 +20,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageActorUseCase
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -110,7 +110,10 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummySeries
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-        viewModel = ActorViewModel(actorId, manageActorDetailsUseCase)
+
+        val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
+
+        viewModel = ActorViewModel(savedStateHandle, manageActorDetailsUseCase)
     }
 
     companion object {
@@ -138,7 +141,8 @@ class ActorViewModelTest {
                 imdbRating = 8.3f,
                 duration = 120.minutes,
                 releaseDate = LocalDate.parse("2020-01-01"),
-                overview = "Overview"
+                overview = "Overview",
+                rating = 0
             ),
             Movie(
                 id = 2,
@@ -148,7 +152,8 @@ class ActorViewModelTest {
                 imdbRating = 7.9f,
                 duration = 118.minutes,
                 releaseDate = LocalDate.parse("2022-09-20"),
-                overview = "Overview"
+                overview = "Overview",
+                rating = 0
             )
         )
 
@@ -161,7 +166,8 @@ class ActorViewModelTest {
                 genres = emptyList(),
                 imdbRating = 8.1f,
                 posterImageUrl = "/s1.jpg",
-                seasonsCount = 2
+                seasonsCount = 2,
+                rating = 0
             )
         )
 

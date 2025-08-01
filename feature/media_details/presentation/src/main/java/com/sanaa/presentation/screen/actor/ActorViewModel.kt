@@ -1,19 +1,25 @@
 package com.sanaa.presentation.screen.actor
 
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.model.mapper.toUiModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageActorUseCase
 
-class ActorViewModel(
-    private val actorId: Int,
-    private val manageActorDetails: ManageActorUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(ActorScreenUiState(), dispatcher),
-    ActorsScreenInteractionListener {
+@HiltViewModel
+class ActorViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    private val manageActorDetails: ManageActorUseCase
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+    initialState = ActorScreenUiState(),
+    defaultDispatcher = Dispatchers.IO
+), ActorsScreenInteractionListener {
+
+    private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
 
     init {
         loadDetails()
@@ -60,7 +66,6 @@ class ActorViewModel(
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
-
     private fun loadDetails() {
         updateState { it.copy(isLoading = true) }
         tryToExecute(

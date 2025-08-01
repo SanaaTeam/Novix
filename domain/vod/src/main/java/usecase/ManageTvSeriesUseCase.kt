@@ -1,13 +1,15 @@
 package usecase
 
 import entity.Actor
+import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
 import repository.TvSeriesRepository
+import javax.inject.Inject
 
-class ManageTvSeriesUseCase(
+class ManageTvSeriesUseCase @Inject constructor(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
     suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =
@@ -47,6 +49,17 @@ class ManageTvSeriesUseCase(
         return tvSeriesRepo.getSeriesGenres()
     }
 
+    suspend fun getSeriesRate(accountId: Long): List<TvSeries> {
+        return tvSeriesRepo.getSeriesRate(accountId)
+    }
+
+    suspend fun getEpisodesRate(accountId: Long): List<Episode> {
+        return tvSeriesRepo.getEpisodesRate(accountId)
+    }
+
+    suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
+        return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
+    }
 
     private companion object {
         const val IMAGE_COUNT = 10

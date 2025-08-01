@@ -3,8 +3,9 @@ package usecase.history
 import kotlinx.coroutines.flow.Flow
 import repository.HistoryRepository
 import usecase.history.history_param.SearchHistory
+import javax.inject.Inject
 
-class ManageHistoryUseCase(
+class ManageHistoryUseCase @Inject constructor(
     private val historyRepo: HistoryRepository,
 ) {
     suspend fun getSearchHistory(): Flow<List<SearchHistory>> =

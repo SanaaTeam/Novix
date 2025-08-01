@@ -18,4 +18,5 @@ data class TvShowDto(
     @SerialName("character") val character: String? = null,
     @SerialName("credit_id") val creditId: String? = null,
     @SerialName("episode_count") val episodeCount: Int = 0,
+    @SerialName("rating") val rating: Float? = null
 )

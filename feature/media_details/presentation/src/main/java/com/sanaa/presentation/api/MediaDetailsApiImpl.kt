@@ -10,8 +10,12 @@ import androidx.activity.enableEdgeToEdge
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.presentation.navigation.DetailsNavHost
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MediaDetailsApiImpl : MediaDetailsApi {
+@Singleton
+class MediaDetailsApiImpl @Inject constructor() : MediaDetailsApi {
     override fun launch(context: Context, startRoute: StartRoute, id: Int) {
         val intent = MediaDetailsActivity.createIntent(context, startRoute, id)
         context.startActivity(
@@ -21,7 +25,7 @@ class MediaDetailsApiImpl : MediaDetailsApi {
     }
 }
 
-
+@AndroidEntryPoint
 class MediaDetailsActivity : ComponentActivity() {
 
     companion object {

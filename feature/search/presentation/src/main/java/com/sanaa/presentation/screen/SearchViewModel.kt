@@ -17,6 +17,7 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
@@ -36,14 +37,18 @@ import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
 import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class SearchViewModel(
+@HiltViewModel
+class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(SearchScreenUiState(), dispatcher),
-    SearchScreenInteractionsListener {
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
+    SearchScreenUiState(),
+    dispatcher
+), SearchScreenInteractionsListener {
 
     init {
         observeSearchQueryChanges()
@@ -69,11 +74,15 @@ class SearchViewModel(
     }
 
     override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
+        val currentQuery =state.value.searchQuery
         updateState { currentState ->
             currentState.copy(
                 movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
                 tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
             )
+        }
+        if (currentQuery.isNotBlank()) {
+            loadMediaByTab(currentQuery)
         }
     }
     override fun onActorClicked(id: Int) {
@@ -330,8 +339,11 @@ class SearchViewModel(
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE, enablePlaceholders = false
-            ), pagingSourceFactory = pagingSourceFactory
+                pageSize = PAGE_SIZE, 
+                enablePlaceholders = false,
+                prefetchDistance = 4
+            ), 
+            pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
             pagingData.map(mapper)
         }.cachedIn(viewModelScope)
@@ -349,6 +361,5 @@ class SearchViewModel(
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
-        const val ACTOR_INDEX = 2
     }
 }

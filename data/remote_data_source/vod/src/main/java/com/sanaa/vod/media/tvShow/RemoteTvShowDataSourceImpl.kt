@@ -4,14 +4,17 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
+import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.util.wrapApiCall
+import javax.inject.Inject
 
-class RemoteTvShowDataSourceImpl(
+class RemoteTvShowDataSourceImpl @Inject constructor(
     private val apiService: TvShowApiService,
 ) : RemoteTvShowDataSource {
 
@@ -33,7 +36,10 @@ class RemoteTvShowDataSourceImpl(
     }
 
     override suspend fun getTvShowsByGenre(page: Int, genreId: Int): List<TvShowDto> = wrapApiCall {
-        apiService.fetchTvShowsByCategory(page = page, category = genreId).results.distinctBy { it.id }
+        apiService.fetchTvShowsByCategory(
+            page = page,
+            category = genreId
+        ).results.distinctBy { it.id }
     }
 
     override suspend fun getReviewsByTvShowId(id: Int, page: Int): List<ReviewDto> = wrapApiCall {
@@ -66,6 +72,16 @@ class RemoteTvShowDataSourceImpl(
         return apiService.fetchTvShowsGenres().genres.distinctBy { it.id }
     }
 
+    override suspend fun getTvShowRate(accountId: Long, sessionId: String): List<TvShowDto> =
+        wrapApiCall {
+            apiService.fetchTvShowRate(accountId = accountId, sessionId = sessionId).results
+        }
+
+    override suspend fun getEpisodesRate(accountId: Long, sessionId: String): List<EpisodeDto> =
+        wrapApiCall {
+            apiService.fetchEpisodesRate(sessionId = sessionId, accountId = accountId).results
+        }
+
     override suspend fun fetchPopularTvShows(
         page: Int,
     ): List<TvShowDto> {
@@ -90,5 +106,35 @@ class RemoteTvShowDataSourceImpl(
             page,
             genreId?.toString()
         ).results.distinctBy { it.id }
+    }
+
+    override suspend fun sendTvSeriesRate(
+        seriesId: Int,
+        sessionId: String,
+        rating: Float
+    ): RatingResponse {
+        val response = apiService.rateTvSeries(
+            seriesId = seriesId,
+            sessionId = sessionId,
+            rating = TvShowRateRequest(value = rating)
+        )
+        return response
+    }
+
+    override suspend fun sendTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        sessionId: String,
+        rating: Float
+    ): RatingResponse {
+        val response = apiService.rateTvEpisode(
+            seriesId = seriesId,
+            seasonNumber = seasonNumber,
+            episodeNumber = episodeNumber,
+            sessionId = sessionId,
+            rating = TvShowRateRequest(value = rating)
+        )
+        return response
     }
 }

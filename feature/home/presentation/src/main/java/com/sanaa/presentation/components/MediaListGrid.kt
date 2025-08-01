@@ -30,7 +30,7 @@ fun MediaListGrid(
     onSaveIconClick: (MediaItem) -> Unit = {},
 ) {
     LazyVerticalGrid(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
         columns = GridCells.Adaptive(minSize = 140.dp),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),

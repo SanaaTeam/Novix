@@ -1,6 +1,5 @@
 package com.sanaa.presentation.app
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -41,7 +40,6 @@ fun NovixApp(
     }
 }
 
-
 @Composable
 private fun AppNavigation(
     startDestination: AppRoute,
@@ -56,7 +54,6 @@ private fun AppNavigation(
             composable<MainScreenRoute> {
                 MainScreen()
             }
-
 
             composable<TrendingMoviesScreenRoute> {
                 TrendingMoviesScreen()

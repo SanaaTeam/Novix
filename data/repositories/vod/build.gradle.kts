@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.library)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -11,6 +12,7 @@ android {
 dependencies {
     implementation(projects.domain.vod)
     implementation(projects.preferences)
+    implementation(projects.data.repositories.identity)
 
     implementation(libs.ktor.serialization.kotlinx.json)
 
@@ -26,5 +28,8 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.slf4j.api)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }
 

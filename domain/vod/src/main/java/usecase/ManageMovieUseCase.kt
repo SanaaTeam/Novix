@@ -5,8 +5,9 @@ import entity.Genre
 import entity.Movie
 import entity.Review
 import repository.MovieRepository
+import javax.inject.Inject
 
-class ManageMovieUseCase(
+class ManageMovieUseCase @Inject constructor(
     private val movieRepo: MovieRepository
 ) {
     suspend fun getMovieDetails(id: Int): Movie =
@@ -44,6 +45,14 @@ class ManageMovieUseCase(
 
     suspend fun getMovieGenres(): List<Genre> {
         return movieRepo.getMovieGenres()
+    }
+
+    suspend fun getMoviesRate(accountId: Long): List<Movie> {
+        return movieRepo.getMoviesRate(accountId)
+    }
+
+    suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
+        return movieRepo.addMovieRate(movieId = movieId, rating = rating)
     }
 
     private companion object {

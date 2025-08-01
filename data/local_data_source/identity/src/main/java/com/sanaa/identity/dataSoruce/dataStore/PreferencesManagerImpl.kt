@@ -8,10 +8,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class PreferencesManagerImpl(private val context: Context) : PreferencesManager {
+class PreferencesManagerImpl @Inject constructor(
+    @ApplicationContext private val context: Context
+) : PreferencesManager {
     override val sessionId: Flow<String> = context.dataStore.data
         .map { preferences -> preferences[SESSION_ID].orEmpty() }
 

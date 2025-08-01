@@ -7,8 +7,10 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
+import exceptions.NoNetworkException
 import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,9 +19,11 @@ import kotlinx.coroutines.flow.flowOf
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
-class HomeScreenViewModel(
+@HiltViewModel
+class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
@@ -29,6 +33,7 @@ class HomeScreenViewModel(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
+
     init {
         fetchPopularMediaData()
         fetchTopRatedMediaData()
@@ -56,9 +61,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -81,9 +84,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -100,9 +101,7 @@ class HomeScreenViewModel(
                     )
                 }
             },
-            onError = { e ->
-                updateState { it.copy(isLoading = false, errorMessage = e.message) }
-            },
+            onError = ::onErrorLoadingData
         )
     }
 
@@ -119,35 +118,23 @@ class HomeScreenViewModel(
                     it.copy(movieGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(errorMessage = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
     private fun fetchUpcomingMovies(
         genreId: Int? = null
     ) {
-        tryToExecute(
+        tryToCollect(
             callee = { loadUpcomingMovies(genreId) },
-            onSuccess = { mediaList ->
+            onCollect = { mediaList ->
                 updateState {
                     it.copy(
-                        isLoadingUpcoming = false,
-                        upcomingMovies = mediaList
+                        upcomingMovies = flowOf(mediaList),
                     )
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        errorMessage = exception.message,
-                        isLoadingUpcoming = false
-                    )
-                }
-            }
+            onError = ::onErrorLoadingData,
         )
     }
 
@@ -201,6 +188,15 @@ class HomeScreenViewModel(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onRetryClick() {
+        updateState { it.copy(isNoInternet = false) }
+        fetchPopularMediaData()
+        fetchTopRatedMediaData()
+        fetchWatchedMediaData()
+        fetchMovieGenres()
+        fetchUpcomingMovies()
+    }
+
 
     private fun loadUpcomingMovies(
         genreId: Int?
@@ -223,6 +219,14 @@ class HomeScreenViewModel(
                 page = page,
                 genreId = genreId
             )
+        }
+    }
+
+
+    private fun onErrorLoadingData(e: Throwable) {
+        when (e) {
+            is NoNetworkException -> updateState { it.copy(isNoInternet = true, isLoading = false) }
+            else -> updateState { it.copy(errorMessage = e.message, isLoading = false) }
         }
     }
 }

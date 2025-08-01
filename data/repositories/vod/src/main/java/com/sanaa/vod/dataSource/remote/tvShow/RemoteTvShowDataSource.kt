@@ -4,6 +4,7 @@ import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
@@ -15,7 +16,7 @@ interface RemoteTvShowDataSource {
     suspend fun getTvShowVideosUrls(id: Int): List<VideoDto>
     suspend fun getTvShowSeasonDetails(seriesId: Int, seasonNumber: Int): SeasonDto
     suspend fun getTvShowImageUrls(id: Int): List<ImageDto>
-    suspend fun getTvShowsByGenre(page:Int,genreId: Int): List<TvShowDto>
+    suspend fun getTvShowsByGenre(page: Int, genreId: Int): List<TvShowDto>
     suspend fun getReviewsByTvShowId(id: Int, page: Int): List<ReviewDto>
     suspend fun getTvShowCast(id: Int): List<ActorDto>
     suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): EpisodeDto
@@ -30,8 +31,19 @@ interface RemoteTvShowDataSource {
     ): List<ActorDto>
 
     suspend fun getTvShowGenres(): List<GenreDto>
+    suspend fun getTvShowRate(accountId: Long, sessionId: String): List<TvShowDto>
+    suspend fun getEpisodesRate(accountId: Long, sessionId: String): List<EpisodeDto>
 
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun fetchTrendingTvShows(page: Int, genreId: Int?): List<TvShowDto>
+    suspend fun sendTvSeriesRate(seriesId: Int, sessionId: String, rating: Float): RatingResponse
+    suspend fun sendTvEpisodeRate(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        sessionId: String,
+        rating: Float
+    ): RatingResponse
+
 }

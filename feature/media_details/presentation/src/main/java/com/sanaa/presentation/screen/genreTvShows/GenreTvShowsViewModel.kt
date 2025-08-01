@@ -1,8 +1,10 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import entity.TvSeries
 import exceptions.NoNetworkException
@@ -10,15 +12,21 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageTvSeriesUseCase
+import javax.inject.Inject
 
-class GenreTvShowsViewModel(
-    private val genreId: Int,
-    private val genreName: String,
+@HiltViewModel
+class GenreTvShowsViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
-    GenreTvShowsScreenUiState(), dispatcher
+    initialState = GenreTvShowsScreenUiState(),
+    defaultDispatcher = dispatcher
 ), GenreTvShowsScreenInteractionListener {
+
+    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
+    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+
     init {
         getTvShowsByGenreId(genreId)
     }

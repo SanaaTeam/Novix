@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
@@ -21,13 +22,15 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeriesViewModelTest {
-
+    private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
+    private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
@@ -83,13 +86,14 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(
-            seriesId,
-            manageTvSeriesDetails,
-            manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            testDispatcher
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
         )
+
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,)
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -114,14 +118,6 @@ class SeriesViewModelTest {
         viewModel.onRateClicked()
 
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
-    }
-
-    @Test
-    fun `onDismissRateBottomSheet sets showLoginBottomSheet to false`() = runTest {
-        givenHappyViewModel()
-        viewModel.onRateClicked()
-        viewModel.onDismissRateBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test
@@ -151,12 +147,20 @@ class SeriesViewModelTest {
     fun `loadSeries handles error correctly when use case fails`() = runTest {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } throws RuntimeException("Test failure")
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
+        )
+
         viewModel = SeriesViewModel(
-            seriesId,
+            savedStateHandle,
+            checkUserLogin,
+            getUser,
             manageTvSeriesDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
-            testDispatcher
+            dispatcher = testDispatcher
         )
         advanceUntilIdle()
 
@@ -170,13 +174,15 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        viewModel = SeriesViewModel(
-            seriesId,
-            manageTvSeriesDetails,
-            manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            testDispatcher
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
         )
+
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,testDispatcher)
 
         viewModel.onSeasonNumberClicked(2)
         advanceUntilIdle()
@@ -188,6 +194,87 @@ class SeriesViewModelTest {
         }
     }
 
+    @Test
+    fun `onPlayTrailerClicked emits PlayTrailer`() = runTest {
+        givenHappyViewModel()
+        advanceUntilIdle()
+        viewModel.onPlayTrailerClicked()
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.PlayTrailer(dummyTrailer))
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onRateClicked sets showRateBottomSheet true when user is logged in`() = runTest {
+        coEvery { checkUserLogin.isLoggedIn() } returns true
+        givenHappyViewModel()
+        advanceUntilIdle()
+        viewModel.onRateClicked()
+        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onDismissRateBottomSheet sets showRateBottomSheet to false`() = runTest {
+        givenHappyViewModel()
+        viewModel.onRateClicked()
+        viewModel.onDismissRateBottomSheet()
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onDismissLoginBottomSheet sets showLoginBottomSheet to false`() = runTest {
+        givenHappyViewModel()
+        viewModel.onSaveSeriesClicked()
+        viewModel.onDismissLoginBottomSheet()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+    }
+
+    @Test
+    fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
+        givenHappyViewModel()
+        viewModel.onSaveSeriesClicked()
+        viewModel.onLoginButtonClick()
+
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.NavigateToLogin)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
+        val errorMsg = "Failed to rate"
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } throws RuntimeException(
+            errorMsg
+        )
+        givenHappyViewModel()
+
+        viewModel.onRatingChanged(6)
+        viewModel.onSubmitRateBottomSheet()
+        advanceUntilIdle()
+
+        with(viewModel.state.value) {
+            assertThat(error).isEqualTo(errorMsg)
+            assertThat(showRateBottomSheet).isFalse()
+        }
+    }
+
+    @Test
+    fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
+        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } returns true
+        givenHappyViewModel()
+
+        viewModel.onRatingChanged(8)
+        viewModel.onSubmitRateBottomSheet()
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
+    }
+
+
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
         coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
@@ -195,13 +282,13 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(
-            seriesId,
-            manageTvSeriesDetails,
-            manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,
-            dispatcher
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId
+            )
         )
+
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase, getLoggedInUserUseCase, dispatcher)
     }
 
     private companion object {
@@ -223,7 +310,8 @@ class SeriesViewModelTest {
             genres = genreList,
             imdbRating = 9.0f,
             posterImageUrl = "/series.jpg",
-            seasonsCount = 2
+            seasonsCount = 2,
+            rating = 0
         )
         val dummyCast = listOf(
             Actor(
@@ -250,7 +338,8 @@ class SeriesViewModelTest {
             overview = "",
             durationMinutes = null,
             releaseDate = null,
-            stillImagePath = null
+            stillImagePath = null,
+            rating = 0
         )
         val dummySeason = Season(
             id = 100,
