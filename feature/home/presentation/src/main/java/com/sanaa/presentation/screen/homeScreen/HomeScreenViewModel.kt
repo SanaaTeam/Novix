@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -24,7 +25,8 @@ class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageHistoryUseCase: ManageHistoryUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val checkIfUserLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -173,10 +175,21 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState { it.copy(showBottomSheet = true) }
+        tryToExecute(
+            callee = {
+                checkIfUserLoggedInUseCase.isLoggedIn()
+            },
+            onSuccess = { isLoggedIn ->
+                updateState {
+                    it.copy(showBottomSheet = !isLoggedIn)
+
+                }
+            }
+        )
     }
 
     override fun onDismissBottomSheet() {
+
         updateState { it.copy(showBottomSheet = false) }
     }
 
