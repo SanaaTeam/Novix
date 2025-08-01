@@ -23,10 +23,12 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeriesViewModelTest {
+    private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
@@ -86,7 +88,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, manageTvSeriesDetails)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, getUser, manageTvSeriesDetails)
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -149,6 +151,7 @@ class SeriesViewModelTest {
         viewModel = SeriesViewModel(
             savedStateHandle,
             checkUserLogin,
+            getUser,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
@@ -171,7 +174,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, manageTvSeriesDetails, testDispatcher)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, testDispatcher)
 
         viewModel.onSeasonNumberClicked(2)
         advanceUntilIdle()
@@ -277,7 +280,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, manageTvSeriesDetails, dispatcher)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, dispatcher)
     }
 
     private companion object {
@@ -299,7 +302,8 @@ class SeriesViewModelTest {
             genres = genreList,
             imdbRating = 9.0f,
             posterImageUrl = "/series.jpg",
-            seasonsCount = 2
+            seasonsCount = 2,
+            rating = 0
         )
         val dummyCast = listOf(
             Actor(
@@ -326,7 +330,8 @@ class SeriesViewModelTest {
             overview = "",
             durationMinutes = null,
             releaseDate = null,
-            stillImagePath = null
+            stillImagePath = null,
+            rating = 0
         )
         val dummySeason = Season(
             id = 100,

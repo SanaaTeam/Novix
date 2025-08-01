@@ -35,7 +35,8 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = null,
     releaseDate = toLocalDateOrNull(releaseDate ?: firstAirDate) ?: LocalDate(1900, 1, 1),
-    overview = overview ?: ""
+    overview = overview ?: "",
+    rating = null
 )
 
 fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
@@ -46,7 +47,8 @@ fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     posterImageUrl = getFullImageUrl(posterPath),
-    seasonsCount = 0
+    seasonsCount = 0,
+    rating = null
 )
 
 
