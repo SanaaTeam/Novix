@@ -1,9 +1,7 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
-import com.sanaa.presentation.model.toUiModel
 import entity.Genre
 import entity.Movie
 import io.mockk.clearAllMocks
@@ -84,9 +82,9 @@ class GenreMoviesViewModelTest {
     fun `onMovieClick should emit NavigateToMovieDetails effect`() = runTest {
         givenHappyViewModel()
 
-        viewModel.onMovieClick(10)
 
         viewModel.effect.test {
+            viewModel.onMovieClick(10)
             assertEquals(GenreMoviesEffects.NavigateToMovieDetails(10), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }

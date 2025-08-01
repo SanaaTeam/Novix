@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -65,9 +64,8 @@ class CelebritiesViewModelTest {
 
         viewModel.effect.test {
             viewModel.onActorClick(actorId)
-            advanceUntilIdle()
-            assertEquals(CelebritiesScreenEffects.NavigateToActorDetails(actorId), awaitItem())
-            cancelAndConsumeRemainingEvents()
+            val item = awaitItem()
+            assertThat(item).isEqualTo(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
         }
     }
 
