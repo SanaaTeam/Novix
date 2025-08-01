@@ -71,6 +71,9 @@ fun NovixPrimaryButton(
             Text(
                 text = it,
                 color = animateTextColor,
+                modifier = Modifier.then(
+                    if (isLoading) Modifier.padding(end = 4.dp) else Modifier
+                ),
                 style = Theme.textStyle.label.large
             )
         }
@@ -88,8 +91,18 @@ private fun PrimaryButtonPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false, modifier = Modifier.fillMaxWidth())
-            NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = true, modifier = Modifier.fillMaxWidth())
+            NovixPrimaryButton(
+                text = "Watch",
+                onClick = {},
+                isLoading = false,
+                modifier = Modifier.fillMaxWidth()
+            )
+            NovixPrimaryButton(
+                text = "Watch",
+                onClick = {},
+                isLoading = true,
+                modifier = Modifier.fillMaxWidth()
+            )
             NovixPrimaryButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
             NovixPrimaryButton(
                 text = null,

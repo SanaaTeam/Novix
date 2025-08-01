@@ -729,7 +729,8 @@ class SearchViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
-            trailerUrl = ""
+            trailerUrl = "",
+            rating = 0
         )
 
         val dummySeries = TvSeries(
@@ -740,7 +741,8 @@ class SearchViewModelTest {
             genres = emptyList(),
             imdbRating = 10f,
             posterImageUrl = "",
-            seasonsCount = 0
+            seasonsCount = 0,
+            rating = 0
         )
 
         val dummyActor = Actor(

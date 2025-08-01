@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.celebritiesScreen
 
 import androidx.paging.testing.asSnapshot
+import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreenEffects
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesViewModel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -61,9 +63,12 @@ class CelebritiesViewModelTest {
         val actorId = 42
         viewModel = CelebritiesViewModel(manageActorUseCase)
 
-        viewModel.onActorClick(actorId)
-        val effect = viewModel.effect.first()
-        assertEquals(CelebritiesScreenEffects.NavigateToActorDetails(actorId), effect)
+        viewModel.effect.test {
+            viewModel.onActorClick(actorId)
+            advanceUntilIdle()
+            assertEquals(CelebritiesScreenEffects.NavigateToActorDetails(actorId), awaitItem())
+            cancelAndConsumeRemainingEvents()
+        }
     }
 
     companion object {

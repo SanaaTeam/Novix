@@ -96,6 +96,20 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun getSeriesRate(accountId: Long): List<TvSeries> {
+        return safeCall("Failed to fetch TvSeries Rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.getTvShowRate(accountId, sessionId).map { it.toEntity() }
+        }
+    }
+
+    override suspend fun getEpisodesRate(accountId: Long): List<Episode> {
+        return safeCall("Failed to fetch Episodes Rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.getEpisodesRate(accountId, sessionId).map { it.toEntity() }
+        }
+    }
+
     override suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
         return safeCall("Failed to add TV series rate") {
             val sessionId = preferences.sessionId.first()

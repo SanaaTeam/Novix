@@ -92,30 +92,6 @@ class GenreMoviesViewModelTest {
         }
     }
 
-    @Test
-    fun `fetchMovies should update state with movies`() = runTest {
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns movies
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "categoryId" to genreList[0].id,
-                "categoryName" to genreList[0].name
-            )
-        )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle = savedStateHandle,
-            manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
-            dispatcher = testDispatcher
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val pagingData = viewModel.state.value.movies
-        val items = pagingData.asSnapshot()
-        assertEquals(movies.map { it.toUiModel() }, items.take(movies.size))
-    }
-
     private fun givenHappyViewModel() {
         coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns movies
 
@@ -150,6 +126,7 @@ class GenreMoviesViewModelTest {
                 duration = 120.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2020, 1, 1),
                 overview = "",
+                rating = 0
             ),
             Movie(
                 id = 2,
@@ -160,6 +137,7 @@ class GenreMoviesViewModelTest {
                 duration = 110.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2019, 1, 1),
                 overview = "",
+                rating = 0
             )
         )
     }

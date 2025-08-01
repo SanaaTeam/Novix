@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    "<string name="view_reviews">عرض التقييمات</string>
+    "
+    <string name="view_reviews">عرض التقييمات</string>
     <string name="seasons_count">%d مواسم</string>
     <string name="overview">نظرة عامة</string>
     <string name="read_more">اقرأ المزيد</string>
@@ -63,4 +64,5 @@
     <string name="rate_it">قم بتقيمه</string>
     <string name="submit_rating_successfully">تم إرسال التقييم بنجاح</string>
     <string name="submit_rating_failed">فشل في إرسال التقييم</string>
+    <string name="please_login_to_rate_your_favorite_items">يرجى تسجيل الدخول لتقييم العناصر المفضلة لديك.</string>
 </resources>

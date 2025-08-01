@@ -70,7 +70,8 @@ class MovieMapperTest {
                 duration = 100.minutes,
                 releaseDate = LocalDate(1970, 1, 1),
                 overview = "",
-                trailerUrl = ""
+                trailerUrl = "",
+                rating = 0
             )
 
         fun createExpectedMovieUiModel(id: Int, title: String, imageUrl: String) =

@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
-import usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre
@@ -20,11 +19,14 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
+import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MovieDetailsViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
+    private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
@@ -59,7 +61,8 @@ class MovieDetailsViewModelTest {
             )
         )
 
-        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin)
+        viewModel =
+            MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, getUser)
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -78,9 +81,9 @@ class MovieDetailsViewModelTest {
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
-        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
         viewModel.onRateMovieClick()
-        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test
@@ -88,7 +91,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
-        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test
@@ -163,10 +166,10 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
         givenHappy()
-        viewModel.updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        viewModel.updateState { it.copy(showLoginBottomSheet = true) }
         viewModel.onLoginButtonClick()
 
-        assertThat(viewModel.state.value.showLoginBottomSheetToAddToList).isFalse()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
 
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
@@ -230,6 +233,7 @@ class MovieDetailsViewModelTest {
             savedStateHandle,
             manageMovieDetails,
             checkUserLogin,
+            getUser,
             dispatcher = testDispatcher
         )
     }
@@ -253,7 +257,8 @@ class MovieDetailsViewModelTest {
             imdbRating = 7.5f,
             duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
-            overview = "Overview1"
+            overview = "Overview1",
+            rating = 0
         )
         private val dummyCast = listOf(
             Actor(

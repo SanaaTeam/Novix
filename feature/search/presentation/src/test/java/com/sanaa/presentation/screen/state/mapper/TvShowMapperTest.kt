@@ -34,6 +34,7 @@ class TvShowMapperTest {
                 imdbRating = 10f,
                 overview = "",
                 seasonsCount = 0,
+                rating = 0
             )
         }
 

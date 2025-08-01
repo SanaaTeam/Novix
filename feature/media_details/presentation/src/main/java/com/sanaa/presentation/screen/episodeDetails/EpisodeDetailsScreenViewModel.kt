@@ -4,11 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -16,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EpisodeDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getUser: GetLoggedInUserUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
@@ -51,7 +54,16 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSavedClick(seriesId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
+        }
+
     }
 
     override fun onDismissBottomSheet() {
@@ -67,7 +79,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
@@ -135,13 +152,21 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
+        val currentEpisodesRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
+            ratedEpisodes.find {
+                it.seasonNumber == seasonNumber && it.number == episodeNumber
+            }?.rating ?: 0
+        }.getOrElse { 0 }
         updateState {
             it.copy(
                 episode = episode.toEpisodeUiModel(),
                 guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
                 seriesId = seriesId,
                 imagesUrl = images,
-                trailerUrl = trailerUrl
+                trailerUrl = trailerUrl,
+                imdbRating = currentEpisodesRating
             )
         }
     }

@@ -14,6 +14,7 @@ fun TvShowDto.toEntity(): TvSeries {
         releaseDate = firstAirDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
         genres = genres.map { it.toEntity() },
         seasonsCount = seasonsCount,
+        rating = rating?.toInt()
     )
 }
 
