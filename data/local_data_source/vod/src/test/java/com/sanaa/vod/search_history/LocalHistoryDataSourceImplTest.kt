@@ -1,25 +1,25 @@
 package com.sanaa.vod.search_history
 
-import com.sanaa.vod.continueWatch.dao.WatchedMediaHistoryDao
+import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
-import com.sanaa.vod.search.search_history.LocalSearchHistoryDataSourceImpl
-import com.sanaa.vod.search.search_history.dao.QueryDao
-import com.sanaa.vod.search.search_history.dao.RecentViewedDao
+import com.sanaa.vod.history.LocalHistoryDataSourceImpl
+import com.sanaa.vod.history.dao.QueryDao
+import com.sanaa.vod.history.dao.RecentViewedDao
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class LocalSearchHistoryDataSourceImplTest {
-    private lateinit var dataSource: LocalSearchHistoryDataSourceImpl
+class LocalHistoryDataSourceImplTest {
+    private lateinit var dataSource: LocalHistoryDataSourceImpl
     private var queryDao: QueryDao = mockk(relaxed = true)
     private var recentViewedDao: RecentViewedDao = mockk(relaxed = true)
     private var watchedMediaHistoryDao: WatchedMediaHistoryDao = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        dataSource = LocalSearchHistoryDataSourceImpl(queryDao, recentViewedDao, watchedMediaHistoryDao)
+        dataSource = LocalHistoryDataSourceImpl(queryDao, recentViewedDao, watchedMediaHistoryDao)
     }
 
     @Test

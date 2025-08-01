@@ -2,7 +2,7 @@ package com.sanaa.vod.repository
 
 import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
 import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
+import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 
 class HistoryRepositoryImpl @Inject constructor(
-    private val local: LocalSearchHistoryDataSource
+    private val local: LocalHistoryDataSource
 ) : HistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(

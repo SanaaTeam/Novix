@@ -1,17 +1,16 @@
-package com.sanaa.vod.continueWatch.dao
+package com.sanaa.vod.history.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WatchedMediaHistoryDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: WatchedMediaHistoryLocalDto)
+    @Upsert
+    suspend fun upsert(item: WatchedMediaHistoryLocalDto)
 
     @Query(
         """
@@ -22,5 +21,5 @@ interface WatchedMediaHistoryDao {
         ORDER BY timestamp DESC
     """
     )
-    fun getHistory(username: String, mediaType: String?, genreIdStr: String?): Flow<List<WatchedMediaHistoryLocalDto>>
+    fun getWatchedMediaHistory(username: String, mediaType: String?, genreIdStr: String?): Flow<List<WatchedMediaHistoryLocalDto>>
 }

@@ -1,7 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
+import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
@@ -23,7 +23,7 @@ import usecase.search.search_param.MediaType
 
 class HistoryRepositoryImplTest {
     private lateinit var repository: HistoryRepositoryImpl
-    private var localDataSource: LocalSearchHistoryDataSource = mockk(relaxed = true)
+    private var localDataSource: LocalHistoryDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
