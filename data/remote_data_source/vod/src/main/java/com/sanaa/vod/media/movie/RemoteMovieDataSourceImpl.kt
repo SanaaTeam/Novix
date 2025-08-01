@@ -76,12 +76,15 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiService.fetchMovieRate(accountId, sessionId).results
         }
 
+
     override suspend fun sendMovieRate(
         movieId: Int,
+        sessionId: String,
         rating: Float
     ): RatingResponse {
         val response = apiService.rateMovie(
             movieId = movieId,
+            sessionId = sessionId,
             rating = MovieRateRequest(value = rating)
         )
         return response

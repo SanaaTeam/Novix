@@ -5,6 +5,9 @@ import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistActionDto
+import com.sanaa.vod.dataSource.remote.dto.WatchlistRequestBody
+import com.sanaa.vod.media.actor.response.PaginatedResponse
 import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse

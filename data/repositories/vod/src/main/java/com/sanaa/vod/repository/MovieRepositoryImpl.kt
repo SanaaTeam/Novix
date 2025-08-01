@@ -13,6 +13,7 @@ import entity.Genre
 import entity.Movie
 import entity.Review
 import entity.WatchlistInfo
+import kotlinx.coroutines.flow.first
 import repository.MovieRepository
 import javax.inject.Inject
 
@@ -100,7 +101,6 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
 
-
     override suspend fun getMoviesRate(accountId: Long): List<Movie> {
         return safeCall("Failed to fetch movie Rate") {
             val sessionId = preferences.sessionId.first()
@@ -118,8 +118,10 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return safeCall("Failed to add movie rate") {
+            val sessionId = preferences.sessionId.first()
             remote.sendMovieRate(
                 movieId = movieId,
+                sessionId = sessionId,
                 rating = rating
             ).isSuccess
         }
