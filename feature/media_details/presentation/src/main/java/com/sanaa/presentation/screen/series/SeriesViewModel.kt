@@ -7,6 +7,7 @@ import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toSeasonUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoLoggedInUserException
@@ -95,7 +96,12 @@ class SeriesViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
@@ -106,7 +112,7 @@ class SeriesViewModel @Inject constructor(
     override fun onDismissAnyBottomSheet() {
         updateState {
             it.copy(
-                showRateBottomSheet  = false,
+                showRateBottomSheet = false,
                 showLoginBottomSheet = false
             )
         }
@@ -143,7 +149,16 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onSaveSeriesClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
+        }
+
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -193,9 +208,11 @@ class SeriesViewModel @Inject constructor(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val userId = getUser.getLoggedInUser().id
-        val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
-        val currentSeriesRating = ratedSeries.find { it.id == seriesId }?.rating ?: 0
+        val currentSeriesRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
+            ratedSeries.find { it.id == seriesId }?.rating ?: 0
+        }.getOrElse { 0 }
 
         addTvSeriesToHistory(series)
         updateState {

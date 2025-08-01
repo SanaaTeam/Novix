@@ -1,10 +1,15 @@
 package com.sanaa.presentation.navigation
 
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -41,6 +46,23 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
     }
 
     val navController = rememberNavController()
+
+
+    NovixTheme(isSystemInDarkTheme()) {
+        val navColor = Theme.colors.surface
+        val isSystemInDarkTheme = isSystemInDarkTheme()
+        val view = LocalView.current
+        val activity = view.context as? ComponentActivity
+        LaunchedEffect(Unit) {
+            activity?.window?.also { window ->
+                window.navigationBarColor = navColor.toArgb()
+                WindowInsetsControllerCompat(window, view).apply {
+                    isAppearanceLightStatusBars = !isSystemInDarkTheme
+                    isAppearanceLightNavigationBars = !isSystemInDarkTheme
+                }
+            }
+        }
+    }
 
     CompositionLocalProvider(
         LocalNavControllerProvider provides navController

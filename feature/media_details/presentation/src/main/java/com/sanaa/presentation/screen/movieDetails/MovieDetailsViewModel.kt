@@ -56,7 +56,16 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
+        }
+
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -67,16 +76,21 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
+        updateState { it.copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
+        updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -160,7 +174,7 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-             return createPagingFlow(
+        return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = Movie::toUiModel
         )
@@ -178,9 +192,11 @@ class MovieDetailsViewModel @Inject constructor(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-        val userId = getLoggedInUserUseCase.getLoggedInUser().id
-        val ratedMovies = manageMovieDetails.getMoviesRate(userId)
-        val currentMovieRating = ratedMovies.find { it.id == movieId }?.rating ?: 0
+        val currentMovieRating = runCatching {
+            val userId = getLoggedInUserUseCase.getLoggedInUser().id
+            val ratedMovies = manageMovieDetails.getMoviesRate(userId)
+            ratedMovies.find { it.id == movieId }?.rating ?: 0
+        }.getOrElse { 0 }
 
         addMovieToHistory(movie)
         updateState {

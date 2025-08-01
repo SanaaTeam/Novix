@@ -44,9 +44,6 @@ internal fun ButtonContainer(
     val animatedIconTint by animateColorAsState(
         targetValue = if (isEnabled) iconTint else Theme.colors.onPrimaryHint
     )
-    val elementsArrangement =
-        if (icon != null || isLoading) Arrangement.spacedBy(8.dp) else Arrangement.Center
-
     Row(
         modifier = modifier
             .height(height = 48.dp)
@@ -63,32 +60,22 @@ internal fun ButtonContainer(
         horizontalArrangement = Arrangement.Center,
     ) {
         content()
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = elementsArrangement,
-        ) {
-            Crossfade(
-                targetState = isLoading,
-                modifier = Modifier
-                    .animateContentSize()
-                    .padding(
-                        start = 4.dp,
-                        end = 4.dp
-                    ),
-            ) { loading ->
-                if (loading) {
-                    AnimatedLoadingIndicator(
-                        iconTint = iconTint,
-                        size = 20.dp,
-                    )
-                } else if (icon != null) {
-                    Icon(
-                        painter = icon,
-                        contentDescription = null,
-                        tint = animatedIconTint,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
+        Crossfade(
+            targetState = isLoading,
+            modifier = Modifier.animateContentSize()
+        ) { loading ->
+            if (loading) {
+                AnimatedLoadingIndicator(
+                    iconTint = iconTint,
+                    size = 20.dp,
+                )
+            } else if (icon != null) {
+                Icon(
+                    painter = icon,
+                    contentDescription = null,
+                    tint = animatedIconTint,
+                    modifier = Modifier.size(20.dp)
+                )
             }
         }
     }

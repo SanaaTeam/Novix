@@ -31,7 +31,6 @@ class HomeScreenViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
-    defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
 
     init {
@@ -181,10 +180,13 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState { it.copy(showBottomSheet = true) }
+        updateState {
+            it.copy(showBottomSheet = true)
+        }
     }
 
     override fun onDismissBottomSheet() {
+
         updateState { it.copy(showBottomSheet = false) }
     }
 

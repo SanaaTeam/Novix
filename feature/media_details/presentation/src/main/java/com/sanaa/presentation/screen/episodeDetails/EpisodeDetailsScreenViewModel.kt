@@ -2,10 +2,11 @@ package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
 import exceptions.NoNetworkException
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -53,7 +54,16 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSavedClick(seriesId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
+        }
+
     }
 
     override fun onDismissBottomSheet() {
@@ -69,7 +79,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
@@ -137,11 +152,13 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val userId = getUser.getLoggedInUser().id
-        val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
-        val currentEpisodesRating = ratedEpisodes.find {
-            it.seasonNumber == seasonNumber && it.number == episodeNumber
-        }?.rating ?: 0
+        val currentEpisodesRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
+            ratedEpisodes.find {
+                it.seasonNumber == seasonNumber && it.number == episodeNumber
+            }?.rating ?: 0
+        }.getOrElse { 0 }
         updateState {
             it.copy(
                 episode = episode.toEpisodeUiModel(),
