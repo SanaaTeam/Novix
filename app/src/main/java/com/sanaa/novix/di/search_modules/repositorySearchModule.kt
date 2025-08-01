@@ -23,6 +23,6 @@ abstract class RepositorySearchModule {
     @Binds
     @Singleton
     abstract fun bindHistoryRepository(
-        searchHistoryRepositoryImpl: HistoryRepositoryImpl
+        historyRepositoryImpl: HistoryRepositoryImpl
     ): HistoryRepository
 }
