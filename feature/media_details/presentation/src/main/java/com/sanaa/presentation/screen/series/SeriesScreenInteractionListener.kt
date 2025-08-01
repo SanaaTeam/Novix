@@ -11,6 +11,7 @@ interface SeriesScreenInteractionListener {
     fun onPlayTrailerClicked()
     fun onRateClicked()
     fun onDismissRateBottomSheet()
+    fun onDismissAnyBottomSheet()
     fun onSaveSeriesClicked()
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
