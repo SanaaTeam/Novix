@@ -17,13 +17,8 @@ class BasePagingSource<T : Any>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: STARTING_PAGE_INDEX
-
-        Log.d("PagingSource", "Loading page: $page")
-
         return try {
             val items = fetchItems(page)
-
-            Log.d("PagingSource", "Loaded ${items.size} items on page $page")
 
             LoadResult.Page(
                 data = items,
@@ -31,7 +26,6 @@ class BasePagingSource<T : Any>(
                 nextKey = if (items.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
-            Log.e("PagingSource", "Error loading page $page: ${e.message}")
             LoadResult.Error(e)
         }
     }
