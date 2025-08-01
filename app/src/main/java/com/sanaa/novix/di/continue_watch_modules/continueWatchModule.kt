@@ -4,6 +4,7 @@ import org.koin.dsl.module
 
 val continueWatchModule = module {
     includes(
-        continueWatchingUseCaseModule
+        continueWatchingUseCaseModule,
+        localContinueWatchingModule
     )
 }

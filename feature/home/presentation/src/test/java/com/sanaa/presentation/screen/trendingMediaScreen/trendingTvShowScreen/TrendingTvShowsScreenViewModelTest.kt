@@ -5,7 +5,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.TvSeries
@@ -194,7 +194,7 @@ class TrendingTvShowsScreenViewModelTest {
             id = 1,
             title = "Test TV Show",
             imageUrl = "https://example.com/image.jpg",
-            mediaType = MediaType.TV_SHOW
+            mediaTypeUi = MediaTypeUi.TV_SHOW
         )
     }
 }

@@ -2,11 +2,11 @@ package com.sanaa.presentation.state.mapper
 
 import android.annotation.SuppressLint
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
+import entity.MediaHistoryItem
 import entity.Movie
 import entity.TvSeries
-import usecase.history.ManageWatchedMediaHistoryUseCase
-import usecase.history.ManageWatchedMediaHistoryUseCase.MediaHistoryItem
+import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
 fun Movie.toState(): MediaItem = MediaItem(
@@ -14,7 +14,7 @@ fun Movie.toState(): MediaItem = MediaItem(
     title = title,
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
-    mediaType = MediaType.MOVIE
+    mediaTypeUi = MediaTypeUi.MOVIE
 )
 
 @SuppressLint("DefaultLocale")
@@ -23,7 +23,7 @@ fun TvSeries.toState(): MediaItem = MediaItem(
     title = title,
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
-    mediaType = MediaType.TV_SHOW
+    mediaTypeUi = MediaTypeUi.TV_SHOW
 )
 
 fun MediaHistoryItem.toState(): MediaItem = MediaItem(
@@ -31,10 +31,10 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
     title = "",
     imageUrl = posterImageUrl,
     rating = "",
-    mediaType = mediaType.toState()
+    mediaTypeUi = mediaType.toState()
 )
 
-fun entity.MediaType.toState(): MediaType = when (this) {
-    entity.MediaType.MOVIE -> MediaType.MOVIE
-    entity.MediaType.TV_SERIES -> MediaType.TV_SHOW
+fun MediaType.toState(): MediaTypeUi = when (this) {
+    MediaType.MOVIE -> MediaTypeUi.MOVIE
+    MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
 }

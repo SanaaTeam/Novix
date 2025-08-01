@@ -54,7 +54,7 @@ class LocalSearchHistoryDataSourceImpl(
         username: String,
         mediaType: MediaType?,
         genreId: Int?
-    ): List<WatchedMediaHistoryLocalDto> {
+    ): Flow<List<WatchedMediaHistoryLocalDto>> {
         return watchedMediaHistoryDao.getHistory(username, mediaType?.name, genreId?.toString())
     }
 }

@@ -5,7 +5,7 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Movie
 import kotlinx.coroutines.CoroutineDispatcher
@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
-import usecase.history.ManageHistoryUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
 class HomeScreenViewModel(
@@ -85,16 +84,16 @@ class HomeScreenViewModel(
 
     private fun fetchWatchedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
-        tryToExecute(
+        tryToCollect(
             callee = {
-                manageWatchedMediaHistoryUseCase.getMediaHistory(null, null).map { it.toState() }
+                manageWatchedMediaHistoryUseCase.getMediaHistory("", null, null)
             },
-            onSuccess = { watchedMediaList ->
+            onCollect = { watchedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        continueWatchingMedia = watchedMediaList
+                        continueWatchingMedia = watchedMediaList.map { it.toState() }
                     )
                 }
             },
@@ -177,8 +176,8 @@ class HomeScreenViewModel(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaType: MediaType) {
-        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaType))
+    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
+        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {

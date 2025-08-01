@@ -86,10 +86,12 @@ class HistoryRepositoryImpl(
         username: String,
         mediaType: MediaType?,
         genreId: Int?
-    ): List<MediaHistoryItem> = safeCall(
+    ): Flow<List<MediaHistoryItem>> = safeCall(
         errorMessage = "Failed to retrieve watched media history for user $username"
     ) {
         val watchedHistoryDtos = local.getWatchedMedia(username, mediaType, genreId)
-        watchedHistoryDtos.map { it.toEntity() }
+        watchedHistoryDtos.map {
+            it.map { watchedHistory -> watchedHistory.toEntity() }
+        }
     }
 }

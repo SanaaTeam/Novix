@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.screenContent
+package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.screenContent
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -18,16 +18,16 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
+import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreenUiState
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
-fun MediaTabScreenContent(
+fun TopRatedMediaScreenContent(
     title: String,
-    state: MediaTabScreenUiState,
+    state: TopRatedMediaScreenUiState,
     interactionListener: MediaTabScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
@@ -53,12 +53,12 @@ fun MediaTabScreenContent(
 
         MediaTabs(
             onTabClick = interactionListener::onMediaTabSelection,
-            selectedTab = state.selectedMediaType,
+            selectedTab = state.selectedMediaTypeUi,
             modifier = Modifier.fillMaxWidth()
         )
 
         AnimatedContent(
-            targetState = state.selectedMediaType,
+            targetState = state.selectedMediaTypeUi,
             transitionSpec = {
                 fadeIn(animationSpec = tween(150, delayMillis = 150))
                     .togetherWith(fadeOut(animationSpec = tween(150)))
@@ -67,33 +67,32 @@ fun MediaTabScreenContent(
         ) { selectedMediaType ->
             when (selectedMediaType) {
 
-                MediaType.MOVIE -> {
-                    MediaListSectionContent(
+                MediaTypeUi.MOVIE -> {
+                    PaginatedMediaListSectionContent(
                         genres = state.movieGenres,
                         mediaList = topRatedMovies,
                         selectedGenreId = state.movieSelectedGenreId,
                         onGenreClick = interactionListener::onMovieGenreClick,
                         onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaType)
+                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         },
                         onSaveIconClick = interactionListener::onSaveIconClick,
                     )
                 }
 
-                MediaType.TV_SHOW -> {
-                    MediaListSectionContent(
+                MediaTypeUi.TV_SHOW -> {
+                    PaginatedMediaListSectionContent(
                         genres = state.tvShowGenres,
                         mediaList = topRatedTvShows,
                         selectedGenreId = state.tvShowSelectedGenreId,
                         onGenreClick = interactionListener::onTvShowGenreClick,
                         onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaType)
+                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         },
                         onSaveIconClick = interactionListener::onSaveIconClick,
                     )
                 }
             }
-
         }
     }
 }

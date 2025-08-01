@@ -9,15 +9,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 
 @Composable
-fun MediaListSectionContent(
+fun PaginatedMediaListSectionContent(
     genres: List<GenreUiState>,
-    mediaList: List<MediaItem>,
+    mediaList: LazyPagingItems<MediaItem>,
     selectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
     onMediaClick: (MediaItem) -> Unit,
@@ -51,7 +52,7 @@ fun MediaListSectionContent(
                 )
             }
         }
-        MediaListGrid(
+        PaginatedMediaListGrid(
             mediaList = mediaList,
             onMediaClick = onMediaClick,
             onSaveIconClick = onSaveIconClick,

@@ -1,6 +1,7 @@
 package usecase.history
 
 import entity.MediaHistoryItem
+import kotlinx.coroutines.flow.Flow
 import repository.HistoryRepository
 import usecase.search.search_param.MediaType
 
@@ -9,13 +10,14 @@ class ManageWatchedMediaHistoryUseCase(
 ) {
 
     suspend fun getMediaHistory(
+        username: String,
         mediaType: MediaType?,
         genreId: Int?
-    ): List<MediaHistoryItem> =
-        repository.getWatchedMediaHistory(mediaType, genreId)
+    ): Flow<List<MediaHistoryItem>> =
+        repository.getWatchedMediaHistory(username = username,mediaType = mediaType, genreId = genreId)
 
-    suspend fun addWatchedMediaHistory(mediaHistoryItem: MediaHistoryItem) {
-        repository.addWatchedMediaHistory(mediaHistoryItem)
+    suspend fun addWatchedMediaHistory(mediaHistoryItem: MediaHistoryItem, username: String) {
+        repository.addWatchedMediaHistory(username= username, media = mediaHistoryItem)
     }
 
 }

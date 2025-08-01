@@ -1,32 +1,27 @@
 package com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen
 
-import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
-import entity.Movie
-import entity.TvSeries
+import entity.MediaHistoryItem
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
-import usecase.history.ManageWatchedMediaHistoryUseCase.MediaHistoryItem
+import usecase.search.search_param.MediaType
 
 class ContinueWatchingMediaScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MediaTabScreenUiState, MediaTabScreenEffect>(
-    MediaTabScreenUiState(),
+) : BaseViewModel<ContinueWatchingMediaScreenUiState, MediaTabScreenEffect>(
+    ContinueWatchingMediaScreenUiState(),
     dispatcher
 ), MediaTabScreenInteractionListener {
 
@@ -38,12 +33,12 @@ class ContinueWatchingMediaScreenViewModel(
     }
 
     private fun fetchMovies(genreId: Int? = null) {
-        tryToExecute(
+        tryToCollect(
             callee = {
                 loadTopRatedMovies(genreId = genreId)
-            }, onSuccess = { mediaList ->
+            }, onCollect = { mediaList ->
                 updateState {
-                    it.copy(movieList = mediaList, isLoading = false)
+                    it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
                 }
             },
             onError = { exception ->
@@ -55,12 +50,12 @@ class ContinueWatchingMediaScreenViewModel(
     }
 
     private fun fetchTvShows(genreId: Int? = null) {
-        tryToExecute(
+        tryToCollect(
             callee = {
                 loadTopRatedTvSeries(genreId = genreId)
-            }, onSuccess = { mediaList ->
+            }, onCollect = { mediaList ->
                 updateState {
-                    it.copy(tvShowList = mediaList, isLoading = false)
+                    it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
                 }
             },
             onError = { exception ->
@@ -113,8 +108,8 @@ class ContinueWatchingMediaScreenViewModel(
         )
     }
 
-    override fun onMediaTabSelection(mediaType: MediaType) {
-        updateState { it.copy(selectedMediaType = mediaType) }
+    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
+        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -131,8 +126,8 @@ class ContinueWatchingMediaScreenViewModel(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaType: MediaType) {
-        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaType))
+    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
+        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
@@ -148,54 +143,26 @@ class ContinueWatchingMediaScreenViewModel(
     }
 
 
-    private fun loadTopRatedMovies(
+    private suspend fun loadTopRatedMovies(
         genreId: Int?
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
-        return createPagingFlow(
-            pagingSourceFactory = {
-                createMoviePagingDataSource(
-                    genreId = genreId
-                )
-            },
-            mapper = MediaHistoryItem::toState
+        return manageWatchedMediaHistoryUseCase.getMediaHistory(
+            genreId = genreId,
+            mediaType = MediaType.MOVIE,
+            username = "sanaa"
         )
     }
 
-    private fun loadTopRatedTvSeries(
+    private suspend fun loadTopRatedTvSeries(
         genreId: Int?
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
-        return createPagingFlow(
-            pagingSourceFactory = {
-                createTvShowPagingDataSource(
-                    genreId = genreId
-                )
-            },
-            mapper = MediaHistoryItem::toState
+        return manageWatchedMediaHistoryUseCase.getMediaHistory(
+            genreId = genreId,
+            mediaType = MediaType.TV_SERIES,
+            username = "sanaa"
         )
     }
 
-
-    private fun createMoviePagingDataSource(
-        genreId: Int?
-    ): PagingSource<Int, MediaHistoryItem> {
-        return BasePagingSourceForHome { page ->
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                mediaType = entity.MediaType.MOVIE,
-                genreId = genreId
-            )
-        }
-    }
-
-    private fun createTvShowPagingDataSource(
-        genreId: Int?
-    ): PagingSource<Int, MediaHistoryItem> {
-        return BasePagingSourceForHome { page ->
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                mediaType = entity.MediaType.TV_SERIES,
-                genreId = genreId
-            )
-        }
-    }
 }

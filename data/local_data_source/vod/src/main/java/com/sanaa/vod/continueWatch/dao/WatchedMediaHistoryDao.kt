@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WatchedMediaHistoryDao {
@@ -21,5 +22,5 @@ interface WatchedMediaHistoryDao {
         ORDER BY timestamp DESC
     """
     )
-    suspend fun getHistory(username: String, mediaType: String?, genreIdStr: String?): List<WatchedMediaHistoryLocalDto>
+    fun getHistory(username: String, mediaType: String?, genreIdStr: String?): Flow<List<WatchedMediaHistoryLocalDto>>
 }

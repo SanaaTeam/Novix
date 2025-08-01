@@ -6,9 +6,8 @@ import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenUiState
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Movie
 import entity.TvSeries
@@ -22,8 +21,8 @@ class TopRatedMediaScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<MediaTabScreenUiState, MediaTabScreenEffect>(
-    MediaTabScreenUiState(),
+) : BaseViewModel<TopRatedMediaScreenUiState, MediaTabScreenEffect>(
+    TopRatedMediaScreenUiState(),
     dispatcher
 ), MediaTabScreenInteractionListener {
 
@@ -110,8 +109,8 @@ class TopRatedMediaScreenViewModel(
         )
     }
 
-    override fun onMediaTabSelection(mediaType: MediaType) {
-        updateState { it.copy(selectedMediaType = mediaType) }
+    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
+        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -128,8 +127,8 @@ class TopRatedMediaScreenViewModel(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaType: MediaType) {
-        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaType))
+    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
+        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {

@@ -15,5 +15,5 @@ interface HistoryRepository {
     suspend fun addRecentViewedMedia(item: RecentViewedMedia)
     suspend fun clearRecentViewed()
     suspend fun addWatchedMediaHistory(username: String, media: MediaHistoryItem)
-    suspend fun getWatchedMediaHistory(username: String, mediaType: MediaType?, genreId: Int?): List<MediaHistoryItem>
+    suspend fun getWatchedMediaHistory(username: String, mediaType: MediaType?, genreId: Int?): Flow<List<MediaHistoryItem>>
 }

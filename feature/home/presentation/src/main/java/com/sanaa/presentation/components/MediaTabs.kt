@@ -23,13 +23,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun MediaTabs(
-    onTabClick: (MediaType) -> Unit,
+    onTabClick: (MediaTypeUi) -> Unit,
     modifier: Modifier = Modifier,
-    selectedTab: MediaType = MediaType.MOVIE,
+    selectedTab: MediaTypeUi = MediaTypeUi.MOVIE,
 ) {
     Box(
         modifier = modifier,
@@ -46,15 +46,15 @@ fun MediaTabs(
             TabButton(
                 text = stringResource(R.string.movies),
                 onClick = onTabClick,
-                isSelected = selectedTab == MediaType.MOVIE,
-                mediaType = MediaType.MOVIE,
+                isSelected = selectedTab == MediaTypeUi.MOVIE,
+                mediaTypeUi = MediaTypeUi.MOVIE,
                 modifier = Modifier.weight(1f)
             )
             TabButton(
                 text = stringResource(R.string.tvshows),
                 onClick = onTabClick,
-                isSelected = selectedTab == MediaType.TV_SHOW,
-                mediaType = MediaType.TV_SHOW,
+                isSelected = selectedTab == MediaTypeUi.TV_SHOW,
+                mediaTypeUi = MediaTypeUi.TV_SHOW,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -64,9 +64,9 @@ fun MediaTabs(
 @Composable
 private fun TabButton(
     text: String,
-    onClick: (MediaType) -> Unit,
+    onClick: (MediaTypeUi) -> Unit,
     modifier: Modifier = Modifier,
-    mediaType: MediaType,
+    mediaTypeUi: MediaTypeUi,
     isSelected: Boolean = false,
     selectedTextColor: Color = Theme.colors.title,
     notSelectedTextColor: Color = Theme.colors.hint,
@@ -81,7 +81,7 @@ private fun TabButton(
     Box(
         modifier = modifier
             .fillMaxHeight()
-            .clickable { onClick(mediaType) },
+            .clickable { onClick(mediaTypeUi) },
         contentAlignment = Alignment.Center
     ) {
         BasicText(
