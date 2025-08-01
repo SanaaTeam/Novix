@@ -95,8 +95,6 @@ fun SearchScreenContent(
         SearchSection(
             text = uiState.searchQuery,
             onTextChange = searchListener::onSearchQueryChanged,
-            onFilterClicked = { /* No-op */ },
-            isFilterButtonVisible = false,
         )
 
         AnimatedContent(uiState.searchQuery.isNotBlank()) {
