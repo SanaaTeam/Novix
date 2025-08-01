@@ -1,12 +1,12 @@
 package usecase.search
 
 import kotlinx.coroutines.flow.Flow
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 class ManageRecentViewedUseCase @Inject constructor(
-    private val historyRepo: SearchHistoryRepository,
+    private val historyRepo: HistoryRepository,
 ) {
     suspend fun addRecentViewed(item: RecentViewedMedia) = historyRepo.addRecentViewedMedia(item)
     suspend fun clearRecentViewed() = historyRepo.clearRecentViewed()

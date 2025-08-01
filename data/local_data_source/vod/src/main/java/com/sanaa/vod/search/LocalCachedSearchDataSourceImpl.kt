@@ -1,4 +1,4 @@
-package com.sanaa.vod.search.search_result
+package com.sanaa.vod.search
 
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
@@ -7,11 +7,11 @@ import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.SearchLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.SearchResultLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
-import com.sanaa.vod.search.search_result.dao.ActorDao
-import com.sanaa.vod.search.search_result.dao.MovieDao
-import com.sanaa.vod.search.search_result.dao.SearchDao
-import com.sanaa.vod.search.search_result.dao.SearchResultDao
-import com.sanaa.vod.search.search_result.dao.SeriesDao
+import com.sanaa.vod.search.dao.ActorDao
+import com.sanaa.vod.search.dao.MovieDao
+import com.sanaa.vod.search.dao.SearchDao
+import com.sanaa.vod.search.dao.SearchResultDao
+import com.sanaa.vod.search.dao.SeriesDao
 import com.sanaa.vod.util.TimeUtils
 import javax.inject.Inject
 

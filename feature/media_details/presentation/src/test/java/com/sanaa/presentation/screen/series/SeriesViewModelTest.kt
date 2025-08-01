@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeriesViewModelTest {
@@ -32,6 +33,9 @@ class SeriesViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
+        mockk(relaxed = true)
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private lateinit var viewModel: SeriesViewModel
 
     private val seriesId = 42
@@ -88,7 +92,8 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, getUser, manageTvSeriesDetails)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,)
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -153,6 +158,8 @@ class SeriesViewModelTest {
             checkUserLogin,
             getUser,
             manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
             dispatcher = testDispatcher
         )
         advanceUntilIdle()
@@ -174,7 +181,8 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, testDispatcher)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,testDispatcher)
 
         viewModel.onSeasonNumberClicked(2)
         advanceUntilIdle()
@@ -280,7 +288,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, dispatcher)
+        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase, getLoggedInUserUseCase, dispatcher)
     }
 
     private companion object {

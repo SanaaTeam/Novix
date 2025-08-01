@@ -18,6 +18,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.navigation.AppNavigation
 import com.sanaa.presentation.api.navigation.AppRoute
+import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoute
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
@@ -25,6 +26,7 @@ import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingMediaScreen
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
@@ -86,6 +88,10 @@ private fun AppNavigation(
 
             composable<TopRatedMediaScreenRoute> {
                 TopRatedMediaScreen()
+            }
+
+            composable<ContinueWatchingMediaScreenRoute> {
+                ContinueWatchingMediaScreen()
             }
         }
     }

@@ -1,13 +1,13 @@
 package com.sanaa.novix.di.search_modules
 
-import com.sanaa.vod.repository.SearchHistoryRepositoryImpl
+import com.sanaa.vod.repository.HistoryRepositoryImpl
 import com.sanaa.vod.repository.SearchRepositoryImpl
-import repository.SearchRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
+import repository.SearchRepository
 import javax.inject.Singleton
 
 @Module
@@ -23,6 +23,6 @@ abstract class RepositorySearchModule {
     @Binds
     @Singleton
     abstract fun bindHistoryRepository(
-        searchHistoryRepositoryImpl: SearchHistoryRepositoryImpl
-    ): SearchHistoryRepository
+        historyRepositoryImpl: HistoryRepositoryImpl
+    ): HistoryRepository
 }

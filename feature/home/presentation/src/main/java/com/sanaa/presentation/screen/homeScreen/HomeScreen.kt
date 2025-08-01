@@ -1,21 +1,17 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
@@ -23,8 +19,8 @@ import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
-import com.sanaa.presentation.state.MediaType
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun HomeScreen(
@@ -46,8 +42,8 @@ fun HomeScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is HomeScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaType) {
-                        MediaType.MOVIE -> {
+                    when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 startRoute = StartRoute.MOVIE,
@@ -55,7 +51,7 @@ fun HomeScreen(
                             )
                         }
 
-                        MediaType.TV_SHOW -> {
+                        MediaTypeUi.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 startRoute = StartRoute.SERIES,
@@ -82,13 +78,11 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                    // TODO()
+                    navController.navigate(ContinueWatchingMediaScreenRoute)
                 }
-
             }
         }
     }
-
 
     NovixTheme(isSystemInDarkTheme()) {
         HomeScreenContent(

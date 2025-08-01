@@ -21,8 +21,6 @@ class ReviewViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieDetails: ManageMovieUseCase
     private lateinit var manageTvSeriesDetails: ManageTvSeriesUseCase
-    private lateinit var viewModel: ReviewViewModel
-    private val mediaId = 101
 
     @BeforeEach
     fun setUp() {
