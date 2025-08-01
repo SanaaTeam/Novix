@@ -336,6 +336,18 @@ fun MovieDetailsContent(
                                     onMovieClick = { interactionListener.onSimilarMovieClick(item.id) },
                                 )
                             }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                if (pagedSimilarMovies.loadState.append is androidx.paging.LoadState.Loading) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                }
+                            }
                         }
                     }
 
