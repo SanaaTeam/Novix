@@ -6,6 +6,7 @@ import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionLis
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,8 +18,10 @@ import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class ContinueWatchingMediaScreenViewModel(
+@HiltViewModel
+class ContinueWatchingMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,

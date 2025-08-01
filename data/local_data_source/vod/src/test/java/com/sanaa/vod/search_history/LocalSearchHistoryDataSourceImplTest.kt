@@ -1,5 +1,6 @@
 package com.sanaa.vod.search_history
 
+import com.sanaa.vod.continueWatch.dao.WatchedMediaHistoryDao
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.search.search_history.LocalSearchHistoryDataSourceImpl
 import com.sanaa.vod.search.search_history.dao.QueryDao
@@ -14,10 +15,11 @@ class LocalSearchHistoryDataSourceImplTest {
     private lateinit var dataSource: LocalSearchHistoryDataSourceImpl
     private var queryDao: QueryDao = mockk(relaxed = true)
     private var recentViewedDao: RecentViewedDao = mockk(relaxed = true)
+    private var watchedMediaHistoryDao: WatchedMediaHistoryDao = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        dataSource = LocalSearchHistoryDataSourceImpl(queryDao, recentViewedDao)
+        dataSource = LocalSearchHistoryDataSourceImpl(queryDao, recentViewedDao, watchedMediaHistoryDao)
     }
 
     @Test

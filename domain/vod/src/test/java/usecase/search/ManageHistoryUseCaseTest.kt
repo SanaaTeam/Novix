@@ -1,7 +1,6 @@
 package usecase.search
 
 import com.google.common.truth.Truth.assertThat
-import entity.Genre
 import exceptions.FailedToDeleteException
 import exceptions.RetrievingDataFailureException
 import extensions.now

@@ -6,6 +6,7 @@ import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
+import entity.MediaHistoryItem
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
@@ -13,8 +14,8 @@ import kotlinx.coroutines.flow.map
 import repository.HistoryRepository
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
-import javax.inject.Inject
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
 
 class HistoryRepositoryImpl @Inject constructor(
@@ -75,13 +76,15 @@ class HistoryRepositoryImpl @Inject constructor(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun addWatchedMediaHistory(username: String, media: MediaHistoryItem) =
-        safeCall(
-            errorMessage = "Failed to add watched media history for user $username",
-            exceptionProvider = ::FailedToAddException
-        ) {
-            local.addWatchedMedia(media.toDto(username))
-        }
+    override suspend fun addWatchedMediaHistory(
+        username: String,
+        media: MediaHistoryItem
+    ) = safeCall(
+        errorMessage = "Failed to add watched media history for user $username",
+        exceptionProvider = ::FailedToAddException
+    ) {
+        local.addWatchedMedia(media.toDto(username))
+    }
 
     override suspend fun getWatchedMediaHistory(
         username: String,

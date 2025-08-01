@@ -4,8 +4,9 @@ import entity.MediaHistoryItem
 import kotlinx.coroutines.flow.Flow
 import repository.HistoryRepository
 import usecase.search.search_param.MediaType
+import javax.inject.Inject
 
-class ManageWatchedMediaHistoryUseCase(
+class ManageWatchedMediaHistoryUseCase @Inject constructor(
     private val repository: HistoryRepository
 ) {
 
@@ -19,5 +20,4 @@ class ManageWatchedMediaHistoryUseCase(
     suspend fun addWatchedMediaHistory(mediaHistoryItem: MediaHistoryItem, username: String) {
         repository.addWatchedMediaHistory(username= username, media = mediaHistoryItem)
     }
-
 }

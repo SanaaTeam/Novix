@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toSeasonUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
-import javax.inject.Inject
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class SeriesViewModel @Inject constructor(
