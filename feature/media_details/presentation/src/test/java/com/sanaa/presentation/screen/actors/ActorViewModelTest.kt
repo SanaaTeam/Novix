@@ -20,7 +20,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageActorUseCase
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -142,7 +141,8 @@ class ActorViewModelTest {
                 imdbRating = 8.3f,
                 duration = 120.minutes,
                 releaseDate = LocalDate.parse("2020-01-01"),
-                overview = "Overview"
+                overview = "Overview",
+                rating = 0
             ),
             Movie(
                 id = 2,
@@ -152,7 +152,8 @@ class ActorViewModelTest {
                 imdbRating = 7.9f,
                 duration = 118.minutes,
                 releaseDate = LocalDate.parse("2022-09-20"),
-                overview = "Overview"
+                overview = "Overview",
+                rating = 0
             )
         )
 
@@ -165,7 +166,8 @@ class ActorViewModelTest {
                 genres = emptyList(),
                 imdbRating = 8.1f,
                 posterImageUrl = "/s1.jpg",
-                seasonsCount = 2
+                seasonsCount = 2,
+                rating = 0
             )
         )
 

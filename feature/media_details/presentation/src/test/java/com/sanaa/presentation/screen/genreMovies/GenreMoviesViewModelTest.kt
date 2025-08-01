@@ -126,6 +126,7 @@ class GenreMoviesViewModelTest {
                 duration = 120.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2020, 1, 1),
                 overview = "",
+                rating = 0
             ),
             Movie(
                 id = 2,
@@ -136,6 +137,7 @@ class GenreMoviesViewModelTest {
                 duration = 110.minutes,
                 releaseDate = kotlinx.datetime.LocalDate(2019, 1, 1),
                 overview = "",
+                rating = 0
             )
         )
     }

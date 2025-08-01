@@ -440,6 +440,7 @@ class SearchViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onFilterApplied() should set tv filters when tv tab is active`() = runTest {
         val filters = MediaFilters()
@@ -454,6 +455,7 @@ class SearchViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
     @Test
     fun `onFilterApplied() should trigger media loading with current query`() = runTest {
         val filters = MediaFilters()
@@ -749,7 +751,8 @@ class SearchViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
-            trailerUrl = ""
+            trailerUrl = "",
+            rating = 0
         )
 
         val movie2 = Movie(
@@ -761,7 +764,8 @@ class SearchViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate(1970, 1, 1),
             overview = "",
-            trailerUrl = ""
+            trailerUrl = "",
+            rating = 0
         )
 
         val series = TvSeries(
@@ -772,7 +776,8 @@ class SearchViewModelTest {
             genres = emptyList(),
             imdbRating = 10f,
             posterImageUrl = "",
-            seasonsCount = 0
+            seasonsCount = 0,
+            rating = 0
         )
 
         val actor = Actor(

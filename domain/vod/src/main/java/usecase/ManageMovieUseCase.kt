@@ -47,6 +47,10 @@ class ManageMovieUseCase @Inject constructor(
         return movieRepo.getMovieGenres()
     }
 
+    suspend fun getMoviesRate(accountId: Long): List<Movie> {
+        return movieRepo.getMoviesRate(accountId)
+    }
+
     suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return movieRepo.addMovieRate(movieId = movieId, rating = rating)
     }
