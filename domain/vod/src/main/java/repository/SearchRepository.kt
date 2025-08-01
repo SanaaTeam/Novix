@@ -11,12 +11,10 @@ interface SearchRepository {
     suspend fun searchMovies(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<Movie>
 
     suspend fun searchTvShows(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<TvSeries>
 }
