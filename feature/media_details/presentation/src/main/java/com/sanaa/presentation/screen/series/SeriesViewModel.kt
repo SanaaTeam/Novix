@@ -6,11 +6,13 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ import javax.inject.Inject
 class SeriesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val getUser: GetLoggedInUserUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -87,7 +90,12 @@ class SeriesViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
@@ -98,7 +106,7 @@ class SeriesViewModel @Inject constructor(
     override fun onDismissAnyBottomSheet() {
         updateState {
             it.copy(
-                showRateBottomSheet  = false,
+                showRateBottomSheet = false,
                 showLoginBottomSheet = false
             )
         }
@@ -135,7 +143,16 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onSaveSeriesClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
+        }
+
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -185,13 +202,18 @@ class SeriesViewModel @Inject constructor(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-
+        val currentSeriesRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
+            ratedSeries.find { it.id == seriesId }?.rating ?: 0
+        }.getOrElse { 0 }
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
-                images = images
+                images = images,
+                imdbRating = currentSeriesRating
             )
         }
     }

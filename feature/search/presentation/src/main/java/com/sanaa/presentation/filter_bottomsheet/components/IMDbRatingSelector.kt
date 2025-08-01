@@ -24,9 +24,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
@@ -42,13 +44,13 @@ fun IMDbRatingSelector(
     maxRating: Int = 10,
 ) {
     var rowSize by remember { mutableStateOf(IntSize.Zero) }
-
+    val layoutDirection = LocalLayoutDirection.current
     Column(modifier = modifier.fillMaxWidth()) {
         BasicText(
             text = title,
             style = Theme.textStyle.title.small.copy(color = Theme.colors.title),
 
-        )
+            )
 
         Row(
             modifier = Modifier
@@ -61,8 +63,15 @@ fun IMDbRatingSelector(
                         onDragEnd = { },
                         onHorizontalDrag = { change, _ ->
                             change.consume()
-                            val newRating = (change.position.x / rowSize.width * maxRating)
-                                .coerceIn(0f, maxRating.toFloat())
+                            val newRating = when (layoutDirection) {
+                                LayoutDirection.Ltr -> {
+                                    (change.position.x / rowSize.width * maxRating)
+                                }
+
+                                LayoutDirection.Rtl -> {
+                                    ((rowSize.width - change.position.x) / rowSize.width * maxRating)
+                                }
+                            }.coerceIn(0f, maxRating.toFloat())
                                 .roundToInt()
                                 .coerceIn(0, maxRating)
 

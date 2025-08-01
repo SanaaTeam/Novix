@@ -20,6 +20,7 @@ interface MovieRepository {
     suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie>
     suspend fun getWatchlistMovies(page: Int): List<Movie>
     suspend fun addToWatchlist(body: WatchlistInfo)
+    suspend fun getMoviesRate(accountId: Long): List<Movie>
     suspend fun getMovieGenres(): List<Genre>
     suspend fun addMovieRate(movieId: Int, rating: Float): Boolean
 }

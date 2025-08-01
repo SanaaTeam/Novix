@@ -4,8 +4,11 @@ import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.TvShowDto
+
 import com.sanaa.vod.media.actor.response.PaginatedResponse
 import com.sanaa.vod.media.movie.request.MovieRateRequest
+
+
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
@@ -68,7 +71,10 @@ interface TvShowApiService {
     suspend fun fetchTvShowsVideos(@Path("tv_id") id: Int): TvShowVideosResponse
 
     @GET("tv/{tv_id}/reviews")
-    suspend fun fetchTvShowsReviews(@Path("tv_id") id: Int, @Query("page") page: Int): TvShowReviewsResponse
+    suspend fun fetchTvShowsReviews(
+        @Path("tv_id") id: Int,
+        @Query("page") page: Int
+    ): TvShowReviewsResponse
 
     @GET("tv/{tv_id}/credits")
     suspend fun fetchTvShowsCast(@Path("tv_id") id: Int): TvShowCastResponse
@@ -116,6 +122,11 @@ interface TvShowApiService {
         @Body rating: TvShowRateRequest
     ): RatingResponse
 
+    @GET("account/{account_id}/rated/tv")
+    suspend fun fetchTvShowRate(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+    ): MovieApiResponse<TvShowDto>
 
     @GET("account/{account_id}/watchlist/tv")
     @Headers(
@@ -129,5 +140,12 @@ interface TvShowApiService {
         @Query("sort_by") sortBy: String = "created_at.asc",
     ): PaginatedResponse<TvShowDto>
 
+
+
+    @GET("account/{account_id}/rated/tv/episodes")
+    suspend fun fetchEpisodesRate(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+    ): MovieApiResponse<EpisodeDto>
 
 }

@@ -79,6 +79,7 @@ class MovieRepositoryImpl @Inject constructor(
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
+
     override suspend fun getWatchlistMovies(
         page: Int,
     ): List<Movie> {
@@ -95,6 +96,16 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch add Watchlist") {
             remote.addToWatchlist(info.toRequestBody())
 
+        }
+    }
+
+
+
+    override suspend fun getMoviesRate(accountId: Long): List<Movie> {
+        return safeCall("Failed to fetch movie Rate") {
+            val sessionId = preferences.sessionId.first()
+            remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
+                .map { it.toDomain() }
         }
     }
 

@@ -5,9 +5,6 @@ import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
-import com.sanaa.vod.dataSource.remote.dto.WatchlistActionDto
-import com.sanaa.vod.dataSource.remote.dto.WatchlistRequestBody
-import com.sanaa.vod.media.actor.response.PaginatedResponse
 import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
@@ -96,8 +93,15 @@ interface MovieApiService {
     @POST("movie/{movie_id}/rating")
     suspend fun rateMovie(
         @Path("movie_id") movieId: Int,
+        @Query("session_id") sessionId: String,
         @Body rating: MovieRateRequest
     ): RatingResponse
+
+    @GET("account/{account_id}/rated/movies")
+    suspend fun fetchMovieRate(
+        @Path("account_id") accountId: Long,
+        @Query("session_id") sessionId: String,
+    ): MovieApiResponse<MovieDto>
 
     @GET("account/{account_id}/watchlist/movies")
     @Headers("Ignore-Language: true")
@@ -111,5 +115,4 @@ interface MovieApiService {
     suspend fun addToWatchlist(
         @Body body: WatchlistRequestBody
     ): WatchlistActionDto
-
 }
