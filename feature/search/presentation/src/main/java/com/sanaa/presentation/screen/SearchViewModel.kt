@@ -73,18 +73,18 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(searchQuery)
     }
 
-    override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
-        val currentQuery =state.value.searchQuery
-        updateState { currentState ->
-            currentState.copy(
-                movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
-                tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
-            )
-        }
-        if (currentQuery.isNotBlank()) {
-            loadMediaByTab(currentQuery)
-        }
-    }
+//    override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
+//        val currentQuery =state.value.searchQuery
+//        updateState { currentState ->
+//            currentState.copy(
+//                movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
+//                tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
+//            )
+//        }
+//        if (currentQuery.isNotBlank()) {
+//            loadMediaByTab(currentQuery)
+//        }
+//    }
     override fun onActorClicked(id: Int) {
         emitEffect(SearchScreenEffects.NavigateToActorDetails(id))
     }
@@ -123,13 +123,13 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(query)
     }
 
-    override fun onFilterClicked() {
-        updateState { it.copy(showBottomSheet = true) }
-    }
+//    override fun onFilterClicked() {
+//        updateState { it.copy(showBottomSheet = true) }
+//    }
 
-    override fun onBottomSheetDragged() {
-        updateState { it.copy(showBottomSheet = false) }
-    }
+//    override fun onBottomSheetDragged() {
+//        updateState { it.copy(showBottomSheet = false) }
+//    }
 
     override fun onClearRecentViewClicked() {
         tryToExecute(

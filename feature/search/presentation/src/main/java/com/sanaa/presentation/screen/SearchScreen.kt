@@ -20,7 +20,7 @@ import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
+//import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
@@ -94,9 +94,9 @@ fun SearchScreenContent(
     onFilterApplied: (Int, MediaFilters?) -> Unit,
 ) {
 
-    val dismissSheet: () -> Unit = {
-        searchListener.onBottomSheetDragged()
-    }
+//    val dismissSheet: () -> Unit = {
+//        searchListener.onBottomSheetDragged()
+//    }
 
     Column {
         NovixTopBar(
@@ -131,12 +131,12 @@ fun SearchScreenContent(
         }
     }
 
-    if (uiState.showBottomSheet) {
-        FilterBottomSheet(
-            dismissSheet = dismissSheet,
-            isVisible = uiState.showBottomSheet,
-            onFilterApplied = onFilterApplied,
-            selectedTabIndex = uiState.selectedTabIndex
-        )
-    }
+//    if (uiState.showBottomSheet) {
+//        FilterBottomSheet(
+//            dismissSheet = dismissSheet,
+//            isVisible = uiState.showBottomSheet,
+//            onFilterApplied = onFilterApplied,
+//            selectedTabIndex = uiState.selectedTabIndex
+//        )
+//    }
 }
