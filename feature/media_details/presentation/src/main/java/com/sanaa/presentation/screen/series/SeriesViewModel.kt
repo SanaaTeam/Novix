@@ -2,17 +2,24 @@ package com.sanaa.presentation.screen.series
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeasonUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
+import com.sanaa.presentation.model.mapper.toSeasonUiModel
+import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import entity.TvSeries
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 class SeriesViewModel(
     private val seriesId: Int,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
     initialState = SeriesScreenUiState(),
@@ -42,16 +49,22 @@ class SeriesViewModel(
             callee = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
                 updateState { it.copy(isLoadingEpisodes = false) }
-            }
-            , onError = {e ->
-                if(e is NoNetworkException){
-                    updateState { it.copy(noInternetConnection = true,
-                        isLoadingEpisodes = false) }
-                }
-                else {
-                    updateState { it.copy( error = e.message,
-                        noInternetConnection = false,
-                        isLoadingEpisodes = false) }
+            }, onError = { e ->
+                if (e is NoNetworkException) {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoadingEpisodes = false
+                        )
+                    }
+                } else {
+                    updateState {
+                        it.copy(
+                            error = e.message,
+                            noInternetConnection = false,
+                            isLoadingEpisodes = false
+                        )
+                    }
                 }
             }
         )
@@ -100,6 +113,7 @@ class SeriesViewModel(
         }
         loadSeries()
     }
+
     private fun loadSeries() {
         tryToExecute(
             callee = ::fetchSeriesDetails,
@@ -113,7 +127,11 @@ class SeriesViewModel(
                     }
                 } else {
                     updateState { state ->
-                        state.copy(error = e.message, isLoading = false, noInternetConnection = false)
+                        state.copy(
+                            error = e.message,
+                            isLoading = false,
+                            noInternetConnection = false
+                        )
                     }
                 }
             }
@@ -129,6 +147,7 @@ class SeriesViewModel(
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
 
+        addTvSeriesToHistory(series)
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
@@ -145,5 +164,18 @@ class SeriesViewModel(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
+    }
+
+    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = tvSeries.toHistory(),
+            username = user.username
+        )
     }
 }

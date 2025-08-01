@@ -7,9 +7,12 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.MediaHistoryItem
+import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
@@ -19,6 +22,7 @@ class ContinueWatchingMediaScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<ContinueWatchingMediaScreenUiState, MediaTabScreenEffect>(
     ContinueWatchingMediaScreenUiState(),
@@ -35,7 +39,7 @@ class ContinueWatchingMediaScreenViewModel(
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
             callee = {
-                loadTopRatedMovies(genreId = genreId)
+                loadWatchedHistoryMovies(genreId = genreId)
             }, onCollect = { mediaList ->
                 updateState {
                     it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
@@ -52,7 +56,7 @@ class ContinueWatchingMediaScreenViewModel(
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
             callee = {
-                loadTopRatedTvSeries(genreId = genreId)
+                loadWatchedHistoryTvSeries(genreId = genreId)
             }, onCollect = { mediaList ->
                 updateState {
                     it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
@@ -143,25 +147,38 @@ class ContinueWatchingMediaScreenViewModel(
     }
 
 
-    private suspend fun loadTopRatedMovies(
+    private suspend fun loadWatchedHistoryMovies(
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return flowOf(emptyList())
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.MOVIE,
-            username = "sanaa"
+            username = user.username
         )
     }
 
-    private suspend fun loadTopRatedTvSeries(
+    private suspend fun loadWatchedHistoryTvSeries(
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return flowOf(emptyList())
+
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.TV_SERIES,
-            username = "sanaa"
+            username = user.username
         )
     }
 

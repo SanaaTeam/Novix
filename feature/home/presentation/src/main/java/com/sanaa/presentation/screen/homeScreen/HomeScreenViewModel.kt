@@ -7,10 +7,14 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
+import entity.MediaHistoryItem
 import entity.Movie
+import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
@@ -19,6 +23,7 @@ class HomeScreenViewModel(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
@@ -85,9 +90,7 @@ class HomeScreenViewModel(
     private fun fetchWatchedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToCollect(
-            callee = {
-                manageWatchedMediaHistoryUseCase.getMediaHistory("", null, null)
-            },
+            callee = { loadWatchedMediaHistory() },
             onCollect = { watchedMediaList ->
                 updateState {
                     it.copy(
@@ -146,6 +149,16 @@ class HomeScreenViewModel(
                 }
             }
         )
+    }
+
+    private suspend fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return flowOf(emptyList())
+        return manageWatchedMediaHistoryUseCase.getMediaHistory(user.username, null, null)
     }
 
 

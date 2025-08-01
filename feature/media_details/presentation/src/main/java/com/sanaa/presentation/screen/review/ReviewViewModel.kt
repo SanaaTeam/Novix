@@ -6,7 +6,7 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.ReviewUiModel
-import com.sanaa.presentation.model.toReviewUiModel
+import com.sanaa.presentation.model.mapper.toReviewUiModel
 import entity.Review
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher

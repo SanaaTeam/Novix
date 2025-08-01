@@ -30,7 +30,6 @@ import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
-import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.screenContent.TopRatedMediaScreenContent
 import com.sanaa.presentation.state.MediaTypeUi
 import org.koin.androidx.compose.koinViewModel
 import org.koin.java.KoinJavaComponent.inject
@@ -73,7 +72,7 @@ fun TopRatedMediaScreen(
             }
         }
     }
-    NovixTheme(isSystemInDarkTheme()){
+    NovixTheme(isSystemInDarkTheme()) {
         TopRatedMediaScreenContent(
             title = stringResource(R.string.top_rated),
             state = state.value,

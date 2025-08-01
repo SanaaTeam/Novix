@@ -6,18 +6,24 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
+import com.sanaa.presentation.model.mapper.toUiModel
 import entity.Movie
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 class MovieDetailsViewModel(
     private val movieId: Int,
     private val manageMovieDetails: ManageMovieUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     MovieDetailsUiState(),
@@ -72,6 +78,7 @@ class MovieDetailsViewModel(
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
     }
+
     override fun onRetryLoadDetails() {
         updateState {
             it.copy(
@@ -82,6 +89,7 @@ class MovieDetailsViewModel(
         }
         fetchMovieDetails(movieId)
     }
+
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -91,9 +99,21 @@ class MovieDetailsViewModel(
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
-                    updateState { it.copy(noInternetConnection = true, isLoading = false, errorMessage = null) }
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            isLoading = false,
+                            errorMessage = null
+                        )
+                    }
                 } else {
-                    updateState { it.copy(isLoading = false, errorMessage = exception.message, noInternetConnection = false) }
+                    updateState {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = exception.message,
+                            noInternetConnection = false
+                        )
+                    }
                 }
             },
             dispatcher = defaultDispatcher
@@ -122,6 +142,7 @@ class MovieDetailsViewModel(
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
 
+        addMovieToHistory(movie)
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
@@ -130,5 +151,18 @@ class MovieDetailsViewModel(
                 similarMovies = similar
             )
         }
+    }
+
+    private suspend fun addMovieToHistory(movie: Movie) {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
+        )
     }
 }

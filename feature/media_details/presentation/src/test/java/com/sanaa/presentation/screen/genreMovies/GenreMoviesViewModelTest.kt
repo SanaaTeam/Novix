@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.genreMovies
 
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toUiModel
 import entity.Genre
 import entity.Movie
 import io.mockk.clearAllMocks

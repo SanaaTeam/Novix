@@ -1,13 +1,13 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toEpisodeUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toEpisodeUiModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvSeriesUseCase
-import exceptions.NoNetworkException
 
 class EpisodeDetailsScreenViewModel(
     seriesId: Int,
@@ -70,13 +70,16 @@ class EpisodeDetailsScreenViewModel(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = {e ->
+            onError = { e ->
                 if (e is NoNetworkException) {
-                    updateState { it.copy(noInternetConnection = true,
-                        error = null,
-                        isLoading = false) }
-                }
-                else {
+                    updateState {
+                        it.copy(
+                            noInternetConnection = true,
+                            error = null,
+                            isLoading = false
+                        )
+                    }
+                } else {
                     updateState { it.copy(error = it.error, isLoading = false) }
                 }
             }

@@ -4,7 +4,7 @@ import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.model.toReviewUiModel
+import com.sanaa.presentation.model.mapper.toReviewUiModel
 import entity.Review
 import exceptions.NoNetworkException
 import io.mockk.coEvery

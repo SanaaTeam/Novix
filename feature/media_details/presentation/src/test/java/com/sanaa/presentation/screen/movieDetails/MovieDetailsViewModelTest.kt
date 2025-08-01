@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.movieDetails
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
-import usecase.ManageMovieUseCase
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre
@@ -18,6 +17,9 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.GetLoggedInUserUseCase
+import usecase.ManageMovieUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -25,6 +27,9 @@ class MovieDetailsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
+        mockk(relaxed = true)
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
 
@@ -48,10 +53,17 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(
+            movieId,
+            manageMovieDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            testDispatcher
+        )
+
         viewModel.onWatchTrailerClick()
 
         viewModel.effect.test {
@@ -123,14 +135,19 @@ class MovieDetailsViewModelTest {
         givenHappy()
         val genre =
             GenreUiModel(
-            id = 1,
-            name = "Drama"
-        )
+                id = 1,
+                name = "Drama"
+            )
 
         viewModel.onGenreClicked(genre)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name))
+                .isEqualTo(
+                    MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(
+                        genre.id,
+                        genre.name
+                    )
+                )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -139,9 +156,15 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId,1) } returns dummySimilar
+        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        viewModel = MovieDetailsViewModel(movieId, manageMovieDetails)
+        viewModel = MovieDetailsViewModel(
+            movieId,
+            manageMovieDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            testDispatcher
+        )
     }
 
     companion object {

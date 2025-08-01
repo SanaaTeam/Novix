@@ -5,7 +5,7 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toUiModel
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher

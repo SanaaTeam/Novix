@@ -8,6 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -134,6 +135,7 @@ private fun ContinueWatchingMediaScreenContent(
                             interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         },
                         onSaveIconClick = interactionListener::onSaveIconClick,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
 
@@ -147,6 +149,7 @@ private fun ContinueWatchingMediaScreenContent(
                             interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         },
                         onSaveIconClick = interactionListener::onSaveIconClick,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
             }

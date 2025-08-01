@@ -21,13 +21,18 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SeriesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
+        mockk(relaxed = true)
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private lateinit var viewModel: SeriesViewModel
 
     private val seriesId = 42
@@ -78,7 +83,13 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails)
+        viewModel = SeriesViewModel(
+            seriesId,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            testDispatcher
+        )
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -140,7 +151,13 @@ class SeriesViewModelTest {
     fun `loadSeries handles error correctly when use case fails`() = runTest {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } throws RuntimeException("Test failure")
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher = testDispatcher)
+        viewModel = SeriesViewModel(
+            seriesId,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            testDispatcher
+        )
         advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo("Test failure")
@@ -153,7 +170,13 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, testDispatcher)
+        viewModel = SeriesViewModel(
+            seriesId,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            testDispatcher
+        )
 
         viewModel.onSeasonNumberClicked(2)
         advanceUntilIdle()
@@ -172,7 +195,13 @@ class SeriesViewModelTest {
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
 
-        viewModel = SeriesViewModel(seriesId, manageTvSeriesDetails, dispatcher)
+        viewModel = SeriesViewModel(
+            seriesId,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            dispatcher
+        )
     }
 
     private companion object {

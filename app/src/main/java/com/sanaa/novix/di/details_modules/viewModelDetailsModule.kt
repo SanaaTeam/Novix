@@ -6,6 +6,7 @@ import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewMode
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
 import com.sanaa.presentation.screen.homeScreen.HomeScreenViewModel
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingMediaScreenViewModel
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreenViewModel
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 import com.sanaa.presentation.screen.review.ReviewViewModel
@@ -28,4 +29,5 @@ val viewModelDetailsModule = module {
     viewModelOf(::TrendingTvShowsScreenViewModel)
     viewModelOf(::CelebritiesViewModel)
     viewModelOf(::TopRatedMediaScreenViewModel)
+    viewModelOf(::ContinueWatchingMediaScreenViewModel)
 }

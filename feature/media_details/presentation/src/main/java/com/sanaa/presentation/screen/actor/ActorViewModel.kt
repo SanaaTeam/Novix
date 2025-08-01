@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.actor
 
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.model.mapper.toUiModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageActorUseCase
@@ -60,6 +60,7 @@ class ActorViewModel(
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
+
     private fun loadDetails() {
         updateState { it.copy(isLoading = true) }
         tryToExecute(
