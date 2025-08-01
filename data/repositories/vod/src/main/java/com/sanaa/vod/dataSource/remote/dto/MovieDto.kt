@@ -13,4 +13,5 @@ data class MovieDto(
     @SerialName("release_date") val releaseDate: String? = null,
     @SerialName("overview") val overview: String? = null,
     @SerialName("runtime") val duration: Int? = null,
+    @SerialName("rating") val rating: Float? = null,
 )

@@ -13,9 +13,10 @@ fun MovieDto.toDomain(): Movie {
         title = title.orEmpty(),
         genres = genres?.map { it.toEntity() } ?: emptyList(),
         imdbRating = voteAverage ?: 0.0f,
-        duration = duration?.minutes ,
+        duration = duration?.minutes,
         releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1900, 1, 1),
-        overview = overview.toString()
+        overview = overview.toString(),
+        rating = rating?.toInt()
     )
 }
 

@@ -69,6 +69,11 @@ class RemoteMovieDataSourceImpl @Inject constructor(
             apiService.fetchUpcomingMovies(page, genreId?.toString()).results.distinctBy { it.id }
         }
 
+    override suspend fun fetchMoviesRate(accountId: Long, sessionId: String): List<MovieDto> =
+        wrapApiCall {
+            apiService.fetchMovieRate(accountId, sessionId).results
+        }
+
     override suspend fun sendMovieRate(
         movieId: Int,
         sessionId: String,

@@ -15,5 +15,6 @@ fun EpisodeDto.toEntity(): Episode {
         durationMinutes = runtime,
         releaseDate = airDate?.let { LocalDate.parse(it) } ?: LocalDate.parse("1970-01-01"),
         stillImagePath = buildPosterUrl(stillPath),
+        rating = rating?.toInt()
     )
 }

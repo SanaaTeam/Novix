@@ -458,7 +458,8 @@ class ManageTvSeriesUseCaseTest {
                 overview = "First episode overview",
                 durationMinutes = 45,
                 releaseDate = LocalDate(2023, 1, 1),
-                stillImagePath = "image1.jpg"
+                stillImagePath = "image1.jpg",
+                rating = 0
             ),
             Episode(
                 id = 102,
@@ -469,7 +470,8 @@ class ManageTvSeriesUseCaseTest {
                 overview = "Second episode overview",
                 durationMinutes = 50,
                 releaseDate = LocalDate(2023, 1, 8),
-                stillImagePath = "image2.jpg"
+                stillImagePath = "image2.jpg",
+                rating = 0
             )
         )
 
@@ -488,7 +490,8 @@ class ManageTvSeriesUseCaseTest {
             genres = listOf(dummyGenre),
             imdbRating = 1.2f,
             posterImageUrl = "Image",
-            seasonsCount = 5
+            seasonsCount = 5,
+            rating = 0
         )
         private val dummyReview = Review(
             id = "rev123",
