@@ -144,17 +144,18 @@ class TrendingTvShowsScreenViewModelTest {
                     mediaId
                 )
             )
-    }
+        }
 
-    @Test
-    fun `onBackClick emits NavigateBack`() = runTest {
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        @Test
+        fun `onBackClick emits NavigateBack`() = runTest {
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
 
-        viewModel.onBackClick()
+            viewModel.onBackClick()
 
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
-            cancelAndIgnoreRemainingEvents()
+            viewModel.effect.test {
+                assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
     }
 

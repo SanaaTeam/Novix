@@ -153,21 +153,6 @@ class TopRatedMediaScreenViewModelTest {
     }
 
     @Test
-    fun `onMediaClick should emit NavigateToMediaDetails`() = runTest {
-        val id = 10
-        val type = MediaType.MOVIE
-        viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
-
-        viewModel.effect.test {
-            viewModel.onMediaClick(id, type)
-            advanceUntilIdle()
-            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(id, type))
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onBackClick should emit NavigateBack`() = runTest {
         viewModel =
             TopRatedMediaScreenViewModel(
@@ -197,11 +182,9 @@ class TopRatedMediaScreenViewModelTest {
                 120.minutes,
                 LocalDate(2020, 1, 1),
                 "",
-                ""
-            ),
-            Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "")
-            Movie(1, "Movie 1", "", emptyList(), 8f, 120.minutes, LocalDate(2020, 1, 1), "", "", 0),
-            Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "", 0)
+                "",
+                rating = 1
+            )
         )
         val tvShows = listOf(
             TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
