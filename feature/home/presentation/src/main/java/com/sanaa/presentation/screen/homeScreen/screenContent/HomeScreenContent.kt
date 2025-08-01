@@ -179,7 +179,7 @@ fun HomeScreenContent(
         }
     }
     if (upcomingMovies.loadState.append is LoadState.Error
-        || upcomingMovies.loadState.refresh is LoadState.Error
+        || upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
