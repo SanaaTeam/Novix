@@ -348,24 +348,19 @@ fun MovieDetailsContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
-            if (state.showRateBottomSheet) {
-                RateBottomSheet(
-                    isRateSelected = state.hasUserSelectedRate,
-                    imdbRating = state.imdbRating,
-                    onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = state.showRateBottomSheet,
-                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                    onRatingChanged = interactionListener::onRatingChanged
-                )
-            }
-            if (state.showLoginBottomSheetToAddToList) {
-                RequestToLoginBottomSheet(
-                    onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheetToAddToList
-                )
-            }
+            RateBottomSheet(
+                isRateSelected = state.hasUserSelectedRate,
+                imdbRating = state.imdbRating,
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = state.showRateBottomSheet,
+                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                onRatingChanged = interactionListener::onRatingChanged
+            )
+            RequestToLoginBottomSheet(
+                onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+                isVisible = state.showLoginBottomSheetToAddToList
+            )
         }
-
     }
 }
 
