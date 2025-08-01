@@ -28,4 +28,6 @@ interface SeriesDao {
     )
     suspend fun getFilteredSeries(query: String, limit: Int, offset: Int): List<TvSeriesLocalDto>
 
+    @Query("SELECT * FROM tv_series WHERE id = :id LIMIT 1")
+    suspend fun getSeriesById(id: Int): TvSeriesLocalDto?
 } 
