@@ -326,15 +326,9 @@ fun MovieDetailsContent(
                                     modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
                                 )
                             }
-
-                            items(
-                                count = pagedSimilarMovies.itemCount,
-                                key = { index ->
-                                    val movie = pagedSimilarMovies[index]
-                                    "${index}-${movie?.id}"
-                                }
-                            ) { index ->
+                            items(pagedSimilarMovies.itemCount) { index ->
                                 val item = pagedSimilarMovies[index] ?: return@items
+
                                 MoreLikeThisCard(
                                     movie = item,
                                     modifier = Modifier.padding(bottom = 12.dp),
