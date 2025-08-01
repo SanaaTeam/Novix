@@ -107,9 +107,9 @@ class LocalHistoryDataSourceImplTest {
             genres = "",
         )
         // When
-        dataSource.upsertWatchedMedia(watchedMedia)
+        dataSource.insertWatchedMediaHistory(watchedMedia)
         // Then
-        coVerify { watchedMediaHistoryDao.upsert(watchedMedia) }
+        coVerify { watchedMediaHistoryDao.insertWatchedMediaHistory(watchedMedia) }
     }
 
     @Test
@@ -118,7 +118,7 @@ class LocalHistoryDataSourceImplTest {
         val mediaType = MediaType.MOVIE
         val genre = null
 
-        dataSource.getWatchedMedia(username, mediaType, genre)
+        dataSource.getWatchedMediaHistory(username, mediaType, genre)
 
         coVerify { watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType.name, genre) }
     }

@@ -83,7 +83,7 @@ class HistoryRepositoryImpl @Inject constructor(
         errorMessage = "Failed to add watched media history for user $username",
         exceptionProvider = ::FailedToAddException
     ) {
-        local.upsertWatchedMedia(media.toDto(username))
+        local.insertWatchedMediaHistory(media.toDto(username))
     }
 
     override suspend fun getWatchedMediaHistory(
@@ -93,7 +93,7 @@ class HistoryRepositoryImpl @Inject constructor(
     ): Flow<List<MediaHistoryItem>> = safeCall(
         errorMessage = "Failed to retrieve watched media history for user $username"
     ) {
-        val watchedHistoryDtos = local.getWatchedMedia(username, mediaType, genreId)
+        val watchedHistoryDtos = local.getWatchedMediaHistory(username, mediaType, genreId)
         watchedHistoryDtos.map {
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }

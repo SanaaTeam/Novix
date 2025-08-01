@@ -47,11 +47,11 @@ class LocalHistoryDataSourceImpl @Inject constructor(
         queryDao.deleteAllQueries()
     }
 
-    override suspend fun upsertWatchedMedia(item: WatchedMediaHistoryLocalDto) {
-        watchedMediaHistoryDao.upsert(item)
+    override suspend fun insertWatchedMediaHistory(item: WatchedMediaHistoryLocalDto) {
+        watchedMediaHistoryDao.insertWatchedMediaHistory(item)
     }
 
-    override suspend fun getWatchedMedia(
+    override suspend fun getWatchedMediaHistory(
         username: String,
         mediaType: MediaType?,
         genreId: Int?

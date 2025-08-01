@@ -186,10 +186,10 @@ class HistoryRepositoryImplTest {
     }
 
     @Test
-    fun `addWatchedMediaHistory should call localDataSource addWatchedMedia with correct parameters`() =
+    fun `addWatchedMediaHistory should call localDataSource insertWatchedMediaHistory with correct parameters`() =
         runTest {
             val watchedMedia = mediaItem.toDto("username")
-            coEvery { localDataSource.upsertWatchedMedia(watchedMedia) } returns Unit
+            coEvery { localDataSource.insertWatchedMediaHistory(watchedMedia) } returns Unit
 
             repository.addWatchedMediaHistory(
                 watchedMedia.username,
@@ -197,7 +197,7 @@ class HistoryRepositoryImplTest {
             )
 
             coVerify {
-                localDataSource.upsertWatchedMedia(watchedMedia)
+                localDataSource.insertWatchedMediaHistory(watchedMedia)
             }
         }
 
@@ -205,7 +205,7 @@ class HistoryRepositoryImplTest {
     fun `addWatchedMediaHistory throws exception when failed to add watched media history`() =
         runTest {
             val watchedMedia = givenWatchedMedia.first()
-            coEvery { localDataSource.upsertWatchedMedia(any()) } throws Exception()
+            coEvery { localDataSource.insertWatchedMediaHistory(any()) } throws Exception()
 
             val result = runCatching {
                 repository.addWatchedMediaHistory("", watchedMedia.toEntity())
@@ -219,7 +219,7 @@ class HistoryRepositoryImplTest {
         val username = "username"
         val mediaType = MediaType.MOVIE
         val genreId: Int? = null
-        coEvery { localDataSource.getWatchedMedia(username, mediaType, genreId) } returns flowOf(
+        coEvery { localDataSource.getWatchedMediaHistory(username, mediaType, genreId) } returns flowOf(
             givenWatchedMedia
         )
 
@@ -231,7 +231,7 @@ class HistoryRepositoryImplTest {
 
     @Test
     fun `getWatchedMediaHistory throws exception when failed to retrieve date`() = runTest {
-        coEvery { localDataSource.getWatchedMedia(any(), any(), any()) } throws Exception()
+        coEvery { localDataSource.getWatchedMediaHistory(any(), any(), any()) } throws Exception()
 
         assertThrows<RetrievingDataFailureException> {
             repository.getWatchedMediaHistory(
