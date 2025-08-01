@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +40,7 @@ import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndica
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.component.text.CustomText
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -233,7 +233,7 @@ fun MovieDetailsContent(
                                                     interactionListener.onGenreClicked(genre)
                                                 }
                                             ) {
-                                                Text(
+                                                CustomText(
                                                     text = genre.name,
                                                     style = Theme.textStyle.label.small,
                                                     color = Theme.colors.body,
@@ -319,7 +319,7 @@ fun MovieDetailsContent(
                         }
                         if (pagedSimilarMovies.itemCount > 0) {
                             item(span = { GridItemSpan(maxLineSpan) }) {
-                                Text(
+                                CustomText(
                                     text = stringResource(id = R.string.more_like_this),
                                     color = Theme.colors.title,
                                     style = Theme.textStyle.title.medium,
