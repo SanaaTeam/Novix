@@ -54,8 +54,12 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun emitEffect(effect: E) {
-        viewModelScope.launch {
-            _effect.emit(effect)
+        val now = System.currentTimeMillis()
+        if (now - lastEmitTime > 500) {
+            lastEmitTime = now
+            viewModelScope.launch {
+                _effect.emit(effect)
+            }
         }
     }
 
@@ -95,6 +99,7 @@ abstract class BaseViewModel<T, E>(
 
 
     companion object {
+        private var lastEmitTime = 0L
         private const val PAGE_SIZE = 20
     }
 }

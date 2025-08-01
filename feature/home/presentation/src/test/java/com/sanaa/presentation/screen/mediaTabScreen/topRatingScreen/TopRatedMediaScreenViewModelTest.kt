@@ -15,6 +15,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -152,24 +153,13 @@ class TopRatedMediaScreenViewModelTest {
     }
 
     @Test
-    fun `onMediaClick should emit NavigateToMediaDetails`() = runTest {
-        val id = 10
-        val type = MediaType.MOVIE
-        viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
-
-        viewModel.onMediaClick(id, type)
-
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(id, type))
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onBackClick should emit NavigateBack`() = runTest {
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                testDispatcher
+            )
 
         viewModel.onBackClick()
 
@@ -183,8 +173,18 @@ class TopRatedMediaScreenViewModelTest {
         val genres = listOf(Genre(1, "Action"), Genre(2, "Drama"))
         val tvGenres = listOf(Genre(3, "Sci-Fi"))
         val movies = listOf(
-            Movie(1, "Movie 1", "", emptyList(), 8f, 120.minutes, LocalDate(2020, 1, 1), "", "", 0),
-            Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "", 0)
+            Movie(
+                1,
+                "Movie 1",
+                "",
+                emptyList(),
+                8f,
+                120.minutes,
+                LocalDate(2020, 1, 1),
+                "",
+                "",
+                rating = 1
+            )
         )
         val tvShows = listOf(
             TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),

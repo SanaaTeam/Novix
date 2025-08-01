@@ -16,6 +16,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -130,20 +131,21 @@ class TrendingMoviesScreenViewModelTest {
         coVerify(exactly = 0) { manageMovieUseCase.getTrendingMovies(any(), any()) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
         viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
 
-        viewModel.onMediaClick(mediaId)
-
         viewModel.effect.test {
+            viewModel.onMediaClick(mediaId)
+            advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(
                 TrendingMediaScreenEffect.NavigateToMediaDetails(
                     mediaId
                 )
             )
-            cancelAndIgnoreRemainingEvents()
+            cancelAndConsumeRemainingEvents()
         }
     }
 

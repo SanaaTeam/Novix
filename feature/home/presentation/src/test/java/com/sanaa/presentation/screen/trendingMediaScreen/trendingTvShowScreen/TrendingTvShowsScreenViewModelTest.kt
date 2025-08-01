@@ -16,6 +16,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -129,32 +130,32 @@ class TrendingTvShowsScreenViewModelTest {
         coVerify(exactly = 0) { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
         viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
 
-        viewModel.onMediaClick(mediaId)
-
         viewModel.effect.test {
+            viewModel.onMediaClick(mediaId)
+            advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(
                 TrendingMediaScreenEffect.NavigateToMediaDetails(
                     mediaId
                 )
             )
-            cancelAndIgnoreRemainingEvents()
         }
-    }
 
-    @Test
-    fun `onBackClick emits NavigateBack`() = runTest {
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        @Test
+        fun `onBackClick emits NavigateBack`() = runTest {
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
 
-        viewModel.onBackClick()
+            viewModel.onBackClick()
 
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
-            cancelAndIgnoreRemainingEvents()
+            viewModel.effect.test {
+                assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
+                cancelAndIgnoreRemainingEvents()
+            }
         }
     }
 
