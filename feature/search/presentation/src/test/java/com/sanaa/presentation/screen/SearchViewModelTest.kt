@@ -309,7 +309,6 @@ class SearchViewModelTest {
 
             searchViewModel.state.test {
                 awaitItem()
-                awaitItem()
                 val item = awaitItem()
                 assertThat(item.searchQuery).isEqualTo(movieName)
                 assertThat(item.selectedTabIndex).isEqualTo(index)
@@ -331,7 +330,6 @@ class SearchViewModelTest {
             searchViewModel.onTabSelected(index)
 
             searchViewModel.state.test {
-                awaitItem()
                 awaitItem()
                 val item = awaitItem()
                 assertThat(item.searchQuery).isEqualTo(tvShowName)
@@ -366,7 +364,6 @@ class SearchViewModelTest {
             searchViewModel.onTabSelected(index)
 
             searchViewModel.state.test {
-                awaitItem()
                 awaitItem()
                 val item = awaitItem()
                 assertThat(item.searchQuery).isEqualTo(actorName)
