@@ -7,8 +7,9 @@ import repository.SearchHistoryRepository
 import repository.SearchRepository
 import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
+import javax.inject.Inject
 
-class SearchUseCase(
+class SearchUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
     private val searchHistoryRepository: SearchHistoryRepository,
 ) {

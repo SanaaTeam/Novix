@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import usecase.ManageEpisodeDetailsUseCase
@@ -97,16 +98,24 @@ class EpisodeDetailsScreenViewModelTest {
         coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber) } returns dummyGuests
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId,
-            seasonNumber,
-            episodeNumber,
+            savedStateHandle,
             checkUserLogin,
             manageEpisodeDetails,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
     }
+
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
         givenHappyViewModel()
@@ -163,15 +172,22 @@ class EpisodeDetailsScreenViewModelTest {
         coEvery { manageEpisodeDetails.getEpisodeDetails(any(), any(), any()) } throws NoNetworkException()
         coEvery { checkUserLogin.isLoggedIn() } returns false
 
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "seriesId" to seriesId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
         viewModel = EpisodeDetailsScreenViewModel(
-            seriesId,
-            seasonNumber,
-            episodeNumber,
+            savedStateHandle,
             checkUserLogin,
             manageEpisodeDetails,
             manageTvSeriesDetails,
             dispatcher = testDispatcher
         )
+
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.noInternetConnection).isTrue()

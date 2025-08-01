@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,12 +17,18 @@ import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
-import org.koin.java.KoinJavaComponent.inject
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun AuthNavHost() {
     val navController = rememberNavController()
-    val homeApi: HomeFeatureApi by inject(HomeFeatureApi::class.java)
+    val appContext   = LocalContext.current.applicationContext
+
+    val homeApi: HomeFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, AuthApiEntryPoint::class.java)
+            .homeApi()
+    }
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {

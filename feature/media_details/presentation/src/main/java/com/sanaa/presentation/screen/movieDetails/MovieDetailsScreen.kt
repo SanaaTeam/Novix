@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
@@ -62,15 +63,12 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
-    viewModel: MovieDetailsViewModel = koinViewModel(parameters = { parametersOf(movieId) })
+    viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -113,6 +111,7 @@ fun MovieDetailsScreen(
                         ).route()
                     )
                 }
+
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
@@ -126,7 +125,7 @@ fun MovieDetailsScreen(
         }
     }
 
-    Box{
+    Box {
         MovieDetailsContent(
             state = state, interactionListener = viewModel
         )
@@ -195,7 +194,9 @@ fun MovieDetailsContent(
                             .fillMaxSize(),
                         columns = GridCells.Adaptive(minSize = 120.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
+                        contentPadding = PaddingValues(
+                            start = 16.dp, end = 16.dp, bottom = 100.dp
+                        )
                     ) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Box(modifier = Modifier.fillWidthOfParent(16.dp)) {
@@ -326,15 +327,9 @@ fun MovieDetailsContent(
                                     modifier = Modifier.padding(bottom = 12.dp, top = 16.dp)
                                 )
                             }
-
-                            items(
-                                count = pagedSimilarMovies.itemCount,
-                                key = { index ->
-                                    val movie = pagedSimilarMovies[index]
-                                    "${index}-${movie?.id}"
-                                }
-                            ) { index ->
+                            items(pagedSimilarMovies.itemCount) { index ->
                                 val item = pagedSimilarMovies[index] ?: return@items
+
                                 MoreLikeThisCard(
                                     movie = item,
                                     modifier = Modifier.padding(bottom = 12.dp),

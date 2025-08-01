@@ -25,8 +25,6 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform(libs.koin.bom))
-    implementation(libs.bundles.koin)
 
     // Paging 3
     implementation(libs.androidx.paging.runtime)

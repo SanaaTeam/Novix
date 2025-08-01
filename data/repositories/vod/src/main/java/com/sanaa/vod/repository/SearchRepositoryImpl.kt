@@ -18,8 +18,9 @@ import entity.TvSeries
 import repository.SearchRepository
 import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
+import javax.inject.Inject
 
-class SearchRepositoryImpl(
+class SearchRepositoryImpl @Inject constructor(
     private val remoteDataSource: SearchRemoteDataSource,
     private val localCacheSearchDataSource: LocalCacheSearchDataSource,
     private val languageProvider: LanguageProvider,

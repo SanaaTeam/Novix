@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.firebase.perf) apply false
     alias(libs.plugins.kover)
     alias(libs.plugins.ksp) apply false
-
+    alias(libs.plugins.hilt.android) apply false
 }
 val excludedPackages = listOf(
     "*.R",
@@ -73,6 +73,16 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.state.**",
     "com.sanaa.vod.media.**",
     "com.sanaa.presentation.modifier.**",
+    "dagger.hilt.**",
+    "hilt_aggregated_deps.**",
+    "**_Factory",
+    "**_HiltModules*",
+    "Hilt_*",
+    "**.di.**",
+    "com.sanaa.novix.Hilt_*",
+    "com.sanaa.novix.*_Factory",
+    "com.sanaa.novix.*_MembersInjector",
+    "com.sanaa.vod.util.*",
     "com.sanaa.presentation.cards.**",
 
     "com.sanaa.presentation.screen.login.**",
