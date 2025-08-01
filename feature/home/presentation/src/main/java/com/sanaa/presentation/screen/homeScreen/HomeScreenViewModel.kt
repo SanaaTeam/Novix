@@ -191,7 +191,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onDismissBottomSheet() {
-
         updateState { it.copy(showBottomSheet = false) }
     }
 
@@ -202,6 +201,10 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
+    }
+
+    override fun onAuthActivityFinishedWithResult() {
+        updateUserLoggingStatus()
     }
 
 

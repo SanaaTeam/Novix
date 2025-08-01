@@ -213,10 +213,11 @@ fun HomeScreenContent(
     ) {result ->
         when(result.resultCode){
             AuthenticationApi.RESULT_LOGGED_WITH_SESSION_ID -> {
-                Log.d("test99", "HomeScreenContent: logged in with session id ")
+                interactionListener.onAuthActivityFinishedWithResult()
+                interactionListener::onDismissBottomSheet
             }
             AuthenticationApi.RESULT_LOGGED_AS_GUEST -> {
-                Log.d("test99", "HomeScreenContent: logged in guest ")
+                interactionListener.onAuthActivityFinishedWithResult()
             }
         }
     }
