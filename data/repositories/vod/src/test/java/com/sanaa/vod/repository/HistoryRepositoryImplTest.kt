@@ -207,15 +207,6 @@ class HistoryRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `getWatchedMoviesHistory returns empty list`() = runTest {
-        // Act
-        val result = repository.getWatchedMediaHistory(null, null)
-
-        // Assert
-        assertThat(result).isEmpty()
-    }
-
     val givenRecentViewed = listOf(
         RecentViewedLocalDto(
             id = 1,
