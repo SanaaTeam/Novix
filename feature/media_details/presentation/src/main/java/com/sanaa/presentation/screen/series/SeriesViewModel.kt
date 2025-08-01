@@ -6,6 +6,7 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toSeasonUiModel
 import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -89,7 +90,12 @@ class SeriesViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 
@@ -100,7 +106,7 @@ class SeriesViewModel @Inject constructor(
     override fun onDismissAnyBottomSheet() {
         updateState {
             it.copy(
-                showRateBottomSheet  = false,
+                showRateBottomSheet = false,
                 showLoginBottomSheet = false
             )
         }
@@ -137,7 +143,12 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onSaveSeriesClicked() {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = LoginPromptType.BOOKMARK
+            )
+        }
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {

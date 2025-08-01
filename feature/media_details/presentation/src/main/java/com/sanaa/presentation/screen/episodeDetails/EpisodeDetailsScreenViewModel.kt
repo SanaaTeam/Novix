@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toEpisodeUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -53,7 +54,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSavedClick(seriesId: Int) {
-        updateState { it.copy(showLoginBottomSheet = true) }
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = LoginPromptType.BOOKMARK
+            )
+        }
     }
 
     override fun onDismissBottomSheet() {
@@ -69,7 +75,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE
+                )
+            }
         }
     }
 

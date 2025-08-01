@@ -32,6 +32,6 @@ data class SnackData(
 )
 
 enum class LoginPromptType {
-    RATE_MOVIE,
-    BOOKMARK_MOVIE
+    RATE,
+    BOOKMARK
 }

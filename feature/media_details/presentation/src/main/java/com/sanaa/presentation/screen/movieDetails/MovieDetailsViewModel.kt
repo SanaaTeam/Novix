@@ -55,7 +55,7 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             it.copy(
                 showLoginBottomSheet = true,
-                loginPromptType = LoginPromptType.BOOKMARK_MOVIE
+                loginPromptType = LoginPromptType.BOOKMARK
             )
         }
     }
@@ -71,7 +71,7 @@ class MovieDetailsViewModel @Inject constructor(
             updateState {
                 it.copy(
                     showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE_MOVIE
+                    loginPromptType = LoginPromptType.RATE
                 )
             }
         }
