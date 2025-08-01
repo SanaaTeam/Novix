@@ -10,11 +10,8 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -25,11 +22,8 @@ class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageHistoryUseCase: ManageHistoryUseCase,
-    private val checkIfUserLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
-    defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
 
     init {
@@ -175,17 +169,9 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        tryToExecute(
-            callee = {
-                checkIfUserLoggedInUseCase.isLoggedIn()
-            },
-            onSuccess = { isLoggedIn ->
-                updateState {
-                    it.copy(showBottomSheet = !isLoggedIn)
-
-                }
-            }
-        )
+        updateState {
+            it.copy(showBottomSheet = true)
+        }
     }
 
     override fun onDismissBottomSheet() {
