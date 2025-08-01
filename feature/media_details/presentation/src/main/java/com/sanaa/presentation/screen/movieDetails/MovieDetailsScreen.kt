@@ -358,10 +358,21 @@ fun MovieDetailsContent(
                     onRatingChanged = interactionListener::onRatingChanged
                 )
             }
-            if (state.showLoginBottomSheetToAddToList) {
+            if (state.showLoginBottomSheet) {
+                val title = when (state.loginPromptType) {
+                    LoginPromptType.RATE_MOVIE -> stringResource(R.string.rate_it)
+                    LoginPromptType.BOOKMARK_MOVIE -> stringResource(R.string.add_to_list)
+                    else -> stringResource(R.string.add_to_list)
+                }
+
+                val text = when (state.loginPromptType) {
+                    LoginPromptType.RATE_MOVIE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
+                    LoginPromptType.BOOKMARK_MOVIE -> stringResource(R.string.request_login)
+                    else -> stringResource(R.string.request_login)
+                }
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheetToAddToList
+                    isVisible = state.showLoginBottomSheet
                 )
             }
         }

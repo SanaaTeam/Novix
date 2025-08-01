@@ -10,7 +10,6 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.toActorUiModel
 import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -52,7 +52,12 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = LoginPromptType.BOOKMARK_MOVIE
+            )
+        }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -63,17 +68,22 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState { it.copy(showLoginBottomSheetToAddToList = true) }
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.RATE_MOVIE
+                )
+            }
         }
 
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
+        updateState { it.copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheetToAddToList = false) }
+        updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
