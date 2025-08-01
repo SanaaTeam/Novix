@@ -170,7 +170,7 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-             return createPagingFlow(
+        return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = Movie::toUiModel
         )
@@ -188,9 +188,12 @@ class MovieDetailsViewModel @Inject constructor(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-        val userId = getUser.getLoggedInUser().id
-        val ratedMovies = manageMovieDetails.getMoviesRate(userId)
-        val currentMovieRating = ratedMovies.find { it.id == movieId }?.rating ?: 0
+        val currentMovieRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedMovies = manageMovieDetails.getMoviesRate(userId)
+            ratedMovies.find { it.id == movieId }?.rating ?: 0
+        }.getOrElse { 0 }
+
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),

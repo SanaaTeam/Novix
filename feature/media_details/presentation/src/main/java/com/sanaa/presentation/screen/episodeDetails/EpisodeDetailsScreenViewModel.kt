@@ -152,11 +152,13 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val userId = getUser.getLoggedInUser().id
-        val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
-        val currentEpisodesRating = ratedEpisodes.find {
-            it.seasonNumber == seasonNumber && it.number == episodeNumber
-        }?.rating ?: 0
+        val currentEpisodesRating = runCatching {
+            val userId = getUser.getLoggedInUser().id
+            val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
+            ratedEpisodes.find {
+                it.seasonNumber == seasonNumber && it.number == episodeNumber
+            }?.rating ?: 0
+        }.getOrElse { 0 }
         updateState {
             it.copy(
                 episode = episode.toEpisodeUiModel(),
