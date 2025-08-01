@@ -1,11 +1,12 @@
 package com.sanaa.vod.dataSource.local.continueWatch.mapper
 
 import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.util.TimeUtils
 import entity.Genre
 import entity.MediaHistoryItem
 import usecase.search.search_param.MediaType
 
-fun MediaHistoryItem.toDto(username: String): WatchedMediaHistoryLocalDto {
+fun MediaHistoryItem.toDto(username: String, time: Long = TimeUtils.getCurrentTimeStamp()): WatchedMediaHistoryLocalDto {
     val genresString =
         this.genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
     return WatchedMediaHistoryLocalDto(
@@ -13,7 +14,8 @@ fun MediaHistoryItem.toDto(username: String): WatchedMediaHistoryLocalDto {
         username = username,
         posterImageUrl = this.posterImageUrl,
         mediaType = this.mediaType.name,
-        genres = genresString
+        genres = genresString,
+        timestamp = time
     )
 }
 
