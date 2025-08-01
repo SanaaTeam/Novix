@@ -95,6 +95,15 @@ class SeriesViewModel @Inject constructor(
         updateState { it.copy(showRateBottomSheet = false) }
     }
 
+    override fun onDismissAnyBottomSheet() {
+        updateState {
+            it.copy(
+                showRateBottomSheet  = false,
+                showLoginBottomSheet = false
+            )
+        }
+    }
+
     override fun onLoginButtonClick() {
         updateState { it.copy(showLoginBottomSheet = false) }
         emitEffect(SeriesScreenEffects.NavigateToLogin)
