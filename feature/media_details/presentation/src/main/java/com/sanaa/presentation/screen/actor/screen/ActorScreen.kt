@@ -89,9 +89,10 @@ fun ActorScreen(
 
                 ActorScreenEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    navController.context.startActivity(intent)
+//                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                    navController.context.startActivity(intent)
+
                 }
             }
         }
