@@ -131,7 +131,7 @@ fun HomeScreenContent(
                             interactionListener.onSaveIconClick(it)
                         },
                         onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                        modifier = Modifier.fillWidthOfParent(16.dp),
+                        modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
                     )
                 }
             }
