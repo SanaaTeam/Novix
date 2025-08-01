@@ -175,7 +175,8 @@ class ManageActorUseCaseTest {
                 imdbRating = 8.6f,
                 duration = 137.minutes,
                 releaseDate = LocalDate(2023, 5, 12),
-                overview = "A big summer action film."
+                overview = "A big summer action film.",
+                rating = 0
             ), Movie(
                 id = 2,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/poster2.jpg",
@@ -184,7 +185,8 @@ class ManageActorUseCaseTest {
                 imdbRating = 8.2f,
                 duration = 126.minutes,
                 releaseDate = LocalDate(2022, 11, 3),
-                overview = "An award-winning character study."
+                overview = "An award-winning character study.",
+                rating = 0
             )
         )
         private val sciFi = Genre(
@@ -202,7 +204,8 @@ class ManageActorUseCaseTest {
                 genres = listOf(sciFi),
                 imdbRating = 8.9f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
-                seasonsCount = 1
+                seasonsCount = 1,
+                rating = 0
             ), TvSeries(
                 id = 102,
                 title = "City Shadows",
@@ -211,7 +214,8 @@ class ManageActorUseCaseTest {
                 genres = listOf(crime),
                 imdbRating = 8.5f,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series2.jpg",
-                seasonsCount = 1
+                seasonsCount = 1,
+                rating = 0
             )
         )
         private val dummyGallery = listOf(

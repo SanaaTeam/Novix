@@ -56,6 +56,11 @@ fun LoginScreen(
 
                 LoginScreenEffects.NavigateToHome -> {
                     navController.navigate(HomeScreenRoute)
+                    {
+                        popUpTo(0) {
+                            inclusive = true
+                        }
+                    }
                 }
 
                 LoginScreenEffects.NavigateToForgotPassword -> {
@@ -113,7 +118,9 @@ fun LoginContent(
             LoginHeader()
 
             Column(
-                modifier = Modifier.padding( horizontal = 16.dp).navigationBarsPadding(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .navigationBarsPadding(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 Spacer(Modifier.height(24.dp))
@@ -144,6 +151,7 @@ fun LoginContent(
         }
     }
 }
+
 @Preview(showSystemUi = true)
 @Composable
 fun PreviewLoginScreen() {

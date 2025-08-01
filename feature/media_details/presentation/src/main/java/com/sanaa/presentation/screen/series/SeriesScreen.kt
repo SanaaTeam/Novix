@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.series
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +43,7 @@ import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
@@ -265,17 +265,30 @@ fun SeriesScreenContent(
             RateBottomSheet(
                 isRateSelected = state.hasUserSelectedRate,
                 imdbRating = state.imdbRating,
-                onDismiss = interactionListener::onDismissRateBottomSheet,
+                onDismiss = interactionListener::onDismissAnyBottomSheet,
                 isVisible = state.showRateBottomSheet,
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                 onRatingChanged = interactionListener::onRatingChanged
             )
         }
         if (state.showLoginBottomSheet) {
+            val title = when (state.loginPromptType) {
+                LoginPromptType.RATE -> stringResource(R.string.rate_it)
+                LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
+                else -> stringResource(R.string.add_to_list)
+            }
+
+            val text = when (state.loginPromptType) {
+                LoginPromptType.RATE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
+                LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
+                else -> stringResource(R.string.request_login)
+            }
             RequestToLoginBottomSheet(
-                onDismiss = interactionListener::onDismissRateBottomSheet,
+                onDismiss = interactionListener::onDismissAnyBottomSheet,
                 onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                isVisible = state.showLoginBottomSheet
+                isVisible = state.showLoginBottomSheet,
+                text = text,
+                title = title
             )
         }
     }

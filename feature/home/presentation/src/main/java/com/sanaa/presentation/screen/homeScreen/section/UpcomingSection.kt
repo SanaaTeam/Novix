@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -140,5 +141,6 @@ fun LazyGridScope.upcomingSection(
             )
         }
     }
+
 
 }

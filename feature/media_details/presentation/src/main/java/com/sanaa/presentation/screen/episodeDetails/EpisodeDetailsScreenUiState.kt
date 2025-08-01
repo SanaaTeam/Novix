@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.episodeDetails
 
 import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.model.EpisodeUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 
 
 data class EpisodeDetailsScreenUiState(
@@ -17,7 +18,8 @@ data class EpisodeDetailsScreenUiState(
     val noInternetConnection: Boolean = false,
     val imdbRating: Int = 0,
     val guestSessionId: String = "",
-    val isUserLoggedIn: Boolean = false
+    val isUserLoggedIn: Boolean = false,
+    val loginPromptType: LoginPromptType? = null
 ) {
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0

@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 val boxContainerGradient = Brush.verticalGradient(
-    colors = listOf(Color(0xFF0D0608),Color(0x00000000))
+    colors = listOf(Color(0xFF0D0608), Color(0x00000000))
 )
 
 @Composable
@@ -64,20 +64,22 @@ fun ImageSlider(
     }
 
     LaunchedEffect(pagerState, images.size) {
-        while (images.size > 1) {
-            delay(4000)
+        if (images.isNotEmpty()) {
+            while (images.size > 1) {
+                delay(4000)
 
-            if (!isUserInteracting) {
-                val nextPage = if (pagerState.currentPage < images.size - 1) {
-                    pagerState.currentPage + 1
-                } else 0
-                pagerState.animateScrollToPage(
-                    page = nextPage,
-                    animationSpec = tween(
-                        durationMillis = 600,
-                        easing = FastOutSlowInEasing
+                if (!isUserInteracting) {
+                    val nextPage = if (pagerState.currentPage < images.size - 1) {
+                        pagerState.currentPage + 1
+                    } else 0
+                    pagerState.animateScrollToPage(
+                        page = nextPage,
+                        animationSpec = tween(
+                            durationMillis = 600,
+                            easing = FastOutSlowInEasing
+                        )
                     )
-                )
+                }
             }
         }
     }
@@ -91,33 +93,38 @@ fun ImageSlider(
             )
 
     ) {
-        HorizontalPager(
-            state = pagerState, modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-        ) { page ->
-            RemoteBlurredHaramImageViewer(
-                imageUrl = images[page], contentDescription = contentDescription,
-                modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
-                placeholderContent = {
-                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                },
-                errorContent = {
-                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                },
-            ) {
-                OnBlurContent(
-                    hintText = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small.copy(
-                        color = Color(0x99FFFFFF)
-                    ),
-                    iconSize = 24.dp,
-                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                )
+        if (images.isNotEmpty()) {
+            HorizontalPager(
+                state = pagerState, modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) { page ->
+                RemoteBlurredHaramImageViewer(
+                    imageUrl = images[page], contentDescription = contentDescription,
+                    modifier = Modifier.fillMaxWidth(),
+                    haramThreshold = 0.2f,
+                    nonHaramThreshold = 0.7f,
+                    placeholderContent = {
+                        RemoteImagePlaceholder(Modifier.fillMaxSize())
+                    },
+                    errorContent = {
+                        RemoteImagePlaceholder(Modifier.fillMaxSize())
+                    },
+                ) {
+                    OnBlurContent(
+                        hintText = stringResource(R.string.unsuitable_image),
+                        textStyle = Theme.textStyle.body.small.copy(
+                            color = Color(0x99FFFFFF)
+                        ),
+                        iconSize = 24.dp,
+                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                    )
+                }
             }
+        } else {
+            RemoteImagePlaceholder(Modifier.fillMaxSize())
         }
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
