@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,9 +41,6 @@ import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
-import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
-import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
 @Composable
 fun TopSeriesScreen(
@@ -64,7 +60,6 @@ fun TopSeriesScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopSeriesContent(
     state: ActorScreenUiState,

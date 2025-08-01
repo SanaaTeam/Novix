@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.text.CustomText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.ActorUiModel
@@ -24,7 +24,7 @@ fun CastComponent(
     Column(
         modifier = modifier
     ) {
-        Text(
+        CustomText(
             text = stringResource(R.string.cast),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title,
