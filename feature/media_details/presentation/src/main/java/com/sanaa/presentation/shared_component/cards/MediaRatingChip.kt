@@ -1,6 +1,5 @@
 package com.sanaa.presentation.shared_component.cards
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -20,6 +19,9 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.ColorFilter
+import com.sanaa.designsystem.design_system.component.text.CustomText
 
 @Composable
 fun MediaRatingChip(
