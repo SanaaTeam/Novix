@@ -1,8 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,7 +9,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,27 +34,20 @@ fun SearchSection(
         )
     }
 
-    Row(
+    NovixTextField(
+        value = textFieldValue,
+        onValueChange = { newValue ->
+            textFieldValue = newValue
+            onTextChange(newValue.text)
+        },
+        hint = stringResource(R.string.search_hint),
+        icon = painterResource(R.drawable.icon_search),
         modifier = Modifier
             .height(48.dp)
             .padding(horizontal = 16.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        NovixTextField(
-            value = textFieldValue,
-            onValueChange = { newValue ->
-                textFieldValue = newValue
-                onTextChange(newValue.text)
-            },
-            hint = stringResource(R.string.search_hint),
-            icon = painterResource(R.drawable.icon_search),
-            modifier = Modifier
-                .weight(1f)
 
         )
-    }
 }
 
 @PreviewLightDark
