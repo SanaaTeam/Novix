@@ -84,6 +84,7 @@ abstract class BaseViewModel<T, E>(
         return Pager(
             config = PagingConfig(
                 pageSize = PAGE_SIZE,
+                prefetchDistance = 4,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = pagingSourceFactory
