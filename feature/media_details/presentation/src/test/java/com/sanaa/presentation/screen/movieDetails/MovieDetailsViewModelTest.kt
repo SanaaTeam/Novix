@@ -32,7 +32,6 @@ class MovieDetailsViewModelTest {
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
-    private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
 
@@ -44,8 +43,10 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
         givenHappy()
-        viewModel.onBackClick()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.effect.test {
+            viewModel.onBackClick()
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
@@ -59,33 +60,33 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
 
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "movieId" to movieId
-            )
-        )
+        val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
-        viewModel =
-            MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, manageWatchedMediaHistoryUseCase, getUser)
-        viewModel.onWatchTrailerClick()
+        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, manageWatchedMediaHistoryUseCase, getUser)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effect.test {
+            viewModel.onWatchTrailerClick()
             expectNoEvents()
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `onReadMoreClick does nothing`() {
+    fun `onReadMoreClick does nothing`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.onReadMoreClick()
     }
 
     @Test
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.onBookmarkClick(movieId)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+
         viewModel.onRateMovieClick()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
@@ -93,6 +94,8 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onDismissLoginBottomSheet sets sheet false`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
@@ -101,11 +104,12 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onSimilarMovieClick emits NavigateToAnotherMovieDetails`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
         val otherId = 99
-        viewModel.onSimilarMovieClick(otherId)
+
         viewModel.effect.test {
-            assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(otherId))
+            viewModel.onSimilarMovieClick(otherId)
+            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(otherId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -113,11 +117,12 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onActorCardClick emits NavigateToActorScreen`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
         val actorId = 5
-        viewModel.onActorCardClick(actorId)
+
         viewModel.effect.test {
-            assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToActorScreen(actorId))
+            viewModel.onActorCardClick(actorId)
+            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToActorScreen(actorId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -125,10 +130,11 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onShowReviewsClick emits NavigateToReviewsScreen`() = runTest {
         givenHappy()
-        viewModel.onShowReviewsClick(movieId)
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.effect.test {
-            assertThat(awaitItem())
-                .isEqualTo(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
+            viewModel.onShowReviewsClick(movieId)
+            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -136,25 +142,17 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappy()
-        val genre =
-            GenreUiModel(
-                id = 1,
-                name = "Drama"
-            )
+        testDispatcher.scheduler.advanceUntilIdle()
+        val genre = GenreUiModel(id = 1, name = "Drama")
 
-        viewModel.onGenreClicked(genre)
         viewModel.effect.test {
-            assertThat(awaitItem())
-                .isEqualTo(
-                    MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(
-                        genre.id,
-                        genre.name
-                    )
-                )
+            viewModel.onGenreClicked(genre)
+            assertThat(awaitItem()).isEqualTo(
+                MovieDetailsUiEffect.NavigateToMovieCategoriesScreen(genre.id, genre.name)
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
-
 
     @Test
     fun `onRateMovieClick shows rate bottom sheet if user is logged in`() = runTest {
@@ -170,20 +168,23 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.updateState { it.copy(showLoginBottomSheet = true) }
-        viewModel.onLoginButtonClick()
-
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
 
         viewModel.effect.test {
+            viewModel.onLoginButtonClick()
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
+
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test
     fun `onRatingChanged updates the rating`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.onRatingChanged(8)
         assertThat(viewModel.state.value.imdbRating).isEqualTo(8)
     }
@@ -191,6 +192,8 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onDismissRateBottomSheet sets sheet to false`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.updateState { it.copy(showRateBottomSheet = true) }
         viewModel.onDismissRateBottomSheet()
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
@@ -201,6 +204,7 @@ class MovieDetailsViewModelTest {
         val error = RuntimeException("Something went wrong")
         coEvery { manageMovieDetails.addMovieRate(any(), any()) } throws error
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onSubmitRateBottomSheet()
         testDispatcher.scheduler.advanceUntilIdle()
@@ -212,13 +216,15 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onRetryLoadDetails updates state and retries fetch`() = runTest {
         givenHappy()
+        testDispatcher.scheduler.advanceUntilIdle()
+
         viewModel.onRetryLoadDetails()
         testDispatcher.scheduler.advanceUntilIdle()
+
         assertThat(viewModel.state.value.isLoading).isFalse()
         assertThat(viewModel.state.value.errorMessage).isNull()
         assertThat(viewModel.state.value.noInternetConnection).isFalse()
     }
-
 
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
@@ -227,11 +233,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
 
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "movieId" to movieId
-            )
-        )
+        val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
             savedStateHandle,
@@ -245,14 +247,8 @@ class MovieDetailsViewModelTest {
 
     companion object {
         private val genreList = listOf(
-            Genre(
-                id = 1,
-                name = "Drama"
-            ),
-            Genre(
-                id = 2,
-                name = "Action"
-            )
+            Genre(id = 1, name = "Drama"),
+            Genre(id = 2, name = "Action")
         )
         private val dummyMovie = Movie(
             id = 10,
@@ -274,9 +270,7 @@ class MovieDetailsViewModelTest {
                 deathDate = null, placeOfBirth = "LA", biography = "Bio"
             )
         )
-        private val dummySimilar = listOf(
-            dummyMovie.copy(id = 11, title = "Movie Two", overview = "Overview2")
-        )
+        private val dummySimilar = listOf(dummyMovie.copy(id = 11, title = "Movie Two", overview = "Overview2"))
         private val dummyImages = listOf("/img1.png", "/img2.png")
         private const val dummyTrailer = "http://trailer.url"
     }
