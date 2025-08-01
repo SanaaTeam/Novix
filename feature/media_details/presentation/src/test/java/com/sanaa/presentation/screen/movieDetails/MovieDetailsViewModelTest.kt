@@ -19,8 +19,9 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import usecase.GetLoggedInUserUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -29,6 +30,8 @@ class MovieDetailsViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
+        mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
 
@@ -59,7 +62,7 @@ class MovieDetailsViewModelTest {
 
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
-        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, getUser)
+        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, manageWatchedMediaHistoryUseCase, getUser)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effect.test {
@@ -158,6 +161,7 @@ class MovieDetailsViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onRateMovieClick()
+
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
 
@@ -235,6 +239,7 @@ class MovieDetailsViewModelTest {
             savedStateHandle,
             manageMovieDetails,
             checkUserLogin,
+            manageWatchedMediaHistoryUseCase,
             getUser,
             dispatcher = testDispatcher
         )

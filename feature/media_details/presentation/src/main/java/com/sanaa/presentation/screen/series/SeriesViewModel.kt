@@ -3,11 +3,14 @@ package com.sanaa.presentation.screen.series
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeasonUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
+import com.sanaa.presentation.model.mapper.toSeasonUiModel
+import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.TvSeries
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +19,7 @@ import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +28,9 @@ class SeriesViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getUser: GetLoggedInUserUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
     initialState = SeriesScreenUiState(),
     defaultDispatcher = dispatcher
@@ -218,6 +224,7 @@ class SeriesViewModel @Inject constructor(
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
         val currentSeriesRating = ratingDeferred.await()
+        addTvSeriesToHistory(series)
 
         updateState {
             it.copy(
@@ -254,5 +261,18 @@ class SeriesViewModel @Inject constructor(
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = tvSeries.toHistory(),
+            username = user.username
+        )
     }
 }

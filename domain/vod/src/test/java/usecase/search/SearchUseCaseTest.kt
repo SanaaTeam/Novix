@@ -13,18 +13,18 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import repository.SearchRepository
 import kotlin.time.Duration.Companion.minutes
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var historyRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var searchUseCase: SearchUseCase
 
     @BeforeEach
     fun setUp() {
-        searchUseCase = SearchUseCase(searchRepository, searchHistoryRepository)
+        searchUseCase = SearchUseCase(searchRepository, historyRepository)
     }
 
     @Test
@@ -39,7 +39,7 @@ class SearchUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 
@@ -88,7 +88,7 @@ class SearchUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 
@@ -138,7 +138,7 @@ class SearchUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 

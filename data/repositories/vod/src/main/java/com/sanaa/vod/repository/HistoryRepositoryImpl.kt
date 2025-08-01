@@ -1,23 +1,26 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
+import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
+import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
+import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall
-import entity.Movie
-import entity.TvSeries
+import entity.MediaHistoryItem
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
+import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
-class SearchHistoryRepositoryImpl @Inject constructor(
-    private val local: LocalSearchHistoryDataSource
-) : SearchHistoryRepository {
+
+class HistoryRepositoryImpl @Inject constructor(
+    private val local: LocalHistoryDataSource
+) : HistoryRepository {
 
     override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
         errorMessage = "Failed to retrieve search history"
@@ -73,11 +76,26 @@ class SearchHistoryRepositoryImpl @Inject constructor(
         local.deleteAllRecentViewed()
     }
 
-    override suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> {
-        return emptyList()
+    override suspend fun addWatchedMediaHistory(
+        username: String,
+        media: MediaHistoryItem
+    ) = safeCall(
+        errorMessage = "Failed to add watched media history for user $username",
+        exceptionProvider = ::FailedToAddException
+    ) {
+        local.insertWatchedMediaHistory(media.toDto(username))
     }
 
-    override suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> {
-        return emptyList()
+    override suspend fun getWatchedMediaHistory(
+        username: String,
+        mediaType: MediaType?,
+        genreId: Int?
+    ): Flow<List<MediaHistoryItem>> = safeCall(
+        errorMessage = "Failed to retrieve watched media history for user $username"
+    ) {
+        val watchedHistoryDtos = local.getWatchedMediaHistory(username, mediaType, genreId)
+        watchedHistoryDtos.map {
+            it.map { watchedHistory -> watchedHistory.toEntity() }
+        }
     }
 }

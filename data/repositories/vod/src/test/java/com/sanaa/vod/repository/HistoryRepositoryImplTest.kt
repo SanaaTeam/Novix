@@ -1,11 +1,15 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
+import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
+import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
+import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
 import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
+import entity.MediaHistoryItem
 import exceptions.FailedToAddException
 import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
@@ -21,209 +25,223 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import usecase.search.search_param.MediaType
 
-class SearchSearchHistoryRepositoryImplTest {
-    private lateinit var repository: SearchHistoryRepositoryImpl
-    private var localDataSource: LocalSearchHistoryDataSource = mockk(relaxed = true)
+class HistoryRepositoryImplTest {
+    private lateinit var repository: HistoryRepositoryImpl
+    private var localDataSource: LocalHistoryDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        repository = SearchHistoryRepositoryImpl(localDataSource)
+        repository = HistoryRepositoryImpl(localDataSource)
     }
 
     @Test
     fun `getSearchHistory returns list of search history`() = runTest {
-        // Given
         coEvery { localDataSource.getQueries(2) } returns flowOf(givenQueries)
-        // When
+
         val expected = givenQueries.map { it.toEntity() }
         val result = repository.getSearchHistory(2)
-        // Then
+
         assertThat(result.first()).isEqualTo(expected)
     }
 
     @Test
     fun `getSearchHistory throws exception when failed to retrieve search history`() = runTest {
-        // Given
         coEvery { localDataSource.getQueries(2) } throws Exception()
 
-        // When & Then
         assertThrows<RetrievingDataFailureException> { repository.getSearchHistory(2).first() }
     }
 
     @Test
     fun `addSearchHistory adds search history`() = runTest {
-        // Given
         val query = "query"
         coEvery { localDataSource.insertQuery(query) } returns Unit
-        // When
+
         repository.addSearchHistory(query)
-        // Then
+
         coVerify { localDataSource.insertQuery(query) }
     }
 
     @Test
     fun `addSearchHistory throws exception when failed to add search history`() = runTest {
-        // Given
         val query = "query"
         coEvery { localDataSource.insertQuery(query) } throws Exception()
-        // When
+
         val result = runCatching { repository.addSearchHistory(query) }
-        // Then
+
         assertThrows<FailedToAddException> { result.getOrThrow() }
     }
 
     @Test
     fun `clearSearchHistory clears search history`() = runTest {
-        // Given
         coEvery { localDataSource.deleteAllQueries() } returns Unit
-        // When
+
         repository.clearSearchHistory()
-        // Then
+
         coVerify { localDataSource.deleteAllQueries() }
     }
 
     @Test
     fun `clearSearchHistory throws exception when failed to clear search history`() = runTest {
-        // Given
         coEvery { localDataSource.deleteAllQueries() } throws Exception()
-        // When
+
         val result = runCatching { repository.clearSearchHistory() }
-        // Then
+
         assertThrows<FailedToDeleteException> { result.getOrThrow() }
     }
 
     @Test
     fun `removeSearchHistoryById removes search history by id`() = runTest {
-        // Given
         val id = 1
         coEvery { localDataSource.deleteQueryById(id) } returns Unit
-        // When
+
         repository.removeSearchHistoryById(id)
-        // Then
+
         coVerify { localDataSource.deleteQueryById(id) }
     }
 
     @Test
     fun `removeSearchHistoryById throws exception when failed to remove search history`() =
         runTest {
-            // Given
             val id = 1
             coEvery { localDataSource.deleteQueryById(id) } throws Exception()
-            // When
+
             val result = runCatching { repository.removeSearchHistoryById(id) }
-            // Then
+
             assertThrows<FailedToDeleteException> { result.getOrThrow() }
         }
 
     @Test
     fun `getRecentViewed returns list of recent viewed`() = runTest {
-        // Given
         coEvery { localDataSource.getAllRecentViewed(2) } returns flowOf(givenRecentViewed)
-        // When
+
         val expected = givenRecentViewed.map { it.toEntity() }
         val result = repository.getRecentViewed(2)
-        // Then
+
         assertThat(result.first()).isEqualTo(expected)
     }
 
     @Test
     fun `getRecentViewed throws exception when failed to retrieve recent viewed`() = runTest {
-        // Given
         coEvery { localDataSource.getAllRecentViewed(2) } throws Exception()
-        // When & Then
+
         assertThrows<RetrievingDataFailureException> { repository.getRecentViewed(2).first() }
     }
 
     @Test
     fun `addRecentViewed adds recent viewed`() = runTest {
-        // Given
+        val recentViewed = givenRecentViewed.first()
+        coEvery { localDataSource.insertRecentViewed(recentViewed) } returns Unit
 
-        coEvery { localDataSource.insertRecentViewed(givenRecentViewed.first()) } returns Unit
+        repository.addRecentViewedMedia(recentViewed.toEntity())
 
-        // When
-        repository.addRecentViewedMedia(givenRecentViewed.first().toEntity())
-
-        // Then
         coVerify {
-            localDataSource.insertRecentViewed(match {
-                it.id == 1 && it.imageUrl == "imageUrl1" && it.mediaType == MediaType.MOVIE.name && it.isSaved
-            })
+            localDataSource.insertRecentViewed(recentViewed)
         }
     }
 
     @Test
     fun `addRecentViewed throws exception when failed to add recent viewed`() = runTest {
-        // Given
         coEvery { localDataSource.insertRecentViewed(any()) } throws Exception()
-        // When
+
         val result = runCatching {
             repository.addRecentViewedMedia(givenRecentViewed.first().toEntity())
         }
         assertThrows<FailedToAddException> { result.getOrThrow() }
-    }
-
-
-    @Test
-    fun `addRecentViewedMedia throws exception when failed to add `() = runTest {
-        // Given
-        coEvery { localDataSource.insertRecentViewed(any()) } throws Exception()
-        // When
-        val result = runCatching {
-            repository.addRecentViewedMedia(givenRecentViewed.first().toEntity())
-        }
-        // Then
-        assertThrows<FailedToAddException> { result.getOrThrow() }
-
     }
 
     @Test
     fun `clearRecentViewed clears recent viewed`() = runTest {
-        // Given
         coEvery { localDataSource.deleteAllRecentViewed() } returns Unit
-        // When
+
         repository.clearRecentViewed()
-        // Then
+
         coVerify { localDataSource.deleteAllRecentViewed() }
     }
 
     @Test
     fun `clearRecentViewed throws exception when failed to clear recent viewed`() = runTest {
-        // Given
         coEvery { localDataSource.deleteAllRecentViewed() } throws Exception()
-        // When
+
         val result = runCatching { repository.clearRecentViewed() }
-        // Then
+
         assertThrows<FailedToDeleteException> { result.getOrThrow() }
     }
 
     @Test
     fun `getSearchHistory throws NoNetworkException when ConnectionException occurs`() = runTest {
-        // Given
         coEvery { localDataSource.getQueries(any()) } throws ConnectionException()
 
-        // When & Then
         assertThrows<NoNetworkException> {
             repository.getSearchHistory(2).first()
         }
     }
 
     @Test
-    fun `getWatchedMoviesHistory returns empty list`() = runTest {
-        // Act
-        val result = repository.getWatchedMoviesHistory(page = 1, genreId = 1)
+    fun `getRecentViewed throws NoNetworkException when ConnectionException occurs`() = runTest {
+        coEvery { localDataSource.getAllRecentViewed(any()) } throws ConnectionException()
 
-        // Assert
-        assertThat(result).isEmpty()
+        assertThrows<NoNetworkException> {
+            repository.getRecentViewed(2).first()
+        }
     }
 
     @Test
-    fun `getWatchedSeriesHistory returns empty list`() = runTest {
-        // Act
-        val result = repository.getWatchedSeriesHistory(1, null)
+    fun `addWatchedMediaHistory should call localDataSource insertWatchedMediaHistory with correct parameters`() =
+        runTest {
+            val watchedMedia = mediaItem.toDto("username")
+            coEvery { localDataSource.insertWatchedMediaHistory(watchedMedia) } returns Unit
 
-        // Assert
-        assertThat(result).isEmpty()
+            repository.addWatchedMediaHistory(
+                watchedMedia.username,
+                mediaItem
+            )
+
+            coVerify {
+                localDataSource.insertWatchedMediaHistory(watchedMedia)
+            }
+        }
+
+    @Test
+    fun `addWatchedMediaHistory throws exception when failed to add watched media history`() =
+        runTest {
+            val watchedMedia = givenWatchedMedia.first()
+            coEvery { localDataSource.insertWatchedMediaHistory(any()) } throws Exception()
+
+            val result = runCatching {
+                repository.addWatchedMediaHistory("", watchedMedia.toEntity())
+            }
+
+            assertThrows<FailedToAddException> { result.getOrThrow() }
+        }
+
+    @Test
+    fun `getWatchedMediaHistory returns list of watched list when available`() = runTest {
+        val username = "username"
+        val mediaType = MediaType.MOVIE
+        val genreId: Int? = null
+        coEvery { localDataSource.getWatchedMediaHistory(username, mediaType, genreId) } returns flowOf(
+            givenWatchedMedia
+        )
+
+        val expected = givenWatchedMedia.map { it.toEntity() }
+        val result = repository.getWatchedMediaHistory(username, mediaType, genreId)
+
+        assertThat(result.first()).isEqualTo(expected)
     }
+
+    @Test
+    fun `getWatchedMediaHistory throws exception when failed to retrieve date`() = runTest {
+        coEvery { localDataSource.getWatchedMediaHistory(any(), any(), any()) } throws Exception()
+
+        assertThrows<RetrievingDataFailureException> {
+            repository.getWatchedMediaHistory(
+                "",
+                null,
+                null
+            ).first()
+        }
+    }
+
 
     val givenRecentViewed = listOf(
         RecentViewedLocalDto(
@@ -244,4 +262,31 @@ class SearchSearchHistoryRepositoryImplTest {
         QueryLocalDto(id = 1, query = "query1", timestamp = 1L),
         QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
     )
+
+
+    val givenWatchedMedia = listOf(
+        WatchedMediaHistoryLocalDto(
+            id = 1,
+            posterImageUrl = "imageUrl1",
+            mediaType = MediaType.MOVIE.name,
+            username = "zack",
+            genres = "11,12",
+        ),
+        WatchedMediaHistoryLocalDto(
+            id = 2,
+            posterImageUrl = "imageUrl2",
+            mediaType = MediaType.TV_SERIES.name,
+            username = "mark",
+            genres = "15,20",
+        )
+    )
+
+    val mediaItem = MediaHistoryItem(
+        id = 1,
+        posterImageUrl = "imageUrl1",
+        mediaType = MediaType.MOVIE,
+        genres = emptyList()
+    )
+
+
 }

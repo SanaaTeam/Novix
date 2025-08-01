@@ -2,15 +2,15 @@ package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toSeriesUiModel
-import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.model.mapper.toUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import usecase.ManageActorUseCase
-import javax.inject.Inject
 
 @HiltViewModel
 class ActorViewModel @Inject constructor(

@@ -1,4 +1,4 @@
-package com.sanaa.vod.search.search_history.dao
+package com.sanaa.vod.history.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
