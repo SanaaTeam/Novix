@@ -23,6 +23,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import repository.SearchRepository.SearchResult
 import usecase.search.search_param.MediaFilters
 
 class SearchRepositoryImplTest {
@@ -48,7 +49,7 @@ class SearchRepositoryImplTest {
         } returns ActorsLocalDtoList
 
         // When
-        val expected = ActorsLocalDtoList.map { it.toEntity() }
+        val expected = SearchResult(-1, ActorsLocalDtoList.map { it.toEntity() })
         val result = searchRepository.searchActors(query, page)
 
         // Then
@@ -108,8 +109,9 @@ class SearchRepositoryImplTest {
         } returns MoviesLocalDtoList
 
         // When
-        val expected =
-            MoviesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() }
+        val expected = SearchResult(
+            -1,
+            MoviesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() })
         val result = searchRepository.searchMovies(query, page, filters)
 
         // Then
@@ -127,7 +129,7 @@ class SearchRepositoryImplTest {
             } returns MoviesLocalDtoList
 
             // When
-            val expected = MoviesLocalDtoList.map { it.toEntity() }
+            val expected = SearchResult(-1, MoviesLocalDtoList.map { it.toEntity() })
             val result = searchRepository.searchMovies(query, page, null)
 
             // Then
@@ -146,8 +148,9 @@ class SearchRepositoryImplTest {
             coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
-            val expected = MoviesLocalDtoList
-                .filter { it.releaseDate == "2025" }.map { it.toEntity() }
+            val expected = SearchResult(
+                1, MoviesLocalDtoList
+                    .filter { it.releaseDate == "2025" }.map { it.toEntity() })
             val result = searchRepository.searchMovies(query, page, filters)
             assertThat(result).isEqualTo(expected)
         }
@@ -163,7 +166,7 @@ class SearchRepositoryImplTest {
             coEvery { remoteDataSource.searchMovies(query, page) } returns MovieSearchResponse
             coEvery { localCacheSearchDataSource.cacheMovie(any()) } just Runs
 
-            val expected = MoviesLocalDtoList.map { it.toEntity() }
+            val expected = SearchResult(1, MoviesLocalDtoList.map { it.toEntity() })
             val result = searchRepository.searchMovies(query, page, null)
             assertThat(result).isEqualTo(expected)
         }
@@ -225,8 +228,9 @@ class SearchRepositoryImplTest {
             } returns TvSeriesLocalDtoList
 
             // When
-            val expected =
-                TvSeriesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() }
+            val expected = SearchResult(
+                -1,
+                TvSeriesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() })
             val result = searchRepository.searchTvShows(query, page, filters)
 
             // Then
@@ -245,7 +249,7 @@ class SearchRepositoryImplTest {
             } returns TvSeriesLocalDtoList
 
             // When
-            val expected = TvSeriesLocalDtoList.map { it.toEntity() }
+            val expected = SearchResult(-1, TvSeriesLocalDtoList.map { it.toEntity() })
             val result = searchRepository.searchTvShows(query, page, null)
 
             // Then
@@ -283,8 +287,9 @@ class SearchRepositoryImplTest {
             coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
-            val expected =
-                MoviesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() }
+            val expected = SearchResult(
+                0,
+                MoviesLocalDtoList.filter { it.releaseDate == "2025" }.map { it.toEntity() })
             val result = searchRepository.searchTvShows(query, page, filters)
             assertThat(result).isEqualTo(expected)
         }
@@ -300,7 +305,7 @@ class SearchRepositoryImplTest {
             coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
             coEvery { localCacheSearchDataSource.cacheTvSeries(any()) } just Runs
 
-            val expected = TvSeriesLocalDtoList.map { it.toEntity() }
+            val expected = SearchResult(0, TvSeriesLocalDtoList.map { it.toEntity() })
             val result = searchRepository.searchTvShows(query, page, null)
             assertThat(result).isEqualTo(expected)
         }
