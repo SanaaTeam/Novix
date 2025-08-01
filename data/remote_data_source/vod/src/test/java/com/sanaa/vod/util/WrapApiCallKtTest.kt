@@ -49,7 +49,7 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()!!.message).isEqualTo("No internet connection")
+        assertThat(result.exceptionOrNull()!!.message).isEqualTo("No internet connection: ${exception.message}")
     }
 
     @Test
@@ -67,7 +67,7 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Request timed out")
+        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Request timed out: ${exception.message}")
     }
 
     @Test
@@ -87,7 +87,7 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Server error")
+        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Server error: ${exception.message}")
     }
 
     @Test
@@ -105,7 +105,7 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Parsing error")
+        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Parsing error: ${exception.message}")
     }
 
     @Test
@@ -123,6 +123,6 @@ class WrapApiCallTest {
         val result = runCatching {
             wrapApiCall { throw exception }
         }
-        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Unknown error")
+        assertThat(result.exceptionOrNull()!!.message).isEqualTo("Unknown error: ${exception.message}")
     }
 }
