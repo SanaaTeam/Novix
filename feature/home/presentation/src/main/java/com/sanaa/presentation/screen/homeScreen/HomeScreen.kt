@@ -91,21 +91,6 @@ fun HomeScreen(
 
 
     NovixTheme(isSystemInDarkTheme()) {
-        val navColor = Theme.colors.surface
-        val isSystemInDarkTheme = isSystemInDarkTheme()
-        val view = LocalView.current
-        val activity = view.context as? ComponentActivity
-
-        LaunchedEffect(Unit) {
-            activity?.window?.also { window ->
-                window.navigationBarColor = navColor.toArgb()
-                WindowInsetsControllerCompat(window, view).apply {
-                    isAppearanceLightStatusBars = !isSystemInDarkTheme
-                    isAppearanceLightNavigationBars = !isSystemInDarkTheme
-                }
-            }
-        }
-
         HomeScreenContent(
             state = state.value,
             interactionListener = viewModel,
