@@ -11,6 +11,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
@@ -194,19 +196,29 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchSeriesDetails() {
+    private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 
-        val series = manageTvSeriesDetails.getTvSeriesDetails(seriesId)
-        val cast = manageTvSeriesDetails.getTvSeriesCast(seriesId)
-        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
-        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-        val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentSeriesRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
-            val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
-            ratedSeries.find { it.id == seriesId }?.rating ?: 0
-        }.getOrElse { 0 }
+        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(seriesId) }
+        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(seriesId) }
+        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
+        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
+        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+        val ratingDeferred = async {
+            runCatching {
+                val userId = getUser.getLoggedInUser().id
+                val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
+                ratedSeries.find { it.id == seriesId }?.rating ?: 0
+            }.getOrElse { 0 }
+        }
+
+        val series = seriesDeferred.await()
+        val cast = castDeferred.await()
+        val season = seasonDeferred.await()
+        val images = imagesDeferred.await()
+        val trailer = trailerDeferred.await()
+        val currentSeriesRating = ratingDeferred.await()
+
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
@@ -217,6 +229,7 @@ class SeriesViewModel @Inject constructor(
             )
         }
     }
+
 
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
