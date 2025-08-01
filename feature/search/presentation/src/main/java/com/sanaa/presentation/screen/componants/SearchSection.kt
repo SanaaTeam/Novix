@@ -25,7 +25,6 @@ import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.text_field.NovixTextField
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 
-
 @Composable
 fun SearchSection(
     text: String,

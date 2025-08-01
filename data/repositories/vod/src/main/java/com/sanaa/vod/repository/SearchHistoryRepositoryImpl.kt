@@ -1,100 +1,83 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
-import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
-import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
+import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
+import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
-import com.sanaa.vod.mapper.search.toLocalDto
 import com.sanaa.vod.util.safeCall
-import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import repository.SearchRepository
+import exceptions.FailedToAddException
+import exceptions.FailedToDeleteException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import repository.SearchHistoryRepository
+import usecase.history.history_param.SearchHistory
+import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import javax.inject.Inject
 
-class SearchRepositoryImpl @Inject constructor(
-    private val remoteDataSource: SearchRemoteDataSource,
-    private val localCacheSearchDataSource: LocalCacheSearchDataSource,
-    private val languageProvider: LanguageProvider,
-) : SearchRepository {
-    override suspend fun searchActors(query: String, page: Int): List<Actor> = safeCall(query) {
-        val pageSize = 20
-        val offset = (page - 1) * pageSize
+class SearchHistoryRepositoryImpl @Inject constructor(
+    private val local: LocalSearchHistoryDataSource
+) : SearchHistoryRepository {
 
-        val cachedActors = localCacheSearchDataSource.getPagedActorsByQuery(query, pageSize, offset)
-        if (cachedActors.isNotEmpty()) {
-            cachedActors.map { it.toEntity() }
-        } else {
-            remoteDataSource.searchActors(query, page).results.onEach {
-                val language = languageProvider.getCurrentLanguage()
-                localCacheSearchDataSource.cacheActor(it.toLocalDto(language))
-            }.map { it.toEntity() }
+    override suspend fun getSearchHistory(sizeLimit: Int): Flow<List<SearchHistory>> = safeCall(
+        errorMessage = "Failed to retrieve search history"
+    ) {
+        local.getQueries(sizeLimit).map {
+            it.map { query -> query.toEntity() }
         }
     }
 
-    override suspend fun searchMovies(
-        query: String,
-        page: Int,
-    ): List<Movie> = safeCall(query) {
-        val pageSize = 20
-        val offset = (page - 1) * pageSize
-
-        val cachedMedia = localCacheSearchDataSource.getMoviesByQuery(
-            query, limit = pageSize, offset = offset
-        )
-        if (cachedMedia.isNotEmpty())
-            getMoviesFromCache(cachedMedia)
-        else
-            getMoviesFromRemote(query, page)
+    override suspend fun addSearchHistory(query: String) = safeCall(
+        errorMessage = "Failed to add search history",
+        exceptionProvider = ::FailedToAddException
+    ) {
+        local.insertQuery(query)
     }
 
-    override suspend fun searchTvShows(
-        query: String,
-        page: Int,
-    ): List<TvSeries> = safeCall(query) {
-        val pageSize = 20
-        val offset = (page - 1) * pageSize
 
-        val cachedTvSeries = localCacheSearchDataSource.getTvSeriesByQuery(
-            query, limit = pageSize, offset = offset
-        )
-        if (cachedTvSeries.isNotEmpty())
-            getTvSeriesFromCache(cachedTvSeries)
-        else
-            getTvSeriesFromRemote(query, page)
+    override suspend fun clearSearchHistory() = safeCall(
+        errorMessage = "Failed to clear search history",
+        exceptionProvider = ::FailedToDeleteException
+    ) {
+        local.deleteAllQueries()
     }
 
-    private suspend fun getMoviesFromRemote(
-        query: String,
-        page: Int,
-    ): List<Movie> {
-        return remoteDataSource.searchMovies(query, page).results.onEach {
-            localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
-        }.map { it.toEntity() }
+
+    override suspend fun removeSearchHistoryById(id: Int) = safeCall(
+        errorMessage = "Failed to remove search history",
+        exceptionProvider = ::FailedToDeleteException
+    ) {
+        local.deleteQueryById(id)
     }
 
-    private fun getMoviesFromCache(
-        cachedMedia: List<MovieLocalDto>,
-    ): List<Movie> {
-        return cachedMedia.map { it.toEntity() }
+
+    override suspend fun getRecentViewed(sizeLimit: Int): Flow<List<RecentViewedMedia>> = safeCall(
+        errorMessage = "Failed to retrieve recent viewed"
+    ) {
+        local.getAllRecentViewed(sizeLimit).map {
+            it.map { recentViewed -> recentViewed.toEntity() }
+        }
     }
 
-    private suspend fun getTvSeriesFromRemote(
-        query: String,
-        page: Int,
-    ): List<TvSeries> {
-        return remoteDataSource.searchTvShows(query, page).results.onEach {
-            localCacheSearchDataSource.cacheTvSeries(
-                it.toLocalDto(languageProvider.getCurrentLanguage())
-            )
-        }.map { it.toEntity() }
+    override suspend fun addRecentViewedMedia(item: RecentViewedMedia) = safeCall(
+        errorMessage = "Failed to add recent viewed",
+        exceptionProvider = ::FailedToAddException
+    ) {
+        local.insertRecentViewed(item.toDto())
     }
 
-    private fun getTvSeriesFromCache(
-        cachedTvSeries: List<TvSeriesLocalDto>,
-    ): List<TvSeries> {
-        return cachedTvSeries.map { it.toEntity() }
+    override suspend fun clearRecentViewed() = safeCall(
+        errorMessage = "Failed to clear recent viewed",
+        exceptionProvider = ::FailedToDeleteException
+    ) {
+        local.deleteAllRecentViewed()
+    }
+
+    override suspend fun getWatchedMoviesHistory(page: Int, genreId: Int?): List<Movie> {
+        return emptyList()
+    }
+
+    override suspend fun getWatchedSeriesHistory(page: Int, genreId: Int?): List<TvSeries> {
+        return emptyList()
     }
 }
