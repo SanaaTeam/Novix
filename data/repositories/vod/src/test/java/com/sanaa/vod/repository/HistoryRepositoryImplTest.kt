@@ -189,7 +189,7 @@ class HistoryRepositoryImplTest {
     fun `addWatchedMediaHistory should call localDataSource addWatchedMedia with correct parameters`() =
         runTest {
             val watchedMedia = mediaItem.toDto("username")
-            coEvery { localDataSource.addWatchedMedia(watchedMedia) } returns Unit
+            coEvery { localDataSource.upsertWatchedMedia(watchedMedia) } returns Unit
 
             repository.addWatchedMediaHistory(
                 watchedMedia.username,
@@ -197,7 +197,7 @@ class HistoryRepositoryImplTest {
             )
 
             coVerify {
-                localDataSource.addWatchedMedia(watchedMedia)
+                localDataSource.upsertWatchedMedia(watchedMedia)
             }
         }
 
@@ -205,7 +205,7 @@ class HistoryRepositoryImplTest {
     fun `addWatchedMediaHistory throws exception when failed to add watched media history`() =
         runTest {
             val watchedMedia = givenWatchedMedia.first()
-            coEvery { localDataSource.addWatchedMedia(any()) } throws Exception()
+            coEvery { localDataSource.upsertWatchedMedia(any()) } throws Exception()
 
             val result = runCatching {
                 repository.addWatchedMediaHistory("", watchedMedia.toEntity())

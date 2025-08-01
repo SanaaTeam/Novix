@@ -83,7 +83,7 @@ class HistoryRepositoryImpl @Inject constructor(
         errorMessage = "Failed to add watched media history for user $username",
         exceptionProvider = ::FailedToAddException
     ) {
-        local.addWatchedMedia(media.toDto(username))
+        local.upsertWatchedMedia(media.toDto(username))
     }
 
     override suspend fun getWatchedMediaHistory(
