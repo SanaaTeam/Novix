@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.movieDetails
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,6 +37,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.button.NovixTextButton
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -47,6 +49,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.modifier.fillWidthOfParent
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
@@ -65,6 +68,7 @@ import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
 import com.sanaa.presentation.util.toLocalizedDigits
+import dagger.hilt.android.EntryPointAccessors
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
@@ -78,6 +82,21 @@ fun MovieDetailsScreen(
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserStatus()
+        }
+    )
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -122,7 +141,9 @@ fun MovieDetailsScreen(
                     snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
-                MovieDetailsUiEffect.NavigateToLogin -> TODO()
+                 MovieDetailsUiEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -385,7 +406,10 @@ fun MovieDetailsContent(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
                     isVisible = state.showLoginBottomSheet,
                     title = title,
-                    text = text
+                    text = text,
+                    onLoginButtonClick = {
+                        interactionListener.onLoginButtonClick()
+                    }
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -36,7 +37,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        tryToExecute(callee = ::getUserState)
+        updateUserStatus()
     }
 
     override fun onBackClick() {
@@ -221,5 +222,9 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 }
