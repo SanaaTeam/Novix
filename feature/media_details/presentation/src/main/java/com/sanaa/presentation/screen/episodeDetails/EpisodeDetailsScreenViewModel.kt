@@ -54,12 +54,16 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSavedClick(seriesId: Int) {
-        updateState {
-            it.copy(
-                showLoginBottomSheet = true,
-                loginPromptType = LoginPromptType.BOOKMARK
-            )
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
         }
+
     }
 
     override fun onDismissBottomSheet() {

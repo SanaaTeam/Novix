@@ -143,12 +143,16 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onSaveSeriesClicked() {
-        updateState {
-            it.copy(
-                showLoginBottomSheet = true,
-                loginPromptType = LoginPromptType.BOOKMARK
-            )
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
         }
+
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {

@@ -52,12 +52,16 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onReadMoreClick() {}
 
     override fun onBookmarkClick(movieId: Int) {
-        updateState {
-            it.copy(
-                showLoginBottomSheet = true,
-                loginPromptType = LoginPromptType.BOOKMARK
-            )
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true,
+                    loginPromptType = LoginPromptType.BOOKMARK
+                )
+            }
         }
+
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
