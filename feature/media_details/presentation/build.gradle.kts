@@ -19,7 +19,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material3)
     implementation(libs.kotlinx.datetime)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
