@@ -74,11 +74,15 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
+        val currentQuery =state.value.searchQuery
         updateState { currentState ->
             currentState.copy(
                 movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
                 tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
             )
+        }
+        if (currentQuery.isNotBlank()) {
+            loadMediaByTab(currentQuery)
         }
     }
     override fun onActorClicked(id: Int) {
