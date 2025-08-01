@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
-    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }
@@ -79,7 +79,7 @@ abstract class BaseViewModel<T, E>(
 
     protected fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R
+        mapper: (T) -> R,
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
