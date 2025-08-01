@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -12,6 +13,8 @@ import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageHistoryUseCase
@@ -22,11 +25,13 @@ class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageHistoryUseCase: ManageHistoryUseCase,
-) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
 ), HomeScreenInteractionListener {
 
     init {
+        updateUserLoggingStatus()
         fetchPopularMediaData()
         fetchTopRatedMediaData()
         fetchWatchedMediaData()
@@ -34,6 +39,17 @@ class HomeScreenViewModel @Inject constructor(
         fetchUpcomingMovies()
     }
 
+
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn
+                )
+            }
+        }
+    }
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -169,8 +185,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState {
-            it.copy(showBottomSheet = true)
+        if (!state.value.userIsLoggedIn){
+            updateState { it.copy(showBottomSheet = true) }
         }
     }
 
