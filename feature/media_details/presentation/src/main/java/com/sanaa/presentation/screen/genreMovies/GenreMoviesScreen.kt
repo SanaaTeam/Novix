@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
@@ -63,8 +62,10 @@ fun GenreMoviesScreen(
                 is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsScreenRoute(effect.id).route()
                 )
+
                 GenreMoviesEffects.NavigateToLogin -> {
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
+                    val intent =
+                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                     navController.context.startActivity(intent)
                 }
@@ -121,7 +122,10 @@ fun GenreMoviesScreenContent(
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NovixLoadingIndicator()
                             }
                         }
@@ -137,7 +141,9 @@ fun GenreMoviesScreenContent(
                         ) {
                             items(
                                 count = pagedMovies.itemCount,
-                                key = pagedMovies.itemKey { it.id }
+                                key = { index ->
+                                    "${index}_${pagedMovies[index]?.id}"
+                                }
                             ) { index ->
                                 val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(

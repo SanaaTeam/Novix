@@ -7,16 +7,11 @@ import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.mapper.search.toLocalDto
-import com.sanaa.vod.util.filterCachedMovies
-import com.sanaa.vod.util.filterCachedTvShows
-import com.sanaa.vod.util.filterMovies
-import com.sanaa.vod.util.filterTvShows
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
 import repository.SearchRepository
-import usecase.search.search_param.MediaFilters
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -42,7 +37,6 @@ class SearchRepositoryImpl @Inject constructor(
     override suspend fun searchMovies(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<Movie> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
@@ -51,15 +45,14 @@ class SearchRepositoryImpl @Inject constructor(
             query, limit = pageSize, offset = offset
         )
         if (cachedMedia.isNotEmpty())
-            getMoviesFromCache(filters, cachedMedia)
+            getMoviesFromCache(cachedMedia)
         else
-            getMoviesFromRemote(query, page, filters)
+            getMoviesFromRemote(query, page)
     }
 
     override suspend fun searchTvShows(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<TvSeries> = safeCall(query) {
         val pageSize = 20
         val offset = (page - 1) * pageSize
@@ -68,53 +61,40 @@ class SearchRepositoryImpl @Inject constructor(
             query, limit = pageSize, offset = offset
         )
         if (cachedTvSeries.isNotEmpty())
-            getTvSeriesFromCache(filters, cachedTvSeries)
+            getTvSeriesFromCache(cachedTvSeries)
         else
-            getTvSeriesFromRemote(query, page, filters)
+            getTvSeriesFromRemote(query, page)
     }
 
     private suspend fun getMoviesFromRemote(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<Movie> {
-        val movies = remoteDataSource.searchMovies(query, page).results.onEach {
+        return remoteDataSource.searchMovies(query, page).results.onEach {
             localCacheSearchDataSource.cacheMovie(it.toLocalDto(languageProvider.getCurrentLanguage()))
-        }
-        val filteredMovies= filters?.filterMovies(movies)
-        return filteredMovies?: movies.map { it.toEntity() }
+        }.map { it.toEntity() }
     }
 
     private fun getMoviesFromCache(
-        filters: MediaFilters?,
         cachedMedia: List<MovieLocalDto>,
     ): List<Movie> {
-        return filters
-            ?.filterCachedMovies(cachedMedia)
-            ?: cachedMedia.map { it.toEntity() }
+        return cachedMedia.map { it.toEntity() }
     }
 
     private suspend fun getTvSeriesFromRemote(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<TvSeries> {
-        val tvSeries = remoteDataSource.searchTvShows(query, page).results.onEach {
+        return remoteDataSource.searchTvShows(query, page).results.onEach {
             localCacheSearchDataSource.cacheTvSeries(
                 it.toLocalDto(languageProvider.getCurrentLanguage())
             )
-        }
-        return filters
-            ?.filterTvShows(tvSeries = tvSeries)
-            ?: return tvSeries.map { it.toEntity() }
+        }.map { it.toEntity() }
     }
 
     private fun getTvSeriesFromCache(
-        filters: MediaFilters?,
         cachedTvSeries: List<TvSeriesLocalDto>,
     ): List<TvSeries> {
-        return filters
-            ?.filterCachedTvShows(cachedTvSeries)
-            ?: return cachedTvSeries.map { it.toEntity() }
+        return cachedTvSeries.map { it.toEntity() }
     }
 }
