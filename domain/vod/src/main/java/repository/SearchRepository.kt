@@ -3,7 +3,6 @@ package repository
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import usecase.search.search_param.MediaFilters
 
 
 interface SearchRepository {

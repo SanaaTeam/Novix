@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.base.BasePagingSource
@@ -256,6 +256,7 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
     private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
         manageRecentViewedUseCase.addRecentViewed(
             RecentViewedMedia(
