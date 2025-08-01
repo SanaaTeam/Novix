@@ -30,7 +30,6 @@ import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndica
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.text.CustomText
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
@@ -40,6 +39,7 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
