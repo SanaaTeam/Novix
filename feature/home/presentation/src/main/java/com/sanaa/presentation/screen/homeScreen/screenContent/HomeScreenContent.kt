@@ -1,8 +1,11 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +35,7 @@ import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.api.launchAuthActivityForResult
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
@@ -57,6 +61,17 @@ fun HomeScreenContent(
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     val errorMessage = stringResource(R.string.error_message)
     var snack by remember { mutableStateOf<SnackData?>(null) }
+
+    val context = LocalContext.current
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            interactionListener.onAuthActivityFinishedWithResult()
+            interactionListener::onDismissBottomSheet
+        },
+        loggedInAsGuest = {
+            interactionListener.onAuthActivityFinishedWithResult()
+        }
+    )
 
     LaunchedEffect(upcomingMovies.loadState) {
         if (upcomingMovies.loadState.refresh is LoadState.Error && state.isNoInternet == false) {
@@ -207,20 +222,7 @@ fun HomeScreenContent(
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
 
-    val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) {result ->
-        when(result.resultCode){
-            AuthenticationApi.RESULT_LOGGED_WITH_SESSION_ID -> {
-                interactionListener.onAuthActivityFinishedWithResult()
-                interactionListener::onDismissBottomSheet
-            }
-            AuthenticationApi.RESULT_LOGGED_AS_GUEST -> {
-                interactionListener.onAuthActivityFinishedWithResult()
-            }
-        }
-    }
+
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,

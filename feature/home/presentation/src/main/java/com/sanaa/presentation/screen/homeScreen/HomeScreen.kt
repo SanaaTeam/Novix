@@ -40,6 +40,7 @@ fun HomeScreen(
         ).authenticationApi()
     }
 
+
     val state = viewModel.state.collectAsStateWithLifecycle()
     Log.d("stateTest", "HomeScreen: state:${state.value}")
 
