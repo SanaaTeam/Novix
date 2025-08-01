@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
-    protected val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    protected val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }
@@ -54,12 +54,8 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun emitEffect(effect: E) {
-        val now = System.currentTimeMillis()
-        if (now - lastEmitTime > 500) {
-            lastEmitTime = now
-            viewModelScope.launch {
-                _effect.emit(effect)
-            }
+        viewModelScope.launch {
+            _effect.emit(effect)
         }
     }
 
@@ -83,7 +79,7 @@ abstract class BaseViewModel<T, E>(
 
     protected fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R
+        mapper: (T) -> R,
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
@@ -99,7 +95,6 @@ abstract class BaseViewModel<T, E>(
 
 
     companion object {
-        private var lastEmitTime = 0L
         private const val PAGE_SIZE = 20
     }
 }
