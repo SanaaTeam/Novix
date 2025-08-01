@@ -16,6 +16,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -97,14 +98,15 @@ class TrendingMoviesScreenViewModelTest {
     }
 
     @Test
-    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() = runTest {
-        coEvery { manageMovieUseCase.getMovieGenres() } throws NoNetworkException()
+    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() =
+        runTest {
+            coEvery { manageMovieUseCase.getMovieGenres() } throws NoNetworkException()
 
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
+            viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
-    }
+            assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
+        }
 
     @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
@@ -129,20 +131,21 @@ class TrendingMoviesScreenViewModelTest {
         coVerify(exactly = 0) { manageMovieUseCase.getTrendingMovies(any(), any()) }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
         viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, testDispatcher)
 
-        viewModel.onMediaClick(mediaId)
-
         viewModel.effect.test {
+            viewModel.onMediaClick(mediaId)
+            advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(
                 TrendingMediaScreenEffect.NavigateToMediaDetails(
                     mediaId
                 )
             )
-            cancelAndIgnoreRemainingEvents()
+            cancelAndConsumeRemainingEvents()
         }
     }
 
