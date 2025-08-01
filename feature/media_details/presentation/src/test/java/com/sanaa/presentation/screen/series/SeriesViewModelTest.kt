@@ -255,6 +255,26 @@ class SeriesViewModelTest {
         assertThat(state.showLoginBottomSheet).isFalse()
     }
 
+    @Test
+    fun `onRetryLoadDetails updates loading state and calls loadSeries`() = runTest {
+        givenHappyViewModel()
+        val errorMsg = "Some error"
+
+        viewModel.updateState {
+            it.copy(
+                isLoading = false,
+                error = errorMsg,
+                noInternetConnection = true
+            )
+        }
+        viewModel.onRetryLoadDetails()
+
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isTrue()
+        assertThat(state.error).isNull()
+        assertThat(state.noInternetConnection).isFalse()
+    }
+
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
