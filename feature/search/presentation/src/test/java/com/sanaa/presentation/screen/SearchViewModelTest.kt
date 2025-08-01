@@ -296,7 +296,7 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `onTabSelected() should load movies when movie tap selected`() =
+    fun `onTabSelected() should load movies when movie tab selected`() =
         runTest {
             val index = SearchScreenUiState.MOVIE_INDEX
             val movieName = "Movie"
@@ -319,7 +319,7 @@ class SearchViewModelTest {
         }
 
     @Test
-    fun `onTabSelected() should load tv shows when tv show tap selected`() =
+    fun `onTabSelected() should load tv shows when tv show tab selected`() =
         runTest {
             val index = SearchScreenUiState.TV_SHOW_INDEX
             val tvShowName = "TvShow"
