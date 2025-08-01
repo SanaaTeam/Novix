@@ -24,8 +24,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.foundation.text.ClickableText // Import ClickableText
+import androidx.compose.foundation.text.ClickableText
 
 @Composable
 fun OverviewSection(
@@ -46,7 +45,7 @@ fun OverviewSection(
 
         ExpandableText(
             text = overview,
-            style = Theme.textStyle.body.medium,
+            style = Theme.textStyle.body.small,
             color = Theme.colors.body,
             collapsedMaxLines = collapsedMaxLines,
             readMoreText = " ${stringResource(R.string.read_more)}",

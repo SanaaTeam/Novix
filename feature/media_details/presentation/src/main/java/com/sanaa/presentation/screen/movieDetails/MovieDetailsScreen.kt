@@ -63,6 +63,8 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import com.sanaa.presentation.util.getCurrentLocale
+import com.sanaa.presentation.util.toLocalizedDigits
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
@@ -146,6 +148,8 @@ fun MovieDetailsContent(
 ) {
 
     val pagedSimilarMovies = state.similarMovies.collectAsLazyPagingItems()
+    val context = LocalContext.current
+    val locale = remember { getCurrentLocale(context) }
 
     NovixScaffold(
         backgroundShapes = { NovixBackgroundShapes() }) {
@@ -265,15 +269,10 @@ fun MovieDetailsContent(
                                                     (duration - hours.hours).inWholeMinutes
 
                                                 val durationText = buildString {
-                                                    if (hours > 0) append("$hours ${stringResource(R.string.hours_label)} ")
-                                                    if (minutes > 0) append(
-                                                        "$minutes ${
-                                                            stringResource(
-                                                                R.string.minutes_label
-                                                            )
-                                                        }"
-                                                    )
+                                                    if (hours > 0) append("${hours.toInt().toLocalizedDigits(locale)}${stringResource(R.string.hours_label)} ")
+                                                    if (minutes > 0) append("${minutes.toInt().toLocalizedDigits(locale)}${stringResource(R.string.minutes_label)}")
                                                 }.trim()
+
 
                                                 IconWithText(
                                                     iconRes = R.drawable.icon_duration,
@@ -324,7 +323,7 @@ fun MovieDetailsContent(
                                     text = stringResource(id = R.string.more_like_this),
                                     color = Theme.colors.title,
                                     style = Theme.textStyle.title.medium,
-                                    modifier = Modifier.padding(bottom = 12.dp, top = 16.dp)
+                                    modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
                                 )
                             }
                             items(pagedSimilarMovies.itemCount) { index ->
@@ -336,6 +335,18 @@ fun MovieDetailsContent(
                                     onBookmarkClick = { interactionListener.onBookmarkClick(item.id) },
                                     onMovieClick = { interactionListener.onSimilarMovieClick(item.id) },
                                 )
+                            }
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                if (pagedSimilarMovies.loadState.append is androidx.paging.LoadState.Loading) {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        NovixLoadingIndicator()
+                                    }
+                                }
                             }
                         }
                     }

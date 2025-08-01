@@ -79,7 +79,6 @@ class MovieDetailsViewModel @Inject constructor(
                 )
             }
         }
-
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -171,8 +170,7 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { it.copy(isLoading = true) }
-        return createPagingFlow(
+             return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = Movie::toUiModel
         )
