@@ -28,6 +28,8 @@ interface TvSeriesRepository {
     suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries>
     suspend fun getPopularSeries(page: Int): List<TvSeries>
     suspend fun getSeriesGenres(): List<Genre>
+    suspend fun getSeriesRate(accountId: Long): List<TvSeries>
+    suspend fun getEpisodesRate(accountId: Long): List<Episode>
     suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean
     suspend fun addTvEpisodeRate(
         seriesId: Int,

@@ -200,10 +200,12 @@ class TopRatedMediaScreenViewModelTest {
                 ""
             ),
             Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "")
+            Movie(1, "Movie 1", "", emptyList(), 8f, 120.minutes, LocalDate(2020, 1, 1), "", "", 0),
+            Movie(2, "Movie 2", "", emptyList(), 9f, 110.minutes, LocalDate(2019, 1, 1), "", "", 0)
         )
         val tvShows = listOf(
-            TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3),
-            TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2)
+            TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
+            TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
         val media = MediaItem(1, "Media", "", mediaType = MediaType.MOVIE)
     }

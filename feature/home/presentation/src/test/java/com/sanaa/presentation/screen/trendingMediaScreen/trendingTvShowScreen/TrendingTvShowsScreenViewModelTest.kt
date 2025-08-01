@@ -97,14 +97,15 @@ class TrendingTvShowsScreenViewModelTest {
     }
 
     @Test
-    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() = runTest {
-        coEvery { manageTvSeriesUseCase.getSeriesGenres() } throws NoNetworkException()
+    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() =
+        runTest {
+            coEvery { manageTvSeriesUseCase.getSeriesGenres() } throws NoNetworkException()
 
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+            testDispatcher.scheduler.advanceUntilIdle()
 
-        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
-    }
+            assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
+        }
 
     @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
@@ -178,6 +179,7 @@ class TrendingTvShowsScreenViewModelTest {
                 genres = emptyList(),
                 imdbRating = 9f,
                 seasonsCount = 2,
+                rating = 0
             ),
             TvSeries(
                 id = 2,
@@ -188,6 +190,7 @@ class TrendingTvShowsScreenViewModelTest {
                 genres = emptyList(),
                 imdbRating = 8f,
                 seasonsCount = 7,
+                rating = 0
             )
         )
         val media = MediaItem(

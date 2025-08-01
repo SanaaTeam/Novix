@@ -183,6 +183,7 @@ class TrendingMoviesScreenViewModelTest {
                 imdbRating = 9f,
                 duration = 100.minutes,
                 trailerUrl = null,
+                rating = 0
             ),
             Movie(
                 id = 2,
@@ -194,6 +195,7 @@ class TrendingMoviesScreenViewModelTest {
                 imdbRating = 8f,
                 duration = 100.minutes,
                 trailerUrl = null,
+                rating = 0
             )
         )
         val media = MediaItem(
