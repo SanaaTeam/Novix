@@ -269,8 +269,17 @@ fun MovieDetailsContent(
                                                     (duration - hours.hours).inWholeMinutes
 
                                                 val durationText = buildString {
-                                                    if (hours > 0) append("${hours.toInt().toLocalizedDigits(locale)}${stringResource(R.string.hours_label)} ")
-                                                    if (minutes > 0) append("${minutes.toInt().toLocalizedDigits(locale)}${stringResource(R.string.minutes_label)}")
+                                                    if (hours > 0) append(
+                                                        "${
+                                                            hours.toInt().toLocalizedDigits(locale)
+                                                        }${stringResource(R.string.hours_label)} "
+                                                    )
+                                                    if (minutes > 0) append(
+                                                        "${
+                                                            minutes.toInt()
+                                                                .toLocalizedDigits(locale)
+                                                        }${stringResource(R.string.minutes_label)}"
+                                                    )
                                                 }.trim()
 
 
@@ -326,9 +335,13 @@ fun MovieDetailsContent(
                                     modifier = Modifier.padding(bottom = 4.dp, top = 16.dp)
                                 )
                             }
-                            items(pagedSimilarMovies.itemCount) { index ->
+                            items(
+                                count = pagedSimilarMovies.itemCount,
+                                key = { index ->
+                                    "${index}_${pagedSimilarMovies[index]?.id}"
+                                }
+                            ) { index ->
                                 val item = pagedSimilarMovies[index] ?: return@items
-
                                 MoreLikeThisCard(
                                     movie = item,
                                     modifier = Modifier.padding(bottom = 12.dp),
