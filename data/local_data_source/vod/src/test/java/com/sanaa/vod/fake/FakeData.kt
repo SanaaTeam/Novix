@@ -1,7 +1,7 @@
 package com.sanaa.vod.fake
 
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
-import com.sanaa.vod.search.search_result.LocalCachedSearchDataSourceImpl
+import com.sanaa.vod.search.LocalCachedSearchDataSourceImpl
 
 object FakeData {
     val currentTimestamp = LocalCachedSearchDataSourceImpl.CACHE_EXPIRATION_TIME + 1000

@@ -13,17 +13,17 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.search_param.MediaType
 
 class ManageRecentViewedUseCaseTest {
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var historyRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var manageRecentViewedUseCase: ManageRecentViewedUseCase
 
     @BeforeEach
     fun setUp() {
-        manageRecentViewedUseCase = ManageRecentViewedUseCase(searchHistoryRepository)
+        manageRecentViewedUseCase = ManageRecentViewedUseCase(historyRepository)
     }
 
     @Test
@@ -37,7 +37,7 @@ class ManageRecentViewedUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.addRecentViewedMedia(item)
+                historyRepository.addRecentViewedMedia(item)
             }
         }
 
@@ -47,7 +47,7 @@ class ManageRecentViewedUseCaseTest {
             // Given
             val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
             coEvery {
-                searchHistoryRepository.addRecentViewedMedia(item)
+                historyRepository.addRecentViewedMedia(item)
             } throws FailedToAddException("Recent View Item")
 
             // When, Then
@@ -62,7 +62,7 @@ class ManageRecentViewedUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.getRecentViewed(any())
+                historyRepository.getRecentViewed(any())
             } returns flowOf(recentViewedList)
 
             // When
@@ -76,7 +76,7 @@ class ManageRecentViewedUseCaseTest {
     fun `getRecentViewed() should return empty list when no recent viewed items are available`() =
         runTest {
             // Given
-            coEvery { searchHistoryRepository.getRecentViewed(any()) } returns flowOf(emptyList())
+            coEvery { historyRepository.getRecentViewed(any()) } returns flowOf(emptyList())
 
             // When
             val result = manageRecentViewedUseCase.getRecentViewed().single()
@@ -90,7 +90,7 @@ class ManageRecentViewedUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.getRecentViewed(any())
+                historyRepository.getRecentViewed(any())
             } throws RetrievingDataFailureException("Recent View")
 
             // When, Then
@@ -107,7 +107,7 @@ class ManageRecentViewedUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.clearRecentViewed()
+                historyRepository.clearRecentViewed()
 
             }
         }
@@ -117,7 +117,7 @@ class ManageRecentViewedUseCaseTest {
         runTest {
             // Given
             coEvery {
-                searchHistoryRepository.clearRecentViewed()
+                historyRepository.clearRecentViewed()
             } throws FailedToDeleteException("Recent View Item")
 
             // When, Then

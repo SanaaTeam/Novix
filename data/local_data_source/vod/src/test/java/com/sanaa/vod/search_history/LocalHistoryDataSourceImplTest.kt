@@ -1,23 +1,27 @@
 package com.sanaa.vod.search_history
 
+import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
-import com.sanaa.vod.search.search_history.LocalSearchHistoryDataSourceImpl
-import com.sanaa.vod.search.search_history.dao.QueryDao
-import com.sanaa.vod.search.search_history.dao.RecentViewedDao
+import com.sanaa.vod.history.LocalHistoryDataSourceImpl
+import com.sanaa.vod.history.dao.QueryDao
+import com.sanaa.vod.history.dao.RecentViewedDao
+import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.search.search_param.MediaType
 
-class LocalSearchHistoryDataSourceImplTest {
-    private lateinit var dataSource: LocalSearchHistoryDataSourceImpl
+class LocalHistoryDataSourceImplTest {
+    private lateinit var dataSource: LocalHistoryDataSourceImpl
     private var queryDao: QueryDao = mockk(relaxed = true)
     private var recentViewedDao: RecentViewedDao = mockk(relaxed = true)
+    private var watchedMediaHistoryDao: WatchedMediaHistoryDao = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        dataSource = LocalSearchHistoryDataSourceImpl(queryDao, recentViewedDao)
+        dataSource = LocalHistoryDataSourceImpl(queryDao, recentViewedDao, watchedMediaHistoryDao)
     }
 
     @Test
@@ -91,10 +95,38 @@ class LocalSearchHistoryDataSourceImplTest {
         coVerify { queryDao.deleteAllQueries() }
     }
 
+
+    @Test
+    fun `upsertWatchedMedia should call upsert on watchedMediaHistoryDao`() = runTest {
+        // Given
+        val watchedMedia = WatchedMediaHistoryLocalDto(
+            id = 1,
+            posterImageUrl = "test imageUrl",
+            mediaType = "test mediaType",
+            username = "username",
+            genres = "",
+        )
+        // When
+        dataSource.insertWatchedMediaHistory(watchedMedia)
+        // Then
+        coVerify { watchedMediaHistoryDao.insertWatchedMediaHistory(watchedMedia) }
+    }
+
+    @Test
+    fun `getWatchedMedia should call getWatchedMediaHistory on watchedMediaHistoryDao`() = runTest {
+        val username = "testUser"
+        val mediaType = MediaType.MOVIE
+        val genre = null
+
+        dataSource.getWatchedMediaHistory(username, mediaType, genre)
+
+        coVerify { watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType.name, genre) }
+    }
+
     // ========== PAGINATION TESTS ==========
 
     @Test
-    fun `getAllQueries_shouldHandleZeroLimit`() = runTest {
+    fun `getAllQueries should Handle zero limit`() = runTest {
         // Given
         val limit = 0
 
@@ -106,7 +138,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `getAllQueries_shouldHandleLargeLimit`() = runTest {
+    fun `getAllQueries should handle large limit`() = runTest {
         // Given
         val limit = 1000
 
@@ -118,7 +150,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `getAllQueries_shouldHandleNegativeLimit`() = runTest {
+    fun `getAllQueries should handle negative limit`() = runTest {
         // Given
         val limit = -10
 
@@ -130,7 +162,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `getAllRecentViewed_shouldHandleZeroLimit`() = runTest {
+    fun `getAllRecentViewed should handle zero limit`() = runTest {
         // Given
         val limit = 0
 
@@ -142,7 +174,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun getAllRecentViewed_shouldHandleLargeLimit() = runTest {
+    fun `getAllRecentViewed should handle large limit`() = runTest {
         // Given
         val limit = 500
 
@@ -154,7 +186,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `getAllRecentViewed_shouldHandleNegativeLimit`() = runTest {
+    fun `getAllRecentViewed should handle negative limit`() = runTest {
         // Given
         val limit = -5
 
@@ -166,7 +198,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `pagination_shouldHandleDifferentLimitValues`() = runTest {
+    fun `pagination should handle different limit values`() = runTest {
         // Given
         val limits = listOf(1, 5, 10, 20, 50, 100)
 
@@ -178,7 +210,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `pagination_shouldHandleConsecutiveCalls`() = runTest {
+    fun `pagination should handle consecutive calls`() = runTest {
         // Given
         val limit1 = 10
         val limit2 = 20
@@ -193,7 +225,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `pagination_shouldHandleRecentViewedConsecutiveCalls`() = runTest {
+    fun `pagination should handle recent viewed consecutive calls`() = runTest {
         // Given
         val limit1 = 5
         val limit2 = 15
@@ -208,7 +240,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `pagination_shouldHandleMixedOperations`() = runTest {
+    fun `pagination should handle mixed operations`() = runTest {
         // Given
         val queryLimit = 25
         val recentLimit = 30
@@ -223,7 +255,7 @@ class LocalSearchHistoryDataSourceImplTest {
     }
 
     @Test
-    fun `pagination_shouldHandleVeryLargeLimits`() = runTest {
+    fun `pagination should handle very large limits`() = runTest {
         // Given
         val veryLargeLimit = 10000
 

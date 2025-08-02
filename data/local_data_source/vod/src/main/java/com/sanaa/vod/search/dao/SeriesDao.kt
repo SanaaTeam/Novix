@@ -1,4 +1,4 @@
-package com.sanaa.vod.search.search_result.dao
+package com.sanaa.vod.search.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -28,4 +28,6 @@ interface SeriesDao {
     )
     suspend fun getFilteredSeries(query: String, limit: Int, offset: Int): List<TvSeriesLocalDto>
 
+    @Query("SELECT * FROM tv_series WHERE id = :id LIMIT 1")
+    suspend fun getSeriesById(id: Int): TvSeriesLocalDto?
 } 
