@@ -443,6 +443,45 @@ class ManageTvSeriesUseCaseTest {
         assertThat(result[0].createdDate).isEqualTo(LocalDate(2023, 5, 20))
     }
 
+    @Test
+    fun `getSeriesRate should call TvSeriesRepository when try to get series rates`() = runTest {
+        // Given
+        val accountId = 1L
+
+        // When
+        manageTvSeriesDetailsUseCase.getSeriesRate(accountId)
+
+        // Then
+        coVerify { tvSeriesRepository.getSeriesRate(accountId) }
+    }
+
+    @Test
+    fun `getEpisodesRate should call TvSeriesRepository when try to get episodes rates`() =
+        runTest {
+            // Given
+            val accountId = 1L
+
+            // When
+            manageTvSeriesDetailsUseCase.getEpisodesRate(accountId)
+
+            // Then
+            coVerify { tvSeriesRepository.getEpisodesRate(accountId) }
+        }
+
+    @Test
+    fun `addTvSeriesRate should call TvSeriesRepository when try to add series rate`() =
+        runTest {
+            // Given
+            val seriesId = 324
+            val rating = 1f
+
+            // When
+            manageTvSeriesDetailsUseCase.addTvSeriesRate(seriesId, rating)
+
+            // Then
+            coVerify { tvSeriesRepository.addTvSeriesRate(seriesId, rating) }
+        }
+
 
     companion object {
         val dummyGenre = Genre(
