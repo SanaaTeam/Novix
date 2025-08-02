@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.sanaa.designsystem.design_system.component.button.NovixTextButton
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
+import com.sanaa.designsystem.design_system.component.button.TextButton
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MovieUiModel
@@ -154,7 +154,7 @@ fun MovieDetailsGridContent(
                             )
                         }
                     }
-                    NovixTextButton(
+                    TextButton(
                         text = stringResource(id = R.string.view_reviews),
                         textColor = Theme.colors.primary,
                         onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })
@@ -207,7 +207,7 @@ fun MovieDetailsGridContent(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        NovixLoadingIndicator()
+                        LoadingIndicator()
                     }
                 }
             }

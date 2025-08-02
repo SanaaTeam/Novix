@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -51,7 +51,7 @@ fun WhatToWatchSection(
                 borderColor = Color.Transparent,
             )
         } else {
-            NovixSectionHeader(title = stringResource(R.string.what_you_want_to_watch))
+            SectionHeader(title = stringResource(R.string.what_you_want_to_watch))
         }
         Row(
             modifier = Modifier

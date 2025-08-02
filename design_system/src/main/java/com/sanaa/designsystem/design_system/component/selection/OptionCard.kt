@@ -78,7 +78,7 @@ fun OptionCard(
 @Composable
 private fun PreviewOptionCard() {
     NovixTheme(isSystemInDarkTheme()) {
-        var selected = remember { mutableStateOf(false) }
+        val selected = remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
                 .background(color = Theme.colors.surface)

@@ -26,11 +26,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
@@ -150,7 +150,7 @@ fun MovieDetailsContent(
     val locale = remember { getCurrentLocale(context) }
 
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }) {
+        backgroundShapes = { BackgroundShapes() }) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
@@ -175,7 +175,7 @@ fun MovieDetailsContent(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            NovixLoadingIndicator()
+                            LoadingIndicator()
                         }
                     }
                 } else {
@@ -233,7 +233,7 @@ fun MovieTopBar(
     interactionListener: MovieDetailsScreenInteractionListener,
     movieId: Int
 ) {
-    NovixTopBar(
+    TopBar(
         leftContent = {
             TopBarClickableIcon(
                 icon = painterResource(R.drawable.icon_back),
