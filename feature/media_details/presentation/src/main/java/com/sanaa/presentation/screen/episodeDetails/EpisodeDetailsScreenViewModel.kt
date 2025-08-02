@@ -154,10 +154,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
         val currentEpisodesRating = runCatching {
             val userId = getUser.getLoggedInUser().id
-            val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
-            ratedEpisodes.find {
-                it.seasonNumber == seasonNumber && it.number == episodeNumber
-            }?.rating ?: 0
+            manageTvSeriesDetails.getEpisodesRate(userId, episode.id)
         }.getOrElse { 0 }
         updateState {
             it.copy(

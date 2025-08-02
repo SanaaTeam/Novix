@@ -204,8 +204,7 @@ class SeriesViewModel @Inject constructor(
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
         val currentSeriesRating = runCatching {
             val userId = getUser.getLoggedInUser().id
-            val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
-            ratedSeries.find { it.id == seriesId }?.rating ?: 0
+            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
         }.getOrElse { 0 }
         updateState {
             it.copy(
