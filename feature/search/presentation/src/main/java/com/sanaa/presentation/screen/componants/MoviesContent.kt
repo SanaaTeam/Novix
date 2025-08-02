@@ -33,6 +33,7 @@ import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndi
 fun MoviesContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     onMovieClick: (RecentViewedUiModel, MovieUiModel) -> Unit,
+    onSaveIconClicked:()-> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
@@ -72,7 +73,9 @@ fun MoviesContent(
                         }
                     },
                     topLeftContent = {
-                        SaveIconChip(onClick = {})
+                        SaveIconChip(onClick = {
+                            onSaveIconClicked()
+                        })
                     },
                     onCardClick = {
                         onMovieClick(

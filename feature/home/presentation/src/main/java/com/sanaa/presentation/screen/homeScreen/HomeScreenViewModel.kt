@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -17,6 +18,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.GetLoggedInUserUseCase
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -28,12 +31,14 @@ class HomeScreenViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
 ), HomeScreenInteractionListener {
 
     init {
+        updateUserLoggingStatus()
         fetchPopularMediaData()
         fetchTopRatedMediaData()
         fetchWatchedMediaData()
@@ -41,6 +46,18 @@ class HomeScreenViewModel @Inject constructor(
         fetchUpcomingMovies()
     }
 
+
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn,
+                    showBottomSheet = false
+                )
+            }
+        }
+    }
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -180,13 +197,12 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState {
-            it.copy(showBottomSheet = true)
+        if (!state.value.userIsLoggedIn){
+            updateState { it.copy(showBottomSheet = true) }
         }
     }
 
     override fun onDismissBottomSheet() {
-
         updateState { it.copy(showBottomSheet = false) }
     }
 
@@ -197,6 +213,10 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
+    }
+
+    override fun onAuthActivityFinishedWithResult() {
+        updateUserLoggingStatus()
     }
 
 
@@ -213,7 +233,7 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun createUpcomingMoviesPagingDataSource(
+    fun createUpcomingMoviesPagingDataSource(
         genreId: Int?
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome { page ->

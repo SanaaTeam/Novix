@@ -19,26 +19,33 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.cards.MediaPosterCard
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
+import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
@@ -48,6 +55,20 @@ fun TopSeriesScreen(
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
     BackHandler(onBack = navigateBack)
+    val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserLoggingStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserLoggingStatus()
+        }
+    )
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -55,7 +76,17 @@ fun TopSeriesScreen(
         TopSeriesContent(
             state = uiState,
             onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            onSaveIconClick = {
+                viewModel.onSaveClicked()
+            }
+        )
+        RequestToLoginBottomSheet(
+            isVisible = uiState.showLoginBottomSheet,
+            onDismiss = viewModel::onDismissBottomSheet,
+            onLoginButtonClick = {
+                launcher.launch(authApi.getLaunchIntent(context))
+            }
         )
     }
 }
@@ -65,16 +96,17 @@ private fun TopSeriesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
+    onSaveIconClick: () -> Unit,
 ) {
     val navController = LocalNavControllerProvider.current
 
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Column(
             modifier = modifier.navigationBarsPadding()
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
@@ -98,7 +130,7 @@ private fun TopSeriesContent(
 
                 ) { loading ->
                     if (loading) {
-                        NovixLoadingIndicator()
+                        LoadingIndicator()
                     } else {
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),
@@ -142,7 +174,9 @@ private fun TopSeriesContent(
                                             )
                                         }
                                     },
-                                    topLeftContent = { SaveIconChip(onClick = { /* save */ }) },
+                                    topLeftContent = { SaveIconChip(onClick = {
+                                    onSaveIconClick()
+                                    }) },
                                     onCardClick = {
                                         navController.navigate(
                                             SeriesDetailsScreenRoute(series.id).route()

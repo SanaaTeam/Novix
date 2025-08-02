@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.sanaa.designsystem.design_system.component.button.NovixTextButton
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -155,7 +152,7 @@ fun MovieDetailsGridContent(
                             )
                         }
                     }
-                    NovixTextButton(
+                    TextButton(
                         text = stringResource(id = R.string.view_reviews),
                         textColor = Theme.colors.primary,
                         onClick = { interactionListener.onShowReviewsClick(state.movieDetails.id) })
@@ -208,7 +205,7 @@ fun MovieDetailsGridContent(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        NovixLoadingIndicator()
+                        LoadingIndicator()
                     }
                 }
             }

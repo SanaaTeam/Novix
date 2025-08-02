@@ -35,7 +35,7 @@ class WelcomeViewModelTest {
     fun `onContinueClicked emits ContinueAsGuest effect`() = runTest {
         viewModel.onContinueClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -57,7 +57,7 @@ class WelcomeViewModelTest {
 
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ExitApp)
             cancelAndIgnoreRemainingEvents()
         }
@@ -81,14 +81,14 @@ class WelcomeViewModelTest {
 
         // First collection
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             cancelAndIgnoreRemainingEvents()
         }
 
         // Trigger again and collect again
         viewModel.onContinueClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -151,7 +151,7 @@ class WelcomeViewModelTest {
 
         viewModel.onContinueClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ContinueAsGuest)
+            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             cancelAndIgnoreRemainingEvents()
         }
 

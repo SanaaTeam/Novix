@@ -15,8 +15,11 @@ data class SearchScreenUiState(
     val tvShows: Flow<PagingData<TvShowUiModel>> = flowOf(PagingData.empty()),
     val actors: Flow<PagingData<ActorUiModel>> = flowOf(PagingData.empty()),
     val error: String? = null,
-    val lastTabIndex: Int = -1
-) {
+    val lastTabIndex: Int = -1,
+    val showLoginBottomSheet: Boolean = false,
+    val isUserLoggedIn: Boolean = false
+    ) {
+
     companion object {
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1

@@ -39,7 +39,7 @@ fun SeasonTap(
             items = (1..seasonCounts).toList(),
             key = { _, item -> item }
         ) { index, item ->
-            NovixToggleableChip(
+            ToggleableChip(
                 text = stringResource(R.string.season_number, item),
                 onClick = { onClick(item) },
                 isSelected = currentSeason == item,
