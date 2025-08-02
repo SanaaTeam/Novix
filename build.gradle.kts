@@ -98,7 +98,6 @@ val excludedPackages = listOf(
     "com.sanaa.identity.dataSoruce.dataStore.**",
     "**.proto.**",
     "**.network.**",
-    "com.sanaa.identity.dataSoruce.local.dataStore.**",
     "com.sanaa.vod.dataSource.remote.search.search.**",
     "com.sanaa.presentation.base.**",
     "**.util.**",
