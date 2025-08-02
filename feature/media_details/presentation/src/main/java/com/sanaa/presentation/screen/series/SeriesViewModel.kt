@@ -218,6 +218,7 @@ class SeriesViewModel @Inject constructor(
             }.getOrElse { 0 }
         }
 
+
         val series = seriesDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()

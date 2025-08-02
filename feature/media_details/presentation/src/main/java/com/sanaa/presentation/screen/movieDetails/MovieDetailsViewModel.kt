@@ -7,11 +7,10 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
@@ -23,8 +22,9 @@ import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import javax.inject.Inject
+
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,

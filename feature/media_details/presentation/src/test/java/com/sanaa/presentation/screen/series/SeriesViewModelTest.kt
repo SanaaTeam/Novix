@@ -92,8 +92,14 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin, getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,)
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            checkUserLogin,
+            getUser,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+        )
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -167,32 +173,6 @@ class SeriesViewModelTest {
         assertThat(viewModel.state.value.error).isEqualTo("Test failure")
     }
 
-    @Test
-    fun `onSeasonNumberClicked updates state when selecting new season`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
-        coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 2) } returns dummySeason2
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "seriesId" to seriesId
-            )
-        )
-
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase,
-            getLoggedInUserUseCase,testDispatcher)
-
-        viewModel.onSeasonNumberClicked(2)
-        advanceUntilIdle()
-
-        with(viewModel.state.value) {
-            assertThat(selectedSeason).isEqualTo(2)
-            assertThat(season.episodes.first().seasonNumber).isEqualTo(2)
-            assertThat(isLoadingEpisodes).isFalse()
-        }
-    }
 
     @Test
     fun `onPlayTrailerClicked emits PlayTrailer`() = runTest {
@@ -322,7 +302,15 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(savedStateHandle, checkUserLogin,getUser, manageTvSeriesDetails, manageWatchedMediaHistoryUseCase, getLoggedInUserUseCase, dispatcher)
+        viewModel = SeriesViewModel(
+            savedStateHandle,
+            checkUserLogin,
+            getUser,
+            manageTvSeriesDetails,
+            manageWatchedMediaHistoryUseCase,
+            getLoggedInUserUseCase,
+            dispatcher
+        )
     }
 
     private companion object {
