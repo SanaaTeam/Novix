@@ -16,86 +16,86 @@ import repository.MovieRepository
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
-    private val remote: RemoteMovieDataSource,
+    private val remoteMovieDataSource: RemoteMovieDataSource,
     private val preferences: PreferencesManager
 ) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Movie =
         safeCall("Failed to fetch movie details") {
-            remote.fetchMovieDetails(id).toDomain()
+            remoteMovieDataSource.fetchMovieDetails(id).toDomain()
         }
 
     override suspend fun getImageUrls(id: Int, count: Int): List<String> =
         safeCall("Failed to fetch images") {
-            remote.fetchImagesUrl(id).take(count).map { getFullImageUrl(it.filePath) }
+            remoteMovieDataSource.fetchImagesUrl(id).take(count).map { getFullImageUrl(it.filePath) }
         }
 
     override suspend fun getMovieCast(id: Int): List<Actor> =
         safeCall("Failed to fetch movie cast") {
-            remote.fetchCast(id).map { it.toDomain() }
+            remoteMovieDataSource.fetchCast(id).map { it.toDomain() }
         }
 
     override suspend fun getSimilarMoviesByMovieId(id: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch similar movies") {
-            remote.fetchSimilarMoviesByMovieId(id, page).map { it.toDomain() }
+            remoteMovieDataSource.fetchSimilarMoviesByMovieId(id, page).map { it.toDomain() }
         }
 
     override suspend fun getReviewsByMovieId(id: Int, page: Int): List<Review> =
         safeCall("Failed to fetch reviews") {
-            remote.fetchReviewsByMovieId(id, page).map { it.toEntity() }
+            remoteMovieDataSource.fetchReviewsByMovieId(id, page).map { it.toEntity() }
         }
 
     override suspend fun getMoviesByCategory(genreId: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch movies by category") {
-            remote.fetchMoviesByCategory(
+            remoteMovieDataSource.fetchMoviesByCategory(
                 genreId, page
             ).map { it.toDomain() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =
         safeCall("Failed to fetch movie trailer") {
-            remote.fetchMovieTrailerUrl(id).toDomain()
+            remoteMovieDataSource.fetchMovieTrailerUrl(id).toDomain()
         }
 
 
     override suspend fun getPopularMovies(page: Int): List<Movie> =
         safeCall("Failed to fetch movie Popular") {
-            remote.fetchPopularMovies(page).map { it.toDomain() }
+            remoteMovieDataSource.fetchPopularMovies(page).map { it.toDomain() }
         }
 
 
     override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie TopRated") {
-            remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
+            remoteMovieDataSource.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie Upcoming") {
-            remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
+            remoteMovieDataSource.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie Trending") {
-            remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
+            remoteMovieDataSource.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getMoviesRate(accountId: Long): List<Movie> {
         return safeCall("Failed to fetch movie Rate") {
             val sessionId = preferences.sessionId.first()
-            remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
+            remoteMovieDataSource.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
                 .map { it.toDomain() }
         }
     }
 
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
-            remote.fetchMovieGenres().map { it.toEntity() }
+            remoteMovieDataSource.fetchMovieGenres().map { it.toEntity() }
         }
     }
 
     override suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return safeCall("Failed to add movie rate") {
             val sessionId = preferences.sessionId.first()
-            remote.sendMovieRate(
+            remoteMovieDataSource.sendMovieRate(
                 movieId = movieId,
                 sessionId = sessionId,
                 rating = rating

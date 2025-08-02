@@ -7,14 +7,18 @@ import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.fake.FakeData.MoviesDtoList
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,17 +28,17 @@ class MovieRepositoryImplTest {
 
     private lateinit var repository: MovieRepositoryImpl
     private val preferences: PreferencesManager = mockk()
-    private val remote: RemoteMovieDataSource =
+    private val remoteMovieDataSource: RemoteMovieDataSource =
         mockk<RemoteMovieDataSource>(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        repository = MovieRepositoryImpl(remote, preferences)
+        repository = MovieRepositoryImpl(remoteMovieDataSource, preferences)
     }
 
     @Test
     fun `getMovieDetails returns expected movie`() = runTest {
-        coEvery { remote.fetchMovieDetails(1) } returns sampleMovieDto
+        coEvery { remoteMovieDataSource.fetchMovieDetails(1) } returns sampleMovieDto
 
         val result = repository.getMovieDetails(1)
 
@@ -43,7 +47,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getImages returns top images poster urls`() = runTest {
-        coEvery { remote.fetchImagesUrl(1) } returns listOf(sampleImagesDto)
+        coEvery { remoteMovieDataSource.fetchImagesUrl(1) } returns listOf(sampleImagesDto)
 
         val result = repository.getImageUrls(1, 2)
 
@@ -52,7 +56,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieCast returns cast list`() = runTest {
-        coEvery { remote.fetchCast(1) } returns sampleCastDto
+        coEvery { remoteMovieDataSource.fetchCast(1) } returns sampleCastDto
 
         val result = repository.getMovieCast(1)
 
@@ -61,7 +65,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getSimilarMoviesByMovieId returns similar movies`() = runTest {
-        coEvery { remote.fetchSimilarMoviesByMovieId(1, 1) } returns sampleSimilarDto
+        coEvery { remoteMovieDataSource.fetchSimilarMoviesByMovieId(1, 1) } returns sampleSimilarDto
 
         val result = repository.getSimilarMoviesByMovieId(1, 1)
 
@@ -70,7 +74,12 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getReviewsByMovieId returns reviews`() = runTest {
-        coEvery { remote.fetchReviewsByMovieId(1, 1) } returns listOf(sampleReviewDto)
+        coEvery {
+            remoteMovieDataSource.fetchReviewsByMovieId(
+                1,
+                1
+            )
+        } returns listOf(sampleReviewDto)
 
         val result = repository.getReviewsByMovieId(1, 1)
 
@@ -79,21 +88,26 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieDetails throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remote.fetchMovieDetails(any()) } throws ConnectionException()
+        coEvery { remoteMovieDataSource.fetchMovieDetails(any()) } throws ConnectionException()
 
         assertThrows<NoNetworkException> { repository.getMovieDetails(1) }
     }
 
     @Test
     fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
-        coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException("some error")
+        coEvery { remoteMovieDataSource.fetchImagesUrl(any()) } throws RuntimeException("some error")
 
         assertThrows<RetrievingDataFailureException> { repository.getImageUrls(1, 2) }
     }
 
     @Test
     fun `getMoviesByCategory should return list of MovieDto `() = runTest {
-        coEvery { remote.fetchMoviesByCategory(any(), any()) } returns sampleSimilarDto
+        coEvery {
+            remoteMovieDataSource.fetchMoviesByCategory(
+                any(),
+                any()
+            )
+        } returns sampleSimilarDto
 
         val result = repository.getMoviesByCategory(1, 1)
 
@@ -103,7 +117,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieTrailer returns null when no YouTube trailer found`() = runTest {
-        coEvery { remote.fetchMovieTrailerUrl(1) } returns trailers
+        coEvery { remoteMovieDataSource.fetchMovieTrailerUrl(1) } returns trailers
 
         val result = repository.getMovieTrailer(1)
 
@@ -112,7 +126,7 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieTrailer returns null when empty list returned`() = runTest {
-        coEvery { remote.fetchMovieTrailerUrl(1) } returns emptyList()
+        coEvery { remoteMovieDataSource.fetchMovieTrailerUrl(1) } returns emptyList()
 
         val result = repository.getMovieTrailer(1)
 
@@ -145,12 +159,112 @@ class MovieRepositoryImplTest {
 
     @Test
     fun `getMovieGenres returns list of genres`() = runTest {
-        coEvery { remote.fetchMovieGenres() } returns dummyGenresDto
+        coEvery { remoteMovieDataSource.fetchMovieGenres() } returns dummyGenresDto
 
         val result = repository.getMovieGenres()
 
         assertThat(result).isNotEmpty()
     }
+
+
+    @Test
+    fun `getMoviesRate should returns empty list when there is no data return from sever`() =
+        runTest {
+            // Given
+            val accountId = 1L
+            val sessionId = "3434"
+            coEvery {
+                remoteMovieDataSource.fetchMoviesRate(
+                    accountId = accountId,
+                    sessionId = sessionId
+                )
+            } returns emptyList()
+
+            coEvery { preferences.sessionId } returns flowOf(sessionId)
+
+            // When
+            val result = repository.getMoviesRate(accountId = accountId)
+
+            // Then
+            assertThat(result).isEmpty()
+        }
+
+    @Test
+    fun `getMoviesRate should returns data as movies list when data return from server`() =
+        runTest {
+            // Given
+            val accountId = 1L
+            val sessionId = "43546"
+            coEvery {
+                remoteMovieDataSource.fetchMoviesRate(
+                    accountId = accountId,
+                    sessionId = sessionId
+                )
+            } returns MoviesDtoList
+
+            coEvery { preferences.sessionId } returns flowOf(sessionId)
+
+            // When
+            val resultIds = repository.getMoviesRate(accountId = accountId).map { it.id }
+            val expectedIds = MoviesDtoList.map { it.id }
+
+            // Then
+            assertThat(resultIds).isEqualTo(expectedIds)
+        }
+
+    @Test
+    fun `addMovieRate should call RemoteMovieDataSource send movie rate when try to add movie rate`() =
+        runTest {
+            // Given
+            val movieId = 4324
+            val rating = 9f
+            val sessionId = "sessionId"
+            coEvery { preferences.sessionId } returns flowOf(sessionId)
+
+            repository.addMovieRate(movieId, rating)
+
+            coVerify { remoteMovieDataSource.sendMovieRate(any(), any(), any()) }
+        }
+
+    @Test
+    fun `addMovieRate should return true when the rate sent to the server`() =
+        runTest {
+            // Given
+            val movieId = 4324
+            val rating = 9f
+            val sessionId = "sessionId"
+            coEvery { preferences.sessionId } returns flowOf(sessionId)
+            coEvery {
+                remoteMovieDataSource.sendMovieRate(
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns RatingResponse(true, 200, "Success")
+
+            val result = repository.addMovieRate(movieId, rating)
+            assertThat(result).isTrue()
+        }
+
+    @Test
+    fun `addMovieRate should return flase when rate sent to the server failed`() =
+        runTest {
+            // Given
+            val movieId = 4324
+            val rating = 9f
+            val sessionId = "sessionId"
+            coEvery { preferences.sessionId } returns flowOf(sessionId)
+            coEvery {
+                remoteMovieDataSource.sendMovieRate(
+                    any(),
+                    any(),
+                    any()
+                )
+            } returns RatingResponse(false, 402, "Failed")
+
+            val result = repository.addMovieRate(movieId, rating)
+            assertThat(result).isFalse()
+        }
 
     companion object {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")

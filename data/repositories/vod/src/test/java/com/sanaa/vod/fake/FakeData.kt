@@ -3,6 +3,7 @@ package com.sanaa.vod.fake
 import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
+import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
@@ -48,8 +49,18 @@ object FakeData {
             null, null, "en", System.currentTimeMillis()
         ),
         MovieLocalDto(
-            id = 1, "Movie2", "2025", null,
+            id = 2, "Movie2", "2025", null,
             null, null, "en", System.currentTimeMillis()
+        ),
+    )
+    val MoviesDtoList = listOf(
+        MovieDto(
+            id = 1, "Movie", "2024", null,
+            null, null, "en", 1
+        ),
+        MovieDto(
+            id = 2, "Movie2", "2025", null,
+            null, null, "en", 1
         ),
     )
 
@@ -58,7 +69,7 @@ object FakeData {
             id = 1, "Movie", "2024", null, null, null,
         ),
         MovieSearchDto(
-            id = 1, "Movie2", "2025", null, null, null
+            id = 2, "Movie2", "2025", null, null, null
         ),
     )
 
@@ -75,7 +86,7 @@ object FakeData {
             null, null, "en", System.currentTimeMillis()
         ),
         TvSeriesLocalDto(
-            id = 1, "TvSeries2", "2025", null,
+            id = 2, "TvSeries2", "2025", null,
             null, null, "en", System.currentTimeMillis()
         ),
     )
@@ -85,7 +96,7 @@ object FakeData {
             id = 1, "TvSeries", "2025", null, null, null,
         ),
         TvShowSearchDto(
-            id = 1, "TvSeries2", "2025", null, null, null
+            id = 2, "TvSeries2", "2025", null, null, null
         ),
     )
 
