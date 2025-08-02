@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -146,7 +145,7 @@ fun SearchScreenContent(
 
 
     RequestToLoginBottomSheet(
-        onDismiss = {searchListener.onBottomSheetDragged()},
+        onDismiss = {searchListener.onBottomSheetDismiss()},
         onLoginButtonClick = { searchListener.onLoginButtonClick() },
         isVisible = uiState.showLoginBottomSheet,
     )

@@ -140,7 +140,7 @@ class SearchViewModel @Inject constructor(
 
 
 
-    override fun onBottomSheetDragged() {
+    override fun onBottomSheetDismiss() {
         updateState { it.copy(showLoginBottomSheet = false) }
     }
 

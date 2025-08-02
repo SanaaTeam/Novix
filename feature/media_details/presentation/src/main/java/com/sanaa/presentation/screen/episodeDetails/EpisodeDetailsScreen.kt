@@ -68,10 +68,10 @@ fun EpisodeDetailsScreen(
 
     val launcher =  launchAuthActivityForResult(
         loggedInWithSessionId = {
-//            viewModel.updateUserLoggingStatus()
+            viewModel.updateUserStatus()
         },
         loggedInAsGuest = {
-//            viewModel.updateUserLoggingStatus()
+            viewModel.updateUserStatus()
         }
     )
 

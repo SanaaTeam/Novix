@@ -19,7 +19,6 @@ data class SearchScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val isUserLoggedIn: Boolean = false
     ) {
-    fun isFilterVisible() = selectedTabIndex != ACTOR_INDEX
 
     companion object {
         const val MOVIE_INDEX = 0

@@ -36,7 +36,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-        tryToExecute(callee = ::getUserState)
+        updateUserStatus()
     }
 
 
@@ -191,5 +191,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 }
