@@ -100,8 +100,7 @@ val excludedPackages = listOf(
     "**.network.**",
     "com.sanaa.presentation.base.**",
     "**.util.**",
-    "**.mapper.**",
-    "com.sanaa.presentation.filter_bottomsheet.state.**",
+    "com.sanaa.pres entation.filter_bottomsheet.state.**",
     "**.api.**",
 )
 allprojects {
