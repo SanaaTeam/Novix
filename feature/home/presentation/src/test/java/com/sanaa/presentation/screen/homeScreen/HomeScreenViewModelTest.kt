@@ -66,18 +66,29 @@ class HomeScreenViewModelTest {
 
     @Test
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
-        val popularMovies = listOf(dummyMovie)
+        // Given
+        val popularMovies = listOf(dummyMovie.copy(id = 1))
+        val popularTvSeries = listOf(dummyTvSeries.copy(id = 2))
+
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
+        coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
+
+        // When
         initializeViewModel()
+
+        // Then
         viewModel.state.test {
-            val state = awaitItem().let {
+            val successState = awaitItem().let {
                 var current = it
-                while (current.popularMedia.isEmpty()) {
+                while (current.popularMedia.size != 2) {
                     current = awaitItem()
                 }
                 current
             }
-            assertThat(state.popularMedia).isNotEmpty()
+
+            assertThat(successState.popularMedia).hasSize(2)
+            assertThat(successState.isLoading).isFalse()
+            cancelAndConsumeRemainingEvents()
         }
     }
 
