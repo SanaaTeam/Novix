@@ -28,13 +28,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
+        "seasonNumber is required in SavedStateHandle"
+    }
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
+        "episodeNumber is required in SavedStateHandle"
+    }
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-        tryToExecute(callee = ::getUserState)
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     override fun onBackClick() {
@@ -56,12 +62,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onSavedClick(seriesId: Int) {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
 
     }
@@ -79,12 +80,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -103,7 +99,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitEpisodeRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -152,10 +148,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentEpisodesRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
-            manageTvSeriesDetails.getEpisodesRate(userId, episode.id)
-        }.getOrElse { 0 }
+        val currentEpisodesRating = getCurrentUserRating(episode.id)
+
         updateState {
             it.copy(
                 episode = episode.toEpisodeUiModel(),
@@ -168,7 +162,21 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun addRate() {
+    private suspend fun getCurrentUserRating(episodeId: Int): Int {
+        var rating = 0
+        tryToExecute(
+            callee = {
+                val userId = getUser.getLoggedInUser().id
+                manageTvSeriesDetails.getEpisodesRate(userId, episodeId)
+            },
+            onSuccess = { result ->
+                rating = result
+            }
+        )
+        return rating
+    }
+
+    private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
             seriesId = seriesId,
             episodeNumber = episodeNumber,
@@ -182,8 +190,17 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
     }
 }
