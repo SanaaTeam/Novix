@@ -52,8 +52,8 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.getSeriesRate(accountId, seriesId) ?: 0
     }
 
-    suspend fun getEpisodesRate(accountId: Long, episodeId: Int): Int {
-        return tvSeriesRepo.getEpisodesRate(accountId, episodeId) ?: 0
+    suspend fun getEpisodesRate(accountId: Long, seasonNumber: Int, episodeNumber: Int): Int {
+        return tvSeriesRepo.getEpisodesRate(accountId, seasonNumber, episodeNumber) ?: 0
     }
 
     suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
