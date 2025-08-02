@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    "
     <string name="view_reviews">عرض المراجعات</string>
     <string name="seasons_count">%d مواسم</string>
     <string name="overview">نظرة عامة</string>
@@ -20,12 +19,9 @@
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
-    <string name="reviews">المراجعات</string>"
-    <string name="hours_label">س</string>
-    <string name="minutes_label">د</string>
+    <string name="reviews">المراجعات</string>
 
 
-    // Genre
     <string name="genres">الفئات</string>
     <string name="gallery">المعرض</string>
     <string name="actor_photos">معرض الصور</string>

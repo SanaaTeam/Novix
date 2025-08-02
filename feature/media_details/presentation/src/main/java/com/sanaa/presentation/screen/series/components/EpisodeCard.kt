@@ -35,7 +35,7 @@ fun EpisodeCard(
     val placeholderResId = if (isSystemInDarkTheme()) {
         RDesignSystem.drawable.icon_placeholder_dark
     } else {
-        RDesignSystem.drawable.icon_placeholder_dark
+        RDesignSystem.drawable.icon_placeholder_light
     }
     Row(
         modifier = modifier,

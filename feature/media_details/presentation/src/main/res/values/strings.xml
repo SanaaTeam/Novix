@@ -17,8 +17,6 @@
     <string name="request_login">Please login to save to list</string>
     <string name="add_to_list">Add to list</string>"
     <string name="login">Login</string>
-    <string name="hours_label">h</string>
-    <string name="minutes_label">m</string>
 
 
     <string name="genres">Genres</string>
