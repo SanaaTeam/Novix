@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,16 +46,18 @@ fun MovieDetailsGridContent(
     state: MovieDetailsUiState,
     pagedSimilarMovies: LazyPagingItems<MovieUiModel>,
     locale: Locale,
-    interactionListener: MovieDetailsScreenInteractionListener
+    interactionListener: MovieDetailsScreenInteractionListener,
+    lazyState: LazyGridState
 ) {
+
     LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize(),
+        state = lazyState,
         columns = GridCells.Adaptive(minSize = 120.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
             start = 16.dp, end = 16.dp, bottom = 100.dp
-        )
+        ),
+        modifier = Modifier.fillMaxSize()
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Box(modifier = Modifier.fillWidthOfParent(16.dp)) {
