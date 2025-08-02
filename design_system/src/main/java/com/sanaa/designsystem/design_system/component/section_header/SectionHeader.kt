@@ -17,7 +17,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixSectionHeader(
+fun SectionHeader(
     title: String,
     modifier: Modifier = Modifier,
     rightContent: @Composable () -> Unit = {},
@@ -50,7 +50,7 @@ private fun PreviewNovixSectionHeader() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NovixSectionHeader(
+            SectionHeader(
                 title = "New arrival",
                 rightContent = {
                     InlineAction(

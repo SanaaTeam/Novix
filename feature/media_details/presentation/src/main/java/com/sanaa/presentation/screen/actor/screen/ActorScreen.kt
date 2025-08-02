@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
@@ -112,11 +112,11 @@ private fun ActorScreenContent(
     modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Box(modifier = modifier.navigationBarsPadding()) {
 
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
@@ -140,7 +140,7 @@ private fun ActorScreenContent(
                         )
                     } else {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            NovixLoadingIndicator()
+                            LoadingIndicator()
                         }
                     }
                 } else {

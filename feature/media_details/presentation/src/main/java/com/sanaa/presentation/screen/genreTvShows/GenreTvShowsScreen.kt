@@ -31,11 +31,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -51,7 +51,7 @@ import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
 @Composable
 fun GenreTvShowsScreen(
-    viewModel: GenreTvShowsViewModel = hiltViewModel()
+    viewModel: GenreTvShowsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
@@ -90,12 +90,12 @@ fun GenreTvShowsScreenContent(
     val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
 
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
@@ -128,7 +128,7 @@ fun GenreTvShowsScreenContent(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                NovixLoadingIndicator()
+                                LoadingIndicator()
                             }
                         }
                     } else {
@@ -185,7 +185,7 @@ fun GenreTvShowsScreenContent(
                                             .padding(16.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        NovixLoadingIndicator()
+                                        LoadingIndicator()
                                     }
                                 }
                             }

@@ -10,8 +10,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
 import com.sanaa.designsystem.design_system.component.section_header.InlineAction
+import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 
 @Composable
 fun <T> MediaSection(
@@ -29,7 +29,7 @@ fun <T> MediaSection(
             .padding(bottom = 24.dp)
     ) {
 
-        NovixSectionHeader(
+        SectionHeader(
             title = title,
             modifier = Modifier.padding(bottom = 12.dp),
             rightContent = {

@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import kotlin.math.sqrt
 
 @Composable
-fun NovixBackgroundShapes() {
+fun BackgroundShapes() {
     Box {
         GlowingEquilateralTriangle(
             modifier = Modifier.fillMaxSize(),

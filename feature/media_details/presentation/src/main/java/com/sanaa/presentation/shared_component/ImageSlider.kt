@@ -32,7 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
+import com.sanaa.designsystem.design_system.component.carousel.CarouselDots
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -133,7 +133,7 @@ fun ImageSlider(
         AnimatedVisibility(
             visible = images.size > 1, modifier = Modifier.align(Alignment.TopCenter)
         ) {
-            NovixCarouselDots(
+            CarouselDots(
                 totalDots = images.size,
                 selectedIndex = pagerState.currentPage,
                 modifier = Modifier
