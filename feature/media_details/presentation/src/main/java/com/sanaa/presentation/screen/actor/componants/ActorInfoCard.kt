@@ -3,17 +3,17 @@ package com.sanaa.presentation.screen.actor.componants
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.InfoSection
-import com.sanaa.presentation.model.ActorUiModel
 
 @Composable
 fun ActorInfoCard(
@@ -28,7 +28,7 @@ fun ActorInfoCard(
         ) {
 
             actor.department?.let {
-                Text(
+                AppText(
                     text = it,
                     style = Theme.textStyle.label.small,
                     color = Theme.colors.body,

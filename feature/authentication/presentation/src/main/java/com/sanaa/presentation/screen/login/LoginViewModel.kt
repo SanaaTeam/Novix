@@ -50,7 +50,7 @@ class LoginViewModel @Inject constructor(
                     val updated = prev.copy(isLoading = false)
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
-                emitEffect(LoginScreenEffects.NavigateToHome)
+                emitEffect(LoginScreenEffects.ReturnLoggedInResultCode)
             },
             onError = ::onDataLoadError
         )

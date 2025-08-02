@@ -40,7 +40,7 @@ class SeriesViewModel @Inject constructor(
 
     init {
         loadSeries()
-        tryToExecute(callee = ::getUserState)
+        updateUserStatus()
     }
 
     override fun onBackClicked() {
@@ -262,6 +262,9 @@ class SeriesViewModel @Inject constructor(
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 
     private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {

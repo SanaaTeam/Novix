@@ -17,10 +17,13 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.navigation.SearchApiEntryPoint
 import com.sanaa.presentation.screen.componants.CategoryTabSection
+import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.state.ActorUiModel
@@ -28,6 +31,7 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -41,6 +45,23 @@ fun SearchScreen(
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
 
     val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        SearchApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            searchViewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            searchViewModel.updateUserStatus()
+        }
+    )
+
+
+
+
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -64,6 +85,10 @@ fun SearchScreen(
                         StartRoute.SERIES,
                         effect.id
                     )
+
+                SearchScreenEffects.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -117,4 +142,11 @@ fun SearchScreenContent(
             }
         }
     }
+
+
+    RequestToLoginBottomSheet(
+        onDismiss = {searchListener.onBottomSheetDismiss()},
+        onLoginButtonClick = { searchListener.onLoginButtonClick() },
+        isVisible = uiState.showLoginBottomSheet,
+    )
 }
