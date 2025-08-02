@@ -15,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -24,18 +24,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.state.MediaTypeUi
+import dagger.hilt.android.EntryPointAccessors
 
 
 @Composable
@@ -103,7 +103,7 @@ private fun TopRatedMediaScreenContent(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
-        NovixTopBar(
+        TopBar(
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(id = R.drawable.icon_back),

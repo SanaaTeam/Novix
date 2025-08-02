@@ -46,7 +46,7 @@ fun PasswordTextField(
         if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(mask = '*')
 
     Column(modifier = modifier) {
-        NovixBasicTextField(
+        BasicTextField(
             value = value,
             onValueChange = onValueChange,
             visualTransformation = visualTransformation,
@@ -133,7 +133,7 @@ private fun PreviewPasswordTextField() {
                 .background(color = Theme.colors.surface)
                 .padding(24.dp)
         ) {
-            NovixTextFieldLabel(
+            TextFieldLabel(
                 text = "Password",
                 modifier = Modifier.padding(bottom = 8.dp)
             )

@@ -18,7 +18,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
@@ -88,7 +88,7 @@ fun SearchScreenContent(
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
     Column {
-        NovixTopBar(
+        TopBar(
             modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
         )
 

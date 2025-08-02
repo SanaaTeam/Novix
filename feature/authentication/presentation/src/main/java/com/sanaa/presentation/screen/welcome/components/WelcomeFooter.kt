@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.button.OutlinedButton
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.authentication.presentation.R
 
@@ -60,13 +60,13 @@ private fun WelcomeActions(
     onLoginClicked: () -> Unit,
     onContinueClicked: () -> Unit
 ) {
-    NovixPrimaryButton(
+    PrimaryButton(
         text = stringResource(R.string.login),
         onClick = onLoginClicked,
         modifier = Modifier.fillMaxWidth()
     )
     Spacer(Modifier.height(12.dp))
-    NovixOutlinedButton(
+    OutlinedButton(
         text = stringResource(R.string.continue_as_guest),
         onClick = onContinueClicked,
         modifier = Modifier.fillMaxWidth()

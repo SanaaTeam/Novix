@@ -11,7 +11,17 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -38,8 +48,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.carousel.NovixCarouselDots
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.carousel.CarouselDots
+import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -88,7 +98,7 @@ fun PopularMediaSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixSectionHeader(title = stringResource(R.string.popular))
+        SectionHeader(title = stringResource(R.string.popular))
 
         PopularMediaSectionPager(
             state = pagerState,
@@ -97,7 +107,7 @@ fun PopularMediaSection(
             onSaveIconClicked = onSaveIconClicked
         )
 
-        NovixCarouselDots(
+        CarouselDots(
             totalDots = mediaItems.size,
             selectedIndex = pagerState.currentPage,
             modifier = Modifier.align(Alignment.CenterHorizontally),

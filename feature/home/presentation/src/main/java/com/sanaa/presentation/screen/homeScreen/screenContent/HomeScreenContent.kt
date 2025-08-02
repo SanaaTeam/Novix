@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
@@ -53,7 +53,7 @@ fun HomeScreenContent(
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && state.isNoInternet == false) {
+        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
             snack = SnackData(
                 message = errorMessage, isError = true
 
@@ -186,7 +186,7 @@ fun HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            NovixPrimaryButton(
+            PrimaryButton(
                 text = null,
                 icon = painterResource(R.drawable.icon_refresh),
                 onClick = upcomingMovies::retry,

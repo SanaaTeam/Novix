@@ -12,11 +12,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 
 @Composable
-fun NovixTab(
+fun Tab(
     categories: List<String>,
     selectedIndex: Int,
     onCategorySelected: (Int) -> Unit,
@@ -41,7 +41,7 @@ fun NovixTab(
                     selectedContentColor = Color.Transparent,
                     unselectedContentColor = Color.Transparent
                 ) {
-                    NovixToggleableChip(
+                    ToggleableChip(
                         text = title,
                         isSelected = selectedIndex == index,
                         onClick = { onCategorySelected(index) },
@@ -58,6 +58,6 @@ fun NovixTab(
 fun PreviewNovixTab() {
     val categories = listOf("Category1", "Category2", "Category3")
     NovixTheme(isSystemInDarkTheme()) {
-        NovixTab(categories, 1, {})
+        Tab(categories, 1, {})
     }
 }
