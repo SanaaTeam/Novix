@@ -2,11 +2,8 @@ package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +29,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -67,7 +63,6 @@ fun HomeScreenContent(
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
         loggedInWithSessionId = {
             interactionListener.onAuthActivityFinishedWithResult()
-            interactionListener::onDismissBottomSheet
         },
         loggedInAsGuest = {
             interactionListener.onAuthActivityFinishedWithResult()

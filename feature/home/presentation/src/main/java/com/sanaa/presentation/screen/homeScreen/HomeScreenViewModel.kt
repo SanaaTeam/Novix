@@ -52,7 +52,8 @@ class HomeScreenViewModel @Inject constructor(
             val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
             updateState {
                 it.copy(
-                    userIsLoggedIn = isLoggedIn
+                    userIsLoggedIn = isLoggedIn,
+                    showBottomSheet = false
                 )
             }
         }

@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.movieDetails
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.component.button.NovixTextButton
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -51,11 +47,8 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
-import kotlinx.coroutines.flow.collectLatest
-import com.sanaa.presentation.util.toLocalizedDigits
 import dagger.hilt.android.EntryPointAccessors
-import kotlin.time.Duration.Companion.hours
-import com.sanaa.designsystem.R as designR
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieDetailsScreen(
@@ -154,10 +147,6 @@ private fun HandleMovieDetailsEffects(
 
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> onShowSuccess()
                 is MovieDetailsUiEffect.ShowErrorSnackBar -> onShowError()
-
-                MovieDetailsUiEffect.NavigateToLogin -> {
-                    // TODO: implement login navigation
-                }
 
                  MovieDetailsUiEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
