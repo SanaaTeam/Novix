@@ -101,7 +101,7 @@ fun EpisodeCard(
 
                     IconWithText(
                         iconRes = R.drawable.icon_duration,
-                        text = stringResource(R.string.m, episode.duration),
+                        text = stringResource(R.string.minutes_duration, episode.duration),
                         contentDescription = episode.duration.toString(),
                         tint = Theme.colors.hint
                     )
