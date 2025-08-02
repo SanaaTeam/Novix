@@ -18,10 +18,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
+import com.sanaa.presentation.navigation.SearchApiEntryPoint
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
@@ -31,6 +33,7 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import usecase.search.search_param.MediaFilters
 
@@ -45,6 +48,23 @@ fun SearchScreen(
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
 
     val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        SearchApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            searchViewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            searchViewModel.updateUserStatus()
+        }
+    )
+
+
+
+
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -69,7 +89,9 @@ fun SearchScreen(
                         effect.id
                     )
 
-                SearchScreenEffects.NavigateToLogin -> TODO()
+                SearchScreenEffects.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -142,9 +164,12 @@ fun SearchScreenContent(
         selectedTabIndex = uiState.selectedTabIndex
     )
 
-    Log.d("test99", "SearchScreenContent: showloggedin bottom sheet :${uiState.showLoginBottomSheet}")
+    Log.d(
+        "test99",
+        "SearchScreenContent: showloggedin bottom sheet :${uiState.showLoginBottomSheet}"
+    )
     RequestToLoginBottomSheet(
-        onDismiss = dismissSheet ,
+        onDismiss = dismissSheet,
         onLoginButtonClick = { searchListener.onLoginButtonClick() },
         isVisible = uiState.showLoginBottomSheet,
     )
