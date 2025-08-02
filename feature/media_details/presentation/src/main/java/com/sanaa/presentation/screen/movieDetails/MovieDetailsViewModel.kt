@@ -32,11 +32,13 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
 
-    private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+        "movieId is required in SavedStateHandle"
+    }
 
     init {
         fetchMovieDetails(movieId)
-        tryToExecute(callee = ::getUserState)
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     override fun onBackClick() {
@@ -54,12 +56,7 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onBookmarkClick(movieId: Int) {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
 
     }
@@ -72,12 +69,7 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -123,7 +115,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitMovieRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -188,11 +180,7 @@ class MovieDetailsViewModel @Inject constructor(
         val images = manageMovieDetails.getMovieImages(movieId)
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-        val currentMovieRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
-            val ratedMovies = manageMovieDetails.getMoviesRate(userId)
-            ratedMovies.find { it.id == movieId }?.rating ?: 0
-        }.getOrElse { 0 }
+        val currentMovieRating = getCurrentUserRating(movieId)
 
         updateState {
             it.copy(
@@ -205,7 +193,24 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun addRate() {
+    private suspend fun getCurrentUserRating(movieId: Int): Int {
+        var rating = 0
+        tryToExecute(
+            callee = {
+                val userId = getUser.getLoggedInUser().id
+                manageMovieDetails.getMoviesRate(userId, movieId)
+            },
+            onSuccess = { result ->
+                rating = result
+            },
+            onError = {
+            }
+        )
+        return rating
+    }
+
+
+    private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
             movieId = movieId,
@@ -218,8 +223,18 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
+    }
+
 }
