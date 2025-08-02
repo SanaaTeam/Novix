@@ -5,23 +5,30 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.MediaHistoryItem
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NoLoggedInUserException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
-import usecase.history.ManageHistoryUseCase
 import javax.inject.Inject
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val manageHistoryUseCase: ManageHistoryUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
 ), HomeScreenInteractionListener {
@@ -82,20 +89,14 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
-        tryToExecute(
-            callee = {
-                val watchedMovies = manageHistoryUseCase
-                    .getWatchedMoviesHistory(10, null).map { it.toState() }
-                val watchedTvSeries = manageHistoryUseCase
-                    .getWatchedSeriesHistory(10, null).map { it.toState() }
-                (watchedMovies + watchedTvSeries).shuffled()
-            },
-            onSuccess = { watchedMediaList ->
+        tryToCollect(
+            callee = { loadWatchedMediaHistory() },
+            onCollect = { watchedMediaList ->
                 updateState {
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        continueWatchingMedia = watchedMediaList
+                        continueWatchingMedia = watchedMediaList.map { it.toState() }
                     )
                 }
             },
@@ -136,6 +137,16 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
+    private suspend fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return flowOf(emptyList())
+        return manageWatchedMediaHistoryUseCase.getMediaHistory(user.username, null, null)
+    }
+
 
     override fun onMoviesCardClicked() {
         emitEffect(HomeScreenEffect.NavigateToMoviesScreen)
@@ -164,8 +175,8 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaType: MediaType) {
-        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaType))
+    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
+        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
