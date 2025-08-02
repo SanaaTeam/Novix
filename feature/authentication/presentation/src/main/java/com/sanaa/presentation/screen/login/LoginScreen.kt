@@ -22,11 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_WITH_SESSION_ID
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.navigation.ForgetPasswordRoute
-import com.sanaa.presentation.navigation.HomeScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SignUpRoute
 import com.sanaa.presentation.screen.login.components.LoginActions
@@ -40,6 +40,7 @@ import com.sanaa.presentation.screen.login.components.UsernameField
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    onFinish: (Int) -> Unit,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -54,13 +55,8 @@ fun LoginScreen(
                 LoginScreenEffects.NavigateBack ->
                     navController.popBackStack()
 
-                LoginScreenEffects.NavigateToHome -> {
-                    navController.navigate(HomeScreenRoute)
-                    {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
-                    }
+                LoginScreenEffects.ReturnLoggedInResultCode -> {
+                    onFinish(RESULT_LOGGED_WITH_SESSION_ID)
                 }
 
                 LoginScreenEffects.NavigateToForgotPassword -> {
@@ -102,7 +98,7 @@ fun LoginContent(
     modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
         topBar = { LoginTopBar(onBackClick = listener::onBackClicked) }
     ) {
         Box(

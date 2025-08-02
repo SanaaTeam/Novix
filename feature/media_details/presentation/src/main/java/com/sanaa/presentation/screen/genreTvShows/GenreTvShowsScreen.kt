@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,31 +31,53 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
+import dagger.hilt.android.EntryPointAccessors
 
 
 @Composable
 fun GenreTvShowsScreen(
-    viewModel: GenreTvShowsViewModel = hiltViewModel()
+    viewModel: GenreTvShowsViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
+
+    val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserLoggingStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserLoggingStatus()
+        }
+    )
+
+
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -65,10 +88,7 @@ fun GenreTvShowsScreen(
                 )
 
                 GenreTvShowsEffects.NavigateToLogin -> {
-                    val intent =
-                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    navController.context.startActivity(intent)
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
@@ -90,12 +110,12 @@ fun GenreTvShowsScreenContent(
     val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
 
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Column(
             modifier = Modifier.navigationBarsPadding()
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
@@ -128,7 +148,7 @@ fun GenreTvShowsScreenContent(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
                             ) {
-                                NovixLoadingIndicator()
+                                LoadingIndicator()
                             }
                         }
                     } else {
@@ -185,7 +205,7 @@ fun GenreTvShowsScreenContent(
                                             .padding(16.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
-                                        NovixLoadingIndicator()
+                                        LoadingIndicator()
                                     }
                                 }
                             }

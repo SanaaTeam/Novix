@@ -34,6 +34,13 @@ fun HomeScreen(
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
     }
+    val authApi = remember {
+        EntryPointAccessors.fromApplication(
+            appContext,
+            HomeApiEntryPoint::class.java
+        ).authenticationApi()
+    }
+
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     Log.d("stateTest", "HomeScreen: state:${state.value}")
@@ -88,6 +95,7 @@ fun HomeScreen(
         HomeScreenContent(
             state = state.value,
             interactionListener = viewModel,
+            authApi = authApi
         )
     }
 }
