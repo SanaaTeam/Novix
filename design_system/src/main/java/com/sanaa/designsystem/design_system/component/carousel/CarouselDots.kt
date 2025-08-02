@@ -31,7 +31,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixCarouselDots(
+fun CarouselDots(
     totalDots: Int,
     selectedIndex: Int,
     modifier: Modifier = Modifier,
@@ -100,7 +100,7 @@ private fun PreviewNovixCarouselDots() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NovixCarouselDots(
+            CarouselDots(
                 totalDots = 10,
                 selectedIndex = selectedIndex,
                 onDotClick = { selectedIndex = it }

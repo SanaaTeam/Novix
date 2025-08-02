@@ -26,7 +26,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 
 @Composable
-fun NovixNavBar(
+fun NavBar(
     modifier: Modifier = Modifier,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -64,36 +64,36 @@ private fun PreviewNovixNavBar() {
                 .background(color = Theme.colors.surface),
             contentAlignment = Alignment.Center
         ) {
-            NovixNavBar {
-                NovixNavBarItem(
+            NavBar {
+                NavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 0,
                     onClick = { selectedIndex = 0 },
                     iconRes = R.drawable.icon_home,
                     selectedIconRes = R.drawable.icon_home_selected,
                 )
-                NovixNavBarItem(
+                NavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 1,
                     onClick = { selectedIndex = 1 },
                     iconRes = R.drawable.icon_search,
                     selectedIconRes = R.drawable.icon_search_selected
                 )
-                NovixNavBarItem(
+                NavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 2,
                     onClick = { selectedIndex = 2 },
                     iconRes = R.drawable.icon_category,
                     selectedIconRes = R.drawable.icon_category_selected
                 )
-                NovixNavBarItem(
+                NavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 3,
                     onClick = { selectedIndex = 3 },
                     iconRes = R.drawable.icon_save,
                     selectedIconRes = R.drawable.icon_save_selected
                 )
-                NovixNavBarItem(
+                NavBarItem(
                     modifier = Modifier.weight(1f),
                     isSelected = selectedIndex == 4,
                     onClick = { selectedIndex = 4 },

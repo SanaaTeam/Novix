@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +10,9 @@ import com.sanaa.presentation.model.mapper.toEpisodeUiModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -34,8 +38,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-        tryToExecute(callee = ::getUserState)
+        updateUserStatus()
     }
+
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
@@ -140,36 +145,54 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) =
+        coroutineScope {
+            updateState { it.copy(isLoading = true) }
 
-        updateState { it.copy(isLoading = true) }
-        val episode =
-            manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
-        val guests = manageEpisodeDetails.getEpisodeGuestsOfHonor(
-            seriesId,
-            seasonNumber,
-            episodeNumber
-        )
-        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-        val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentEpisodesRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
-            val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
-            ratedEpisodes.find {
-                it.seasonNumber == seasonNumber && it.number == episodeNumber
-            }?.rating ?: 0
-        }.getOrElse { 0 }
-        updateState {
-            it.copy(
-                episode = episode.toEpisodeUiModel(),
-                guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
-                seriesId = seriesId,
-                imagesUrl = images,
-                trailerUrl = trailerUrl,
-                imdbRating = currentEpisodesRating
-            )
+            val episodeDeferred = async {
+                manageEpisodeDetails.getEpisodeDetails(
+                    seriesId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            }
+            val guestsDeferred = async {
+                manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                    seriesId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            }
+            val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
+            val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+            val ratingDeferred = async {
+                runCatching {
+                    val userId = getUser.getLoggedInUser().id
+                    val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
+                    ratedEpisodes.find {
+                        it.seasonNumber == seasonNumber && it.number == episodeNumber
+                    }?.rating ?: 0
+                }.getOrElse { 0 }
+            }
+
+            val episode = episodeDeferred.await()
+            val guests = guestsDeferred.await()
+            val images = imagesDeferred.await()
+            val trailerUrl = trailerDeferred.await()
+            val currentEpisodesRating = ratingDeferred.await()
+
+            updateState {
+                it.copy(
+                    episode = episode.toEpisodeUiModel(),
+                    guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
+                    seriesId = seriesId,
+                    imagesUrl = images,
+                    trailerUrl = trailerUrl,
+                    imdbRating = currentEpisodesRating
+                )
+            }
         }
-    }
+
 
     private suspend fun addRate() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
@@ -188,5 +211,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 }

@@ -14,7 +14,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NovixLoadingIndicator(
+fun LoadingIndicator(
     modifier: Modifier = Modifier,
 ) {
     CircularWavyProgressIndicator(
@@ -31,6 +31,6 @@ fun NovixIndicatorPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        NovixLoadingIndicator()
+        LoadingIndicator()
     }
 }

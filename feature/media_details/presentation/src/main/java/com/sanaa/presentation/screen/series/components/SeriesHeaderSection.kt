@@ -17,14 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.button.NovixTextButton
+import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
-import com.sanaa.presentation.model.GenreUiModel
 
 @Composable
 fun SeriesHeaderSection(
@@ -125,7 +125,7 @@ fun SeriesHeaderSection(
                     )
                 }}
                 if (showReviews) {
-                    NovixTextButton(
+                    TextButton(
                         text = stringResource(R.string.view_reviews),
                         onClick = onReviewClicked
                     )

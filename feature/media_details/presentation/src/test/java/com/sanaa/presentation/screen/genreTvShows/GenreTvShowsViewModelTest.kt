@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,6 +32,8 @@ class GenreTvShowsViewModelTest {
     private lateinit var viewModel: GenreTvShowsViewModel
 
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk()
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+
 
     @BeforeEach
     fun setUp() {
@@ -57,7 +60,8 @@ class GenreTvShowsViewModelTest {
 
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
-            manageTvSeriesUseCase
+            manageTvSeriesUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
         advanceUntilIdle()
@@ -82,19 +86,26 @@ class GenreTvShowsViewModelTest {
 
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
-            manageTvSeriesUseCase
+            manageTvSeriesUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
-        advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onTvShowClick(101)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
             assertEquals(
                 GenreTvShowsEffects.NavigateToTvShowDetails(101),
                 awaitItem()
             )
+
+            cancelAndIgnoreRemainingEvents()
         }
     }
+
 
     private companion object {
         val genreList = listOf(

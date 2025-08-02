@@ -2,10 +2,8 @@ package com.sanaa.presentation.shared_component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.feature.mediadetails.presentation.R
 
 
@@ -41,12 +39,12 @@ fun BottomContainer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            NovixPrimaryButton(
+            PrimaryButton(
                 text = null,
                 onClick = onSetRateClicked,
                 icon = painterResource(R.drawable.icon_star_outlined)
             )
-            NovixPrimaryButton(
+            PrimaryButton(
                 text = stringResource(R.string.play_trailer),
                 isEnabled = trailerUrl != null,
                 modifier = Modifier.weight(1f),

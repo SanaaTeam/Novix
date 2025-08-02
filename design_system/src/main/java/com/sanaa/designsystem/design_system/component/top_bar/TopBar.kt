@@ -20,7 +20,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTopBar(
+fun TopBar(
     modifier: Modifier = Modifier,
     screenTitle: String = "",
     leftContent: @Composable () -> Unit = {},
@@ -58,7 +58,7 @@ private fun AppTopBarPreview() {
                 .background(Theme.colors.surface)
                 .fillMaxWidth()
         ) {
-            NovixTopBar(
+            TopBar(
                 screenTitle = "Title",
                 rightContent = {
                     TopBarClickableIcon(

@@ -19,6 +19,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -31,6 +32,8 @@ class MovieCategoriesViewModelTest {
     private lateinit var viewModel: GenreMoviesViewModel
 
     private val manageMoviesDetailsUseCase: ManageMovieUseCase = mockk()
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+
 
     @BeforeAll
     fun setUpDispatcher() {
@@ -67,7 +70,8 @@ class MovieCategoriesViewModelTest {
 
         viewModel = GenreMoviesViewModel(
             savedStateHandle,
-            manageMoviesDetailsUseCase
+            manageMoviesDetailsUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
         advanceUntilIdle()
@@ -91,7 +95,8 @@ class MovieCategoriesViewModelTest {
 
         viewModel = GenreMoviesViewModel(
             savedStateHandle,
-            manageMoviesDetailsUseCase
+            manageMoviesDetailsUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
         advanceUntilIdle()
@@ -117,7 +122,8 @@ class MovieCategoriesViewModelTest {
 
         viewModel = GenreMoviesViewModel(
             savedStateHandle,
-            manageMoviesDetailsUseCase
+            manageMoviesDetailsUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
         advanceUntilIdle()
@@ -142,7 +148,8 @@ class MovieCategoriesViewModelTest {
 
         viewModel = GenreMoviesViewModel(
             savedStateHandle,
-            manageMoviesDetailsUseCase
+            manageMoviesDetailsUseCase,
+            checkIfUserIsLoggedInUseCase
         )
 
         advanceUntilIdle()
