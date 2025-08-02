@@ -22,7 +22,6 @@ import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
 import com.sanaa.presentation.navigation.SearchApiEntryPoint
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
@@ -147,7 +146,7 @@ fun SearchScreenContent(
 
 
     RequestToLoginBottomSheet(
-        onDismiss = dismissSheet,
+        onDismiss = {searchListener.onBottomSheetDragged()},
         onLoginButtonClick = { searchListener.onLoginButtonClick() },
         isVisible = uiState.showLoginBottomSheet,
     )

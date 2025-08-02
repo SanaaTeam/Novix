@@ -16,5 +16,6 @@ interface SearchScreenInteractionsListener {
     fun onLoginButtonClick()
     fun onSaveSeriesClicked()
     fun onSaveMoviesClicked()
+    fun onBottomSheetDragged()
 
 }
