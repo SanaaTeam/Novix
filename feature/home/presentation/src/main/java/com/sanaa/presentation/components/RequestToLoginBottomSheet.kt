@@ -14,8 +14,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
-import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.button.OutlinedButton
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
@@ -46,7 +46,7 @@ fun RequestToLoginBottomSheet(
                     .padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                NovixTopBar(
+                TopBar(
                     screenTitle = title,
                     rightContent = {
                         TopBarClickableIcon(
@@ -66,7 +66,7 @@ fun RequestToLoginBottomSheet(
                     style = Theme.textStyle.body.small.copy(color = Theme.colors.body),
                     modifier = Modifier.padding(bottom = 24.dp, top = 12.dp)
                 )
-                NovixOutlinedButton(
+                OutlinedButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),

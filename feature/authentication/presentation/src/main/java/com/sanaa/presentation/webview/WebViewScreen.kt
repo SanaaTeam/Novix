@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.authentication.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -24,7 +24,7 @@ fun WebViewScreen(url: String) {
             .fillMaxSize()
             .testTag("auth_webview")
     ) {
-        NovixTopBar(
+        TopBar(
             modifier = Modifier.fillMaxWidth(),
             screenTitle = stringResource(R.string.sign_up),
             leftContent = {

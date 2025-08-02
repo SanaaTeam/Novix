@@ -34,7 +34,7 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixNavBarItem(
+fun NavBarItem(
     isSelected: Boolean,
     onClick: () -> Unit,
     iconRes: Int,
@@ -137,7 +137,7 @@ private fun PreviewNovixNavBarItem() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        NovixNavBarItem(
+        NavBarItem(
             isSelected = true,
             onClick = {},
             iconRes = R.drawable.icon_home,
