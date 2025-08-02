@@ -3,7 +3,6 @@ package repository
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import usecase.search.search_param.MediaFilters
 
 
 interface SearchRepository {
@@ -11,12 +10,10 @@ interface SearchRepository {
     suspend fun searchMovies(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<Movie>
 
     suspend fun searchTvShows(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<TvSeries>
 }

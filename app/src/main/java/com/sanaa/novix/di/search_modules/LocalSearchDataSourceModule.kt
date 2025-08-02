@@ -1,9 +1,9 @@
 package com.sanaa.novix.di.search_modules
 
 import com.sanaa.vod.dataSource.local.search.LocalCacheSearchDataSource
-import com.sanaa.vod.dataSource.local.search.LocalSearchHistoryDataSource
-import com.sanaa.vod.search.search_result.LocalCachedSearchDataSourceImpl
-import com.sanaa.vod.search.search_history.LocalSearchHistoryDataSourceImpl
+import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
+import com.sanaa.vod.search.LocalCachedSearchDataSourceImpl
+import com.sanaa.vod.history.LocalHistoryDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,6 +20,6 @@ abstract class LocalSearchDataSourceModule {
 
     @Binds
     abstract fun bindLocalSearchHistoryDataSource(
-        localSearchHistoryDataSourceImpl: LocalSearchHistoryDataSourceImpl
-    ): LocalSearchHistoryDataSource
+        localHistoryDataSourceImpl: LocalHistoryDataSourceImpl
+    ): LocalHistoryDataSource
 }

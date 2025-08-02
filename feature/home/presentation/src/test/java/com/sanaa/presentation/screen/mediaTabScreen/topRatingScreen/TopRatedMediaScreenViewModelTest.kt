@@ -5,7 +5,7 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
@@ -190,6 +190,6 @@ class TopRatedMediaScreenViewModelTest {
             TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
             TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
-        val media = MediaItem(1, "Media", "", mediaType = MediaType.MOVIE)
+        val media = MediaItem(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
     }
 }
