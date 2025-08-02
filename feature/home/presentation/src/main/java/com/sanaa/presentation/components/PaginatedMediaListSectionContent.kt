@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.sanaa.designsystem.design_system.component.chips.NovixToggleableChip
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
@@ -36,7 +36,7 @@ fun PaginatedMediaListSectionContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             item {
-                NovixToggleableChip(
+                ToggleableChip(
                     text = stringResource(R.string.all),
                     onClick = {
                         onGenreClick(null)
@@ -45,7 +45,7 @@ fun PaginatedMediaListSectionContent(
                 )
             }
             items(genres, key = { it.id }) { genre ->
-                NovixToggleableChip(
+                ToggleableChip(
                     text = genre.name,
                     onClick = { onGenreClick(genre.id) },
                     isSelected = genre.id == selectedGenreId,

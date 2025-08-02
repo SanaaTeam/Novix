@@ -32,7 +32,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixTextButton(
+fun TextButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -88,8 +88,8 @@ private fun TextButtonPreview() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            NovixTextButton(text = "Watch", onClick = { isLoading = !isLoading }, isLoading = isLoading)
-            NovixTextButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
+            TextButton(text = "Watch", onClick = { isLoading = !isLoading }, isLoading = isLoading)
+            TextButton(text = "Watch", onClick = {}, isLoading = false, isEnabled = false)
         }
     }
 }

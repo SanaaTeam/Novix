@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
@@ -102,7 +102,7 @@ private fun ContinueWatchingMediaScreenContent(
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
-        NovixTopBar(
+        TopBar(
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(id = R.drawable.icon_back),

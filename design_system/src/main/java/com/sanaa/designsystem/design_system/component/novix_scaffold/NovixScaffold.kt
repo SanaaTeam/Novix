@@ -26,7 +26,7 @@ fun NovixScaffold(
     bottomBar: @Composable () -> Unit = {},
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
-    backgroundShapes: @Composable () -> Unit = { NovixBackgroundShapes() },
+    backgroundShapes: @Composable () -> Unit = { BackgroundShapes() },
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -58,7 +58,7 @@ fun NovixScaffold(
 private fun PreviewNovixScaffold() {
     NovixTheme(true) {
         NovixScaffold(
-            backgroundShapes = { NovixBackgroundShapes() }
+            backgroundShapes = { BackgroundShapes() }
         ) {
             Box(modifier = Modifier.fillMaxSize())
         }

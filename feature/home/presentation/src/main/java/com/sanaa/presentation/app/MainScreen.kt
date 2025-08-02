@@ -16,8 +16,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBar
-import com.sanaa.designsystem.design_system.component.nav_bar.NovixNavBarItem
+import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
+import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.HomeScreenRoute
@@ -91,9 +91,9 @@ private fun AppBottomNavBar(navController: NavController) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
-    NovixNavBar {
+    NavBar {
         navItems.forEach { item ->
-            NovixNavBarItem(
+            NavBarItem(
                 modifier = Modifier.weight(1f),
                 isSelected = currentDestination?.hasRoute(item.route::class) == true,
                 onClick = {

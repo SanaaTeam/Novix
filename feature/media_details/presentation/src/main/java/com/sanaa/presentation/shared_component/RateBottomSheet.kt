@@ -17,8 +17,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -45,7 +45,7 @@ fun RateBottomSheet(
                     .padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                NovixTopBar(
+                TopBar(
                     screenTitle = stringResource(R.string.rate_it),
                     rightContent = {
                         TopBarClickableIcon(
@@ -68,7 +68,7 @@ fun RateBottomSheet(
                         onRatingChanged = onRatingChanged
                     )
                 }
-                NovixPrimaryButton(
+                PrimaryButton(
                     isEnabled = isRateSelected,
                     modifier = Modifier
                         .fillMaxWidth()

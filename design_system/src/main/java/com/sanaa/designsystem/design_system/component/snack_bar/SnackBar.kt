@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun NovixSnackBar(
+fun SnackBar(
     message: String,
     modifier: Modifier = Modifier,
     isErrorMessage: Boolean = false,
@@ -81,7 +81,7 @@ private fun PreviewNovixSnackBar() {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            NovixSnackBar(
+            SnackBar(
                 message = "This is a snack bar",
                 isErrorMessage = false
             )

@@ -11,6 +11,8 @@ import com.sanaa.presentation.model.mapper.toUiModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import usecase.ManageActorUseCase
 
 @HiltViewModel
@@ -83,6 +85,7 @@ class ActorViewModel @Inject constructor(
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
+
     private fun loadDetails() {
         updateState { it.copy(isLoading = true) }
         tryToExecute(
@@ -96,13 +99,19 @@ class ActorViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchActorDetails() {
+    private suspend fun fetchActorDetails() = coroutineScope {
+        val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
+        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
+        val topSeriesDeferred = async { manageActorDetails.getActorTopTvSeries(actorId) }
+        val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
+        val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
 
-        val actor = manageActorDetails.getActorDetails(actorId)
-        val topMovies = manageActorDetails.getActorTopMovies(actorId)
-        val topSeries = manageActorDetails.getActorTopTvSeries(actorId)
-        val profiles = manageActorDetails.getProfileImages(actorId)
-        val gallery = manageActorDetails.getGalleryImages(actorId)
+        val actor = actorDeferred.await()
+        val topMovies = topMoviesDeferred.await()
+        val topSeries = topSeriesDeferred.await()
+        val profiles = profilesDeferred.await()
+        val gallery = galleryDeferred.await()
+
         updateState {
             it.copy(
                 actor = actor.toActorUiModel(),

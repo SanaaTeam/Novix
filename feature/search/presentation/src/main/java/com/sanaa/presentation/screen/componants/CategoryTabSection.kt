@@ -17,11 +17,10 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.tab.NovixTab
-import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
+import com.sanaa.designsystem.design_system.component.tab.Tab
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -51,7 +50,7 @@ fun CategoryTabSection(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.padding(top = 12.dp)
     ) {
-        NovixTab(
+        Tab(
             categories = tabs,
             selectedIndex = selectedTabIndex,
             onCategorySelected = interactionsListener::onTabSelected,
@@ -60,7 +59,7 @@ fun CategoryTabSection(
         when {
             uiState.isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NovixLoadingIndicator()
+                    LoadingIndicator()
                 }
             }
             uiState.noInternetConnection -> {

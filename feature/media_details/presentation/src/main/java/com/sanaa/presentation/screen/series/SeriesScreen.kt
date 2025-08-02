@@ -33,9 +33,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
@@ -157,14 +159,14 @@ fun SeriesScreenContent(
     interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
@@ -193,7 +195,7 @@ fun SeriesScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        NovixLoadingIndicator(
+                        LoadingIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -256,7 +258,7 @@ fun SeriesScreenContent(
                                         verticalArrangement = Arrangement.Center
 
                                     ) {
-                                        NovixLoadingIndicator()
+                                        LoadingIndicator()
                                     }
                                 } else {
                                     EpisodesContent(
