@@ -13,7 +13,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.MediaListSectionContent
+import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 
@@ -45,7 +45,7 @@ fun TrendingMediaScreenContent(
                 .statusBarsPadding()
         )
 
-        MediaListSectionContent(
+        PaginatedMediaListSectionContent(
             genres = state.genreList,
             mediaList = trendingMedia,
             selectedGenreId = state.selectedGenreId,

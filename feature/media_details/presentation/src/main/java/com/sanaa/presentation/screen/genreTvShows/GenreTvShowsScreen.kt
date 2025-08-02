@@ -30,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
@@ -144,7 +143,9 @@ fun GenreTvShowsScreenContent(
                         ) {
                             items(
                                 count = pagedTvShows.itemCount,
-                                key = pagedTvShows.itemKey { tvShow -> tvShow.id }
+                                key = { index ->
+                                    "${index}_${pagedTvShows[index]?.id}"
+                                }
                             ) { index ->
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(

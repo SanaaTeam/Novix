@@ -32,7 +32,7 @@ import com.sanaa.presentation.components.shimmerEffect.upComingTitlePlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 
 fun LazyGridScope.upcomingSection(
     upcomingMovies: LazyPagingItems<MediaItem>,
@@ -41,7 +41,7 @@ fun LazyGridScope.upcomingSection(
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
     onSaveIconClick: (item: MediaItem) -> Unit,
-    onMovieClick: (id: Int, mediaType: MediaType) -> Unit,
+    onMovieClick: (id: Int, mediaTypeUi: MediaTypeUi) -> Unit,
 ) {
 
     if (isLoading) {
@@ -99,7 +99,7 @@ fun LazyGridScope.upcomingSection(
         val item = upcomingMovies[index] ?: return@items
         MediaPosterCard(
             onCardClick = {
-                onMovieClick(item.id, item.mediaType)
+                onMovieClick(item.id, item.mediaTypeUi)
             },
             posterImage = {
                 RemoteBlurredHaramImageViewer(
