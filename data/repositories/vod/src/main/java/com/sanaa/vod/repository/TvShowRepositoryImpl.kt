@@ -104,11 +104,17 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getEpisodesRate(accountId: Long, episodeId: Int): Int? {
+    override suspend fun getEpisodesRate(
+        accountId: Long,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): Int? {
         return safeCall("Failed to fetch Episodes Rate") {
             val sessionId = preferences.sessionId.first()
             remoteDataSource.getEpisodesRate(accountId, sessionId).map { it.toEntity() }
-                .find { it.id == episodeId }?.rating
+                .find {
+                    it.seasonNumber == seasonNumber && it.number == episodeNumber
+                }?.rating
         }
     }
 
