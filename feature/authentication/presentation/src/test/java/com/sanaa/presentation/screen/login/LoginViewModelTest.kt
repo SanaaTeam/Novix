@@ -5,7 +5,6 @@ import com.google.common.truth.Truth.assertThat
 import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -131,7 +130,7 @@ class LoginViewModelTest {
         viewModel.onLoginClicked()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToHome)
+            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.ReturnLoggedInResultCode)
             cancelAndIgnoreRemainingEvents()
         }
         assertThat(viewModel.state.value.isLoading).isFalse()
@@ -216,7 +215,7 @@ class LoginViewModelTest {
         viewModel.onLoginClicked()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.NavigateToHome)
+            assertThat(awaitItem()).isEqualTo(LoginScreenEffects.ReturnLoggedInResultCode)
             cancelAndIgnoreRemainingEvents()
         }
     }

@@ -23,6 +23,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -37,6 +38,7 @@ class HomeScreenViewModelTest {
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
+    private val checkIfUserIsLoggedInUseCase : CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -60,6 +62,7 @@ class HomeScreenViewModelTest {
             manageTvSeriesUseCase,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
+            checkIfUserIsLoggedInUseCase,
             testDispatcher
         )
     }

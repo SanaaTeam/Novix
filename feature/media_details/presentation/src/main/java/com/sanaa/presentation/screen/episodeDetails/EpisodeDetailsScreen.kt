@@ -27,6 +27,7 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -35,6 +36,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
@@ -45,6 +47,7 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -57,6 +60,20 @@ fun EpisodeDetailsScreen(
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserStatus()
+        }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -86,10 +103,7 @@ fun EpisodeDetailsScreen(
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent =
-                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    navController.context.startActivity(intent)
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
