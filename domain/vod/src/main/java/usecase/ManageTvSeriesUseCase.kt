@@ -61,6 +61,14 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
     }
 
+    suspend fun getUserRatedTvSeries(userId: String): List<TvSeries> {
+        return tvSeriesRepo.getUserRatedTvSeries(userId)
+    }
+
+    suspend fun deleteTvSeriesRate(seriesId: Int): Boolean {
+        return tvSeriesRepo.deleteTvSeriesRate(seriesId)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }
