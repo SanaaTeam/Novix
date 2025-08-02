@@ -109,7 +109,7 @@ fun HomeScreenContent(
                 else item(span = { GridItemSpan(maxLineSpan) }) {
                     PopularMediaSection(
                         mediaItems = state.popularMedia, onMediaClick = {
-                            interactionListener.onMediaClick(it.id, it.mediaType)
+                            interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                         }, onSaveIconClicked = {
                             interactionListener.onSaveIconClick(it)
                         }, modifier = Modifier.fillWidthOfParent(16.dp)
@@ -152,7 +152,7 @@ fun HomeScreenContent(
                                 ),
                             mediaItems = state.topRatingMedia,
                             onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaType)
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                             },
                             onSaveIconClicked = {
                                 interactionListener.onSaveIconClick(it)
@@ -178,12 +178,13 @@ fun HomeScreenContent(
                             headerLabel = stringResource(R.string.continue_watching),
                             mediaItems = state.continueWatchingMedia,
                             onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaType)
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                             },
                             onSaveIconClicked = {
                                 interactionListener.onSaveIconClick(it)
                             },
-                            modifier = Modifier.fillWidthOfParent(16.dp),
+                            onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
+                            modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
                         )
                     }
                 }

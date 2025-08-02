@@ -35,7 +35,6 @@ import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
-import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
@@ -103,9 +102,6 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-            onFilterApplied = { tabIndex, filters ->
-                searchViewModel.onFilterApplied(tabIndex, filters)
-            }
         )
     }
 }
@@ -117,13 +113,7 @@ fun SearchScreenContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onFilterApplied: (Int, MediaFilters?) -> Unit,
 ) {
-
-    val dismissSheet: () -> Unit = {
-        searchListener.onBottomSheetDragged()
-    }
-
     Column {
         NovixTopBar(
             modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
@@ -132,8 +122,6 @@ fun SearchScreenContent(
         SearchSection(
             text = uiState.searchQuery,
             onTextChange = searchListener::onSearchQueryChanged,
-            onFilterClicked = { searchListener.onFilterClicked() },
-            isFilterButtonVisible = uiState.isFilterVisible(),
         )
 
         AnimatedContent(uiState.searchQuery.isNotBlank()) {
@@ -157,17 +145,7 @@ fun SearchScreenContent(
         }
     }
 
-    FilterBottomSheet(
-        dismissSheet = dismissSheet,
-        isVisible = uiState.showBottomSheet,
-        onFilterApplied = onFilterApplied,
-        selectedTabIndex = uiState.selectedTabIndex
-    )
 
-    Log.d(
-        "test99",
-        "SearchScreenContent: showloggedin bottom sheet :${uiState.showLoginBottomSheet}"
-    )
     RequestToLoginBottomSheet(
         onDismiss = dismissSheet,
         onLoginButtonClick = { searchListener.onLoginButtonClick() },

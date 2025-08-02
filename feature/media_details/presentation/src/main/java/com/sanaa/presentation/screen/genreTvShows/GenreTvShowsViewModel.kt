@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import entity.TvSeries
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher

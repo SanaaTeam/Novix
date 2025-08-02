@@ -86,6 +86,7 @@ fun GenreTvShowsScreen(
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )
+
                 GenreTvShowsEffects.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
@@ -143,7 +144,10 @@ fun GenreTvShowsScreenContent(
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NovixLoadingIndicator()
                             }
                         }
@@ -159,7 +163,9 @@ fun GenreTvShowsScreenContent(
                         ) {
                             items(
                                 count = pagedTvShows.itemCount,
-                                key = pagedTvShows.itemKey { it.id }
+                                key = { index ->
+                                    "${index}_${pagedTvShows[index]?.id}"
+                                }
                             ) { index ->
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(

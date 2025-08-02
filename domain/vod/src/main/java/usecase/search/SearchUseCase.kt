@@ -3,31 +3,29 @@ package usecase.search
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import repository.SearchRepository
-import usecase.search.search_param.MediaFilters
 import javax.inject.Inject
 
 class SearchUseCase @Inject constructor(
     private val searchRepository: SearchRepository,
-    private val searchHistoryRepository: SearchHistoryRepository,
+    private val historyRepository: HistoryRepository,
 ) {
-    suspend fun searchMovies(query: String, page: Int, filters: MediaFilters?): List<Movie> {
-        searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchMovies(query, page, filters)
+    suspend fun searchMovies(query: String, page: Int): List<Movie> {
+        historyRepository.addSearchHistory(query)
+        return searchRepository.searchMovies(query, page)
     }
 
     suspend fun searchActors(query: String, page: Int): List<Actor> {
-        searchHistoryRepository.addSearchHistory(query)
+        historyRepository.addSearchHistory(query)
         return searchRepository.searchActors(query, page)
     }
 
     suspend fun searchTvShows(
         query: String,
         page: Int,
-        filters: MediaFilters?,
     ): List<TvSeries> {
-        searchHistoryRepository.addSearchHistory(query)
-        return searchRepository.searchTvShows(query, page, filters)
+        historyRepository.addSearchHistory(query)
+        return searchRepository.searchTvShows(query, page)
     }
 }

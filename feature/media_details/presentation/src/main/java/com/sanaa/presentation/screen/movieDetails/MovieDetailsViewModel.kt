@@ -8,10 +8,13 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
+import com.sanaa.presentation.model.mapper.toUiModel
 import entity.Movie
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,14 +22,15 @@ import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import javax.inject.Inject
+import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val getUser: GetLoggedInUserUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -190,11 +194,12 @@ class MovieDetailsViewModel @Inject constructor(
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
         val currentMovieRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
+            val userId = getLoggedInUserUseCase.getLoggedInUser().id
             val ratedMovies = manageMovieDetails.getMoviesRate(userId)
             ratedMovies.find { it.id == movieId }?.rating ?: 0
         }.getOrElse { 0 }
 
+        addMovieToHistory(movie)
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
@@ -226,5 +231,18 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun updateUserStatus(){
         tryToExecute(callee = ::getUserState)
+    }
+
+    private suspend fun addMovieToHistory(movie: Movie) {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
+        )
     }
 }

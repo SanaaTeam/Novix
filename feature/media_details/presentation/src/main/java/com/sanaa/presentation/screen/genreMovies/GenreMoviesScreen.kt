@@ -82,6 +82,7 @@ fun GenreMoviesScreen(
                 is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsScreenRoute(effect.id).route()
                 )
+
                 GenreMoviesEffects.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
@@ -138,7 +139,10 @@ fun GenreMoviesScreenContent(
                                 modifier = Modifier.fillMaxSize()
                             )
                         } else {
-                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
                                 NovixLoadingIndicator()
                             }
                         }
@@ -154,7 +158,9 @@ fun GenreMoviesScreenContent(
                         ) {
                             items(
                                 count = pagedMovies.itemCount,
-                                key = pagedMovies.itemKey { it.id }
+                                key = { index ->
+                                    "${index}_${pagedMovies[index]?.id}"
+                                }
                             ) { index ->
                                 val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(
