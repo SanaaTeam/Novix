@@ -1,15 +1,16 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import repository.TvSeriesRepository
 import entity.Actor
 import entity.Episode
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import repository.TvSeriesRepository
 import usecase.ManageEpisodeDetailsUseCase
 
 class ManageEpisodeUseCaseTest {
@@ -135,5 +136,15 @@ class ManageEpisodeUseCaseTest {
         assertThrows<IllegalStateException> {
             manageEpisodeDetailsUseCase.getEpisodeImages(seriesId, season, episode, count)
         }
+    }
+
+    @Test
+    fun `addTvEpisodeRate should call TvSeriesRepository when try to add episode rate`() = runTest {
+        val seriesId = 3
+        val season = 1
+        val episode = 1
+        val rating = 5f
+        manageEpisodeDetailsUseCase.addTvEpisodeRate(seriesId, season, episode, rating)
+        coVerify { tvSeriesRepository.addTvEpisodeRate(seriesId, season, episode, rating) }
     }
 }
