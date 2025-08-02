@@ -85,19 +85,26 @@ class GenreTvShowsViewModelTest {
 
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
-            manageTvSeriesUseCase
+            manageTvSeriesUseCase,
+            dispatcher = testDispatcher
         )
 
-        advanceUntilIdle()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onTvShowClick(101)
+
+            testDispatcher.scheduler.advanceUntilIdle()
+
             assertEquals(
                 GenreTvShowsEffects.NavigateToTvShowDetails(101),
                 awaitItem()
             )
+
+            cancelAndIgnoreRemainingEvents()
         }
     }
+
 
     private companion object {
         val genreList = listOf(

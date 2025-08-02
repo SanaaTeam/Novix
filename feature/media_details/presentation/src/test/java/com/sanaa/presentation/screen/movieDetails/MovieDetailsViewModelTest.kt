@@ -19,8 +19,8 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageMovieUseCase
 import usecase.GetLoggedInUserUseCase
+import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import kotlin.time.Duration.Companion.minutes
 
@@ -62,7 +62,13 @@ class MovieDetailsViewModelTest {
 
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
-        viewModel = MovieDetailsViewModel(savedStateHandle, manageMovieDetails, checkUserLogin, manageWatchedMediaHistoryUseCase, getUser)
+        viewModel = MovieDetailsViewModel(
+            savedStateHandle,
+            manageMovieDetails,
+            checkUserLogin,
+            manageWatchedMediaHistoryUseCase,
+            getUser
+        )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.effect.test {
@@ -109,7 +115,11 @@ class MovieDetailsViewModelTest {
 
         viewModel.effect.test {
             viewModel.onSimilarMovieClick(otherId)
-            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(otherId))
+            assertThat(awaitItem()).isEqualTo(
+                MovieDetailsUiEffect.NavigateToAnotherMovieDetails(
+                    otherId
+                )
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -173,6 +183,7 @@ class MovieDetailsViewModelTest {
 
         viewModel.effect.test {
             viewModel.onLoginButtonClick()
+            testDispatcher.scheduler.advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
@@ -270,7 +281,8 @@ class MovieDetailsViewModelTest {
                 deathDate = null, placeOfBirth = "LA", biography = "Bio"
             )
         )
-        private val dummySimilar = listOf(dummyMovie.copy(id = 11, title = "Movie Two", overview = "Overview2"))
+        private val dummySimilar =
+            listOf(dummyMovie.copy(id = 11, title = "Movie Two", overview = "Overview2"))
         private val dummyImages = listOf("/img1.png", "/img2.png")
         private const val dummyTrailer = "http://trailer.url"
     }
