@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
@@ -44,6 +45,7 @@ class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -54,6 +56,7 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
+        updateUserStatus()
     }
 
     override fun onSearchQueryChanged(query: String) {
@@ -101,6 +104,33 @@ class SearchViewModel @Inject constructor(
         )
     }
 
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(SearchScreenEffects.NavigateToLogin)
+    }
+
+    override fun onSaveSeriesClicked() {
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true
+                )
+            }
+        }
+    }
+
+    override fun onSaveMoviesClicked() {
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true
+                )
+            }
+        }
+    }
+
     override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
         if (viewed.mediaType == MediaTypeUi.MOVIE) {
             emitEffect(SearchScreenEffects.NavigateToMovieDetails(viewed.id))
@@ -128,7 +158,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onBottomSheetDragged() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { it.copy(showBottomSheet = false, showLoginBottomSheet = false) }
     }
 
     override fun onClearRecentViewClicked() {
@@ -355,6 +385,14 @@ class SearchViewModel @Inject constructor(
 
     private fun setSuccessState() {
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 
     companion object {

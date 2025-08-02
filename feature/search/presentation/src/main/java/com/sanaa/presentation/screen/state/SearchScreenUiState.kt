@@ -20,8 +20,10 @@ data class SearchScreenUiState(
     val movieFilters: MediaFilters? = null,
     val tvFilters: MediaFilters? = null,
     val showBottomSheet: Boolean = false,
-    val lastTabIndex: Int = -1
-) {
+    val showLoginBottomSheet: Boolean = false,
+    val lastTabIndex: Int = -1,
+    val isUserLoggedIn: Boolean = false,
+    ) {
     fun isFilterVisible() = selectedTabIndex != ACTOR_INDEX
 
     companion object {

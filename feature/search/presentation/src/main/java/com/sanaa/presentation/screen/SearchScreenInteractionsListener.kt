@@ -17,4 +17,8 @@ interface SearchScreenInteractionsListener {
     fun onFilterApplied(tabIndex: Int,filters: MediaFilters?)
     fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
+    fun onLoginButtonClick()
+    fun onSaveSeriesClicked()
+    fun onSaveMoviesClicked()
+
 }

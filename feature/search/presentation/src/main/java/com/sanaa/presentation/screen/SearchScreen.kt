@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
 import com.sanaa.presentation.screen.componants.CategoryTabSection
+import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.state.ActorUiModel
@@ -66,6 +68,8 @@ fun SearchScreen(
                         StartRoute.SERIES,
                         effect.id
                     )
+
+                SearchScreenEffects.NavigateToLogin -> TODO()
             }
         }
     }
@@ -77,7 +81,7 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-            onFilterApplied ={ tabIndex, filters ->
+            onFilterApplied = { tabIndex, filters ->
                 searchViewModel.onFilterApplied(tabIndex, filters)
             }
         )
@@ -131,12 +135,17 @@ fun SearchScreenContent(
         }
     }
 
-    if (uiState.showBottomSheet) {
-        FilterBottomSheet(
-            dismissSheet = dismissSheet,
-            isVisible = uiState.showBottomSheet,
-            onFilterApplied = onFilterApplied,
-            selectedTabIndex = uiState.selectedTabIndex
-        )
-    }
+    FilterBottomSheet(
+        dismissSheet = dismissSheet,
+        isVisible = uiState.showBottomSheet,
+        onFilterApplied = onFilterApplied,
+        selectedTabIndex = uiState.selectedTabIndex
+    )
+
+    Log.d("test99", "SearchScreenContent: showloggedin bottom sheet :${uiState.showLoginBottomSheet}")
+    RequestToLoginBottomSheet(
+        onDismiss = dismissSheet ,
+        onLoginButtonClick = { searchListener.onLoginButtonClick() },
+        isVisible = uiState.showLoginBottomSheet,
+    )
 }
