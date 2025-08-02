@@ -5,7 +5,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.api.AuthenticationApi
-import io.mockk.mockk
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,13 +46,5 @@ class AuthenticationApiImplTest {
         assertThat(implementationMethod.parameterTypes).isEqualTo(interfaceMethod.parameterTypes)
     }
 
-//    @Test
-//    fun `AuthenticationScreen composable can be called without crashing`() {
-//        val apiImpl = AuthenticationApiImpl()
-//        val mockContext = mockk<Context>()
-//
-//        composeTestRule.setContent {
-//            apiImpl.AuthenticationScreen(mockContext)
-//        }
-//    }
+
 }
