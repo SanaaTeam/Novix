@@ -1,21 +1,82 @@
 package usecase.custom_list
 
+import com.google.common.truth.Truth.assertThat
 import entity.Movie
 import entity.TvSeries
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import repository.SavedListRepository
 import usecase.custom_list.custom_list_param.SavedItem
 import usecase.search.search_param.MediaType
 
 class ManageSavedListItemsUseCaseTest {
     private val savedListRepository: SavedListRepository = mockk(relaxed = true)
-    private lateinit var manageSavedListsUseCase: ManageSavedListsUseCase
+    private lateinit var manageSavedListItemsUseCase: ManageSavedListItemsUseCase
 
     @BeforeEach
     fun setUp() {
-        manageSavedListsUseCase = ManageSavedListsUseCase(savedListRepository)
+        manageSavedListItemsUseCase = ManageSavedListItemsUseCase(savedListRepository)
+    }
+
+    @Test
+    fun shouldReturnAllItems_whenGetAllItemsInSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.getAllItemsInList(dummyListId) } returns dummySavedItems
+
+        val result = manageSavedListItemsUseCase.getAllItemsInSavedList(dummyListId)
+
+        assertThat(result).isEqualTo(dummySavedItems)
+    }
+
+    @Test
+    fun shouldReturnMovies_whenGetMoviesInSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.getMoviesInList(dummyListId) } returns dummyMovies
+
+        val result = manageSavedListItemsUseCase.getMoviesInSavedList(dummyListId)
+
+        assertThat(result).isEqualTo(dummyMovies)
+    }
+
+    @Test
+    fun shouldReturnTvSeries_whenGetTvSeriesInSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.getTvSeriesInList(dummyListId) } returns dummyTvSeries
+
+        val result = manageSavedListItemsUseCase.getTvSeriesInSavedList(dummyListId)
+
+        assertThat(result).isEqualTo(dummyTvSeries)
+    }
+
+    @Test
+    fun shouldReturnTrue_whenAddMovieToSavedListIsSuccessful() = runTest {
+        coEvery { savedListRepository.addMovieToList(dummyListId, dummyMovieId) } returns true
+
+        val result = manageSavedListItemsUseCase.addMovieToSavedList(dummyListId, dummyMovieId)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun shouldReturnTrue_whenAddTvSeriesToSavedListIsSuccessful() = runTest {
+        coEvery { savedListRepository.addTvSeriesToList(dummyListId, dummyTvSeriesId) } returns true
+
+        val result =
+            manageSavedListItemsUseCase.addTvSeriesToSavedList(dummyListId, dummyTvSeriesId)
+
+        assertTrue(result)
+    }
+
+    @Test
+    fun shouldCallRemoveItemFromList_whenRemoveItemFromSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.removeItemFromList(dummyItemId) } returns Unit
+
+        manageSavedListItemsUseCase.removeItemFromSavedList(dummyItemId)
+
+        coVerify(exactly = 1) { savedListRepository.removeItemFromList(dummyItemId) }
     }
 
     companion object {
