@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
@@ -33,7 +33,7 @@ fun EmptyReviewsContent(
             contentDescription = "chat",
             modifier = Modifier.size(128.dp)
         )
-        CustomText(
+        AppText(
             text = stringResource(id = R.string.no_review),
             style = Theme.textStyle.body.small,
             color = Theme.colors.body

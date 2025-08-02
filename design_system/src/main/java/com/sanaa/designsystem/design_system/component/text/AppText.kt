@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 
 @Composable
-fun CustomText(
+fun AppText(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = Color.Unspecified,

@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.EpisodeUiModel
@@ -74,12 +74,12 @@ fun EpisodeCard(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            CustomText(
+            AppText(
                 text = stringResource(R.string.episode_number, episode.number),
                 style = Theme.textStyle.label.large,
                 color = Theme.colors.title
             )
-            CustomText(
+            AppText(
                 text = episode.title,
                 style = Theme.textStyle.label.small,
                 color = Theme.colors.hint
@@ -108,7 +108,7 @@ fun EpisodeCard(
                     DotSeparator()
                 }
                 episode.airDate?.let {
-                    CustomText(
+                    AppText(
                         text = episode.airDate,
                         style = Theme.textStyle.label.small,
                         color = Theme.colors.hint

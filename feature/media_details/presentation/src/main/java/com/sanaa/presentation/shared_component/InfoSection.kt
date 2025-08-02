@@ -12,7 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -29,7 +29,7 @@ fun InfoSection(
             .fillMaxWidth()
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CustomText(
+            AppText(
                 text = title,
                 style = Theme.textStyle.title.medium,
                 color = Theme.colors.title,

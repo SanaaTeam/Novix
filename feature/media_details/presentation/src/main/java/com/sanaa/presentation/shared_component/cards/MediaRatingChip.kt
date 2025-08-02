@@ -21,7 +21,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import androidx.compose.foundation.Image
 import androidx.compose.ui.graphics.ColorFilter
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 
 @Composable
 fun MediaRatingChip(
@@ -50,7 +50,7 @@ fun MediaRatingChip(
             modifier = Modifier.size(12.dp),
             colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
         )
-        CustomText(
+        AppText(
             text = rating,
             style = Theme.textStyle.label.small,
             color = Theme.colors.onPrimary

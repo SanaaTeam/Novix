@@ -22,7 +22,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -89,14 +89,14 @@ fun ReviewCard(
             Spacer(modifier = Modifier.width(8.dp))
             Column {
 
-                CustomText(
+                AppText(
                     text = review.authorName.takeUnless { it.isNullOrBlank() }
                         ?: stringResource(R.string.anonymous),
                     style = Theme.textStyle.title.medium,
                     color = Theme.colors.title
                 )
                 review.username?.let {
-                    CustomText(
+                    AppText(
                         text = it,
                         style = Theme.textStyle.label.small,
                         color = Theme.colors.hint

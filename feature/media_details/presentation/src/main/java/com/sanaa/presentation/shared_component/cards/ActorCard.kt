@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -115,13 +115,13 @@ fun ActorCard(
                 .padding(start = 86.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            CustomText(
+            AppText(
                 text = actorName,
                 style = Theme.textStyle.title.medium,
                 color = Theme.colors.body,
             )
             playedCharacter?.let {
-                CustomText(
+                AppText(
                     text = it,
                     style = Theme.textStyle.label.small,
                     color = Theme.colors.hint

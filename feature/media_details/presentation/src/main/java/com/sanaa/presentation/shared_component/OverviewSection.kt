@@ -32,7 +32,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.text.AnnotatedText
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 
@@ -45,7 +45,7 @@ fun OverviewSection(
     collapsedMaxLines: Int = 4,
 ) {
     Column(modifier = modifier) {
-        CustomText(
+        AppText(
             text = stringResource(id = titleResId),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title

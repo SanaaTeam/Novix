@@ -9,7 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.EpisodeUiModel
@@ -24,7 +24,7 @@ fun EpisodesContent(
     Column(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        CustomText(
+        AppText(
             text = stringResource(R.string.episodes_count, episodes.size),
             style = Theme.textStyle.label.small,
             color = Theme.colors.hint,

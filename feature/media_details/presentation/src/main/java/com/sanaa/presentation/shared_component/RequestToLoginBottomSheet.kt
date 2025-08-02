@@ -20,7 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.NovixOutlinedButton
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -67,7 +67,7 @@ fun RequestToLoginBottomSheet(
                     contentDescription = "pleas login light",
                     modifier = Modifier.height(100.dp),
                 )
-                CustomText(
+                AppText(
                     text = text,
                     style = Theme.textStyle.body.small,
                     color = Theme.colors.body,
@@ -91,7 +91,7 @@ fun RequestToLoginBottomSheet(
 private fun RequestToLoginBottomSheetPreview() {
     val showSheet = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-        CustomText(text = "Show Bottom Sheet",
+        AppText(text = "Show Bottom Sheet",
             modifier = Modifier.clickable(onClick =
                 { showSheet.value = true }
             )

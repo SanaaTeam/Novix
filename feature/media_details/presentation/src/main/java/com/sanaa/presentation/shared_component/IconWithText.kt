@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.text.CustomText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -34,7 +34,7 @@ fun IconWithText(
             colorFilter = ColorFilter.tint(tint),
             modifier = Modifier.size(12.dp)
         )
-        CustomText(
+        AppText(
             text = text,
             style = Theme.textStyle.label.small,
             color = textColor
