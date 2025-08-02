@@ -233,7 +233,7 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun createUpcomingMoviesPagingDataSource(
+    fun createUpcomingMoviesPagingDataSource(
         genreId: Int?
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome { page ->
