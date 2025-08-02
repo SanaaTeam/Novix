@@ -55,6 +55,14 @@ class ManageMovieUseCase @Inject constructor(
         return movieRepo.addMovieRate(movieId = movieId, rating = rating)
     }
 
+    suspend fun getUserRatedMovies(userId: String): List<Movie> {
+        return movieRepo.getUserRatedMovies(userId)
+    }
+
+    suspend fun deleteMovieRate(movieId: Int): Boolean {
+        return movieRepo.deleteMovieRate(movieId)
+    }
+
     private companion object {
         const val IMAGE_COUNT = 10
     }
