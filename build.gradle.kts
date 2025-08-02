@@ -104,6 +104,7 @@ val excludedPackages = listOf(
     "**.util.**",
     "**.mapper.**",
     "com.sanaa.presentation.filter_bottomsheet.state.**",
+    "**.api.**",
 )
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
