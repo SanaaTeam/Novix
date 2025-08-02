@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -28,11 +29,13 @@ class SeriesViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), SeriesScreenInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
 
     init {
         loadSeries()
-        tryToExecute(callee = ::getUserState)
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     override fun onBackClicked() {
@@ -90,12 +93,7 @@ class SeriesViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -127,7 +125,7 @@ class SeriesViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitTvSeriesRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -145,14 +143,8 @@ class SeriesViewModel @Inject constructor(
     override fun onSaveSeriesClicked() {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
-
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -202,10 +194,8 @@ class SeriesViewModel @Inject constructor(
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1)
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentSeriesRating = runCatching {
-            val userId = getUser.getLoggedInUser().id
-            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
-        }.getOrElse { 0 }
+        val currentSeriesRating = getCurrentUserRating(seriesId)
+        Log.i("viewModel", "currentSeriesRating: $currentSeriesRating")
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
@@ -225,7 +215,21 @@ class SeriesViewModel @Inject constructor(
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 
-    private suspend fun addRate() {
+    private suspend fun getCurrentUserRating(seriesId: Int): Int {
+        var rating = 0
+        tryToExecute(
+            callee = {
+                val userId = getUser.getLoggedInUser().id
+                manageTvSeriesDetails.getSeriesRate(userId, seriesId)
+            },
+            onSuccess = { result ->
+                rating = result
+            }
+        )
+        return rating
+    }
+
+    private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
             seriesId = seriesId,
             rating = state.value.imdbRating.toFloat()
@@ -237,8 +241,17 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
     }
 }

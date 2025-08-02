@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.toActorUiModel
@@ -148,7 +149,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentEpisodesRating = getCurrentUserRating(episode.id)
+        val currentEpisodesRating = getCurrentUserRating()
+        Log.i("viewModel", "currentEpisodesRating: $currentEpisodesRating")
 
         updateState {
             it.copy(
@@ -162,12 +164,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getCurrentUserRating(episodeId: Int): Int {
+    private suspend fun getCurrentUserRating(): Int {
         var rating = 0
         tryToExecute(
             callee = {
                 val userId = getUser.getLoggedInUser().id
-                manageTvSeriesDetails.getEpisodesRate(userId, episodeId)
+                manageTvSeriesDetails.getEpisodesRate(userId, seasonNumber, episodeNumber)
             },
             onSuccess = { result ->
                 rating = result
