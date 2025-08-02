@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.designsystem.R as RDesignSystem
+import com.sanaa.presentation.model.EpisodeUiModel
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
-import com.sanaa.presentation.model.EpisodeUiModel
+import com.sanaa.designsystem.R as RDesignSystem
 
 @Composable
 fun EpisodeCard(
@@ -74,12 +74,12 @@ fun EpisodeCard(
             verticalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier.align(Alignment.CenterVertically)
         ) {
-            Text(
+            AppText(
                 text = stringResource(R.string.episode_number, episode.number),
                 style = Theme.textStyle.label.large,
                 color = Theme.colors.title
             )
-            Text(
+            AppText(
                 text = episode.title,
                 style = Theme.textStyle.label.small,
                 color = Theme.colors.hint
@@ -108,7 +108,7 @@ fun EpisodeCard(
                     DotSeparator()
                 }
                 episode.airDate?.let {
-                    Text(
+                    AppText(
                         text = episode.airDate,
                         style = Theme.textStyle.label.small,
                         color = Theme.colors.hint
