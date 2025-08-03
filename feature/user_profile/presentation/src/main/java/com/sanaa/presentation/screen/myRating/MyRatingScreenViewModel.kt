@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.myRating
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.profileMapper.toRatedMediaUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
@@ -55,8 +56,11 @@ class MyRatingScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        updateState { it.copy(isLoading = false, error = e.message) }
-        emitEffect(MyRatingScreenEffect.ShowMessage("Failed to load ratings: ${e.message}"))
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true, isLoading = false, error = null) }
+        } else {
+            updateState { it.copy(isLoading = false, error = e.message) }
+        }
     }
 
     override fun onBackClick() {
@@ -66,40 +70,50 @@ class MyRatingScreenViewModel @Inject constructor(
     override fun onTabSelected(tab: MyRatingTab) {
         updateState { it.copy(selectedTab = tab) }
     }
-    override fun onMediaClick(id: Int, mediaType: String) {
-        emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
+//    override fun onMediaClick(id: Int, mediaType: String) {
+//        emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
+//    }
+override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
+    if (mediaType == "movie") {
+        tryToExecute(
+            callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
+            onSuccess = { success ->
+                if (success) {
+                    updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
+                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                } else {
+                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                }
+            },
+            onError = { e ->
+                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+            }
+        )
+    } else if (mediaType == "tv_show") {
+        tryToExecute(
+            callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+            onSuccess = { success ->
+                if (success) {
+                    updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                } else {
+                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                }
+            },
+            onError = { e ->
+                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+            }
+        )
     }
-    override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
-        if (mediaType == "movie") {
-            tryToExecute(
-                callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
-                onSuccess = { success ->
-                    if (success) {
-                        updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
-                        emitEffect(MyRatingScreenEffect.ShowMessage("Movie rating deleted successfully."))
-                    } else {
-                        emitEffect(MyRatingScreenEffect.ShowMessage("Failed to delete movie rating."))
-                    }
-                },
-                onError = { e ->
-                    emitEffect(MyRatingScreenEffect.ShowMessage("Failed to delete rating: ${e.message}"))
-                }
-            )
-        } else if (mediaType == "tv_show") {
-            tryToExecute(
-                callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
-                onSuccess = { success ->
-                    if (success) {
-                        updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
-                        emitEffect(MyRatingScreenEffect.ShowMessage("TV show rating deleted successfully."))
-                    } else {
-                        emitEffect(MyRatingScreenEffect.ShowMessage("Failed to delete TV show rating."))
-                    }
-                },
-                onError = { e ->
-                    emitEffect(MyRatingScreenEffect.ShowMessage("Failed to delete rating: ${e.message}"))
-                }
+}
+    override fun onRetryLoadDetails() {
+        updateState {
+            it.copy(
+                isLoading = true,
+                error = null,
+                isNoInternetConnection = false
             )
         }
+        loadRatedMedia()
     }
 }
