@@ -56,11 +56,7 @@ class HomeScreenViewModelTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         coEvery {
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                any(),
-                any(),
-                any()
-            )
+            manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
@@ -131,11 +127,7 @@ class HomeScreenViewModelTest {
         val historyItems = listOf(dummyHistoryItem)
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
         coEvery {
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                dummyUser.username,
-                null,
-                null
-            )
+            manageWatchedMediaHistoryUseCase.getMediaHistory(dummyUser.username, null, null)
         } returns flowOf(historyItems)
         initializeViewModel()
         advanceUntilIdle()
@@ -258,10 +250,7 @@ class HomeScreenViewModelTest {
         viewModel.effect.test {
             viewModel.onMediaClick(101, MediaTypeUi.MOVIE)
             assertThat(awaitItem()).isEqualTo(
-                HomeScreenEffect.NavigateToMediaDetails(
-                    101,
-                    MediaTypeUi.MOVIE
-                )
+                HomeScreenEffect.NavigateToMediaDetails(101, MediaTypeUi.MOVIE)
             )
         }
     }
@@ -301,10 +290,7 @@ class HomeScreenViewModelTest {
     fun `createUpcomingMoviesPagingDataSource should load movies successfully`() = runTest {
         val upcomingMovies = listOf(dummyMovie)
         coEvery {
-            manageMovieUseCase.getUpcomingMovies(
-                page = 1,
-                genreId = null
-            )
+            manageMovieUseCase.getUpcomingMovies(page = 1, genreId = null)
         } returns upcomingMovies
         initializeViewModel()
         val pagingSource = viewModel.createUpcomingMoviesPagingDataSource(genreId = null)
