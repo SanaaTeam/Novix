@@ -23,7 +23,7 @@ fun <T> SelectionBottomSheet(
     bottomSheetTitle: String,
     options: List<Option<T>>,
     onDismiss: () -> Unit,
-    onValueChange: (T) -> Unit,
+    onOptionSelected: (T) -> Unit,
     selectedValue: T,
     isVisible: Boolean,
     onSaveClick: () -> Unit,
@@ -49,7 +49,7 @@ fun <T> SelectionBottomSheet(
             SelectionComponent(
                 options = options,
                 selectedValue = selectedValue,
-                onOptionSelected = onValueChange,
+                onOptionSelected = onOptionSelected,
                 modifier = Modifier.padding(
                     vertical = 24.dp, horizontal = 16.dp
                 )
@@ -75,13 +75,13 @@ private fun PreviewBottomSheet() {
         SelectionBottomSheet(
             bottomSheetTitle = "Title",
             options = listOf(
-                Option("Option 1", "Option 1"),
-                Option("Option 2", "Option 2"),
-                Option("Option 3", "Option 3"),
-                Option("Option 4", "Option 4"),
+                Option("Option 1", "Option 1", "This a Description"),
+                Option("Option 2", "Option 2", "Take a look"),
+                Option("Option 3", "Option 3", "Blur"),
+                Option("Option 4", "Option 4", "Theme"),
             ),
             onDismiss = {},
-            onValueChange = {},
+            onOptionSelected = {},
             selectedValue = "Option 1",
             isVisible = true,
             onSaveClick = {}
