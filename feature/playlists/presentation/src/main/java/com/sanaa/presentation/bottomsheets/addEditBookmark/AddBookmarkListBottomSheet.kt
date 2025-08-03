@@ -28,7 +28,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun AddBookmarkListBottomSheet(
+fun AddOrEditBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     state: AddEditBookmarkListUiState,
@@ -113,7 +113,7 @@ fun AddBookmarkListBottomSheet(
 @Composable
 private fun AddBookmarkListBottomSheetAddEmptyPreview() {
     NovixTheme(isDarkMode = true) {
-        AddBookmarkListBottomSheet(
+        AddOrEditBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = {},
             state = AddEditBookmarkListUiState(
@@ -140,7 +140,7 @@ private fun AddBookmarkListBottomSheetAddActivePreview() {
         )
     }
     NovixTheme(isDarkMode = true) {
-        AddBookmarkListBottomSheet(
+        AddOrEditBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = {},
             state = state,
@@ -169,7 +169,7 @@ private fun AddBookmarkListBottomSheetEditModePreview() {
     }
 
     NovixTheme(isDarkMode = true) {
-        AddBookmarkListBottomSheet(
+        AddOrEditBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = {},
             state = state,
