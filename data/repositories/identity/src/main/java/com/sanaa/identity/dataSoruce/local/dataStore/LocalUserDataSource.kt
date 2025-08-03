@@ -6,4 +6,6 @@ interface LocalUserDataSource {
     suspend fun getLoggedUser(): UserDto?
 
     suspend fun saveUser(user: UserDto)
+
+    suspend fun deleteUser()
 }

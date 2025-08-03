@@ -23,7 +23,6 @@ fun PosterCard(
     imageUrl: String?,
     onCardClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
-
 ) {
 
     MediaPosterCard(

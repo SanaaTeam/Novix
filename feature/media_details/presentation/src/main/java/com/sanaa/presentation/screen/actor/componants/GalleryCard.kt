@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -39,7 +38,7 @@ fun GalleryCard(
             modifier = Modifier.fillMaxWidth(),
             haramThreshold = 0.2f,
             nonHaramThreshold = 0.7f,
-            contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
+            contentDescription = null,
             placeholderContent = {
                 RemoteImagePlaceholder(Modifier.fillMaxSize())
             },

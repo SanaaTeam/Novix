@@ -10,25 +10,19 @@
     <string name="recent_viewed">Recent viewed</string>
     <string name="clear_all">Clear all</string>
     <string name="recent_search">Recent search</string>
-    <string name="released_year">Released year</string>
-    <string name="imdb_rating">IMDb rating</string>
-    <string name="clear">Clear</string>
-    <string name="filter">Filter</string>
-    <string name="apply">Apply</string>
     <string name="cancel">Cancel</string>
     <string name="search_hint">Search…</string>
     <string name="read_more">Read more</string>
     <string name="no_review">There is no review!</string>
     <string name="rating">Rating</string>
     <string name="reviews">Reviews</string>
-    <string name="my_rating">My rating</string>
-
-    <!-- Tab Labels -->
-    <string name="movies">Movies</string>
-    <string name="tv_shows">TV Shows</string>
-    <string name="actors">Actors</string>
-    <string name="error_general_title">Oops! Something went wrong.</string>
-    <string name="error_general_message">Please try again later, we’ll be waiting with your movies and popcorn</string>
 
     <string name="unsuitable_image">"unsuitable image "</string>
+    <string name="my_account">My account</string>
+    <string name="watching_history">Watching history</string>
+    <string name="my_rating">My rating</string>
+    <string name="content_restriction">Content Restriction</string>
+    <string name="change_password">Change password</string>
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
 </resources>
