@@ -1,5 +1,3 @@
-// File: com/sanaa/presentation/screen/myRating/component/RatedMediaListGrid.kt
-
 package com.sanaa.presentation.screen.myRating.component
 
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +33,7 @@ fun RatedMediaListGrid(
             RatedMediaItem(
                 media = mediaItem,
                 onDeleteClick = onDeleteIconClick,
-                onCardClick = TODO(),
+//                onCardClick = TODO(),
             )
         }
     }
