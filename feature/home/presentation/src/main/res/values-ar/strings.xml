@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_bar_subtitle">مستوحاة من نوفا، مصنوعة لفلِكس.</string>
+    <string name="home_bar_subtitle">حيث يلتقي الابداع بالفن لعشاق الأفلام.</string>
     <string name="novix">نوفِكس</string>
     <string name="top_rated">الاعلى تقييمًا</string>
     <string name="all">الكل</string>
     <string name="trending_movies">الافلام الرائجة</string>
-    <string name="trending_tvshows">المسلسلات الرائجة</string>
+    <string name="trending_tvshows">البرامج الرائجة</string>
     <string name="movies">الافلام</string>
-    <string name="tvshows">المسلسلات</string>
+    <string name="tvshows">البرامج</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
-    <string name="people">الشخصيات</string>
-    <string name="trending_people"> الشخصيات المشهورة</string>
+    <string name="people">المشاهير</string>
+    <string name="trending_people">المشاهير</string>
     <string name="continue_watching">متابعة المشاهدة</string>
-    <string name="what_you_want_to_watch">ماذا ترغب بمشاهدته؟</string>
+    <string name="what_you_want_to_watch">ما الذي ترغب بمشاهدته؟</string>
     <string name="up_upcoming">قادم</string>"
-    <string name="popular">مشهور حاليا</string>
-    <string name="what_to_watch">ماذا تريد ان تشاهد؟</string>
+    <string name="popular">مشهور</string>
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
