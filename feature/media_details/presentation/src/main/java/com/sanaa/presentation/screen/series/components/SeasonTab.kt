@@ -16,7 +16,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 
 @Composable
-fun SeasonTap(
+fun SeasonTab(
     currentSeason: Int,
     onClick: (Int) -> Unit,
     seasonCounts: Int,
