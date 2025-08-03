@@ -181,7 +181,6 @@ class MovieDetailsViewModel @Inject constructor(
         val similar = loadSimilarMovies(movieId)
         val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
         val currentMovieRating = getCurrentUserRating(movieId)
-
         updateState {
             it.copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
@@ -194,19 +193,12 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private suspend fun getCurrentUserRating(movieId: Int): Int {
-        var rating = 0
-        tryToExecute(
-            callee = {
-                val userId = getUser.getLoggedInUser().id
-                manageMovieDetails.getMoviesRate(userId, movieId)
-            },
-            onSuccess = { result ->
-                rating = result
-            },
-            onError = {
-            }
-        )
-        return rating
+        val userId = getUser.getLoggedInUser().id
+        return try {
+            manageMovieDetails.getMoviesRate(userId, movieId)
+        } catch (e: Exception) {
+            0
+        }
     }
 
 

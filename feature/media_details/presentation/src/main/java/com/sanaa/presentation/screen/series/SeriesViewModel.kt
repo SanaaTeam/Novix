@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -195,7 +194,6 @@ class SeriesViewModel @Inject constructor(
         val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
         val trailer = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
         val currentSeriesRating = getCurrentUserRating(seriesId)
-        Log.i("viewModel", "currentSeriesRating: $currentSeriesRating")
         updateState {
             it.copy(
                 series = series.toSeriesUiModel(trailer),
@@ -216,17 +214,14 @@ class SeriesViewModel @Inject constructor(
     }
 
     private suspend fun getCurrentUserRating(seriesId: Int): Int {
-        var rating = 0
-        tryToExecute(
-            callee = {
-                val userId = getUser.getLoggedInUser().id
-                manageTvSeriesDetails.getSeriesRate(userId, seriesId)
-            },
-            onSuccess = { result ->
-                rating = result
-            }
-        )
-        return rating
+        val userId = getUser.getLoggedInUser().id
+        return try {
+            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
+
+        } catch (e: Exception) {
+            0
+        }
+
     }
 
     private suspend fun submitTvSeriesRating() {
