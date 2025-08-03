@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
         val sessionId = runBlocking { preferenceManager.sessionId.firstOrNull() }
         if (sessionId.isNullOrEmpty()){
-            val authIntent = authenticationApi.getLaunchIntent(this)
+            val authIntent = authenticationApi.getLaunchIntent(this,AuthStartRoute.Welcome)
             authLuncher.launch(authIntent)
         }else{
             setContent {
