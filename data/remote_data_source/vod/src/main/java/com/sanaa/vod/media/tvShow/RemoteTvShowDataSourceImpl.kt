@@ -137,4 +137,8 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         )
         return response
     }
+    override suspend fun deleteTvSeriesRate(seriesId: Int, sessionId: String): RatingResponse =
+        wrapApiCall {
+            apiService.deleteTvShowRating(seriesId, sessionId)
+        }
 }
