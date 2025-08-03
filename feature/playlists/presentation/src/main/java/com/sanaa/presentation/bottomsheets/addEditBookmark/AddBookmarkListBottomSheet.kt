@@ -1,4 +1,4 @@
-package com.sanaa.presentation.bottomsheets.addBookmark
+package com.sanaa.presentation.bottomsheets.addEditBookmark
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

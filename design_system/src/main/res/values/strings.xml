@@ -32,4 +32,8 @@
     <string name="add">Add</string>
     <string name="edit_list">Edit list</string>
     <string name="save">Save</string>
+
+    <string name="delete_list">Delete list</string>
+    <string name="delete_list_confirmation_message">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
+    <string name="delete">Delete</string>
 </resources>

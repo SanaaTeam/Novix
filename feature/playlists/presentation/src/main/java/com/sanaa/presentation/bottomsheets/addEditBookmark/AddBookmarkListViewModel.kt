@@ -1,8 +1,7 @@
-package com.sanaa.screen
+package com.sanaa.presentation.bottomsheets.addEditBookmark
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sanaa.presentation.bottomsheets.addBookmark.AddEditBookmarkListUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

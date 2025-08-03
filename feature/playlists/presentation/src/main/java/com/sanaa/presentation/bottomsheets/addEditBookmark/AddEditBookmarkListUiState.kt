@@ -1,4 +1,4 @@
-package com.sanaa.presentation.bottomsheets.addBookmark
+package com.sanaa.presentation.bottomsheets.addEditBookmark
 
 data class AddEditBookmarkListUiState(
     val listTitle: String = "",
