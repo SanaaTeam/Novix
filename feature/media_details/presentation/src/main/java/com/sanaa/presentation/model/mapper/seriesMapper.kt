@@ -10,6 +10,7 @@ import entity.Episode
 import entity.MediaHistoryItem
 import entity.Season
 import entity.TvSeries
+import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
@@ -49,6 +50,8 @@ fun TvSeries.toHistory(): MediaHistoryItem {
         id = id,
         genres = genres,
         posterImageUrl = posterImageUrl.orEmpty(),
-        mediaType = MediaType.TV_SERIES
+        mediaType = MediaType.TV_SERIES,
+        isSaved = false,
+        lastWatchedAt = Clock.System.now()
     )
 }

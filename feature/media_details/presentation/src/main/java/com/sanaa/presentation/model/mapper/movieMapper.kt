@@ -5,6 +5,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.util.formatDateLocalizedDigits
 import entity.MediaHistoryItem
 import entity.Movie
+import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
@@ -31,6 +32,8 @@ fun Movie.toHistory(): MediaHistoryItem {
         id = id,
         genres = genres,
         posterImageUrl = posterImageUrl,
-        mediaType = MediaType.MOVIE
+        mediaType = MediaType.MOVIE,
+        isSaved = false,
+        lastWatchedAt = Clock.System.now()
     )
 }
