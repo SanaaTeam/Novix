@@ -46,12 +46,16 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun getLoggedUser(): User {
         return userLocalDataSource.getLoggedUser()
-            ?.toEntity()
-            ?: throw NoLoggedInUserException()
+            ?.toEntity() ?: throw NoLoggedInUserException()
     }
 
     override suspend fun isLoggedIn(): Boolean = wrapApiCall {
         return userLocalDataSource.getLoggedUser() != null
+    }
+
+    override suspend fun logout() {
+        userLocalDataSource.deleteUser()
+        preferences.clearSession()
     }
 
     private suspend fun saveSession(session: CreateSessionResponse) {

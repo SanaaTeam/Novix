@@ -13,16 +13,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MovieUiModel
@@ -35,7 +36,7 @@ import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.util.toLocalizedDigits
+import com.sanaa.presentation.util.formatTime
 import java.util.Locale
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
@@ -87,7 +88,7 @@ fun MovieDetailsGridContent(
                                     interactionListener.onGenreClicked(genre)
                                 }
                             ) {
-                                Text(
+                                AppText(
                                     text = genre.name,
                                     style = Theme.textStyle.label.small,
                                     color = Theme.colors.body,
@@ -118,29 +119,10 @@ fun MovieDetailsGridContent(
                                 DotSeparator()
                             }
                             state.movieDetails.duration?.let { duration ->
-                                val hours = duration.inWholeHours
-                                val minutes =
-                                    (duration - hours.hours).inWholeMinutes
-
-                                val durationText = buildString {
-                                    if (hours > 0) append(
-                                        "${
-                                            hours.toInt().toLocalizedDigits(locale)
-                                        }${stringResource(R.string.hours_label)} "
-                                    )
-                                    if (minutes > 0) append(
-                                        "${
-                                            minutes.toInt()
-                                                .toLocalizedDigits(locale)
-                                        }${stringResource(R.string.minutes_label)}"
-                                    )
-                                }.trim()
-
-
                                 IconWithText(
                                     iconRes = R.drawable.icon_duration,
                                     contentDescription = null,
-                                    text = durationText,
+                                    text = formatTime(duration, locale),
                                     tint = Theme.colors.body
                                 )
                                 DotSeparator()
@@ -182,7 +164,7 @@ fun MovieDetailsGridContent(
         }
         if (pagedSimilarMovies.itemCount > 0) {
             item(span = { GridItemSpan(maxLineSpan) }) {
-                Text(
+                AppText(
                     text = stringResource(id = R.string.more_like_this),
                     color = Theme.colors.title,
                     style = Theme.textStyle.title.medium,
