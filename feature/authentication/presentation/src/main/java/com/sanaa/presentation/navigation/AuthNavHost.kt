@@ -27,9 +27,6 @@ fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
         AuthStartRoute.ForgetPassword -> ForgetPasswordRoute
     }
 
-    Log.d("test99", "AuthNavHost: start route is : $startRoute")
-    Log.d("test99", "AuthNavHost: start destination = $startDestination")
-
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {
             NavHost(

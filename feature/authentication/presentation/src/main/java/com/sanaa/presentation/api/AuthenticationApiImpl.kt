@@ -20,7 +20,6 @@ class AuthenticationApiImpl @Inject constructor() : AuthenticationApi {
     override fun getLaunchIntent(context: Context,startRoute: AuthStartRoute): Intent {
         return Intent(context, AuthActivity::class.java).apply {
             putExtra(AuthActivity.EXTRA_START_ROUTE,startRoute.name)
-            Log.d("test99", "getLaunchIntent: adding extra :$startRoute")
         }
     }
 }
@@ -37,7 +36,6 @@ class AuthActivity : ComponentActivity(){
         enableEdgeToEdge()
 
         val startRoute = intent.getStringExtra(EXTRA_START_ROUTE)?.let { AuthStartRoute.valueOf(it) }
-        Log.d("test99", "onCreate: start route = $startRoute")
 
         setContent {
             AuthNavHost(
