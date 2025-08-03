@@ -18,10 +18,10 @@ class ManageSavedListItemsUseCase @Inject constructor(
     suspend fun getTvSeriesInSavedList(listId: Int): List<TvSeries> =
         savedListRepository.getTvSeriesInList(listId)
 
-    suspend fun addMovieToSavedList(listId: Int, movieId: Int): Boolean =
+    suspend fun addMovieToSavedList(listId: Int, movieId: Int) =
         savedListRepository.addMovieToList(listId, movieId)
 
-    suspend fun addTvSeriesToSavedList(listId: Int, tvSeriesId: Int): Boolean =
+    suspend fun addTvSeriesToSavedList(listId: Int, tvSeriesId: Int) =
         savedListRepository.addTvSeriesToList(listId, tvSeriesId)
 
     suspend fun removeItemFromSavedList(itemId: Int) =

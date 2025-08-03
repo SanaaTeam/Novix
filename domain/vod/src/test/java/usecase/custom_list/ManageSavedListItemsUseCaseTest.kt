@@ -8,7 +8,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListRepository
@@ -52,22 +51,21 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldReturnTrue_whenAddMovieToSavedListIsSuccessful() = runTest {
-        coEvery { savedListRepository.addMovieToList(dummyListId, dummyMovieId) } returns true
+    fun shouldCallAddMovieToList_whenAddMovieToSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.addMovieToList(dummyListId, dummyMovieId) } returns Unit
 
-        val result = manageSavedListItemsUseCase.addMovieToSavedList(dummyListId, dummyMovieId)
+        manageSavedListItemsUseCase.addMovieToSavedList(dummyListId, dummyMovieId)
 
-        assertTrue(result)
+        coVerify(exactly = 1) { savedListRepository.addMovieToList(dummyListId, dummyMovieId) }
     }
 
     @Test
-    fun shouldReturnTrue_whenAddTvSeriesToSavedListIsSuccessful() = runTest {
-        coEvery { savedListRepository.addTvSeriesToList(dummyListId, dummyTvSeriesId) } returns true
+    fun shouldCallAddTvSeriesToList_whenAddTvSeriesToSavedListIsCalled() = runTest {
+        coEvery { savedListRepository.addTvSeriesToList(dummyListId, dummyTvSeriesId) } returns Unit
 
-        val result =
-            manageSavedListItemsUseCase.addTvSeriesToSavedList(dummyListId, dummyTvSeriesId)
+        manageSavedListItemsUseCase.addTvSeriesToSavedList(dummyListId, dummyTvSeriesId)
 
-        assertTrue(result)
+        coVerify(exactly = 1) { savedListRepository.addTvSeriesToList(dummyListId, dummyTvSeriesId) }
     }
 
     @Test
@@ -80,19 +78,20 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     companion object {
-
         private val dummyListId = 1
         private val dummyMovieId = 101
         private val dummyTvSeriesId = 202
         private val dummyItemId = 303
 
         private val dummySavedItems = listOf(
-            SavedItem(id = 1, posterImageUrl = "url1", mediaType = MediaType.MOVIE, isSaved = true),
+            SavedItem(
+                id = 1, posterImageUrl = "url1",
+                mediaType = MediaType.MOVIE
+            ),
             SavedItem(
                 id = 2,
                 posterImageUrl = "url2",
-                mediaType = MediaType.TV_SERIES,
-                isSaved = true
+                mediaType = MediaType.TV_SERIES
             )
         )
 
