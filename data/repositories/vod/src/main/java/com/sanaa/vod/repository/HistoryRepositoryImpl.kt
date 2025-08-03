@@ -98,4 +98,27 @@ class HistoryRepositoryImpl @Inject constructor(
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }
     }
+
+    override suspend fun getWatchingHistory(
+        username: String,
+        mediaType: MediaType?
+    ): Flow<List<MediaHistoryItem>> = safeCall(
+        errorMessage = "Failed to retrieve watching history for user $username"
+    ) {
+        val watchedHistoryDtos = local.getWatchedMediaHistory(username, mediaType, null)
+        watchedHistoryDtos.map {
+            it.map { watchedHistory -> watchedHistory.toEntity() }
+        }
+    }
+
+    override suspend fun updateLastWatchedTime(
+        username: String,
+        mediaId: Int,
+        mediaType: MediaType
+    ) = safeCall(
+        errorMessage = "Failed to update last watched time for user $username",
+        exceptionProvider = ::FailedToAddException
+    ) {
+        local.updateLastWatchedTime(username, mediaId, mediaType)
+    }
 }
