@@ -201,7 +201,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
