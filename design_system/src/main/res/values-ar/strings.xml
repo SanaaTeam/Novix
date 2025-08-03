@@ -30,5 +30,11 @@
 
     <string name="error_general_title">عذرًا! حدث خطاء.</string>
     <string name="error_general_message">حاول مرة أخرى لاحقا، نحن بانتظارك مع الأفلام والفشار</string>
-
+    <string name="my_account">حسابي</string>
+    <string name="watching_history">سجل المشاهدة</string>
+    <string name="my_rating">تقيماتي</string>
+    <string name="content_restriction">تقييد المحتوى</string>
+    <string name="change_password">تغيير كلمة المرور</string>
+    <string name="appearance">المظهر</string>
+    <string name="language">اللغة</string>
 </resources>
