@@ -1,4 +1,4 @@
-package com.sanaa.presentation.myAccount
+package com.sanaa.presentation.screen.myAccount
 
 import com.sanaa.presentation.user_profile_base.BaseViewModel
 import kotlinx.coroutines.CoroutineDispatcher

@@ -2,6 +2,8 @@ package com.sanaa.presentation.myAccount
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.myAccount
+package com.sanaa.presentation.screen.myAccount
 
 data class MyAccountScreenUiState(
     val username: String = "",

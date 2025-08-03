@@ -1,4 +1,4 @@
-package com.sanaa.presentation.myAccount
+package com.sanaa.presentation.screen.myAccount
 
 sealed interface MyAccountScreenEffect {
     object NavigateToWatchingHistory : MyAccountScreenEffect

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.myAccount
+package com.sanaa.presentation.screen.myAccount
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,11 +38,11 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
-import com.sanaa.presentation.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
-import com.sanaa.presentation.myAccount.MyAccountScreenEffect.NavigateToLanguageSetting
-import com.sanaa.presentation.myAccount.MyAccountScreenEffect.NavigateToMyRating
-import com.sanaa.presentation.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToLanguageSetting
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
 import com.sanaa.presentation.util.Listen
 
 @Composable
