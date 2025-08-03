@@ -1,6 +1,6 @@
 package com.sanaa.vod.mapper.search
 
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
 import com.sanaa.vod.util.TimeUtils
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.search_param.MediaType

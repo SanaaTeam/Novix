@@ -1,12 +1,12 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
-import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.dataSource.local.history.mapper.toDto
+import com.sanaa.vod.dataSource.local.history.mapper.toEntity
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import entity.MediaHistoryItem

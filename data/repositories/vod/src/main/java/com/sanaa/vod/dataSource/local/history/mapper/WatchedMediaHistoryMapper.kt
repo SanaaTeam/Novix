@@ -1,6 +1,6 @@
-package com.sanaa.vod.dataSource.local.continueWatch.mapper
+package com.sanaa.vod.dataSource.local.history.mapper
 
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
 import com.sanaa.vod.util.TimeUtils
 import entity.Genre
 import entity.MediaHistoryItem

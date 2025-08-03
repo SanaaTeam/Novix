@@ -1,6 +1,6 @@
 package com.sanaa.vod.mapper.search
 
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime

@@ -37,7 +37,6 @@ val excludedPackages = listOf(
     "**.response.**",
     "exceptions.**",
     "com.sanaa.vod.mapper.*",
-    "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
     "com.sanaa.presentation.component.**",
     "com.sanaa.presentation.shared_component.*",
@@ -45,8 +44,6 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
     "com.sanaa.presentation.screen.SearchScreen*",
-    "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet*",
-    "com.sanaa.search.search_result.db.*",
     "com.sanaa.presentation.navigation.**",
     "com.sanaa.presentation.screen.actor.componants.**",
     "com.sanaa.presentation.screen.actor.screen.**",
@@ -103,7 +100,6 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.base.**",
     "**.util.**",
     "**.mapper.**",
-    "com.sanaa.presentation.filter_bottomsheet.state.**",
     "**.api.**",
 )
 allprojects {

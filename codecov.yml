@@ -34,15 +34,12 @@ ignore:
   - "com/sanaa/identity/dataSoruce/dataStore/**"
   - "com/sanaa/vod/mapper/**"
   - "com/sanaa/search/repository/**"
-  - "com/sanaa/presentation/filter_bottomsheet/components/**"
   - "com/sanaa/presentation/screen/componants/**"
   - "com/sanaa/presentation/component/**"
   - "com/sanaa/presentation/model/**"
   - "com/sanaa/presentation/details_base/**"
   - "com/sanaa/presentation/screen/state/**"
   - "com/sanaa/presentation/screen/SearchScreen*"
-  - "com/sanaa/presentation/filter_bottomsheet/FilterBottomSheet*"
-  - "com/sanaa/search/search_result/db/**"
   - "com/sanaa/vod/media/movie/MovieApiService/*",
 
   - "com/sanaa/presentation/navigation/**"

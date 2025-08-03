@@ -1,24 +1,12 @@
 package com.sanaa.vod.fake
 
-import com.sanaa.vod.dataSource.local.search.dto.ActorLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.MovieLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.TvSeriesLocalDto
 import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
 import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
 
 object FakeData {
-    val ActorsLocalDtoList = listOf(
-        ActorLocalDto(id = 1, name = "Tom Hanks", imagePath = "img", language = "en", gender = 0),
-        ActorLocalDto(
-            id = 2,
-            name = "Leonardo Leonardo",
-            imagePath = "img",
-            language = "en",
-            gender = 0
-        )
-    )
+
     val ActorsRemoteDtoList = listOf(
         ActorSearchDto(
             id = 1,
@@ -42,17 +30,6 @@ object FakeData {
         totalResults = ActorsRemoteDtoList.size
     )
 
-    val MoviesLocalDtoList = listOf(
-        MovieLocalDto(
-            id = 1, "Movie", "2024", null,
-            null, null, "en", System.currentTimeMillis()
-        ),
-        MovieLocalDto(
-            id = 1, "Movie2", "2025", null,
-            null, null, "en", System.currentTimeMillis()
-        ),
-    )
-
     val MoviesRemoteDtoList = listOf(
         MovieSearchDto(
             id = 1, "Movie", "2024", null, null, null,
@@ -67,17 +44,6 @@ object FakeData {
         results = MoviesRemoteDtoList,
         totalPages = 1,
         totalResults = MoviesRemoteDtoList.size
-    )
-
-    val TvSeriesLocalDtoList = listOf(
-        TvSeriesLocalDto(
-            id = 1, "TvSeries", "2025", null,
-            null, null, "en", System.currentTimeMillis()
-        ),
-        TvSeriesLocalDto(
-            id = 1, "TvSeries2", "2025", null,
-            null, null, "en", System.currentTimeMillis()
-        ),
     )
 
     val TvSeriesRemoteDtoList = listOf(

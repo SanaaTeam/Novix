@@ -1,8 +1,8 @@
-package com.sanaa.vod.dataSource.local.search
+package com.sanaa.vod.dataSource.local.history
 
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
 import kotlinx.coroutines.flow.Flow
 import usecase.search.search_param.MediaType
 

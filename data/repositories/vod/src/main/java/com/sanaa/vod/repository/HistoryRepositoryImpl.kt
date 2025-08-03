@@ -1,8 +1,8 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
-import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
+import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
+import com.sanaa.vod.dataSource.local.history.mapper.toDto
+import com.sanaa.vod.dataSource.local.history.mapper.toEntity
 import com.sanaa.vod.mapper.search.toDto
 import com.sanaa.vod.mapper.search.toEntity
 import com.sanaa.vod.util.safeCall

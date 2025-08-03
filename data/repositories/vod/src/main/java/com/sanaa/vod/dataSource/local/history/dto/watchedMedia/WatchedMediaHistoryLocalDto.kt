@@ -1,4 +1,4 @@
-package com.sanaa.vod.dataSource.local.continueWatch.dto
+package com.sanaa.vod.dataSource.local.history.dto.watchedMedia
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

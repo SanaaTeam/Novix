@@ -2,15 +2,10 @@ package com.sanaa.novix.di.search_modules
 
 import android.content.Context
 import androidx.room.Room
-import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import com.sanaa.vod.db.AppDatabase
 import com.sanaa.vod.history.dao.QueryDao
 import com.sanaa.vod.history.dao.RecentViewedDao
-import com.sanaa.vod.search.dao.ActorDao
-import com.sanaa.vod.search.dao.MovieDao
-import com.sanaa.vod.search.dao.SearchDao
-import com.sanaa.vod.search.dao.SearchResultDao
-import com.sanaa.vod.search.dao.SeriesDao
+import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,26 +22,6 @@ object LocalSearchDatabaseModule {
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(context, AppDatabase::class.java, "search_db")
             .build()
-
-    @Provides
-    fun provideSearchDao(database: AppDatabase): SearchDao =
-        database.searchDao()
-
-    @Provides
-    fun provideSearchResultDao(database: AppDatabase): SearchResultDao =
-        database.searchResultDao()
-
-    @Provides
-    fun provideActorDao(database: AppDatabase): ActorDao =
-        database.actorDao()
-
-    @Provides
-    fun provideMovieDao(database: AppDatabase): MovieDao =
-        database.movieDao()
-
-    @Provides
-    fun provideSeriesDao(database: AppDatabase): SeriesDao =
-        database.seriesDao()
 
     @Provides
     fun provideQueryDao(database: AppDatabase): QueryDao =
