@@ -2,6 +2,7 @@ package com.sanaa.presentation.navigation
 
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -13,4 +14,5 @@ interface HomeApiEntryPoint {
     fun searchApi(): SearchFeatureApi
     fun detailsApi(): MediaDetailsApi
     fun authenticationApi(): AuthenticationApi
+    fun playListApi(): PlaylistsFeatureApi
 }

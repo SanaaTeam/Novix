@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
@@ -43,6 +44,12 @@ fun MainScreen() {
             .searchApi()
     }
 
+    val playlistsFeatureApi: PlaylistsFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .playListApi()
+    }
+
 
     CompositionLocalProvider(LocalMainNavController provides navController) {
         NovixTheme(isSystemInDarkTheme()) {
@@ -65,7 +72,7 @@ fun MainScreen() {
                         searchFeatureApi.SearchScreenApi()
                     }
                     composable<PlayListScreenRoute> {
-
+                        playlistsFeatureApi.PlaylistsScreenApi()
                     }
                     composable<SavedContentScreenRoute> {
 
@@ -120,11 +127,11 @@ private sealed class BottomNavItem(
         BottomNavItem(SearchScreenRoute, R.drawable.icon_search, R.drawable.icon_search_selected)
 
     object Playlists : BottomNavItem(
-        PlayListScreenRoute, R.drawable.icon_category, R.drawable.icon_category_selected
+        SavedContentScreenRoute, R.drawable.icon_category, R.drawable.icon_category_selected
     )
 
     object Saved :
-        BottomNavItem(SavedContentScreenRoute, R.drawable.icon_save, R.drawable.icon_save_selected)
+        BottomNavItem(PlayListScreenRoute, R.drawable.icon_save, R.drawable.icon_save_selected)
 
     object Profile : BottomNavItem(
         UserProfileScreenRoute, R.drawable.icon_account, R.drawable.icon_account_selected
