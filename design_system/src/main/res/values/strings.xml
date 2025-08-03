@@ -25,4 +25,6 @@
     <string name="change_password">Change password</string>
     <string name="appearance">Appearance</string>
     <string name="language">Language</string>
+    <string name="delete_rating_message">Delete rating successfully</string>
+    <string name="error_delete_rating_message">failed to delete rating</string>
 </resources>
