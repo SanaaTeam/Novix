@@ -20,4 +20,8 @@
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"
     <string name="error_message">Something went wrong</string>
+    
+    <!-- Watching History -->
+    <string name="watching_history">Watching history</string>
+    <string name="no_watching_history">No watching history yet</string>
 </resources>

@@ -19,4 +19,8 @@
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
+    
+    <!-- Watching History -->
+    <string name="watching_history">سجل المشاهدات</string>
+    <string name="no_watching_history">لا توجد مشاهدات بعد</string>
 </resources>
