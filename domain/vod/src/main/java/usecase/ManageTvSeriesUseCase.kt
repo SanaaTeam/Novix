@@ -60,8 +60,8 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
     }
 
-    suspend fun getUserRatedTvSeries(userId: String): List<TvSeries> {
-        return tvSeriesRepo.getUserRatedTvSeries(userId)
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
+        return tvSeriesRepo.getUserRatedTvSeries(accountId,sessionId)
     }
 
     suspend fun deleteTvSeriesRate(seriesId: Int): Boolean {
