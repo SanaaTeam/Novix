@@ -35,4 +35,6 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+    implementation(projects.designSystem)
+
 }
