@@ -3,4 +3,6 @@
     <string name="my_list_is_empty">قائمتي فارغة</string>
     <string name="saved_list">القائمة المحفوظة</string>
     <string name="there_is_no_saved_list_yet_click_on_button_to_add_a_new_list">لا توجد أي قائمة محفوظة بعد، اضغط على زر + لإضافة قائمة جديدة!</string>
+    <string name="please_login_to_create_lists_and_add_your_favorite_items_to_it">يرجى تسجيل الدخول لإنشاء قوائم وإضافة العناصر المفضلة إليها!</string>
+    <string name="my_lists">قوائمي</string>
 </resources>
