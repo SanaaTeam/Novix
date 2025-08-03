@@ -45,5 +45,5 @@ interface RemoteTvShowDataSource {
         sessionId: String,
         rating: Float
     ): RatingResponse
-
+    suspend fun deleteTvSeriesRate(seriesId: Int,sessionId: String): RatingResponse
 }
