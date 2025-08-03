@@ -224,6 +224,7 @@ class SeriesViewModel @Inject constructor(
 
     }
 
+
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
             seriesId = seriesId,
