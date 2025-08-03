@@ -1,89 +1,124 @@
 package com.sanaa.presentation.screen.myRating
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
+import kotlinx.coroutines.flow.collectLatest
+
 
 @Composable
 fun MyRatingScreen(
-    modifier: Modifier = Modifier,
     viewModel: MyRatingScreenViewModel = hiltViewModel()
 ) {
+    val successMsg = stringResource(R.string.delete_rating_message)
+    val failedMsg = stringResource(R.string.error_delete_rating_message)
+
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val appContext = LocalContext.current.applicationContext
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is MyRatingScreenEffect.NavigateBack -> {
-//                    navController.popBackStack()
+                    // navController.popBackStack()
                 }
-                is MyRatingScreenEffect.ShowMessage -> {
+                is MyRatingScreenEffect.ShowErrorSnackBar -> {
+                    snack = SnackData(message = failedMsg, isError = true)
                 }
-
-                is MyRatingScreenEffect.NavigateToMediaDetails -> TODO()
+                is MyRatingScreenEffect.ShowSuccessSnackBar -> {
+                    snack = SnackData(message = successMsg, isError = false)
+                }
             }
         }
     }
 
     NovixTheme(isSystemInDarkTheme()) {
-        MyRatingScreenContent(
-            title = stringResource(R.string.my_rating),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            MyRatingScreenContent(
+                state = state.value,
+                interactionListener = viewModel
+            )
+            AnimatedSnackBarHost(
+                data = snack,
+                onDismiss = { snack = null },
+                modifier = Modifier
+            )
+        }
     }
 }
-
 @Composable
 fun MyRatingScreenContent(
-    title: String,
     state: MyRatingScreenUiState,
     interactionListener: MyRatingScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier
-            .background(color = Theme.colors.surface),
+    NovixScaffold(
+        modifier = modifier.background(color = Theme.colors.surface),
+        backgroundShapes = {},
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = stringResource(R.string.my_rating),
+                modifier = Modifier.statusBarsPadding().padding(vertical = 12.dp)
+            )
+        }
     ) {
-
-        TopBar(
-            leftContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(id = R.drawable.icon_back),
-                    onClick = interactionListener::onBackClick
-                )
-            },
-            screenTitle = title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .padding(bottom = 12.dp)
-        )
-
-        RatedMediaListSectionContent(
-            state = state,
-            onTabSelected = interactionListener::onTabSelected,
-            onDeleteRatingClick = interactionListener::onDeleteIconClick,
-        )
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            AnimatedContent(
+                targetState = state.isLoading || state.isNoInternetConnection,
+                contentAlignment = Alignment.Center
+            ) { shouldShowLoadingOrError ->
+                if (shouldShowLoadingOrError) {
+                    if (state.isNoInternetConnection) {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        LoadingIndicator()
+                    }
+                } else {
+                    RatedMediaListSectionContent(
+                        state = state,
+                        onTabSelected = interactionListener::onTabSelected,
+                        onDeleteRatingClick = interactionListener::onDeleteIconClick,
+                    )
+                }
+            }
+        }
     }
 }
