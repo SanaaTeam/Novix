@@ -14,8 +14,8 @@ class UserPreferenceImpl
     private val localDataSource: LocalUserPreferenceDataSource
 ) : UserPreference {
     override fun getLanguage(): Flow<Language> {
-        return localDataSource.getLanguage().map {
-            Language.valueOf(it)
+        return localDataSource.getLanguage().map { code ->
+            Language.entries.first { it.code == code }
         }
     }
 
@@ -40,6 +40,6 @@ class UserPreferenceImpl
     }
 
     override suspend fun setLanguage(language: Language) {
-        localDataSource.setLanguage(language.name)
+        localDataSource.setLanguage(language.code)
     }
 }

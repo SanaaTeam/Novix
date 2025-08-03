@@ -11,8 +11,11 @@ interface UserPreference {
     suspend fun setLanguage(language: Language)
 }
 
-enum class Language {
-    ENGLISH, ARABIC, UNSPECIFIED
+enum class Language(val code: String) {
+    ENGLISH(
+        "en",
+    ),
+    ARABIC("ar"),
 }
 
 enum class ContentRestriction {
