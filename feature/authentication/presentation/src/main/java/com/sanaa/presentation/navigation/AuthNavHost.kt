@@ -1,56 +1,53 @@
 package com.sanaa.presentation.navigation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sanaa.api.HomeFeatureApi
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
 import com.sanaa.presentation.webview.ResetPasswordWebViewScreen
 import com.sanaa.presentation.webview.WebViewScreen
-import dagger.hilt.android.EntryPointAccessors
 
 @Composable
-fun AuthNavHost() {
+fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
     val navController = rememberNavController()
-    val appContext   = LocalContext.current.applicationContext
-
-    val homeApi: HomeFeatureApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, AuthApiEntryPoint::class.java)
-            .homeApi()
+    val startDestination = when(startRoute){
+        AuthStartRoute.Welcome -> WelcomeRoute()
+        AuthStartRoute.Login -> LoginRoute
+        AuthStartRoute.SignUp -> SignUpRoute
+        AuthStartRoute.ForgetPassword -> ForgetPasswordRoute
     }
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NovixTheme(isDarkMode = isSystemInDarkTheme()) {
             NavHost(
                 navController = navController,
-                startDestination = WelcomeRoute(),
+                startDestination = startDestination,
                 modifier = Modifier.background(Theme.colors.surface)
             ) {
                 composable(WelcomeRoute::class) {
-                    WelcomeScreen()
+                    WelcomeScreen(
+                        onFinish = onAuthResult
+                    )
                 }
 
                 composable(LoginRoute::class) {
-                    LoginScreen()
+                    LoginScreen(
+                        onFinish = onAuthResult
+                    )
                 }
 
                 composable(SignUpRoute::class) { entry ->
                     WebViewScreen(url = "https://www.themoviedb.org/signup")
-                }
-
-                composable(HomeScreenRoute::class) {
-                    homeApi.HomeScreenApi()
                 }
 
                 composable(ForgetPasswordRoute::class) { entry ->

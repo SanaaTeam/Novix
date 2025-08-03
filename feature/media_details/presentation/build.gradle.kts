@@ -10,6 +10,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.feature.authentication.api)
+    implementation(projects.domain.identity)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
@@ -19,7 +21,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material3)
     implementation(libs.kotlinx.datetime)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)

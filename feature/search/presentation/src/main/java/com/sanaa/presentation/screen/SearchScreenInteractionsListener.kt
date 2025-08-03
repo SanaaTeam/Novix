@@ -13,4 +13,9 @@ interface SearchScreenInteractionsListener {
     fun retrySearch()
     fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
+    fun onLoginButtonClick()
+    fun onSaveSeriesClicked()
+    fun onSaveMoviesClicked()
+    fun onBottomSheetDismiss()
+
 }

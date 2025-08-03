@@ -15,6 +15,3 @@ object SignUpRoute : DestinationLogin()
 
 @Serializable
 object ForgetPasswordRoute : DestinationLogin()
-
-@Serializable
-object HomeScreenRoute : DestinationLogin()

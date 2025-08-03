@@ -1,6 +1,10 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,11 +22,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
+import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -46,11 +54,22 @@ import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
+    authApi: AuthenticationApi,
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     val errorMessage = stringResource(R.string.error_message)
     var snack by remember { mutableStateOf<SnackData?>(null) }
+
+    val context = LocalContext.current
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            interactionListener.onAuthActivityFinishedWithResult()
+        },
+        loggedInAsGuest = {
+            interactionListener.onAuthActivityFinishedWithResult()
+        }
+    )
 
     LaunchedEffect(upcomingMovies.loadState) {
         if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
@@ -163,7 +182,9 @@ fun HomeScreenContent(
                                 interactionListener.onSaveIconClick(it)
                             },
                             onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                            modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
+                            modifier = Modifier
+                                .fillWidthOfParent(16.dp)
+                                .padding(top = 24.dp),
                         )
                     }
                 }
@@ -202,7 +223,13 @@ fun HomeScreenContent(
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
 
+
     RequestToLoginBottomSheet(
-        isVisible = state.showBottomSheet, onDismiss = interactionListener::onDismissBottomSheet
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet,
+        onLoginButtonClick = {
+            Log.d("test99", "HomeScreenContent: launching loging start route")
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
     )
 }

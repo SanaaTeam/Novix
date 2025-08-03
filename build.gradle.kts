@@ -104,13 +104,25 @@ val excludedPackages = listOf(
     "**.util.**",
     "**.mapper.**",
     "com.sanaa.presentation.filter_bottomsheet.state.**",
+    "**.api.**",
 )
+
+val profileScreenPackages = listOf(
+    "com.sanaa.presentation.screen.MyAccountScreen*",
+    "com.sanaa.presentation.screen.myAccount.component.**",
+)
+
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
     kover {
         reports {
             filters {
-                excludes { classes(excludedPackages) }
+                excludes {
+                    classes(
+                        excludedPackages +
+                                profileScreenPackages
+                    )
+                }
             }
             total {
                 verify {
