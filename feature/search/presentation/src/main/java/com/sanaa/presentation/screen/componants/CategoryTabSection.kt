@@ -16,11 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.tab.Tab
+import com.sanaa.feature.search.presentation.R
+import com.sanaa.designsystem.R as RDesignSystem
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -177,12 +178,12 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
 private fun NoSearchResultContent() {
     val isDarkTheme = isSystemInDarkTheme()
     val iconRss =if (isDarkTheme)
-      R.drawable.ic_no_search_result_dark
+        RDesignSystem.drawable.ic_no_search_result_dark
         else {
-      R.drawable.ic_no_search_result
+        RDesignSystem.drawable.ic_no_search_result
     }
     EmptySearchContent(
         icon =painterResource(id = iconRss),
-        text = stringResource(id = R.string.no_search_result_message)
+        text = stringResource(id = RDesignSystem.string.no_search_result_message)
     )
 }

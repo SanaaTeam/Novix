@@ -56,7 +56,7 @@ import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
-import com.sanaa.presentation.screen.series.components.SeasonTap
+import com.sanaa.presentation.screen.series.components.SeasonTab
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
@@ -259,7 +259,7 @@ fun SeriesScreenContent(
                                     casts = state.cast,
                                     onActorClicked = interactionListener::onActorClicked,
                                 )
-                            SeasonTap(
+                            SeasonTab(
                                 onClick = interactionListener::onSeasonNumberClicked,
                                 seasonCounts = state.series.seasonsCount,
                                 currentSeason = state.selectedSeason,
