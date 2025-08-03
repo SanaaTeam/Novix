@@ -11,7 +11,7 @@ class LogOutUseCaseTest {
     private  val logoutUseCase: LogOutUseCase = LogOutUseCase(authenticationRepository)
 
     @Test
-    fun `logout should call repository logout`() = runTest{
+    fun `logout should call AuthenticationRepository when try to logout`() = runTest{
         logoutUseCase.logout()
         coVerify(exactly = 1) { authenticationRepository.logout() }
     }
