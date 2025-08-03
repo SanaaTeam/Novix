@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 
 data class AccountOptionItem(
@@ -59,7 +59,7 @@ fun AccountOption(painter: Painter, title: String, onClick: () -> Unit) {
             )
         }
 
-        Text(
+        AppText(
             modifier = Modifier,
             text = title,
             color = Theme.colors.title,
