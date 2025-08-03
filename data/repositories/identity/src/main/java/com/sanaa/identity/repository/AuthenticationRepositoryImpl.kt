@@ -46,8 +46,7 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun getLoggedUser(): User {
         return userLocalDataSource.getLoggedUser()
-            ?.toEntity()
-            ?: throw NoLoggedInUserException()
+            ?.toEntity() ?: throw NoLoggedInUserException()
     }
 
     override suspend fun isLoggedIn(): Boolean = wrapApiCall {
