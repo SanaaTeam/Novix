@@ -27,7 +27,7 @@ class MyAccountScreenViewModelTest {
     fun `should emit NavigateToMyRating effect when navigateToMyRating is called`() =
         runTest(testDispatcher) {
             viewModel.effect.test {
-                viewModel.navigateToMyRating()
+                viewModel.onClickMyTopRating()
                 assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToMyRating)
             }
         }
@@ -36,7 +36,7 @@ class MyAccountScreenViewModelTest {
     fun `should emit NavigateToContentRestrictionSetting effect when navigateContentRestrictionSetting is called`() =
         runTest(testDispatcher) {
             viewModel.effect.test {
-                viewModel.navigateContentRestrictionSetting()
+                viewModel.onClickContentRestriction()
                 assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToContentRestrictionSetting)
             }
         }
@@ -45,7 +45,7 @@ class MyAccountScreenViewModelTest {
     fun `should emit NavigateToChangePasswordSetting effect when navigateChangePasswordSetting is called`() =
         runTest(testDispatcher) {
             viewModel.effect.test {
-                viewModel.navigateChangePasswordSetting()
+                viewModel.onClickChangePassword()
                 assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToChangePasswordSetting)
             }
         }
@@ -54,7 +54,7 @@ class MyAccountScreenViewModelTest {
     fun `should emit NavigateToLanguageSetting effect when navigateLanguageSetting is called`() =
         runTest(testDispatcher) {
             viewModel.effect.test {
-                viewModel.navigateLanguageSetting()
+                viewModel.onClickLanguageSetting()
                 assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToLanguageSetting)
             }
         }
@@ -63,7 +63,7 @@ class MyAccountScreenViewModelTest {
     fun `should emit NavigateToWatchingHistory effect when navigateToWatchingHistory is called`() =
         runTest(testDispatcher) {
             viewModel.effect.test {
-                viewModel.navigateToWatchingHistory()
+                viewModel.onClickWatchingHistory()
                 assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToWatchingHistory)
             }
         }

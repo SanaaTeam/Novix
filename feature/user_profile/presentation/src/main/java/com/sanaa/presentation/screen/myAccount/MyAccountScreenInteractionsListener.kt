@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.myAccount
 
 interface MyAccountScreenInteractionsListener {
-    fun navigateChangePasswordSetting()
-    fun navigateContentRestrictionSetting()
-    fun navigateLanguageSetting()
-    fun navigateToMyRating()
-    fun navigateToWatchingHistory()
+    fun onClickChangePassword()
+    fun onClickContentRestriction()
+    fun onClickLanguageSetting()
+    fun onClickMyTopRating()
+    fun onClickWatchingHistory()
 }

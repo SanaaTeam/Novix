@@ -62,27 +62,27 @@ fun MyAccountScreenContent(
                 AccountOptionItem(
                     painter = painterResource(R.drawable.time_schedule),
                     title = stringResource(R.string.watching_history),
-                    onClick = { interactionsListener.navigateToWatchingHistory() }
+                    onClick = { interactionsListener.onClickWatchingHistory() }
                 ),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.star_square),
                     title = stringResource(R.string.my_rating),
-                    onClick = { interactionsListener.navigateToMyRating() }
+                    onClick = { interactionsListener.onClickMyTopRating() }
                 ),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.shield_energy),
                     title = stringResource(R.string.content_restriction),
-                    onClick = { interactionsListener.navigateContentRestrictionSetting() }
+                    onClick = { interactionsListener.onClickContentRestriction() }
                 ),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.lock_key),
                     title = stringResource(R.string.change_password),
-                    onClick = { interactionsListener.navigateChangePasswordSetting() }
+                    onClick = { interactionsListener.onClickChangePassword() }
                 ),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.language_circle),
                     title = stringResource(R.string.language),
-                    onClick = { interactionsListener.navigateLanguageSetting() }
+                    onClick = { interactionsListener.onClickLanguageSetting() }
                 ),
             )
         )
@@ -93,19 +93,19 @@ fun MyAccountScreenContent(
 @Composable
 private fun AccountScreenContentPreview() {
     val interactionsListener = object : MyAccountScreenInteractionsListener {
-        override fun navigateChangePasswordSetting() {
+        override fun onClickChangePassword() {
         }
 
-        override fun navigateContentRestrictionSetting() {
+        override fun onClickContentRestriction() {
         }
 
-        override fun navigateLanguageSetting() {
+        override fun onClickLanguageSetting() {
         }
 
-        override fun navigateToMyRating() {
+        override fun onClickMyTopRating() {
         }
 
-        override fun navigateToWatchingHistory() {
+        override fun onClickWatchingHistory() {
         }
     }
     NovixTheme(isSystemInDarkTheme()) {

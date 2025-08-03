@@ -8,23 +8,23 @@ class MyAccountScreenViewModel(
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
 ), MyAccountScreenInteractionsListener {
-    override fun navigateChangePasswordSetting() {
+    override fun onClickChangePassword() {
         emitEffect(MyAccountScreenEffect.NavigateToChangePasswordSetting)
     }
 
-    override fun navigateContentRestrictionSetting() {
+    override fun onClickContentRestriction() {
         emitEffect(MyAccountScreenEffect.NavigateToContentRestrictionSetting)
     }
 
-    override fun navigateLanguageSetting() {
+    override fun onClickLanguageSetting() {
         emitEffect(MyAccountScreenEffect.NavigateToLanguageSetting)
     }
 
-    override fun navigateToMyRating() {
+    override fun onClickMyTopRating() {
         emitEffect(MyAccountScreenEffect.NavigateToMyRating)
     }
 
-    override fun navigateToWatchingHistory() {
+    override fun onClickWatchingHistory() {
         emitEffect(MyAccountScreenEffect.NavigateToWatchingHistory)
     }
 }
