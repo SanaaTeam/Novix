@@ -14,7 +14,7 @@ dependencies {
     implementation(projects.domain.vod)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
-
+    implementation(projects.feature.mediaDetails.api)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)
