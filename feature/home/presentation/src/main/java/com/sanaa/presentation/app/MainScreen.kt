@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.SearchFeatureApi
+import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
@@ -27,8 +28,8 @@ import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
-import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -41,6 +42,12 @@ fun MainScreen() {
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .searchApi()
+    }
+
+    val userProfileApi: UserProfileFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .userProfileApi()
     }
 
 
@@ -71,7 +78,7 @@ fun MainScreen() {
 
                     }
                     composable<UserProfileScreenRoute> {
-
+                        userProfileApi.UserProfileScreenApi()
                     }
                 }
             }
