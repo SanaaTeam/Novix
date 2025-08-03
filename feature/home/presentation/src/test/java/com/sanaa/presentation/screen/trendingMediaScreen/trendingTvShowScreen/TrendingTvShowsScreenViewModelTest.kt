@@ -24,12 +24,15 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 
 class TrendingTvShowsScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+
     private lateinit var viewModel: TrendingTvShowsScreenViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -49,7 +52,7 @@ class TrendingTvShowsScreenViewModelTest {
     fun `init should fetch genres and update state on creation`() = runTest {
         coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns genres
 
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.genreList).isEqualTo(genres.map { it.toState() })
@@ -59,7 +62,7 @@ class TrendingTvShowsScreenViewModelTest {
     fun `init should fetch tv show and update state on creation`() = runTest {
         coEvery { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) } returns tvShows
 
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val pagingData = viewModel.state.value.mediaList
         val items = pagingData.asSnapshot()
@@ -74,7 +77,7 @@ class TrendingTvShowsScreenViewModelTest {
             coEvery {
                 manageTvSeriesUseCase.getTrendingTvSeries(any(), genreId)
             } returns tvShows
-            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
             testDispatcher.scheduler.advanceUntilIdle()
 
             viewModel.onGenreClick(genreId)
@@ -90,7 +93,7 @@ class TrendingTvShowsScreenViewModelTest {
         val exceptionMessage = "error"
         coEvery { manageTvSeriesUseCase.getSeriesGenres() } throws RuntimeException(exceptionMessage)
 
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
@@ -101,7 +104,7 @@ class TrendingTvShowsScreenViewModelTest {
         runTest {
             coEvery { manageTvSeriesUseCase.getSeriesGenres() } throws NoNetworkException()
 
-            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
@@ -109,7 +112,7 @@ class TrendingTvShowsScreenViewModelTest {
 
     @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onSaveIconClick(media)
@@ -120,7 +123,7 @@ class TrendingTvShowsScreenViewModelTest {
     @Test
     fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
         coEvery { manageTvSeriesUseCase.getTrendingTvSeries(any(), any()) } returns listOf(mockk())
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val selectedGenre = viewModel.state.value.selectedGenreId
 
@@ -134,7 +137,7 @@ class TrendingTvShowsScreenViewModelTest {
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
-        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+        viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
 
         viewModel.effect.test {
             viewModel.onMediaClick(mediaId)
@@ -148,7 +151,7 @@ class TrendingTvShowsScreenViewModelTest {
 
         @Test
         fun `onBackClick emits NavigateBack`() = runTest {
-            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, testDispatcher)
+            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
 
             viewModel.onBackClick()
 
