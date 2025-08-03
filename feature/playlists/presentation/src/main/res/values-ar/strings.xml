@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="my_list_is_empty">قائمتي فارغة</string>
+    <string name="saved_list">القائمة المحفوظة</string>
+    <string name="there_is_no_saved_list_yet_click_on_button_to_add_a_new_list">لا توجد أي قائمة محفوظة بعد، اضغط على زر + لإضافة قائمة جديدة!</string>
 </resources>

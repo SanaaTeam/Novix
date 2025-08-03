@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+    <string name="my_list_is_empty">" my list is empty"</string>
+    <string name="saved_list">Saved list</string>
+    <string name="there_is_no_saved_list_yet_click_on_button_to_add_a_new_list">There is no saved list yet, click on + button to add a new list!</string>
 </resources>
