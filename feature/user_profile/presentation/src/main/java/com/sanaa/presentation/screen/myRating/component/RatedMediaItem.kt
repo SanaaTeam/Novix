@@ -1,7 +1,10 @@
+package com.sanaa.presentation.screen.myRating.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -21,47 +24,52 @@ import com.sanaa.presentation.model.RatedMediaUiModel
 fun RatedMediaItem(
     media: RatedMediaUiModel,
     onDeleteClick: (mediaId: Int, mediaType: String) -> Unit,
+    onCardClick: (mediaId: Int, mediaType: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    MediaPosterCard(
-        modifier = modifier,
-        posterImage = {
-            RemoteBlurredHaramImageViewer(
-                imageUrl = media.posterImageUrl.orEmpty(),
-                modifier = Modifier.fillMaxSize(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
-                contentDescription = media.title,
-                placeholderContent = {
-                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                },
-                errorContent = {
-                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                },
-            ) {
-                OnBlurContent(
-                    hintText = stringResource(R.string.unsuitable_image),
-                    textStyle = Theme.textStyle.body.small.copy(
-                        color = Color(0x99FFFFFF)
-                    ),
-                    iconSize = 24.dp,
-                    icon = painterResource(R.drawable.icon_eye_slash),
-                )
-            }
-        },
-        topLeftContent = {
-            media.rating?.let {
-                MediaRatingChip(
-                    rating = it.toString(),
-                    modifier = Modifier.padding(top = 4.dp, start = 4.dp)
-                )
-            }
-        },
-        topRightContent = {
-            DeleteIconChip(
-                onClick = { onDeleteClick(media.id, media.mediaType) },
-                modifier = Modifier.padding(top = 4.dp, end = 4.dp)
-            )
-        }
-    )
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        MediaPosterCard(
+            onCardClick = { onCardClick(media.id, media.mediaType) },
+            posterImage = {
+                RemoteBlurredHaramImageViewer(
+                    imageUrl = media.posterImageUrl.orEmpty(),
+                    modifier = Modifier.fillMaxSize(),
+                    haramThreshold = 0.2f,
+                    nonHaramThreshold = 0.7f,
+                    contentDescription = media.title,
+                    placeholderContent = {
+                        RemoteImagePlaceholder(Modifier.fillMaxSize())
+                    },
+                    errorContent = {
+                        RemoteImagePlaceholder(Modifier.fillMaxSize())
+                    },
+                ) {
+                    OnBlurContent(
+                        hintText = stringResource(R.string.unsuitable_image),
+                        textStyle = Theme.textStyle.body.small.copy(
+                            color = Color(0x99FFFFFF)
+                        ),
+                        iconSize = 24.dp,
+                        icon = painterResource(R.drawable.icon_eye_slash),
+                    )
+                }
+            },
+            topLeftContent = {
+                media.rating?.let {
+                    MediaRatingChip(
+                        rating = it.toString()
+                    )
+                }
+            },
+        )
+        DeleteIconChip(
+            onClick = { onDeleteClick(media.id, media.mediaType) },
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp)
+        )
+    }
 }
