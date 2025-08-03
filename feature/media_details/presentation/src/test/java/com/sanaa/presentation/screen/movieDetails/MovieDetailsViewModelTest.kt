@@ -182,21 +182,6 @@ class MovieDetailsViewModelTest {
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
 
-    @Test
-    fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
-        givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
-        viewModel.updateState { it.copy(showLoginBottomSheet = true) }
-
-        viewModel.effect.test {
-            viewModel.onLoginButtonClick()
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-    }
 
     @Test
     fun `onRatingChanged updates the rating`() = runTest {

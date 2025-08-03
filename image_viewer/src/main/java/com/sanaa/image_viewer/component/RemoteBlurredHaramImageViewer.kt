@@ -51,7 +51,7 @@ fun RemoteBlurredHaramImageViewer(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    blurRadius: Dp = 10.dp,
+    blurRadius: Dp = 30.dp,
     isBlurEnabled: Boolean = true,
     placeholderContent: @Composable () -> Unit = {},
     errorContent: @Composable () -> Unit = {},
