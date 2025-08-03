@@ -2,7 +2,6 @@
 
 package com.sanaa.presentation.screen.myRating.component
 
-import RatedMediaItem
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,6 +35,7 @@ fun RatedMediaListGrid(
             RatedMediaItem(
                 media = mediaItem,
                 onDeleteClick = onDeleteIconClick,
+                onCardClick = TODO(),
             )
         }
     }
