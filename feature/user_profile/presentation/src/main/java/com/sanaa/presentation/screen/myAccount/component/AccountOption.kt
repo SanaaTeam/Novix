@@ -54,7 +54,7 @@ fun AccountOption(painter: Painter, title: String, onClick: () -> Unit) {
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = painter,
-                contentDescription = null,
+                contentDescription = title,
                 colorFilter = ColorFilter.tint(Theme.colors.primary)
             )
         }
