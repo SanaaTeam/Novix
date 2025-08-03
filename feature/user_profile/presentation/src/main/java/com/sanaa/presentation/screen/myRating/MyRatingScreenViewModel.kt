@@ -41,7 +41,6 @@ class MyRatingScreenViewModel @Inject constructor(
             onError = ::onDataLoadError
         )
 
-        // Fetch rated TV shows
         tryToExecute(
             callee = { manageTvSeriesUseCase.getSeriesRate(accountId) },
             onSuccess = { tvShows ->
@@ -67,7 +66,9 @@ class MyRatingScreenViewModel @Inject constructor(
     override fun onTabSelected(tab: MyRatingTab) {
         updateState { it.copy(selectedTab = tab) }
     }
-
+    override fun onMediaClick(id: Int, mediaType: String) {
+        emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
+    }
     override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
         if (mediaType == "movie") {
             tryToExecute(
