@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
@@ -23,6 +24,7 @@ import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToM
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
 import com.sanaa.presentation.screen.myAccount.component.AccountOptionItem
 import com.sanaa.presentation.screen.myAccount.component.MyAccountUserInfo
+import com.sanaa.presentation.screen.myAccount.component.SelectionBottomSheet
 import com.sanaa.presentation.screen.myAccount.component.VerticalList
 import com.sanaa.presentation.util.Listen
 
@@ -62,29 +64,49 @@ fun MyAccountScreenContent(
                 AccountOptionItem(
                     painter = painterResource(R.drawable.time_schedule),
                     title = stringResource(R.string.watching_history),
-                    onClick = { interactionsListener.onClickWatchingHistory() }
-                ),
+                    onClick = { interactionsListener.onClickWatchingHistory() }),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.star_square),
                     title = stringResource(R.string.my_rating),
-                    onClick = { interactionsListener.onClickMyTopRating() }
-                ),
+                    onClick = { interactionsListener.onClickMyTopRating() }),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.shield_energy),
                     title = stringResource(R.string.content_restriction),
-                    onClick = { interactionsListener.onClickContentRestriction() }
-                ),
+                    onClick = { interactionsListener.onClickContentRestriction() }),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.lock_key),
                     title = stringResource(R.string.change_password),
-                    onClick = { interactionsListener.onClickChangePassword() }
-                ),
+                    onClick = { interactionsListener.onClickChangePassword() }),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.language_circle),
                     title = stringResource(R.string.language),
-                    onClick = { interactionsListener.onClickLanguageSetting() }
-                ),
+                    onClick = { interactionsListener.onClickLanguageSetting() }),
             )
+        )
+        SelectionBottomSheet(
+            isVisible = uiState.showChangeLanguageBottomSheet,
+            bottomSheetTitle = "Language",
+            options = listOf(
+                Option(
+                    label = "Arabic", value = "ar"
+                ),
+                Option(
+                    label = "English", value = "en"
+                ),
+
+                ),
+            onDismiss = {
+                interactionsListener.onDismissBottomSheet()
+            },
+            onOptionSelected = {
+                interactionsListener.onSelectLanguage(
+                    it.toString()
+                )
+            },
+            selectedValue = uiState.selectedLanguage,
+            onSaveClick = {
+                interactionsListener.onSaveLanguageClick()
+            }
         )
     }
 }
@@ -107,14 +129,24 @@ private fun AccountScreenContentPreview() {
 
         override fun onClickWatchingHistory() {
         }
+
+        override fun onSelectLanguage(language: String) {
+
+        }
+
+        override fun onDismissBottomSheet() {
+
+        }
+
+        override fun onSaveLanguageClick() {
+        }
     }
     NovixTheme(isSystemInDarkTheme()) {
         NovixScaffold {
             MyAccountScreenContent(
                 uiState = MyAccountScreenUiState(
                     username = "User Name",
-                ),
-                interactionsListener = interactionsListener
+                ), interactionsListener = interactionsListener
             )
         }
     }
