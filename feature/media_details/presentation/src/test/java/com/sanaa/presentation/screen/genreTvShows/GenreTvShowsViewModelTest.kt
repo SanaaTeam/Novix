@@ -50,6 +50,32 @@ class GenreTvShowsViewModelTest {
     }
 
     @Test
+    fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
+        val category = genreList[0]
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), 1) } returns emptyList()
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "genreId" to category.id,
+                "genreName" to category.name
+            )
+        )
+
+        viewModel = GenreTvShowsViewModel(
+            savedStateHandle,
+            manageTvSeriesUseCase,
+            checkIfUserIsLoggedInUseCase
+        )
+
+        advanceUntilIdle()
+
+        viewModel.onSaveIconClick()
+
+        assertTrue(viewModel.state.value.showBottomSheet)
+    }
+
+
+    @Test
     fun `onTvShowClick should emit NavigateToTvShowDetails effect`() = runTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), 1) } returns emptyList()
