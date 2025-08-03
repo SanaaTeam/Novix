@@ -31,19 +31,22 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    state: AddBookmarkListUiState,
+    state: AddEditBookmarkListUiState,
     onTitleChanged: (String) -> Unit,
-    onAddClick: () -> Unit,
+    onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(text = state.listTitle)) }
-
-    if (textFieldValue.text != state.listTitle) {
-        textFieldValue = TextFieldValue(
-            text = state.listTitle,
-            selection = TextRange(state.listTitle.length)
+    var textFieldValue by remember(state.listTitle) {
+        mutableStateOf(
+            TextFieldValue(
+                text = state.listTitle,
+                selection = TextRange(state.listTitle.length)
+            )
         )
     }
+
+    val titleRes = if (state.isEditMode) R.string.edit_list else R.string.add_new_list
+    val buttonTextRes = if (state.isEditMode) R.string.save else R.string.add
 
     BaseBottomSheet(
         isVisible = isVisible,
@@ -56,7 +59,7 @@ fun AddBookmarkListBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopBar(
-                screenTitle = stringResource(R.string.add_new_list),
+                screenTitle = stringResource(titleRes),
                 rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_cancel),
@@ -77,8 +80,10 @@ fun AddBookmarkListBottomSheet(
             TextField(
                 value = textFieldValue,
                 onValueChange = { newValue ->
+                    if (textFieldValue.text != newValue.text) {
+                        onTitleChanged(newValue.text)
+                    }
                     textFieldValue = newValue
-                    onTitleChanged(newValue.text)
                 },
                 hint = stringResource(R.string.my_favorite_placeholder),
                 icon = painterResource(id = R.drawable.ic_bookmark_list),
@@ -89,11 +94,10 @@ fun AddBookmarkListBottomSheet(
                     .padding(start = 16.dp, end = 16.dp)
             )
 
-
             PrimaryButton(
-                text = stringResource(R.string.add),
-                onClick = onAddClick,
-                isEnabled = state.isAddButtonEnabled,
+                text = stringResource(buttonTextRes),
+                onClick = onSaveClick,
+                isEnabled = state.isSaveButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -104,33 +108,62 @@ fun AddBookmarkListBottomSheet(
     }
 }
 
-@Preview(name = "Empty State", showBackground = true)
+
+@Preview(name = "Add Mode - Empty", showBackground = true)
 @Composable
-private fun AddBookmarkListBottomSheetEmptyPreview() {
+private fun AddBookmarkListBottomSheetAddEmptyPreview() {
     NovixTheme(isDarkMode = true) {
         AddBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = {},
-            state = AddBookmarkListUiState(
+            state = AddEditBookmarkListUiState(
+                isEditMode = false,
                 listTitle = "",
-                isAddButtonEnabled = false,
-                isLoading = false
+                isSaveButtonEnabled = false
             ),
             onTitleChanged = {},
-            onAddClick = {}
+            onSaveClick = {}
         )
     }
 }
 
-@Preview(name = "Active State", showBackground = true)
+@Preview(name = "Add Mode - Active", showBackground = true)
 @Composable
-private fun AddBookmarkListBottomSheetActivePreview() {
+private fun AddBookmarkListBottomSheetAddActivePreview() {
     var state by remember {
         mutableStateOf(
-            AddBookmarkListUiState(
+            AddEditBookmarkListUiState(
+                isEditMode = false,
                 listTitle = "My favorite",
-                isAddButtonEnabled = true,
-                isLoading = false
+                isSaveButtonEnabled = true
+            )
+        )
+    }
+    NovixTheme(isDarkMode = true) {
+        AddBookmarkListBottomSheet(
+            isVisible = true,
+            onDismiss = {},
+            state = state,
+            onTitleChanged = { newTitle ->
+                state =
+                    state.copy(listTitle = newTitle, isSaveButtonEnabled = newTitle.isNotBlank())
+            },
+            onSaveClick = {}
+        )
+    }
+}
+
+
+@Preview(name = "Edit Mode", showBackground = true)
+@Composable
+private fun AddBookmarkListBottomSheetEditModePreview() {
+    var state by remember {
+        mutableStateOf(
+            AddEditBookmarkListUiState(
+                listTitle = "My favorite movies",
+                isSaveButtonEnabled = true,
+                isLoading = false,
+                isEditMode = true
             )
         )
     }
@@ -143,28 +176,10 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             onTitleChanged = { newTitle ->
                 state = state.copy(
                     listTitle = newTitle,
-                    isAddButtonEnabled = newTitle.isNotBlank()
+                    isSaveButtonEnabled = newTitle.isNotBlank()
                 )
             },
-            onAddClick = {}
-        )
-    }
-}
-
-@Preview(name = "Loading State", showBackground = true)
-@Composable
-private fun AddBookmarkListBottomSheetLoadingPreview() {
-    NovixTheme(isDarkMode = true) {
-        AddBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = {},
-            state = AddBookmarkListUiState(
-                listTitle = "Action Movies",
-                isAddButtonEnabled = true,
-                isLoading = true
-            ),
-            onTitleChanged = {},
-            onAddClick = {}
+            onSaveClick = {}
         )
     }
 }
