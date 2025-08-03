@@ -138,4 +138,19 @@ class TvShowRepositoryImpl @Inject constructor(
             ).isSuccess
         }
     }
+
+    override suspend fun getUserRatedTvSeries(userId: String): List<TvSeries> {
+        return safeCall("Failed to fetch user rated tv shows") {
+            val accountId = preferences.accountId.first()
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.getTvShowRate(accountId, sessionId).map { it.toEntity() }
+        }
+    }
+
+    override suspend fun deleteTvSeriesRate(seriesId: Int): Boolean {
+        return safeCall("Failed to delete tv series rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.deleteTvSeriesRate(seriesId, sessionId).isSuccess
+        }
+    }
 }
