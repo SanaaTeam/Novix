@@ -80,7 +80,7 @@ fun HomeScreenContent(
         }
     }
 
-    NovixScaffold(backgroundShapes = {}, topBar = {
+    NovixScaffold(topBar = {
         HomeTopBar(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         )

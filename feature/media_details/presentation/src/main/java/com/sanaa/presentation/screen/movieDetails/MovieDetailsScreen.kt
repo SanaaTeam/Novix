@@ -4,10 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,8 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -33,6 +40,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
@@ -167,15 +175,38 @@ fun MovieDetailsContent(
     val context = LocalContext.current
     val locale = remember { getCurrentLocale(context) }
 
+    val lazyState = rememberLazyGridState()
+    var shouldShowBackground by remember { mutableStateOf(false) }
+    val animatedColor by animateColorAsState(
+        targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+    )
+
+    LaunchedEffect(lazyState) {
+        snapshotFlow {
+            if (lazyState.firstVisibleItemIndex == 0) {
+                lazyState.firstVisibleItemScrollOffset
+            } else {
+                Int.MAX_VALUE
+            }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 200
+        }
+    }
+
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() }) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
-
         ) {
-            MovieTopBar(interactionListener = interactionListener, movieId = state.movieDetails.id)
+
+            MovieTopBar(
+                interactionListener = interactionListener,
+                movieId = state.movieDetails.id,
+                modifier = Modifier.background(color = animatedColor)
+            )
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
@@ -201,7 +232,8 @@ fun MovieDetailsContent(
                         state = state,
                         pagedSimilarMovies = pagedSimilarMovies,
                         locale = locale,
-                        interactionListener = interactionListener
+                        interactionListener = interactionListener,
+                        lazyState = lazyState
                     )
                 }
             }
@@ -252,7 +284,8 @@ fun MovieDetailsContent(
 @Composable
 fun MovieTopBar(
     interactionListener: MovieDetailsScreenInteractionListener,
-    movieId: Int
+    movieId: Int,
+    modifier: Modifier = Modifier,
 ) {
     TopBar(
         leftContent = {
@@ -267,7 +300,7 @@ fun MovieTopBar(
                 onClick = { interactionListener.onBookmarkClick(movieId) }
             )
         },
-        modifier = Modifier
+        modifier = modifier
             .systemBarsPadding()
             .zIndex(10f)
     )
