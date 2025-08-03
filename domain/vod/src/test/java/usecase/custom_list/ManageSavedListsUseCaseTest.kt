@@ -3,6 +3,7 @@ package usecase.custom_list
 import com.google.common.truth.Truth.assertThat
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -63,6 +64,8 @@ class ManageSavedListsUseCaseTest {
         coEvery { savedListRepository.editSavedList(dummyList) } returns Unit
 
         manageSavedListsUseCase.editSavedList(dummyList)
+
+        coVerify(exactly = 1) { savedListRepository.editSavedList(dummyList) }
     }
 
     @Test
@@ -79,6 +82,8 @@ class ManageSavedListsUseCaseTest {
         coEvery { savedListRepository.deleteSavedList(dummyList.id) } returns Unit
 
         manageSavedListsUseCase.deleteSavedList(dummyList.id)
+
+        coVerify(exactly = 1) { savedListRepository.deleteSavedList(dummyList.id) }
     }
 
     @Test
