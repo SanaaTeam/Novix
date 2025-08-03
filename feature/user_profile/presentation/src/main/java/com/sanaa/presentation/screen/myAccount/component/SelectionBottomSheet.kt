@@ -1,4 +1,4 @@
-package com.sanaa.presentation.component
+package com.sanaa.presentation.screen.myAccount.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

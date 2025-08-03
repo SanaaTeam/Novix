@@ -6,4 +6,7 @@ interface MyAccountScreenInteractionsListener {
     fun onClickLanguageSetting()
     fun onClickMyTopRating()
     fun onClickWatchingHistory()
+    fun onSelectLanguage(language: String)
+    fun onDismissBottomSheet()
+    fun onSaveLanguageClick()
 }
