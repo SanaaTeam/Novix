@@ -1,12 +1,12 @@
 package com.sanaa.presentation.shared_component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,8 +17,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.text.AppText
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -45,7 +46,7 @@ fun RateBottomSheet(
                     .padding(bottom = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                NovixTopBar(
+                TopBar(
                     screenTitle = stringResource(R.string.rate_it),
                     rightContent = {
                         TopBarClickableIcon(
@@ -54,7 +55,7 @@ fun RateBottomSheet(
                         )
                     }
                 )
-                Text(
+                AppText(
                     text = stringResource(R.string.select_how_much_you_like_it),
                     style = Theme.textStyle.body.medium,
                     color = Theme.colors.body,
@@ -68,7 +69,7 @@ fun RateBottomSheet(
                         onRatingChanged = onRatingChanged
                     )
                 }
-                NovixPrimaryButton(
+                PrimaryButton(
                     isEnabled = isRateSelected,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -88,9 +89,12 @@ fun RateBottomSheet(
 private fun RateBottomSheetPreview() {
     val showSheet = remember { mutableStateOf(false) }
     Box(modifier = Modifier.fillMaxSize()) {
-        androidx.compose.material3.Button(onClick = { showSheet.value = true }) {
-            Text(text = "Show Bottom Sheet")
-        }
+
+            AppText(text = "Show Bottom Sheet",
+                modifier = Modifier.clickable(onClick =
+                    { showSheet.value = true }
+                )
+            )
 
         if (showSheet.value) {
             RateBottomSheet(isVisible = showSheet.value,

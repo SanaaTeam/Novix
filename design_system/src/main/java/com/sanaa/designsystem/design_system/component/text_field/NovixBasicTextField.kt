@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-internal fun NovixBasicTextField(
+internal fun BasicTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -50,7 +50,7 @@ internal fun NovixBasicTextField(
         }
     }
 
-    NovixBasicTextField(
+    BasicTextField(
         value = internalValue,
         onValueChange = {
             internalValue = it
@@ -68,7 +68,7 @@ internal fun NovixBasicTextField(
 }
 
 @Composable
-internal fun NovixBasicTextField(
+internal fun BasicTextField(
     value: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier,

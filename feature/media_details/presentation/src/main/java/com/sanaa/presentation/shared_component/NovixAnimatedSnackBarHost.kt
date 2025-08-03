@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.snack_bar.NovixSnackBar
+import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import kotlinx.coroutines.delay
 
@@ -36,7 +36,7 @@ fun NovixAnimatedSnackBarHost(
                 delay(durationMillis)
                 onDismiss()
             }
-            NovixSnackBar(
+            SnackBar(
                 message = data.message,
                 isErrorMessage = data.isError,
                 modifier = Modifier.padding(horizontal = 16.dp)

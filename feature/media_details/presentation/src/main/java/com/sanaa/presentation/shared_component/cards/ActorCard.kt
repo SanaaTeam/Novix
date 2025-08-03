@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -115,13 +115,13 @@ fun ActorCard(
                 .padding(start = 86.dp),
             verticalArrangement = Arrangement.Center
         ) {
-            Text(
+            AppText(
                 text = actorName,
                 style = Theme.textStyle.title.medium,
                 color = Theme.colors.body,
             )
             playedCharacter?.let {
-                Text(
+                AppText(
                     text = it,
                     style = Theme.textStyle.label.small,
                     color = Theme.colors.hint

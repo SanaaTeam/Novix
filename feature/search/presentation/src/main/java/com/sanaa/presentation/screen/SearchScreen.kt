@@ -17,11 +17,13 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet
+import com.sanaa.presentation.navigation.SearchApiEntryPoint
 import com.sanaa.presentation.screen.componants.CategoryTabSection
+import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
 import com.sanaa.presentation.screen.componants.SearchSection
 import com.sanaa.presentation.screen.state.ActorUiModel
@@ -29,8 +31,8 @@ import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
-import usecase.search.search_param.MediaFilters
 
 @Composable
 fun SearchScreen(
@@ -43,6 +45,23 @@ fun SearchScreen(
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
 
     val context = LocalContext.current
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        SearchApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            searchViewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            searchViewModel.updateUserStatus()
+        }
+    )
+
+
+
+
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -66,6 +85,10 @@ fun SearchScreen(
                         StartRoute.SERIES,
                         effect.id
                     )
+
+                SearchScreenEffects.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -77,9 +100,6 @@ fun SearchScreen(
             moviesPagingData = moviesPagingData,
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
-            onFilterApplied ={ tabIndex, filters ->
-                searchViewModel.onFilterApplied(tabIndex, filters)
-            }
         )
     }
 }
@@ -91,23 +111,15 @@ fun SearchScreenContent(
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
-    onFilterApplied: (Int, MediaFilters?) -> Unit,
 ) {
-
-    val dismissSheet: () -> Unit = {
-        searchListener.onBottomSheetDragged()
-    }
-
     Column {
-        NovixTopBar(
+        TopBar(
             modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
         )
 
         SearchSection(
             text = uiState.searchQuery,
             onTextChange = searchListener::onSearchQueryChanged,
-            onFilterClicked = { searchListener.onFilterClicked() },
-            isFilterButtonVisible = uiState.isFilterVisible(),
         )
 
         AnimatedContent(uiState.searchQuery.isNotBlank()) {
@@ -131,12 +143,10 @@ fun SearchScreenContent(
         }
     }
 
-    if (uiState.showBottomSheet) {
-        FilterBottomSheet(
-            dismissSheet = dismissSheet,
-            isVisible = uiState.showBottomSheet,
-            onFilterApplied = onFilterApplied,
-            selectedTabIndex = uiState.selectedTabIndex
-        )
-    }
+
+    RequestToLoginBottomSheet(
+        onDismiss = {searchListener.onBottomSheetDismiss()},
+        onLoginButtonClick = { searchListener.onLoginButtonClick() },
+        isVisible = uiState.showLoginBottomSheet,
+    )
 }

@@ -30,12 +30,12 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.SearchUseCase
-import usecase.search.search_param.MediaFilters
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
@@ -44,6 +44,7 @@ class SearchViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
+    private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -54,6 +55,7 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
+        updateUserStatus()
     }
 
     override fun onSearchQueryChanged(query: String) {
@@ -64,8 +66,6 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(state.value.searchQuery)
     }
 
-
-
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
         updateState { it.copy(selectedTabIndex = index) }
@@ -73,18 +73,6 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(searchQuery)
     }
 
-    override fun onFilterApplied(tabIndex: Int, filters: MediaFilters?) {
-        val currentQuery =state.value.searchQuery
-        updateState { currentState ->
-            currentState.copy(
-                movieFilters = if (tabIndex == SearchScreenUiState.MOVIE_INDEX) filters else currentState.movieFilters,
-                tvFilters = if (tabIndex == SearchScreenUiState.TV_SHOW_INDEX) filters else currentState.tvFilters
-            )
-        }
-        if (currentQuery.isNotBlank()) {
-            loadMediaByTab(currentQuery)
-        }
-    }
     override fun onActorClicked(id: Int) {
         emitEffect(SearchScreenEffects.NavigateToActorDetails(id))
     }
@@ -99,6 +87,33 @@ class SearchViewModel @Inject constructor(
             callee = { addRecentViewedMedia(viewed) },
             onError = ::onDataLoadError
         )
+    }
+
+    override fun onLoginButtonClick() {
+        updateState { it.copy(showLoginBottomSheet = false) }
+        emitEffect(SearchScreenEffects.NavigateToLogin)
+    }
+
+    override fun onSaveSeriesClicked() {
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true
+                )
+            }
+        }
+    }
+
+    override fun onSaveMoviesClicked() {
+        val isLoggIn = state.value.isUserLoggedIn
+        if (!isLoggIn) {
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true
+                )
+            }
+        }
     }
 
     override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
@@ -123,12 +138,10 @@ class SearchViewModel @Inject constructor(
         loadMediaByTab(query)
     }
 
-    override fun onFilterClicked() {
-        updateState { it.copy(showBottomSheet = true) }
-    }
 
-    override fun onBottomSheetDragged() {
-        updateState { it.copy(showBottomSheet = false) }
+
+    override fun onBottomSheetDismiss() {
+        updateState { it.copy(showLoginBottomSheet = false) }
     }
 
     override fun onClearRecentViewClicked() {
@@ -279,6 +292,7 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
     private suspend fun addRecentViewedMedia(viewed: RecentViewedUiModel) {
         manageRecentViewedUseCase.addRecentViewed(
             RecentViewedMedia(
@@ -319,7 +333,7 @@ class SearchViewModel @Inject constructor(
 
     fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return BasePagingSource { page ->
-            searchUseCase.searchTvShows(query = query, page = page, filters = state.value.tvFilters)
+            searchUseCase.searchTvShows(query = query, page = page)
         }
     }
 
@@ -328,7 +342,6 @@ class SearchViewModel @Inject constructor(
             searchUseCase.searchMovies(
                 query = query,
                 page = page,
-                filters = state.value.movieFilters
             )
         }
     }
@@ -339,10 +352,10 @@ class SearchViewModel @Inject constructor(
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
-                pageSize = PAGE_SIZE, 
+                pageSize = PAGE_SIZE,
                 enablePlaceholders = false,
                 prefetchDistance = 4
-            ), 
+            ),
             pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData ->
             pagingData.map(mapper)
@@ -355,6 +368,14 @@ class SearchViewModel @Inject constructor(
 
     private fun setSuccessState() {
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
+    }
+
+    private suspend fun getUserState() {
+        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+    fun updateUserStatus(){
+        tryToExecute(callee = ::getUserState)
     }
 
     companion object {

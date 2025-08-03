@@ -7,17 +7,22 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toHistory
+import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +30,8 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val getUser: GetLoggedInUserUseCase,
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -38,7 +44,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        tryToExecute(callee = ::updateUserLoginState)
+        updateUserStatus()
     }
 
     override fun onBackClick() {
@@ -174,26 +180,38 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadMovieDetails(movieId: Int) {
-        val movie = manageMovieDetails.getMovieDetails(movieId)
-        val cast = manageMovieDetails.getMovieCast(movieId)
-        val images = manageMovieDetails.getMovieImages(movieId)
-        val similar = loadSimilarMovies(movieId)
-        val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-        val currentMovieRating = getCurrentUserRating(movieId)
+
+    private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
+        val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
+        val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
+        val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
+        val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
+        val ratingDeferred = async { getCurrentUserRating(movieId) }
+        val similarDeferred = async { loadSimilarMovies(movieId) }
+
+        val movie = movieDeferred.await()
+        val cast = castDeferred.await()
+        val images = imagesDeferred.await()
+        val trailerUrl = trailerDeferred.await()
+        val currentMovieRating = ratingDeferred.await()
+        val similar = similarDeferred.await()
+
+        addMovieToHistory(movie)
         updateState {
             it.copy(
-                movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
-                cast = cast.map { actor -> actor.toActorUiModel() },
+                movieDetails = movie.toUiModel(isBookmarked = false, trailerUrl = trailerUrl),
+                cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
                 imdbRating = currentMovieRating
             )
         }
+
     }
 
+
     private suspend fun getCurrentUserRating(movieId: Int): Int {
-        val userId = getUser.getLoggedInUser().id
+        val userId = getLoggedInUserUseCase.getLoggedInUser().id
         return try {
             manageMovieDetails.getMoviesRate(userId, movieId)
         } catch (e: Exception) {
@@ -217,6 +235,23 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus() {
+        tryToExecute(callee = ::updateUserLoginState)
+    }
+
+    private suspend fun addMovieToHistory(movie: Movie) {
+        val user = try {
+            getLoggedInUserUseCase.getLoggedInUser()
+        } catch (_: NoLoggedInUserException) {
+            null
+        }
+        if (user == null) return
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
+        )
     }
 
     private fun promptLogin(type: LoginPromptType) {

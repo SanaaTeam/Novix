@@ -1,12 +1,13 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.toUiModel
+import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import entity.Movie
@@ -15,12 +16,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 
 @HiltViewModel
 class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
@@ -31,19 +35,28 @@ class GenreMoviesViewModel @Inject constructor(
     private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
 
     init {
+        updateUserLoggingStatus()
         fetchMovies(categoryId)
     }
 
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn
+                )
+            }
+        }
+    }
     override fun onRetryClicked() {
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         fetchMovies(categoryId)
     }
 
     override fun onSaveIconClick() {
-        updateState {
-            it.copy(
-                showBottomSheet = true
-            )
+        if (!state.value.userIsLoggedIn){
+            updateState { it.copy(showBottomSheet = true) }
         }
     }
 

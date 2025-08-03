@@ -16,20 +16,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -46,6 +49,7 @@ import com.sanaa.presentation.screen.actor.componants.PosterCard
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun ActorScreen(
@@ -53,6 +57,21 @@ fun ActorScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
+    val context = LocalContext.current
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+   val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserLoggingStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserLoggingStatus()
+        }
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -88,10 +107,7 @@ fun ActorScreen(
                 }
 
                 ActorScreenEffects.NavigateToLogin -> {
-                    // Launch authentication activity
-                    val intent = Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    navController.context.startActivity(intent)
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
@@ -112,11 +128,11 @@ private fun ActorScreenContent(
     modifier: Modifier = Modifier,
 ) {
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Box(modifier = modifier.navigationBarsPadding()) {
 
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
@@ -140,7 +156,7 @@ private fun ActorScreenContent(
                         )
                     } else {
                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                            NovixLoadingIndicator()
+                            LoadingIndicator()
                         }
                     }
                 } else {
@@ -220,7 +236,9 @@ private fun ActorScreenContent(
             RequestToLoginBottomSheet(
                 isVisible = state.showLoginBottomSheet,
                 onDismiss = listener::onDismissBottomSheet,
-                onLoginButtonClick = { listener.onLoginButtonClick() }
+                onLoginButtonClick = {
+                    listener.onLoginButtonClick()
+                }
             )
         }
     }

@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +31,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.text.AnnotatedText
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 
@@ -44,7 +45,7 @@ fun OverviewSection(
     collapsedMaxLines: Int = 4,
 ) {
     Column(modifier = modifier) {
-        Text(
+        AppText(
             text = stringResource(id = titleResId),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title
@@ -133,7 +134,7 @@ fun ExpandableText(
             }
         }
 
-        Text(
+        AnnotatedText(
             text = buildAnnotatedString {
                 when {
                     !isExpanded && hasOverflow && displayText.endsWith(readMoreText) -> {

@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -23,7 +23,7 @@ import com.sanaa.presentation.state.MediaItem
 
 @Composable
 fun MediaListGrid(
-    mediaList: LazyPagingItems<MediaItem>,
+    mediaList: List<MediaItem>,
     modifier: Modifier = Modifier,
     isScrollEnabled: Boolean = true,
     onMediaClick: (MediaItem) -> Unit = {},
@@ -37,8 +37,7 @@ fun MediaListGrid(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         userScrollEnabled = isScrollEnabled
     ) {
-        items(mediaList.itemCount) { index ->
-            val media = mediaList[index] ?: return@items
+        itemsIndexed(mediaList, key = { index, _ -> index }) { index, media ->
             MediaPosterCard(
                 posterImage = {
                     RemoteBlurredHaramImageViewer(

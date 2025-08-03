@@ -2,13 +2,15 @@ package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.toActorUiModel
-import com.sanaa.presentation.model.toEpisodeUiModel
+import com.sanaa.presentation.model.mapper.toActorUiModel
+import com.sanaa.presentation.model.mapper.toEpisodeUiModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -40,8 +42,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-        tryToExecute(callee = ::updateUserLoginState)
+        updateUserStatus()
     }
+
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
@@ -136,30 +139,47 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) =
+        coroutineScope {
+            updateState { it.copy(isLoading = true) }
 
-        updateState { it.copy(isLoading = true) }
-        val episode =
-            manageEpisodeDetails.getEpisodeDetails(seriesId, seasonNumber, episodeNumber)
-        val guests = manageEpisodeDetails.getEpisodeGuestsOfHonor(
-            seriesId,
-            seasonNumber,
-            episodeNumber
-        )
-        val images = manageTvSeriesDetails.getTvSeriesImages(seriesId)
-        val trailerUrl = manageTvSeriesDetails.getTvSeriesTrailer(seriesId)
-        val currentEpisodesRating = getCurrentUserRating()
-        updateState {
-            it.copy(
-                episode = episode.toEpisodeUiModel(),
-                guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
-                seriesId = seriesId,
-                imagesUrl = images,
-                trailerUrl = trailerUrl,
-                imdbRating = currentEpisodesRating
-            )
+            val episodeDeferred = async {
+                manageEpisodeDetails.getEpisodeDetails(
+                    seriesId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            }
+            val guestsDeferred = async {
+                manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                    seriesId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            }
+            val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
+            val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+            val ratingDeferred = async {
+                getCurrentUserRating()
+            }
+
+            val episode = episodeDeferred.await()
+            val guests = guestsDeferred.await()
+            val images = imagesDeferred.await()
+            val trailerUrl = trailerDeferred.await()
+            val currentEpisodesRating = ratingDeferred.await()
+
+            updateState {
+                it.copy(
+                    episode = episode.toEpisodeUiModel(),
+                    guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
+                    seriesId = seriesId,
+                    imagesUrl = images,
+                    trailerUrl = trailerUrl,
+                    imdbRating = currentEpisodesRating
+                )
+            }
         }
-    }
 
     private suspend fun getCurrentUserRating(): Int {
         return try {
@@ -187,6 +207,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus() {
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     private fun promptLogin(type: LoginPromptType) {

@@ -1,17 +1,18 @@
 package com.sanaa.presentation.shared_component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -26,13 +27,14 @@ fun IconWithText(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Icon(
+
+        Image(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,
-            tint = tint,
+            colorFilter = ColorFilter.tint(tint),
             modifier = Modifier.size(12.dp)
         )
-        Text(
+        AppText(
             text = text,
             style = Theme.textStyle.label.small,
             color = textColor

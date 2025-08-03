@@ -8,8 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.text_field.NovixTextFieldLabel
 import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
+import com.sanaa.designsystem.design_system.component.text_field.TextFieldLabel
 import com.sanaa.feature.authentication.presentation.R
 
 @Composable
@@ -24,7 +24,7 @@ fun PasswordField(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        NovixTextFieldLabel(
+        TextFieldLabel(
             text = stringResource(R.string.password),
         )
         PasswordTextField(

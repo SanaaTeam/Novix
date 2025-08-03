@@ -3,8 +3,6 @@ package com.sanaa.presentation.screen.state
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import usecase.search.search_param.MediaFilters
-
 
 data class SearchScreenUiState(
     val searchQuery: String = "",
@@ -17,12 +15,10 @@ data class SearchScreenUiState(
     val tvShows: Flow<PagingData<TvShowUiModel>> = flowOf(PagingData.empty()),
     val actors: Flow<PagingData<ActorUiModel>> = flowOf(PagingData.empty()),
     val error: String? = null,
-    val movieFilters: MediaFilters? = null,
-    val tvFilters: MediaFilters? = null,
-    val showBottomSheet: Boolean = false,
-    val lastTabIndex: Int = -1
-) {
-    fun isFilterVisible() = selectedTabIndex != ACTOR_INDEX
+    val lastTabIndex: Int = -1,
+    val showLoginBottomSheet: Boolean = false,
+    val isUserLoggedIn: Boolean = false
+    ) {
 
     companion object {
         const val MOVIE_INDEX = 0

@@ -1,9 +1,7 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
-import com.sanaa.presentation.model.toUiModel
 import entity.Genre
 import entity.Movie
 import io.mockk.clearAllMocks
@@ -20,6 +18,7 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,6 +31,8 @@ class GenreMoviesViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: GenreMoviesViewModel
     private lateinit var manageMoviesDetailsUseCase: ManageMovieUseCase
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+
 
     @BeforeAll
     fun setUpDispatcher() {
@@ -84,9 +85,9 @@ class GenreMoviesViewModelTest {
     fun `onMovieClick should emit NavigateToMovieDetails effect`() = runTest {
         givenHappyViewModel()
 
-        viewModel.onMovieClick(10)
 
         viewModel.effect.test {
+            viewModel.onMovieClick(10)
             assertEquals(GenreMoviesEffects.NavigateToMovieDetails(10), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
@@ -105,7 +106,8 @@ class GenreMoviesViewModelTest {
         viewModel = GenreMoviesViewModel(
             savedStateHandle = savedStateHandle,
             manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
-            dispatcher = testDispatcher
+            dispatcher = testDispatcher,
+            checkIfUserIsLoggedInUseCase = checkIfUserIsLoggedInUseCase
         )
         testDispatcher.scheduler.advanceUntilIdle()
     }

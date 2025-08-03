@@ -13,19 +13,18 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SearchHistoryRepository
+import repository.HistoryRepository
 import repository.SearchRepository
-import usecase.search.search_param.MediaFilters
 import kotlin.time.Duration.Companion.minutes
 
 class SearchUseCaseTest {
     private var searchRepository: SearchRepository = mockk(relaxed = true)
-    private var searchHistoryRepository: SearchHistoryRepository = mockk(relaxed = true)
+    private var historyRepository: HistoryRepository = mockk(relaxed = true)
     private lateinit var searchUseCase: SearchUseCase
 
     @BeforeEach
     fun setUp() {
-        searchUseCase = SearchUseCase(searchRepository, searchHistoryRepository)
+        searchUseCase = SearchUseCase(searchRepository, historyRepository)
     }
 
     @Test
@@ -36,45 +35,26 @@ class SearchUseCaseTest {
             val page = 1
 
             // When
-            searchUseCase.searchMovies(query, page, null)
+            searchUseCase.searchMovies(query, page)
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 
     @Test
-    fun `searchMovies() should return movie search result when search without filters`() =
-        runTest {
-            // Given
-            val query = "Movie"
-            val filters = null
-            val page = 1
-            coEvery {
-                searchRepository.searchMovies(query, page, filters)
-            } returns dummyMovie
-
-            // When
-            val result = searchUseCase.searchMovies(query, page, filters)
-
-            // Then
-            assertThat(result).isEqualTo(dummyMovie)
-        }
-
-    @Test
-    fun `searchMovies() should return movie search result when search with filters`() =
+    fun `searchMovies() should return movie search result`() =
         runTest {
             // Given
             val query = "Movie"
             val page = 1
-            val filters = MediaFilters()
             coEvery {
-                searchRepository.searchMovies(query, page, filters)
+                searchRepository.searchMovies(query, page)
             } returns dummyMovie
 
             // When
-            val result = searchUseCase.searchMovies(query, page, filters)
+            val result = searchUseCase.searchMovies(query, page)
 
             // Then
             assertThat(result).isEqualTo(dummyMovie)
@@ -87,12 +67,12 @@ class SearchUseCaseTest {
             val query = "Sam"
             val page = 1
             coEvery {
-                searchRepository.searchMovies(query, page, null)
+                searchRepository.searchMovies(query, page)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchUseCase.searchMovies(query, page, null)
+                searchUseCase.searchMovies(query, page)
             }
         }
 
@@ -104,52 +84,30 @@ class SearchUseCaseTest {
             val page = 1
 
             // When
-            searchUseCase.searchTvShows(query, page, null)
+            searchUseCase.searchTvShows(query, page)
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 
     @Test
-    fun `searchTvShows() should return tv series search result when search without filters`() =
+    fun `searchTvShows() should return tv series search result`() =
         runTest {
             // Given
             val query = "Tv Series"
             val page = 1
-            val filters = null
             coEvery {
-                searchRepository.searchTvShows(query, page, filters)
+                searchRepository.searchTvShows(query, page)
             } returns dummyTvShow
 
             // When
-            val result = searchUseCase.searchTvShows(query, page, filters)
-
-            // Then
-            assertThat(result).isEqualTo(dummyTvShow)
-
-        }
-
-    @Test
-    fun `searchTvShows() should return tv series search result when search with filters`() =
-        runTest {
-            // Given
-            val query = "Tv Series"
-            val page = 1
-            val filters = MediaFilters()
-            coEvery {
-                searchRepository.searchTvShows(query, page, filters)
-            } returns dummyTvShow
-
-
-            // When
-            val result = searchUseCase.searchTvShows(query, page, filters)
+            val result = searchUseCase.searchTvShows(query, page)
 
             // Then
             assertThat(result).isEqualTo(dummyTvShow)
         }
-
 
     @Test
     fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv series failed`() =
@@ -158,12 +116,12 @@ class SearchUseCaseTest {
             val query = "Sam"
             val page = 1
             coEvery {
-                searchRepository.searchTvShows(query, page, null)
+                searchRepository.searchTvShows(query, page)
             } throws RetrievingDataFailureException("")
 
             // When, Then
             assertThrows<RetrievingDataFailureException> {
-                searchUseCase.searchTvShows(query, page, null)
+                searchUseCase.searchTvShows(query, page)
             }
         }
 
@@ -180,7 +138,7 @@ class SearchUseCaseTest {
 
             // Then
             coVerify {
-                searchHistoryRepository.addSearchHistory(query)
+                historyRepository.addSearchHistory(query)
             }
         }
 

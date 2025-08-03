@@ -5,13 +5,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.authentication.presentation.R
 
 @Composable
 fun LoginTopBar(onBackClick: () -> Unit) {
-    NovixTopBar(
+    TopBar(
         leftContent = {
             TopBarClickableIcon(
                 icon = painterResource(id = R.drawable.icon_back),

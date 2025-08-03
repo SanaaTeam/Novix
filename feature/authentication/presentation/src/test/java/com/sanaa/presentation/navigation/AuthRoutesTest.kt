@@ -12,7 +12,6 @@ class AuthRoutesTest {
             LoginRoute,
             SignUpRoute,
             ForgetPasswordRoute,
-            HomeScreenRoute
         )
 
         routes.forEach { route ->
@@ -25,7 +24,6 @@ class AuthRoutesTest {
         assertThat(LoginRoute).isSameInstanceAs(LoginRoute)
         assertThat(SignUpRoute).isSameInstanceAs(SignUpRoute)
         assertThat(ForgetPasswordRoute).isSameInstanceAs(ForgetPasswordRoute)
-        assertThat(HomeScreenRoute).isSameInstanceAs(HomeScreenRoute)
     }
 
     @Test

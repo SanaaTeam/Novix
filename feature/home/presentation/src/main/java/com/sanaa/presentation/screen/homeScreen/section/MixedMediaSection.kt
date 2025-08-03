@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.section_header.InlineAction
-import com.sanaa.designsystem.design_system.component.section_header.NovixSectionHeader
+import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.component.slider.CarouselSlider
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -35,7 +35,7 @@ import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaType
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun MixedMediaSection(
@@ -51,7 +51,7 @@ fun MixedMediaSection(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        NovixSectionHeader(
+        SectionHeader(
             title = headerLabel,
             rightContent = {
                 InlineAction(
@@ -148,28 +148,28 @@ val demoMediaList = listOf(
         title = "media 1",
         imageUrl = "",
         rating = " 9.9",
-        mediaType = MediaType.MOVIE
+        mediaTypeUi = MediaTypeUi.MOVIE
     ),
     MediaItem(
         id = 2,
         title = "media 2",
         imageUrl = "",
         rating = " 9.9",
-        mediaType = MediaType.TV_SHOW
+        mediaTypeUi = MediaTypeUi.TV_SHOW
     ),
     MediaItem(
         id = 3,
         title = "media 3",
         imageUrl = "",
         rating = " 9.9",
-        mediaType = MediaType.MOVIE
+        mediaTypeUi = MediaTypeUi.MOVIE
     ),
     MediaItem(
         id = 4,
         title = "media 4",
         imageUrl = "",
         rating = " 9.9",
-        mediaType = MediaType.TV_SHOW
+        mediaTypeUi = MediaTypeUi.TV_SHOW
     ),
 )
 

@@ -1,6 +1,9 @@
 package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -18,12 +21,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.button.NovixPrimaryButton
+import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
@@ -46,14 +52,25 @@ import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
+    authApi: AuthenticationApi,
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     val errorMessage = stringResource(R.string.error_message)
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
+    val context = LocalContext.current
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            interactionListener.onAuthActivityFinishedWithResult()
+        },
+        loggedInAsGuest = {
+            interactionListener.onAuthActivityFinishedWithResult()
+        }
+    )
+
     LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && state.isNoInternet == false) {
+        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
             snack = SnackData(
                 message = errorMessage, isError = true
 
@@ -88,7 +105,7 @@ fun HomeScreenContent(
                 else item(span = { GridItemSpan(maxLineSpan) }) {
                     PopularMediaSection(
                         mediaItems = state.popularMedia, onMediaClick = {
-                            interactionListener.onMediaClick(it.id, it.mediaType)
+                            interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                         }, onSaveIconClicked = {
                             interactionListener.onSaveIconClick(it)
                         }, modifier = Modifier.fillWidthOfParent(16.dp)
@@ -131,7 +148,7 @@ fun HomeScreenContent(
                                 ),
                             mediaItems = state.topRatingMedia,
                             onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaType)
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                             },
                             onSaveIconClicked = {
                                 interactionListener.onSaveIconClick(it)
@@ -157,12 +174,13 @@ fun HomeScreenContent(
                             headerLabel = stringResource(R.string.continue_watching),
                             mediaItems = state.continueWatchingMedia,
                             onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaType)
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
                             },
                             onSaveIconClicked = {
                                 interactionListener.onSaveIconClick(it)
                             },
-                            modifier = Modifier.fillWidthOfParent(16.dp),
+                            onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
+                            modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
                         )
                     }
                 }
@@ -185,7 +203,7 @@ fun HomeScreenContent(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            NovixPrimaryButton(
+            PrimaryButton(
                 text = null,
                 icon = painterResource(R.drawable.icon_refresh),
                 onClick = upcomingMovies::retry,
@@ -201,7 +219,12 @@ fun HomeScreenContent(
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
 
+
     RequestToLoginBottomSheet(
-        isVisible = state.showBottomSheet, onDismiss = interactionListener::onDismissBottomSheet
+        isVisible = state.showBottomSheet,
+        onDismiss = interactionListener::onDismissBottomSheet,
+        onLoginButtonClick = {
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
     )
 }

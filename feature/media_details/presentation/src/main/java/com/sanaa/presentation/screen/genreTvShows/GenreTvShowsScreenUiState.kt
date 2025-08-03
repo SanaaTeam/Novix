@@ -11,7 +11,8 @@ data class GenreTvShowsScreenUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val showBottomSheet: Boolean = false,
-    val noInternetConnection: Boolean = false
+    val noInternetConnection: Boolean = false,
+    val userIsLoggedIn: Boolean = false
 )
 
 
