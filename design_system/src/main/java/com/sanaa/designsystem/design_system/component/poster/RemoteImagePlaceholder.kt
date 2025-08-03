@@ -1,4 +1,4 @@
-package com.sanaa.presentation.shared_component
+package com.sanaa.designsystem.design_system.component.poster
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
