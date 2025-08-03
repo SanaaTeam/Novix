@@ -18,8 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -80,7 +78,6 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
-        advanceUntilIdle()
 
         // Then
         viewModel.state.test {
@@ -130,7 +127,6 @@ class HomeScreenViewModelTest {
                 current
             }
             assertThat(successState.continueWatchingMedia).hasSize(1)
-            cancelAndConsumeRemainingEvents()
         }
     }
 
