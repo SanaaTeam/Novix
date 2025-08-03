@@ -1,11 +1,13 @@
 package com.sanaa.presentation.screen.myRating
 
+import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.presentation.profileBase.BaseViewModel
 import com.sanaa.presentation.profileMapper.toRatedMediaUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -14,6 +16,7 @@ import javax.inject.Inject
 class MyRatingScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val preferencesManager: PreferencesManager,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MyRatingScreenUiState, MyRatingScreenEffect>(
     initialState = MyRatingScreenUiState(),
@@ -25,13 +28,15 @@ class MyRatingScreenViewModel @Inject constructor(
     }
 
     private fun loadRatedMedia() {
-        val currentUserId = "user_id_from_session"
-        val accountId = 12345L
-
         updateState { it.copy(isLoading = true) }
 
         tryToExecute(
-            callee = { manageMovieUseCase.getMoviesRate(accountId) },
+            callee = {
+                val accountId = preferencesManager.accountId.first()
+                val sessionId = preferencesManager.sessionId.first()
+
+                manageMovieUseCase.getUserRatedMovies(accountId, sessionId)
+            },
             onSuccess = { movies ->
                 val uiModels = movies.map { it.toRatedMediaUiModel() }
                 updateState { it.copy(ratedMovies = uiModels) }
@@ -43,7 +48,12 @@ class MyRatingScreenViewModel @Inject constructor(
         )
 
         tryToExecute(
-            callee = { manageTvSeriesUseCase.getSeriesRate(accountId) },
+            callee = {
+                val accountId = preferencesManager.accountId.first()
+                val sessionId = preferencesManager.sessionId.first()
+
+                manageTvSeriesUseCase.getUserRatedTvSeries(accountId, sessionId)
+            },
             onSuccess = { tvShows ->
                 val uiModels = tvShows.map { it.toRatedMediaUiModel() }
                 updateState { it.copy(ratedTvShows = uiModels) }
@@ -70,42 +80,41 @@ class MyRatingScreenViewModel @Inject constructor(
     override fun onTabSelected(tab: MyRatingTab) {
         updateState { it.copy(selectedTab = tab) }
     }
-//    override fun onMediaClick(id: Int, mediaType: String) {
-//        emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
-//    }
-override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
-    if (mediaType == "movie") {
-        tryToExecute(
-            callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
-            onSuccess = { success ->
-                if (success) {
-                    updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
-                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                } else {
+
+    override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
+        if (mediaType == "movie") {
+            tryToExecute(
+                callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
+                onSuccess = { success ->
+                    if (success) {
+                        updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
+                        emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                    } else {
+                        emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                    }
+                },
+                onError = { e ->
                     emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
                 }
-            },
-            onError = { e ->
-                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-            }
-        )
-    } else if (mediaType == "tv_show") {
-        tryToExecute(
-            callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
-            onSuccess = { success ->
-                if (success) {
-                    updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
-                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                } else {
+            )
+        } else if (mediaType == "tv_show") {
+            tryToExecute(
+                callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+                onSuccess = { success ->
+                    if (success) {
+                        updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+                        emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                    } else {
+                        emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                    }
+                },
+                onError = { e ->
                     emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
                 }
-            },
-            onError = { e ->
-                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-            }
-        )
+            )
+        }
     }
-}
+
     override fun onRetryLoadDetails() {
         updateState {
             it.copy(
