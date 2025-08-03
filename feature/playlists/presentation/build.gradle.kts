@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.feature.playlists.api)
+    implementation(projects.designSystem)
 
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
