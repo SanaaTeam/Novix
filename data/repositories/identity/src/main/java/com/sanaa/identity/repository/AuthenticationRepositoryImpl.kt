@@ -54,6 +54,11 @@ class AuthenticationRepositoryImpl @Inject constructor(
         return userLocalDataSource.getLoggedUser() != null
     }
 
+    override suspend fun logout() {
+        userLocalDataSource.deleteUser()
+        preferences.clearSession()
+    }
+
     private suspend fun saveSession(session: CreateSessionResponse) {
         preferences.updateSessionId(session.sessionId)
         preferences.setIsGuest(false)
