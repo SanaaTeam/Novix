@@ -2,15 +2,15 @@ package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
-import com.sanaa.vod.dataSource.remote.dto.AuthorDetailsDto
-import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
+import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
-import com.sanaa.vod.dataSource.remote.dto.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.review.AuthorDetailsDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException

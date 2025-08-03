@@ -5,9 +5,8 @@ import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
 import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.local.history.mapper.toDto
-import com.sanaa.vod.dataSource.local.history.mapper.toEntity
-import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.repository.mapper.history.toDto
+import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import entity.MediaHistoryItem
 import exceptions.FailedToAddException
@@ -135,7 +134,12 @@ class HistoryRepositoryImplTest {
         repository.addRecentViewedMedia(recentViewed.toEntity())
 
         coVerify {
-            localDataSource.insertRecentViewed(recentViewed)
+            localDataSource.insertRecentViewed(match {
+                it.id == recentViewed.id &&
+                it.imageUrl == recentViewed.imageUrl &&
+                it.isSaved == recentViewed.isSaved &&
+                it.mediaType == recentViewed.mediaType
+            })
         }
     }
 

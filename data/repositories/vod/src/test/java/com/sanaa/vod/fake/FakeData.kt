@@ -1,9 +1,9 @@
 package com.sanaa.vod.fake
 
-import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
-import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
-import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
-import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
+import com.sanaa.vod.dataSource.remote.dto.search.ActorSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.MovieSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.TvShowSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.response.SearchResponse
 
 object FakeData {
 

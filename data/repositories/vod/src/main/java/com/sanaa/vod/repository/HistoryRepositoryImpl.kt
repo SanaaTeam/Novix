@@ -1,10 +1,8 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
-import com.sanaa.vod.dataSource.local.history.mapper.toDto
-import com.sanaa.vod.dataSource.local.history.mapper.toEntity
-import com.sanaa.vod.mapper.search.toDto
-import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.repository.mapper.history.toDto
+import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.MediaHistoryItem
 import exceptions.FailedToAddException

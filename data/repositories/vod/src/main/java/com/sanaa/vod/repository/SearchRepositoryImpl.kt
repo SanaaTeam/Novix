@@ -1,7 +1,7 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
-import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
+import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie

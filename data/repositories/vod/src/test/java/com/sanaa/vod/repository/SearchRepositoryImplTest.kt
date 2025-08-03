@@ -1,11 +1,11 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
+import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.vod.fake.FakeData.MovieSearchResponse
 import com.sanaa.vod.fake.FakeData.TvSeriesSearchResponse
 import com.sanaa.vod.fake.FakeData.actorSearchResponse
-import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
