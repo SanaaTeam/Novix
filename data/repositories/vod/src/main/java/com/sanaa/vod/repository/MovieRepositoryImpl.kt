@@ -78,7 +78,7 @@ class MovieRepositoryImpl @Inject constructor(
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
-    override suspend fun getMoviesRate(accountId: Long, movieId: Int): Int? {
+    override suspend fun getMovieRate(accountId: Long, movieId: Int): Int? {
         return safeCall("Failed to fetch movie Rate") {
             val sessionId = preferences.sessionId.first()
             remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)

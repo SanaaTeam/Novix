@@ -213,7 +213,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun getCurrentUserRating(movieId: Int): Int {
         val userId = getLoggedInUserUseCase.getLoggedInUser().id
         return try {
-            manageMovieDetails.getMoviesRate(userId, movieId)
+            manageMovieDetails.getMovieRate(userId, movieId)
         } catch (e: Exception) {
             0
         }
