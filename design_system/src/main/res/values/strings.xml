@@ -21,7 +21,7 @@
     <string name="no_review">There is no review!</string>
     <string name="rating">Rating</string>
     <string name="reviews">Reviews</string>
-
+    <string name="my_rating">My rating</string>
 
     <!-- Tab Labels -->
     <string name="movies">Movies</string>

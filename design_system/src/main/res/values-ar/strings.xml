@@ -22,6 +22,7 @@
     <string name="no_review">لا توجد مراجعات!</string>
     <string name="reviews">المراجعات</string>
     <string name="rating">التقييم</string>
+    <string name="my_rating">تقييماتى</string>
     <!-- Tab Labels -->
     <string name="movies">أفلام</string>
     <string name="tv_shows">مسلسلات</string>
