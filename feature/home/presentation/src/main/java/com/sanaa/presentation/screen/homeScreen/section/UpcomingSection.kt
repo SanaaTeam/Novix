@@ -24,8 +24,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.components.RemoteImagePlaceholder
-import com.sanaa.presentation.components.cards.MediaPosterCard
-import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.presentation.components.shimmerEffect.PlaceholderWithShimmerEffect
 import com.sanaa.presentation.components.shimmerEffect.upComingGenresLoadingPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.upComingTitlePlaceholder

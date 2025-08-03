@@ -1,4 +1,4 @@
-package com.sanaa.presentation.components.chips
+package com.sanaa.designsystem.design_system.component.chips
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
