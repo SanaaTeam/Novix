@@ -11,11 +11,14 @@ import com.sanaa.vod.dataSource.remote.dto.review.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertNotNull
@@ -273,6 +276,64 @@ class TvShowRepositoryImplTest {
         val result = repository.getSeriesGenres()
 
         assertThat(result).isNotEmpty()
+    }
+
+    @Test
+    fun `getSeriesRate should return rate when available`() = runTest {
+        val id = 1
+        val accountId = 1L
+        val sessionId = flowOf("session123")
+        val rate = 8.5f
+        val rates = listOf(TvShowDto(id = id, rating = rate))
+        coEvery { preferences.sessionId } returns sessionId
+        coEvery { remote.getTvShowRate(accountId, sessionId.first()) } returns rates
+
+        val result = repository.getSeriesRate(accountId, id)
+
+        assertThat(result).isEqualTo(rate.toInt())
+    }
+
+    @Test
+    fun `getSeriesRate should returns rate null when no rate is available`() = runTest {
+        val id = 1
+        val accountId = 1L
+        val sessionId = flowOf("session123")
+        coEvery { preferences.sessionId } returns sessionId
+        coEvery { remote.getTvShowRate(accountId, sessionId.first()) } returns emptyList()
+
+        val result = repository.getSeriesRate(accountId, id)
+
+        assertThat(result).isEqualTo(null)
+    }
+
+    @Test
+    fun `getEpisodesRate should return rate when available`() = runTest {
+        val episodeNumber = 1
+        val seasonNumber = 1
+        val accountId = 1L
+        val sessionId = flowOf("session123")
+        val rate = 8.5f
+        val rates = listOf(EpisodeDto(episodeNumber = episodeNumber, seasonNumber = seasonNumber, rating = rate))
+        coEvery { preferences.sessionId } returns sessionId
+        coEvery { remote.getEpisodesRate(accountId, sessionId.first()) } returns rates
+
+        val result = repository.getEpisodesRate(accountId, seasonNumber, episodeNumber)
+
+        assertThat(result).isEqualTo(rate.toInt())
+    }
+
+    @Test
+    fun `getEpisodesRate should returns rate null when no rate is available`() = runTest {
+        val episodeNumber = 1
+        val seasonNumber = 1
+        val accountId = 1L
+        val sessionId = flowOf("session123")
+        coEvery { preferences.sessionId } returns sessionId
+        coEvery { remote.getEpisodesRate(accountId, sessionId.first()) } returns emptyList()
+
+        val result = repository.getEpisodesRate(accountId, seasonNumber, episodeNumber)
+
+        assertThat(result).isEqualTo(null)
     }
 
     private val dummyReviewDto = ReviewDto(
