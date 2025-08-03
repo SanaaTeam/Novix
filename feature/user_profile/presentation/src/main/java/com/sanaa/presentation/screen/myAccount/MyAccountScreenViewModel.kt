@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.myAccount
 
-import com.sanaa.presentation.user_profile_base.BaseViewModel
+import com.sanaa.presentation.profileBase.BaseViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 
 class MyAccountScreenViewModel(
