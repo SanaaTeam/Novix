@@ -1,27 +1,16 @@
 package com.sanaa.presentation.api
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.sp
 import com.sanaa.api.PlaylistsFeatureApi
+import com.sanaa.presentation.screen.saved.EmptySavedListScreenContent
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PlaylistsFeatureApiImpl : PlaylistsFeatureApi {
+@Singleton
+class PlaylistsFeatureApiImpl @Inject constructor() : PlaylistsFeatureApi {
     @Composable
     override fun PlaylistsScreenApi() {
-        PlaylistsScreenPlaceholder()
+        EmptySavedListScreenContent()
     }
 }
 
-@Composable
-private fun PlaylistsScreenPlaceholder() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Playlists (Category) Screen", fontSize = 24.sp)
-    }
-}

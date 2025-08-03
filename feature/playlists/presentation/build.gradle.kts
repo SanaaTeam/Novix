@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -36,4 +38,7 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 }
