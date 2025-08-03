@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
