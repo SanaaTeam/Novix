@@ -147,10 +147,8 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRatedTvSeries(userId: String): List<TvSeries> {
+    override suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
         return safeCall("Failed to fetch user rated tv shows") {
-            val accountId = preferences.accountId.first()
-            val sessionId = preferences.sessionId.first()
             remoteDataSource.getTvShowRate(accountId, sessionId).map { it.toEntity() }
         }
     }
