@@ -86,5 +86,9 @@ class RemoteMovieDataSourceImpl @Inject constructor(
         )
         return response
     }
+    override suspend fun deleteMovieRate(movieId: Int, sessionId: String): RatingResponse =
+        wrapApiCall {
+            apiService.deleteMovieRating(movieId, sessionId)
+        }
 
 }
