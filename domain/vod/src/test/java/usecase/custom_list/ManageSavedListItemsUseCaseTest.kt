@@ -24,7 +24,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldReturnAllItems_whenGetAllItemsInSavedListIsCalled() = runTest {
+    fun `getAllItemsInSavedList should call repository and return list`() = runTest {
         coEvery { savedListRepository.getAllItemsInList(dummyListId) } returns dummySavedItems
 
         val result = manageSavedListItemsUseCase.getAllItemsInSavedList(dummyListId)
@@ -33,7 +33,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldReturnMovies_whenGetMoviesInSavedListIsCalled() = runTest {
+    fun `getMoviesInSavedList should call repository and return movies`() = runTest {
         coEvery { savedListRepository.getMoviesInList(dummyListId) } returns dummyMovies
 
         val result = manageSavedListItemsUseCase.getMoviesInSavedList(dummyListId)
@@ -42,7 +42,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldReturnTvSeries_whenGetTvSeriesInSavedListIsCalled() = runTest {
+    fun `getTvSeriesInSavedList should call repository and return tv series`() = runTest {
         coEvery { savedListRepository.getTvSeriesInList(dummyListId) } returns dummyTvSeries
 
         val result = manageSavedListItemsUseCase.getTvSeriesInSavedList(dummyListId)
@@ -51,7 +51,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldCallAddMovieToList_whenAddMovieToSavedListIsCalled() = runTest {
+    fun `addMovieToSavedList should call repository`() = runTest {
         coEvery { savedListRepository.addMovieToList(dummyListId, dummyMovieId) } returns Unit
 
         manageSavedListItemsUseCase.addMovieToSavedList(dummyListId, dummyMovieId)
@@ -60,7 +60,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldCallAddTvSeriesToList_whenAddTvSeriesToSavedListIsCalled() = runTest {
+    fun `addTvSeriesToSavedList should call repository`() = runTest {
         coEvery { savedListRepository.addTvSeriesToList(dummyListId, dummyTvSeriesId) } returns Unit
 
         manageSavedListItemsUseCase.addTvSeriesToSavedList(dummyListId, dummyTvSeriesId)
@@ -69,7 +69,7 @@ class ManageSavedListItemsUseCaseTest {
     }
 
     @Test
-    fun shouldCallRemoveItemFromList_whenRemoveItemFromSavedListIsCalled() = runTest {
+    fun `removeItemFromSavedList should call repository`() = runTest {
         coEvery { savedListRepository.removeItemFromList(dummyItemId) } returns Unit
 
         manageSavedListItemsUseCase.removeItemFromSavedList(dummyItemId)
