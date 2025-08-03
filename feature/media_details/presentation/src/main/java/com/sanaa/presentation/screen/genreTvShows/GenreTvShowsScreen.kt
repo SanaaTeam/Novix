@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.genreTvShows
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -31,7 +30,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -47,11 +45,12 @@ import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
-import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.designsystem.design_system.component.poster.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 
 @Composable
@@ -118,7 +117,7 @@ fun GenreTvShowsScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designR.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
                 },
                 screenTitle = state.title.orEmpty(),
