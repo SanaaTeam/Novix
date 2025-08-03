@@ -1,34 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="novix">نوفكس</string>
+    <string name="novix">نوفِكس</string>
     <string name="offline_title">عذرًا! يبدو أنك غير متصل بالإنترنت.</string>
-    <string name="offline_subtitle">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار </string>
+    <string name="offline_subtitle">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار</string>
     <string name="offline_note">إعادة المحاولة</string>
     <string name="view_all">عرض الكل</string>
     <string name="no_search_result_message">لايوجد نتائج، يرجى تجربة مدخل آخر</string>
-    <string name="empty_search_message">إبداء التصفح! ابحث عن افلامك ومسلسلاتك المفضلة</string>
+    <string name="empty_search_message">إبدأ التصفح! ابحث عن أفلامك وبرامجك المفضلة</string>
     <string name="search">بحث</string>
-    <string name="recent_viewed">المستعرضة مسبقا</string>
+    <string name="recent_viewed">المعروضة مسبقًا</string>
     <string name="clear_all">حذف الكل</string>
-    <string name="recent_search">تم بحثها سابقا</string>
-    <string name="released_year">سنة الإصدار</string>
-    <string name="imdb_rating">تقييم IMDb</string>
-    <string name="clear">مسح</string>
-    <string name="filter">تصفية</string>
-    <string name="apply">تطبيق</string>
+    <string name="recent_search">بحثت عنها سابقًا</string>
     <string name="cancel">إلغاء</string>
     <string name="search_hint">بحث…</string>
     <string name="read_more">اقرأ المزيد</string>
     <string name="no_review">لا توجد مراجعات!</string>
     <string name="reviews">المراجعات</string>
     <string name="rating">التقييم</string>
-    <!-- Tab Labels -->
-    <string name="movies">أفلام</string>
-    <string name="tv_shows">مسلسلات</string>
-    <string name="actors">ممثلين</string>
-    <string name="unsuitable_image">"صورة غير مناسبة "</string>
 
-    <string name="error_general_title">عذرًا! حدث خطاء.</string>
-    <string name="error_general_message">حاول مرة أخرى لاحقا، نحن بانتظارك مع الأفلام والفشار</string>
+    <string name="unsuitable_image">صورة غير مناسبة</string>
 
 </resources>
