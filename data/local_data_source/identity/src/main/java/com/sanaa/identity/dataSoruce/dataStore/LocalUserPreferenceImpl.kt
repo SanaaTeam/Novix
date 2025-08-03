@@ -1,5 +1,6 @@
 package com.sanaa.identity.dataSource.dataStore
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,6 +11,7 @@ import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSour
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 import javax.inject.Inject
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("user_preferences")
@@ -59,7 +61,8 @@ class LocalUserPreferenceImpl @Inject constructor(
         val CONTENT_RESTRICTION = stringPreferencesKey("content_restriction")
         val THEME = stringPreferencesKey("theme")
 
-        const val DEFAULT_LANGUAGE = "UNSPECIFIED"
+        @SuppressLint("ConstantLocale")
+        val DEFAULT_LANGUAGE: String = Locale.getDefault().language
         const val DEFAULT_CONTENT_RESTRICTION = "RESTRICTED"
         const val DEFAULT_THEME = "DARK"
     }
