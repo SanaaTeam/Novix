@@ -1,5 +1,6 @@
 package com.sanaa.identity.repository
 
+import com.google.common.base.CharMatcher.any
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
@@ -93,4 +94,15 @@ class AuthenticationRepositoryImplTest {
 
         coVerify(exactly = 1) { preferencesManager.updateSessionId(guestSessionId) }
     }
+
+    @Test
+    fun `logout should call delete user from datasource and clear from preferences manager`()=runTest {
+        coEvery { userLocalDataSource.deleteUser() }  returns Unit
+        coEvery { preferencesManager.clearSession() } returns Unit
+        repository.logout()
+
+        coVerify(exactly = 1) { userLocalDataSource.deleteUser() }
+        coVerify(exactly = 1) { preferencesManager.clearSession() }
+    }
+
 }

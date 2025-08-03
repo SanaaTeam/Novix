@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
@@ -180,7 +182,9 @@ fun HomeScreenContent(
                                 interactionListener.onSaveIconClick(it)
                             },
                             onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                            modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
+                            modifier = Modifier
+                                .fillWidthOfParent(16.dp)
+                                .padding(top = 24.dp),
                         )
                     }
                 }
@@ -224,6 +228,7 @@ fun HomeScreenContent(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,
         onLoginButtonClick = {
+            Log.d("test99", "HomeScreenContent: launching loging start route")
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
