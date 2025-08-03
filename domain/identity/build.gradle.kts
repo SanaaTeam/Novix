@@ -8,5 +8,6 @@ dependencies {
 
     // Dagger 2
     implementation(libs.dagger.core)
+    testImplementation(libs.junit.jupiter)
     ksp(libs.dagger.compiler)
 }

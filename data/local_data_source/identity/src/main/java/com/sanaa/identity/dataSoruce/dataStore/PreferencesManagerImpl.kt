@@ -34,6 +34,13 @@ class PreferencesManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearSession() {
+        context.dataStore.edit { prefs->
+            prefs[SESSION_ID] = ""
+            prefs[IS_GUEST] = false
+        }
+    }
+
     companion object {
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("storeData")
         val SESSION_ID = stringPreferencesKey("SESSION_ID")
