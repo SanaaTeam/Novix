@@ -10,8 +10,8 @@ class ManageSavedListsUseCase @Inject constructor(
     suspend fun getSavedLists(accountId: Long): List<SavedList> =
         savedListRepository.getSavedLists(accountId)
 
-    suspend fun createSavedList(list: SavedList): SavedList =
-        savedListRepository.createSavedList(list)
+    suspend fun createSavedList(title: String): SavedList =
+        savedListRepository.createSavedList(title)
 
     suspend fun deleteSavedList(listId: Int) =
         savedListRepository.deleteSavedList(listId)
