@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.genreMovies
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -40,7 +37,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -63,10 +59,11 @@ fun GenreMoviesScreen(
     val context = LocalContext.current
 
     val authApi = EntryPointAccessors
-        .fromApplication(context, DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+        .fromApplication(
+            context, DetailsApiEntryPoint::class.java
+        ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserLoggingStatus()
         },
@@ -90,11 +87,10 @@ fun GenreMoviesScreen(
         }
     }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        GenreMoviesScreenContent(
-            state = state.value, interactionListener = viewModel
-        )
-    }
+    GenreMoviesScreenContent(
+        state = state.value, interactionListener = viewModel
+    )
+
 
 }
 

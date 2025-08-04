@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,7 +31,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundS
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -46,8 +44,6 @@ import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
-import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
 @Composable
 fun TopSeriesScreen(
@@ -61,7 +57,7 @@ fun TopSeriesScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserLoggingStatus()
         },
@@ -72,23 +68,21 @@ fun TopSeriesScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        TopSeriesContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize(),
-            onSaveIconClick = {
-                viewModel.onSaveClicked()
-            }
-        )
-        RequestToLoginBottomSheet(
-            isVisible = uiState.showLoginBottomSheet,
-            onDismiss = viewModel::onDismissBottomSheet,
-            onLoginButtonClick = {
-                launcher.launch(authApi.getLaunchIntent(context))
-            }
-        )
-    }
+    TopSeriesContent(
+        state = uiState,
+        onBackClick = navigateBack,
+        modifier = Modifier.fillMaxSize(),
+        onSaveIconClick = {
+            viewModel.onSaveClicked()
+        }
+    )
+    RequestToLoginBottomSheet(
+        isVisible = uiState.showLoginBottomSheet,
+        onDismiss = viewModel::onDismissBottomSheet,
+        onLoginButtonClick = {
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
+    )
 }
 
 @Composable
@@ -174,9 +168,11 @@ private fun TopSeriesContent(
                                             )
                                         }
                                     },
-                                    topLeftContent = { SaveIconChip(onClick = {
-                                    onSaveIconClick()
-                                    }) },
+                                    topLeftContent = {
+                                        SaveIconChip(onClick = {
+                                            onSaveIconClick()
+                                        })
+                                    },
                                     onCardClick = {
                                         navController.navigate(
                                             SeriesDetailsScreenRoute(series.id).route()
