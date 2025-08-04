@@ -42,6 +42,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
+    mediaType: MediaType,
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,7 +56,11 @@ fun SaveToListBottomSheet(
         onDismiss = onDismiss,
         onPlaylistSelected = viewModel::onPlaylistSelected,
         onAddClick = {
-            viewModel.onAddClicked(mediaId = mediaId, onSuccess = onDismiss)
+            viewModel.onAddClicked(
+                mediaId = mediaId,
+                mediaType = mediaType,
+                onSuccess = onDismiss
+            )
         },
         onCreateNewListClick = onCreateNewListClick,
         modifier = modifier

@@ -7,10 +7,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SaveToListUiState())
@@ -22,13 +26,24 @@ class SaveToListViewModel @Inject constructor(
 
     private fun loadPlaylists() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            val fakePlaylists = listOf(
-                PlaylistUiItem(id = 1, title = "My favorite", itemCount = 12),
-                PlaylistUiItem(id = 2, title = "My movies", itemCount = 5),
-                PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23)
-            )
-            _uiState.update { it.copy(isLoading = false, playlists = fakePlaylists) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            try {
+                val playlists = manageSavedListsUseCase.getSavedLists().map { savedList ->
+                    PlaylistUiItem(
+                        id = savedList.id.toLong(),
+                        title = savedList.title,
+                        itemCount = 0
+                    )
+                }
+                _uiState.update { it.copy(isLoading = false, playlists = playlists) }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to load lists."
+                    )
+                }
+            }
         }
     }
 
@@ -40,16 +55,33 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(mediaId: Long, onSuccess: () -> Unit) {
+    fun onAddClicked(mediaId: Long, mediaType: MediaType, onSuccess: () -> Unit) {
         val selectedListId = _uiState.value.selectedListId ?: return
         if (!_uiState.value.isAddButtonEnabled) return
 
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
-            println("Adding media $mediaId to playlist $selectedListId")
-
-            _uiState.update { it.copy(isLoading = false) }
-            onSuccess()
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            try {
+                when (mediaType) {
+                    MediaType.MOVIE -> manageSavedListItemsUseCase.addMovieToSavedList(
+                        listId = selectedListId.toInt(),
+                        movieId = mediaId.toInt()
+                    )
+                    MediaType.TV -> manageSavedListItemsUseCase.addTvSeriesToSavedList(
+                        listId = selectedListId.toInt(),
+                        tvSeriesId = mediaId.toInt()
+                    )
+                }
+                _uiState.update { it.copy(isLoading = false) }
+                onSuccess()
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to add item to list."
+                    )
+                }
+            }
         }
     }
 }
