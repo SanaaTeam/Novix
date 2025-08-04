@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -29,11 +29,11 @@ fun MoreLikeThisCard(
         modifier = modifier,
         onCardClick = onMovieClick,
         posterImage = {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = movie.posterUrl.orEmpty(),
                 modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
+                sensitiveContentThreshold = 0.2f,
+                safeContentThreshold = 0.7f,
                 contentDescription = movie.title,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())

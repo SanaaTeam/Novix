@@ -27,7 +27,7 @@ import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.screen.componants.RemoteImagePlaceholder
 
 @Composable
@@ -71,11 +71,11 @@ fun ActorCard(
                 .zIndex(10f),
             contentAlignment = Alignment.Center
         ) {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = imageUrl,
                 modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
+                sensitiveContentThreshold = 0.2f,
+                safeContentThreshold = 0.7f,
                 contentDescription = actorName,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())

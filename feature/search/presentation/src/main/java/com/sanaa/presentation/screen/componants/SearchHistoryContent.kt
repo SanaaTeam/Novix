@@ -29,7 +29,7 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
@@ -151,11 +151,11 @@ private fun MediaPoster(
             .width(158.dp)
             .height(210.dp),
         PosterImage = {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = item.imageUrl,
                 modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
+                sensitiveContentThreshold = 0.2f,
+                safeContentThreshold = 0.7f,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
                 },

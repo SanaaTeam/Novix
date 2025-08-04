@@ -24,7 +24,7 @@ import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.TvShowUiModel
@@ -49,11 +49,11 @@ fun TvShowsContent(
             if (tvShow != null) {
                 MediaPosterCard(
                     PosterImage = {
-                        RemoteBlurredHaramImageViewer(
+                        RemoteBlurredSensitiveImage(
                             imageUrl = tvShow.imageUrl,
                             modifier = Modifier.fillMaxWidth(),
-                            haramThreshold = 0.2f,
-                            nonHaramThreshold = 0.7f,
+                            sensitiveContentThreshold = 0.2f,
+                            safeContentThreshold = 0.7f,
                             contentDescription = tvShow.title,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

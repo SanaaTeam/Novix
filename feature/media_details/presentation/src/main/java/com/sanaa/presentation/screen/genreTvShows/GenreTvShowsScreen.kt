@@ -39,7 +39,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -164,11 +164,11 @@ fun GenreTvShowsScreenContent(
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
-                                        RemoteBlurredHaramImageViewer(
+                                        RemoteBlurredSensitiveImage(
                                             imageUrl = tvShow.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
+                                            sensitiveContentThreshold = 0.2f,
+                                            safeContentThreshold = 0.7f,
                                             contentDescription = tvShow.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

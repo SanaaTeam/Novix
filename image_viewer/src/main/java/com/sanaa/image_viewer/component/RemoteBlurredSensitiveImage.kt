@@ -28,7 +28,7 @@ import kotlinx.coroutines.withContext
 
 /**
  * A composable executes an [ImageRequest] asynchronously and
- * analyse the image to blur haram content.
+ * analyse the image to blur sensitive content.
  *
  * @param imageUrl path for remote image url.
  * @param contentDescription Text used by accessibility services to describe what this image
@@ -40,14 +40,14 @@ import kotlinx.coroutines.withContext
  * @param onSuccess Called when the image request completes successfully.
  * @param onError Called when the image request completes unsuccessfully.
  * @param blurRadius Radius of the blur along both the x and y axis.
- * @param nonHaramThreshold If the 'is non-haram' score for this image is less than the threshold,
+ * @param safeContentThreshold If the 'is non-sensitive' score for this image is less than the threshold,
  *  the blur would be enabled. Range is [0.0f, 1.0f].
- * @param haramThreshold If the 'is haram' score for this image is more than the threshold, the blur
+ * @param sensitiveContentThreshold If the 'is sensitive' score for this image is more than the threshold, the blur
  *  would be enabled. Range is [0.0f, 1.0f].
  * @param onBlurContent composable that would be displayed when the image is blurred.
  */
 @Composable
-fun RemoteBlurredHaramImageViewer(
+fun RemoteBlurredSensitiveImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
@@ -57,8 +57,8 @@ fun RemoteBlurredHaramImageViewer(
     errorContent: @Composable () -> Unit = {},
     onSuccess: (() -> Unit)? = null,
     onError: (() -> Unit)? = null,
-    @FloatRange(from = 0.0, to = 1.0) haramThreshold: Float = 0.2f,
-    @FloatRange(from = 0.0, to = 1.0) nonHaramThreshold: Float = 0.7f,
+    @FloatRange(from = 0.0, to = 1.0) sensitiveContentThreshold: Float = 0.2f,
+    @FloatRange(from = 0.0, to = 1.0) safeContentThreshold: Float = 0.7f,
     onBlurContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -83,8 +83,8 @@ fun RemoteBlurredHaramImageViewer(
                 if (bitmap != null) {
                     val classificationResult = classifier.isInappropriateImage(
                         bitmap,
-                        nonHaramThreshold,
-                        haramThreshold
+                        safeContentThreshold,
+                        sensitiveContentThreshold
                     )
                     Pair(bitmap, classificationResult)
                 } else null
