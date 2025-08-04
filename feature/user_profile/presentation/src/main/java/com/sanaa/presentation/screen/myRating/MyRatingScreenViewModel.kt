@@ -29,14 +29,14 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun loadRatedMedia() {
         updateState { it.copy(isLoading = true) }
+        loadRatedMovies()
+        loadRatedTvShows()
+    }
 
+
+    private fun loadRatedMovies() {
         tryToExecute(
-            callee = {
-                val accountId = preferencesManager.accountId.first()
-                val sessionId = preferencesManager.sessionId.first()
-
-                manageMovieUseCase.getUserRatedMovies(accountId, sessionId)
-            },
+            callee = { manageMovieUseCase.getUserRatedMovies() },
             onSuccess = { movies ->
                 val uiModels = movies.map { it.toRatedMediaUiModel() }
                 updateState { it.copy(ratedMovies = uiModels) }
@@ -46,7 +46,9 @@ class MyRatingScreenViewModel @Inject constructor(
             },
             onError = ::onDataLoadError
         )
+    }
 
+    private fun loadRatedTvShows() {
         tryToExecute(
             callee = {
                 val accountId = preferencesManager.accountId.first()
@@ -83,38 +85,43 @@ class MyRatingScreenViewModel @Inject constructor(
 
     override fun onDeleteIconClick(mediaId: Int, mediaType: MediaTypeUi) {
         when (mediaType) {
-            MediaTypeUi.MOVIE -> {
-                tryToExecute(
-                    callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
-                    onSuccess = { success ->
-                        if (success) {
-                            updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
-                            emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                        } else {
-                            emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                        }
-                    },
-                    onError = { e ->
-                        emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                    }
-                )
-            }
+            MediaTypeUi.MOVIE -> deleteRatedMovie(mediaId)
+            MediaTypeUi.TV_SHOW -> deleteRatedTvShow(mediaId)
+        }
+    }
 
-            MediaTypeUi.TV_SHOW -> tryToExecute(
-                callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
-                onSuccess = { success ->
-                    if (success) {
-                        updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
-                        emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                    } else {
-                        emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                    }
-                },
-                onError = { e ->
+    private fun deleteRatedMovie(mediaId: Int) {
+        tryToExecute(
+            callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
+            onSuccess = { success ->
+                if (success) {
+                    updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
+                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                } else {
                     emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
                 }
-            )
-        }
+            },
+            onError = {
+                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+            }
+        )
+    }
+
+    private fun deleteRatedTvShow(mediaId: Int) {
+        tryToExecute(
+            callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+            onSuccess = { success ->
+                if (success) {
+                    updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                } else {
+                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                }
+            },
+            onError = {
+                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+            }
+        )
     }
 
     override fun onRetryLoadDetails() {
