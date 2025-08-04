@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -20,7 +19,6 @@ import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.navigation.SearchApiEntryPoint
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
@@ -93,15 +91,13 @@ fun SearchScreen(
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
-        SearchScreenContent(
-            uiState = uiState,
-            searchListener = searchViewModel,
-            moviesPagingData = moviesPagingData,
-            tvShowsPagingData = tvShowsPagingData,
-            actorsPagingData = actorsPagingData,
-        )
-    }
+    SearchScreenContent(
+        uiState = uiState,
+        searchListener = searchViewModel,
+        moviesPagingData = moviesPagingData,
+        tvShowsPagingData = tvShowsPagingData,
+        actorsPagingData = actorsPagingData,
+    )
 }
 
 @Composable
@@ -145,7 +141,7 @@ fun SearchScreenContent(
 
 
     RequestToLoginBottomSheet(
-        onDismiss = {searchListener.onBottomSheetDismiss()},
+        onDismiss = { searchListener.onBottomSheetDismiss() },
         onLoginButtonClick = { searchListener.onLoginButtonClick() },
         isVisible = uiState.showLoginBottomSheet,
     )
