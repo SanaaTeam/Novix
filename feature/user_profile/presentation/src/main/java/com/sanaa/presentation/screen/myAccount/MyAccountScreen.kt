@@ -93,8 +93,7 @@ fun MyAccountScreenContent(
                 Option(
                     label = "English", value = "en"
                 ),
-
-                ),
+            ),
             onDismiss = {
                 interactionsListener.onDismissBottomSheet()
             },
@@ -108,8 +107,57 @@ fun MyAccountScreenContent(
                 interactionsListener.onSaveLanguageClick()
             }
         )
+
+        SelectionBottomSheet(
+            isVisible = uiState.showContentRestrictionBottomSheet,
+            bottomSheetTitle = "Content Restriction",
+            options = listOf(
+                Option(
+                    label = "Restricted", value = ContentRestrictionUiState.RESTRICTED
+                ),
+                Option(
+                    label = "Moderate Restriction",
+                    value = ContentRestrictionUiState.MODERATE_RESTRICTION
+                ),
+                Option(
+                    label = "Unrestricted", value = ContentRestrictionUiState.UNRESTRICTED
+                )
+            ),
+            onDismiss = {
+                interactionsListener.onDismissBottomSheet()
+            },
+            onOptionSelected = {
+                interactionsListener.onSelectContentRestriction(it)
+            },
+            selectedValue = uiState.selectedContentRestriction,
+            onSaveClick = { interactionsListener.onSaveContentRestrictionClick() }
+        )
+
+        SelectionBottomSheet(
+            isVisible = uiState.showChangeThemeBottomSheet,
+            bottomSheetTitle = "Theme",
+            options = listOf(
+                Option(
+                    label = "Light", value = ThemeUiState.LIGHT
+                ),
+                Option(
+                    label = "Dark", value = ThemeUiState.DARK
+                ),
+            ),
+            onDismiss = {
+                interactionsListener.onDismissBottomSheet()
+            },
+            onOptionSelected = {
+                interactionsListener.onSelectTheme(it)
+            },
+            selectedValue = uiState.selectedTheme,
+            onSaveClick = {
+                interactionsListener.onSaveThemeClick()
+            },
+        )
     }
 }
+
 
 @PreviewLightDark
 @Composable
@@ -140,6 +188,20 @@ private fun AccountScreenContentPreview() {
 
         override fun onSaveLanguageClick() {
         }
+
+        override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
+
+        }
+
+        override fun onSelectTheme(theme: ThemeUiState?) {
+        }
+
+        override fun onSaveThemeClick() {
+        }
+
+        override fun onSaveContentRestrictionClick() {
+        }
+
     }
     NovixTheme(isSystemInDarkTheme()) {
         NovixScaffold {
