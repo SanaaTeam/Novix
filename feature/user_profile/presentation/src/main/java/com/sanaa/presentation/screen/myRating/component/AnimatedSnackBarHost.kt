@@ -21,7 +21,6 @@ fun AnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
     durationMillis: Long = 2500,
-    modifier: Modifier
 ) {
     AnimatedVisibility(
         visible = data != null,
