@@ -33,6 +33,11 @@ class PlayListScreenViewModel @Inject constructor(
     override fun onAddNewListClicked() {
         TODO("Not yet implemented")
     }
+
+    override fun onItemListClicked() {
+        TODO("Not yet implemented")
+    }
+
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
