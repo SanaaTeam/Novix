@@ -35,8 +35,8 @@ fun DeleteConfirmationBottomSheet(
     isVisible: Boolean,
     listId: Long?,
     onDismiss: () -> Unit,
-    viewModel: DeleteListViewModel = hiltViewModel(),
 ) {
+    val viewModel: DeleteListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {

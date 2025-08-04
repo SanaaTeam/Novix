@@ -48,8 +48,8 @@ fun SaveToListBottomSheet(
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SaveToListViewModel = hiltViewModel(),
 ) {
+    val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
