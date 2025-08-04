@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import android.util.Log
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -10,7 +9,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
@@ -19,8 +17,8 @@ import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
-import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.presentation.state.MediaTypeUi
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun HomeScreen(
@@ -91,11 +89,10 @@ fun HomeScreen(
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
-        HomeScreenContent(
-            state = state.value,
-            interactionListener = viewModel,
-            authApi = authApi
-        )
-    }
+
+    HomeScreenContent(
+        state = state.value,
+        interactionListener = viewModel,
+        authApi = authApi
+    )
 }
