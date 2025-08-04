@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved
+package com.sanaa.presentation.screen.saved.componants
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 
 @Composable
-fun EmptySavedListScreenContent(
+fun PlayListEmptyStateScreen(
     @DrawableRes imageRes: Int,
     screenTitle: String,
     messageText: String,
@@ -77,7 +77,7 @@ fun EmptySavedListScreenContent(
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .size(width = 104.dp, height = 48.dp),
-                    text = "Login",
+                    text = stringResource(R.string.login),
                     onClick = onLoginClick
                 )
             }
@@ -98,7 +98,7 @@ private fun EmptySavedListUserScreenContentPrev() {
         } else {
             R.drawable.my_list_light
         }
-        EmptySavedListScreenContent(
+        PlayListEmptyStateScreen(
             screenTitle = stringResource(R.string.saved_list),
             messageText = stringResource(R.string.there_is_no_saved_list_yet_click_on_button_to_add_a_new_list),
             imageRes = myListImg,
@@ -120,7 +120,7 @@ private fun EmptySavedListGuestScreenContentPrev() {
         } else {
             R.drawable.no_login_my_list_light
         }
-        EmptySavedListScreenContent(
+        PlayListEmptyStateScreen(
             screenTitle = stringResource(R.string.my_lists),
             messageText = stringResource(R.string.please_login_to_create_lists_and_add_your_favorite_items_to_it),
             imageRes = myListImg,
