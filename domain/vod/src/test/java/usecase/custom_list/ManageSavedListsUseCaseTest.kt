@@ -44,9 +44,9 @@ class ManageSavedListsUseCaseTest {
 
     @Test
     fun `createSavedList should call repository and return SavedList`() = runTest {
-        coEvery { savedListRepository.createSavedList(DUMMY_LIST) } returns DUMMY_LIST
+        coEvery { savedListRepository.createSavedList(DUMMY_LIST.title) } returns DUMMY_LIST
 
-        val result = manageSavedListsUseCase.createSavedList(DUMMY_LIST)
+        val result = manageSavedListsUseCase.createSavedList(DUMMY_LIST.title)
 
         assertThat(result).isEqualTo(DUMMY_LIST)
     }
