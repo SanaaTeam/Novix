@@ -28,10 +28,11 @@ import com.sanaa.feature.playlists.presentation.R
 fun MyListItem(
     modifier: Modifier = Modifier,
     onItemClick: () -> Unit = {},
-    title: String = stringResource(R.string.my_list)
+    title: String = stringResource(R.string.my_list),
+    count: Int = 10,
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(
                 color = Theme.colors.surface,
@@ -44,7 +45,6 @@ fun MyListItem(
             )
             .padding(vertical = 16.dp, horizontal = 12.dp)
     ) {
-
         AppText(
             modifier = Modifier,
             text = title,
@@ -60,9 +60,8 @@ fun MyListItem(
                     onClick = { onItemClick() }
                 )
                 .background(
-                    color = Theme.colors.surface,
-
-                    )
+                    color = Theme.colors.primaryVariant,
+                )
                 .border(
                     width = 1.dp,
                     color = Theme.colors.stroke,
@@ -73,7 +72,7 @@ fun MyListItem(
         ) {
             AppText(
                 modifier = Modifier,
-                text = "12",
+                text = count.toString(),
                 style = Theme.textStyle.label.small,
                 color = Theme.colors.primary,
                 textAlign = TextAlign.Center
@@ -85,16 +84,13 @@ fun MyListItem(
                 ),
                 tint = Theme.colors.primary
             )
-
         }
-
     }
 }
 
 @PreviewLightDark
 @Composable
 private fun MyListItemPreview() {
-
     NovixTheme(
         isSystemInDarkTheme()
     ) {
