@@ -8,6 +8,12 @@
     <string name="login">تسجيل الدخول</string>
     <string name="added_to_list_successfully">تمت إضافة القائمة بنجاح</string>
     <string name="added_to_list_failed">فشلت إضافة القائمة</string>
+    <string name="edited_to_list_successfully">تم تحديث القائمة بنجاح</string>
+    <string name="edited_to_list_failed">فشلت تحديث القائمة</string>
+
     <string name="arrow_right">سهم</string>
     <string name="my_list">قائمتي</string>
+    <string name="all">الكل</string>
+    <string name="movies">الافلام</string>
+    <string name="tvshows">البرامج</string>
 </resources>
