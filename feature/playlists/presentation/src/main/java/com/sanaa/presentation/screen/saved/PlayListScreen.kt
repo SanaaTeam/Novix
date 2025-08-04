@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.saved
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,9 +10,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.navigation.PlayListApiEntryPoint
 import com.sanaa.presentation.screen.saved.componants.AnimatedSnackBarHost
@@ -92,4 +96,65 @@ fun PlaylistScreenContent(
         }
     }
 
+}
+
+
+@PreviewLightDark
+@Composable
+fun Preview_PlaylistScreenContent_Guest() {
+    NovixTheme(
+        isSystemInDarkTheme()
+    ) {
+        PlaylistScreenContent(
+            interactionListener = fakeListener(),
+            state = PlayListScreenUiState(
+                isUserLoggedIn = false,
+                lists = emptyList()
+            )
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun Preview_PlaylistScreenContent_EmptyList() {
+    NovixTheme(
+        isSystemInDarkTheme()
+    ) {
+        PlaylistScreenContent(
+            interactionListener = fakeListener(),
+            state = PlayListScreenUiState(
+                isUserLoggedIn = true,
+                lists = emptyList()
+            )
+        )
+    }
+}
+
+@PreviewLightDark
+@Composable
+fun Preview_PlaylistScreenContent_WithItems() {
+    NovixTheme(
+        isSystemInDarkTheme()
+    ) {
+        PlaylistScreenContent(
+            interactionListener = fakeListener(),
+            state = PlayListScreenUiState(
+                isUserLoggedIn = true,
+                lists = listOf(
+                    PlayListUiModel(id = 1, title = "Favorites", mediaCount = 5),
+                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 3)
+                )
+            )
+        )
+    }
+}
+
+@Composable
+fun fakeListener() = object : PlayListScreenInteractionListener {
+    override fun onFabBottomSheetClicked() {}
+    override fun onButtonLoginClicked() {}
+    override fun onDismissAddBottomSheet() {}
+    override fun onAddNewListClicked() {}
+    override fun onItemListClicked() {}
 }
