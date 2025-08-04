@@ -1,6 +1,5 @@
 package com.sanaa.presentation.app
 
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -49,13 +48,15 @@ fun MainScreen() {
     }
 
 
-    CompositionLocalProvider(LocalMainNavController provides navController) {
+    CompositionLocalProvider(
+        LocalMainNavController provides navController,
+    ) {
         NovixScaffold(
             bottomBar = {
                 AppBottomNavBar(
                     navController = navController
                 )
-            }, modifier = Modifier.systemBarsPadding()
+            }, modifier = Modifier
         ) { innerPadding ->
             NavHost(
                 navController = navController,
