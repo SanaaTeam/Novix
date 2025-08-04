@@ -52,7 +52,8 @@ class MyAccountScreenViewModel @Inject constructor(
         updateState {
             it.copy(
                 showContentRestrictionBottomSheet = false,
-                showChangeLanguageBottomSheet = false
+                showChangeLanguageBottomSheet = false,
+                showChangeThemeBottomSheet = false
             )
         }
     }

@@ -37,4 +37,7 @@
     <string name="light">فاتح</string>
     <string name="dark">داكن</string>
     <string name="save">حفظ</string>
+    <string name="blurs_all_sensitive_content">يخفي كل المحتوى الحساس</string>
+    <string name="blurs_explicit_scenes_only">يخفي المشاهد الصريحة فقط</string>
+    <string name="no_content_is_blurred">لا يتم إخفاء أي محتوى</string>
 </resources>

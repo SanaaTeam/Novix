@@ -143,15 +143,18 @@ fun MyAccountScreenContent(
             options = listOf(
                 Option(
                     label = stringResource(R.string.strict_restriction),
-                    value = ContentRestrictionUiState.RESTRICTED
+                    value = ContentRestrictionUiState.RESTRICTED,
+                    description = stringResource(R.string.blurs_all_sensitive_content)
                 ),
                 Option(
                     label = stringResource(R.string.moderate_restriction),
-                    value = ContentRestrictionUiState.MODERATE_RESTRICTION
+                    value = ContentRestrictionUiState.MODERATE_RESTRICTION,
+                    description = stringResource(R.string.blurs_explicit_scenes_only)
                 ),
                 Option(
                     label = stringResource(R.string.unrestricted),
-                    value = ContentRestrictionUiState.UNRESTRICTED
+                    value = ContentRestrictionUiState.UNRESTRICTED,
+                    description = stringResource(R.string.no_content_is_blurred)
                 )
             ),
             onDismiss = {
