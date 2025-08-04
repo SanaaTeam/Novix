@@ -16,6 +16,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -34,19 +35,15 @@ class GenreTvShowsViewModelTest {
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
 
-    @BeforeAll
-    fun setUpDispatcher() {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    @AfterAll
-    fun resetDispatcher() {
-        Dispatchers.resetMain()
-    }
-
     @BeforeEach
     fun setUp() {
+        Dispatchers.setMain(testDispatcher)
         clearAllMocks()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

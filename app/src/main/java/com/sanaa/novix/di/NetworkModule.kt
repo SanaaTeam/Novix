@@ -60,9 +60,10 @@ object NetworkModule {
     @Singleton
     fun provideApiKeyInterceptor(
         preferencesManager: PreferencesManager
-    ): APIKeyInterceptor = APIKeyInterceptor {
-        runBlocking { preferencesManager.sessionId.firstOrNull() }
-    }
+    ): APIKeyInterceptor = APIKeyInterceptor(
+        apiKey = BuildConfig.TMDB_API_KEY,
+        sessionId = { runBlocking { preferencesManager.sessionId.firstOrNull() } }
+    )
 
     @Provides
     @Singleton
