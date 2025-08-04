@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
@@ -33,6 +34,11 @@ fun HomeScreen(
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
+    }
+    val playListApi: PlaylistsFeatureApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .playListApi()
     }
     val authApi = remember {
         EntryPointAccessors.fromApplication(
@@ -86,6 +92,10 @@ fun HomeScreen(
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
                     navController.navigate(ContinueWatchingMediaScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToPlayListScreen -> {
+                    playListApi.launchPlaylistScreen(context = navController.context)
                 }
             }
         }
