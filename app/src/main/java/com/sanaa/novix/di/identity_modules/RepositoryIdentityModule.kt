@@ -1,7 +1,7 @@
 package com.sanaa.novix.di.identity_modules
 
 import com.sanaa.identity.repository.AuthenticationRepositoryImpl
-import com.sanaa.identity.repository.UserPreferenceImpl
+import com.sanaa.identity.repository.UserPreferencesRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -23,6 +23,6 @@ abstract class RepositoryIdentityModule {
     @Binds
     @Singleton
     abstract fun bindUserPreference(
-        userPreferenceImpl: UserPreferenceImpl
+        userPreferencesRepositoryImpl: UserPreferencesRepositoryImpl
     ): UserPreferencesRepository
 }

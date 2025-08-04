@@ -9,7 +9,7 @@ import repository.Theme
 import repository.UserPreferencesRepository
 import javax.inject.Inject
 
-class UserPreferenceImpl
+class UserPreferencesRepositoryImpl
 @Inject constructor(
     private val localDataSource: LocalUserPreferenceDataSource
 ) : UserPreferencesRepository {
