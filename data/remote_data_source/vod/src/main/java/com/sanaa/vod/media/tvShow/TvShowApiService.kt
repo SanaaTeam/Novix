@@ -1,9 +1,9 @@
 package com.sanaa.vod.media.tvShow
 
-import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
-import com.sanaa.vod.dataSource.remote.dto.SeasonDto
-import com.sanaa.vod.dataSource.remote.dto.TvShowDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse

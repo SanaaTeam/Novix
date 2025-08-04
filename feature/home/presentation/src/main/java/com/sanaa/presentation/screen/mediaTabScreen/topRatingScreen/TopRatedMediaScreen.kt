@@ -23,15 +23,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
 
@@ -51,10 +51,26 @@ fun TopRatedMediaScreen(
             .detailsApi()
     }
 
+    val context = LocalContext.current
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserLoggingStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserLoggingStatus()
+        }
+    )
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MediaTabScreenEffect.NavigateToMediaDetails -> {
+                is TopRatedScreenEffect.NavigateToMediaDetails -> {
                     if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
                         detailsApi.launch(
                             context = navController.context,
@@ -70,8 +86,12 @@ fun TopRatedMediaScreen(
                     }
                 }
 
-                is MediaTabScreenEffect.NavigateBack -> {
+                is TopRatedScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+
+                TopRatedScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
@@ -82,6 +102,13 @@ fun TopRatedMediaScreen(
         interactionListener = viewModel,
         modifier = modifier,
     )
+    RequestToLoginBottomSheet(
+        isVisible = state.value.showLoginBottomSheet,
+        onDismiss = viewModel::onDismissBottomSheet,
+        onLoginButtonClick = {
+            viewModel.onLoginButtonClick()
+        }
+    )
 }
 
 
@@ -89,7 +116,7 @@ fun TopRatedMediaScreen(
 private fun TopRatedMediaScreenContent(
     title: String,
     state: TopRatedMediaScreenUiState,
-    interactionListener: MediaTabScreenInteractionListener,
+    interactionListener: TopRatedScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     val topRatedTvShows = state.tvShowList.collectAsLazyPagingItems()

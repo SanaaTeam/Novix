@@ -1,9 +1,9 @@
 package com.sanaa.vod.media.actor
 
-import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
-import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.util.wrapApiCall
 import javax.inject.Inject
 

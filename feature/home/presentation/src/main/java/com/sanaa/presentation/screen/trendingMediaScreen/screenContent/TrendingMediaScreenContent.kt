@@ -14,6 +14,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 
@@ -52,6 +53,14 @@ fun TrendingMediaScreenContent(
             onGenreClick = interactionListener::onGenreClick,
             onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
             onSaveIconClick = interactionListener::onSaveIconClick,
+        )
+
+        RequestToLoginBottomSheet(
+            isVisible = state.showBottomSheet,
+            onDismiss = interactionListener::onDismissBottomSheet,
+            onLoginButtonClick = {
+                interactionListener.onLoginButtonClick()
+            }
         )
     }
 }

@@ -10,6 +10,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
@@ -31,6 +32,21 @@ fun TrendingMoviesScreen(
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
     }
+    val context = LocalContext.current
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserLoggingStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserLoggingStatus()
+        }
+    )
 
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -47,6 +63,10 @@ fun TrendingMoviesScreen(
 
                 is TrendingMediaScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+
+                TrendingMediaScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
