@@ -8,4 +8,6 @@
     <string name="login">Login</string>
     <string name="added_to_list_successfully">Added list successfully</string>
     <string name="added_to_list_failed">Added list Failed</string>
+    <string name="arrow_right">arrow</string>
+    <string name="my_list">My List</string>
 </resources>
