@@ -117,4 +117,10 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.converter.gson)
     implementation( libs.androidx.appcompat)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
+}
+tasks.withType(Test::class.java).configureEach {
+    useJUnitPlatform()
 }
