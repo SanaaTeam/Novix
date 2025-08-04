@@ -23,7 +23,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -31,12 +30,14 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.userprofile.presentation.R
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as designR
 
 
 @Composable
@@ -109,7 +110,7 @@ fun MyRatingScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_back),
+                        icon = painterResource(designR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 },
