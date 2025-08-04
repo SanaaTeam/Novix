@@ -32,7 +32,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
         PlayListApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserStatus()
         },
@@ -50,6 +50,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 PlayListScreenEffect.ShowErrorSnackBar -> {
                     snack = SnackData(addedToListFailedMsg, isError = true)
                 }
+
                 PlayListScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(addedToListSuccessMsg, isError = false)
                 }
@@ -74,12 +75,21 @@ fun PlaylistScreenContent(
     interactionListener: PlayListScreenInteractionListener,
     state: PlayListScreenUiState
 ) {
-    if (!state.isUserLoggedIn) {
-        PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
-    } else {
-        PlaylistEmptyScreen(
-            onFabClick = { interactionListener.onFabBottomSheetClicked() }
-        )
+    when {
+        !state.isUserLoggedIn -> {
+            PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
+        }
+
+        state.lists.isEmpty() -> {
+            PlaylistEmptyScreen(onFabClick = { interactionListener.onFabBottomSheetClicked() })
+        }
+
+        else -> {
+            PlayListWithItemsScreen(
+                lists = state.lists,
+                onItemClick = { interactionListener.onItemListClicked() }
+            )
+        }
     }
 
 }
