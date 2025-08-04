@@ -8,7 +8,7 @@ class ManageSavedListItemsUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
     suspend fun getAllItemsInSavedList(listId: Int): List<Movie> =
-        savedListRepository.getAllItemsInList(listId)
+        savedListRepository.getAllMoviesInList(listId)
 
     suspend fun addMovieToSavedList(listId: Int, movieId: Int): Boolean =
         savedListRepository.addMovieToList(listId, movieId)

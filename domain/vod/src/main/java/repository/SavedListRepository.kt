@@ -8,7 +8,7 @@ interface SavedListRepository {
     suspend fun createSavedList(list: SavedList): SavedList
     suspend fun deleteSavedList(listId: Int)
 
-    suspend fun getAllItemsInList(listId: Int): List<Movie>
+    suspend fun getAllMoviesInList(listId: Int): List<Movie>
     suspend fun addMovieToList(listId: Int, movieId: Int): Boolean
     suspend fun removeMovieFromList(listId: Int, movieId: Int): Boolean
 }
