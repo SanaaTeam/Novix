@@ -1,11 +1,11 @@
 package com.sanaa.novix.di.identity_modules
 
 import com.sanaa.identity.dataSoruce.dataStore.LocalUserDataSourceImpl
+import com.sanaa.identity.dataSoruce.dataStore.LocalUserPreferenceImpl
 import com.sanaa.identity.dataSoruce.dataStore.PreferencesManagerImpl
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.LocalUserPreferenceDataSource
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.identity.dataSoruce.dataStore.LocalUserPreferenceImpl
 import com.sanaa.novix.resourceProvider.StringProviderImpl
 import dagger.Binds
 import dagger.Module

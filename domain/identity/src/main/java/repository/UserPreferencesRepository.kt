@@ -2,7 +2,7 @@ package repository
 
 import kotlinx.coroutines.flow.Flow
 
-interface UserPreference {
+interface UserPreferencesRepository {
     fun getLanguage(): Flow<Language>
     fun getContentRestriction(): Flow<ContentRestriction>
     fun getTheme(): Flow<Theme>

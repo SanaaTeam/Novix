@@ -6,13 +6,13 @@ import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
-import repository.UserPreference
+import repository.UserPreferencesRepository
 import javax.inject.Inject
 
 class UserPreferenceImpl
 @Inject constructor(
     private val localDataSource: LocalUserPreferenceDataSource
-) : UserPreference {
+) : UserPreferencesRepository {
     override fun getLanguage(): Flow<Language> {
         return localDataSource.getLanguage().map { code ->
             Language.entries.first { it.code == code }

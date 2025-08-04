@@ -4,12 +4,12 @@ import kotlinx.coroutines.flow.Flow
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
-import repository.UserPreference
+import repository.UserPreferencesRepository
 import javax.inject.Inject
 
 
 class MangeUserPreferenceUseCase @Inject constructor(
-    private val userPreference: UserPreference
+    private val userPreference: UserPreferencesRepository
 ) {
     suspend fun setLanguage(language: Language) {
         userPreference.setLanguage(language)

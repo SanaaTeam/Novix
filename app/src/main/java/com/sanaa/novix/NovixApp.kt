@@ -1,16 +1,13 @@
 package com.sanaa.novix
 
 import android.app.Application
-import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.ui.platform.LocalView
 import androidx.core.os.LocaleListCompat
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import repository.UserPreference
+import repository.UserPreferencesRepository
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -23,7 +20,7 @@ class NovixApp : Application() {
     lateinit var timberTree: Timber.Tree
 
     @Inject
-    lateinit var userPreference: UserPreference
+    lateinit var userPreference: UserPreferencesRepository
 
     override fun onCreate() {
         super.onCreate()
