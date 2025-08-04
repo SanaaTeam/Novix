@@ -43,7 +43,7 @@ class MyRatingScreenViewModelTest {
     }
 
     @Test
-    fun `loadRatedMedia sets isNoInternetConnection to true on movie network error`() = runTest {
+    fun `loadRatedMedia should sets isNoInternetConnection to true when there is a network error`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } throws NoNetworkException()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
 
@@ -65,7 +65,7 @@ class MyRatingScreenViewModelTest {
 
 
     @Test
-    fun `onBackClick emits NavigateBack effect`() = runTest {
+    fun `onBackClick should emit NavigateBack effect when user clicks back button`() = runTest {
         viewModel =
             MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
         viewModel.onBackClick()
