@@ -7,10 +7,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class DeleteListViewModel @Inject constructor(
+    private val manageSavedListsUseCase: ManageSavedListsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DeleteListUiState())
@@ -18,12 +20,22 @@ class DeleteListViewModel @Inject constructor(
 
     fun onDeleteConfirmed(listId: Long, onSuccess: () -> Unit) {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true) }
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
-            println("Deleting playlist with ID: $listId")
+            try {
+                manageSavedListsUseCase.deleteSavedList(listId.toInt())
 
-            _uiState.update { it.copy(isLoading = false) }
-            onSuccess()
+                _uiState.update { it.copy(isLoading = false) }
+                onSuccess()
+
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to delete list. Please try again."
+                    )
+                }
+            }
         }
     }
 }
