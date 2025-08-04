@@ -44,7 +44,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `loadRatedMedia should sets isNoInternetConnection to true when there is a network error`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } throws NoNetworkException()
+        coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
 
         viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
@@ -85,7 +85,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onDeleteIconClick for movie success removes item from state`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } returns listOf(dummyMovie)
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns true
         viewModel =
@@ -97,7 +97,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } returns listOf(dummyMovie)
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns false
         viewModel =
@@ -136,7 +136,7 @@ class MyRatingScreenViewModelTest {
     }
     @Test
     fun `onDeleteIconClick for tv show success removes item from state`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } returns emptyList()
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
         coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } returns true
 
@@ -156,7 +156,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onDeleteIconClick for tv show throws exception emits error snackbar`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies(any(), any()) } returns emptyList()
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
         coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")
 
