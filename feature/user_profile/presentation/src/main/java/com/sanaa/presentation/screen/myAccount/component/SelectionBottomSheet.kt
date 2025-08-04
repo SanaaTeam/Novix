@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
@@ -55,7 +56,7 @@ fun <T> SelectionBottomSheet(
                 )
             )
             PrimaryButton(
-                text = "Save",
+                text = stringResource(com.sanaa.designsystem.R.string.save),
                 onClick = onSaveClick,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)

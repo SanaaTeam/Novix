@@ -103,24 +103,24 @@ fun MyAccountScreenContent(
                     title = stringResource(R.string.change_password),
                     onClick = { interactionsListener.onClickChangePassword() }),
                 AccountOptionItem(
-                    painter = painterResource(R.drawable.language_circle),
-                    title = stringResource(R.string.language),
-                    onClick = { interactionsListener.onClickLanguageSetting() }),
-                AccountOptionItem(
                     painter = painterResource(R.drawable.icon_moon),
                     title = stringResource(R.string.appearance),
                     onClick = { interactionsListener.onClickAppearance() }),
+                AccountOptionItem(
+                    painter = painterResource(R.drawable.language_circle),
+                    title = stringResource(R.string.language),
+                    onClick = { interactionsListener.onClickLanguageSetting() }),
             )
         )
         SelectionBottomSheet(
             isVisible = uiState.showChangeLanguageBottomSheet,
-            bottomSheetTitle = "Language",
+            bottomSheetTitle = stringResource(R.string.language),
             options = listOf(
                 Option(
-                    label = "Arabic", value = "ar"
+                    label = stringResource(R.string.arabic), value = "ar"
                 ),
                 Option(
-                    label = "English", value = "en"
+                    label = stringResource(R.string.english), value = "en"
                 ),
             ),
             onDismiss = {
@@ -139,17 +139,19 @@ fun MyAccountScreenContent(
 
         SelectionBottomSheet(
             isVisible = uiState.showContentRestrictionBottomSheet,
-            bottomSheetTitle = "Content Restriction",
+            bottomSheetTitle = stringResource(R.string.content_restriction),
             options = listOf(
                 Option(
-                    label = "Restricted", value = ContentRestrictionUiState.RESTRICTED
+                    label = stringResource(R.string.strict_restriction),
+                    value = ContentRestrictionUiState.RESTRICTED
                 ),
                 Option(
-                    label = "Moderate Restriction",
+                    label = stringResource(R.string.moderate_restriction),
                     value = ContentRestrictionUiState.MODERATE_RESTRICTION
                 ),
                 Option(
-                    label = "Unrestricted", value = ContentRestrictionUiState.UNRESTRICTED
+                    label = stringResource(R.string.unrestricted),
+                    value = ContentRestrictionUiState.UNRESTRICTED
                 )
             ),
             onDismiss = {
@@ -164,13 +166,13 @@ fun MyAccountScreenContent(
 
         SelectionBottomSheet(
             isVisible = uiState.showChangeThemeBottomSheet,
-            bottomSheetTitle = "Theme",
+            bottomSheetTitle = stringResource(R.string.appearance),
             options = listOf(
                 Option(
-                    label = "Light", value = ThemeUiState.LIGHT
+                    label = stringResource(R.string.light), value = ThemeUiState.LIGHT
                 ),
                 Option(
-                    label = "Dark", value = ThemeUiState.DARK
+                    label = stringResource(R.string.dark), value = ThemeUiState.DARK
                 ),
             ),
             onDismiss = {

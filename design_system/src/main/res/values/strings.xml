@@ -25,4 +25,12 @@
     <string name="change_password">Change password</string>
     <string name="appearance">Appearance</string>
     <string name="language">Language</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="strict_restriction">Strict</string>
+    <string name="moderate_restriction">Moderate</string>
+    <string name="unrestricted">Off</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="save">Save</string>
 </resources>
