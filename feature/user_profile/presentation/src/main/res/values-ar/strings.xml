@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_rating_message">تم حذف التقييم بنجاح</string>
+    <string name="error_delete_rating_message">فشل في حذف التقييم</string>
+</resources>
