@@ -9,8 +9,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import com.sanaa.feature.userprofile.presentation.R
+
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.myRating.MyRatingScreenUiState
 import com.sanaa.presentation.screen.myRating.MyRatingTab
@@ -34,9 +37,9 @@ fun RatedMediaListSectionContent(
         ) {
             items(items = MyRatingTab.entries.toTypedArray()) { tab ->
                 val tabText = when (tab) {
-                    MyRatingTab.ALL -> "All"
-                    MyRatingTab.MOVIES -> "Movies"
-                    MyRatingTab.TV_SHOWS -> "TV shows"
+                    MyRatingTab.ALL -> stringResource(R.string.all)
+                    MyRatingTab.MOVIES -> stringResource(R.string.movies)
+                    MyRatingTab.TV_SHOWS -> stringResource(R.string.tv_shows)
                 }
                 ToggleableChip(
                     text = tabText,
