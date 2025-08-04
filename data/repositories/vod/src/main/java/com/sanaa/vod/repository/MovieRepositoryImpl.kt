@@ -102,8 +102,10 @@ class MovieRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRatedMovies(accountId: Long, sessionId: String): List<Movie> {
+    override suspend fun getUserRatedMovies(): List<Movie> {
         return safeCall("Failed to fetch user rated movies") {
+            val sessionId =preferences.sessionId.first()
+            val accountId =preferences.accountId.first()
             remote.fetchMoviesRate(accountId, sessionId).map { it.toDomain() }
         }
     }

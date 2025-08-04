@@ -55,8 +55,8 @@ class ManageMovieUseCase @Inject constructor(
         return movieRepo.addMovieRate(movieId = movieId, rating = rating)
     }
 
-    suspend fun getUserRatedMovies(accountId: Long, sessionId: String): List<Movie> {
-        return movieRepo.getUserRatedMovies(accountId, sessionId)
+    suspend fun getUserRatedMovies(): List<Movie> {
+        return movieRepo.getUserRatedMovies()
     }
 
     suspend fun deleteMovieRate(movieId: Int): Boolean {
