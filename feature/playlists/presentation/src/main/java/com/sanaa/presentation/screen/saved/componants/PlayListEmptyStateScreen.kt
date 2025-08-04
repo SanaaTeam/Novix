@@ -37,8 +37,12 @@ fun PlayListEmptyStateScreen(
     onLoginClick: () -> Unit = {}
 ) {
     NovixScaffold(
-        modifier = Modifier.padding(top = 12.dp),
-        topBar = { TopBar(screenTitle = screenTitle) },
+        topBar = {
+            TopBar(
+                screenTitle = screenTitle,
+                modifier = Modifier.padding(top = 12.dp)
+            )
+        },
         floatingActionButton = {
             if (showFab) {
                 FabButton(
