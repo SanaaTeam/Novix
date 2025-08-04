@@ -80,6 +80,7 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.cards.**",
 
     "com.sanaa.presentation.screen.login.**",
+    "com.sanaa.presentation.screen.myRating.**",
     "com.sanaa.presentation.screen.login.components.**",
     "com.sanaa.presentation.screen.login_base.**",
     "com.sanaa.presentation.screen.welcome.**",
