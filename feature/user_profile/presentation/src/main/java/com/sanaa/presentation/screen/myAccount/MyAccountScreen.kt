@@ -1,15 +1,20 @@
 package com.sanaa.presentation.screen.myAccount
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.R
@@ -19,27 +24,47 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
-import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToLanguageSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.UpdateAppLanguage
 import com.sanaa.presentation.screen.myAccount.component.AccountOptionItem
 import com.sanaa.presentation.screen.myAccount.component.MyAccountUserInfo
 import com.sanaa.presentation.screen.myAccount.component.SelectionBottomSheet
 import com.sanaa.presentation.screen.myAccount.component.VerticalList
-import com.sanaa.presentation.util.Listen
 
 @Composable
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val effect by viewModel.effect.collectAsState(null)
+    val view = LocalView.current
 
-    effect?.Listen {
-        when (it) {
+    val activity = view.context as? AppCompatActivity
+
+    LaunchedEffect(effect) {
+        when (val it = effect) {
             NavigateToChangePasswordSetting -> TODO("Add Navigation Code")
             NavigateToContentRestrictionSetting -> TODO("Add Navigation Code")
-            NavigateToLanguageSetting -> TODO("Add Navigation Code")
+            is UpdateAppLanguage -> {
+                val localeList = LocaleListCompat.forLanguageTags(it.language)
+                if (AppCompatDelegate.getApplicationLocales()
+                        .toLanguageTags() != localeList.toLanguageTags()
+                ) {
+                    AppCompatDelegate.setApplicationLocales(localeList)
+                }
+                activity?.recreate()
+            }
+
             NavigateToMyRating -> TODO("Add Navigation Code")
             NavigateToWatchingHistory -> TODO("Add Navigation Code")
+            is MyAccountScreenEffect.UpdateAppTheme -> {
+                if (it.isDarkMode) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+
+            null -> {}
         }
     }
 
@@ -81,6 +106,10 @@ fun MyAccountScreenContent(
                     painter = painterResource(R.drawable.language_circle),
                     title = stringResource(R.string.language),
                     onClick = { interactionsListener.onClickLanguageSetting() }),
+                AccountOptionItem(
+                    painter = painterResource(R.drawable.icon_moon),
+                    title = stringResource(R.string.Appearance),
+                    onClick = { interactionsListener.onClickAppearance() }),
             )
         )
         SelectionBottomSheet(
@@ -200,6 +229,10 @@ private fun AccountScreenContentPreview() {
         }
 
         override fun onSaveContentRestrictionClick() {
+        }
+
+        override fun onClickAppearance() {
+
         }
 
     }

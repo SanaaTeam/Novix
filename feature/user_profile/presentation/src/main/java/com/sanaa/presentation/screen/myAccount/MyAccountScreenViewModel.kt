@@ -62,12 +62,13 @@ class MyAccountScreenViewModel @Inject constructor(
     override fun onSaveLanguageClick() {
         tryToExecute(
             callee = {
-                mangeUserPreference.setLanguage(
-                    Language.entries.first { it.code == state.value.selectedLanguage }
-                )
+                val newLanguage = Language.entries.first { it.code == state.value.selectedLanguage }
+                mangeUserPreference.setLanguage(newLanguage)
+                newLanguage
             },
-            onSuccess = {
+            onSuccess = { newLanguage ->
                 updateState { it.copy(showChangeLanguageBottomSheet = false) }
+                emitEffect(MyAccountScreenEffect.UpdateAppLanguage(newLanguage.code))
             }
         )
     }
@@ -87,12 +88,17 @@ class MyAccountScreenViewModel @Inject constructor(
     override fun onSaveThemeClick() {
         tryToExecute(
             callee = {
-                mangeUserPreference.setTheme(
-                    Theme.entries.first { it.name == state.value.selectedTheme?.name }
-                )
+                val newTheme = Theme.entries.first { it.name == state.value.selectedTheme?.name }
+                mangeUserPreference.setTheme(newTheme)
+                newTheme
             },
-            onSuccess = {
+            onSuccess = { newTheme ->
                 updateState { it.copy(showChangeThemeBottomSheet = false) }
+                emitEffect(
+                    MyAccountScreenEffect.UpdateAppTheme(
+                        isDarkMode = newTheme == Theme.DARK
+                    )
+                )
             }
         )
     }
@@ -108,6 +114,10 @@ class MyAccountScreenViewModel @Inject constructor(
                 updateState { it.copy(showContentRestrictionBottomSheet = false) }
             }
         )
+    }
+
+    override fun onClickAppearance() {
+        updateState { it.copy(showChangeThemeBottomSheet = true) }
     }
 
     private suspend fun fetchUserPreference() {
