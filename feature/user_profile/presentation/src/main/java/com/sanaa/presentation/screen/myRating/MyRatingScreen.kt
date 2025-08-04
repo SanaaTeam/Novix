@@ -15,11 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -28,8 +31,11 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -39,6 +45,14 @@ fun MyRatingScreen(
 ) {
     val successMsg = stringResource(R.string.delete_rating_message)
     val failedMsg = stringResource(R.string.error_delete_rating_message)
+    val navController = LocalNavControllerProvider.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
+            .detailsApi()
+    }
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -47,13 +61,23 @@ fun MyRatingScreen(
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is MyRatingScreenEffect.NavigateBack -> {
-                    // navController.popBackStack()
+                    navController.popBackStack()
                 }
                 is MyRatingScreenEffect.ShowErrorSnackBar -> {
                     snack = SnackData(message = failedMsg, isError = true)
                 }
                 is MyRatingScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(message = successMsg, isError = false)
+                }
+                is MyRatingScreenEffect.NavigateToMediaDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.mediaId,
+                        startRoute = when (effect.mediaTypeUi) {
+                            MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                            MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                        }
+                    )
                 }
             }
         }
@@ -68,7 +92,6 @@ fun MyRatingScreen(
             AnimatedSnackBarHost(
                 data = snack,
                 onDismiss = { snack = null },
-                modifier = Modifier
             )
         }
     }
@@ -96,6 +119,7 @@ fun MyRatingScreenContent(
         }
     ) {
         Box(
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
             AnimatedContent(
@@ -116,6 +140,7 @@ fun MyRatingScreenContent(
                         state = state,
                         onTabSelected = interactionListener::onTabSelected,
                         onDeleteRatingClick = interactionListener::onDeleteIconClick,
+                        onCardClick = interactionListener::onMediaClick
                     )
                 }
             }
