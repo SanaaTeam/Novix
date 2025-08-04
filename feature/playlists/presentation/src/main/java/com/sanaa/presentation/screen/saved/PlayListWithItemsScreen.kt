@@ -9,25 +9,38 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.component.button.FabButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddOrEditBookmarkListBottomSheet
 import com.sanaa.presentation.screen.saved.componants.MyListItem
 
 @Composable
 fun PlayListWithItemsScreen(
     lists: List<PlayListUiModel>,
-    onItemClick: () -> Unit
+    onItemClick: () -> Unit,
+    onFabClick: () -> Unit = {},
+    isVisible: Boolean = false
 ) {
     NovixScaffold(
         topBar = {
             TopBar(
                 screenTitle = stringResource(R.string.my_lists),
                 modifier = Modifier.padding(top = 12.dp, bottom = 8.dp)
+            )
+        },
+        floatingActionButton = {
+            FabButton(
+                icon = painterResource(id = com.sanaa.designsystem.R.drawable.icon_plus),
+                onClick = onFabClick,
+                isLoading = false,
+                isEnabled = true
             )
         }
     ) {

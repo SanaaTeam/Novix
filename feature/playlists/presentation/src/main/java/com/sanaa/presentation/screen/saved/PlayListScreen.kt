@@ -90,11 +90,16 @@ fun PlaylistScreenContent(
             }
 
             isEmptyList -> {
-                PlaylistEmptyScreen(onFabClick = { interactionListener.onFabBottomSheetClicked() })
+                PlaylistEmptyScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet
+                )
             }
 
             else -> {
                 PlayListWithItemsScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet,
                     lists = lists,
                     onItemClick = { interactionListener.onItemListClicked() }
                 )
@@ -102,7 +107,6 @@ fun PlaylistScreenContent(
         }
     }
 }
-
 
 
 @PreviewLightDark
@@ -164,6 +168,7 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
-    override fun onAddNewListClicked() {}
     override fun onItemListClicked() {}
+    override fun onTitleChange() {}
+    override fun onSavedClicked() {}
 }
