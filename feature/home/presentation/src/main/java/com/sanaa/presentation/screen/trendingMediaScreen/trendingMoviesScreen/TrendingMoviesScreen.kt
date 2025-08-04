@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -12,12 +11,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 
@@ -41,7 +39,7 @@ fun TrendingMoviesScreen(
         HomeApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserLoggingStatus()
         },
@@ -73,12 +71,11 @@ fun TrendingMoviesScreen(
             }
         }
     }
-    NovixTheme(isSystemInDarkTheme()) {
-        TrendingMediaScreenContent(
-            title = stringResource(R.string.trending_movies),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
-        )
-    }
+    TrendingMediaScreenContent(
+        title = stringResource(R.string.trending_movies),
+        state = state.value,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
 }
+

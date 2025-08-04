@@ -29,6 +29,15 @@
     <string name="change_password">تغيير كلمة المرور</string>
     <string name="appearance">المظهر</string>
     <string name="language">اللغة</string>
-
-
+    <string name="arabic">العربية</string>
+    <string name="english">الإنكليزية</string>
+    <string name="strict_restriction">صارم</string>
+    <string name="moderate_restriction">معتدل</string>
+    <string name="unrestricted">إيقاف</string>
+    <string name="light">فاتح</string>
+    <string name="dark">داكن</string>
+    <string name="save">حفظ</string>
+    <string name="blurs_all_sensitive_content">يخفي كل المحتوى الحساس</string>
+    <string name="blurs_explicit_scenes_only">يخفي المشاهد الصريحة فقط</string>
+    <string name="no_content_is_blurred">لا يتم إخفاء أي محتوى</string>
 </resources>
