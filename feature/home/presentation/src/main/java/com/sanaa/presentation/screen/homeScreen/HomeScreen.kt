@@ -14,6 +14,8 @@ import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.api.navigation.LocalMainNavController
+import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
@@ -28,6 +30,7 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val navController = LocalAppNavController.current
+    val mainNavController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
@@ -95,7 +98,7 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToPlayListScreen -> {
-                    playListApi.launchPlaylistScreen(context = navController.context)
+                    mainNavController.navigate(PlayListScreenRoute)
                 }
             }
         }
