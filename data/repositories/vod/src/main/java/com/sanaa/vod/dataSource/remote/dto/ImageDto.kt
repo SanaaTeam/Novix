@@ -5,5 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ImageDto(
-    @SerialName("file_path") val filePath: String,
+    @SerialName("file_path")
+    val filePath: String,
 )

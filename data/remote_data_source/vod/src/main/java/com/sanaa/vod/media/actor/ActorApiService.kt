@@ -1,6 +1,6 @@
 package com.sanaa.vod.media.actor
 
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.media.actor.response.ActorCastCreditsResponse
 import com.sanaa.vod.media.actor.response.ActorImagesResponse
 import com.sanaa.vod.media.actor.response.PaginatedResponse

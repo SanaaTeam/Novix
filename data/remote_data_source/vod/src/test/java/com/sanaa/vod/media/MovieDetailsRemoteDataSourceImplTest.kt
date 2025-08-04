@@ -1,13 +1,13 @@
 package com.sanaa.vod.media
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
-import com.sanaa.vod.dataSource.remote.dto.MovieDto
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
-import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.media.movie.MovieApiService
 import com.sanaa.vod.media.movie.RemoteMovieDataSourceImpl
 import com.sanaa.vod.media.movie.response.MovieApiResponse

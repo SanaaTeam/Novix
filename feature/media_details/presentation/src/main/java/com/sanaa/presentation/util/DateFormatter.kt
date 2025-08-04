@@ -46,18 +46,23 @@ fun formatTime(duration: Duration, locale: Locale = Locale.getDefault()): String
             else -> "$minute دقيقة"
         }
 
-        return "${hourLabel(hours)} و ${minuteLabel(minutes)}"
+        val hoursText = hourLabel(hours)
+        val minutesText = minuteLabel(minutes)
+
+        return when {
+            hours > 0 && minutes > 0 -> "$hoursText و $minutesText"
+            hours > 0 -> hoursText
+            minutes > 0 -> minutesText
+            else -> "0 دقيقة"
+        }
     } else {
-        fun hourLabel(hour: Int): String = when (hour) {
-            1 -> "${hour}h"
-            else -> "${hour}h"
-        }
+        fun hourLabel(hour: Int): String = "${hour}h"
+        fun minuteLabel(minute: Int): String = "${minute}m"
 
-        fun minuteLabel(minute: Int): String = when (minute) {
-            1 -> "${minute}m"
-            else -> "${minute}m"
-        }
+        val parts = mutableListOf<String>()
+        if (hours > 0) parts.add(hourLabel(hours))
+        if (minutes > 0) parts.add(minuteLabel(minutes))
 
-        return "${hourLabel(hours)} ${minuteLabel(minutes)}"
+        return if (parts.isNotEmpty()) parts.joinToString(" ") else "0m"
     }
 }
