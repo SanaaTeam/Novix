@@ -1,8 +1,11 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import android.app.Activity
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,12 +14,18 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -30,6 +39,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
@@ -127,6 +137,25 @@ private fun ActorScreenContent(
     listener: ActorsScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
+
+    val lazyState =  rememberLazyListState()
+    var shouldShowBackground by remember { mutableStateOf(false) }
+    val animatedColor by animateColorAsState(
+        targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+    )
+
+    LaunchedEffect(lazyState) {
+        snapshotFlow {
+            if (lazyState.firstVisibleItemIndex == 0) {
+                lazyState.firstVisibleItemScrollOffset
+            } else {
+                Int.MAX_VALUE
+            }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 200
+        }
+    }
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
     ) {
@@ -139,6 +168,7 @@ private fun ActorScreenContent(
                         onClick = listener::onBackClicked
                     )
                 }, modifier = Modifier
+                    .background(animatedColor)
                     .systemBarsPadding()
                     .zIndex(10f)
             )
@@ -161,6 +191,7 @@ private fun ActorScreenContent(
                     }
                 } else {
                     LazyColumn(
+                        state = lazyState,
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(bottom = 24.dp)
                     ) {
