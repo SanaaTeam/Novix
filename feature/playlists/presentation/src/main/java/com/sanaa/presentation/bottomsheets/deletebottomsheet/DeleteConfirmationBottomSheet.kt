@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -17,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
@@ -27,6 +30,27 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun DeleteConfirmationBottomSheet(
+    isVisible: Boolean,
+    listId: Long?,
+    onDismiss: () -> Unit,
+    viewModel: DeleteListViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    DeleteConfirmationBottomSheetContent(
+        isVisible = isVisible,
+        isLoading = state.isLoading,
+        onDismiss = onDismiss,
+        onDeleteClick = {
+            listId?.let { id ->
+                viewModel.onDeleteConfirmed(listId = id, onSuccess = onDismiss)
+            }
+        }
+    )
+}
+
+@Composable
+private fun DeleteConfirmationBottomSheetContent(
     isVisible: Boolean,
     isLoading: Boolean,
     onDismiss: () -> Unit,
@@ -86,11 +110,12 @@ fun DeleteConfirmationBottomSheet(
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 private fun DeleteConfirmationBottomSheetPreview() {
     NovixTheme(isDarkMode = true) {
-        DeleteConfirmationBottomSheet(
+        DeleteConfirmationBottomSheetContent(
             isVisible = true,
             isLoading = false,
             onDismiss = {},
@@ -103,7 +128,7 @@ private fun DeleteConfirmationBottomSheetPreview() {
 @Composable
 private fun DeleteConfirmationBottomSheetLoadingPreview() {
     NovixTheme(isDarkMode = true) {
-        DeleteConfirmationBottomSheet(
+        DeleteConfirmationBottomSheetContent(
             isVisible = true,
             isLoading = true,
             onDismiss = {},
