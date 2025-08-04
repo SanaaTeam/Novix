@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
@@ -28,12 +30,36 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
-fun AddOrEditBookmarkListBottomSheet(
+fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    state: AddEditBookmarkListUiState,
+    viewModel: AddBookmarkListViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    val handleDismiss = {
+        viewModel.resetState()
+        onDismiss()
+    }
+
+    AddBookmarkListBottomSheetContent(
+        isVisible = isVisible,
+        onDismiss = handleDismiss,
+        state = state,
+        onTitleChanged = viewModel::onListTitleChanged,
+        onAddClick = {
+            viewModel.onAddClicked(onSuccess = handleDismiss)
+        }
+    )
+}
+
+@Composable
+private fun AddBookmarkListBottomSheetContent(
+    isVisible: Boolean,
+    onDismiss: () -> Unit,
+    state: AddBookmarkListUiState,
     onTitleChanged: (String) -> Unit,
-    onSaveClick: () -> Unit,
+    onAddClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var textFieldValue by remember(state.listTitle) {
@@ -44,9 +70,6 @@ fun AddOrEditBookmarkListBottomSheet(
             )
         )
     }
-
-    val titleRes = if (state.isEditMode) R.string.edit_list else R.string.add_new_list
-    val buttonTextRes = if (state.isEditMode) R.string.save else R.string.add
 
     BaseBottomSheet(
         isVisible = isVisible,
@@ -59,7 +82,7 @@ fun AddOrEditBookmarkListBottomSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopBar(
-                screenTitle = stringResource(titleRes),
+                screenTitle = stringResource(R.string.add_new_list),
                 rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_cancel),
@@ -95,9 +118,9 @@ fun AddOrEditBookmarkListBottomSheet(
             )
 
             PrimaryButton(
-                text = stringResource(buttonTextRes),
-                onClick = onSaveClick,
-                isEnabled = state.isSaveButtonEnabled,
+                text = stringResource(R.string.add),
+                onClick = onAddClick,
+                isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,78 +131,43 @@ fun AddOrEditBookmarkListBottomSheet(
     }
 }
 
-
 @Preview(name = "Add Mode - Empty", showBackground = true)
 @Composable
-private fun AddBookmarkListBottomSheetAddEmptyPreview() {
+private fun AddBookmarkListBottomSheetEmptyPreview() {
     NovixTheme(isDarkMode = true) {
-        AddOrEditBookmarkListBottomSheet(
+        AddBookmarkListBottomSheetContent(
             isVisible = true,
             onDismiss = {},
-            state = AddEditBookmarkListUiState(
-                isEditMode = false,
+            state = AddBookmarkListUiState(
                 listTitle = "",
-                isSaveButtonEnabled = false
+                isAddButtonEnabled = false
             ),
             onTitleChanged = {},
-            onSaveClick = {}
+            onAddClick = {}
         )
     }
 }
 
 @Preview(name = "Add Mode - Active", showBackground = true)
 @Composable
-private fun AddBookmarkListBottomSheetAddActivePreview() {
+private fun AddBookmarkListBottomSheetActivePreview() {
     var state by remember {
         mutableStateOf(
-            AddEditBookmarkListUiState(
-                isEditMode = false,
+            AddBookmarkListUiState(
                 listTitle = "My favorite",
-                isSaveButtonEnabled = true
+                isAddButtonEnabled = true
             )
         )
     }
     NovixTheme(isDarkMode = true) {
-        AddOrEditBookmarkListBottomSheet(
+        AddBookmarkListBottomSheetContent(
             isVisible = true,
             onDismiss = {},
             state = state,
             onTitleChanged = { newTitle ->
-                state =
-                    state.copy(listTitle = newTitle, isSaveButtonEnabled = newTitle.isNotBlank())
+                state = state.copy(listTitle = newTitle, isAddButtonEnabled = newTitle.isNotBlank())
             },
-            onSaveClick = {}
-        )
-    }
-}
-
-
-@Preview(name = "Edit Mode", showBackground = true)
-@Composable
-private fun AddBookmarkListBottomSheetEditModePreview() {
-    var state by remember {
-        mutableStateOf(
-            AddEditBookmarkListUiState(
-                listTitle = "My favorite movies",
-                isSaveButtonEnabled = true,
-                isLoading = false,
-                isEditMode = true
-            )
-        )
-    }
-
-    NovixTheme(isDarkMode = true) {
-        AddOrEditBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = {},
-            state = state,
-            onTitleChanged = { newTitle ->
-                state = state.copy(
-                    listTitle = newTitle,
-                    isSaveButtonEnabled = newTitle.isNotBlank()
-                )
-            },
-            onSaveClick = {}
+            onAddClick = {}
         )
     }
 }

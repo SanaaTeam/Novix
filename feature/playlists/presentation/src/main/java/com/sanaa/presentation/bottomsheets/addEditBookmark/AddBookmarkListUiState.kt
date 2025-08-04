@@ -1,8 +1,7 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
-data class AddEditBookmarkListUiState(
+data class AddBookmarkListUiState(
     val listTitle: String = "",
     val isLoading: Boolean = false,
-    val isSaveButtonEnabled: Boolean = false,
-    val isEditMode: Boolean = false
+    val isAddButtonEnabled: Boolean = false
 )
