@@ -8,9 +8,15 @@ data class PlayListScreenUiState(
     val isUserLoggedIn: Boolean = false,
     val isListAdded: Boolean = false,
     val showAddBottomSheet: Boolean = false,
+    val lists: List<PlayListUiModel> = emptyList()
 )
 
 data class SnackData(
     val message: String,
     val isError: Boolean
+)
+data class PlayListUiModel(
+    val id: Int = 0,
+    val title: String = "",
+    val mediaCount: Int = 1
 )
