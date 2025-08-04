@@ -36,7 +36,9 @@ class SeriesViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), SeriesScreenInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
 
     init {
         loadSeries()
@@ -98,12 +100,7 @@ class SeriesViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -135,7 +132,7 @@ class SeriesViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitTvSeriesRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -153,14 +150,8 @@ class SeriesViewModel @Inject constructor(
     override fun onSaveSeriesClicked() {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
-
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
@@ -210,13 +201,7 @@ class SeriesViewModel @Inject constructor(
         val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
         val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
         val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
-        val ratingDeferred = async {
-            runCatching {
-                val userId = getUser.getLoggedInUser().id
-                val ratedSeries = manageTvSeriesDetails.getSeriesRate(userId)
-                ratedSeries.find { it.id == seriesId }?.rating ?: 0
-            }.getOrElse { 0 }
-        }
+        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
 
         val series = seriesDeferred.await()
@@ -247,7 +232,19 @@ class SeriesViewModel @Inject constructor(
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 
-    private suspend fun addRate() {
+    private suspend fun getCurrentUserRating(seriesId: Int): Int {
+        val userId = getUser.getLoggedInUser().id
+        return try {
+            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
+
+        } catch (e: Exception) {
+            0
+        }
+
+    }
+
+
+    private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
             seriesId = seriesId,
             rating = state.value.imdbRating.toFloat()
@@ -259,12 +256,22 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
-    fun updateUserStatus(){
-        tryToExecute(callee = ::getUserState)
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
+    }
+
+    fun updateUserStatus() {
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {

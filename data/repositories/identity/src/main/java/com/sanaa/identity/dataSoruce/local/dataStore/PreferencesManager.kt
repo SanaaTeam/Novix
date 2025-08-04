@@ -7,4 +7,6 @@ interface PreferencesManager {
     val isGuest: Flow<Boolean>
     suspend fun updateSessionId(value: String)
     suspend fun setIsGuest(value: Boolean)
+
+    suspend fun clearSession()
 }

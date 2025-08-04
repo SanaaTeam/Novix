@@ -7,4 +7,5 @@ interface AuthenticationRepository {
     suspend fun createGuestSession()
     suspend fun getLoggedUser(): User
     suspend fun isLoggedIn(): Boolean
+    suspend fun logout()
 }

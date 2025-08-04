@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import com.sanaa.presentation.model.EpisodeUiModel
 import com.sanaa.presentation.model.SeasonUiModel
 import com.sanaa.presentation.model.SeriesUiModel
-import com.sanaa.presentation.util.formatDateLocalizedDigits
 import com.sanaa.presentation.util.formatLocalizedDate
 import entity.Episode
 import entity.MediaHistoryItem
@@ -23,7 +22,7 @@ fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
     genres = genres.map { it.toUiModel() },
-    releaseDate = releaseDate.formatDateLocalizedDigits().toString(),
+    releaseDate = releaseDate.toString(),
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(

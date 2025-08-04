@@ -1,13 +1,13 @@
 package com.sanaa.vod.media.movie
 
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
-import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
-import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.util.wrapApiCall
 import javax.inject.Inject

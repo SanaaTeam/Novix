@@ -1,12 +1,12 @@
 package com.sanaa.vod.history
 
-import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
 import com.sanaa.vod.history.dao.QueryDao
 import com.sanaa.vod.history.dao.RecentViewedDao
+import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
 import kotlinx.coroutines.flow.Flow
 import usecase.search.search_param.MediaType
 import javax.inject.Inject

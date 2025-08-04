@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
@@ -35,7 +37,7 @@ import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.util.toLocalizedDigits
+import com.sanaa.presentation.util.formatTime
 import java.util.Locale
 import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
@@ -45,16 +47,18 @@ fun MovieDetailsGridContent(
     state: MovieDetailsUiState,
     pagedSimilarMovies: LazyPagingItems<MovieUiModel>,
     locale: Locale,
-    interactionListener: MovieDetailsScreenInteractionListener
+    interactionListener: MovieDetailsScreenInteractionListener,
+    lazyState: LazyGridState
 ) {
+
     LazyVerticalGrid(
-        modifier = Modifier
-            .fillMaxSize(),
+        state = lazyState,
         columns = GridCells.Adaptive(minSize = 120.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
             start = 16.dp, end = 16.dp, bottom = 100.dp
-        )
+        ),
+        modifier = Modifier.fillMaxSize()
     ) {
         item(span = { GridItemSpan(maxLineSpan) }) {
             Box(modifier = Modifier.fillWidthOfParent(16.dp)) {
@@ -118,29 +122,10 @@ fun MovieDetailsGridContent(
                                 DotSeparator()
                             }
                             state.movieDetails.duration?.let { duration ->
-                                val hours = duration.inWholeHours
-                                val minutes =
-                                    (duration - hours.hours).inWholeMinutes
-
-                                val durationText = buildString {
-                                    if (hours > 0) append(
-                                        "${
-                                            hours.toInt().toLocalizedDigits(locale)
-                                        }${stringResource(R.string.hours_label)} "
-                                    )
-                                    if (minutes > 0) append(
-                                        "${
-                                            minutes.toInt()
-                                                .toLocalizedDigits(locale)
-                                        }${stringResource(R.string.minutes_label)}"
-                                    )
-                                }.trim()
-
-
                                 IconWithText(
                                     iconRes = R.drawable.icon_duration,
                                     contentDescription = null,
-                                    text = durationText,
+                                    text = formatTime(duration, locale),
                                     tint = Theme.colors.body
                                 )
                                 DotSeparator()
