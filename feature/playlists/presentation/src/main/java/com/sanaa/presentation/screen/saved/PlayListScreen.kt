@@ -143,7 +143,10 @@ fun Preview_PlaylistScreenContent_WithItems() {
                 isUserLoggedIn = true,
                 lists = listOf(
                     PlayListUiModel(id = 1, title = "Favorites", mediaCount = 5),
-                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 3)
+                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 10),
+                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 13),
+                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 7),
+                    PlayListUiModel(id = 2, title = "Watch Later", mediaCount = 8),
                 )
             )
         )

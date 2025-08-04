@@ -78,9 +78,6 @@ fun PlayListEmptyStateScreen(
 
             if (showLoginButton) {
                 OutlinedButton(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .size(width = 104.dp, height = 48.dp),
                     text = stringResource(R.string.login),
                     onClick = onLoginClick
                 )
