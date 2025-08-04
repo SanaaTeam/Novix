@@ -8,6 +8,7 @@
     <string name="trending_tvshows">المسلسلات الرائجة</string>
     <string name="movies">الافلام</string>
     <string name="tvshows">المسلسلات</string>
+    <string name="tv_shows">المسلسلات</string>
     <string name="unsuitable_image">صورة غير مناسبة</string>
     <string name="people">الشخصيات</string>
     <string name="trending_people"> الشخصيات المشهورة</string>
@@ -19,8 +20,11 @@
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
+    <string name="movie_poster">ملصق الفيلم</string>
     
     <!-- Watching History -->
     <string name="watching_history">سجل المشاهدات</string>
     <string name="no_watching_history">لا توجد مشاهدات بعد</string>
+    <string name="no_history_yet">لا توجد مشاهدات بعد</string>
+    <string name="failed_to_load_watching_history">فشل في تحميل سجل المشاهدات</string>
 </resources>

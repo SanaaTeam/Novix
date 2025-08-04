@@ -1,104 +1,138 @@
 package com.sanaa.presentation.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
+
+import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import entity.MediaHistoryItem
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
+import usecase.history.ManageWatchingHistoryUseCase
+import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 @HiltViewModel
-class WatchingHistoryViewModel @Inject constructor() : ViewModel(), MediaTabScreenInteractionListener {
-
-    private val _state = MutableStateFlow(
-        WatchingHistoryUiState(
-            watchingHistory = createMockPagingData(),
-            selectedMediaTypeUi = MediaTypeUi.MOVIE
-        )
+class WatchingHistoryViewModel @Inject constructor(
+    private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase
+) : BaseViewModel<WatchingHistoryUiState, MediaTabScreenEffect>(
+    initialState = WatchingHistoryUiState(
+        watchingHistory = flowOf(PagingData.empty<MediaItem>())
     )
-    val state: StateFlow<WatchingHistoryUiState> = _state.asStateFlow()
+) {
 
-    private val _effect = MutableSharedFlow<MediaTabScreenEffect>()
-    val effect: Flow<MediaTabScreenEffect> = _effect
+    init {
+        loadWatchingHistory()
+    }
 
-    private fun createMockPagingData(): Flow<PagingData<MediaItem>> {
-        val mockData = listOf(
-            MediaItem(
-                id = 1,
-                title = "Movie 1",
-                imageUrl = "https://example.com/movie1.jpg",
-                mediaTypeUi = MediaTypeUi.MOVIE,
-                rating = "8.5"
-            ),
-            MediaItem(
-                id = 2,
-                title = "Movie 2",
-                imageUrl = "https://example.com/movie2.jpg",
-                mediaTypeUi = MediaTypeUi.MOVIE,
-                rating = "7.8"
-            ),
-            MediaItem(
-                id = 3,
-                title = "TV Show 1",
-                imageUrl = "https://example.com/series1.jpg",
-                mediaTypeUi = MediaTypeUi.TV_SHOW,
-                rating = "9.2"
-            ),
-            MediaItem(
-                id = 4,
-                title = "Movie 3",
-                imageUrl = "https://example.com/movie3.jpg",
-                mediaTypeUi = MediaTypeUi.MOVIE,
-                rating = "8.0"
-            ),
-            MediaItem(
-                id = 5,
-                title = "TV Show 2",
-                imageUrl = "https://example.com/series2.jpg",
-                mediaTypeUi = MediaTypeUi.TV_SHOW,
-                rating = "8.7"
-            )
+    private fun loadWatchingHistory() {
+        updateState { it.copy(isLoading = true, error = null) }
+        
+        tryToExecute(
+            callee = {
+                val loggedInUser = getLoggedInUserUseCase.getLoggedInUser()
+                manageWatchingHistoryUseCase.getWatchingHistory(loggedInUser!!.username, null)
+            },
+            onSuccess = { watchingHistoryFlow ->
+                tryToCollect(
+                    callee = { watchingHistoryFlow },
+                    onCollect = { watchingHistoryList ->
+                        val mediaItems = watchingHistoryList.map { it.toState() }
+                        val pagingData = PagingData.from(mediaItems)
+                        updateState {
+                            it.copy(
+                                watchingHistory = flowOf(pagingData).cachedIn(viewModelScope),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    },
+                    onError = { exception ->
+                        updateState {
+                            it.copy(
+                                isLoading = false,
+                                error = exception.message ?: "Failed to load watching history"
+                            )
+                        }
+                    }
+                )
+            }
         )
-        return flowOf(PagingData.from(mockData)).cachedIn(viewModelScope)
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        _state.value = _state.value.copy(selectedMediaTypeUi = mediaTypeUi)
+    fun onMediaTabSelection(mediaTypeUi: MediaTypeUi?) {
+        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
+        
+        val mediaType = when (mediaTypeUi) {
+            null -> null // null means all types
+            MediaTypeUi.MOVIE -> MediaType.MOVIE
+            MediaTypeUi.TV_SHOW -> MediaType.TV_SERIES
+        }
+        
+        loadWatchingHistoryByType(mediaType)
     }
 
-    override fun onMovieGenreClick(id: Int?) {
-        // Handle movie genre click
+    private fun loadWatchingHistoryByType(mediaType: MediaType?) {
+        updateState { it.copy(isLoading = true, error = null) }
+        
+        tryToExecute(
+            callee = {
+                val loggedInUser = getLoggedInUserUseCase.getLoggedInUser()
+                manageWatchingHistoryUseCase.getWatchingHistory(loggedInUser!!.username, mediaType)
+            },
+            onSuccess = { watchingHistoryFlow ->
+                tryToCollect(
+                    callee = { watchingHistoryFlow },
+                    onCollect = { watchingHistoryList ->
+                        val mediaItems = watchingHistoryList.map { it.toState() }
+                        val pagingData = PagingData.from(mediaItems)
+                        updateState {
+                            it.copy(
+                                watchingHistory = flowOf(pagingData).cachedIn(viewModelScope),
+                                isLoading = false,
+                                error = null
+                            )
+                        }
+                    },
+                    onError = { exception ->
+                        updateState {
+                            it.copy(
+                                isLoading = false,
+                                error = exception.message ?: "Failed to load watching history"
+                            )
+                        }
+                    }
+                )
+            },
+            
+        )
     }
 
-    override fun onTvShowGenreClick(id: Int?) {
-        // Handle TV show genre click
-    }
-
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
+    fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
         viewModelScope.launch {
-            _effect.emit(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+            emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
         }
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    fun onSaveIconClick(media: MediaItem) {
         // Handle save icon click
     }
 
-    override fun onBackClick() {
+
+    fun onBackClick() {
         viewModelScope.launch {
-            _effect.emit(MediaTabScreenEffect.NavigateBack)
+            emitEffect(MediaTabScreenEffect.NavigateBack)
         }
     }
 }

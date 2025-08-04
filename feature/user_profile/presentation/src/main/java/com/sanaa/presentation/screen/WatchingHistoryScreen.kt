@@ -15,16 +15,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.designsystem.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.components.MediaTabs
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.LaunchedEffect
@@ -42,9 +41,25 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.viewmodel.WatchingHistoryViewModel
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import dagger.hilt.android.EntryPointAccessors
-
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.style.TextAlign
+import com.sanaa.feature.home.presentation.R as HomeR
 
 @Composable
 fun WatchingHistoryScreen(
@@ -61,25 +76,23 @@ fun WatchingHistoryScreen(
             .detailsApi()
     }
 
-
-
-            LaunchedEffect(Unit) {
-            viewModel.effect.collect { effect ->
-                when (effect) {
-                    is MediaTabScreenEffect.NavigateToMediaDetails -> {
-                        val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
-                        detailsApi.launch(
-                            context = navController.context,
-                            id = effect.id,
-                            startRoute = startRoute
-                        )
-                    }
-                    is MediaTabScreenEffect.NavigateBack -> {
-                        navController.popBackStack()
-                    }
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is MediaTabScreenEffect.NavigateToMediaDetails -> {
+                    val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.id,
+                        startRoute = startRoute
+                    )
+                }
+                is MediaTabScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
                 }
             }
         }
+    }
 
     NovixTheme(isSystemInDarkTheme()) {
         WatchingHistoryScreenContent(
@@ -93,7 +106,7 @@ fun WatchingHistoryScreen(
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
-    interactionListener: MediaTabScreenInteractionListener,
+    interactionListener: WatchingHistoryViewModel,
     modifier: Modifier = Modifier,
 ) {
     val watchedItems = state.watchingHistory.collectAsLazyPagingItems()
@@ -104,15 +117,27 @@ private fun WatchingHistoryScreenContent(
     ) {
 
         TopBar(
-            screenTitle = "Watching history",
+            screenTitle = stringResource(HomeR.string.watching_history),
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
         )
 
-        MediaTabs(
-            onTabClick = interactionListener::onMediaTabSelection,
-            selectedTab = state.selectedMediaTypeUi,
+        WatchingHistoryTabs(
+            onTabClick = { tab ->
+                val mediaTypeUi = when (tab) {
+                    "All" -> null
+                    "Movies" -> MediaTypeUi.MOVIE
+                    "TV Shows" -> MediaTypeUi.TV_SHOW
+                    else -> null
+                }
+                interactionListener.onMediaTabSelection(mediaTypeUi)
+            },
+            selectedTab = when (state.selectedMediaTypeUi) {
+                null -> "All"
+                MediaTypeUi.MOVIE -> "Movies"
+                MediaTypeUi.TV_SHOW -> "TV Shows"
+            },
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -124,16 +149,116 @@ private fun WatchingHistoryScreenContent(
             },
             modifier = Modifier.padding(top = 8.dp)
         ) { selectedMediaType ->
-            WatchingHistoryGrid(
-                items = watchedItems,
-                onItemClick = { media ->
-                    if (media.mediaTypeUi == selectedMediaType) {
-                        interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                    }
+            if (watchedItems.itemCount == 0) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(HomeR.string.no_history_yet),
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Center,
+                        color = com.sanaa.designsystem.design_system.theme.Theme.colors.hint
+                    )
                 }
-            )
+            } else {
+                WatchingHistoryGrid(
+                    items = watchedItems,
+                    onItemClick = { media ->
+                        if (selectedMediaType == null || media.mediaTypeUi == selectedMediaType) {
+                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                        }
+                    }
+                )
+            }
         }
 
+    }
+}
+
+@Composable
+fun WatchingHistoryTabs(
+    onTabClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    selectedTab: String = "All",
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Row(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            WatchingHistoryTabButton(
+                text = stringResource(HomeR.string.all),
+                onClick = onTabClick,
+                isSelected = selectedTab == stringResource(HomeR.string.all),
+                modifier = Modifier.weight(1f)
+            )
+            WatchingHistoryTabButton(
+                text = stringResource(HomeR.string.movies),
+                onClick = onTabClick,
+                isSelected = selectedTab == stringResource(HomeR.string.movies),
+                modifier = Modifier.weight(1f)
+            )
+            WatchingHistoryTabButton(
+                text = stringResource(HomeR.string.tv_shows),
+                onClick = onTabClick,
+                isSelected = selectedTab == stringResource(HomeR.string.tv_shows),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun WatchingHistoryTabButton(
+    text: String,
+    onClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
+) {
+    val animatedTextColor by animateColorAsState(
+        targetValue = if (isSelected) com.sanaa.designsystem.design_system.theme.Theme.colors.title else com.sanaa.designsystem.design_system.theme.Theme.colors.hint,
+    )
+
+    val animatedLineWidthDp by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0f,
+    )
+
+    val interactionSource = remember { MutableInteractionSource() }
+    
+    Column(
+        modifier = modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) { onClick(text) }
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = text,
+            color = animatedTextColor,
+            style = MaterialTheme.typography.bodyMedium
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+        Box(
+            modifier = Modifier
+                .height(2.dp)
+                .fillMaxWidth(animatedLineWidthDp)
+                .background(
+                    color = com.sanaa.designsystem.design_system.theme.Theme.colors.primary,
+                    shape = RoundedCornerShape(1.dp)
+                )
+        )
     }
 }
 
@@ -159,7 +284,7 @@ fun WatchingHistoryGrid(
                     posterImage = {
                         Image(
                             painter = painterResource(R.drawable.icon_placeholder_light),
-                            contentDescription = "Movie poster",
+                            contentDescription = stringResource(HomeR.string.movie_poster),
                             modifier = Modifier.fillMaxSize(),
                             contentScale = ContentScale.Crop
                         )
