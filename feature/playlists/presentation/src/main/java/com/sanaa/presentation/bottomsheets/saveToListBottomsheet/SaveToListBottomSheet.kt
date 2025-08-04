@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBottomSheet
 import com.sanaa.designsystem.design_system.component.button.OutlinedButton
@@ -38,6 +40,30 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun SaveToListBottomSheet(
+    isVisible: Boolean,
+    mediaId: Long,
+    onDismiss: () -> Unit,
+    onCreateNewListClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SaveToListViewModel = hiltViewModel(),
+) {
+    val state by viewModel.uiState.collectAsState()
+
+    SaveToListBottomSheetContent(
+        isVisible = isVisible,
+        state = state,
+        onDismiss = onDismiss,
+        onPlaylistSelected = viewModel::onPlaylistSelected,
+        onAddClick = {
+            viewModel.onAddClicked(mediaId = mediaId, onSuccess = onDismiss)
+        },
+        onCreateNewListClick = onCreateNewListClick,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
@@ -177,22 +203,19 @@ private fun SaveToListBottomSheetPreview() {
     }
 
     NovixTheme(isDarkMode = true) {
-        SaveToListBottomSheet(
+        SaveToListBottomSheetContent(
             isVisible = true,
             state = state,
             onDismiss = {},
-
             onPlaylistSelected = { selectedId ->
                 state = state.copy(
                     selectedListId = selectedId,
                     isAddButtonEnabled = true
                 )
             },
-
             onAddClick = {
                 state = state.copy(isLoading = true)
             },
-
             onCreateNewListClick = {}
         )
     }
