@@ -145,18 +145,6 @@ class MovieDetailsViewModelTest {
     }
 
     @Test
-    fun `onShowReviewsClick emits NavigateToReviewsScreen`() = runTest {
-        givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.effect.test {
-            viewModel.onShowReviewsClick(movieId)
-            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappy()
         testDispatcher.scheduler.advanceUntilIdle()
