@@ -1,6 +1,7 @@
 package com.sanaa.presentation.profileMapper
 
 import com.sanaa.presentation.model.RatedMediaUiModel
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import entity.Movie
 import entity.TvSeries
 
@@ -10,7 +11,7 @@ fun Movie.toRatedMediaUiModel(): RatedMediaUiModel {
         posterImageUrl = this.posterImageUrl,
         title = this.title,
         rating = this.rating,
-        mediaType = "movie"
+        mediaType = MediaTypeUi.MOVIE
     )
 }
 fun TvSeries.toRatedMediaUiModel(): RatedMediaUiModel {
@@ -19,6 +20,6 @@ fun TvSeries.toRatedMediaUiModel(): RatedMediaUiModel {
         posterImageUrl = this.posterImageUrl,
         title = this.title,
         rating = this.rating,
-        mediaType = "tv_show"
+        mediaType = MediaTypeUi.TV_SHOW
     )
 }

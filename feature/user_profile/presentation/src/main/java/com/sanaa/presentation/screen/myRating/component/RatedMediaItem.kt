@@ -17,17 +17,18 @@ import com.sanaa.designsystem.design_system.component.poster.RemoteImagePlacehol
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.presentation.model.RatedMediaUiModel
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
 
 @Composable
 fun RatedMediaItem(
     media: RatedMediaUiModel,
-    onDeleteClick: (mediaId: Int, mediaType: String) -> Unit,
-//    onCardClick: (mediaId: Int, mediaType: String) -> Unit, // تم إزالة هذا لتجنب الأخطاء
+    onDeleteClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
+    onCardClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     MediaPosterCard(
         modifier = modifier,
-//        onCardClick = { /* onCardClick(media.id, media.mediaType) */ }, // تم إزالة هذا
+        onCardClick = {onCardClick(media.id, media.mediaType)},
         posterImage = {
             RemoteBlurredHaramImageViewer(
                 imageUrl = media.posterImageUrl.orEmpty(),

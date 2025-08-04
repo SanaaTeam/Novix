@@ -10,13 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.presentation.model.RatedMediaUiModel
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
 
 @Composable
 fun RatedMediaListGrid(
+    onCardClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
+    onDeleteIconClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit ,
     mediaList: List<RatedMediaUiModel>,
     modifier: Modifier = Modifier,
     isScrollEnabled: Boolean = true,
-    onDeleteIconClick: (mediaId: Int, mediaType: String) -> Unit ,
 ) {
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
@@ -31,9 +33,9 @@ fun RatedMediaListGrid(
             key = { mediaItem -> "${mediaItem.mediaType}_${mediaItem.id}" }
         ) { mediaItem ->
             RatedMediaItem(
-                media = mediaItem,
+                onCardClick = onCardClick,
                 onDeleteClick = onDeleteIconClick,
-//                onCardClick = TODO(),
+                media = mediaItem,
             )
         }
     }

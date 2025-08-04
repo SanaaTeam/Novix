@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.myRating.MyRatingScreenUiState
 import com.sanaa.presentation.screen.myRating.MyRatingTab
 
@@ -18,7 +19,8 @@ import com.sanaa.presentation.screen.myRating.MyRatingTab
 fun RatedMediaListSectionContent(
     state: MyRatingScreenUiState,
     onTabSelected: (MyRatingTab) -> Unit,
-    onDeleteRatingClick: (mediaId: Int, mediaType: String) -> Unit,
+    onDeleteRatingClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
+    onCardClick: (mediaId: Int, mediaType: MediaTypeUi) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -51,10 +53,11 @@ fun RatedMediaListSectionContent(
         }
 
         RatedMediaListGrid(
-            mediaList = mediaListToShow,
             onDeleteIconClick = onDeleteRatingClick,
+            onCardClick = onCardClick,
+            mediaList = mediaListToShow,
             modifier = Modifier.fillMaxSize(),
-            isScrollEnabled = true
+            isScrollEnabled = true,
         )
     }
 }

@@ -5,6 +5,6 @@ sealed interface MyRatingScreenEffect {
     data object  ShowErrorSnackBar : MyRatingScreenEffect
     data object ShowSuccessSnackBar : MyRatingScreenEffect
 
-//    data class NavigateToMediaDetails(val mediaId: Int, val mediaTypeUi: MediaTypeUi): MyRatingScreenEffect
+    data class NavigateToMediaDetails(val mediaId: Int, val mediaTypeUi: MediaTypeUi): MyRatingScreenEffect
 
 }
