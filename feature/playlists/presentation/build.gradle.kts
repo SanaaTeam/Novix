@@ -11,8 +11,8 @@ android {
 
 dependencies {
     implementation(projects.feature.playlists.api)
-    implementation(projects.feature.authentication.api)
     implementation(projects.designSystem)
+    implementation(projects.feature.authentication.api)
     implementation(projects.imageViewer)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
@@ -42,7 +42,9 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.slf4j.api)
 }
