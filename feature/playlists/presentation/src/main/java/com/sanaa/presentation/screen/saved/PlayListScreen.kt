@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.saved
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -79,23 +80,32 @@ fun PlaylistScreenContent(
     interactionListener: PlayListScreenInteractionListener,
     state: PlayListScreenUiState
 ) {
-    when {
-        !state.isUserLoggedIn -> {
-            PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
-        }
+    AnimatedContent(
+        targetState = Triple(state.isUserLoggedIn, state.lists.isEmpty(), state.lists),
+        label = "PlaylistContentTransition"
+    ) { (isUserLoggedIn, isEmptyList, lists) ->
+        when {
+            !isUserLoggedIn -> {
+                PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
+            }
 
-        state.lists.isEmpty() -> {
-            PlaylistEmptyScreen(onFabClick = { interactionListener.onFabBottomSheetClicked() })
-        }
+            isEmptyList -> {
+                PlaylistEmptyScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet
+                )
+            }
 
-        else -> {
-            PlayListWithItemsScreen(
-                lists = state.lists,
-                onItemClick = { interactionListener.onItemListClicked() }
-            )
+            else -> {
+                PlayListWithItemsScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet,
+                    lists = lists,
+                    onItemClick = { interactionListener.onItemListClicked() }
+                )
+            }
         }
     }
-
 }
 
 
@@ -158,6 +168,7 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
-    override fun onAddNewListClicked() {}
     override fun onItemListClicked() {}
+    override fun onTitleChange() {}
+    override fun onSavedClicked() {}
 }
