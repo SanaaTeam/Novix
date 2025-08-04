@@ -8,8 +8,9 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
+import javax.inject.Inject
 
-class DailyCachedContentDataSourceImpl(
+class DailyCachedContentDataSourceImpl @Inject constructor(
     private val cachedContentDao: CachedContentDao,
     private val cachedContentMetadataDao: CachedContentMetadataDao,
     private val languageProvider: LanguageProvider
@@ -29,9 +30,11 @@ class DailyCachedContentDataSourceImpl(
     }
 
     override suspend fun getCachedPopularMedia(mediaType: MediaType): List<CachedContentLocalDto> {
-        val cachedMetadata =
-            cachedContentMetadataDao.getCachedContentMetadata(Category.POPULAR.name, language)
-        return cachedContentDao.getMedia(metadataId = cachedMetadata.id, mediaType = mediaType.name)
+        clearExpiredCachedContent()
+        cachedContentMetadataDao.getCachedContentMetadata(Category.POPULAR.name, language)?.let {
+                return cachedContentDao.getMedia(metadataId = it.id, mediaType = mediaType.name)
+            }
+        return emptyList()
     }
 
     override suspend fun cacheTopRatedMedia(media: List<CachedContentLocalDto>) {
@@ -46,9 +49,11 @@ class DailyCachedContentDataSourceImpl(
     }
 
     override suspend fun getCachedTopRatedMedia(mediaType: MediaType): List<CachedContentLocalDto> {
-        val cachedMetadata =
-            cachedContentMetadataDao.getCachedContentMetadata(Category.TOP_RATED.name, language)
-        return cachedContentDao.getMedia(metadataId = cachedMetadata.id, mediaType = mediaType.name)
+        clearExpiredCachedContent()
+        cachedContentMetadataDao.getCachedContentMetadata(Category.TOP_RATED.name, language)?.let {
+                return cachedContentDao.getMedia(metadataId = it.id, mediaType = mediaType.name)
+            }
+        return emptyList()
     }
 
     override suspend fun cacheUpcomingMedia(media: List<CachedContentLocalDto>) {
@@ -63,13 +68,15 @@ class DailyCachedContentDataSourceImpl(
     }
 
     override suspend fun getCachedUpcomingMedia(mediaType: MediaType): List<CachedContentLocalDto> {
-        val cachedMetadata =
-            cachedContentMetadataDao.getCachedContentMetadata(Category.UPCOMING.name, language)
-        return cachedContentDao.getMedia(metadataId = cachedMetadata.id, mediaType = mediaType.name)
+        clearExpiredCachedContent()
+        cachedContentMetadataDao.getCachedContentMetadata(Category.UPCOMING.name, language)?.let {
+            return cachedContentDao.getMedia(metadataId = it.id, mediaType = mediaType.name)
+        }
+        return emptyList()
     }
 
     override suspend fun clearExpiredCachedContent() {
-        val oneDayAgo = System.currentTimeMillis() - (1000 * 60 * 60 * 24)
+        val oneDayAgo = System.currentTimeMillis() - (1000 * 60)
         cachedContentMetadataDao.clearExpiredMetadata(oneDayAgo)
     }
 }

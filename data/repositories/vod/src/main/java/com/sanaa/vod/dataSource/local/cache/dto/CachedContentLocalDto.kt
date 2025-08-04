@@ -3,7 +3,6 @@ package com.sanaa.vod.dataSource.local.cache.dto
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "cached_content",
@@ -17,9 +16,8 @@ import androidx.room.PrimaryKey
         )
     ]
 )
-
 data class CachedContentLocalDto(
-    @PrimaryKey
+    @ColumnInfo(name = "id")
     val id: Int,
     @ColumnInfo(name = "title")
     val title: String,
@@ -34,7 +32,7 @@ data class CachedContentLocalDto(
     @ColumnInfo(name = "rating")
     val imdbRating: Float,
     @ColumnInfo(name = "metadata_id")
-    val metadataId: Int,
+    val metadataId: Long,
 ) {
     enum class MediaType {
         MOVIE,

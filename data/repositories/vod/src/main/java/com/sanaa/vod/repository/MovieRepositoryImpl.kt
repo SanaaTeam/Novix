@@ -1,7 +1,11 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
+import com.sanaa.vod.repository.mapper.cachedContent.toCachedContentLocalDto
+import com.sanaa.vod.repository.mapper.cachedContent.toMovie
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
@@ -16,6 +20,7 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val remote: RemoteMovieDataSource,
+    private val dailyCachedContentDataSource: DailyCachedContentDataSource,
     private val preferences: PreferencesManager
 ) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Movie =
@@ -58,18 +63,57 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getPopularMovies(page: Int): List<Movie> =
         safeCall("Failed to fetch movie Popular") {
-            remote.fetchPopularMovies(page).map { it.toDomain() }
+            if (page == 1) {
+                val cachedMovies =
+                    dailyCachedContentDataSource.getCachedPopularMedia(MediaType.MOVIE)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toMovie() }
+                }
+                return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
+                    dailyCachedContentDataSource.cachePopularMedia(
+                        it.map { it.toCachedContentLocalDto() }
+                    )
+                }
+            }
+
+            return remote.fetchPopularMovies(page).map { it.toDomain() }
         }
 
 
     override suspend fun getTopRatedMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie TopRated") {
-            remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
+            if (page == 1 && genreId == null) {
+                val cachedMovies =
+                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toMovie() }
+                }
+                return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
+                    dailyCachedContentDataSource.cacheTopRatedMedia(
+                        it.map { it.toCachedContentLocalDto() }
+                    )
+                }
+            }
+
+            return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie Upcoming") {
-            remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
+            if (page == 1 && genreId == null) {
+                val cachedMovies =
+                    dailyCachedContentDataSource.getCachedUpcomingMedia(MediaType.MOVIE)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toMovie() }
+                }
+                return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
+                    dailyCachedContentDataSource.cacheUpcomingMedia(
+                        it.map { it.toCachedContentLocalDto() }
+                    )
+                }
+            }
+
+            return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =

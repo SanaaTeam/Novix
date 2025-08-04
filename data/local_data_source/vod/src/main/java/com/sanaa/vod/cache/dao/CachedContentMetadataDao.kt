@@ -10,7 +10,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 interface CachedContentMetadataDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCachedContentMetadata(metadata: CachedContentMetadataLocalDto): Int
+    suspend fun insertCachedContentMetadata(metadata: CachedContentMetadataLocalDto): Long
 
     @Query(
         """
@@ -20,10 +20,10 @@ interface CachedContentMetadataDao {
         LIMIT 1
     """
     )
-    fun getCachedContentMetadata(
+    suspend fun getCachedContentMetadata(
         category: String?,
         language: String?
-    ): CachedContentMetadataLocalDto
+    ): CachedContentMetadataLocalDto?
 
     @Query("DELETE FROM cached_content_metadata WHERE timestamp < :timestamp")
     suspend fun clearExpiredMetadata(timestamp: Long)

@@ -19,8 +19,8 @@ interface CachedContentDao {
         AND (:mediaType IS NULL OR media_type = :mediaType)
     """
     )
-    fun getMedia(
-        metadataId: Int,
+    suspend fun getMedia(
+        metadataId: Long,
         mediaType: String? = null,
     ): List<CachedContentLocalDto>
 }
