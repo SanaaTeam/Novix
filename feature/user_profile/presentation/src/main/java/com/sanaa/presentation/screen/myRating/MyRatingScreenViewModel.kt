@@ -81,24 +81,26 @@ class MyRatingScreenViewModel @Inject constructor(
         updateState { it.copy(selectedTab = tab) }
     }
 
-    override fun onDeleteIconClick(mediaId: Int, mediaType: String) {
-        if (mediaType == "movie") {
-            tryToExecute(
-                callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
-                onSuccess = { success ->
-                    if (success) {
-                        updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
-                        emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                    } else {
+    override fun onDeleteIconClick(mediaId: Int, mediaType: MediaTypeUi) {
+        when (mediaType) {
+            MediaTypeUi.MOVIE -> {
+                tryToExecute(
+                    callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
+                    onSuccess = { success ->
+                        if (success) {
+                            updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
+                            emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
+                        } else {
+                            emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                        }
+                    },
+                    onError = { e ->
                         emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
                     }
-                },
-                onError = { e ->
-                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                }
-            )
-        } else if (mediaType == "tv_show") {
-            tryToExecute(
+                )
+            }
+
+            MediaTypeUi.TV_SHOW -> tryToExecute(
                 callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
                 onSuccess = { success ->
                     if (success) {
@@ -124,5 +126,9 @@ class MyRatingScreenViewModel @Inject constructor(
             )
         }
         loadRatedMedia()
+    }
+
+    override fun onMediaClick(id: Int, mediaType: MediaTypeUi) {
+        emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
     }
 }
