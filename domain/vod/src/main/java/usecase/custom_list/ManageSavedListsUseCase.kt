@@ -7,14 +7,11 @@ import javax.inject.Inject
 class ManageSavedListsUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
-    suspend fun getSavedLists(): List<SavedList> =
-        savedListRepository.getSavedLists()
+    suspend fun getSavedLists(accountId: Long): List<SavedList> =
+        savedListRepository.getSavedLists(accountId)
 
     suspend fun createSavedList(list: SavedList): SavedList =
         savedListRepository.createSavedList(list)
-
-    suspend fun editSavedList(list: SavedList) =
-        savedListRepository.editSavedList(list)
 
     suspend fun deleteSavedList(listId: Int) =
         savedListRepository.deleteSavedList(listId)
