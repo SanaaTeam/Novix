@@ -1,6 +1,6 @@
 package com.sanaa.novix.di.search_modules
 
-import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
+import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.vod.search.SearchApiService
 import com.sanaa.vod.search.SearchRemoteDataSourceImpl
 import dagger.Binds
