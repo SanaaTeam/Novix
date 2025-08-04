@@ -1,16 +1,14 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
-import dagger.hilt.android.lifecycle.HiltViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
+import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -32,9 +30,15 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"])
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
+        "seasonNumber is required in SavedStateHandle"
+    }
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
+        "episodeNumber is required in SavedStateHandle"
+    }
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
@@ -61,12 +65,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onSavedClick(seriesId: Int) {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
 
     }
@@ -84,12 +83,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -108,7 +102,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitEpisodeRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -166,13 +160,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
             val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
             val ratingDeferred = async {
-                runCatching {
-                    val userId = getUser.getLoggedInUser().id
-                    val ratedEpisodes = manageTvSeriesDetails.getEpisodesRate(userId)
-                    ratedEpisodes.find {
-                        it.seasonNumber == seasonNumber && it.number == episodeNumber
-                    }?.rating ?: 0
-                }.getOrElse { 0 }
+                getCurrentUserRating()
             }
 
             val episode = episodeDeferred.await()
@@ -193,8 +181,16 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
         }
 
+    private suspend fun getCurrentUserRating(): Int {
+        return try {
+            val userId = getUser.getLoggedInUser().id
+            manageTvSeriesDetails.getEpisodesRate(userId, seasonNumber, episodeNumber)
+        } catch (e: Exception) {
+            0
+        }
+    }
 
-    private suspend fun addRate() {
+    private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
             seriesId = seriesId,
             episodeNumber = episodeNumber,
@@ -208,12 +204,21 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
 
-    fun updateUserStatus(){
-        tryToExecute(callee = ::getUserState)
+    fun updateUserStatus() {
+        tryToExecute(callee = ::updateUserLoginState)
+    }
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
     }
 }

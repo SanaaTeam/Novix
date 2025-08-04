@@ -1,6 +1,6 @@
 package com.sanaa.vod.media.tvShow.response
 
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

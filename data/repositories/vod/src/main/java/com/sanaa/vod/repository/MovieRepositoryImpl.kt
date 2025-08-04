@@ -1,11 +1,10 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
-import com.sanaa.vod.mapper.actor.getFullImageUrl
-import com.sanaa.vod.mapper.actor.toDomain
-import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
+import com.sanaa.vod.repository.mapper.media.getFullImageUrl
+import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Genre
@@ -78,11 +77,11 @@ class MovieRepositoryImpl @Inject constructor(
             remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
         }
 
-    override suspend fun getMoviesRate(accountId: Long): List<Movie> {
+    override suspend fun getMovieRate(accountId: Long, movieId: Int): Int? {
         return safeCall("Failed to fetch movie Rate") {
             val sessionId = preferences.sessionId.first()
             remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
-                .map { it.toDomain() }
+                .map { it.toDomain() }.find { it.id == movieId }?.rating
         }
     }
 

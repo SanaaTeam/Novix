@@ -1,10 +1,10 @@
 package com.sanaa.vod.repository
 
-import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
-import com.sanaa.vod.mapper.actor.toDomain
-import com.sanaa.vod.mapper.actor.toMovie
-import com.sanaa.vod.mapper.actor.toTvSeries
-import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
+import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.media.toEntity
+import com.sanaa.vod.repository.mapper.media.toMovie
+import com.sanaa.vod.repository.mapper.media.toTvSeries
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
