@@ -1,7 +1,7 @@
 package com.sanaa.vod.media
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
+import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyEpisodeDto
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyGenreTvShowResponse
 import com.sanaa.vod.fakeData.TvShowDtoDummyData.dummyGuestOfHonor

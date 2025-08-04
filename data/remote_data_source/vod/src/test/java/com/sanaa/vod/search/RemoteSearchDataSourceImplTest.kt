@@ -1,11 +1,11 @@
 package com.sanaa.vod.search
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.remote.search.dto.ActorSearchDto
-import com.sanaa.vod.dataSource.remote.search.dto.MovieSearchDto
-import com.sanaa.vod.dataSource.remote.search.dto.TvShowSearchDto
-import com.sanaa.vod.dataSource.remote.search.response.SearchResponse
-import com.sanaa.vod.dataSource.remote.search.search.SearchRemoteDataSource
+import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
+import com.sanaa.vod.dataSource.remote.dto.search.ActorSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.MovieSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.TvShowSearchDto
+import com.sanaa.vod.dataSource.remote.dto.search.response.SearchResponse
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest

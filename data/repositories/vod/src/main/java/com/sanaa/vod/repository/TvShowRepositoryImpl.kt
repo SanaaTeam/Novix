@@ -1,10 +1,9 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
-import com.sanaa.vod.mapper.actor.toDomain
-import com.sanaa.vod.mapper.media.toDomain
-import com.sanaa.vod.mapper.media.toEntity
+import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
+import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Episode

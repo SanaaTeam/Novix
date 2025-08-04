@@ -1,6 +1,6 @@
 package com.sanaa.vod.media.actor.response
 
-import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
