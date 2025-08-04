@@ -108,7 +108,7 @@ fun MyAccountScreenContent(
                     onClick = { interactionsListener.onClickLanguageSetting() }),
                 AccountOptionItem(
                     painter = painterResource(R.drawable.icon_moon),
-                    title = stringResource(R.string.Appearance),
+                    title = stringResource(R.string.appearance),
                     onClick = { interactionsListener.onClickAppearance() }),
             )
         )
