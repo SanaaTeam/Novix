@@ -42,6 +42,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.designSystem)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.androidx.datastore)

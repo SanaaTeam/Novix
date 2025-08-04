@@ -55,7 +55,7 @@ class MyAccountScreenViewModelTest {
         runTest(testDispatcher) {
             viewModel.effect.test {
                 viewModel.onClickLanguageSetting()
-                assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.NavigateToLanguageSetting)
+                assertThat(awaitItem()).isEqualTo(MyAccountScreenEffect.UpdateAppLanguage)
             }
         }
 
