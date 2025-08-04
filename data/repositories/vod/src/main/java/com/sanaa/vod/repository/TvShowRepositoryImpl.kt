@@ -1,7 +1,11 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
+import com.sanaa.vod.repository.mapper.cachedContent.toCachedContentLocalDto
+import com.sanaa.vod.repository.mapper.cachedContent.toTvSeries
 import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
@@ -17,6 +21,7 @@ import javax.inject.Inject
 
 class TvShowRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteTvShowDataSource,
+    private val dailyCachedContentDataSource: DailyCachedContentDataSource,
     private val preferences: PreferencesManager
 ) : TvSeriesRepository {
 
@@ -75,7 +80,20 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries TopRated") {
-            remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
+            if (page == 1 && genreId == null) {
+                val cachedMovies =
+                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toTvSeries() }
+                }
+            }
+            return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
+                if (page == 1) {
+                    dailyCachedContentDataSource.cacheTopRatedMedia(
+                        it.map { it.toCachedContentLocalDto() }
+                    )
+                }
+            }
         }
 
 
@@ -86,6 +104,20 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getPopularSeries(page: Int): List<TvSeries> =
         safeCall("Failed to fetch TvSeries Popular") {
+            if (page == 1) {
+                val cachedMovies =
+                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toTvSeries() }
+                }
+            }
+            return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
+                if (page == 1) {
+                    dailyCachedContentDataSource.cachePopularMedia(
+                        it.map { it.toCachedContentLocalDto() }
+                    )
+                }
+            }
             remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }
         }
 

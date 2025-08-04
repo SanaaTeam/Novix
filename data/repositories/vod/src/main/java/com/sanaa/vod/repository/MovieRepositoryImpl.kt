@@ -69,14 +69,15 @@ class MovieRepositoryImpl @Inject constructor(
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toMovie() }
                 }
-                return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
+            }
+
+            return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
+                if (page == 1) {
                     dailyCachedContentDataSource.cachePopularMedia(
                         it.map { it.toCachedContentLocalDto() }
                     )
                 }
             }
-
-            return remote.fetchPopularMovies(page).map { it.toDomain() }
         }
 
 
@@ -88,14 +89,14 @@ class MovieRepositoryImpl @Inject constructor(
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toMovie() }
                 }
-                return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
+            }
+            return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
+                if (page == 1) {
                     dailyCachedContentDataSource.cacheTopRatedMedia(
                         it.map { it.toCachedContentLocalDto() }
                     )
                 }
             }
-
-            return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getUpcomingMovies(page: Int, genreId: Int?): List<Movie> =
@@ -106,14 +107,15 @@ class MovieRepositoryImpl @Inject constructor(
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toMovie() }
                 }
-                return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
+            }
+
+            return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
+                if (page == 1) {
                     dailyCachedContentDataSource.cacheUpcomingMedia(
                         it.map { it.toCachedContentLocalDto() }
                     )
                 }
             }
-
-            return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }
         }
 
     override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =
