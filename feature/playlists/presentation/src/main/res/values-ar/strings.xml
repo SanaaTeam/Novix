@@ -10,4 +10,7 @@
     <string name="added_to_list_failed">فشلت إضافة القائمة</string>
     <string name="arrow_right">سهم</string>
     <string name="my_list">قائمتي</string>
+    <string name="all">الكل</string>
+    <string name="movies">الافلام</string>
+    <string name="tvshows">البرامج</string>
 </resources>
