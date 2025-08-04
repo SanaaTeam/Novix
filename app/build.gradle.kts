@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.designSystem)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.androidx.datastore)
@@ -115,4 +116,11 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.converter.gson)
+    implementation( libs.androidx.appcompat)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
+}
+tasks.withType(Test::class.java).configureEach {
+    useJUnitPlatform()
 }

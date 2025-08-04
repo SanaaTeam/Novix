@@ -39,7 +39,7 @@ fun BaseBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
             scrimColor = ScrimColor,
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             containerColor = Theme.colors.surface,
             dragHandle = {
                 Row(

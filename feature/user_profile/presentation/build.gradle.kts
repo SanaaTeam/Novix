@@ -45,4 +45,5 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.slf4j.api)
+    implementation(projects.domain.identity)
 }
