@@ -1,8 +1,8 @@
 package com.sanaa.novix.di.details_modules
 
-import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
-import com.sanaa.vod.dataSource.remote.movie.RemoteMovieDataSource
-import com.sanaa.vod.dataSource.remote.tvShow.RemoteTvShowDataSource
+import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
+import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
+import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.media.actor.ActorApiService
 import com.sanaa.vod.media.actor.RemoteActorDataSourceImpl
 import com.sanaa.vod.media.movie.MovieApiService
