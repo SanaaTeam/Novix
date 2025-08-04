@@ -17,8 +17,9 @@ data class SearchScreenUiState(
     val error: String? = null,
     val lastTabIndex: Int = -1,
     val showLoginBottomSheet: Boolean = false,
-    val isUserLoggedIn: Boolean = false
-    ) {
+    val isUserLoggedIn: Boolean = false,
+    val isDarkMode: Boolean = false,
+) {
 
     companion object {
         const val MOVIE_INDEX = 0

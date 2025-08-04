@@ -30,7 +30,9 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
@@ -45,7 +47,8 @@ class SearchViewModel @Inject constructor(
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
     dispatcher
@@ -55,6 +58,7 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
+        observeSelectedTheme()
         updateUserStatus()
     }
 
@@ -137,7 +141,6 @@ class SearchViewModel @Inject constructor(
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
     }
-
 
 
     override fun onBottomSheetDismiss() {
@@ -370,11 +373,21 @@ class SearchViewModel @Inject constructor(
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
+    private fun observeSelectedTheme() {
+        tryToCollect(
+            callee = mangeUserPreferenceUseCase::getTheme,
+            onCollect = { isDarkMode -> updateState { it.copy(isDarkMode = isDarkMode == Theme.DARK) } },
+            onError = ::onDataLoadError
+        )
+
+    }
+
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
-    fun updateUserStatus(){
+
+    fun updateUserStatus() {
         tryToExecute(callee = ::getUserState)
     }
 

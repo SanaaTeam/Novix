@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -20,6 +21,7 @@ import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.presentation.navigation.SearchApiEntryPoint
+import com.sanaa.presentation.provider.LocalThemeProvider
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.componants.SearchHistoryContent
@@ -41,7 +43,6 @@ fun SearchScreen(
     val moviesPagingData = uiState.movies.collectAsLazyPagingItems()
     val tvShowsPagingData = uiState.tvShows.collectAsLazyPagingItems()
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
-
     val context = LocalContext.current
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -90,14 +91,15 @@ fun SearchScreen(
             }
         }
     }
-
-    SearchScreenContent(
-        uiState = uiState,
-        searchListener = searchViewModel,
-        moviesPagingData = moviesPagingData,
-        tvShowsPagingData = tvShowsPagingData,
-        actorsPagingData = actorsPagingData,
-    )
+    CompositionLocalProvider(LocalThemeProvider provides uiState.isDarkMode) {
+        SearchScreenContent(
+            uiState = uiState,
+            searchListener = searchViewModel,
+            moviesPagingData = moviesPagingData,
+            tvShowsPagingData = tvShowsPagingData,
+            actorsPagingData = actorsPagingData,
+        )
+    }
 }
 
 @Composable
