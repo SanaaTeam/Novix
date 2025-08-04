@@ -23,7 +23,7 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
     override fun onButtonLoginClicked() {
-        TODO("Not yet implemented")
+        emitEffect(PlayListScreenEffect.NavigateToLogin)
     }
 
     override fun onDismissAddBottomSheet() {
@@ -37,7 +37,7 @@ class PlayListScreenViewModel @Inject constructor(
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
     }
-    private fun updateUserStatus(){
+    fun updateUserStatus(){
         tryToExecute(callee = ::getUserState)
     }
 }
