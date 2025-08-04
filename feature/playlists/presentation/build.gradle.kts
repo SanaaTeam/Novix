@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.feature.playlists.api)
+    implementation(projects.feature.authentication.api)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
     implementation(projects.domain.vod)
