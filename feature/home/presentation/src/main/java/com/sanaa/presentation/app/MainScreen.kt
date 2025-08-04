@@ -1,6 +1,5 @@
 package com.sanaa.presentation.app
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,7 +19,6 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.HomeScreenRoute
 import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoutes
@@ -52,34 +50,32 @@ fun MainScreen() {
 
 
     CompositionLocalProvider(LocalMainNavController provides navController) {
-        NovixTheme(isSystemInDarkTheme()) {
-            NovixScaffold(
-                bottomBar = {
-                    AppBottomNavBar(
-                        navController = navController
-                    )
-                }, modifier = Modifier.systemBarsPadding()
-            ) { innerPadding ->
-                NavHost(
-                    navController = navController,
-                    startDestination = HomeScreenRoute,
-                    modifier = Modifier
-                ) {
-                    composable<HomeScreenRoute> {
-                        HomeScreen()
-                    }
-                    composable<SearchScreenRoute> {
-                        searchFeatureApi.SearchScreenApi()
-                    }
-                    composable<PlayListScreenRoute> {
+        NovixScaffold(
+            bottomBar = {
+                AppBottomNavBar(
+                    navController = navController
+                )
+            }, modifier = Modifier.systemBarsPadding()
+        ) { innerPadding ->
+            NavHost(
+                navController = navController,
+                startDestination = HomeScreenRoute,
+                modifier = Modifier
+            ) {
+                composable<HomeScreenRoute> {
+                    HomeScreen()
+                }
+                composable<SearchScreenRoute> {
+                    searchFeatureApi.SearchScreenApi()
+                }
+                composable<PlayListScreenRoute> {
 
-                    }
-                    composable<SavedContentScreenRoute> {
+                }
+                composable<SavedContentScreenRoute> {
 
-                    }
-                    composable<UserProfileScreenRoute> {
-                        userProfileApi.UserProfileScreenApi()
-                    }
+                }
+                composable<UserProfileScreenRoute> {
+                    userProfileApi.UserProfileScreenApi()
                 }
             }
         }

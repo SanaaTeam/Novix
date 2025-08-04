@@ -6,4 +6,19 @@ data class MyAccountScreenUiState(
     val showContentRestrictionBottomSheet: Boolean = false,
     val showChangeThemeBottomSheet: Boolean = false,
     val selectedLanguage: String? = null,
+    val selectedContentRestriction: ContentRestrictionUiState? = null,
+    val selectedTheme: ThemeUiState? = null,
+    val isLoading: Boolean = false,
 )
+
+
+enum class ThemeUiState {
+    LIGHT,
+    DARK
+}
+
+enum class ContentRestrictionUiState {
+    RESTRICTED,
+    UNRESTRICTED,
+    MODERATE_RESTRICTION
+}
