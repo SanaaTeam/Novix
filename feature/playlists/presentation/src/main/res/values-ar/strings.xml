@@ -6,4 +6,6 @@
     <string name="please_login_to_create_lists_and_add_your_favorite_items_to_it">يرجى تسجيل الدخول لإنشاء قوائم وإضافة العناصر المفضلة إليها!</string>
     <string name="my_lists">قوائمي</string>
     <string name="login">تسجيل الدخول</string>
+    <string name="added_to_list_successfully">تمت إضافة القائمة بنجاح</string>
+    <string name="added_to_list_failed">فشلت إضافة القائمة</string>
 </resources>

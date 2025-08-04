@@ -5,5 +5,4 @@ interface PlayListScreenInteractionListener {
     fun onButtonLoginClicked()
     fun onDismissAddBottomSheet()
     fun onAddNewListClicked()
-
 }
