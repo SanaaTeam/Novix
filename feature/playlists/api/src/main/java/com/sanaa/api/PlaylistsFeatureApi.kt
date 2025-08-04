@@ -6,5 +6,4 @@ import androidx.compose.runtime.Composable
 interface PlaylistsFeatureApi {
     @Composable
     fun PlaylistsScreenApi()
-    fun launchPlaylistScreen(context: Context)
 }

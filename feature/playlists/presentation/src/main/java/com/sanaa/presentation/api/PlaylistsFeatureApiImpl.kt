@@ -23,11 +23,6 @@ class PlaylistsFeatureApiImpl @Inject constructor() : PlaylistsFeatureApi {
             PlaylistScreen()
         }
     }
-
-    override fun launchPlaylistScreen(context: Context) {
-        val intent = Intent(context, PlaylistActivity::class.java)
-        context.startActivity(intent)
-    }
 }
 
 @AndroidEntryPoint
