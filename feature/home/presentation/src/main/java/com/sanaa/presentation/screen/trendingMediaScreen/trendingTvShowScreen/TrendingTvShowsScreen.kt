@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -11,12 +10,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.AppNavigation
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -52,12 +50,10 @@ fun TrendingTvShowsScreen(
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
-        TrendingMediaScreenContent(
-            title = stringResource(R.string.trending_tvshows),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
-        )
-    }
+    TrendingMediaScreenContent(
+        title = stringResource(R.string.trending_tvshows),
+        state = state.value,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
 }

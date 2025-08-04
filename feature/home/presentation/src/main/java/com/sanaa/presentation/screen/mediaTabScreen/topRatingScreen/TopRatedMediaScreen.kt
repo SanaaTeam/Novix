@@ -5,7 +5,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,7 +25,6 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaTabs
@@ -78,14 +76,12 @@ fun TopRatedMediaScreen(
             }
         }
     }
-    NovixTheme(isSystemInDarkTheme()) {
-        TopRatedMediaScreenContent(
-            title = stringResource(R.string.top_rated),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
-        )
-    }
+    TopRatedMediaScreenContent(
+        title = stringResource(R.string.top_rated),
+        state = state.value,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
 }
 
 
