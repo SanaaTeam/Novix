@@ -13,6 +13,8 @@ dependencies {
     implementation(projects.feature.playlists.api)
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
+    implementation(projects.domain.vod)
+    implementation(projects.domain.identity)
 
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
