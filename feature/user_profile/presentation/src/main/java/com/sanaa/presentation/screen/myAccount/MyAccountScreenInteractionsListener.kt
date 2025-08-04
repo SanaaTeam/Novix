@@ -9,4 +9,8 @@ interface MyAccountScreenInteractionsListener {
     fun onSelectLanguage(language: String)
     fun onDismissBottomSheet()
     fun onSaveLanguageClick()
+    fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?)
+    fun onSelectTheme(theme: ThemeUiState?)
+    fun onSaveThemeClick()
+    fun onSaveContentRestrictionClick()
 }
