@@ -2,4 +2,5 @@
 <resources>
     <string name="delete_rating_message">Delete rating successfully</string>
     <string name="error_delete_rating_message">failed to delete rating</string>
+    <string name="my_rating">My rating</string>
 </resources>
