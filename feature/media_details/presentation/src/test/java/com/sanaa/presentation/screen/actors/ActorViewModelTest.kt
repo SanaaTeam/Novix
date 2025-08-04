@@ -21,6 +21,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import kotlin.time.Duration.Companion.minutes
 
@@ -29,6 +30,7 @@ class ActorViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private val manageActorDetailsUseCase: ManageActorUseCase = mockk(relaxed = true)
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorViewModel
     private val actorId = 77
 
@@ -120,7 +122,7 @@ class ActorViewModelTest {
 
         val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
-        viewModel = ActorViewModel(savedStateHandle, manageActorDetailsUseCase)
+        viewModel = ActorViewModel(savedStateHandle, manageActorDetailsUseCase,checkIfUserIsLoggedInUseCase)
     }
 
     companion object {

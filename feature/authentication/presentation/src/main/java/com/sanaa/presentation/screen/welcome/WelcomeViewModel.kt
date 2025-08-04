@@ -10,7 +10,7 @@ class WelcomeViewModel @Inject constructor() : BaseViewModel<Unit, WelcomeScreen
 
     override fun onLoginClicked() = emitEffect(WelcomeScreenEffects.NavigateToLogin)
 
-    override fun onContinueClicked() = emitEffect(WelcomeScreenEffects.ContinueAsGuest)
+    override fun onContinueClicked() = emitEffect(WelcomeScreenEffects.ReturnGuestResultCode)
 
     override fun onExit() = emitEffect(WelcomeScreenEffects.ExitApp)
 }

@@ -26,6 +26,7 @@
             </intent-filter>
         </activity>
         <activity android:name="com.sanaa.presentation.api.MediaDetailsActivity" />
+        <activity android:name="com.sanaa.presentation.api.AuthActivity" />
     </application>
 
 </manifest>

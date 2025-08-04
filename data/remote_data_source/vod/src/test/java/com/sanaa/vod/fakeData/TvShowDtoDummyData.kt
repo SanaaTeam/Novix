@@ -1,13 +1,13 @@
 package com.sanaa.vod.fakeData
 
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
-import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
-import com.sanaa.vod.dataSource.remote.dto.SeasonDto
-import com.sanaa.vod.dataSource.remote.dto.TvShowDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
 import com.sanaa.vod.media.tvShow.response.TvShowCastResponse
 import com.sanaa.vod.media.tvShow.response.TvShowGenresResponse

@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao

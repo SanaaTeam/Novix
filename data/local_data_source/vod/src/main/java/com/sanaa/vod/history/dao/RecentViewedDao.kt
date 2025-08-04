@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao

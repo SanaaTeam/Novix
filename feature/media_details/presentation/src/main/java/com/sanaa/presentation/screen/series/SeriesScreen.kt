@@ -3,6 +3,10 @@ package com.sanaa.presentation.screen.series
 import android.app.Activity
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,8 +24,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,14 +36,17 @@ import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -47,13 +56,14 @@ import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.screen.series.components.CastComponent
 import com.sanaa.presentation.screen.series.components.EpisodesContent
-import com.sanaa.presentation.screen.series.components.SeasonTap
+import com.sanaa.presentation.screen.series.components.SeasonTab
 import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun SeriesScreen(
@@ -65,6 +75,22 @@ fun SeriesScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserStatus()
+        }
+    )
+
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
@@ -115,10 +141,7 @@ fun SeriesScreen(
 
                 SeriesScreenEffects.NavigateToLogin -> {
                     // Launch authentication activity
-                    val intent =
-                        Intent(navController.context, Class.forName("com.sanaa.novix.MainActivity"))
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    navController.context.startActivity(intent)
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
@@ -140,15 +163,22 @@ fun SeriesScreen(
 fun SeriesScreenContent(
     interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
 ) {
+
+    val scrollState = rememberScrollState()
+    val animatedColor by animateColorAsState(
+        targetValue = if (scrollState.value > 200) Theme.colors.surface else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+    )
+
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() },
+        backgroundShapes = { BackgroundShapes() },
     ) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
         ) {
-            NovixTopBar(
+            TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_back),
@@ -161,6 +191,7 @@ fun SeriesScreenContent(
                         onClick = interactionListener::onSaveSeriesClicked
                     )
                 }, modifier = Modifier
+                    .background(animatedColor)
                     .systemBarsPadding()
                     .zIndex(10f)
             )
@@ -177,7 +208,7 @@ fun SeriesScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        NovixLoadingIndicator(
+                        LoadingIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
@@ -186,7 +217,7 @@ fun SeriesScreenContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(
-                                state = rememberScrollState()
+                                state = scrollState
                             )
                     ) {
                         Column(
@@ -206,7 +237,11 @@ fun SeriesScreenContent(
                                         state.series.id
                                     )
                                 },
-                                onGenreClicked = { genre -> interactionListener.onGenreClicked(genre) })
+                                onGenreClicked = { genre ->
+                                    interactionListener.onGenreClicked(
+                                        genre
+                                    )
+                                })
 
                             if (state.series.overview.isNotEmpty()) {
                                 OverviewSection(
@@ -224,7 +259,7 @@ fun SeriesScreenContent(
                                     casts = state.cast,
                                     onActorClicked = interactionListener::onActorClicked,
                                 )
-                            SeasonTap(
+                            SeasonTab(
                                 onClick = interactionListener::onSeasonNumberClicked,
                                 seasonCounts = state.series.seasonsCount,
                                 currentSeason = state.selectedSeason,
@@ -240,7 +275,7 @@ fun SeriesScreenContent(
                                         verticalArrangement = Arrangement.Center
 
                                     ) {
-                                        NovixLoadingIndicator()
+                                        LoadingIndicator()
                                     }
                                 } else {
                                     EpisodesContent(

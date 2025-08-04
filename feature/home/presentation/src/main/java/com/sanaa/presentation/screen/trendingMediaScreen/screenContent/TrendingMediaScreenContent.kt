@@ -10,10 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 
@@ -32,7 +33,7 @@ fun TrendingMediaScreenContent(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        NovixTopBar(
+        TopBar(
             leftContent = {
                 TopBarClickableIcon(
                     icon = painterResource(id = R.drawable.icon_back),
@@ -52,6 +53,14 @@ fun TrendingMediaScreenContent(
             onGenreClick = interactionListener::onGenreClick,
             onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
             onSaveIconClick = interactionListener::onSaveIconClick,
+        )
+
+        RequestToLoginBottomSheet(
+            isVisible = state.showBottomSheet,
+            onDismiss = interactionListener::onDismissBottomSheet,
+            onLoginButtonClick = {
+                interactionListener.onLoginButtonClick()
+            }
         )
     }
 }

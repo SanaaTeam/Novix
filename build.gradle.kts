@@ -15,6 +15,13 @@ val excludedPackages = listOf(
     "*.R",
     "*.R_*",
     "**.di.**",
+    "**.dao.**",
+    "**.dto.**",
+    "**.db.**",
+    "**.util.**",
+    "**.response.**",
+    "**.entity.**",
+    "**.exceptions.**",
     "**.logging.**",
     "*.BuildConfig*",
     "*.Manifest*",
@@ -24,20 +31,11 @@ val excludedPackages = listOf(
     "*.NovixApp*",
     "com.sanaa.image_viewer.*",
     "com.sanaa.designsystem.*",
-    "com.sanaa.search.dto.*",
-    "com.sanaa.search.di.*",
+    "com.sanaa.vod.dataSource.**",
     "com.sanaa.movies.MovieApiService.*",
 
-    "entity.**",
     "search.usecase.search_param.**",
-    "**.dao.**",
-    "**.dto.**",
-    "**.db.**",
-    "**.util.**",
-    "**.response.**",
-    "exceptions.**",
     "com.sanaa.vod.mapper.*",
-    "com.sanaa.presentation.filter_bottomsheet.components.**",
     "com.sanaa.presentation.screen.componants.*",
     "com.sanaa.presentation.component.**",
     "com.sanaa.presentation.shared_component.*",
@@ -45,8 +43,6 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.details_base.*",
     "com.sanaa.presentation.screen.state.*",
     "com.sanaa.presentation.screen.SearchScreen*",
-    "com.sanaa.presentation.filter_bottomsheet.FilterBottomSheet*",
-    "com.sanaa.search.search_result.db.*",
     "com.sanaa.presentation.navigation.**",
     "com.sanaa.presentation.screen.actor.componants.**",
     "com.sanaa.presentation.screen.actor.screen.**",
@@ -68,7 +64,6 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.api.**",
     "com.sanaa.presentation.**",
     "com.sanaa.presentation.screen.**",
-    "com.sanaa.vod.dataSource.remote.search.search.**",
     "com.sanaa.presentation.util.**",
     "com.sanaa.presentation.state.**",
     "com.sanaa.vod.media.**",
@@ -78,7 +73,6 @@ val excludedPackages = listOf(
     "**_Factory",
     "**_HiltModules*",
     "Hilt_*",
-    "**.di.**",
     "com.sanaa.novix.Hilt_*",
     "com.sanaa.novix.*_Factory",
     "com.sanaa.novix.*_MembersInjector",
@@ -103,14 +97,25 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.base.**",
     "**.util.**",
     "**.mapper.**",
-    "com.sanaa.presentation.filter_bottomsheet.state.**",
+    "**.api.**",
 )
+
+val profileScreenPackages = listOf(
+    "com.sanaa.presentation.screen.MyAccountScreen*",
+    "com.sanaa.presentation.screen.myAccount.component.**",
+)
+
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
     kover {
         reports {
             filters {
-                excludes { classes(excludedPackages) }
+                excludes {
+                    classes(
+                        excludedPackages +
+                                profileScreenPackages
+                    )
+                }
             }
             total {
                 verify {

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.review.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -12,16 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
@@ -57,24 +58,24 @@ fun ReviewCard(
                     nonHaramThreshold = 0.7f,
                     contentDescription = review.authorName,
                     placeholderContent = {
-                        Icon(
+                        Image(
                             painter = painterResource(R.drawable.user_avater),
                             contentDescription = stringResource(R.string.anonymous),
                             modifier = Modifier
                                 .size(28.dp)
                                 .align(Alignment.Center),
-                            tint = Theme.colors.hint
+                            colorFilter = ColorFilter.tint(Theme.colors.hint)
 
                         )
                     },
                     errorContent = {
-                        Icon(
+                        Image(
                             painter = painterResource(R.drawable.user_avater),
                             contentDescription = stringResource(R.string.anonymous),
                             modifier = Modifier
                                 .size(28.dp)
                                 .align(Alignment.Center),
-                            tint = Theme.colors.hint
+                            colorFilter = ColorFilter.tint(Theme.colors.hint)
                         )
                     },
                 ) {
@@ -88,15 +89,17 @@ fun ReviewCard(
             Spacer(modifier = Modifier.width(8.dp))
             Column {
 
-                Text(
+                AppText(
                     text = review.authorName.takeUnless { it.isNullOrBlank() }
                         ?: stringResource(R.string.anonymous),
                     style = Theme.textStyle.title.medium,
                     color = Theme.colors.title
                 )
                 review.username?.let {
-                    Text(
-                        text = it, style = Theme.textStyle.label.small, color = Theme.colors.hint
+                    AppText(
+                        text = it,
+                        style = Theme.textStyle.label.small,
+                        color = Theme.colors.hint
                     )
                 }
             }

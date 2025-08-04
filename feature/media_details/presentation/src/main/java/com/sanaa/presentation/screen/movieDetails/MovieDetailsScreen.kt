@@ -4,10 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,8 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,14 +33,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.loading.NovixLoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixBackgroundShapes
+import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.top_bar.NovixTopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
@@ -45,6 +55,7 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
+import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -91,6 +102,21 @@ private fun HandleMovieDetailsEffects(
     val currentContext by rememberUpdatedState(context)
     val currentNavController by rememberUpdatedState(navController)
 
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        DetailsApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher =  launchAuthActivityForResult(
+        loggedInWithSessionId = {
+            viewModel.updateUserStatus()
+        },
+        loggedInAsGuest = {
+            viewModel.updateUserStatus()
+        }
+    )
+
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -130,8 +156,8 @@ private fun HandleMovieDetailsEffects(
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> onShowSuccess()
                 is MovieDetailsUiEffect.ShowErrorSnackBar -> onShowError()
 
-                MovieDetailsUiEffect.NavigateToLogin -> {
-                    // TODO: implement login navigation
+                 MovieDetailsUiEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
@@ -149,15 +175,38 @@ fun MovieDetailsContent(
     val context = LocalContext.current
     val locale = remember { getCurrentLocale(context) }
 
+    val lazyState = rememberLazyGridState()
+    var shouldShowBackground by remember { mutableStateOf(false) }
+    val animatedColor by animateColorAsState(
+        targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+    )
+
+    LaunchedEffect(lazyState) {
+        snapshotFlow {
+            if (lazyState.firstVisibleItemIndex == 0) {
+                lazyState.firstVisibleItemScrollOffset
+            } else {
+                Int.MAX_VALUE
+            }
+        }.collect { totalScrollPosition ->
+            shouldShowBackground = totalScrollPosition > 200
+        }
+    }
+
     NovixScaffold(
-        backgroundShapes = { NovixBackgroundShapes() }) {
+        backgroundShapes = { BackgroundShapes() }) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
-
         ) {
-            MovieTopBar(interactionListener = interactionListener, movieId = state.movieDetails.id)
+
+            MovieTopBar(
+                interactionListener = interactionListener,
+                movieId = state.movieDetails.id,
+                modifier = Modifier.background(color = animatedColor)
+            )
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
@@ -175,7 +224,7 @@ fun MovieDetailsContent(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            NovixLoadingIndicator()
+                            LoadingIndicator()
                         }
                     }
                 } else {
@@ -183,7 +232,8 @@ fun MovieDetailsContent(
                         state = state,
                         pagedSimilarMovies = pagedSimilarMovies,
                         locale = locale,
-                        interactionListener = interactionListener
+                        interactionListener = interactionListener,
+                        lazyState = lazyState
                     )
                 }
             }
@@ -219,7 +269,10 @@ fun MovieDetailsContent(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
                     isVisible = state.showLoginBottomSheet,
                     title = title,
-                    text = text
+                    text = text,
+                    onLoginButtonClick = {
+                        interactionListener.onLoginButtonClick()
+                    }
                 )
             }
         }
@@ -231,9 +284,10 @@ fun MovieDetailsContent(
 @Composable
 fun MovieTopBar(
     interactionListener: MovieDetailsScreenInteractionListener,
-    movieId: Int
+    movieId: Int,
+    modifier: Modifier = Modifier,
 ) {
-    NovixTopBar(
+    TopBar(
         leftContent = {
             TopBarClickableIcon(
                 icon = painterResource(R.drawable.icon_back),
@@ -246,7 +300,7 @@ fun MovieTopBar(
                 onClick = { interactionListener.onBookmarkClick(movieId) }
             )
         },
-        modifier = Modifier
+        modifier = modifier
             .systemBarsPadding()
             .zIndex(10f)
     )

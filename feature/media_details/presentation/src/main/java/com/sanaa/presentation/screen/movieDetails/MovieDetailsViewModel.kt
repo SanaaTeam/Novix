@@ -7,21 +7,23 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
@@ -36,11 +38,13 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
 
-    private val movieId: Int = checkNotNull(savedStateHandle["movieId"])
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+        "movieId is required in SavedStateHandle"
+    }
 
     init {
         fetchMovieDetails(movieId)
-        tryToExecute(callee = ::getUserState)
+        updateUserStatus()
     }
 
     override fun onBackClick() {
@@ -58,12 +62,7 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onBookmarkClick(movieId: Int) {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.BOOKMARK
-                )
-            }
+            promptLogin(LoginPromptType.BOOKMARK)
         }
 
     }
@@ -76,12 +75,7 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             updateState { it.copy(showRateBottomSheet = true) }
         } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true,
-                    loginPromptType = LoginPromptType.RATE
-                )
-            }
+            promptLogin(LoginPromptType.RATE)
         }
     }
 
@@ -127,7 +121,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::addRate,
+            callee = ::submitMovieRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -186,31 +180,46 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadMovieDetails(movieId: Int) {
-        val movie = manageMovieDetails.getMovieDetails(movieId)
-        val cast = manageMovieDetails.getMovieCast(movieId)
-        val images = manageMovieDetails.getMovieImages(movieId)
-        val similar = loadSimilarMovies(movieId)
-        val trailerUrl = manageMovieDetails.getMovieTrailer(movieId)
-        val currentMovieRating = runCatching {
-            val userId = getLoggedInUserUseCase.getLoggedInUser().id
-            val ratedMovies = manageMovieDetails.getMoviesRate(userId)
-            ratedMovies.find { it.id == movieId }?.rating ?: 0
-        }.getOrElse { 0 }
+
+    private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
+        val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
+        val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
+        val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
+        val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
+        val ratingDeferred = async { getCurrentUserRating(movieId) }
+        val similarDeferred = async { loadSimilarMovies(movieId) }
+
+        val movie = movieDeferred.await()
+        val cast = castDeferred.await()
+        val images = imagesDeferred.await()
+        val trailerUrl = trailerDeferred.await()
+        val currentMovieRating = ratingDeferred.await()
+        val similar = similarDeferred.await()
 
         addMovieToHistory(movie)
         updateState {
             it.copy(
-                movieDetails = movie.toUiModel(trailerUrl = trailerUrl),
-                cast = cast.map { actor -> actor.toActorUiModel() },
+                movieDetails = movie.toUiModel(isBookmarked = false, trailerUrl = trailerUrl),
+                cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
                 imdbRating = currentMovieRating
             )
         }
+
     }
 
-    private suspend fun addRate() {
+
+    private suspend fun getCurrentUserRating(movieId: Int): Int {
+        val userId = getLoggedInUserUseCase.getLoggedInUser().id
+        return try {
+            manageMovieDetails.getMovieRate(userId, movieId)
+        } catch (e: Exception) {
+            0
+        }
+    }
+
+    private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
             movieId = movieId,
@@ -223,9 +232,13 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getUserState() {
+    private suspend fun updateUserLoginState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    }
+
+    fun updateUserStatus() {
+        tryToExecute(callee = ::updateUserLoginState)
     }
 
     private suspend fun addMovieToHistory(movie: Movie) {
@@ -240,4 +253,14 @@ class MovieDetailsViewModel @Inject constructor(
             username = user.username
         )
     }
+
+    private fun promptLogin(type: LoginPromptType) {
+        updateState {
+            it.copy(
+                showLoginBottomSheet = true,
+                loginPromptType = type
+            )
+        }
+    }
+
 }
