@@ -20,14 +20,13 @@ class SaveToListViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            // TODO:  fix it
-            callee = { manageSavedListsUseCase.getSavedLists(0) },
+            callee = { manageSavedListsUseCase.getSavedLists() },
             onSuccess = { domainLists ->
                 val uiLists = domainLists.map { savedList ->
                     PlaylistUiItem(
                         id = savedList.id.toLong(),
                         title = savedList.title,
-                        itemCount = 0
+                        itemCount = savedList.itemCount
                     )
                 }
                 updateState { it.copy(isLoading = false, playlists = uiLists) }
@@ -56,7 +55,8 @@ class SaveToListViewModel @Inject constructor(
             callee = {
                 manageSavedListItemsUseCase.addMovieToSavedList(
                     listId = selectedListId.toInt(),
-                    movieId = mediaId.toInt())
+                    movieId = mediaId.toInt()
+                )
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
