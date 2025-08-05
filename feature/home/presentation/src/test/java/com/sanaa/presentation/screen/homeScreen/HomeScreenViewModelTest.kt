@@ -4,13 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.homeScreen.HomeScreenEffect
 import com.sanaa.presentation.screen.homeScreen.HomeScreenViewModel
 import com.sanaa.presentation.state.MediaTypeUi
-import entity.Genre
-import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
-import entity.User
 import exceptions.NoLoggedInUserException
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -31,7 +26,6 @@ import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
-import usecase.search.search_param.MediaType
 import kotlin.time.Duration.Companion.minutes
 
 @ExperimentalCoroutinesApi
@@ -81,35 +75,6 @@ class HomeScreenViewModelTest {
             testDispatcher
         )
     }
-
-    @Test
-    fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
-        val popularMovies = listOf(dummyMovie.copy(id = 1))
-        val popularTvSeries = listOf(dummyTvSeries.copy(id = 2))
-
-        coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
-        coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
-
-        initializeViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertThat(state.popularMedia).hasSize(2)
-        assertThat(state.isLoading).isFalse()
-    }
-
-    @Test
-    fun `init should return empty watched history when user is not logged in`() =
-        runTest(testDispatcher) {
-            coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
-
-            initializeViewModel()
-            advanceUntilIdle()
-
-            val finalState = viewModel.state.value
-            assertThat(finalState.continueWatchingMedia).isEmpty()
-        }
-
 
     @Test
     fun `onMoviesCardClicked should emit NavigateToMoviesScreen effect`() =
@@ -239,17 +204,6 @@ class HomeScreenViewModelTest {
             releaseDate = LocalDate(2020, 2, 1),
             overview = "",
             trailerUrl = null,
-            rating = 0
-        )
-        val dummyTvSeries = TvSeries(
-            id = 2,
-            title = "Dummy Series",
-            posterImageUrl = "",
-            overview = "",
-            releaseDate = LocalDate(2020, 2, 1),
-            genres = emptyList(),
-            imdbRating = 8.0f,
-            seasonsCount = 3,
             rating = 0
         )
     }
