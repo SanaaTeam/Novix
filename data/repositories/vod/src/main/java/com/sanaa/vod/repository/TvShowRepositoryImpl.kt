@@ -84,7 +84,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
-                    cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toDomain() }
                 }
 
             }
@@ -97,8 +97,6 @@ class TvShowRepositoryImpl @Inject constructor(
                     )
                 }
             }
-
-
         }
 
 
@@ -113,9 +111,8 @@ class TvShowRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toDomain() }
                 }
-
             }
 
             return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
@@ -126,8 +123,6 @@ class TvShowRepositoryImpl @Inject constructor(
                     )
                 }
             }
-
-            remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }
         }
 
     override suspend fun getSeriesGenres(): List<Genre> {
