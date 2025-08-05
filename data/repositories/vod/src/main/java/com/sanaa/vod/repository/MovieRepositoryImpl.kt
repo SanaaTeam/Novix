@@ -67,9 +67,8 @@ class MovieRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toDomain() }
                 }
-
             }
 
             return remote.fetchPopularMovies(page).map { it.toDomain() }.also {

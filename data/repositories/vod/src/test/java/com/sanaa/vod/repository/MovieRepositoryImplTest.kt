@@ -2,6 +2,9 @@ package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
+import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
@@ -10,10 +13,13 @@ import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.review.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
+import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -24,12 +30,12 @@ class MovieRepositoryImplTest {
 
     private lateinit var repository: MovieRepositoryImpl
     private val preferences: PreferencesManager = mockk()
-    private val remote: RemoteMovieDataSource =
-        mockk<RemoteMovieDataSource>(relaxed = true)
+    private val remote: RemoteMovieDataSource = mockk(relaxed = true)
+    private val local: LocalCachedContentDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        repository = MovieRepositoryImpl(remote, preferences)
+        repository = MovieRepositoryImpl(remote, local, preferences)
     }
 
     @Test
@@ -120,22 +126,205 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularMovies returns empty list`() = runTest {
+    fun `getPopularMovies should return cached data if available when page is 1`() = runTest {
+        val cached = listOf(sampleMovieLocalDto)
+        coEvery { local.getCachedMovies(Category.POPULAR) } returns cached
+
         val result = repository.getPopularMovies(1)
-        assertThat(result).isEmpty()
+
+        assertThat(result).isEqualTo(cached.map { it.toDomain() })
     }
 
     @Test
-    fun `getTopRatedMovies returns empty list`() = runTest {
-        val result = repository.getTopRatedMovies(page = 1, genreId = 1)
-        assertThat(result).isEmpty()
+    fun `getPopularMovies should fetches remote when page is 1 and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.POPULAR) } returns emptyList()
+        coEvery { remote.fetchPopularMovies(1) } returns movies
+
+        val result = repository.getPopularMovies(1)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
     }
 
     @Test
-    fun `getUpcomingMovies returns empty list`() = runTest {
+    fun `getPopularMovies should cache the new data when page is 1 and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.POPULAR) } returns emptyList()
+        coEvery { remote.fetchPopularMovies(1) } returns movies
+
+        repository.getPopularMovies(1)
+
+        coVerify(exactly = movies.size) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getPopularMovies should fetch from remote if page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchPopularMovies(2) } returns movies
+
+        val result = repository.getPopularMovies(2)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getPopularMovies should not cache the new data when page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchPopularMovies(2) } returns movies
+
+        repository.getPopularMovies(2)
+
+        coVerify(exactly = 0) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should return cached data if available when page is 1 and genreId is null`() = runTest {
+        val cached = listOf(sampleMovieLocalDto)
+        coEvery { local.getCachedMovies(Category.TOP_RATED) } returns cached
+
+        val result = repository.getTopRatedMovies(1, null)
+
+        assertThat(result).isEqualTo(cached.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getTopRatedMovies should fetches remote when page is 1 and genreId is null and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.TOP_RATED) } returns emptyList()
+        coEvery { remote.fetchTopRatedMovies(1, null) } returns movies
+
+        val result = repository.getTopRatedMovies(1, null)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getTopRatedMovies should cache the new data when page is 1 and genreId is null and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.TOP_RATED) } returns emptyList()
+        coEvery { remote.fetchTopRatedMovies(1, null) } returns movies
+
+        repository.getTopRatedMovies(1, null)
+
+        coVerify(exactly = movies.size) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should not cache the new data when page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.TOP_RATED) } returns emptyList()
+        coEvery { remote.fetchTopRatedMovies(2, null) } returns movies
+
+        repository.getTopRatedMovies(2, null)
+
+        coVerify(exactly = 0) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should not cache the new data when genreId is not null`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.TOP_RATED) } returns emptyList()
+        coEvery { remote.fetchTopRatedMovies(1, 1) } returns movies
+
+        repository.getTopRatedMovies(1, 1)
+
+        coVerify(exactly = 0) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getTopRatedMovies should fetch from remote when page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchTopRatedMovies(2, null) } returns movies
+
+        val result = repository.getTopRatedMovies(2, null)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getTopRatedMovies should fetch from remote when genreId is not null`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchTopRatedMovies(1, 1) } returns movies
+
+        val result = repository.getTopRatedMovies(1, 1)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getUpcomingMovies should return cached data if available when page is 1 and genreId is null`() = runTest {
+        val cached = listOf(sampleMovieLocalDto)
+        coEvery { local.getCachedMovies(Category.UPCOMING) } returns cached
+
         val result = repository.getUpcomingMovies(1, null)
-        assertThat(result).isEmpty()
+
+        assertThat(result).isEqualTo(cached.map { it.toDomain() })
     }
+
+    @Test
+    fun `getUpcomingMovies should fetches remote when page is 1 and genreId is null and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.UPCOMING) } returns emptyList()
+        coEvery { remote.fetchUpcomingMovies(1, null) } returns movies
+
+        val result = repository.getUpcomingMovies(1, null)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getUpcomingMovies should cache the new data when page is 1 and genreId is null and cache is empty`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.UPCOMING) } returns emptyList()
+        coEvery { remote.fetchUpcomingMovies(1, null) } returns movies
+
+        repository.getUpcomingMovies(1, null)
+
+        coVerify(exactly = movies.size) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getUpcomingMovies should not cache the new data when page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.UPCOMING) } returns emptyList()
+        coEvery { remote.fetchUpcomingMovies(2, null) } returns movies
+
+        repository.getUpcomingMovies(2, null)
+
+        coVerify(exactly = 0) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getUpcomingMovies should not cache the new data when genreId is not null`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { local.getCachedMovies(Category.UPCOMING) } returns emptyList()
+        coEvery { remote.fetchUpcomingMovies(1, 1) } returns movies
+
+        repository.getUpcomingMovies(1, 1)
+
+        coVerify(exactly = 0) { local.cacheMovie(any(), any()) }
+    }
+
+    @Test
+    fun `getUpcomingMovies should fetch from remote when page is not 1`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchUpcomingMovies(2, null) } returns movies
+
+        val result = repository.getUpcomingMovies(2, null)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
+    @Test
+    fun `getUpcomingMovies should fetch from remote when genreId is not null`() = runTest {
+        val movies = listOf(sampleMovieDto)
+        coEvery { remote.fetchUpcomingMovies(1, 1) } returns movies
+
+        val result = repository.getUpcomingMovies(1, 1)
+
+        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+    }
+
 
     @Test
     fun `getTrendingMovies returns empty list`() = runTest {
@@ -154,6 +343,12 @@ class MovieRepositoryImplTest {
 
     companion object {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")
+        private val sampleMovieLocalDto = MovieLocalDto(
+            id = 1, title = "Fight club",
+            posterImageUrl = "",
+            releaseDate = null,
+            imdbRating = 5f
+        )
         private val sampleImagesDto = ImageDto(filePath = "/poster1.jpg")
 
         private val sampleCastDto = listOf<ActorDto>(
@@ -183,6 +378,5 @@ class MovieRepositoryImplTest {
             GenreDto(id = 1, name = "Action"),
             GenreDto(id = 2, name = "Drama")
         )
-
     }
 }
