@@ -1,18 +1,10 @@
 package com.sanaa.presentation.screen.savedDetails
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,14 +20,12 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.screen.saved.SnackData
 import com.sanaa.presentation.screen.savedDetails.components.SavedDetailsListSectionContent
-import com.sanaa.presentation.screen.savedDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
 
 @Composable
@@ -82,11 +72,8 @@ fun SavedDetailsContent(
     modifier: Modifier = Modifier,
 
     ) {
-    val tvShowList = state.tvShowList.collectAsLazyPagingItems()
     val movieList = state.movieList.collectAsLazyPagingItems()
-    val allList = state.allList.collectAsLazyPagingItems()
 
-    val mediaTypes = listOf(MediaTypeUi.ALL, MediaTypeUi.MOVIE, MediaTypeUi.TV_SHOW)
 
     NovixScaffold(
         topBar = {
@@ -98,41 +85,13 @@ fun SavedDetailsContent(
                 .padding(top = 12.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                items(mediaTypes, key = { it.name }) { mediaType ->
-                    ToggleableChip(
-                        text = mediaType.toLocalizedString(),
-                        onClick = {
-                            interactionListener.onMediaTypeClick(mediaType)
-                        },
-                        isSelected = mediaType == state.selectedMediaTypeUi,
-                    )
-                }
-            }
 
-            AnimatedContent(
-                targetState = state.selectedMediaTypeUi,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(150, delayMillis = 150)) togetherWith
-                            fadeOut(animationSpec = tween(150))
-                }
-            ) { selectedMediaType ->
-                val currentList = when (selectedMediaType) {
-                    MediaTypeUi.ALL -> allList
-                    MediaTypeUi.MOVIE -> movieList
-                    MediaTypeUi.TV_SHOW -> tvShowList
-                }
+            SavedDetailsListSectionContent(
+                mediaList = movieList,
+                onMediaClick = { interactionListener.onMediaClick(it.id) },
+                onSaveIconClick = { interactionListener.onSaveIconClick(it) }
+            )
 
-                SavedDetailsListSectionContent(
-                    mediaList = currentList,
-                    onMediaClick = { interactionListener.onMediaClick(it.id, selectedMediaType) },
-                    onSaveIconClick = { interactionListener.onSaveIconClick(it) }
-                )
-            }
         }
     }
 }
@@ -169,13 +128,6 @@ fun SavedDetailsTopBar(title: String) {
     )
 }
 
-@Composable
-fun MediaTypeUi.toLocalizedString(): String {
-    return when (this) {
-        MediaTypeUi.ALL -> stringResource(R.string.all)
-        MediaTypeUi.MOVIE -> stringResource(R.string.movies)
-        MediaTypeUi.TV_SHOW -> stringResource(R.string.tvshows)
-    }
-}
+
 
 
