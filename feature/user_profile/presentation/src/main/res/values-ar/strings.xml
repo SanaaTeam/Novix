@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_rating_message">تم حذف التقييم بنجاح</string>
+    <string name="error_delete_rating_message">فشل في حذف التقييم</string>
+    <string name="my_rating">تقييماتى</string>
+    <string name="all">الكل</string>
+    <string name="movies">الافلام</string>
+    <string name="tv_shows">المسلسلات</string>
+</resources>
