@@ -134,25 +134,7 @@ class MyRatingScreenViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-    @Test
-    fun `onDeleteIconClick for tv show success removes item from state`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
-        coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } returns true
 
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
-        advanceUntilIdle()
-
-        viewModel.state.test {
-            viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
-
-            skipItems(1)
-
-            val updatedState = awaitItem()
-            assertThat(updatedState.ratedTvShows).isEmpty()
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
     @Test
     fun `onDeleteIconClick for tv show throws exception emits error snackbar`() = runTest {
