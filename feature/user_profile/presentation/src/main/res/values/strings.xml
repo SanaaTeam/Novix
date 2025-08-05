@@ -7,4 +7,6 @@
     <string name="movies">Movies</string>
     <string name="tv_shows">TV shows</string>
     <string name="change_password">change password</string>
+    <string name="please_login_to_access_your_account_details_and_other_features">Please login to access your account details and other features!</string>
+    <string name="login">Login</string>
 </resources>

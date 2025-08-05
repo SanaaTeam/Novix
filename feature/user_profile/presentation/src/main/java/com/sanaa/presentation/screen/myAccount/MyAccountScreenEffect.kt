@@ -12,4 +12,6 @@ sealed interface MyAccountScreenEffect {
     data class UpdateAppTheme(
         val isDarkMode: Boolean
     ): MyAccountScreenEffect
+
+    object NavigateToLogin : MyAccountScreenEffect
 }
