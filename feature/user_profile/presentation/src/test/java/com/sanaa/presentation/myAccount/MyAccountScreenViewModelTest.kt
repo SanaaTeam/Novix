@@ -2,6 +2,7 @@ package com.sanaa.presentation.myAccount
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.screen.myAccount.ContentRestrictionUiState
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenViewModel
 import io.mockk.coEvery
@@ -82,17 +83,19 @@ class MyAccountScreenViewModelTest {
     fun `should call mangeUserPreference setLanguage and emit UpdateAppLanguage when onSaveLanguageClick is called`() =
         runTest {
             val selectedLanguage = Language.ENGLISH
-            viewModel.updateState { it.copy(selectedLanguage = selectedLanguage.code) }
+
+            coEvery { mangeUserPreference.getLanguage() } returns flowOf(Language.ARABIC)
             coEvery { mangeUserPreference.setLanguage(any()) } returns Unit
+
+            viewModel.updateState { it.copy(selectedLanguage = selectedLanguage.code) }
 
             viewModel.effect.test {
                 viewModel.onSaveLanguageClick()
                 coVerify { mangeUserPreference.setLanguage(selectedLanguage) }
                 val effect = awaitItem()
                 assertThat(effect).isInstanceOf(MyAccountScreenEffect.UpdateAppLanguage::class.java)
-                assertThat((effect as MyAccountScreenEffect.UpdateAppLanguage).language).isEqualTo(
-                    selectedLanguage.code
-                )
+                assertThat((effect as MyAccountScreenEffect.UpdateAppLanguage).language)
+                    .isEqualTo(selectedLanguage.code)
             }
         }
 
@@ -100,8 +103,11 @@ class MyAccountScreenViewModelTest {
     fun `should call mangeUserPreference setTheme and emit UpdateAppTheme when onSaveThemeClick is called`() =
         runTest {
             val selectedTheme = Theme.DARK
-            viewModel.updateState { it.copy(selectedTheme = selectedTheme.toUiState()) }
+
+            coEvery { mangeUserPreference.getTheme() } returns flowOf(Theme.LIGHT)
             coEvery { mangeUserPreference.setTheme(any()) } returns Unit
+
+            viewModel.updateState { it.copy(selectedTheme = selectedTheme.toUiState()) }
 
             viewModel.effect.test {
                 viewModel.onSaveThemeClick()
@@ -116,14 +122,15 @@ class MyAccountScreenViewModelTest {
     fun `should call mangeUserPreference setContentRestriction when onSaveContentRestrictionClick is called`() =
         runTest {
             val restriction = ContentRestriction.RESTRICTED
-            viewModel.updateState {
-                it.copy(
-                    selectedContentRestriction = com.sanaa.presentation.screen.myAccount.ContentRestrictionUiState.valueOf(
-                        restriction.name
-                    )
-                )
-            }
+
+            coEvery { mangeUserPreference.getContentRestriction() } returns flowOf(
+                ContentRestriction.UNRESTRICTED
+            )
             coEvery { mangeUserPreference.setContentRestriction(any()) } returns Unit
+
+            viewModel.updateState {
+                it.copy(selectedContentRestriction = ContentRestrictionUiState.valueOf(restriction.name))
+            }
 
             viewModel.onSaveContentRestrictionClick()
             coVerify { mangeUserPreference.setContentRestriction(restriction) }
