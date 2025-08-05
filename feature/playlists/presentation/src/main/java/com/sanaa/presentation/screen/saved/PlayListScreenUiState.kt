@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.saved
 
+import usecase.custom_list.custom_list_param.SavedList
+
 
 data class PlayListScreenUiState(
     val isLoading: Boolean = true,
@@ -19,4 +21,15 @@ data class PlayListUiModel(
     val id: Int = 0,
     val title: String = "",
     val mediaCount: Int = 1
+)
+
+fun PlayListUiModel.toDomain() = SavedList(
+    id = id,
+    title = title
+)
+
+fun SavedList.toUiModel() = PlayListUiModel(
+    id = id,
+    title = title,
+    mediaCount = 0
 )

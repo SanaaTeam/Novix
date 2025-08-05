@@ -17,7 +17,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
+import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
+import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListViewModel
 import com.sanaa.presentation.screen.saved.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.saved.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.saved.componants.PlaylistEmptyScreen
@@ -30,6 +33,9 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     val addedToListFailedMsg = stringResource(R.string.added_to_list_failed)
     val context = LocalContext.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
+    val navController = LocalNavControllerProvider.current
+
+    val addListViewModel: AddBookmarkListViewModel = hiltViewModel()
 
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -44,6 +50,21 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
             viewModel.updateUserStatus()
         }
     )
+
+    LaunchedEffect(Unit) {
+        addListViewModel.effect.collect {
+            viewModel.onListAdded()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        addListViewModel.state.collect { state ->
+            if (state.errorMessage != null) {
+                viewModel.onListAddFailed()
+            }
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
@@ -58,6 +79,9 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 PlayListScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(addedToListSuccessMsg, isError = false)
                 }
+
+                is PlayListScreenEffect.NavigateToSavedDetails ->
+                    navController.navigate(SavedDetailsScreenRoute(it.listId).route())
             }
         }
 
@@ -103,7 +127,7 @@ fun PlaylistScreenContent(
                     isVisible = state.showAddBottomSheet,
                     onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
                     lists = lists,
-                    onItemClick = { interactionListener.onItemListClicked() }
+                    onItemClick = interactionListener::onItemListClicked
                 )
             }
         }
@@ -170,7 +194,5 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
-    override fun onItemListClicked() {}
-    override fun onTitleChange() {}
-    override fun onSavedClicked() {}
+    override fun onItemListClicked(listId: Int) {}
 }

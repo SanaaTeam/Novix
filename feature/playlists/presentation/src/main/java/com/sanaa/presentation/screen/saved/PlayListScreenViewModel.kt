@@ -5,17 +5,45 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
     PlayListScreenInteractionListener {
     init {
+        loadSavedLists()
         updateUserStatus()
+    }
+
+    private fun loadSavedLists() = tryToExecute(
+        dispatcher = Dispatchers.IO,
+        callee = {
+            val userId = getLoggedInUserUseCase.getLoggedInUser().id
+            val savedLists = manageSavedListsUseCase.getSavedLists(userId).map {
+                it.toUiModel()
+            }
+            updateState { it.copy(isLoading = false, lists = savedLists) }
+        },
+        onError = { err ->
+            updateState { it.copy(isLoading = false, errorMessage = err.message) }
+        }
+    )
+
+    fun onListAdded() {
+        loadSavedLists()
+        emitEffect(PlayListScreenEffect.ShowSuccessSnackBar)
+    }
+
+    fun onListAddFailed() {
+        emitEffect(PlayListScreenEffect.ShowErrorSnackBar)
     }
 
     override fun onFabBottomSheetClicked() {
@@ -31,16 +59,8 @@ class PlayListScreenViewModel @Inject constructor(
         updateState { it.copy(showAddBottomSheet = false) }
     }
 
-    override fun onItemListClicked() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onTitleChange() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSavedClicked() {
-        TODO("Not yet implemented")
+    override fun onItemListClicked(listId: Int) {
+        emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId))
     }
 
     private suspend fun getUserState() {

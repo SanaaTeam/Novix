@@ -4,7 +4,5 @@ interface PlayListScreenInteractionListener {
     fun onFabBottomSheetClicked()
     fun onButtonLoginClicked()
     fun onDismissAddBottomSheet()
-    fun onItemListClicked()
-    fun onTitleChange()
-    fun onSavedClicked()
+    fun onItemListClicked(listId: Int)
 }
