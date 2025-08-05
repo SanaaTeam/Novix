@@ -20,7 +20,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         description: String
     ): SavedListDto {
         val response = savedListApiService
-            .createList(sessionId, CreateListBody(name, description, "en"))
+            .createList(sessionId, CreateListBody(name, description, DEFAULT_LANGUAGE))
         return savedListApiService.getListDetails(response.listId).toListDto()
     }
 
@@ -36,4 +36,8 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
 
     override suspend fun removeItem(sessionId: String, listId: Int, movieId: Int) =
         savedListApiService.removeItem(listId, sessionId, AddOrRemoveItemBody(movieId)).success
+
+    companion object {
+        private const val DEFAULT_LANGUAGE = "en"
+    }
 }
