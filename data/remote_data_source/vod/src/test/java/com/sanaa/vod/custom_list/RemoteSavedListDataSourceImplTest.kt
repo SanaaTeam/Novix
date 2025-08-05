@@ -1,8 +1,8 @@
 package com.sanaa.vod.custom_list
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.custom_list.request.AddOrRemoveItemBodyDto
-import com.sanaa.vod.custom_list.request.CreateListBodyDto
+import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
+import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.CreateListResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
@@ -60,7 +60,7 @@ class RemoteSavedListDataSourceImplTest {
         coEvery {
             apiService.createList(
                 SESSION_ID,
-                CreateListBodyDto("Watch-Later", "Movies to watch", "en")
+                CreateListBody("Watch-Later", "Movies to watch", "en")
             )
         } returns CreateListResponseDto(true, 201, "Created", LIST_ID)
 
@@ -96,7 +96,7 @@ class RemoteSavedListDataSourceImplTest {
             apiService.addItem(
                 LIST_ID,
                 SESSION_ID,
-                AddOrRemoveItemBodyDto(MOVIE_ID)
+                AddOrRemoveItemBody(MOVIE_ID)
             )
         } returns TmdbStatusResponseDto(success = true)
 
@@ -111,7 +111,7 @@ class RemoteSavedListDataSourceImplTest {
             apiService.removeItem(
                 LIST_ID,
                 SESSION_ID,
-                AddOrRemoveItemBodyDto(MOVIE_ID)
+                AddOrRemoveItemBody(MOVIE_ID)
             )
         } returns TmdbStatusResponseDto(success = true)
 

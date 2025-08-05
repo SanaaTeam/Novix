@@ -1,7 +1,7 @@
 package com.sanaa.vod.custom_list
 
-import com.sanaa.vod.custom_list.request.AddOrRemoveItemBodyDto
-import com.sanaa.vod.custom_list.request.CreateListBodyDto
+import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
+import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
 
@@ -20,7 +20,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         description: String
     ): SavedListDto {
         val response = savedListApiService
-            .createList(sessionId, CreateListBodyDto(name, description, "en"))
+            .createList(sessionId, CreateListBody(name, description, "en"))
         return savedListApiService.getListDetails(response.listId).toListDto()
     }
 
@@ -32,8 +32,8 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         savedListApiService.getListDetails(listId, page).items
 
     override suspend fun addItem(sessionId: String, listId: Int, movieId: Int) =
-        savedListApiService.addItem(listId, sessionId, AddOrRemoveItemBodyDto(movieId)).success
+        savedListApiService.addItem(listId, sessionId, AddOrRemoveItemBody(movieId)).success
 
     override suspend fun removeItem(sessionId: String, listId: Int, movieId: Int) =
-        savedListApiService.removeItem(listId, sessionId, AddOrRemoveItemBodyDto(movieId)).success
+        savedListApiService.removeItem(listId, sessionId, AddOrRemoveItemBody(movieId)).success
 }
