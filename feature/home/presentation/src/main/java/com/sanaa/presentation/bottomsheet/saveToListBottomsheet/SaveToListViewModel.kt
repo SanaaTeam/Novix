@@ -20,7 +20,8 @@ class SaveToListViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.getSavedLists() },
+            // TODO:  fix it
+            callee = { manageSavedListsUseCase.getSavedLists(0) },
             onSuccess = { domainLists ->
                 val uiLists = domainLists.map { savedList ->
                     PlaylistUiItem(
@@ -45,7 +46,7 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(mediaId: Long, mediaType: MediaType) {
+    fun onAddClicked(mediaId: Long) {
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
@@ -53,17 +54,9 @@ class SaveToListViewModel @Inject constructor(
 
         tryToExecute(
             callee = {
-                when (mediaType) {
-                    MediaType.MOVIE -> manageSavedListItemsUseCase.addMovieToSavedList(
-                        listId = selectedListId.toInt(),
-                        movieId = mediaId.toInt()
-                    )
-
-                    MediaType.TV -> manageSavedListItemsUseCase.addTvSeriesToSavedList(
-                        listId = selectedListId.toInt(),
-                        tvSeriesId = mediaId.toInt()
-                    )
-                }
+                manageSavedListItemsUseCase.addMovieToSavedList(
+                    listId = selectedListId.toInt(),
+                    movieId = mediaId.toInt())
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
