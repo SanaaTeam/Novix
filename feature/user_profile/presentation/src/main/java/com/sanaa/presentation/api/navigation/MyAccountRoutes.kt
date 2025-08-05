@@ -12,7 +12,7 @@ object MyRatingScreenRoute : MyAccountRoutes()
 object WatchingHistoryScreenRoute : MyAccountRoutes()
 
 @Serializable
-object ChangePasswordScreen: MyAccountRoutes()
+object ChangePasswordScreenRoute: MyAccountRoutes()
 
 
 

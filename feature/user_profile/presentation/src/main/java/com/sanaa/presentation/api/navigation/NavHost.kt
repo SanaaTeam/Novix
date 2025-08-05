@@ -25,8 +25,8 @@ fun AccountNavHost() {
             composable<MyRatingScreenRoute> {
                 MyRatingScreen()
             }
-            composable(ChangePasswordScreen::class) {
-//                ChangePasswordWebView(url = )
+            composable(ChangePasswordScreenRoute::class) {
+                ChangePasswordWebView(url = "https://www.themoviedb.org/settings/profile")
             }
 
         }
