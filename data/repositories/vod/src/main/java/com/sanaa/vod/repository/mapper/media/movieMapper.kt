@@ -5,7 +5,7 @@ import entity.Movie
 import kotlinx.datetime.LocalDate
 import kotlin.time.Duration.Companion.minutes
 
-fun MovieDto.toDomain(): Movie {
+fun MovieDto.toEntity(): Movie {
     return Movie(
         id = id,
         posterImageUrl = getFullImageUrl(posterImagePath),
