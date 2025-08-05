@@ -45,7 +45,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        tryToExecute(::fetchUserRating)
+        fetchUserRating()
         updateUserStatus()
     }
 
@@ -184,7 +184,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchUserRating() = coroutineScope {
+    private  fun fetchUserRating()  {
         if (state.value.isUserLoggedIn) {
             tryToExecute(
                 callee = {
