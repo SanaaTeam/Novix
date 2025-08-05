@@ -78,6 +78,7 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.state.test {
@@ -97,20 +98,21 @@ class HomeScreenViewModelTest {
 
     @Test
     fun `init should fetch top-rated media and update state on success`() = runTest(testDispatcher) {
+        // Given
         val topRatedMovies = listOf(dummyMovie.copy(id = 3))
         coEvery { manageMovieUseCase.getTopRatedMovies(1, null) } returns topRatedMovies
+
+        // When
         initializeViewModel()
-        viewModel.state.test {
-            val state = awaitItem().let {
-                var current = it
-                while (current.topRatingMedia.isEmpty()) {
-                    current = awaitItem()
-                }
-                current
-            }
-            assertThat(state.topRatingMedia).hasSize(1)
-        }
+
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        val finalState = viewModel.state.value
+        assertThat(finalState.topRatingMedia).hasSize(1)
+        assertThat(finalState.topRatingMedia.first().id).isEqualTo(3)
     }
+
 
     @Test
     fun `init should fetch watched history when user is logged in`() = runTest(testDispatcher) {
