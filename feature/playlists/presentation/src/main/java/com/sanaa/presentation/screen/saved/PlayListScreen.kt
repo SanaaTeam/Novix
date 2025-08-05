@@ -17,7 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.api.navigation.PlayListApiEntryPoint
+import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
 import com.sanaa.presentation.screen.saved.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.saved.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.saved.componants.PlaylistEmptyScreen
