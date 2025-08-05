@@ -19,7 +19,7 @@ import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.MediaTypeUi
@@ -28,6 +28,7 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import androidx.compose.ui.Alignment
 import androidx.paging.LoadState
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
+import com.sanaa.presentation.provider.LocalSaveContentThreshold
 
 @Composable
 fun MoviesContent(
@@ -49,11 +50,12 @@ fun MoviesContent(
             if (movie != null) {
                 MediaPosterCard(
                     PosterImage = {
-                        RemoteBlurredHaramImageViewer(
+                        RemoteBlurredSensitiveImage(
                             imageUrl = movie.imageUrl,
                             modifier = Modifier.fillMaxWidth(),
-                            haramThreshold = 0.2f,
-                            nonHaramThreshold = 0.7f,
+                            sensitiveContentThreshold = 0.2f,
+                            safeContentThreshold = LocalSaveContentThreshold.current,
+                            isBlurEnabled = LocalSaveContentThreshold.current != 0f,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },

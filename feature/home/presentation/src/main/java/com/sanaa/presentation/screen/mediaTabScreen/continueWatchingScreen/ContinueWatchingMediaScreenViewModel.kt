@@ -1,8 +1,6 @@
 package com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen
 
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
@@ -27,10 +25,10 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<ContinueWatchingMediaScreenUiState, MediaTabScreenEffect>(
+) : BaseViewModel<ContinueWatchingMediaScreenUiState, ContinueWatchingScreenEffect>(
     ContinueWatchingMediaScreenUiState(),
     dispatcher
-), MediaTabScreenInteractionListener {
+), ContinueWatchingScreenInteractionListener {
 
     init {
         fetchMovieGenres()
@@ -119,7 +117,7 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     }
 
     override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+        emitEffect(ContinueWatchingScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
@@ -131,7 +129,7 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        emitEffect(MediaTabScreenEffect.NavigateBack)
+        emitEffect(ContinueWatchingScreenEffect.NavigateBack)
     }
 
 

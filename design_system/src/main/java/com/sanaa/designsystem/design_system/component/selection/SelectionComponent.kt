@@ -30,6 +30,7 @@ fun <T> SelectionComponent(
                 label = option.label,
                 onClick = { onOptionSelected(option.value) },
                 isSelected = option.value == selectedValue,
+                description = option.description,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 12.dp)
@@ -40,7 +41,8 @@ fun <T> SelectionComponent(
 
 data class Option<T>(
     val label: String,
-    val value: T
+    val value: T,
+    val description: String? = null
 )
 
 @PreviewLightDark

@@ -2,19 +2,18 @@ package com.sanaa.presentation.app
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.navigation.AppNavigation
 import com.sanaa.presentation.api.navigation.AppRoute
@@ -25,6 +24,8 @@ import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
+import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingMediaScreen
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
@@ -33,13 +34,22 @@ import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.Tr
 
 @Composable
 fun NovixApp(
-
+    viewModel: NovixAppViewModel = hiltViewModel(),
 ) {
+
+    val state = viewModel.state.collectAsStateWithLifecycle()
+
     val appNavController = rememberNavController()
     Box {
-        CompositionLocalProvider(LocalAppNavController provides appNavController) {
+        CompositionLocalProvider(
+            LocalAppNavController provides appNavController,
+            LocalThemeProvider provides state.value.isDarkTheme,
+            LocalSafeContentThreshold provides state.value.safeContentThreshold,
+        ) {
             AppNavigation(
-                startDestination = MainScreenRoute, modifier = Modifier
+                startDestination = MainScreenRoute,
+                state = state.value,
+                modifier = Modifier,
             )
         }
     }
@@ -48,51 +58,47 @@ fun NovixApp(
 @Composable
 private fun AppNavigation(
     startDestination: AppRoute,
+    state: NovixAppUiState,
     modifier: Modifier = Modifier,
 ) {
-    NovixTheme(isSystemInDarkTheme()) {
-        val navColor = Theme.colors.surface
-        val isSystemInDarkTheme = isSystemInDarkTheme()
-        val view = LocalView.current
-        val activity = view.context as? ComponentActivity
+    val view = LocalView.current
+    val activity = view.context as? ComponentActivity
 
-        LaunchedEffect(Unit) {
-            activity?.window?.also { window ->
-                window.navigationBarColor = navColor.toArgb()
-                WindowInsetsControllerCompat(window, view).apply {
-                    isAppearanceLightStatusBars = !isSystemInDarkTheme
-                    isAppearanceLightNavigationBars = !isSystemInDarkTheme
-                }
+    LaunchedEffect(state.isDarkTheme) {
+        activity?.window?.also { window ->
+            WindowInsetsControllerCompat(window, view).apply {
+                isAppearanceLightStatusBars = !state.isDarkTheme
+                isAppearanceLightNavigationBars = !state.isDarkTheme
             }
         }
-        NavHost(
-            modifier = modifier.background(color = Theme.colors.surface),
-            navController = AppNavigation.app,
-            startDestination = startDestination,
-        ) {
-            composable<MainScreenRoute> {
-                MainScreen()
-            }
+    }
+    NavHost(
+        modifier = modifier.background(color = Theme.colors.surface),
+        navController = AppNavigation.app,
+        startDestination = startDestination,
+    ) {
+        composable<MainScreenRoute> {
+            MainScreen()
+        }
 
-            composable<TrendingMoviesScreenRoute> {
-                TrendingMoviesScreen()
-            }
+        composable<TrendingMoviesScreenRoute> {
+            TrendingMoviesScreen()
+        }
 
-            composable<TrendingTvShowsScreenRoute> {
-                TrendingTvShowsScreen()
-            }
+        composable<TrendingTvShowsScreenRoute> {
+            TrendingTvShowsScreen()
+        }
 
-            composable<TrendingPeopleScreenRoute> {
-                CelebritiesScreen()
-            }
+        composable<TrendingPeopleScreenRoute> {
+            CelebritiesScreen()
+        }
 
-            composable<TopRatedMediaScreenRoute> {
-                TopRatedMediaScreen()
-            }
+        composable<TopRatedMediaScreenRoute> {
+            TopRatedMediaScreen()
+        }
 
-            composable<ContinueWatchingMediaScreenRoute> {
-                ContinueWatchingMediaScreen()
-            }
+        composable<ContinueWatchingMediaScreenRoute> {
+            ContinueWatchingMediaScreen()
         }
     }
 }

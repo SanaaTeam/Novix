@@ -15,9 +15,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.resetMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.AfterEach
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -38,6 +40,11 @@ class MovieDetailsViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
@@ -144,10 +151,12 @@ class MovieDetailsViewModelTest {
 
         viewModel.effect.test {
             viewModel.onShowReviewsClick(movieId)
+            testDispatcher.scheduler.advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
             cancelAndIgnoreRemainingEvents()
         }
     }
+
 
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {

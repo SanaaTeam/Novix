@@ -42,6 +42,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.modifiers.shimmerEffect
+import com.sanaa.presentation.providers.LocalThemeProvider
 import kotlin.math.absoluteValue
 
 @PreviewLightDark
@@ -293,9 +294,9 @@ fun PlaceholderWithShimmerEffect(
             .background(
                 Brush.linearGradient(
                     colors = listOf(
-                        if (isSystemInDarkTheme()) Color(0x3DFFFFFF) else Color(0x3D000000),
+                        if (LocalThemeProvider.current) Color(0x3DFFFFFF) else Color(0x3D000000),
                         Color(0x00FFFFFF),
-                        if (isSystemInDarkTheme()) Color(0x14000000) else Color(0x14000008),
+                        if (LocalThemeProvider.current) Color(0x14000000) else Color(0x14000008),
                     ),
                     start = Offset.Zero,
                     end = Offset.Infinite,

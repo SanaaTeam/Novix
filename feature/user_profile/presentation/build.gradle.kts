@@ -10,8 +10,12 @@ android {
 }
 
 dependencies {
+    implementation(projects.data.repositories.identity)
     implementation(projects.feature.userProfile.api)
+    implementation(projects.domain.vod)
     implementation(projects.designSystem)
+    implementation(projects.imageViewer)
+    implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
@@ -55,4 +59,5 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.slf4j.api)
+    implementation(projects.domain.identity)
 }
