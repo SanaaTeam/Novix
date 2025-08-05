@@ -6,7 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.presentation.screen.saved.PlaylistScreen
-import com.sanaa.presentation.screen.savedDetails.screen.SavedDetailsScreen
+import com.sanaa.presentation.screen.savedDetails.SavedDetailsScreen
 
 @Composable
 fun SavedNavHost() {

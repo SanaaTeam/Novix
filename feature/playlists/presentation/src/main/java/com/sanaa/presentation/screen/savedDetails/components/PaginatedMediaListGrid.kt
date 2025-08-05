@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen.components
+package com.sanaa.presentation.screen.savedDetails.components
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -19,7 +19,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
-import com.sanaa.presentation.screen.savedDetails.screen.components.chips.SaveIconChip
+import com.sanaa.presentation.screen.savedDetails.components.chips.SaveIconChip
 import com.sanaa.presentation.screen.savedDetails.state.MediaItem
 
 @Composable

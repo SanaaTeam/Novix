@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen.components.chips
+package com.sanaa.presentation.screen.savedDetails.components.chips
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen
+package com.sanaa.presentation.screen.savedDetails
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.savedDetails.state.MediaItem

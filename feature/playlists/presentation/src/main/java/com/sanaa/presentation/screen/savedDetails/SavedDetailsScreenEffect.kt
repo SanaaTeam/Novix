@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen
+package com.sanaa.presentation.screen.savedDetails
 
 sealed interface SavedDetailsScreenEffect {
     object NavigateBack : SavedDetailsScreenEffect

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen
+package com.sanaa.presentation.screen.savedDetails
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -34,7 +34,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.screen.saved.SnackData
-import com.sanaa.presentation.screen.savedDetails.screen.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.savedDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.savedDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
 

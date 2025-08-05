@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen.components
+package com.sanaa.presentation.screen.savedDetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -12,6 +12,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+
 @Composable
 fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
     val isDarkTheme = isSystemInDarkTheme()

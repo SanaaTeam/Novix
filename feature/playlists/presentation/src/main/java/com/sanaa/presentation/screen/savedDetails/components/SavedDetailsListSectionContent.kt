@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.screen.components
+package com.sanaa.presentation.screen.savedDetails.components
 
 
 import androidx.compose.foundation.layout.Arrangement
