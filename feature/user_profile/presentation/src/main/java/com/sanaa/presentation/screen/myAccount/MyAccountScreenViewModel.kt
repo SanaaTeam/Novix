@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.myAccount
 
-import com.sanaa.presentation.user_profile_base.BaseViewModel
+import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first

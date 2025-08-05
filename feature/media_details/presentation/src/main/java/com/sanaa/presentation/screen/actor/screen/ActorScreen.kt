@@ -60,6 +60,7 @@ import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorScreen(
@@ -164,7 +165,7 @@ private fun ActorScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designR.drawable.icon_back),
                         onClick = listener::onBackClicked
                     )
                 }, modifier = Modifier
