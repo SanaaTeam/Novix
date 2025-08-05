@@ -85,12 +85,12 @@ fun PlayListEmptyStateScreen(
                 )
             }
         }
-//        if (isVisible){
-//            AddBookmarkListBottomSheet(
-//                isVisible = isVisible,
-//                onDismiss = onDismissAddBottomSheet
-//            )
-//        }
+        if (isVisible){
+            AddBookmarkListBottomSheet(
+                isVisible = isVisible,
+                onDismiss = onDismissAddBottomSheet
+            )
+        }
     }
 }
 

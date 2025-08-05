@@ -60,12 +60,12 @@ fun PlayListWithItemsScreen(
                 }
             }
         }
-//        if (isVisible){
-//            AddBookmarkListBottomSheet(
-//                isVisible = isVisible,
-//                onDismiss = onDismissAddBottomSheet
-//            )
-//        }
+        if (isVisible){
+            AddBookmarkListBottomSheet(
+                isVisible = isVisible,
+                onDismiss = onDismissAddBottomSheet
+            )
+        }
     }
 }
 
