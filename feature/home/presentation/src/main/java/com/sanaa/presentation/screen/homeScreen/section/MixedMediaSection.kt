@@ -30,7 +30,7 @@ import com.sanaa.designsystem.design_system.component.slider.CarouselSlider
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
@@ -93,11 +93,11 @@ fun MixedMediaSection(
                         onMediaClick(item)
                     },
                     posterImage = {
-                        RemoteBlurredHaramImageViewer(
+                        RemoteBlurredSensitiveImage(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
-                            haramThreshold = 0.2f,
-                            nonHaramThreshold = 0.7f,
+                            sensitiveContentThreshold = 0.2f,
+                            safeContentThreshold = 0.7f,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },

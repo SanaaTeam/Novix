@@ -41,7 +41,6 @@ fun HomeScreen(
 
 
     val state = viewModel.state.collectAsStateWithLifecycle()
-    Log.d("stateTest", "HomeScreen: state:${state.value}")
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
