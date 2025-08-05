@@ -135,6 +135,6 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     }
 
     companion object {
-        const val CACHE_EXPIRATION_TIME = 1000 * 60L // 24 hours in milliseconds
+        const val CACHE_EXPIRATION_TIME = 1000 * 60 * 60 * 24L // 24 hours in milliseconds
     }
 }
