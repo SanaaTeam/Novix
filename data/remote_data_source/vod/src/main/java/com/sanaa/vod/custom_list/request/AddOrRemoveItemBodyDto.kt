@@ -4,10 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddItemBodyDto(
-    @SerialName("media_id")  val mediaId: Int,
-)
-
-data class RemoveItemBodyDto(
+data class AddOrRemoveItemBodyDto(
     @SerialName("media_id")  val mediaId: Int,
 )

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateListBodyDto(
-    val name: String,
-    val description: String,
-    @SerialName("iso_639_1") val language: String
+    @SerialName("name") val name: String,
+    @SerialName("description") val description: String,
+    @SerialName("language") val language: String
 )
