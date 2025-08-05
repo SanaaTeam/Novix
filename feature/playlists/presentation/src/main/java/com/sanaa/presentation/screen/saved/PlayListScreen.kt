@@ -92,14 +92,17 @@ fun PlaylistScreenContent(
             isEmptyList -> {
                 PlaylistEmptyScreen(
                     onFabClick = { interactionListener.onFabBottomSheetClicked() },
-                    isVisible = state.showAddBottomSheet
-                )
+                    isVisible = state.showAddBottomSheet,
+                    onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
+
+                    )
             }
 
             else -> {
                 PlayListWithItemsScreen(
                     onFabClick = { interactionListener.onFabBottomSheetClicked() },
                     isVisible = state.showAddBottomSheet,
+                    onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
                     lists = lists,
                     onItemClick = { interactionListener.onItemListClicked() }
                 )

@@ -24,6 +24,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 
 @Composable
 fun PlayListEmptyStateScreen(
@@ -34,7 +35,8 @@ fun PlayListEmptyStateScreen(
     showLoginButton: Boolean = false,
     onFabClick: () -> Unit = {},
     onLoginClick: () -> Unit = {},
-    isVisible: Boolean = false
+    isVisible: Boolean = false,
+    onDismissAddBottomSheet: () -> Unit = {}
 ) {
     NovixScaffold(
         topBar = {
@@ -83,6 +85,12 @@ fun PlayListEmptyStateScreen(
                 )
             }
         }
+//        if (isVisible){
+//            AddBookmarkListBottomSheet(
+//                isVisible = isVisible,
+//                onDismiss = onDismissAddBottomSheet
+//            )
+//        }
     }
 }
 

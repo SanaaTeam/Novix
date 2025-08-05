@@ -10,7 +10,8 @@ import com.sanaa.feature.playlists.presentation.R
 @Composable
 fun PlaylistEmptyScreen(
     onFabClick: () -> Unit = {},
-    isVisible: Boolean = false
+    isVisible: Boolean = false,
+    onDismissAddBottomSheet: () -> Unit = {}
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     NovixTheme(
@@ -26,8 +27,9 @@ fun PlaylistEmptyScreen(
             messageText = stringResource(R.string.there_is_no_saved_list_yet_click_on_button_to_add_a_new_list),
             imageRes = myListImg,
             showFab = true,
-            onFabClick = {onFabClick()},
-            isVisible = isVisible
+            onFabClick = { onFabClick() },
+            isVisible = isVisible,
+            onDismissAddBottomSheet = onDismissAddBottomSheet
         )
     }
 }

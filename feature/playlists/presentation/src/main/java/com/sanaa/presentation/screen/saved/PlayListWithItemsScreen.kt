@@ -18,7 +18,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.bottomsheets.addEditBookmark.AddOrEditBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.screen.saved.componants.MyListItem
 
 @Composable
@@ -26,7 +26,8 @@ fun PlayListWithItemsScreen(
     lists: List<PlayListUiModel>,
     onItemClick: () -> Unit,
     onFabClick: () -> Unit = {},
-    isVisible: Boolean = false
+    isVisible: Boolean = false,
+    onDismissAddBottomSheet: () -> Unit = {}
 ) {
     NovixScaffold(
         topBar = {
@@ -59,6 +60,12 @@ fun PlayListWithItemsScreen(
                 }
             }
         }
+//        if (isVisible){
+//            AddBookmarkListBottomSheet(
+//                isVisible = isVisible,
+//                onDismiss = onDismissAddBottomSheet
+//            )
+//        }
     }
 }
 
