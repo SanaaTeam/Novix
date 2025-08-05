@@ -24,7 +24,7 @@ interface GenreDao {
 
     @Query(
         """
-        DELETE FROM movie 
+        DELETE FROM genre 
         WHERE id NOT IN (
             SELECT item_id FROM cached_content WHERE content_type = (:contentType)
         )

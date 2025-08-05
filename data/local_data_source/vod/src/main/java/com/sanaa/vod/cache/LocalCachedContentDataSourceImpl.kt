@@ -28,11 +28,11 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     private val currentLanguage: String
         get() = languageProvider.getCurrentLanguage()
 
-    override suspend fun cacheMovie(movie: List<MovieLocalDto>, category: Category) {
-        movieDao.insertAll(movie).also {
-            movie.forEach { movie ->
+    override suspend fun cacheMovie(movies: List<MovieLocalDto>, category: Category) {
+        movieDao.insertAll(movies).also {
+            movies.forEach { movie ->
                 cacheContent(
-                    mediaId = movie.id,
+                    itemId = movie.id,
                     contentType = ContentType.MOVIE,
                     category = category
                 )
@@ -51,11 +51,11 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         return movieDao.getMoviesByIds(moviesIds)
     }
 
-    override suspend fun cacheTvShow(tvShow: List<TvShowLocalDto>, category: Category) {
-        tvShowDao.insertAll(tvShow).also {
-            tvShow.forEach { tvShow ->
+    override suspend fun cacheTvShow(tvShows: List<TvShowLocalDto>, category: Category) {
+        tvShowDao.insertAll(tvShows).also {
+            tvShows.forEach { tvShow ->
                 cacheContent(
-                    mediaId = tvShow.id,
+                    itemId = tvShow.id,
                     contentType = ContentType.TV_SHOW,
                     category = category
                 )
@@ -81,7 +81,7 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         genreDao.insertAll(genres).also {
             genres.forEach { genre ->
                 cacheContent(
-                    mediaId = genre.id,
+                    itemId = genre.id,
                     contentType = ContentType.GENRE,
                     category = category
                 )
@@ -120,7 +120,7 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     }
 
     private suspend fun cacheContent(
-        mediaId: Int,
+        itemId: Int,
         contentType: ContentType,
         category: Category
     ) {
@@ -141,7 +141,7 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         cachedContentDao.insert(
             CachedContentLocalDto(
                 id = metadataId,
-                itemId = mediaId,
+                itemId = itemId,
                 contentType = contentType.name
             )
         )

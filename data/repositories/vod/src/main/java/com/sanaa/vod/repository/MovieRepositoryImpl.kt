@@ -73,7 +73,7 @@ class MovieRepositoryImpl @Inject constructor(
             return remote.fetchPopularMovies(page).map { it.toEntity() }.also {
                 if (page == 1) {
                     localCachedContentDataSource.cacheMovie(
-                        movie = it.map { it.toLocalDto() },
+                        movies = it.map { it.toLocalDto() },
                         category = Category.POPULAR_MEDIA
                     )
                 }
@@ -93,7 +93,7 @@ class MovieRepositoryImpl @Inject constructor(
             return remote.fetchTopRatedMovies(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
-                        movie = it.map { it.toLocalDto() },
+                        movies = it.map { it.toLocalDto() },
                         category = Category.TOP_RATED_MEDIA
                     )
                 }
@@ -113,7 +113,7 @@ class MovieRepositoryImpl @Inject constructor(
             return remote.fetchUpcomingMovies(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
-                        movie = it.map { it.toLocalDto() },
+                        movies = it.map { it.toLocalDto() },
                         category = Category.UPCOMING_MEDIA
                     )
                 }

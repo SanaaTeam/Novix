@@ -91,7 +91,7 @@ class TvShowRepositoryImpl @Inject constructor(
             return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheTvShow(
-                        tvShow = it.map { it.toLocalDto() },
+                        tvShows = it.map { it.toLocalDto() },
                         category = Category.TOP_RATED_MEDIA
                     )
                 }
@@ -117,7 +117,7 @@ class TvShowRepositoryImpl @Inject constructor(
             return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
                 if (page == 1) {
                     localCachedContentDataSource.cacheTvShow(
-                        tvShow = it.map { it.toLocalDto() },
+                        tvShows = it.map { it.toLocalDto() },
                         category = Category.POPULAR_MEDIA
                     )
                 }
