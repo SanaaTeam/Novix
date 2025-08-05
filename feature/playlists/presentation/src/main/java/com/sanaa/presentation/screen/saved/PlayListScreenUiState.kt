@@ -17,6 +17,7 @@ data class SnackData(
     val message: String,
     val isError: Boolean
 )
+
 data class PlayListUiModel(
     val id: Int = 0,
     val title: String = "",
@@ -25,11 +26,12 @@ data class PlayListUiModel(
 
 fun PlayListUiModel.toDomain() = SavedList(
     id = id,
-    title = title
+    title = title,
+    itemCount = mediaCount
 )
 
 fun SavedList.toUiModel() = PlayListUiModel(
     id = id,
     title = title,
-    mediaCount = 0
+    mediaCount = itemCount
 )
