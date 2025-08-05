@@ -2,10 +2,10 @@ package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
-import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
-import com.sanaa.vod.repository.mapper.cachedContent.toCachedContentLocalDto
-import com.sanaa.vod.repository.mapper.cachedContent.toTvSeries
+import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
@@ -80,20 +80,25 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries TopRated") {
-            if (page == 1 && genreId == null) {
+           if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                    dailyCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toTvSeries() }
+                    cachedMovies.map { it.toDomain() }
                 }
+
             }
+
             return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
-                if (page == 1) {
-                    dailyCachedContentDataSource.cacheTopRatedMedia(
-                        it.map { it.toCachedContentLocalDto() }
+                if (page == 1 && genreId == null) {
+                    dailyCachedContentDataSource.cacheTvShow(
+                        tvShow = it.map { it.toLocalDto() },
+                        category = Category.TOP_RATED
                     )
                 }
             }
+
+
         }
 
 
@@ -106,18 +111,22 @@ class TvShowRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch TvSeries Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                    dailyCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toTvSeries() }
+                    cachedMovies.map { it.toDomain() }
                 }
+
             }
+
             return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
                 if (page == 1) {
-                    dailyCachedContentDataSource.cachePopularMedia(
-                        it.map { it.toCachedContentLocalDto() }
+                    dailyCachedContentDataSource.cacheTvShow(
+                        tvShow = it.map { it.toLocalDto() },
+                        category = Category.POPULAR
                     )
                 }
             }
+
             remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }
         }
 

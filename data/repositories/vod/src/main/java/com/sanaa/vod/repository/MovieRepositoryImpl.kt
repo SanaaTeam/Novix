@@ -2,10 +2,10 @@ package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
-import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
-import com.sanaa.vod.repository.mapper.cachedContent.toCachedContentLocalDto
-import com.sanaa.vod.repository.mapper.cachedContent.toMovie
+import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
@@ -65,16 +65,18 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedPopularMedia(MediaType.MOVIE)
+                    dailyCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toMovie() }
+                    cachedMovies.map { it.toDomain() }
                 }
+
             }
 
             return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
                 if (page == 1) {
-                    dailyCachedContentDataSource.cachePopularMedia(
-                        it.map { it.toCachedContentLocalDto() }
+                    dailyCachedContentDataSource.cacheMovie(
+                        movie = it.map { it.toLocalDto() },
+                        category = Category.POPULAR
                     )
                 }
             }
@@ -85,15 +87,16 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie TopRated") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedTopRatedMedia(MediaType.MOVIE)
+                    dailyCachedContentDataSource.getCachedMovies(Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toMovie() }
+                    return cachedMovies.map { it.toDomain() }
                 }
             }
             return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
-                if (page == 1) {
-                    dailyCachedContentDataSource.cacheTopRatedMedia(
-                        it.map { it.toCachedContentLocalDto() }
+                if (page == 1 && genreId == null) {
+                    dailyCachedContentDataSource.cacheMovie(
+                        movie = it.map { it.toLocalDto() },
+                        category = Category.TOP_RATED
                     )
                 }
             }
@@ -103,16 +106,17 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Upcoming") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedUpcomingMedia(MediaType.MOVIE)
+                    dailyCachedContentDataSource.getCachedMovies(Category.UPCOMING)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toMovie() }
+                    return cachedMovies.map { it.toDomain() }
                 }
             }
 
             return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
-                if (page == 1) {
-                    dailyCachedContentDataSource.cacheUpcomingMedia(
-                        it.map { it.toCachedContentLocalDto() }
+                if (page == 1 && genreId == null) {
+                    dailyCachedContentDataSource.cacheMovie(
+                        movie = it.map { it.toLocalDto() },
+                        category = Category.UPCOMING
                     )
                 }
             }

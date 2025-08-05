@@ -10,16 +10,16 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
 interface CachedContentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(media: List<CachedContentLocalDto>)
+    suspend fun insert(contentInfo: CachedContentLocalDto)
 
     @Query(
         """
         SELECT * FROM cached_content
-        WHERE (metadata_id = :metadataId)
+        WHERE (id = :metadataId)
         AND (:mediaType IS NULL OR media_type = :mediaType)
     """
     )
-    suspend fun getMedia(
+    suspend fun getCachedContentInfo(
         metadataId: Long,
         mediaType: String? = null,
     ): List<CachedContentLocalDto>

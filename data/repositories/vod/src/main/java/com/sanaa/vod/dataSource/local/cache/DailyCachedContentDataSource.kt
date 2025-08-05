@@ -1,15 +1,14 @@
 package com.sanaa.vod.dataSource.local.cache
 
-import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
-import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
+import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 
 interface DailyCachedContentDataSource {
-    suspend fun cachePopularMedia(media: List<CachedContentLocalDto>)
-    suspend fun getCachedPopularMedia(mediaType: MediaType): List<CachedContentLocalDto>
-    suspend fun cacheTopRatedMedia(media: List<CachedContentLocalDto>)
-    suspend fun getCachedTopRatedMedia(mediaType: MediaType): List<CachedContentLocalDto>
-    suspend fun cacheUpcomingMedia(media: List<CachedContentLocalDto>)
-    suspend fun getCachedUpcomingMedia(mediaType: MediaType): List<CachedContentLocalDto>
+    suspend fun cacheMovie(movie: List<MovieLocalDto>, category: Category)
+    suspend fun getCachedMovies(category: Category): List<MovieLocalDto>
+    suspend fun cacheTvShow(tvShow: List<TvShowLocalDto>, category: Category)
+    suspend fun getCachedTvShows(category: Category): List<TvShowLocalDto>
 
-    suspend fun clearExpiredCachedContent()
+    suspend fun clearExpiredCache()
 }
