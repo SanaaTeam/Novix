@@ -9,7 +9,7 @@ import com.sanaa.vod.util.safeCall
 import entity.Movie
 import kotlinx.coroutines.flow.first
 import repository.SavedListRepository
-import usecase.custom_list.custom_list_param.*
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 class SavedListRepositoryImpl @Inject constructor(
@@ -20,9 +20,9 @@ class SavedListRepositoryImpl @Inject constructor(
 
     private suspend fun sessionId(): String = preferencesManager.sessionId.first()
 
-    override suspend fun getSavedLists(accountId: Long): List<SavedList> =
+    override suspend fun getSavedLists(): List<SavedList> =
         safeCall("Failed to fetch saved lists") {
-            remoteSavedListDataSource.fetchUserLists(sessionId(), accountId).map { it.toEntity() }
+            remoteSavedListDataSource.fetchUserLists(sessionId()).map { it.toEntity() }
         }
 
     override suspend fun createSavedList(title: String): SavedList =
@@ -36,7 +36,7 @@ class SavedListRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllMoviesInList(listId: Int): List<Movie> =
+    override suspend fun getAllMoviesInList(listId: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch list items") {
             remoteSavedListDataSource.fetchListItems(listId).map {
                 remoteMovieDataSource.fetchMovieDetails(
@@ -47,7 +47,11 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieToList(listId: Int, movieId: Int): Boolean =
         safeCall("Failed to add movie to list") {
-            remoteSavedListDataSource.addItem(sessionId(), listId, movieId)
+            remoteSavedListDataSource.addItem(
+                sessionId = sessionId(),
+                listId = listId,
+                movieId = movieId
+            )
         }
 
     override suspend fun removeMovieFromList(listId: Int, movieId: Int): Boolean =
