@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.genreTvShows
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -40,10 +37,10 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -67,7 +64,7 @@ fun GenreTvShowsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserLoggingStatus()
         },
@@ -94,13 +91,11 @@ fun GenreTvShowsScreen(
         }
     }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        GenreTvShowsScreenContent(
-            state = state.value, interactionListener = viewModel
-        )
-    }
-
+    GenreTvShowsScreenContent(
+        state = state.value, interactionListener = viewModel
+    )
 }
+
 
 @Composable
 fun GenreTvShowsScreenContent(
@@ -170,11 +165,12 @@ fun GenreTvShowsScreenContent(
                                 val tvShow = pagedTvShows[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
-                                        RemoteBlurredHaramImageViewer(
+                                        RemoteBlurredSensitiveImage(
                                             imageUrl = tvShow.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
+                                            sensitiveContentThreshold = 0.2f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
                                             contentDescription = tvShow.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
