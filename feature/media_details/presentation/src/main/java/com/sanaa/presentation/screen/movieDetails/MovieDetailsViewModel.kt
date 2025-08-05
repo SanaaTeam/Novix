@@ -139,7 +139,10 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = { loadMovieDetails(movieId) },
+            callee = {
+                fetchUserRating()
+                loadMovieDetails(movieId)
+                     },
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
@@ -180,20 +183,25 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
+    private suspend fun fetchUserRating() = coroutineScope {
+        val ratingDeferred = async { getCurrentUserRating(movieId) }
+        val currentMovieRating = ratingDeferred.await()
+        updateState {
+            it.copy(imdbRating = currentMovieRating)
+        }
+    }
 
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
         val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
-        val ratingDeferred = async { getCurrentUserRating(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
         val movie = movieDeferred.await()
         val cast = castDeferred.await()
         val images = imagesDeferred.await()
         val trailerUrl = trailerDeferred.await()
-        val currentMovieRating = ratingDeferred.await()
         val similar = similarDeferred.await()
 
         addMovieToHistory(movie)
@@ -203,7 +211,6 @@ class MovieDetailsViewModel @Inject constructor(
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
-                imdbRating = currentMovieRating
             )
         }
 
