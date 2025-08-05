@@ -1,4 +1,4 @@
-package com.sanaa.vod.mapper.custom_list
+package com.sanaa.vod.repository.mapper.custom_list
 
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
@@ -6,18 +6,17 @@ import entity.Movie
 import kotlinx.datetime.LocalDate
 import usecase.custom_list.custom_list_param.SavedList
 
-/* ---------- list ---------- */
-fun SavedListDto.toDomain() = SavedList(id, title)
-fun SavedList.toDto() = SavedListDto(id = id, title = title)
+fun SavedListDto.toEntity() = SavedList(id, title)
 
-/* ---------- item ---------- */
-fun SavedItemDto.toDomain() = Movie(
+fun SavedItemDto.toEntity() = Movie(
     id = id,
     posterImageUrl = posterPath ?: "",
-    title = title ?: "",
+    title = title ?: originalTitle ?: "Untitled",
     genres = emptyList(),
     imdbRating = voteAverage,
     duration = null,
-    releaseDate = LocalDate(2023, 5, 20),
+    releaseDate = LocalDate.parse(releaseDate ?: "2000-01-01"),
+    overview = overview ?: "",
+    trailerUrl = null,
     rating = null
 )
