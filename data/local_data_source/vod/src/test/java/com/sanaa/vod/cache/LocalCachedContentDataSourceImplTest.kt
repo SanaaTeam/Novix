@@ -139,20 +139,6 @@ class LocalCachedContentDataSourceImplTest {
         coVerify { tvShowDao.deleteUnreferencedTvShows() }
     }
 
-//    @Test
-//    fun `getCachedContent should return empty list when metadata is expired`() = runTest {
-//        val oldTimestamp =
-//            TimeUtils.getCurrentTimeStamp() - (CACHE_EXPIRATION_TIME + 1000)
-//        val metadata = dummyMetadata.copy(timestamp = oldTimestamp)
-//        coEvery { cachedContentMetadataDao.getCachedContentMetadata(any(), any()) } returns metadata
-//
-//        val result =
-//            localCachedContentDataSource.getCachedContent(Category.TOP_RATED, MediaType.MOVIE)
-//
-//        assertThat(result).isEmpty()
-//    }
-
-
     private companion object {
         const val FAKE_LANGUAGE = "en"
 
