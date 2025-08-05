@@ -1,7 +1,7 @@
 package com.sanaa.vod.custom_list
 
-import com.sanaa.vod.custom_list.request.AddOrRemoveItemBodyDto
-import com.sanaa.vod.custom_list.request.CreateListBodyDto
+import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
+import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.CreateListResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
@@ -28,7 +28,7 @@ interface SavedListApiService {
     @POST("list")
     suspend fun createList(
         @Query("session_id") sessionId: String,
-        @Body body: CreateListBodyDto,
+        @Body body: CreateListBody,
     ): CreateListResponseDto
 
     @DELETE("list/{list_id}")
@@ -48,7 +48,7 @@ interface SavedListApiService {
     suspend fun addItem(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String,
-        @Body body: AddOrRemoveItemBodyDto
+        @Body body: AddOrRemoveItemBody
     ): TmdbStatusResponseDto
 
     @POST("list/{list_id}/remove_item")
@@ -56,6 +56,6 @@ interface SavedListApiService {
     suspend fun removeItem(
         @Path("list_id") listId: Int,
         @Query("session_id") sessionId: String,
-        @Body body: AddOrRemoveItemBodyDto
+        @Body body: AddOrRemoveItemBody
     ): TmdbStatusResponseDto
 }
