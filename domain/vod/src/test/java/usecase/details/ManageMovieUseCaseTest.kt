@@ -334,6 +334,53 @@ class ManageMovieUseCaseTest {
             manageMovieDetailsUseCase.getMovieGenres()
         }
     }
+    @Test
+    fun `getUserRatedMovies should return rated movies when available`() = runTest {
+        val expected = listOf(mockk<Movie>(), mockk<Movie>())
+        coEvery { movieRepository.getUserRatedMovies() } returns expected
+
+        val result = manageMovieDetailsUseCase.getUserRatedMovies()
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `getUserRatedMovies should return empty list when none rated`() = runTest {
+        coEvery { movieRepository.getUserRatedMovies() } returns emptyList()
+
+        val result = manageMovieDetailsUseCase.getUserRatedMovies()
+
+        assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getUserRatedMovies should throw exception when repository fails`() = runTest {
+        coEvery { movieRepository.getUserRatedMovies() } throws RetrievingDataFailureException("Error")
+
+        assertThrows<RetrievingDataFailureException> {
+            manageMovieDetailsUseCase.getUserRatedMovies()
+        }
+    }
+    @Test
+    fun `deleteMovieRate should return true when deletion is successful`() = runTest {
+        val movieId = 101
+        coEvery { movieRepository.deleteMovieRate(movieId) } returns true
+
+        val result = manageMovieDetailsUseCase.deleteMovieRate(movieId)
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `deleteMovieRate should return false when deletion fails`() = runTest {
+        val movieId = 102
+        coEvery { movieRepository.deleteMovieRate(movieId) } returns false
+
+        val result = manageMovieDetailsUseCase.deleteMovieRate(movieId)
+
+        assertThat(result).isFalse()
+    }
+
 
     val dummyGenre = Genre(
         id = 1, name = "Action"

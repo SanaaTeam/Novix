@@ -100,4 +100,19 @@ class MovieRepositoryImpl @Inject constructor(
             ).isSuccess
         }
     }
+
+    override suspend fun getUserRatedMovies(): List<Movie> {
+        return safeCall("Failed to fetch user rated movies") {
+            val sessionId =preferences.sessionId.first()
+            val accountId =preferences.accountId.first()
+            remote.fetchMoviesRate(accountId, sessionId).map { it.toEntity() }
+        }
+    }
+
+    override suspend fun deleteMovieRate(movieId: Int): Boolean {
+        return safeCall("Failed to delete movie rate") {
+            val sessionId = preferences.sessionId.first()
+            remote.deleteMovieRate(movieId, sessionId).isSuccess
+        }
+    }
 }

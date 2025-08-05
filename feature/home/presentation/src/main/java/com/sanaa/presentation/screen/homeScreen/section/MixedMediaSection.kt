@@ -32,8 +32,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
-import com.sanaa.presentation.components.cards.MediaPosterCard
-import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 

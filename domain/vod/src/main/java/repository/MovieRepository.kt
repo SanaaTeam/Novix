@@ -20,4 +20,6 @@ interface MovieRepository {
     suspend fun getMovieRate(accountId: Long, movieId: Int): Int?
     suspend fun getMovieGenres(): List<Genre>
     suspend fun addMovieRate(movieId: Int, rating: Float): Boolean
+    suspend fun getUserRatedMovies(): List<Movie>
+    suspend fun deleteMovieRate(movieId: Int): Boolean
 }

@@ -64,6 +64,7 @@ import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun SeriesScreen(
@@ -181,7 +182,7 @@ fun SeriesScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_back),
+                        icon = painterResource(designR.drawable.icon_back),
                         onClick = interactionListener::onBackClicked
 
                     )

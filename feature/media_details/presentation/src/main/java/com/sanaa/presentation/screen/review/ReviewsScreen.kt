@@ -29,6 +29,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent
 import com.sanaa.presentation.screen.review.components.ReviewCard
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ReviewsScreen(
@@ -64,7 +65,7 @@ fun ReviewsScreenContent(
             TopBar(
                 screenTitle = stringResource(id = R.string.reviews), leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_back),
+                        icon = painterResource(designR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 })

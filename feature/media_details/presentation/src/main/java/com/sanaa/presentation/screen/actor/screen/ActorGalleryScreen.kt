@@ -32,6 +32,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorGalleryScreen(
@@ -64,7 +65,7 @@ private fun ActorGalleryContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designR.drawable.icon_back),
                         onClick = onBackClick
                     )
                 },

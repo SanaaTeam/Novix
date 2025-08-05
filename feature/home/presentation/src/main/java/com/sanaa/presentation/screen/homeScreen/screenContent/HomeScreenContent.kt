@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -86,6 +87,7 @@ fun HomeScreenContent(
             HomeTopBar(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .navigationBarsPadding()
                     .statusBarsPadding()
             )
         },

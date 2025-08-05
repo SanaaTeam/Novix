@@ -1,5 +1,6 @@
 package com.sanaa.presentation.app
 
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -27,7 +28,6 @@ import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import dagger.hilt.android.EntryPointAccessors
 
@@ -64,7 +64,7 @@ fun MainScreen() {
                 AppBottomNavBar(
                     navController = navController
                 )
-            }, modifier = Modifier
+            }, modifier = Modifier.navigationBarsPadding()
         ) { innerPadding ->
             NavHost(
                 navController = navController,
