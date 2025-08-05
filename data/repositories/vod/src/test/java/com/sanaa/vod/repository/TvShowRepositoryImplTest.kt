@@ -15,7 +15,7 @@ import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
-import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
@@ -256,7 +256,7 @@ class TvShowRepositoryImplTest {
 
         val result = repository.getPopularSeries(1)
 
-        assertThat(result).isEqualTo(cached.map { it.toDomain() })
+        assertThat(result).isEqualTo(cached.map { it.toEntity() })
     }
 
     @Test
@@ -310,7 +310,7 @@ class TvShowRepositoryImplTest {
 
             val result = repository.getTopRatedTvSeries(1, null)
 
-            assertThat(result).isEqualTo(cached.map { it.toDomain() })
+            assertThat(result).isEqualTo(cached.map { it.toEntity() })
         }
 
     @Test

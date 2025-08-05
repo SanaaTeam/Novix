@@ -25,7 +25,7 @@ fun TvSeries.toLocalDto(): TvShowLocalDto =
 
     )
 
-fun MovieLocalDto.toDomain() = Movie(
+fun MovieLocalDto.toEntity() = Movie(
     id = id,
     title = title,
     posterImageUrl = posterImageUrl,
@@ -38,7 +38,7 @@ fun MovieLocalDto.toDomain() = Movie(
     rating = 0,
 )
 
-fun TvShowLocalDto.toDomain() = TvSeries(
+fun TvShowLocalDto.toEntity() = TvSeries(
     id = id,
     title = title,
     posterImageUrl = posterImageUrl,

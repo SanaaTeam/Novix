@@ -4,7 +4,7 @@ import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
-import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
@@ -83,7 +83,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toEntity() }
                 }
 
             }
@@ -110,7 +110,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toEntity() }
                 }
             }
 

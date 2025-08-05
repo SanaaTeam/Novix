@@ -13,8 +13,8 @@ import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.review.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
-import com.sanaa.vod.repository.mapper.cachedContent.toDomain
-import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toEntity
+import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -132,7 +132,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getPopularMovies(1)
 
-        assertThat(result).isEqualTo(cached.map { it.toDomain() })
+        assertThat(result).isEqualTo(cached.map { it.toEntity() })
     }
 
     @Test
@@ -143,7 +143,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getPopularMovies(1)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -164,7 +164,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getPopularMovies(2)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -184,7 +184,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getTopRatedMovies(1, null)
 
-        assertThat(result).isEqualTo(cached.map { it.toDomain() })
+        assertThat(result).isEqualTo(cached.map { it.toEntity() })
     }
 
     @Test
@@ -195,7 +195,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getTopRatedMovies(1, null)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -238,7 +238,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getTopRatedMovies(2, null)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -248,7 +248,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getTopRatedMovies(1, 1)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -258,7 +258,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getUpcomingMovies(1, null)
 
-        assertThat(result).isEqualTo(cached.map { it.toDomain() })
+        assertThat(result).isEqualTo(cached.map { it.toEntity() })
     }
 
     @Test
@@ -269,7 +269,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getUpcomingMovies(1, null)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -312,7 +312,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getUpcomingMovies(2, null)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
     @Test
@@ -322,7 +322,7 @@ class MovieRepositoryImplTest {
 
         val result = repository.getUpcomingMovies(1, 1)
 
-        assertThat(result).isEqualTo(movies.map { it.toDomain() })
+        assertThat(result).isEqualTo(movies.map { it.toEntity() })
     }
 
 

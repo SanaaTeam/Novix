@@ -4,7 +4,7 @@ import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
-import com.sanaa.vod.repository.mapper.cachedContent.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.repository.mapper.media.toEntity
@@ -66,7 +66,7 @@ class MovieRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toEntity() }
                 }
             }
 
@@ -87,7 +87,7 @@ class MovieRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedMovies(Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toEntity() }
                 }
             }
             return remote.fetchTopRatedMovies(page, genreId).map { it.toEntity() }.also {
@@ -106,7 +106,7 @@ class MovieRepositoryImpl @Inject constructor(
                 val cachedMovies =
                     localCachedContentDataSource.getCachedMovies(Category.UPCOMING)
                 if (cachedMovies.isNotEmpty()) {
-                    return cachedMovies.map { it.toDomain() }
+                    return cachedMovies.map { it.toEntity() }
                 }
             }
 
