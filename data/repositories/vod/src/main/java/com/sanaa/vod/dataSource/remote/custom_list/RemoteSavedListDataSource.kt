@@ -5,7 +5,7 @@ import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
 
 interface RemoteSavedListDataSource {
 
-    suspend fun fetchUserLists(sessionId: String, accountId: Long, page: Int? = null): List<SavedListDto>
+    suspend fun fetchUserLists(sessionId: String, page: Int? = null): List<SavedListDto>
 
     suspend fun createList(
         sessionId: String,
