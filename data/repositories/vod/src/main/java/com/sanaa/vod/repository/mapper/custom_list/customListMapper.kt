@@ -6,7 +6,7 @@ import entity.Movie
 import kotlinx.datetime.LocalDate
 import usecase.custom_list.custom_list_param.SavedList
 
-fun SavedListDto.toEntity() = SavedList(id, title)
+fun SavedListDto.toEntity() = SavedList(id, title, itemCount)
 
 fun SavedItemDto.toEntity() = Movie(
     id = id,
