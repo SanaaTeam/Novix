@@ -12,7 +12,6 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
-import com.sanaa.vod.util.TimeUtils
 import javax.inject.Inject
 
 class LocalCachedContentDataSourceImpl @Inject constructor(
@@ -72,7 +71,7 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         return tvShowDao.getTvShowsByIds(ids)
     }
 
-    suspend fun getCachedContent(
+    private suspend fun getCachedContent(
         category: Category,
         mediaType: MediaType
     ): List<CachedContentLocalDto> {
@@ -84,14 +83,14 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
             language = currentLanguage
         )
 
-        if (metadata == null || isExpired(metadata.timestamp)) {
+        if (metadata == null) {
             return emptyList()
         }
 
         return cachedContentDao.getCachedContentInfo(metadata.id, mediaType.name)
     }
 
-    suspend fun cacheContent(
+    private suspend fun cacheContent(
         mediaId: Int,
         mediaType: MediaType,
         category: Category
@@ -119,17 +118,11 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         )
     }
 
-    private fun isExpired(timestamp: Long): Boolean {
-        val currentTimestamp = TimeUtils.getCurrentTimeStamp()
-        return currentTimestamp - timestamp > CACHE_EXPIRATION_TIME
-    }
-
     override suspend fun clearExpiredCache() {
         val oneDayAgo = System.currentTimeMillis() - CACHE_EXPIRATION_TIME
 
         cachedContentMetadataDao.clearExpiredMetadata(oneDayAgo)
 
-        // Clean up movies and tv shows that are no longer referenced
         movieDao.deleteUnreferencedMovies()
         tvShowDao.deleteUnreferencedTvShows()
     }
