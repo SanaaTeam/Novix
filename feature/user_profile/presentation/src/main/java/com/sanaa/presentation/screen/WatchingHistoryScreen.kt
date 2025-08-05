@@ -279,7 +279,7 @@ fun WatchingHistoryGrid(
         ) { index ->
             val item = items[index]
             item?.let { mediaItem ->
-                MediaPosterCard(
+            MediaPosterCard(
                     onCardClick = { onItemClick(mediaItem) },
                     posterImage = {
                         Image(

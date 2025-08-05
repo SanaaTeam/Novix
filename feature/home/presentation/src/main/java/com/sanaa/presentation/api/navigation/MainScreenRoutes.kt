@@ -18,3 +18,6 @@ object SavedContentScreenRoute : MainScreenRoutes()
 
 @Serializable
 object UserProfileScreenRoute : MainScreenRoutes()
+
+@Serializable
+object WatchingHistoryScreenRoute : MainScreenRoutes()
