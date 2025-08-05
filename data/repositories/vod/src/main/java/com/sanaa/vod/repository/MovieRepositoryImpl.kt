@@ -64,7 +64,7 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    localCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
+                    localCachedContentDataSource.getCachedMovies(category = Category.POPULAR_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
@@ -74,7 +74,7 @@ class MovieRepositoryImpl @Inject constructor(
                 if (page == 1) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
-                        category = Category.POPULAR
+                        category = Category.POPULAR_MEDIA
                     )
                 }
             }
@@ -85,7 +85,7 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie TopRated") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    localCachedContentDataSource.getCachedMovies(Category.TOP_RATED)
+                    localCachedContentDataSource.getCachedMovies(Category.TOP_RATED_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
@@ -94,7 +94,7 @@ class MovieRepositoryImpl @Inject constructor(
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
-                        category = Category.TOP_RATED
+                        category = Category.TOP_RATED_MEDIA
                     )
                 }
             }
@@ -104,7 +104,7 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Upcoming") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    localCachedContentDataSource.getCachedMovies(Category.UPCOMING)
+                    localCachedContentDataSource.getCachedMovies(Category.UPCOMING_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
@@ -114,7 +114,7 @@ class MovieRepositoryImpl @Inject constructor(
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
-                        category = Category.UPCOMING
+                        category = Category.UPCOMING_MEDIA
                     )
                 }
             }
@@ -135,7 +135,17 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovieGenres(): List<Genre> {
         return safeCall("Failed to fetch movie genres") {
-            remote.fetchMovieGenres().map { it.toEntity() }
+            val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.MOVIE_GENRES)
+            if (cachedGenres.isNotEmpty()) {
+                    return cachedGenres.map { it.toEntity() }
+            }
+
+            return remote.fetchMovieGenres().map { it.toEntity() }.also {
+                localCachedContentDataSource.cacheGenres(
+                    genres = it.map { it.toLocalDto() },
+                    category = Category.MOVIE_GENRES
+                )
+            }
         }
     }
 
@@ -152,8 +162,8 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getUserRatedMovies(): List<Movie> {
         return safeCall("Failed to fetch user rated movies") {
-            val sessionId =preferences.sessionId.first()
-            val accountId =preferences.accountId.first()
+            val sessionId = preferences.sessionId.first()
+            val accountId = preferences.accountId.first()
             remote.fetchMoviesRate(accountId, sessionId).map { it.toEntity() }
         }
     }

@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 
 @Entity(
     tableName = "cached_content",
-    primaryKeys = ["id", "media_type", "media_id"],
+    primaryKeys = ["id", "item_id", "content_type"],
     foreignKeys = [
         ForeignKey(
             entity = CachedContentMetadataLocalDto::class,
@@ -19,13 +19,14 @@ import androidx.room.ForeignKey
 data class CachedContentLocalDto(
     @ColumnInfo(name = "id")
     val id: Long,
-    @ColumnInfo(name = "media_id")
-    val mediaId: Int,
-    @ColumnInfo(name = "media_type")
-    val mediaType: String,
+    @ColumnInfo(name = "item_id")
+    val itemId: Int,
+    @ColumnInfo(name = "content_type")
+    val contentType: String,
 ) {
-    enum class MediaType {
+    enum class ContentType {
         MOVIE,
         TV_SHOW,
+        GENRE,
     }
 }

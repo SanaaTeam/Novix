@@ -21,8 +21,10 @@ data class CachedContentMetadataLocalDto(
     val timestamp: Long = System.currentTimeMillis()
 ) {
     enum class Category {
-        POPULAR,
-        TOP_RATED,
-        UPCOMING,
+        POPULAR_MEDIA,
+        TOP_RATED_MEDIA,
+        UPCOMING_MEDIA,
+        MOVIE_GENRES,
+        TV_SHOW_GENRES,
     }
 }

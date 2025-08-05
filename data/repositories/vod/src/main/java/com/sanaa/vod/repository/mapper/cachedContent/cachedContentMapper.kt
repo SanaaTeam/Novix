@@ -1,7 +1,9 @@
 package com.sanaa.vod.repository.mapper.cachedContent
 
+import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
+import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
@@ -48,4 +50,14 @@ fun TvShowLocalDto.toEntity() = TvSeries(
     overview = "",
     seasonsCount = 0,
     rating = 0,
+)
+
+fun GenreLocalDto.toEntity() = Genre(
+    id = id,
+    name = name,
+)
+
+fun Genre.toLocalDto() = GenreLocalDto(
+    id = id,
+    name = name,
 )

@@ -5,22 +5,22 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.ContentType
-import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 
 @Dao
-interface MovieDao {
+interface GenreDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(movie: MovieLocalDto)
+    suspend fun insert(genre: GenreLocalDto)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(movies: List<MovieLocalDto>)
+    suspend fun insertAll(genres: List<GenreLocalDto>)
 
-    @Query("SELECT * FROM movie WHERE id = :id LIMIT 1")
-    suspend fun getMovieById(id: Int): MovieLocalDto?
+    @Query("SELECT * FROM genre WHERE id = :id LIMIT 1")
+    suspend fun getGenreById(id: Int): GenreLocalDto?
 
-    @Query("SELECT * FROM movie WHERE (id IN (:ids))")
-    suspend fun getMoviesByIds(ids: List<Int>): List<MovieLocalDto>
+    @Query("SELECT * FROM genre WHERE (id IN (:ids))")
+    suspend fun getGenreByIds(ids: List<Int>): List<GenreLocalDto>
 
     @Query(
         """
@@ -30,5 +30,5 @@ interface MovieDao {
         )
     """
     )
-    suspend fun deleteUnreferencedMovies(contentType: String = ContentType.MOVIE.name)
+    suspend fun deleteUnreferencedGenres(contentType: String = ContentType.GENRE.name)
 }

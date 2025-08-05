@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
+import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
@@ -252,7 +253,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries should return cached data if available when page is 1`() = runTest {
         val cached = listOf(sampleTvShowLocalDto)
-        coEvery { local.getCachedTvShows(Category.POPULAR) } returns cached
+        coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns cached
 
         val result = repository.getPopularSeries(1)
 
@@ -262,7 +263,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries should fetches remote when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
-        coEvery { local.getCachedTvShows(Category.POPULAR) } returns emptyList()
+        coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
 
         val result = repository.getPopularSeries(1)
@@ -273,7 +274,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getPopularSeries should cache the new data when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
-        coEvery { local.getCachedTvShows(Category.POPULAR) } returns emptyList()
+        coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
 
         repository.getPopularSeries(1)
@@ -306,7 +307,7 @@ class TvShowRepositoryImplTest {
     fun `getTopRatedTvSeries should return cached data if available when page is 1 and genreId is null`() =
         runTest {
             val cached = listOf(sampleTvShowLocalDto)
-            coEvery { local.getCachedTvShows(Category.TOP_RATED) } returns cached
+            coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns cached
 
             val result = repository.getTopRatedTvSeries(1, null)
 
@@ -317,7 +318,7 @@ class TvShowRepositoryImplTest {
     fun `getTopRatedTvSeries should fetches remote when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
-            coEvery { local.getCachedTvShows(Category.TOP_RATED) } returns emptyList()
+            coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
             coEvery { remote.fetchTopRatedTvShows(1, null) } returns tvShows
 
             val result = repository.getTopRatedTvSeries(1, null)
@@ -329,7 +330,7 @@ class TvShowRepositoryImplTest {
     fun `getTopRatedTvSeries should cache the new data when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
-            coEvery { local.getCachedTvShows(Category.TOP_RATED) } returns emptyList()
+            coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
             coEvery { remote.fetchTopRatedTvShows(1, null) } returns tvShows
 
             repository.getTopRatedTvSeries(1, null)
@@ -340,7 +341,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTopRatedTvSeries should not cache the new data when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
-        coEvery { local.getCachedTvShows(Category.TOP_RATED) } returns emptyList()
+        coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(2, null) } returns tvShows
 
         repository.getTopRatedTvSeries(2, null)
@@ -351,7 +352,7 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTopRatedTvSeries should not cache the new data when genreId is not null`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
-        coEvery { local.getCachedTvShows(Category.TOP_RATED) } returns emptyList()
+        coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(1, 1) } returns tvShows
 
         repository.getTopRatedTvSeries(1, 1)
@@ -386,15 +387,6 @@ class TvShowRepositoryImplTest {
 
         // Assert
         assertEquals(0, result.size)
-    }
-
-    @Test
-    fun `getSeriesGenres returns list of Genre`() = runTest {
-        coEvery { remote.getTvShowGenres() } returns dummyGenresDto
-
-        val result = repository.getSeriesGenres()
-
-        assertThat(result).isNotEmpty()
     }
 
     @Test
@@ -461,40 +453,75 @@ class TvShowRepositoryImplTest {
         assertThat(result).isEqualTo(null)
     }
 
-    private val dummyReviewDto = ReviewDto(
-        id = "1", content = "Review", authorDetails = AuthorDetailsDto(
-            name = "A", username = "a", avatarPath = "/avatar.png", rating = 4.0f
-        ), createdAt = "2024-01-01"
-    )
+    @Test
+    fun `getTvShowGenres should return cached data when available`() = runTest {
+        coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns genres
 
-    private val dummyActorDto = ActorDto(
-        id = 10, name = "Actor", gender = 2,
-    )
+        val result = repository.getSeriesGenres()
 
-    private val dummySeasonDto = SeasonDto(
-        id = 5, name = "Season 1", overview = "intro", seasonNumber = 1, episodes = emptyList()
-    )
+        assertThat(result).isEqualTo(genres.map { it.toEntity() })
+    }
 
-    private val dummyEpisodeDto = EpisodeDto(
-        id = 8,
-        name = "Episode",
-        overview = "desc",
-        seasonNumber = 1,
-        episodeNumber = 1,
-        voteAverage = 8f,
-        airDate = "2024-01-01",
-        runtime = 50
-    )
+    @Test
+    fun `getTvShowGenres should fetches remote when cache is empty`() = runTest {
+        coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns emptyList()
+        coEvery { remote.getTvShowGenres() } returns dummyGenresDto
 
-    val dummyGenresDto = listOf(
-        GenreDto(id = 1, name = "Action"),
-        GenreDto(id = 2, name = "Drama")
-    )
-    private val sampleTvShowDto = TvShowDto(id = 1, name = "Fight club")
-    private val sampleTvShowLocalDto = TvShowLocalDto(
-        id = 1, title = "Fight club",
-        posterImageUrl = "",
-        releaseDate = null,
-        imdbRating = 5f
-    )
+        val result = repository.getSeriesGenres()
+
+        assertThat(result).isEqualTo(dummyGenresDto.map { it.toEntity() })
+    }
+
+    @Test
+    fun `getTvShowGenres should cache the new data when cache is empty`() = runTest {
+        coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns emptyList()
+        coEvery { remote.getTvShowGenres() } returns dummyGenresDto
+
+        repository.getSeriesGenres()
+
+        coVerify(exactly = dummyGenresDto.size) { local.cacheGenres(any(), Category.TV_SHOW_GENRES) }
+    }
+
+    private companion object {
+        val dummyReviewDto = ReviewDto(
+            id = "1", content = "Review", authorDetails = AuthorDetailsDto(
+                name = "A", username = "a", avatarPath = "/avatar.png", rating = 4.0f
+            ), createdAt = "2024-01-01"
+        )
+
+        val dummyActorDto = ActorDto(
+            id = 10, name = "Actor", gender = 2,
+        )
+
+        val dummySeasonDto = SeasonDto(
+            id = 5, name = "Season 1", overview = "intro", seasonNumber = 1, episodes = emptyList()
+        )
+
+        val dummyEpisodeDto = EpisodeDto(
+            id = 8,
+            name = "Episode",
+            overview = "desc",
+            seasonNumber = 1,
+            episodeNumber = 1,
+            voteAverage = 8f,
+            airDate = "2024-01-01",
+            runtime = 50
+        )
+
+        val sampleTvShowDto = TvShowDto(id = 1, name = "Fight club")
+        val sampleTvShowLocalDto = TvShowLocalDto(
+            id = 1, title = "Fight club",
+            posterImageUrl = "",
+            releaseDate = null,
+            imdbRating = 5f
+        )
+        val dummyGenresDto = listOf(
+            GenreDto(id = 1, name = "Action"),
+            GenreDto(id = 2, name = "Drama")
+        )
+
+        val dummyGenre1 = GenreLocalDto(1, "Action")
+        val dummyGenre2 = GenreLocalDto(2, "Crime")
+        val genres = listOf(dummyGenre1, dummyGenre2)
+    }
 }

@@ -81,7 +81,7 @@ class TvShowRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch TvSeries TopRated") {
            if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
+                    localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
@@ -92,7 +92,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheTvShow(
                         tvShow = it.map { it.toLocalDto() },
-                        category = Category.TOP_RATED
+                        category = Category.TOP_RATED_MEDIA
                     )
                 }
             }
@@ -108,7 +108,7 @@ class TvShowRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch TvSeries Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
+                    localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR_MEDIA)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toEntity() }
                 }
@@ -118,7 +118,7 @@ class TvShowRepositoryImpl @Inject constructor(
                 if (page == 1) {
                     localCachedContentDataSource.cacheTvShow(
                         tvShow = it.map { it.toLocalDto() },
-                        category = Category.POPULAR
+                        category = Category.POPULAR_MEDIA
                     )
                 }
             }
@@ -127,6 +127,17 @@ class TvShowRepositoryImpl @Inject constructor(
     override suspend fun getSeriesGenres(): List<Genre> {
         return safeCall("Genres not found") {
             remoteDataSource.getTvShowGenres().map { it.toEntity() }
+            val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
+            if (cachedGenres.isNotEmpty()) {
+                return cachedGenres.map { it.toEntity() }
+            }
+
+            return remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
+                localCachedContentDataSource.cacheGenres(
+                    genres = it.map { it.toLocalDto() },
+                    category = Category.TV_SHOW_GENRES
+                )
+            }
         }
     }
 

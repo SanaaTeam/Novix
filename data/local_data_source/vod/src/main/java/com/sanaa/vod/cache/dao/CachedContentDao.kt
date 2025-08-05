@@ -16,11 +16,11 @@ interface CachedContentDao {
         """
         SELECT * FROM cached_content
         WHERE (id = :metadataId)
-        AND (:mediaType IS NULL OR media_type = :mediaType)
+        AND (:contentType IS NULL OR content_type = :contentType)
     """
     )
     suspend fun getCachedContentInfo(
         metadataId: Long,
-        mediaType: String? = null,
+        contentType: String? = null,
     ): List<CachedContentLocalDto>
 }
