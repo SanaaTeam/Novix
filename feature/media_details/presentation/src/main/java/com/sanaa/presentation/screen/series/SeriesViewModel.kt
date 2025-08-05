@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.series
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -42,6 +43,7 @@ class SeriesViewModel @Inject constructor(
 
     init {
         loadSeries()
+        fetchUserRating()
         updateUserStatus()
     }
 
@@ -172,7 +174,6 @@ class SeriesViewModel @Inject constructor(
     private fun loadSeries() {
         tryToExecute(
             callee = {
-                fetchUserRating()
                 fetchSeriesDetails()
                      },
             onSuccess = {
@@ -196,11 +197,19 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchUserRating() = coroutineScope {
-        val ratingDeferred = async { getCurrentUserRating(seriesId) }
-        val currentSeriesRating = ratingDeferred.await()
-        updateState {
-            it.copy(imdbRating = currentSeriesRating)
+    private  fun fetchUserRating()  {
+        if (state.value.isUserLoggedIn) {
+            tryToExecute(
+                callee = {
+                    getCurrentUserRating(seriesId)
+                },
+                onSuccess = {rating->
+                    updateState {
+                        it.copy(imdbRating = rating)
+                    }
+                },
+            )
+
         }
     }
     private suspend fun fetchSeriesDetails() = coroutineScope {
@@ -211,7 +220,6 @@ class SeriesViewModel @Inject constructor(
         val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
         val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
         val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
-        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
 
         val series = seriesDeferred.await()
@@ -219,7 +227,6 @@ class SeriesViewModel @Inject constructor(
         val season = seasonDeferred.await()
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
-        val currentSeriesRating = ratingDeferred.await()
         addTvSeriesToHistory(series)
 
         updateState {
@@ -228,7 +235,6 @@ class SeriesViewModel @Inject constructor(
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
                 images = images,
-                imdbRating = currentSeriesRating
             )
         }
     }
@@ -290,7 +296,9 @@ class SeriesViewModel @Inject constructor(
         } catch (_: NoLoggedInUserException) {
             null
         }
-        if (user == null) return
+        if (user == null) {
+            return
+        }
         manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
             mediaHistoryItem = tvSeries.toHistory(),
             username = user.username
