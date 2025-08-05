@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -23,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +34,6 @@ import com.sanaa.designsystem.design_system.component.base_bottomsheet.BaseBotto
 import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
@@ -103,7 +102,6 @@ private fun SaveToListBottomSheetContent(
                     )
                 }
             )
-
             if (state.isLoading && state.playlists.isEmpty()) {
                 Box(
                     modifier = Modifier
@@ -116,8 +114,11 @@ private fun SaveToListBottomSheetContent(
             } else {
                 LazyColumn(
                     modifier = Modifier
+                        .heightIn(max = 400.dp)
+
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
+
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(state.playlists, key = { it.id }) { playlist ->
@@ -163,49 +164,40 @@ private fun PlaylistItem(
     modifier: Modifier = Modifier
 ) {
     val shape = RoundedCornerShape(12.dp)
-    NovixScaffold(
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(shape)
-            .clickable(onClick = onClick),
-        backgroundColor = Color.Transparent,
-        contentBackground = Color.Transparent,
-        backgroundShapes = {},
-        cancelInnerPadding = true
+            .background(
+                color = if (isSelected) Theme.colors.primaryVariant
+                else Theme.colors.surface
+            )
+            .border(
+                width = if (isSelected) 2.dp else 1.dp,
+                color = if (isSelected) Theme.colors.primary
+                else Theme.colors.stroke,
+                shape = shape
+            )
+            .clickable(onClick = onClick)
+            .padding(16.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape)
-                .background(
-                    color = if (isSelected) Theme.colors.primaryVariant else Theme.colors.surface
-                )
-                .border(
-                    width = if (isSelected) 2.dp else 1.dp,
-                    color = if (isSelected) Theme.colors.primary else Theme.colors.stroke,
-                    shape = shape
-                )
-                .clickable(onClick = onClick)
-                .padding(it) // padding from scaffold
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                AppText(
-                    text = title,
-                    style = Theme.textStyle.body.large,
-                    color = Theme.colors.title
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                AppText(
-                    text = "$itemCount items",
-                    style = Theme.textStyle.body.small,
-                    color = Theme.colors.body
-                )
-            }
+        Column {
+            AppText(
+                text = title,
+                style = Theme.textStyle.body.large,
+                color = Theme.colors.title
+            )
+            Spacer(Modifier.height(4.dp))
+            AppText(
+                text = "$itemCount items",
+                style = Theme.textStyle.body.small,
+                color = Theme.colors.body
+            )
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
