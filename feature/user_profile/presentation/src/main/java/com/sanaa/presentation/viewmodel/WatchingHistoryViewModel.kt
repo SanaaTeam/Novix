@@ -11,9 +11,7 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.MediaHistoryItem
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -38,7 +36,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun loadWatchingHistory() {
         updateState { it.copy(isLoading = true, error = null) }
-        
+
         tryToExecute(
             callee = {
                 val loggedInUser = getLoggedInUserUseCase.getLoggedInUser()
@@ -67,25 +65,26 @@ class WatchingHistoryViewModel @Inject constructor(
                         }
                     }
                 )
-            }
+            },
+
         )
     }
 
     fun onMediaTabSelection(mediaTypeUi: MediaTypeUi?) {
         updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
-        
+
         val mediaType = when (mediaTypeUi) {
             null -> null // null means all types
             MediaTypeUi.MOVIE -> MediaType.MOVIE
             MediaTypeUi.TV_SHOW -> MediaType.TV_SERIES
         }
-        
+
         loadWatchingHistoryByType(mediaType)
     }
 
     private fun loadWatchingHistoryByType(mediaType: MediaType?) {
         updateState { it.copy(isLoading = true, error = null) }
-        
+
         tryToExecute(
             callee = {
                 val loggedInUser = getLoggedInUserUseCase.getLoggedInUser()
@@ -115,7 +114,14 @@ class WatchingHistoryViewModel @Inject constructor(
                     }
                 )
             },
-            
+            onError = { exception ->
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        error = exception.message ?: "Failed to load watching history"
+                    )
+                }
+            }
         )
     }
 
