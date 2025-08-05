@@ -21,6 +21,7 @@ import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.presentation.navigation.SearchApiEntryPoint
+import com.sanaa.presentation.provider.LocalSaveContentThreshold
 import com.sanaa.presentation.provider.LocalThemeProvider
 import com.sanaa.presentation.screen.componants.CategoryTabSection
 import com.sanaa.presentation.screen.componants.RequestToLoginBottomSheet
@@ -91,7 +92,10 @@ fun SearchScreen(
             }
         }
     }
-    CompositionLocalProvider(LocalThemeProvider provides uiState.isDarkMode) {
+    CompositionLocalProvider(
+        LocalThemeProvider provides uiState.isDarkMode,
+        LocalSaveContentThreshold provides uiState.safeContentThreshold
+    ) {
         SearchScreenContent(
             uiState = uiState,
             searchListener = searchViewModel,

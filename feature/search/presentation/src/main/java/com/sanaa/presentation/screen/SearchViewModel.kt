@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import repository.ContentRestriction
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
@@ -59,6 +60,7 @@ class SearchViewModel @Inject constructor(
         observeRecentViewedItems()
         observeRecentSearchHistory()
         observeSelectedTheme()
+        observeContentRestriction()
         updateUserStatus()
     }
 
@@ -382,6 +384,25 @@ class SearchViewModel @Inject constructor(
 
     }
 
+    private fun observeContentRestriction() {
+        tryToCollect(
+            callee = mangeUserPreferenceUseCase::getContentRestriction,
+            onCollect = { contentRestriction ->
+                updateState {
+                    it.copy(
+                        safeContentThreshold =
+                            when (contentRestriction) {
+                                ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+                                ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+                                ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+                            }
+                    )
+                }
+            },
+
+            )
+    }
+
     private suspend fun getUserState() {
         val isUserLoggedIn = checkUserLogin.isLoggedIn()
         updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
@@ -391,9 +412,13 @@ class SearchViewModel @Inject constructor(
         tryToExecute(callee = ::getUserState)
     }
 
-    companion object {
+    private companion object {
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
+
+        const val STRICT_CONTENT_THRESHOLD = 0.9f
+        const val MODERATE_CONTENT_THRESHOLD = 0.5f
+        const val UNRESTRICTED_CONTENT_THRESHOLD = 0.0f
     }
 }

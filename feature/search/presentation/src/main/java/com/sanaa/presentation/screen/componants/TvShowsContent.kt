@@ -20,11 +20,12 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
-import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
-import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.provider.LocalSaveContentThreshold
+import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
+import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.TvShowUiModel
@@ -33,7 +34,7 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 fun TvShowsContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     onTvShowClick: (RecentViewedUiModel, TvShowUiModel) -> Unit,
-    onSaveIconClicked:()-> Unit
+    onSaveIconClicked: () -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
@@ -53,7 +54,8 @@ fun TvShowsContent(
                             imageUrl = tvShow.imageUrl,
                             modifier = Modifier.fillMaxWidth(),
                             sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = 0.7f,
+                            safeContentThreshold = LocalSaveContentThreshold.current,
+                            isBlurEnabled = LocalSaveContentThreshold.current != 0f,
                             contentDescription = tvShow.title,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

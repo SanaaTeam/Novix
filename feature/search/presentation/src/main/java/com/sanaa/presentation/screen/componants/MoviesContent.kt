@@ -28,6 +28,7 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import androidx.compose.ui.Alignment
 import androidx.paging.LoadState
 import com.sanaa.designsystem.design_system.component.indicator.WavyProgressIndicator
+import com.sanaa.presentation.provider.LocalSaveContentThreshold
 
 @Composable
 fun MoviesContent(
@@ -53,7 +54,8 @@ fun MoviesContent(
                             imageUrl = movie.imageUrl,
                             modifier = Modifier.fillMaxWidth(),
                             sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = 0.7f,
+                            safeContentThreshold = LocalSaveContentThreshold.current,
+                            isBlurEnabled = LocalSaveContentThreshold.current != 0f,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },

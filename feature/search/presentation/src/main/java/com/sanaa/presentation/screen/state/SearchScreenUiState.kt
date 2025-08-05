@@ -19,6 +19,7 @@ data class SearchScreenUiState(
     val showLoginBottomSheet: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val isDarkMode: Boolean = false,
+    val safeContentThreshold: Float = 0f,
 ) {
 
     companion object {
