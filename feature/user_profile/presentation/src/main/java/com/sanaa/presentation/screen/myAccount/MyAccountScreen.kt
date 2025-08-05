@@ -124,7 +124,7 @@ fun MyAccountScreenContent(
             )
         } else {
             Column {
-                MyAccountUserInfo(uiState.username)
+                MyAccountUserInfo(uiState.currentUser)
 
                 VerticalList(
                     items = listOf(
@@ -292,7 +292,6 @@ private fun AccountScreenContentPreview() {
         NovixScaffold {
             MyAccountScreenContent(
                 uiState = MyAccountScreenUiState(
-                    username = "User Name",
                 ), interactionsListener = interactionsListener
             )
         }
