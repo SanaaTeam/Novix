@@ -49,6 +49,7 @@ import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun GenreMoviesScreen(
@@ -111,7 +112,7 @@ fun GenreMoviesScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designR.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
                 }, screenTitle = state.title.orEmpty(), modifier = Modifier
                     .fillMaxWidth()

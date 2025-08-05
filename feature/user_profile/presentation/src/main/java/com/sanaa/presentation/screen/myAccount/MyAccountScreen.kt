@@ -22,6 +22,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
@@ -36,14 +38,14 @@ import com.sanaa.presentation.screen.myAccount.component.VerticalList
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val effect by viewModel.effect.collectAsState(null)
+    val navController = LocalNavControllerProvider.current
     val view = LocalView.current
-
     val activity = view.context as? AppCompatActivity
-
     LaunchedEffect(effect) {
         when (val it = effect) {
-            NavigateToChangePasswordSetting -> TODO("Add Navigation Code")
-            NavigateToContentRestrictionSetting -> TODO("Add Navigation Code")
+            NavigateToChangePasswordSetting -> {}
+            NavigateToContentRestrictionSetting -> {
+            }
             is UpdateAppLanguage -> {
                 val localeList = LocaleListCompat.forLanguageTags(it.language)
                 if (AppCompatDelegate.getApplicationLocales()
@@ -54,8 +56,9 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 activity?.recreate()
             }
 
-            NavigateToMyRating -> TODO("Add Navigation Code")
-            NavigateToWatchingHistory -> TODO("Add Navigation Code")
+            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+            NavigateToWatchingHistory -> {
+            }
             is MyAccountScreenEffect.UpdateAppTheme -> {
                 if (it.isDarkMode) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
