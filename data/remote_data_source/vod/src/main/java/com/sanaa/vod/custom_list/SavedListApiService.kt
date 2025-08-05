@@ -19,7 +19,6 @@ interface SavedListApiService {
 
     @GET("account/{account_id}/lists")
     suspend fun getUserLists(
-        @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
         @Query("page") page: Int? = null
     ): ListApiResponse<SavedListDto>
