@@ -6,17 +6,29 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.Serializable
 
-open class SavedRoutes
-
-@Serializable
-object PlaylistScreenRoute : SavedRoutes()
-
-@Serializable
-object SavedDetailsScreenRoute : SavedRoutes()
+interface SavedDestination {
+    fun route(): String
+}
 
 
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface PlayListApiEntryPoint {
     fun authenticationApi(): AuthenticationApi
+}
+
+@Serializable
+data class SavedDetailsScreenRoute(val listId: Int) : SavedDestination {
+    override fun route(): String = "saved/$listId"
+
+    companion object {
+        const val PATTERN    = "saved/{listId}"
+        const val ARG_LIST_ID = "listId"
+    }
+}
+
+object PlaylistsScreenRoute : SavedDestination {
+    override fun route() = "playlists"
+
+    const val PATTERN = "playlists"
 }

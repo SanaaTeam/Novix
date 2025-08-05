@@ -24,6 +24,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.playlists.presentation.R
+import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.screen.saved.SnackData
 import com.sanaa.presentation.screen.savedDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
@@ -38,12 +39,13 @@ fun SavedDetailsScreen(
     val context = LocalContext.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
+    val navController = LocalNavControllerProvider.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
                 SavedDetailsScreenEffect.NavigateBack -> {
-                    //
+                    navController.popBackStack()
                 }
 
                 SavedDetailsScreenEffect.ShowErrorSnackBar -> {
@@ -77,7 +79,7 @@ fun SavedDetailsContent(
 
     NovixScaffold(
         topBar = {
-            SavedDetailsTopBar(title = "My List")
+            SavedDetailsTopBar(title = "My List", interactionListener = interactionListener)
         }
     ) {
         Column(
@@ -98,12 +100,12 @@ fun SavedDetailsContent(
 
 
 @Composable
-fun SavedDetailsTopBar(title: String) {
+fun SavedDetailsTopBar(title: String, interactionListener: SavedDetailsInteractionListener) {
     TopBar(
         leftContent = {
             TopBarClickableIcon(
                 icon = painterResource(R.drawable.icon_back),
-                onClick = { }
+                onClick = { interactionListener.onBackClick() }
             )
         },
         screenTitle = title,
@@ -117,7 +119,7 @@ fun SavedDetailsTopBar(title: String) {
                 )
                 TopBarClickableIcon(
                     icon = painterResource(R.drawable.icon_deleat),
-                    onClick = {}
+                    onClick = { }
                 )
             }
 

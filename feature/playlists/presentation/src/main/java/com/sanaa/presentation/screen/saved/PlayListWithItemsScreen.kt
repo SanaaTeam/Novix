@@ -24,7 +24,7 @@ import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottom
 @Composable
 fun PlayListWithItemsScreen(
     lists: List<PlayListUiModel>,
-    onItemClick: () -> Unit,
+    onItemClick: (Int) -> Unit,
     onFabClick: () -> Unit = {},
     isVisible: Boolean = false,
     onDismissAddBottomSheet: () -> Unit = {}
@@ -53,7 +53,7 @@ fun PlayListWithItemsScreen(
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(lists) { list ->
                     MyListItem(
-                        onItemClick = { onItemClick() },
+                        onItemClick = { onItemClick(list.id) },
                         title = list.title,
                         count = list.mediaCount
                     )

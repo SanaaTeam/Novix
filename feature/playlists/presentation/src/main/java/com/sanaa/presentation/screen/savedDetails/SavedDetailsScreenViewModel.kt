@@ -26,5 +26,7 @@ class SavedDetailsScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-
+    override fun onBackClick() {
+        emitEffect(SavedDetailsScreenEffect.NavigateBack)
+    }
 }
