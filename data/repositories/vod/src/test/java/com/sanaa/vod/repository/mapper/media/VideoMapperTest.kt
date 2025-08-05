@@ -15,7 +15,7 @@ class VideoMapperTest {
             VideoDto(key = "ghi789", site = "YouTube", type = "Teaser")
         )
 
-        val url = videos.toDomain()
+        val url = videos.toEntity()
 
         assertEquals("https://www.youtube.com/watch?v=abc123", url)
     }
@@ -27,7 +27,7 @@ class VideoMapperTest {
             VideoDto(key = "ghi789", site = "YouTube", type = "Teaser")
         )
 
-        val url = videos.toDomain()
+        val url = videos.toEntity()
 
         assertNull(url)
     }
@@ -36,7 +36,7 @@ class VideoMapperTest {
     fun `toDomain returns null when list is empty`() {
         val videos = emptyList<VideoDto>()
 
-        val url = videos.toDomain()
+        val url = videos.toEntity()
 
         assertNull(url)
     }
