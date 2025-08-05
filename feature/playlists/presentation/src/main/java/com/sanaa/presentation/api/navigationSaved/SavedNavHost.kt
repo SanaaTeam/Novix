@@ -11,8 +11,8 @@ import androidx.navigation.navArgument
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsScreenRoute
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
-import com.sanaa.presentation.screen.saved.PlaylistScreen
 import com.sanaa.presentation.screen.saved.PlayListScreenViewModel
+import com.sanaa.presentation.screen.saved.PlaylistScreen
 import com.sanaa.presentation.screen.savedDetails.SavedDetailsScreen
 import com.sanaa.presentation.screen.savedDetails.SavedDetailsScreenViewModel
 
@@ -23,7 +23,7 @@ fun SavedNavHost() {
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
         NavHost(
-            navController  = navController,
+            navController = navController,
             startDestination = PlaylistsScreenRoute.route()
         ) {
 
@@ -37,7 +37,11 @@ fun SavedNavHost() {
                 arguments = listOf(
                     navArgument(SavedDetailsScreenRoute.ARG_LIST_ID) {
                         type = NavType.IntType
+                    },
+                    navArgument(SavedDetailsScreenRoute.ARG_LIST_TITLE) {
+                        type = NavType.StringType
                     }
+
                 )
             ) {
                 val viewModel: SavedDetailsScreenViewModel = hiltViewModel()

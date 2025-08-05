@@ -58,8 +58,8 @@ class PlayListScreenViewModel @Inject constructor(
         updateState { it.copy(showAddBottomSheet = false) }
     }
 
-    override fun onItemListClicked(listId: Int) {
-        emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId))
+    override fun onItemListClicked(listId: Int, title: String) {
+        emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId,title))
     }
 
     private suspend fun getUserState() {

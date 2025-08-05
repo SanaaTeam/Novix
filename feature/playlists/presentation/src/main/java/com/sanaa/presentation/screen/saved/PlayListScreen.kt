@@ -81,7 +81,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 }
 
                 is PlayListScreenEffect.NavigateToSavedDetails ->
-                    navController.navigate(SavedDetailsScreenRoute(it.listId).route())
+                    navController.navigate(SavedDetailsScreenRoute(it.listId,it.title).route())
             }
         }
 
@@ -194,5 +194,5 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
-    override fun onItemListClicked(listId: Int) {}
+    override fun onItemListClicked(listId: Int, title: String) {}
 }

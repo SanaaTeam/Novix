@@ -79,7 +79,10 @@ fun SavedDetailsContent(
 
     NovixScaffold(
         topBar = {
-            SavedDetailsTopBar(title = "My List", interactionListener = interactionListener)
+            SavedDetailsTopBar(
+                title = state.title.orEmpty(),
+                interactionListener = interactionListener
+            )
         }
     ) {
         Column(
