@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.savedDetails
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.savedDetails.state.MediaItem
-import com.sanaa.presentation.screen.savedDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,7 +18,6 @@ class SavedDetailsScreenViewModel @Inject constructor(
     SavedDetailsInteractionListener {
     override fun onMediaClick(
         mediaId: Int,
-        mediaType: MediaTypeUi
     ) {
         TODO("Not yet implemented")
     }
@@ -28,8 +26,5 @@ class SavedDetailsScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun onMediaTypeClick(mediaType: MediaTypeUi) {
-        TODO("Not yet implemented")
-    }
 
 }
