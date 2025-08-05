@@ -34,7 +34,6 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.MediaType
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
@@ -229,7 +228,6 @@ fun HomeScreenContent(
             onDismiss = { interactionListener.onDismissBottomSheet() },
             onCreateNewListClick = { interactionListener.onCreateNewListClick() },
             mediaId = 1,
-            mediaType = MediaType.MOVIE
         )
     }
 
