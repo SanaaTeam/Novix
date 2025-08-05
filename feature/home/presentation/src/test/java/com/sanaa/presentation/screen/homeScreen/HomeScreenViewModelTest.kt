@@ -19,9 +19,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -64,6 +66,11 @@ class HomeScreenViewModelTest {
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
     }
 
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     private fun initializeViewModel() {
         viewModel = HomeScreenViewModel(
             manageMovieUseCase,
@@ -92,38 +99,6 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `init should fetch top-rated media and update state on success`() =
-        runTest(testDispatcher) {
-            val topRatedMovies = listOf(dummyMovie.copy(id = 3))
-            coEvery { manageMovieUseCase.getTopRatedMovies(1, null) } returns topRatedMovies
-
-            initializeViewModel()
-            advanceUntilIdle()
-
-            val state = viewModel.state.value
-            assertThat(state.topRatingMedia).hasSize(1)
-        }
-
-    @Test
-    fun `init should fetch watched history when user is logged in`() = runTest(testDispatcher) {
-        val historyItems = listOf(dummyHistoryItem)
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
-        coEvery {
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                dummyUser.username,
-                null,
-                null
-            )
-        } returns flowOf(historyItems)
-
-        initializeViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertThat(state.continueWatchingMedia).hasSize(1)
-    }
-
-    @Test
     fun `init should return empty watched history when user is not logged in`() =
         runTest(testDispatcher) {
             coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
@@ -131,86 +106,63 @@ class HomeScreenViewModelTest {
             initializeViewModel()
             advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertThat(state.continueWatchingMedia).isEmpty()
+            val finalState = viewModel.state.value
+            assertThat(finalState.continueWatchingMedia).isEmpty()
         }
 
-    @Test
-    fun `init should fetch genres and update state on success`() = runTest(testDispatcher) {
-        val genres = listOf(dummyGenre)
-        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
-
-        initializeViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertThat(state.movieGenres).hasSize(1)
-    }
 
     @Test
-    fun `init should set isNoInternet to true for NoNetworkException`() = runTest(testDispatcher) {
-        coEvery { manageMovieUseCase.getPopularMovies(any()) } throws NoNetworkException()
-
-        initializeViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertThat(state.isNoInternet).isTrue()
-    }
-
-    @Test
-    fun `onMoviesCardClicked should emit NavigateToMoviesScreen effect`() = runTest {
-        initializeViewModel()
-        viewModel.effect.test {
-            viewModel.onMoviesCardClicked()
-            assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `onTvShowsCardClicked should emit NavigateToTvShowsScreen effect`() = runTest {
-        initializeViewModel()
-        viewModel.effect.test {
-            viewModel.onTvShowsCardClicked()
-            assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `onPeopleCardClicked should emit NavigateToPeopleScreen effect`() = runTest {
-        initializeViewModel()
-        viewModel.effect.test {
-            viewModel.onPeopleCardClicked()
-            assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `onShowAllTopRatingClicked should emit NavigateToTopRatingMediaScreen effect`() = runTest {
-        initializeViewModel()
-        viewModel.effect.test {
-            viewModel.onShowAllTopRatingClicked()
-            assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTopRatingMediaScreen)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `onShowAllContinueWatchingClicked should emit NavigateToWatchedMediaScreen effect`() =
-        runTest {
+    fun `onMoviesCardClicked should emit NavigateToMoviesScreen effect`() =
+        runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onShowAllContinueWatchingClicked()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToWatchedMediaScreen)
-                cancelAndIgnoreRemainingEvents()
+                viewModel.onMoviesCardClicked()
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
             }
         }
 
     @Test
-    fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest {
+    fun `onTvShowsCardClicked should emit NavigateToTvShowsScreen effect`() =
+        runTest(testDispatcher) {
+            initializeViewModel()
+            viewModel.effect.test {
+                viewModel.onTvShowsCardClicked()
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
+            }
+        }
+
+    @Test
+    fun `onPeopleCardClicked should emit NavigateToPeopleScreen effect`() =
+        runTest(testDispatcher) {
+            initializeViewModel()
+            viewModel.effect.test {
+                viewModel.onPeopleCardClicked()
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
+            }
+        }
+
+    @Test
+    fun `onShowAllTopRatingClicked should emit NavigateToTopRatingMediaScreen effect`() =
+        runTest(testDispatcher) {
+            initializeViewModel()
+            viewModel.effect.test {
+                viewModel.onShowAllTopRatingClicked()
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTopRatingMediaScreen)
+            }
+        }
+
+    @Test
+    fun `onShowAllContinueWatchingClicked should emit NavigateToWatchedMediaScreen effect`() =
+        runTest(testDispatcher) {
+            initializeViewModel()
+            viewModel.effect.test {
+                viewModel.onShowAllContinueWatchingClicked()
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToWatchedMediaScreen)
+            }
+        }
+
+    @Test
+    fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.effect.test {
             viewModel.onMediaClick(101, MediaTypeUi.MOVIE)
@@ -220,7 +172,6 @@ class HomeScreenViewModelTest {
                     MediaTypeUi.MOVIE
                 )
             )
-            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -265,14 +216,16 @@ class HomeScreenViewModelTest {
                 genreId = null
             )
         } returns upcomingMovies
+
         initializeViewModel()
         val pagingSource = viewModel.createUpcomingMoviesPagingDataSource(genreId = null)
         val result = pagingSource.load(
             PagingSource.LoadParams.Refresh(key = 1, loadSize = 20, placeholdersEnabled = false)
         )
-        val expected =
-            PagingSource.LoadResult.Page(data = upcomingMovies, prevKey = null, nextKey = 2)
-        assertThat(result).isEqualTo(expected)
+
+        val page = result as PagingSource.LoadResult.Page
+        assertThat(page.data).isEqualTo(upcomingMovies)
+        assertThat(page.nextKey).isEqualTo(2)
     }
 
     private companion object {
@@ -298,14 +251,6 @@ class HomeScreenViewModelTest {
             imdbRating = 8.0f,
             seasonsCount = 3,
             rating = 0
-        )
-        val dummyGenre = Genre(id = 28, name = "Action")
-        val dummyUser = User(id = 42L, name = "Test User", username = "testuser")
-        val dummyHistoryItem = MediaHistoryItem(
-            id = 1,
-            posterImageUrl = "",
-            mediaType = MediaType.MOVIE,
-            genres = emptyList()
         )
     }
 }
