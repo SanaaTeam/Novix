@@ -44,8 +44,9 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     LaunchedEffect(effect) {
         when (val it = effect) {
-            NavigateToChangePasswordSetting -> TODO("Add Navigation Code")
-            NavigateToContentRestrictionSetting -> TODO("Add Navigation Code")
+            NavigateToChangePasswordSetting -> {}
+            NavigateToContentRestrictionSetting -> {
+            }
             is UpdateAppLanguage -> {
                 val localeList = LocaleListCompat.forLanguageTags(it.language)
                 if (AppCompatDelegate.getApplicationLocales()
@@ -57,7 +58,8 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             }
 
             NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
-            NavigateToWatchingHistory -> TODO("Add Navigation Code")
+            NavigateToWatchingHistory -> {
+            }
             is MyAccountScreenEffect.UpdateAppTheme -> {
                 if (it.isDarkMode) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
