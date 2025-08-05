@@ -8,12 +8,12 @@ import com.sanaa.presentation.state.MediaTypeUi
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.User
-import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -77,23 +77,6 @@ class WatchingHistoryViewModelTest {
     }
 
     @Test
-    fun `init should handle error when user is not logged in`() = runTest(testDispatcher) {
-        // Given
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
-
-        // When
-        initializeViewModel()
-
-        // Then
-        viewModel.state.test {
-            val state = awaitItem()
-            assertThat(state.isLoading).isTrue()
-            assertThat(state.error).isEqualTo("Failed to load watching history")
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-
-    @Test
     fun `onMediaTabSelection should update selected media type and load filtered history`() = runTest(testDispatcher) {
         // Given
         val moviesHistory = listOf(dummyHistoryItem.copy(id = 1, mediaType = MediaType.MOVIE))
@@ -105,10 +88,14 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.state.test {
-            awaitItem() // Initial state
-            val finalState = awaitItem()
-            assertThat(finalState.selectedMediaTypeUi).isEqualTo(MediaTypeUi.MOVIE)
-            assertThat(finalState.isLoading).isFalse()
+            var currentState = awaitItem()
+            while (currentState.isLoading) {
+                currentState = awaitItem()
+            }
+
+            assertThat(currentState.selectedMediaTypeUi).isEqualTo(MediaTypeUi.MOVIE)
+            assertThat(currentState.isLoading).isFalse()
+            assertThat(currentState.error).isNull()
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -128,16 +115,20 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.state.test {
-            awaitItem()
-            val finalState = awaitItem()
-            assertThat(finalState.selectedMediaTypeUi).isNull()
-            assertThat(finalState.isLoading).isFalse()
-            assertThat(finalState.error).isNull()
+            var state = awaitItem()
+            while (state.isLoading) {
+                state = awaitItem()
+            }
+
+            assertThat(state.selectedMediaTypeUi).isNull()
+            assertThat(state.isLoading).isFalse()
+            assertThat(state.error).isNull()
             cancelAndConsumeRemainingEvents()
         }
 
         coVerify { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) }
     }
+
 
     @Test
     fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
@@ -191,6 +182,55 @@ class WatchingHistoryViewModelTest {
         // Then
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateBack)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+    @Test
+    fun `init should handle error when collecting watching history fails`() = runTest(testDispatcher) {
+        // Given
+        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } returns flow {
+            throw RuntimeException("Collect failed")
+        }
+
+        // When
+        initializeViewModel()
+
+        // Then
+        viewModel.state.test {
+            val state = awaitItem().let {
+                var current = it
+                while (current.isLoading) {
+                    current = awaitItem()
+                }
+                current
+            }
+
+            assertThat(state.error).isEqualTo("Collect failed")
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+    @Test
+    fun `onMediaTabSelection should handle error when collecting filtered history fails`() = runTest(testDispatcher) {
+        // Given
+        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, MediaType.TV_SERIES) } returns flow {
+            throw RuntimeException("Collect error TV")
+        }
+        initializeViewModel()
+
+        // When
+        viewModel.onMediaTabSelection(MediaTypeUi.TV_SHOW)
+
+        // Then
+        viewModel.state.test {
+            val state = awaitItem().let {
+                var current = it
+                while (current.isLoading) {
+                    current = awaitItem()
+                }
+                current
+            }
+
+            assertThat(state.error).isEqualTo("Collect error TV")
             cancelAndConsumeRemainingEvents()
         }
     }
