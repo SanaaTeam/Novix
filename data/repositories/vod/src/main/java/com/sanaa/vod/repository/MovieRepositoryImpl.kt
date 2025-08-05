@@ -1,7 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.repository.mapper.cachedContent.toDomain
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
     private val remote: RemoteMovieDataSource,
-    private val dailyCachedContentDataSource: DailyCachedContentDataSource,
+    private val localCachedContentDataSource: LocalCachedContentDataSource,
     private val preferences: PreferencesManager
 ) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Movie =
@@ -65,7 +65,7 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
+                    localCachedContentDataSource.getCachedMovies(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
                     cachedMovies.map { it.toDomain() }
                 }
@@ -74,7 +74,7 @@ class MovieRepositoryImpl @Inject constructor(
 
             return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
                 if (page == 1) {
-                    dailyCachedContentDataSource.cacheMovie(
+                    localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
                         category = Category.POPULAR
                     )
@@ -87,14 +87,14 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie TopRated") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedMovies(Category.TOP_RATED)
+                    localCachedContentDataSource.getCachedMovies(Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toDomain() }
                 }
             }
             return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
                 if (page == 1 && genreId == null) {
-                    dailyCachedContentDataSource.cacheMovie(
+                    localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
                         category = Category.TOP_RATED
                     )
@@ -106,7 +106,7 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movie Upcoming") {
             if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedMovies(Category.UPCOMING)
+                    localCachedContentDataSource.getCachedMovies(Category.UPCOMING)
                 if (cachedMovies.isNotEmpty()) {
                     return cachedMovies.map { it.toDomain() }
                 }
@@ -114,7 +114,7 @@ class MovieRepositoryImpl @Inject constructor(
 
             return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
                 if (page == 1 && genreId == null) {
-                    dailyCachedContentDataSource.cacheMovie(
+                    localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
                         category = Category.UPCOMING
                     )

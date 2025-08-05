@@ -5,7 +5,7 @@ import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
 import com.sanaa.vod.cache.dao.MovieDao
 import com.sanaa.vod.cache.dao.TvShowDao
-import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
@@ -15,13 +15,13 @@ import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.util.TimeUtils
 import javax.inject.Inject
 
-class DailyCachedContentDataSourceImpl @Inject constructor(
+class LocalCachedContentDataSourceImpl @Inject constructor(
     private val cachedContentDao: CachedContentDao,
     private val cachedContentMetadataDao: CachedContentMetadataDao,
     private val movieDao: MovieDao,
     private val tvShowDao: TvShowDao,
     private val languageProvider: LanguageProvider
-) : DailyCachedContentDataSource {
+) : LocalCachedContentDataSource {
 
     private val currentLanguage: String
         get() = languageProvider.getCurrentLanguage()

@@ -1,7 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
-import com.sanaa.vod.dataSource.local.cache.DailyCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.repository.mapper.cachedContent.toDomain
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class TvShowRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteTvShowDataSource,
-    private val dailyCachedContentDataSource: DailyCachedContentDataSource,
+    private val localCachedContentDataSource: LocalCachedContentDataSource,
     private val preferences: PreferencesManager
 ) : TvSeriesRepository {
 
@@ -82,7 +82,7 @@ class TvShowRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch TvSeries TopRated") {
            if (page == 1 && genreId == null) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
+                    localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED)
                 if (cachedMovies.isNotEmpty()) {
                     cachedMovies.map { it.toDomain() }
                 }
@@ -91,7 +91,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
             return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
-                    dailyCachedContentDataSource.cacheTvShow(
+                    localCachedContentDataSource.cacheTvShow(
                         tvShow = it.map { it.toLocalDto() },
                         category = Category.TOP_RATED
                     )
@@ -111,7 +111,7 @@ class TvShowRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch TvSeries Popular") {
             if (page == 1) {
                 val cachedMovies =
-                    dailyCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
+                    localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR)
                 if (cachedMovies.isNotEmpty()) {
                     cachedMovies.map { it.toDomain() }
                 }
@@ -120,7 +120,7 @@ class TvShowRepositoryImpl @Inject constructor(
 
             return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
                 if (page == 1) {
-                    dailyCachedContentDataSource.cacheTvShow(
+                    localCachedContentDataSource.cacheTvShow(
                         tvShow = it.map { it.toLocalDto() },
                         category = Category.POPULAR
                     )

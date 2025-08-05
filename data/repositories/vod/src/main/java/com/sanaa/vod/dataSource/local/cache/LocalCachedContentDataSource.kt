@@ -4,7 +4,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Ca
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 
-interface DailyCachedContentDataSource {
+interface LocalCachedContentDataSource {
     suspend fun cacheMovie(movie: List<MovieLocalDto>, category: Category)
     suspend fun getCachedMovies(category: Category): List<MovieLocalDto>
     suspend fun cacheTvShow(tvShow: List<TvShowLocalDto>, category: Category)
