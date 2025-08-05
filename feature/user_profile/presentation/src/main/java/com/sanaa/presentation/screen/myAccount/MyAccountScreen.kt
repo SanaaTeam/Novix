@@ -41,7 +41,6 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val navController = LocalNavControllerProvider.current
     val view = LocalView.current
     val activity = view.context as? AppCompatActivity
-
     LaunchedEffect(effect) {
         when (val it = effect) {
             NavigateToChangePasswordSetting -> {}

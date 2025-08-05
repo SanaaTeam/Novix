@@ -13,9 +13,8 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.chips.DeleteIconChip
 import com.sanaa.designsystem.design_system.component.chips.MediaRatingChip
 import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
-import com.sanaa.designsystem.design_system.component.poster.RemoteImagePlaceholder
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.model.RatedMediaUiModel
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 
@@ -30,11 +29,9 @@ fun RatedMediaItem(
         modifier = modifier,
         onCardClick = {onCardClick(media.id, media.mediaType)},
         posterImage = {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = media.posterImageUrl.orEmpty(),
                 modifier = Modifier.fillMaxSize(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
                 contentDescription = media.title,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
