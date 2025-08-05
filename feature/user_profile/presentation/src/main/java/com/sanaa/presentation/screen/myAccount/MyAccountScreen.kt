@@ -22,6 +22,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.navigation.ChangPasswordRoute
+import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
@@ -39,10 +41,11 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val view = LocalView.current
 
     val activity = view.context as? AppCompatActivity
+    val navController = LocalNavControllerProvider.current
 
     LaunchedEffect(effect) {
         when (val it = effect) {
-            NavigateToChangePasswordSetting -> TODO("Add Navigation Code")
+            NavigateToChangePasswordSetting -> navController.navigate(ChangPasswordRoute)
             NavigateToContentRestrictionSetting -> TODO("Add Navigation Code")
             is UpdateAppLanguage -> {
                 val localeList = LocaleListCompat.forLanguageTags(it.language)
