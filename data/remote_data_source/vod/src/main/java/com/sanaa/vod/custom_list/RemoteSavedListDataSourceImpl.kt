@@ -11,8 +11,8 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     private val savedListApiService: SavedListApiService
 ) : RemoteSavedListDataSource {
 
-    override suspend fun fetchUserLists(sessionId: String, accountId: Long,  page: Int?) =
-        savedListApiService.getUserLists(accountId, sessionId, page).results
+    override suspend fun fetchUserLists(sessionId: String, page: Int?) =
+        savedListApiService.getUserLists(sessionId = sessionId, page = page).results
 
     override suspend fun createList(
         sessionId: String,
