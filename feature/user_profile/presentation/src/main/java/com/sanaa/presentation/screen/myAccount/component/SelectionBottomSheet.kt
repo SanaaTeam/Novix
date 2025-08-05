@@ -35,7 +35,8 @@ fun <T> SelectionBottomSheet(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopBar(

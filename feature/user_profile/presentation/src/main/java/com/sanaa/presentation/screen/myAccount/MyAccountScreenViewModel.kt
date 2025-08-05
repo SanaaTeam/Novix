@@ -4,6 +4,7 @@ import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import repository.Language
 import repository.Theme
 import usecase.MangeUserPreferenceUseCase
@@ -59,10 +60,13 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSaveLanguageClick() {
-        tryToExecute(
-            callee = { saveLanguage() },
-            onSuccess = ::onSaveLanguageSuccess
-        )
+        val previousLanguage = runBlocking { mangeUserPreference.getLanguage().first() }
+        if (previousLanguage.code != state.value.selectedLanguage)
+            tryToExecute(
+                callee = { saveLanguage() },
+                onSuccess = ::onSaveLanguageSuccess
+            )
+        else updateState { it.copy(showChangeLanguageBottomSheet = false) }
     }
 
     private suspend fun saveLanguage(): Language {
@@ -80,10 +84,13 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSaveThemeClick() {
-        tryToExecute(
-            callee = { saveTheme() },
-            onSuccess = ::onSaveThemeSuccess
-        )
+        val previousTheme = runBlocking { mangeUserPreference.getTheme().first() }
+        if (previousTheme.name != state.value.selectedTheme?.name)
+            tryToExecute(
+                callee = { saveTheme() },
+                onSuccess = ::onSaveThemeSuccess
+            )
+        else updateState { it.copy(showChangeThemeBottomSheet = false) }
     }
 
     private suspend fun saveTheme(): Theme {
@@ -93,12 +100,16 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSaveContentRestrictionClick() {
-        tryToExecute(
-            callee = { saveContentRestriction() },
-            onSuccess = {
-                updateState { it.copy(showContentRestrictionBottomSheet = false) }
-            }
-        )
+        val previousContentRestriction =
+            runBlocking { mangeUserPreference.getContentRestriction().first() }
+        if (previousContentRestriction.name != state.value.selectedContentRestriction?.name)
+            tryToExecute(
+                callee = { saveContentRestriction() },
+                onSuccess = {
+                    updateState { it.copy(showContentRestrictionBottomSheet = false) }
+                }
+            )
+        else updateState { it.copy(showContentRestrictionBottomSheet = false) }
     }
 
     private suspend fun saveContentRestriction() {

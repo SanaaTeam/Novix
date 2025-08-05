@@ -37,7 +37,8 @@ import com.sanaa.designsystem.design_system.component.poster.RemoteImagePlacehol
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -100,11 +101,12 @@ fun ImageSlider(
                     .fillMaxWidth()
                     .fillMaxHeight()
             ) { page ->
-                RemoteBlurredHaramImageViewer(
+                RemoteBlurredSensitiveImage(
                     imageUrl = images[page], contentDescription = contentDescription,
                     modifier = Modifier.fillMaxWidth(),
-                    haramThreshold = 0.2f,
-                    nonHaramThreshold = 0.7f,
+                    sensitiveContentThreshold = 0.2f,
+                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                    safeContentThreshold = LocalSafeContentThreshold.current,
                     placeholderContent = {
                         RemoteImagePlaceholder(Modifier.fillMaxSize())
                     },

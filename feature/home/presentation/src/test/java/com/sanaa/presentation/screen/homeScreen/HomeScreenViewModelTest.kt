@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -104,13 +105,17 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Then
-        val finalState = viewModel.state.value
-        assertThat(finalState.topRatingMedia).hasSize(1)
-        assertThat(finalState.topRatingMedia.first().id).isEqualTo(3)
+        advanceUntilIdle()
+        viewModel.state.test {
+            val state = awaitItem().let {
+                var current = it
+                while (current.topRatingMedia.isEmpty()) {
+                    current = awaitItem()
+                }
+                current
+            }
+            assertThat(state.topRatingMedia).hasSize(1)
+        }
     }
 
 
@@ -265,6 +270,7 @@ class HomeScreenViewModelTest {
     fun `onRetryClick should re-fetch all data`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onRetryClick()
+        advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
         coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
     }

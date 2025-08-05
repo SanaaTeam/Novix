@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +28,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundS
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
@@ -45,13 +43,11 @@ fun ActorGalleryScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        ActorGalleryContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+    ActorGalleryContent(
+        state = uiState,
+        onBackClick = navigateBack,
+        modifier = Modifier.fillMaxSize()
+    )
 }
 
 @Composable

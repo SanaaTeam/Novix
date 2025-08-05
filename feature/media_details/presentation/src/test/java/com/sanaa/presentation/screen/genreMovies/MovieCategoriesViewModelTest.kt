@@ -8,17 +8,8 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import kotlinx.coroutines.test.*
+import org.junit.jupiter.api.*
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.test.assertEquals
@@ -34,19 +25,18 @@ class MovieCategoriesViewModelTest {
     private val manageMoviesDetailsUseCase: ManageMovieUseCase = mockk()
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
-
     @BeforeAll
-    fun setUpDispatcher() {
+    fun setMainDispatcher() {
         Dispatchers.setMain(testDispatcher)
     }
 
     @AfterAll
-    fun resetDispatcher() {
+    fun resetMainDispatcher() {
         Dispatchers.resetMain()
     }
 
     @BeforeEach
-    fun setUp() {
+    fun setupMocks() {
         clearAllMocks()
     }
 
@@ -55,25 +45,9 @@ class MovieCategoriesViewModelTest {
         Dispatchers.resetMain()
     }
 
-
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
-        val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), 1) } returns emptyList()
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "categoryId" to category.id,
-                "categoryName" to category.name
-            )
-        )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle,
-            manageMoviesDetailsUseCase,
-            checkIfUserIsLoggedInUseCase
-        )
-
+        prepareViewModel()
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -83,22 +57,7 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onBottomSheetDismiss should set showBottomSheet to false`() = runTest {
-        val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), 1) } returns emptyList()
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "categoryId" to category.id,
-                "categoryName" to category.name
-            )
-        )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle,
-            manageMoviesDetailsUseCase,
-            checkIfUserIsLoggedInUseCase
-        )
-
+        prepareViewModel()
         advanceUntilIdle()
 
         viewModel.onSaveIconClick()
@@ -110,22 +69,7 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
-        val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), 1) } returns emptyList()
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "categoryId" to category.id,
-                "categoryName" to category.name
-            )
-        )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle,
-            manageMoviesDetailsUseCase,
-            checkIfUserIsLoggedInUseCase
-        )
-
+        prepareViewModel()
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -136,43 +80,42 @@ class MovieCategoriesViewModelTest {
 
     @Test
     fun `onMovieClick should emit NavigateToMovieDetails effect`() = runTest {
-        val category = genreList[0]
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), 1) } returns emptyList()
+        prepareViewModel()
+        advanceUntilIdle()
 
+        viewModel.effect.test {
+            viewModel.onMovieClick(10)
+            assertEquals(GenreMoviesEffects.NavigateToMovieDetails(10), awaitItem())
+        }
+    }
+
+
+    private fun prepareViewModel() {
+        val category = genreList.first()
+        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns emptyList()
+
+        viewModel = createViewModel(category)
+    }
+
+    private fun createViewModel(category: Genre): GenreMoviesViewModel {
         val savedStateHandle = SavedStateHandle(
             mapOf(
                 "categoryId" to category.id,
                 "categoryName" to category.name
             )
         )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle,
-            manageMoviesDetailsUseCase,
-            checkIfUserIsLoggedInUseCase
+        return GenreMoviesViewModel(
+            savedStateHandle = savedStateHandle,
+            manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
+            checkIfUserIsLoggedInUseCase = checkIfUserIsLoggedInUseCase,
+            dispatcher = testDispatcher
         )
-
-        advanceUntilIdle()
-
-        viewModel.effect.test {
-            viewModel.onMovieClick(10)
-            assertEquals(
-                GenreMoviesEffects.NavigateToMovieDetails(10),
-                awaitItem()
-            )
-        }
     }
 
     private companion object {
         val genreList = listOf(
-            Genre(
-                id = 1,
-                name = "Drama"
-            ),
-            Genre(
-                id = 2,
-                name = "Action"
-            )
+            Genre(id = 1, name = "Drama"),
+            Genre(id = 2, name = "Action")
         )
     }
 }
