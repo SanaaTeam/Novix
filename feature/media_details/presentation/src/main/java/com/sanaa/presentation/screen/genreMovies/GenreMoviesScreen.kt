@@ -44,7 +44,6 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.designsystem.design_system.component.poster.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
