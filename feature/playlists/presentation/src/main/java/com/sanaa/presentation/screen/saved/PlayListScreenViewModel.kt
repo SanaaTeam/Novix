@@ -26,8 +26,7 @@ class PlayListScreenViewModel @Inject constructor(
     private fun loadSavedLists() = tryToExecute(
         dispatcher = Dispatchers.IO,
         callee = {
-            val userId = getLoggedInUserUseCase.getLoggedInUser().id
-            val savedLists = manageSavedListsUseCase.getSavedLists(userId).map {
+            val savedLists = manageSavedListsUseCase.getSavedLists().map {
                 it.toUiModel()
             }
             updateState { it.copy(isLoading = false, lists = savedLists) }
