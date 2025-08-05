@@ -6,4 +6,6 @@
     <string name="all">الكل</string>
     <string name="movies">الافلام</string>
     <string name="tv_shows">المسلسلات</string>
+    <string name="change_password">تغيير رمز المرور</string>
+
 </resources>
