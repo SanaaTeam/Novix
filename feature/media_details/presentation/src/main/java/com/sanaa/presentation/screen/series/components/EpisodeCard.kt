@@ -22,6 +22,7 @@ import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.model.EpisodeUiModel
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
@@ -32,7 +33,7 @@ fun EpisodeCard(
     episode: EpisodeUiModel, modifier: Modifier = Modifier
 ) {
 
-    val placeholderResId = if (isSystemInDarkTheme()) {
+    val placeholderResId = if (LocalThemeProvider.current) {
         RDesignSystem.drawable.icon_placeholder_dark
     } else {
         RDesignSystem.drawable.icon_placeholder_light

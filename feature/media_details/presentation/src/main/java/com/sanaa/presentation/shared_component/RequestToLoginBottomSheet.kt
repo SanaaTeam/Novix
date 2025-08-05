@@ -25,6 +25,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalThemeProvider
 
 @Composable
 fun RequestToLoginBottomSheet(
@@ -36,7 +37,7 @@ fun RequestToLoginBottomSheet(
     title: String = stringResource(R.string.add_to_list)
 
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = LocalThemeProvider.current
     val loginImageId = if (isDarkTheme) {
         R.drawable.icon_users_dark
     } else {

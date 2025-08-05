@@ -84,7 +84,6 @@ class AuthenticationRepositoryImplTest {
         val guestSessionId = "guest_123"
         coEvery { apiService.createGuestSession() } returns CreateGuestSessionResponse(
             success = true,
-            statusCode = null,
             expiresAt = null,
             guestSessionId = guestSessionId
         )

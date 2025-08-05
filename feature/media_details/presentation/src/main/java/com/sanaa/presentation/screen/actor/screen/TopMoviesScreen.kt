@@ -1,11 +1,7 @@
 package com.sanaa.presentation.screen.actor.screen
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +31,10 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundS
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
@@ -73,23 +69,21 @@ fun TopMoviesScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        TopMoviesContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize(),
-            onSaveIconClick = {
-                viewModel.onSaveClicked()
-            }
-        )
-        RequestToLoginBottomSheet(
-            isVisible = uiState.showLoginBottomSheet,
-            onDismiss = viewModel::onDismissBottomSheet,
-            onLoginButtonClick = {
-                launcher.launch(authApi.getLaunchIntent(context))
-            }
-        )
-    }
+    TopMoviesContent(
+        state = uiState,
+        onBackClick = navigateBack,
+        modifier = Modifier.fillMaxSize(),
+        onSaveIconClick = {
+            viewModel.onSaveClicked()
+        }
+    )
+    RequestToLoginBottomSheet(
+        isVisible = uiState.showLoginBottomSheet,
+        onDismiss = viewModel::onDismissBottomSheet,
+        onLoginButtonClick = {
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
+    )
 }
 
 @Composable
@@ -153,11 +147,12 @@ private fun TopMoviesContent(
                             ) { _, movie ->
                                 MediaPosterCard(
                                     posterImage = {
-                                        RemoteBlurredHaramImageViewer(
+                                        RemoteBlurredSensitiveImage(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
+                                            sensitiveContentThreshold = 0.2f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
                                             contentDescription = movie.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
