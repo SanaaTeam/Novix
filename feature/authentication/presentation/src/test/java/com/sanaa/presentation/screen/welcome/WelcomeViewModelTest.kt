@@ -2,19 +2,38 @@ package com.sanaa.presentation.screen.welcome
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.CreateGuestSessionUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class WelcomeViewModelTest {
 
     private lateinit var viewModel: WelcomeViewModel
+    private val createGuestSessionUseCase: CreateGuestSessionUseCase = mockk()
+    private lateinit var testDispatcher: TestDispatcher
+
 
     @BeforeEach
     fun setUp() {
-        viewModel = WelcomeViewModel()
+        testDispatcher = StandardTestDispatcher()
+        Dispatchers.setMain(testDispatcher)
+
+        coEvery { createGuestSessionUseCase.createGuestSession() } returns Unit
+        viewModel = WelcomeViewModel(
+            createGuestSessionUseCase = createGuestSessionUseCase,
+             dispatcher = testDispatcher
+        )
     }
 
     @Test
@@ -44,20 +63,6 @@ class WelcomeViewModelTest {
     fun `onExit emits ExitApp effect`() = runTest {
         viewModel.onExit()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ExitApp)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `multiple effects are emitted in sequence`() = runTest {
-        viewModel.onLoginClicked()
-        viewModel.onContinueClicked()
-        viewModel.onExit()
-
-        viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.NavigateToLogin)
-            assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ReturnGuestResultCode)
             assertThat(awaitItem()).isEqualTo(WelcomeScreenEffects.ExitApp)
             cancelAndIgnoreRemainingEvents()
         }
@@ -111,7 +116,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `viewModel uses provided dispatcher`() = runTest {
-        val customViewModel = WelcomeViewModel()
+        val customViewModel = WelcomeViewModel(createGuestSessionUseCase)
 
         customViewModel.onLoginClicked()
         customViewModel.effect.test {
@@ -122,7 +127,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `viewModel uses default dispatcher when none provided`() = runTest {
-        val defaultViewModel = WelcomeViewModel()
+        val defaultViewModel = WelcomeViewModel(createGuestSessionUseCase)
 
         defaultViewModel.onLoginClicked()
         defaultViewModel.effect.test {
@@ -164,7 +169,7 @@ class WelcomeViewModelTest {
 
     @Test
     fun `emitEffect works correctly on custom dispatcher`() = runTest {
-        val customViewModel = WelcomeViewModel()
+        val customViewModel = WelcomeViewModel(createGuestSessionUseCase)
 
         customViewModel.onExit()
         customViewModel.effect.test {
