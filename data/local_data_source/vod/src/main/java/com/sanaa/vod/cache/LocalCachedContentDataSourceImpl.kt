@@ -39,13 +39,14 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getCachedMovies(category: Category): List<MovieLocalDto> {
-//        clearExpiredCachedContent()
-        val ids = getCachedContent(category, MediaType.MOVIE).map { it.mediaId }
-        if (ids.isEmpty()) {
+        val cachedMoviesInfo = getCachedContent(category, MediaType.MOVIE)
+
+        if (cachedMoviesInfo.isEmpty()) {
             return emptyList()
         }
 
-        return movieDao.getMoviesByIds(ids)
+        val moviesIds = cachedMoviesInfo.map { it.mediaId }
+        return movieDao.getMoviesByIds(moviesIds)
     }
 
     override suspend fun cacheTvShow(tvShow: List<TvShowLocalDto>, category: Category) {
@@ -61,11 +62,13 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getCachedTvShows(category: Category): List<TvShowLocalDto> {
-//        clearExpiredCachedContent()
-        val ids = getCachedContent(category, MediaType.TV_SHOW).map { it.mediaId }
-        if (ids.isEmpty()) {
+        val cachedTvShowsInfo = getCachedContent(category, MediaType.TV_SHOW)
+
+        if (cachedTvShowsInfo.isEmpty()) {
             return emptyList()
         }
+
+        val ids = cachedTvShowsInfo.map { it.mediaId }
         return tvShowDao.getTvShowsByIds(ids)
     }
 
@@ -73,6 +76,7 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         category: Category,
         mediaType: MediaType
     ): List<CachedContentLocalDto> {
+
         clearExpiredCache()
 
         val metadata = cachedContentMetadataDao.getCachedContentMetadata(
@@ -92,6 +96,8 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         mediaType: MediaType,
         category: Category
     ) {
+        clearExpiredCache()
+
         val existingMetadata = cachedContentMetadataDao.getCachedContentMetadata(
             category = category.name,
             language = currentLanguage
@@ -122,7 +128,12 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
 
     override suspend fun clearExpiredCache() {
         val oneDayAgo = System.currentTimeMillis() - CACHE_EXPIRATION_TIME
+
         cachedContentMetadataDao.clearExpiredMetadata(oneDayAgo)
+
+        // Clean up movies and tv shows that are no longer referenced
+        movieDao.deleteUnreferencedMovies()
+        tvShowDao.deleteUnreferencedTvShows()
     }
 
     companion object {

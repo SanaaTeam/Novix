@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto.MediaType
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 
 @Dao
@@ -20,4 +21,12 @@ interface TvShowDao {
 
     @Query("SELECT * FROM tvshow WHERE (id IN (:ids))")
     suspend fun getTvShowsByIds(ids: List<Int>): List<TvShowLocalDto>
+
+    @Query("""
+        DELETE FROM tvshow 
+        WHERE id NOT IN (
+            SELECT media_id FROM cached_content WHERE media_type = (:mediaType)
+        )
+    """)
+    suspend fun deleteUnreferencedTvShows(mediaType: String = MediaType.TV_SHOW.name)
 }
