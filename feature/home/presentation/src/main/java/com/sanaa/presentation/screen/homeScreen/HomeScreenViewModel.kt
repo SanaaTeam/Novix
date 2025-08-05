@@ -198,7 +198,7 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (state.value.userIsLoggedIn){
-            updateState { it.copy(showBottomSheet = true) }
+            updateState { it.copy(showSaveToListBottomSheet = true) }
         }else{
             emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
         }
@@ -206,6 +206,14 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false) }
+    }
+
+    override fun onCreateNewListClick() {
+        TODO("Not yet implemented")
     }
 
     override fun onRetryClick() {
