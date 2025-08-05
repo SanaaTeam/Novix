@@ -57,6 +57,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItem
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -238,7 +239,8 @@ private fun PopularMediaSectionPager(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
                             sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = 0.7f,
+                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                            safeContentThreshold = LocalSafeContentThreshold.current,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },

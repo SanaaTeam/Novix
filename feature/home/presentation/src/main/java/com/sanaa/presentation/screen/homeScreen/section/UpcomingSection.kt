@@ -30,6 +30,7 @@ import com.sanaa.presentation.components.shimmerEffect.PlaceholderWithShimmerEff
 import com.sanaa.presentation.components.shimmerEffect.upComingGenresLoadingPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.upComingTitlePlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
@@ -106,7 +107,8 @@ fun LazyGridScope.upcomingSection(
                     imageUrl = item.imageUrl.orEmpty(),
                     modifier = Modifier.fillMaxWidth(),
                     sensitiveContentThreshold = 0.2f,
-                    safeContentThreshold = 0.7f,
+                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                    safeContentThreshold = LocalSafeContentThreshold.current,
                     contentDescription = item.title,
                     placeholderContent = {
                         RemoteImagePlaceholder(Modifier.fillMaxSize())

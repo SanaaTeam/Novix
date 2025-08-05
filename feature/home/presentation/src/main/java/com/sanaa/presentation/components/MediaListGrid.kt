@@ -19,6 +19,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItem
 
 @Composable
@@ -44,7 +45,8 @@ fun MediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-                        safeContentThreshold = 0.7f,
+                        isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                        safeContentThreshold = LocalSafeContentThreshold.current,
                         contentDescription = media.title,
                         placeholderContent = {
                             RemoteImagePlaceholder(Modifier.fillMaxSize())

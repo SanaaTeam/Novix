@@ -24,6 +24,7 @@ import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingMediaScreen
@@ -42,7 +43,8 @@ fun NovixApp(
     Box {
         CompositionLocalProvider(
             LocalAppNavController provides appNavController,
-            LocalThemeProvider provides state.value.isDarkTheme
+            LocalThemeProvider provides state.value.isDarkTheme,
+            LocalSafeContentThreshold provides state.value.safeContentThreshold,
         ) {
             AppNavigation(
                 startDestination = MainScreenRoute,
