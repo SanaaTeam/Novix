@@ -96,7 +96,6 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
         mediaType: MediaType,
         category: Category
     ) {
-        clearExpiredCache()
 
         val existingMetadata = cachedContentMetadataDao.getCachedContentMetadata(
             category = category.name,
@@ -111,7 +110,6 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
                 )
             )
 
-        clearExpiredCache()
         cachedContentDao.insert(
             CachedContentLocalDto(
                 id = metadataId,
@@ -137,6 +135,6 @@ class LocalCachedContentDataSourceImpl @Inject constructor(
     }
 
     companion object {
-        const val CACHE_EXPIRATION_TIME = 1000 * 60 * 60 * 24L // 24 hours in milliseconds
+        const val CACHE_EXPIRATION_TIME = 1000 * 60L // 24 hours in milliseconds
     }
 }
