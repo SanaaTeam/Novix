@@ -1,7 +1,6 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
-import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.repository.mapper.media.toMovie
 import com.sanaa.vod.repository.mapper.media.toTvSeries
@@ -19,7 +18,7 @@ class ActorRepositoryImpl @Inject constructor(
 
     override suspend fun getActorDetails(id: Int): Actor =
         safeCall("Failed to retrieve actor details for ID: $id") {
-            remoteDataSource.getActorDetails(id).toDomain()
+            remoteDataSource.getActorDetails(id).toEntity()
         }
 
     override suspend fun getProfileImageUrls(id: Int, count: Int): List<String> =
@@ -55,7 +54,7 @@ class ActorRepositoryImpl @Inject constructor(
     override suspend fun getTrendingActors(page: Int): List<Actor> {
         safeCall("Failed to fetch Trending People ") {
             return remoteDataSource.fetchTrendingPeople(page).map {
-                it.toDomain()
+                it.toEntity()
             }
         }
     }

@@ -6,7 +6,6 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Ca
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
 import com.sanaa.vod.repository.mapper.cachedContent.toDomain
 import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
-import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
@@ -45,7 +44,7 @@ class TvShowRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {
-        remoteDataSource.getTvShowCast(id).map { it.toDomain() }
+        remoteDataSource.getTvShowCast(id).map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): Season =
@@ -70,12 +69,12 @@ class TvShowRepositoryImpl @Inject constructor(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<Actor> = safeCall("Guests not found") {
         remoteDataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
-            .map { it.toDomain() }
+            .map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesTrailer(id: Int): String? =
         safeCall(errorMessage = "Trailer not found") {
-            remoteDataSource.getTvShowVideosUrls(id).toDomain()
+            remoteDataSource.getTvShowVideosUrls(id).toEntity()
         }
 
     override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =

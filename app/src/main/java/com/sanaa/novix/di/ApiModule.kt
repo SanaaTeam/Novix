@@ -5,11 +5,13 @@ import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.SearchNavigatorApi
+import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.presentation.api.AuthenticationApiImpl
 import com.sanaa.presentation.api.HomeFeatureApiImpl
 import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.presentation.api.SearchFeatureApiImpl
 import com.sanaa.presentation.api.SearchNavigatorApiImpl
+import com.sanaa.presentation.api.UserProfileFeatureApiImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -49,4 +51,10 @@ abstract class ApiModule {
     abstract fun bindSearchNavigatorApi(
         searchNavigatorApiImpl: SearchNavigatorApiImpl
     ): SearchNavigatorApi
+
+    @Binds
+    @Singleton
+    abstract fun bindUserProfileApi(
+        userProfileApiImpl: UserProfileFeatureApiImpl
+    ): UserProfileFeatureApi
 }

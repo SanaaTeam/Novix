@@ -1,5 +1,6 @@
 [versions]
 # Project Config
+appcompatVersion = "1.6.1"
 compileSdk = "35"
 converterGson = "3.0.0"
 datastore = "1.1.7"
@@ -71,6 +72,7 @@ navigationTestingAndroid = "2.9.2"
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }

@@ -19,8 +19,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.resetMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -43,6 +45,11 @@ class SeriesViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

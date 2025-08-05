@@ -7,7 +7,6 @@ import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.repository.mapper.cachedContent.toDomain
 import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
-import com.sanaa.vod.repository.mapper.media.toDomain
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
@@ -25,7 +24,7 @@ class MovieRepositoryImpl @Inject constructor(
 ) : MovieRepository {
     override suspend fun getMovieDetails(id: Int): Movie =
         safeCall("Failed to fetch movie details") {
-            remote.fetchMovieDetails(id).toDomain()
+            remote.fetchMovieDetails(id).toEntity()
         }
 
     override suspend fun getImageUrls(id: Int, count: Int): List<String> =
@@ -35,12 +34,12 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovieCast(id: Int): List<Actor> =
         safeCall("Failed to fetch movie cast") {
-            remote.fetchCast(id).map { it.toDomain() }
+            remote.fetchCast(id).map { it.toEntity() }
         }
 
     override suspend fun getSimilarMoviesByMovieId(id: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch similar movies") {
-            remote.fetchSimilarMoviesByMovieId(id, page).map { it.toDomain() }
+            remote.fetchSimilarMoviesByMovieId(id, page).map { it.toEntity() }
         }
 
     override suspend fun getReviewsByMovieId(id: Int, page: Int): List<Review> =
@@ -52,12 +51,12 @@ class MovieRepositoryImpl @Inject constructor(
         safeCall("Failed to fetch movies by category") {
             remote.fetchMoviesByCategory(
                 genreId, page
-            ).map { it.toDomain() }
+            ).map { it.toEntity() }
         }
 
     override suspend fun getMovieTrailer(id: Int): String? =
         safeCall("Failed to fetch movie trailer") {
-            remote.fetchMovieTrailerUrl(id).toDomain()
+            remote.fetchMovieTrailerUrl(id).toEntity()
         }
 
 
@@ -71,7 +70,7 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             }
 
-            return remote.fetchPopularMovies(page).map { it.toDomain() }.also {
+            return remote.fetchPopularMovies(page).map { it.toEntity() }.also {
                 if (page == 1) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
@@ -91,7 +90,7 @@ class MovieRepositoryImpl @Inject constructor(
                     return cachedMovies.map { it.toDomain() }
                 }
             }
-            return remote.fetchTopRatedMovies(page, genreId).map { it.toDomain() }.also {
+            return remote.fetchTopRatedMovies(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
@@ -111,7 +110,7 @@ class MovieRepositoryImpl @Inject constructor(
                 }
             }
 
-            return remote.fetchUpcomingMovies(page, genreId).map { it.toDomain() }.also {
+            return remote.fetchUpcomingMovies(page, genreId).map { it.toEntity() }.also {
                 if (page == 1 && genreId == null) {
                     localCachedContentDataSource.cacheMovie(
                         movie = it.map { it.toLocalDto() },
@@ -123,14 +122,14 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getTrendingMovies(page: Int, genreId: Int?): List<Movie> =
         safeCall("Failed to fetch movie Trending") {
-            remote.fetchTrendingMovies(page, genreId).map { it.toDomain() }
+            remote.fetchTrendingMovies(page, genreId).map { it.toEntity() }
         }
 
     override suspend fun getMovieRate(accountId: Long, movieId: Int): Int? {
         return safeCall("Failed to fetch movie Rate") {
             val sessionId = preferences.sessionId.first()
             remote.fetchMoviesRate(accountId = accountId, sessionId = sessionId)
-                .map { it.toDomain() }.find { it.id == movieId }?.rating
+                .map { it.toEntity() }.find { it.id == movieId }?.rating
         }
     }
 
