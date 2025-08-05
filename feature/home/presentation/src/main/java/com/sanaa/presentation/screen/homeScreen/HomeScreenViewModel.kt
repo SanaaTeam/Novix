@@ -35,6 +35,7 @@ class HomeScreenViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
+    defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
 
     init {

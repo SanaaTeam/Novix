@@ -32,8 +32,6 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
 
@@ -56,7 +54,7 @@ fun ContinueWatchingMediaScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MediaTabScreenEffect.NavigateToMediaDetails -> {
+                is ContinueWatchingScreenEffect.NavigateToMediaDetails -> {
                     if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
                         detailsApi.launch(
                             context = navController.context,
@@ -72,7 +70,7 @@ fun ContinueWatchingMediaScreen(
                     }
                 }
 
-                is MediaTabScreenEffect.NavigateBack -> {
+                is ContinueWatchingScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
             }
@@ -92,7 +90,7 @@ fun ContinueWatchingMediaScreen(
 private fun ContinueWatchingMediaScreenContent(
     title: String,
     state: ContinueWatchingMediaScreenUiState,
-    interactionListener: MediaTabScreenInteractionListener,
+    interactionListener: ContinueWatchingScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     val topRatedTvShows = state.tvShowList

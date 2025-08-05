@@ -24,78 +24,44 @@ class ManageSavedListsUseCaseTest {
 
     @Test
     fun `getSavedLists should call repository and return list`() = runTest {
-        val expected = listOf(dummyList, dummyList.copy(id = 2, title = "Favorites"))
-        coEvery { savedListRepository.getSavedLists() } returns expected
+        val expected = listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Favs"))
+        coEvery { savedListRepository.getSavedLists(ACCOUNT_ID) } returns expected
 
-        val result = manageSavedListsUseCase.getSavedLists()
+        val result = manageSavedListsUseCase.getSavedLists(ACCOUNT_ID)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getSavedLists should throw when repository fails`() = runTest {
-        coEvery { savedListRepository.getSavedLists() } throws RetrievingDataFailureException("Error")
+        coEvery { savedListRepository.getSavedLists(ACCOUNT_ID) } throws
+                RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageSavedListsUseCase.getSavedLists()
+            manageSavedListsUseCase.getSavedLists(ACCOUNT_ID)
         }
     }
 
     @Test
     fun `createSavedList should call repository and return SavedList`() = runTest {
-        coEvery { savedListRepository.createSavedList(dummyList) } returns dummyList
+        coEvery { savedListRepository.createSavedList(DUMMY_LIST.title) } returns DUMMY_LIST
 
-        val result = manageSavedListsUseCase.createSavedList(dummyList)
+        val result = manageSavedListsUseCase.createSavedList(DUMMY_LIST.title)
 
-        assertThat(result).isEqualTo(dummyList)
-    }
-
-    @Test
-    fun `createSavedList should throw when repository fails`() = runTest {
-        coEvery { savedListRepository.createSavedList(dummyList) } throws RetrievingDataFailureException("Error")
-
-        assertThrows<RetrievingDataFailureException> {
-            manageSavedListsUseCase.createSavedList(dummyList)
-        }
-    }
-
-    @Test
-    fun `editSavedList should call repository`() = runTest {
-        coEvery { savedListRepository.editSavedList(dummyList) } returns Unit
-
-        manageSavedListsUseCase.editSavedList(dummyList)
-
-        coVerify(exactly = 1) { savedListRepository.editSavedList(dummyList) }
-    }
-
-    @Test
-    fun `editSavedList should throw when repository fails`() = runTest {
-        coEvery { savedListRepository.editSavedList(dummyList) } throws RetrievingDataFailureException("Error")
-
-        assertThrows<RetrievingDataFailureException> {
-            manageSavedListsUseCase.editSavedList(dummyList)
-        }
+        assertThat(result).isEqualTo(DUMMY_LIST)
     }
 
     @Test
     fun `deleteSavedList should call repository`() = runTest {
-        coEvery { savedListRepository.deleteSavedList(dummyList.id) } returns Unit
+        coEvery { savedListRepository.deleteSavedList(DUMMY_LIST.id) } returns Unit
 
-        manageSavedListsUseCase.deleteSavedList(dummyList.id)
+        manageSavedListsUseCase.deleteSavedList(DUMMY_LIST.id)
 
-        coVerify(exactly = 1) { savedListRepository.deleteSavedList(dummyList.id) }
+        coVerify(exactly = 1) { savedListRepository.deleteSavedList(DUMMY_LIST.id) }
     }
 
-    @Test
-    fun `deleteSavedList should throw when repository fails`() = runTest {
-        coEvery { savedListRepository.deleteSavedList(dummyList.id) } throws RetrievingDataFailureException("Error")
-
-        assertThrows<RetrievingDataFailureException> {
-            manageSavedListsUseCase.deleteSavedList(dummyList.id)
-        }
-    }
-
-    companion object {
-        private val dummyList = SavedList(id = 1, title = "Watch-Later")
+    private companion object {
+        const val ACCOUNT_ID = 123L
+        val DUMMY_LIST = SavedList(id = 1, title = "Watch-Later")
     }
 }

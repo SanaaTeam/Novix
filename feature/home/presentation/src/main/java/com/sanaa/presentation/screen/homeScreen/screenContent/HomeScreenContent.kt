@@ -237,7 +237,6 @@ fun HomeScreenContent(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,
         onLoginButtonClick = {
-            Log.d("test99", "HomeScreenContent: launching loging start route")
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )

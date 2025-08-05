@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.componants
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +18,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
+import com.sanaa.presentation.provider.LocalThemeProvider
 
 @Composable
 fun RequestToLoginBottomSheet(
@@ -30,8 +30,7 @@ fun RequestToLoginBottomSheet(
     title: String = stringResource(R.string.add_to_list)
 
 ) {
-    val isDarkTheme = isSystemInDarkTheme()
-    val loginImageId = if (isDarkTheme) {
+    val loginImageId = if (LocalThemeProvider.current) {
         R.drawable.icon_users_dark
     } else {
         R.drawable.icon_users_light

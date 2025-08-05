@@ -23,7 +23,7 @@ class ActorMapperTest {
             biography = "Some bio"
         )
 
-        val result = dto.toDomain()
+        val result = dto.toEntity()
 
         assertEquals(1, result.id)
         assertEquals("https://image.tmdb.org/t/p/w500/image.jpg", result.imageUrl)

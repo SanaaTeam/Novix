@@ -1,11 +1,10 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenInteractionListener
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
@@ -15,6 +14,8 @@ import entity.Movie
 import entity.TvSeries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -23,19 +24,32 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<TopRatedMediaScreenUiState, MediaTabScreenEffect>(
+) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
     initialState = TopRatedMediaScreenUiState(),
     defaultDispatcher = dispatcher
-), MediaTabScreenInteractionListener {
+), TopRatedScreenInteractionListener {
 
     init {
+        updateUserLoggingStatus()
         fetchMovieGenres()
         fetchTvShowGenres()
         fetchMovies()
         fetchTvShows()
     }
 
+    fun updateUserLoggingStatus(){
+        viewModelScope.launch {
+            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
+            updateState {
+                it.copy(
+                    userIsLoggedIn = isLoggedIn
+                )
+            }
+        }
+        onDismissBottomSheet()
+    }
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
             callee = {
@@ -131,19 +145,31 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+        emitEffect(TopRatedScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState {
-            it.copy(
-                showBottomSheet = true
-            )
+        if (!state.value.userIsLoggedIn){
+            updateState {
+                it.copy(
+                    showLoginBottomSheet = true
+                )
+            }
         }
     }
 
     override fun onBackClick() {
-        emitEffect(MediaTabScreenEffect.NavigateBack)
+        emitEffect(TopRatedScreenEffect.NavigateBack)
+    }
+
+    override fun onLoginButtonClick() {
+        emitEffect(TopRatedScreenEffect.NavigateToLogin)
+    }
+
+    override fun onDismissBottomSheet() {
+        updateState {
+            it.copy(showLoginBottomSheet = false)
+        }
     }
 
 

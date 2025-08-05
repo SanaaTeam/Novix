@@ -6,7 +6,7 @@ import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
-import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -215,7 +215,7 @@ class ActorRepositoryImplTest {
 
         val result = repository.getTrendingActors(page)
 
-        assertThat(result).isEqualTo(actorList.map { it.toDomain() })
+        assertThat(result).isEqualTo(actorList.map { it.toEntity() })
     }
 
     companion object {

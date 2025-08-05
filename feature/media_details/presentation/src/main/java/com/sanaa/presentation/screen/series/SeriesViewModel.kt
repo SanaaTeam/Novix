@@ -171,7 +171,10 @@ class SeriesViewModel @Inject constructor(
 
     private fun loadSeries() {
         tryToExecute(
-            callee = ::fetchSeriesDetails,
+            callee = {
+                fetchUserRating()
+                fetchSeriesDetails()
+                     },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
@@ -193,6 +196,13 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
+    private suspend fun fetchUserRating() = coroutineScope {
+        val ratingDeferred = async { getCurrentUserRating(seriesId) }
+        val currentSeriesRating = ratingDeferred.await()
+        updateState {
+            it.copy(imdbRating = currentSeriesRating)
+        }
+    }
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 

@@ -1,29 +1,18 @@
 package usecase.custom_list
 
 import entity.Movie
-import entity.TvSeries
 import repository.SavedListRepository
-import usecase.custom_list.custom_list_param.SavedItem
 import javax.inject.Inject
 
 class ManageSavedListItemsUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
-    suspend fun getAllItemsInSavedList(listId: Int): List<SavedItem> =
-        savedListRepository.getAllItemsInList(listId)
+    suspend fun getAllItemsInSavedList(listId: Int): List<Movie> =
+        savedListRepository.getAllMoviesInList(listId)
 
-    suspend fun getMoviesInSavedList(listId: Int): List<Movie> =
-        savedListRepository.getMoviesInList(listId)
-
-    suspend fun getTvSeriesInSavedList(listId: Int): List<TvSeries> =
-        savedListRepository.getTvSeriesInList(listId)
-
-    suspend fun addMovieToSavedList(listId: Int, movieId: Int) =
+    suspend fun addMovieToSavedList(listId: Int, movieId: Int): Boolean =
         savedListRepository.addMovieToList(listId, movieId)
 
-    suspend fun addTvSeriesToSavedList(listId: Int, tvSeriesId: Int) =
-        savedListRepository.addTvSeriesToList(listId, tvSeriesId)
-
-    suspend fun removeItemFromSavedList(itemId: Int) =
-        savedListRepository.removeItemFromList(itemId)
+    suspend fun removeMovieFromSavedList(listId: Int, movieId: Int): Boolean =
+        savedListRepository.removeMovieFromList(listId, movieId)
 }
