@@ -31,6 +31,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
@@ -43,6 +44,7 @@ class SearchViewModelTest {
     private val searchUseCase: SearchUseCase = mockk(relaxed = true)
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase = mockk(relaxed = true)
     private val manageSearchHistoryUseCase: ManageHistoryUseCase = mockk(relaxed = true)
+    private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase = mockk(relaxed = true)
     private lateinit var searchViewModel: SearchViewModel
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
@@ -58,7 +60,8 @@ class SearchViewModelTest {
             manageRecentViewedUseCase = manageRecentViewedUseCase,
             manageSearchHistoryUseCase = manageSearchHistoryUseCase,
             dispatcher = testDispatcher,
-            checkUserLogin = checkUserLogin
+            checkUserLogin = checkUserLogin,
+            mangeUserPreferenceUseCase = mangeUserPreferenceUseCase
         )
     }
 

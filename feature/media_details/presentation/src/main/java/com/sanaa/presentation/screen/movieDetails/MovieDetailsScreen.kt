@@ -57,7 +57,7 @@ import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
-
+import com.sanaa.designsystem.R as designR
 @Composable
 fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel()
@@ -290,7 +290,7 @@ fun MovieTopBar(
     TopBar(
         leftContent = {
             TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_back),
+                icon = painterResource(designR.drawable.icon_back),
                 onClick = { interactionListener.onBackClick() }
             )
         },

@@ -10,18 +10,18 @@ android {
 }
 
 dependencies {
+    implementation(projects.data.repositories.identity)
     implementation(projects.feature.userProfile.api)
+    implementation(projects.domain.vod)
     implementation(projects.designSystem)
+    implementation(projects.imageViewer)
+    implementation(projects.feature.mediaDetails.api)
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.mediaDetails.api)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
 
-    implementation(libs.androidx.material3.window.size.class1)
-    implementation(libs.androidx.material3.adaptive.navigation.suite)
-
-    implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)
@@ -44,10 +44,6 @@ dependencies {
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.timber)
 
@@ -55,4 +51,5 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.slf4j.api)
+    implementation(projects.domain.identity)
 }

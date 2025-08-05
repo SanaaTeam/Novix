@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -78,6 +79,7 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.state.test {
@@ -97,9 +99,13 @@ class HomeScreenViewModelTest {
 
     @Test
     fun `init should fetch top-rated media and update state on success`() = runTest(testDispatcher) {
+        // Given
         val topRatedMovies = listOf(dummyMovie.copy(id = 3))
         coEvery { manageMovieUseCase.getTopRatedMovies(1, null) } returns topRatedMovies
+
+        // When
         initializeViewModel()
+        advanceUntilIdle()
         viewModel.state.test {
             val state = awaitItem().let {
                 var current = it
@@ -112,12 +118,14 @@ class HomeScreenViewModelTest {
         }
     }
 
+
     @Test
     fun `init should fetch watched history when user is logged in`() = runTest(testDispatcher) {
         val historyItems = listOf(dummyHistoryItem)
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
         coEvery { manageWatchedMediaHistoryUseCase.getMediaHistory(dummyUser.username, null, null) } returns flowOf(historyItems)
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {
             val successState = awaitItem().let {
                 var current = it
@@ -134,6 +142,7 @@ class HomeScreenViewModelTest {
     fun `init should return empty watched history when user is not logged in`() = runTest(testDispatcher) {
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         val finalState = viewModel.state.value
         assertThat(finalState.continueWatchingMedia).isEmpty()
     }
@@ -143,6 +152,7 @@ class HomeScreenViewModelTest {
         val genres = listOf(dummyGenre)
         coEvery { manageMovieUseCase.getMovieGenres() } returns genres
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {
             val state = awaitItem().let {
                 var current = it
@@ -162,7 +172,7 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         // Then
         viewModel.state.test {
             val state = awaitItem().let {
@@ -260,6 +270,7 @@ class HomeScreenViewModelTest {
     fun `onRetryClick should re-fetch all data`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onRetryClick()
+        advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
         coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
     }

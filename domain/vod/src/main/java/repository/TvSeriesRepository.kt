@@ -37,5 +37,6 @@ interface TvSeriesRepository {
         episodeNumber: Int,
         rating: Float
     ): Boolean
-
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries>
+    suspend fun deleteTvSeriesRate(seriesId: Int): Boolean
 }
