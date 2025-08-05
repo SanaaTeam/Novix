@@ -2,9 +2,14 @@ package com.sanaa.vod.dataSource.local.cache.dto
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "cached_content_metadata")
+@Entity(
+    tableName = "cached_content_metadata",
+    indices = [Index(value = ["category"], unique = true)
+    ]
+)
 data class CachedContentMetadataLocalDto(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
