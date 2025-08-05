@@ -120,6 +120,7 @@ class HomeScreenViewModelTest {
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
         coEvery { manageWatchedMediaHistoryUseCase.getMediaHistory(dummyUser.username, null, null) } returns flowOf(historyItems)
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {
             val successState = awaitItem().let {
                 var current = it
@@ -136,6 +137,7 @@ class HomeScreenViewModelTest {
     fun `init should return empty watched history when user is not logged in`() = runTest(testDispatcher) {
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         val finalState = viewModel.state.value
         assertThat(finalState.continueWatchingMedia).isEmpty()
     }
@@ -145,6 +147,7 @@ class HomeScreenViewModelTest {
         val genres = listOf(dummyGenre)
         coEvery { manageMovieUseCase.getMovieGenres() } returns genres
         initializeViewModel()
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.state.test {
             val state = awaitItem().let {
                 var current = it
@@ -164,7 +167,7 @@ class HomeScreenViewModelTest {
 
         // When
         initializeViewModel()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         // Then
         viewModel.state.test {
             val state = awaitItem().let {
