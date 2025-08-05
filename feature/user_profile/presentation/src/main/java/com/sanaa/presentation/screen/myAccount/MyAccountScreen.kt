@@ -24,6 +24,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.api.navigation.ChangePasswordScreenRoute
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
@@ -66,7 +67,9 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     LaunchedEffect(effect) {
         when (val it = effect) {
-            NavigateToChangePasswordSetting -> {}
+            NavigateToChangePasswordSetting -> {
+                navController.navigate(ChangePasswordScreenRoute)
+            }
             NavigateToContentRestrictionSetting -> {
             }
 
