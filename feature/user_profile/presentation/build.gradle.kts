@@ -45,4 +45,6 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.slf4j.api)
     implementation(projects.domain.identity)
+
+    implementation(projects.feature.authentication.api)
 }

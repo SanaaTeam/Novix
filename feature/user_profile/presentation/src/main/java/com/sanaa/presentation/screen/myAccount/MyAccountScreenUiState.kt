@@ -9,6 +9,7 @@ data class MyAccountScreenUiState(
     val selectedContentRestriction: ContentRestrictionUiState? = null,
     val selectedTheme: ThemeUiState? = null,
     val isLoading: Boolean = false,
+    val isUserLoggedIn: Boolean = false
 )
 
 

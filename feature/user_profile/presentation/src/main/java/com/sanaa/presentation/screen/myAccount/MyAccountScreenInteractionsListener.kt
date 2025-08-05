@@ -14,4 +14,5 @@ interface MyAccountScreenInteractionsListener {
     fun onSaveThemeClick()
     fun onSaveContentRestrictionClick()
     fun onClickAppearance()
+    fun onLoginButtonClick()
 }

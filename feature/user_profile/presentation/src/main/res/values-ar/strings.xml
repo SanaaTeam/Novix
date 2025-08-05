@@ -6,4 +6,6 @@
     <string name="all">الكل</string>
     <string name="movies">الافلام</string>
     <string name="tv_shows">المسلسلات</string>
+    <string name="please_login_to_access_your_account_details_and_other_features">يرجى تسجيل الدخول للوصول إلى تفاصيل حسابك والميزات الأخرى!</string>
+    <string name="login">تسجيل الدخول</string>
 </resources>

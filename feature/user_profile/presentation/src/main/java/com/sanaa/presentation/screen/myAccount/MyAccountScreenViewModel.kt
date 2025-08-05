@@ -7,12 +7,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import repository.Language
 import repository.Theme
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyAccountScreenViewModel @Inject constructor(
     val mangeUserPreference: MangeUserPreferenceUseCase,
+    val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -23,6 +25,7 @@ class MyAccountScreenViewModel @Inject constructor(
             callee = { fetchUserPreference() },
             onSuccess = { updateState { it.copy(isLoading = false) } }
         )
+        checkUserLoggedIn()
     }
 
     override fun onClickChangePassword() {
@@ -123,6 +126,15 @@ class MyAccountScreenViewModel @Inject constructor(
         updateState { it.copy(showChangeThemeBottomSheet = true) }
     }
 
+    override fun onLoginButtonClick() {
+        emitEffect(MyAccountScreenEffect.NavigateToLogin)
+    }
+
+    fun updateUserStatus() {
+        val isLoggedIn = runBlocking { checkIfUserIsLoggedInUseCase.isLoggedIn() }
+        updateState { it.copy(isUserLoggedIn = isLoggedIn) }
+    }
+
     private suspend fun fetchUserPreference() {
         updateState { it.copy(isLoading = true) }
 
@@ -165,5 +177,16 @@ class MyAccountScreenViewModel @Inject constructor(
     private fun onSaveLanguageSuccess(newLanguage: Language) {
         updateState { it.copy(showChangeLanguageBottomSheet = false) }
         emitEffect(MyAccountScreenEffect.UpdateAppLanguage(newLanguage.code))
+    }
+
+    private fun checkUserLoggedIn() {
+        tryToExecute(
+            callee = {
+                checkIfUserIsLoggedInUseCase.isLoggedIn()
+            },
+            onSuccess = { isLoggedIn ->
+                updateState { it.copy(isUserLoggedIn = isLoggedIn) }
+            }
+        )
     }
 }
