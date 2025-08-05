@@ -19,4 +19,21 @@ data class AccountDetailsResponse(
     @SerialName("name") val name: String? = null,
     @SerialName("username") val username: String? = null,
     @SerialName("include_adult") val includeAdult: Boolean? = null,
+    @SerialName("avatar") val avatar: Avatar? = null
+)
+
+@Serializable
+data class Avatar(
+    @SerialName("gravatar") val gravatar: Gravatar? = null,
+    @SerialName("tmdb") val tmdb: TmdbAvatar? = null
+)
+
+@Serializable
+data class Gravatar(
+    @SerialName("hash") val hash: String? = null
+)
+
+@Serializable
+data class TmdbAvatar(
+    @SerialName("avatar_path") val avatarPath: String? = null
 )

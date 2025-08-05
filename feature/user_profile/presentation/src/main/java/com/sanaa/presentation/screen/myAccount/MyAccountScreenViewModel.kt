@@ -2,12 +2,14 @@ package com.sanaa.presentation.screen.myAccount
 
 import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import repository.Language
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class MyAccountScreenViewModel @Inject constructor(
     val mangeUserPreference: MangeUserPreferenceUseCase,
     val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -26,6 +29,7 @@ class MyAccountScreenViewModel @Inject constructor(
             onSuccess = { updateState { it.copy(isLoading = false) } }
         )
         checkUserLoggedIn()
+        fetchUserData()
     }
 
     override fun onClickChangePassword() {
@@ -132,6 +136,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     fun updateUserStatus() {
         val isLoggedIn = runBlocking { checkIfUserIsLoggedInUseCase.isLoggedIn() }
+        fetchUserData()
         updateState { it.copy(isUserLoggedIn = isLoggedIn) }
     }
 
@@ -188,5 +193,23 @@ class MyAccountScreenViewModel @Inject constructor(
                 updateState { it.copy(isUserLoggedIn = isLoggedIn) }
             }
         )
+    }
+
+    private fun fetchUserData() {
+        tryToExecute(
+            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            onSuccess = ::onLoadUserDataSuccess
+        )
+    }
+
+    private fun onLoadUserDataSuccess(user: User) {
+        updateState {
+            it.copy(
+                currentUser = UserUiState(
+                    username = user.username,
+                    imageUrl = user.profileImageUrl
+                )
+            )
+        }
     }
 }
