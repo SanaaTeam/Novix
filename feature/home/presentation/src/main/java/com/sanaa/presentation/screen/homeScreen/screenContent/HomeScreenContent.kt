@@ -232,9 +232,9 @@ fun HomeScreenContent(
     if (state.showSaveToListBottomSheet) {
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            onDismiss = { interactionListener.onDismissBottomSheet() },
+            onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
             onCreateNewListClick = { interactionListener.onCreateNewListClick() },
-            mediaId = 1,
+            mediaId = state.selectedMediaId.toLong(),
         )
     }
 
