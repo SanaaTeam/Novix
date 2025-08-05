@@ -40,4 +40,19 @@
     <string name="blurs_all_sensitive_content">يخفي كل المحتوى الحساس</string>
     <string name="blurs_explicit_scenes_only">يخفي المشاهد الصريحة فقط</string>
     <string name="no_content_is_blurred">لا يتم إخفاء أي محتوى</string>
+
+    <string name="add_new_list">إضافة قائمة جديدة</string>
+    <string name="list_title">عنوان القائمة</string>
+    <string name="my_favorite_placeholder">مفضلتي</string>
+    <string name="add">إضافة</string>
+    <string name="edit_list">تعديل القائمة</string>
+
+    <string name="delete_list">حذف القائمة</string>
+    <string name="delete_list_confirmation_message">حذف القائمة المحفوظة سيؤدي إلى إزالة جميع العناصر الموجودة بها. هل أنت متأكد أنك تريد المتابعة؟</string>
+    <string name="delete">حذف</string>
+
+    <string name="save_to_list">حفظ في القائمة</string>
+    <string name="create_new_list">إنشاء قائمة جديدة</string>
+
+
 </resources>
