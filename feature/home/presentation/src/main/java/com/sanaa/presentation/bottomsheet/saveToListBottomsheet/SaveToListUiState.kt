@@ -1,4 +1,4 @@
-package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
+package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 enum class MediaType {
     MOVIE,

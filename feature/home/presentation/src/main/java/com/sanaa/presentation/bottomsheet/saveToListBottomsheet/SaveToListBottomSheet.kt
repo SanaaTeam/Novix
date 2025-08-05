@@ -1,4 +1,4 @@
-package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
+package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
