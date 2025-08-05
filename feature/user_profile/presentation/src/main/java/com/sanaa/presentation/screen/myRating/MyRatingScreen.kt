@@ -64,12 +64,15 @@ fun MyRatingScreen(
                 is MyRatingScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
+
                 is MyRatingScreenEffect.ShowErrorSnackBar -> {
                     snack = SnackData(message = failedMsg, isError = true)
                 }
+
                 is MyRatingScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(message = successMsg, isError = false)
                 }
+
                 is MyRatingScreenEffect.NavigateToMediaDetails -> {
                     detailsApi.launch(
                         context = navController.context,
@@ -84,19 +87,19 @@ fun MyRatingScreen(
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            MyRatingScreenContent(
-                state = state.value,
-                interactionListener = viewModel
-            )
-            AnimatedSnackBarHost(
-                data = snack,
-                onDismiss = { snack = null },
-            )
-        }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        MyRatingScreenContent(
+            state = state.value,
+            interactionListener = viewModel
+        )
+        AnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null },
+        )
     }
 }
+
 @Composable
 fun MyRatingScreenContent(
     state: MyRatingScreenUiState,
@@ -115,7 +118,9 @@ fun MyRatingScreenContent(
                     )
                 },
                 screenTitle = stringResource(R.string.my_rating),
-                modifier = Modifier.statusBarsPadding().padding(vertical = 12.dp)
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(vertical = 12.dp)
             )
         }
     ) {
