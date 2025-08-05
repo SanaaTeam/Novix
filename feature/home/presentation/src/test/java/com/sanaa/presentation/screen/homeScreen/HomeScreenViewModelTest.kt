@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
@@ -100,6 +101,7 @@ class HomeScreenViewModelTest {
         val topRatedMovies = listOf(dummyMovie.copy(id = 3))
         coEvery { manageMovieUseCase.getTopRatedMovies(1, null) } returns topRatedMovies
         initializeViewModel()
+        advanceUntilIdle()
         viewModel.state.test {
             val state = awaitItem().let {
                 var current = it
@@ -260,6 +262,7 @@ class HomeScreenViewModelTest {
     fun `onRetryClick should re-fetch all data`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onRetryClick()
+        advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
         coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
     }
