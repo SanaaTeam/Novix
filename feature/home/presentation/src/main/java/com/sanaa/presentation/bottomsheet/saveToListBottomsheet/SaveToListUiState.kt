@@ -1,10 +1,5 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
-enum class MediaType {
-    MOVIE,
-    TV
-}
-
 data class SaveToListUiState(
     val playlists: List<PlaylistUiItem> = emptyList(),
     val selectedListId: Long? = null,
