@@ -18,7 +18,7 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.presentation.providers.LocalSafeContentThreshold
+import com.sanaa.presentation.providersSaved.LocalSafeContentThreshold
 import com.sanaa.presentation.screen.savedDetails.components.chips.SaveIconChip
 import com.sanaa.presentation.screen.savedDetails.state.MediaItem
 
