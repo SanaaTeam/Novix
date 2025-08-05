@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.movieDetails
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -44,6 +45,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
+        tryToExecute(::fetchUserRating)
         updateUserStatus()
     }
 
@@ -140,7 +142,6 @@ class MovieDetailsViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
-                fetchUserRating()
                 loadMovieDetails(movieId)
                      },
             onSuccess = {
@@ -184,12 +185,21 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private suspend fun fetchUserRating() = coroutineScope {
-        val ratingDeferred = async { getCurrentUserRating(movieId) }
-        val currentMovieRating = ratingDeferred.await()
-        updateState {
-            it.copy(imdbRating = currentMovieRating)
+        if (state.value.isUserLoggedIn) {
+            tryToExecute(
+                callee = {
+                    getCurrentUserRating(movieId)
+                },
+                onSuccess = { rating->
+                    updateState {
+                        it.copy(imdbRating = rating)
+                    }
+                },
+            )
+
         }
     }
+
 
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
@@ -254,7 +264,9 @@ class MovieDetailsViewModel @Inject constructor(
         } catch (_: NoLoggedInUserException) {
             null
         }
-        if (user == null) return
+        if (user == null) {
+            return
+        }
         manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
             mediaHistoryItem = movie.toHistory(),
             username = user.username
