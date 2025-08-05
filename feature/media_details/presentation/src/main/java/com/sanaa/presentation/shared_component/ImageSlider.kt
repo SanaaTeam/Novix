@@ -37,6 +37,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -103,7 +104,8 @@ fun ImageSlider(
                     imageUrl = images[page], contentDescription = contentDescription,
                     modifier = Modifier.fillMaxWidth(),
                     sensitiveContentThreshold = 0.2f,
-                    safeContentThreshold = 0.7f,
+                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                    safeContentThreshold = LocalSafeContentThreshold.current,
                     placeholderContent = {
                         RemoteImagePlaceholder(Modifier.fillMaxSize())
                     },

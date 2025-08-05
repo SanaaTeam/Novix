@@ -28,6 +28,7 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 
 @Composable
@@ -75,7 +76,8 @@ fun ActorCard(
                 imageUrl = imageUrl,
                 modifier = Modifier.fillMaxWidth(),
                 sensitiveContentThreshold = 0.2f,
-                safeContentThreshold = 0.7f,
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                safeContentThreshold = LocalSafeContentThreshold.current,
                 contentDescription = actorName,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())

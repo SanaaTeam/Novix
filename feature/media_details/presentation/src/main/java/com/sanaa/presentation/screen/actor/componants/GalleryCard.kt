@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 
 @Composable
@@ -37,7 +38,8 @@ fun GalleryCard(
             imageUrl = imageUrl.orEmpty(),
             modifier = Modifier.fillMaxWidth(),
             sensitiveContentThreshold = 0.2f,
-            safeContentThreshold = 0.7f,
+            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+            safeContentThreshold = LocalSafeContentThreshold.current,
             contentDescription = null,
             placeholderContent = {
                 RemoteImagePlaceholder(Modifier.fillMaxSize())

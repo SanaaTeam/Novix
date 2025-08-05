@@ -13,6 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.main.DetailsViewModel
 import com.sanaa.presentation.navigation.DetailsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import repository.UserPreferencesRepository
@@ -64,7 +65,10 @@ class MediaDetailsActivity : AppCompatActivity() {
 
         setContent {
             val state = viewModel.state.collectAsStateWithLifecycle()
-            CompositionLocalProvider(LocalThemeProvider provides state.value.isDarkTheme) {
+            CompositionLocalProvider(
+                LocalThemeProvider provides state.value.isDarkTheme,
+                LocalSafeContentThreshold provides state.value.safeContentThreshold
+            ) {
                 NovixTheme(isDarkMode = state.value.isDarkTheme) {
                     DetailsNavHost(startRoute = startRoute, id = mediaId)
                 }

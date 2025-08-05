@@ -14,6 +14,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -35,7 +36,8 @@ fun PosterCard(
                 imageUrl = imageUrl ?: "",
                 modifier = Modifier.fillMaxWidth(),
                 sensitiveContentThreshold = 0.2f,
-                safeContentThreshold = 0.7f,
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                safeContentThreshold = LocalSafeContentThreshold.current,
                 contentDescription = null,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())

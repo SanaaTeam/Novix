@@ -34,6 +34,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -149,7 +150,8 @@ private fun TopSeriesContent(
                                             imageUrl = series.posterPath ?: "",
                                             modifier = Modifier.fillMaxSize(),
                                             sensitiveContentThreshold = 0.2f,
-                                            safeContentThreshold = 0.7f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
                                             contentDescription = series.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

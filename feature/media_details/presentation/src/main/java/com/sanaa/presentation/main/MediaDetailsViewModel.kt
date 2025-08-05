@@ -1,5 +1,6 @@
-package com.sanaa.presentation.api
+package com.sanaa.presentation.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,13 +23,14 @@ class DetailsViewModel @Inject constructor(
     init {
         fetchUserPreference()
     }
-
     private fun fetchUserPreference() {
         viewModelScope.launch {
             launch {
                 mangeUserPreference.getTheme().collect { theme ->
                     updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
                 }
+            }
+            launch {
                 mangeUserPreference.getContentRestriction().collect {
                     val threshold = when (it) {
                         ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
@@ -53,9 +55,3 @@ class DetailsViewModel @Inject constructor(
         const val UNRESTRICTED_CONTENT_THRESHOLD = 0.0f
     }
 }
-
-data class DetailsUiState(
-    val isDarkTheme: Boolean = true,
-    val isReady: Boolean = false,
-    val safeContentThreshold: Float = 0f,
-)
