@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.feature.playlists.api)
     implementation(projects.designSystem)
     implementation(projects.feature.authentication.api)
+    implementation(projects.feature.mediaDetails.api)
     implementation(projects.imageViewer)
     implementation(projects.domain.vod)
     implementation(projects.domain.identity)

@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.saved
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -10,14 +11,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.navigation.PlayListApiEntryPoint
+import com.sanaa.presentation.api.navigation.PlayListApiEntryPoint
 import com.sanaa.presentation.screen.saved.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.saved.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.saved.componants.PlaylistEmptyScreen
@@ -79,23 +79,32 @@ fun PlaylistScreenContent(
     interactionListener: PlayListScreenInteractionListener,
     state: PlayListScreenUiState
 ) {
-    when {
-        !state.isUserLoggedIn -> {
-            PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
-        }
+    AnimatedContent(
+        targetState = Triple(state.isUserLoggedIn, state.lists.isEmpty(), state.lists),
+        label = "PlaylistContentTransition"
+    ) { (isUserLoggedIn, isEmptyList, lists) ->
+        when {
+            !isUserLoggedIn -> {
+                PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
+            }
 
-        state.lists.isEmpty() -> {
-            PlaylistEmptyScreen(onFabClick = { interactionListener.onFabBottomSheetClicked() })
-        }
+            isEmptyList -> {
+                PlaylistEmptyScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet
+                )
+            }
 
-        else -> {
-            PlayListWithItemsScreen(
-                lists = state.lists,
-                onItemClick = { interactionListener.onItemListClicked() }
-            )
+            else -> {
+                PlayListWithItemsScreen(
+                    onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                    isVisible = state.showAddBottomSheet,
+                    lists = lists,
+                    onItemClick = { interactionListener.onItemListClicked() }
+                )
+            }
         }
     }
-
 }
 
 
@@ -158,6 +167,7 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
-    override fun onAddNewListClicked() {}
     override fun onItemListClicked() {}
+    override fun onTitleChange() {}
+    override fun onSavedClicked() {}
 }
