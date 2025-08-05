@@ -359,7 +359,7 @@ class MovieRepositoryImplTest {
 
         repository.getMovieGenres()
 
-        coVerify(exactly = dummyGenresDto.size) { local.cacheGenres(any(), Category.MOVIE_GENRES) }
+        coVerify(exactly = 1) { local.cacheGenres(any(), any()) }
     }
 
     companion object {

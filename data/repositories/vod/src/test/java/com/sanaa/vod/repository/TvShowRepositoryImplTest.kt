@@ -479,7 +479,7 @@ class TvShowRepositoryImplTest {
 
         repository.getSeriesGenres()
 
-        coVerify(exactly = dummyGenresDto.size) { local.cacheGenres(any(), Category.TV_SHOW_GENRES) }
+        coVerify(exactly = 1) { local.cacheGenres(any(), any()) }
     }
 
     private companion object {

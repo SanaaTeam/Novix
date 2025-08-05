@@ -137,7 +137,7 @@ class MovieRepositoryImpl @Inject constructor(
         return safeCall("Failed to fetch movie genres") {
             val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.MOVIE_GENRES)
             if (cachedGenres.isNotEmpty()) {
-                    return cachedGenres.map { it.toEntity() }
+                return cachedGenres.map { it.toEntity() }
             }
 
             return remote.fetchMovieGenres().map { it.toEntity() }.also {
