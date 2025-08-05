@@ -105,7 +105,7 @@ class MovieRepositoryImpl @Inject constructor(
         return safeCall("Failed to fetch user rated movies") {
             val sessionId =preferences.sessionId.first()
             val accountId =preferences.accountId.first()
-            remote.fetchMoviesRate(accountId, sessionId).map { it.toDomain() }
+            remote.fetchMoviesRate(accountId, sessionId).map { it.toEntity() }
         }
     }
 
