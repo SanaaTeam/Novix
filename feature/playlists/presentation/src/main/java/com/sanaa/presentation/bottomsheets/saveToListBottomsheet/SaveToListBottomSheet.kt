@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SaveToListBottomSheet(
@@ -46,9 +48,15 @@ fun SaveToListBottomSheet(
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SaveToListViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val viewModel: SaveToListViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest {
+            onDismiss()
+        }
+    }
 
     SaveToListBottomSheetContent(
         isVisible = isVisible,
@@ -58,8 +66,7 @@ fun SaveToListBottomSheet(
         onAddClick = {
             viewModel.onAddClicked(
                 mediaId = mediaId,
-                mediaType = mediaType,
-                onSuccess = onDismiss
+                mediaType = mediaType
             )
         },
         onCreateNewListClick = onCreateNewListClick,
@@ -186,7 +193,6 @@ private fun PlaylistItem(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

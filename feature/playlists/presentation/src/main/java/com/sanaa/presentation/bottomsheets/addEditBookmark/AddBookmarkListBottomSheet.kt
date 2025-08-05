@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,18 +29,25 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    viewModel: AddBookmarkListViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val viewModel: AddBookmarkListViewModel = hiltViewModel()
+    val state by viewModel.state.collectAsState()
 
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest {
+            handleDismiss()
+        }
     }
 
     AddBookmarkListBottomSheetContent(
@@ -47,9 +55,7 @@ fun AddBookmarkListBottomSheet(
         onDismiss = handleDismiss,
         state = state,
         onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = {
-            viewModel.onAddClicked(onSuccess = handleDismiss)
-        }
+        onAddClick = viewModel::onAddClicked
     )
 }
 
