@@ -28,13 +28,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.MediaType
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
@@ -222,7 +223,15 @@ fun HomeScreenContent(
     }
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
-
+//    if (state.showSaveToListBottomSheet) {
+//        SaveToListBottomSheet(
+//            isVisible = state.showSaveToListBottomSheet,
+//            onDismiss = { interactionListener.onDismissBottomSheet() },
+//            onCreateNewListClick = { interactionListener.onCreateNewListClick() },
+//            mediaId = 1,
+//            mediaType = MediaType.MOVIE
+//        )
+//    }
 
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
