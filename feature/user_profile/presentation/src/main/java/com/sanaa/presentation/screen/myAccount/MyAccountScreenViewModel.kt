@@ -144,6 +144,7 @@ class MyAccountScreenViewModel @Inject constructor(
             },
             onSuccess = {
                 updateUserStatus()
+                emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
             },
             onError = {e->
                 updateState {

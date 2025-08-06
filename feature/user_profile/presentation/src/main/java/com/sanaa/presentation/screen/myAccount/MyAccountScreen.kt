@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.myAccount
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -61,6 +63,9 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
         },
         loggedInAsGuest = {
             viewModel.updateUserStatus()
+        },
+        onBackClicked = {
+            (context as? Activity)?.finishAffinity()
         }
     )
 
@@ -98,9 +103,11 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             MyAccountScreenEffect.NavigateToLogin -> {
                 launcher.launch(authApi.getLaunchIntent(context))
             }
+            MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
+                launcher.launch(authApi.getLaunchIntent(context, AuthStartRoute.Welcome))
+            }
 
             null -> {}
-
         }
     }
 
