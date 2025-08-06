@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -64,14 +65,13 @@ fun TvMediaPosterCard(
         if (isFocused) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .background(Theme.colors.surface.copy(alpha = 0.8f))
-                    .padding(4.dp)
+                    .align(Alignment.BottomStart)
+                    .padding(top = 10.dp)
             ) {
                 Text(
                     text = title,
                     color = Theme.colors.primary,
-                    style = Theme.textStyle.body.small
+                    style = Theme.textStyle.label.medium
                 )
             }
         }
@@ -82,17 +82,19 @@ fun TvMediaPosterCard(
 @Composable
 private fun PreviewMediaPosterCard() {
     NovixTheme(isSystemInDarkTheme()) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            TvMediaPosterCard(
+                title = "ghsjhvj",
+                PosterImage = {
+                    Image(
+                        painter = painterResource(R.drawable.icon_placeholder_light),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            )
+        }
 
-        TvMediaPosterCard(
-            title = "ghsjhvj",
-            PosterImage = {
-                Image(
-                    painter = painterResource(R.drawable.icon_placeholder_light),
-                    contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop
-                )
-            }
-        )
     }
 }
