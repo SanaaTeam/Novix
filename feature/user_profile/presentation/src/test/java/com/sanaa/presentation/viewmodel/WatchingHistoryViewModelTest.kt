@@ -3,6 +3,7 @@ package com.sanaa.presentation.viewmodel
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import entity.Genre
@@ -140,7 +141,7 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(101, MediaTypeUi.MOVIE))
+            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToMediaDetails(101, MediaTypeUi.MOVIE))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -155,7 +156,7 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateToMediaDetails(102, MediaTypeUi.TV_SHOW))
+            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToMediaDetails(102, MediaTypeUi.TV_SHOW))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -181,7 +182,7 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MediaTabScreenEffect.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateBack)
             cancelAndConsumeRemainingEvents()
         }
     }

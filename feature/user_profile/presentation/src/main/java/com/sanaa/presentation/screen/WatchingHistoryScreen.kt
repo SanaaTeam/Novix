@@ -19,13 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.presentation.components.cards.MediaPosterCard
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.paging.compose.LazyPagingItems
@@ -34,32 +35,34 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.api.navigation.LocalAppNavController
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.viewmodel.WatchingHistoryViewModel
 import dagger.hilt.android.EntryPointAccessors
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
-import com.sanaa.feature.home.presentation.R as HomeR
+
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import androidx.compose.ui.graphics.Color
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
+import com.sanaa.presentation.components.RemoteImagePlaceholder
 
 @Composable
 fun WatchingHistoryScreen(
@@ -67,19 +70,19 @@ fun WatchingHistoryScreen(
     viewModel: WatchingHistoryViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
+    val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
             .detailsApi()
     }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MediaTabScreenEffect.NavigateToMediaDetails -> {
+                is ContinueWatchingScreenEffect.NavigateToMediaDetails -> {
                     val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
                     detailsApi.launch(
                         context = navController.context,
@@ -87,8 +90,10 @@ fun WatchingHistoryScreen(
                         startRoute = startRoute
                     )
                 }
-                is MediaTabScreenEffect.NavigateBack -> {
+                is ContinueWatchingScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+                null -> {
                 }
             }
         }
@@ -117,27 +122,23 @@ private fun WatchingHistoryScreenContent(
     ) {
 
         TopBar(
-            screenTitle = stringResource(HomeR.string.watching_history),
+            leftContent = {
+                TopBarClickableIcon(
+                    icon = painterResource(id = R.drawable.icon_back),
+                    onClick = { interactionListener.onBackClick() }
+                )
+            },
+            screenTitle = stringResource(id = R.string.watching_history),
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
         )
 
         WatchingHistoryTabs(
-            onTabClick = { tab ->
-                val mediaTypeUi = when (tab) {
-                    "All" -> null
-                    "Movies" -> MediaTypeUi.MOVIE
-                    "TV Shows" -> MediaTypeUi.TV_SHOW
-                    else -> null
-                }
+            onTabClick = { mediaTypeUi ->
                 interactionListener.onMediaTabSelection(mediaTypeUi)
             },
-            selectedTab = when (state.selectedMediaTypeUi) {
-                null -> "All"
-                MediaTypeUi.MOVIE -> "Movies"
-                MediaTypeUi.TV_SHOW -> "TV Shows"
-            },
+            selectedTab = state.selectedMediaTypeUi,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -158,10 +159,10 @@ private fun WatchingHistoryScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(HomeR.string.no_history_yet),
+                        text = stringResource(id = R.string.no_history_yet),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
-                        color = com.sanaa.designsystem.design_system.theme.Theme.colors.hint
+                        color = Theme.colors.hint
                     )
                 }
             } else {
@@ -171,6 +172,9 @@ private fun WatchingHistoryScreenContent(
                         if (selectedMediaType == null || media.mediaTypeUi == selectedMediaType) {
                             interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         }
+                    },
+                    onSaveIconClick = { media ->
+                        interactionListener.onSaveIconClick(media)
                     }
                 )
             }
@@ -181,96 +185,49 @@ private fun WatchingHistoryScreenContent(
 
 @Composable
 fun WatchingHistoryTabs(
-    onTabClick: (String) -> Unit,
+    onTabClick: (MediaTypeUi?) -> Unit,
     modifier: Modifier = Modifier,
-    selectedTab: String = "All",
+    selectedTab: MediaTypeUi? = null,
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.BottomCenter
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WatchingHistoryTabButton(
-                text = stringResource(HomeR.string.all),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.all),
-                modifier = Modifier.weight(1f)
+        item {
+            ToggleableChip(
+                text = stringResource(id = R.string.all),
+                onClick = { onTabClick(null) },
+                isSelected = selectedTab == null,
             )
-            WatchingHistoryTabButton(
-                text = stringResource(HomeR.string.movies),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.movies),
-                modifier = Modifier.weight(1f)
+        }
+        item {
+            ToggleableChip(
+                text = stringResource(id = R.string.movies),
+                onClick = { onTabClick(MediaTypeUi.MOVIE) },
+                isSelected = selectedTab == MediaTypeUi.MOVIE,
             )
-            WatchingHistoryTabButton(
-                text = stringResource(HomeR.string.tv_shows),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.tv_shows),
-                modifier = Modifier.weight(1f)
+        }
+        item {
+            ToggleableChip(
+                text = stringResource(id = R.string.tv_shows),
+                onClick = { onTabClick(MediaTypeUi.TV_SHOW) },
+                isSelected = selectedTab == MediaTypeUi.TV_SHOW,
             )
         }
     }
 }
 
 @Composable
-private fun WatchingHistoryTabButton(
-    text: String,
-    onClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-) {
-    val animatedTextColor by animateColorAsState(
-        targetValue = if (isSelected) com.sanaa.designsystem.design_system.theme.Theme.colors.title else com.sanaa.designsystem.design_system.theme.Theme.colors.hint,
-    )
-
-    val animatedLineWidthDp by animateFloatAsState(
-        targetValue = if (isSelected) 1f else 0f,
-    )
-
-    val interactionSource = remember { MutableInteractionSource() }
-    
-    Column(
-        modifier = modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { onClick(text) }
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = text,
-            color = animatedTextColor,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth(animatedLineWidthDp)
-                .background(
-                    color = com.sanaa.designsystem.design_system.theme.Theme.colors.primary,
-                    shape = RoundedCornerShape(1.dp)
-                )
-        )
-    }
-}
-
-@Composable
 fun WatchingHistoryGrid(
     items: LazyPagingItems<MediaItem>,
-    onItemClick: (MediaItem) -> Unit
+    onItemClick: (MediaItem) -> Unit,
+    onSaveIconClick: (MediaItem) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        columns = GridCells.Adaptive(minSize = 158.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.padding(8.dp)
     ) {
         items(
@@ -279,15 +236,41 @@ fun WatchingHistoryGrid(
         ) { index ->
             val item = items[index]
             item?.let { mediaItem ->
-            MediaPosterCard(
+                MediaPosterCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.7f),
                     onCardClick = { onItemClick(mediaItem) },
-                    posterImage = {
-                        Image(
-                            painter = painterResource(R.drawable.icon_placeholder_light),
-                            contentDescription = stringResource(HomeR.string.movie_poster),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
+                    topLeftContent = {
+                        SaveIconChip(
+                            isSaved = mediaItem.isSaved,
+                            onClick = { onSaveIconClick(mediaItem) }
                         )
+                    },
+                    posterImage = {
+                        RemoteBlurredSensitiveImage(
+                            imageUrl = mediaItem.imageUrl.orEmpty(),
+                            modifier = Modifier.fillMaxWidth(),
+                            sensitiveContentThreshold = 0.2f,
+                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                            safeContentThreshold = LocalSafeContentThreshold.current,
+                            contentDescription = mediaItem.title,
+                            placeholderContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            errorContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                        ) {
+                            OnBlurContent(
+                                hintText = stringResource(id = R.string.unsuitable_image),
+                                textStyle = Theme.textStyle.body.small.copy(
+                                    color = Color(0x99FFFFFF)
+                                ),
+                                iconSize = 24.dp,
+                                icon = painterResource(R.drawable.icon_eye_slash),
+                            )
+                        }
                     }
                 )
             }
