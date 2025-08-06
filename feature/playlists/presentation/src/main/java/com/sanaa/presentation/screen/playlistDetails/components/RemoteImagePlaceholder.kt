@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.components
+package com.sanaa.presentation.screen.playlistDetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme

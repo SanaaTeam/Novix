@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.state
+package com.sanaa.presentation.screen.playlistDetails.state
 
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow

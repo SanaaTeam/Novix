@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.components
+package com.sanaa.presentation.screen.playlistDetails.components
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import com.sanaa.presentation.screen.savedDetails.state.MediaItem
+import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 
 @Composable
 fun SavedDetailsListSectionContent(

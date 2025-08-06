@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved.componants
+package com.sanaa.presentation.screen.playlist.componants
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

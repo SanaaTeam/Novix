@@ -11,13 +11,13 @@ import androidx.navigation.navArgument
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsScreenRoute
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
-import com.sanaa.presentation.screen.saved.PlayListScreenViewModel
-import com.sanaa.presentation.screen.saved.PlaylistScreen
-import com.sanaa.presentation.screen.savedDetails.SavedDetailsScreen
-import com.sanaa.presentation.screen.savedDetails.SavedDetailsScreenViewModel
+import com.sanaa.presentation.screen.playlist.PlayListScreenViewModel
+import com.sanaa.presentation.screen.playlist.PlaylistScreen
+import com.sanaa.presentation.screen.playlistDetails.PlaylistDetailsScreen
+import com.sanaa.presentation.screen.playlistDetails.PlaylistDetailsScreenViewModel
 
 @Composable
-fun SavedNavHost() {
+fun PlaylistNavHost() {
 
     val navController = rememberNavController()
 
@@ -44,8 +44,8 @@ fun SavedNavHost() {
 
                 )
             ) {
-                val viewModel: SavedDetailsScreenViewModel = hiltViewModel()
-                SavedDetailsScreen(viewModel = viewModel)
+                val viewModel: PlaylistDetailsScreenViewModel = hiltViewModel()
+                PlaylistDetailsScreen(viewModel = viewModel)
             }
         }
     }

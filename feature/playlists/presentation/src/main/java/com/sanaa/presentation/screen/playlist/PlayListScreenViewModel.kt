@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved
+package com.sanaa.presentation.screen.playlist
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

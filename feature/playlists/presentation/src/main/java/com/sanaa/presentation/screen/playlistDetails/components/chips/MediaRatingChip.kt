@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.components.chips
+package com.sanaa.presentation.screen.playlistDetails.components.chips
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

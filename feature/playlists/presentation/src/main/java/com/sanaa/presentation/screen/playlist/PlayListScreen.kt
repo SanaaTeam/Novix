@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved
+package com.sanaa.presentation.screen.playlist
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -21,9 +21,9 @@ import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListViewModel
-import com.sanaa.presentation.screen.saved.componants.AnimatedSnackBarHost
-import com.sanaa.presentation.screen.saved.componants.PlayListGuestScreen
-import com.sanaa.presentation.screen.saved.componants.PlaylistEmptyScreen
+import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
+import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
+import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable

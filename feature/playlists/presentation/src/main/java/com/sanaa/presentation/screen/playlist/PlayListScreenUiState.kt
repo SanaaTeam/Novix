@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved
+package com.sanaa.presentation.screen.playlist
 
 import usecase.custom_list.custom_list_param.SavedList
 

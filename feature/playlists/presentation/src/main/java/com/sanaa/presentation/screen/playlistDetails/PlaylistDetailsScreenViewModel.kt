@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails
+package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
@@ -6,8 +6,8 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
-import com.sanaa.presentation.screen.savedDetails.state.MediaItem
-import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
+import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
+import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
@@ -19,13 +19,13 @@ import usecase.custom_list.ManageSavedListItemsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedDetailsScreenViewModel @Inject constructor(
+class PlaylistDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
-    BaseViewModel<SavedDetailsScreenUiState, SavedDetailsScreenEffect>(SavedDetailsScreenUiState()),
-    SavedDetailsInteractionListener {
+    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState()),
+    PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
         "listId is required in SavedStateHandle"
     }
@@ -78,7 +78,7 @@ class SavedDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        emitEffect(SavedDetailsScreenEffect.NavigateBack)
+        emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
     }
 
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {

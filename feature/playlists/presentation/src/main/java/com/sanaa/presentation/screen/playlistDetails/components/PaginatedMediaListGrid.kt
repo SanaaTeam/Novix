@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.components
+package com.sanaa.presentation.screen.playlistDetails.components
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +18,8 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.presentation.screen.savedDetails.components.chips.SaveIconChip
-import com.sanaa.presentation.screen.savedDetails.state.MediaItem
+import com.sanaa.presentation.screen.playlistDetails.components.chips.SaveIconChip
+import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 
 @Composable
 fun PaginatedMediaListGrid(

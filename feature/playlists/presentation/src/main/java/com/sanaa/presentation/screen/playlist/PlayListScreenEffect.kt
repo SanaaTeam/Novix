@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved
+package com.sanaa.presentation.screen.playlist
 
 sealed class PlayListScreenEffect{
     object NavigateToLogin : PlayListScreenEffect()

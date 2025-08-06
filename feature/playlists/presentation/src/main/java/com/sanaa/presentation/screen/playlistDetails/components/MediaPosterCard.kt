@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails.components
+package com.sanaa.presentation.screen.playlistDetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.savedDetails.components.chips.MediaRatingChip
-import com.sanaa.presentation.screen.savedDetails.components.chips.SaveIconChip
+import com.sanaa.presentation.screen.playlistDetails.components.chips.MediaRatingChip
+import com.sanaa.presentation.screen.playlistDetails.components.chips.SaveIconChip
 
 @Composable
 fun MediaPosterCard(

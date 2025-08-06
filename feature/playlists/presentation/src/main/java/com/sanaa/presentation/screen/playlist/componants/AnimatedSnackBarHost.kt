@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved.componants
+package com.sanaa.presentation.screen.playlist.componants
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -13,7 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
-import com.sanaa.presentation.screen.saved.SnackData
+import com.sanaa.presentation.screen.playlist.SnackData
 import kotlinx.coroutines.delay
 
 @Composable

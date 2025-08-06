@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.saved.componants
+package com.sanaa.presentation.screen.playlist.componants
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

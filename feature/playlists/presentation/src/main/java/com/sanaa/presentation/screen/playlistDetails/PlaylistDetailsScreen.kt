@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.savedDetails
+package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,13 +25,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
-import com.sanaa.presentation.screen.saved.SnackData
-import com.sanaa.presentation.screen.savedDetails.components.SavedDetailsListSectionContent
-import com.sanaa.presentation.screen.savedDetails.state.SavedDetailsScreenUiState
+import com.sanaa.presentation.screen.playlist.SnackData
+import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 
 @Composable
-fun SavedDetailsScreen(
-    viewModel: SavedDetailsScreenViewModel = hiltViewModel(),
+fun PlaylistDetailsScreen(
+    viewModel: PlaylistDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val editedListSuccessMsg = stringResource(R.string.edited_to_list_successfully)
@@ -44,15 +44,15 @@ fun SavedDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                SavedDetailsScreenEffect.NavigateBack -> {
+                PlaylistDetailsScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                SavedDetailsScreenEffect.ShowErrorSnackBar -> {
+                PlaylistDetailsScreenEffect.ShowErrorSnackBar -> {
                     snack = SnackData(editedListFailedMsg, isError = true)
                 }
 
-                SavedDetailsScreenEffect.ShowSuccessSnackBar -> {
+                PlaylistDetailsScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(editedListSuccessMsg, isError = false)
                 }
             }
@@ -60,7 +60,7 @@ fun SavedDetailsScreen(
 
     }
 
-    SavedDetailsContent(
+    PlaylistDetailsContent(
         state = state.value,
         interactionListener = viewModel
     )
@@ -68,9 +68,9 @@ fun SavedDetailsScreen(
 
 
 @Composable
-fun SavedDetailsContent(
+fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState = SavedDetailsScreenUiState(),
-    interactionListener: SavedDetailsInteractionListener,
+    interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
 
     ) {
@@ -79,7 +79,7 @@ fun SavedDetailsContent(
 
     NovixScaffold(
         topBar = {
-            SavedDetailsTopBar(
+            PlaylistDetailsTopBar(
                 title = state.title.orEmpty(),
                 interactionListener = interactionListener
             )
@@ -103,7 +103,7 @@ fun SavedDetailsContent(
 
 
 @Composable
-fun SavedDetailsTopBar(title: String, interactionListener: SavedDetailsInteractionListener) {
+fun PlaylistDetailsTopBar(title: String, interactionListener: PlaylistDetailsInteractionListener) {
     TopBar(
         leftContent = {
             TopBarClickableIcon(
