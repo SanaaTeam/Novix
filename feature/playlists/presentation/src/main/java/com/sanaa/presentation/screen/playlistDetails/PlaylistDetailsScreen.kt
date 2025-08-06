@@ -23,6 +23,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
@@ -52,11 +53,11 @@ fun PlaylistDetailsScreen(
                 }
 
                 PlaylistDetailsScreenEffect.ShowErrorSnackBar -> {
-                    snack = SnackData(editedListFailedMsg, isError = true)
+                    snack = SnackData(message = editedListFailedMsg, isError = true)
                 }
 
                 PlaylistDetailsScreenEffect.ShowSuccessSnackBar -> {
-                    snack = SnackData(editedListSuccessMsg, isError = false)
+                    snack = SnackData(message = editedListSuccessMsg, isError = false)
                 }
             }
         }
@@ -131,7 +132,8 @@ fun PlaylistDetailsTopBar(
             ) {
                 TopBarClickableIcon(
                     icon = painterResource(R.drawable.icon_deleat),
-                    onClick = { onDeleteListClicked() }
+                    onClick = { onDeleteListClicked() },
+                    tint = Theme.colors.statusColors.redAccent
                 )
             }
 

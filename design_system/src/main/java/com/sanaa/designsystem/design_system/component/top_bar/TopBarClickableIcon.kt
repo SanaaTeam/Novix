@@ -29,7 +29,8 @@ fun TopBarClickableIcon(
     icon: Painter,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    contentDescription: String? = ""
+    contentDescription: String? = "",
+    tint: androidx.compose.ui.graphics.Color = Theme.colors.title
 
 ) {
     Box(
@@ -56,7 +57,7 @@ fun TopBarClickableIcon(
             painter = icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = Theme.colors.title
+            tint = tint
         )
     }
 }

@@ -14,6 +14,7 @@ data class PlayListScreenUiState(
 )
 
 data class SnackData(
+    val id: Long = System.currentTimeMillis(),
     val message: String,
     val isError: Boolean
 )

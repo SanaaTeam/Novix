@@ -99,21 +99,21 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 }
 
                 PlayListScreenEffect.ShowErrorToAddListSnackBar -> {
-                    snack = SnackData(addedToListFailedMsg, isError = true)
+                    snack = SnackData(message = addedToListFailedMsg, isError = true)
                 }
 
                 PlayListScreenEffect.ShowSuccessToAddListSnackBar -> {
-                    snack = SnackData(addedToListSuccessMsg, isError = false)
+                    snack = SnackData(message = addedToListSuccessMsg, isError = false)
                 }
 
 
                 PlayListScreenEffect.ShowErrorToDeleteListSnackBar -> {
-                    snack = SnackData(deleteListFailedMsg, isError = true)
+                    snack = SnackData(message = deleteListFailedMsg, isError = true)
 
                 }
 
                 PlayListScreenEffect.ShowSuccessToDeleteListSnackBar -> {
-                    snack = SnackData(deleteListSuccessMsg, isError = false)
+                    snack = SnackData(message = deleteListSuccessMsg, isError = false)
 
                 }
 

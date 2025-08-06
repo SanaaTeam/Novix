@@ -50,7 +50,10 @@ class PlayListScreenViewModel @Inject constructor(
     fun onListDeletedSuccessfully() {
         loadSavedLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
+        Log.i("PlaylistScreen", "onListDeletedSuccessfully: ")
     }
+
+
 
     override fun onFabBottomSheetClicked() {
         updateState { it.copy(showAddBottomSheet = true) }
