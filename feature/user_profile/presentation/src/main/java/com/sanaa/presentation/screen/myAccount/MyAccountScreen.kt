@@ -130,7 +130,7 @@ fun MyAccountScreenContent(
                 MyAccountUserInfo(
                     uiState.currentUser,
                     onLogoutClick = {
-                        interactionsListener.onLogoutButtonClicked()
+                        interactionsListener.onLogoutButtonClick()
                     }
                 )
 
@@ -295,7 +295,7 @@ private fun AccountScreenContentPreview() {
         override fun onLoginButtonClick() {
         }
 
-        override fun onLogoutButtonClicked() {
+        override fun onLogoutButtonClick() {
 
         }
 
