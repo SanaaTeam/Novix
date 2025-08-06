@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
@@ -61,6 +62,10 @@ import com.sanaa.feature.home.presentation.R as HomeR
 import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.PaddingValues
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 
 @Composable
 fun WatchingHistoryScreen(
@@ -118,6 +123,12 @@ private fun WatchingHistoryScreenContent(
     ) {
 
         TopBar(
+            leftContent = {
+                TopBarClickableIcon(
+                    icon = painterResource(id = R.drawable.icon_back),
+                    onClick = { interactionListener.onBackClick() }
+                )
+            },
             screenTitle = stringResource(HomeR.string.watching_history),
             modifier = Modifier
                 .fillMaxWidth()
@@ -125,20 +136,10 @@ private fun WatchingHistoryScreenContent(
         )
 
         WatchingHistoryTabs(
-            onTabClick = { tab ->
-                val mediaTypeUi = when (tab) {
-                    "All" -> null
-                    "Movies" -> MediaTypeUi.MOVIE
-                    "TV Shows" -> MediaTypeUi.TV_SHOW
-                    else -> null
-                }
+            onTabClick = { mediaTypeUi ->
                 interactionListener.onMediaTabSelection(mediaTypeUi)
             },
-            selectedTab = when (state.selectedMediaTypeUi) {
-                null -> "All"
-                MediaTypeUi.MOVIE -> "Movies"
-                MediaTypeUi.TV_SHOW -> "TV Shows"
-            },
+            selectedTab = state.selectedMediaTypeUi,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -182,84 +183,36 @@ private fun WatchingHistoryScreenContent(
 
 @Composable
 fun WatchingHistoryTabs(
-    onTabClick: (String) -> Unit,
+    onTabClick: (MediaTypeUi?) -> Unit,
     modifier: Modifier = Modifier,
-    selectedTab: String = "All",
+    selectedTab: MediaTypeUi? = null,
 ) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.BottomCenter
+    LazyRow(
+        contentPadding = PaddingValues(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
-        Row(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            WatchingHistoryTabButton(
+        item {
+            ToggleableChip(
                 text = stringResource(HomeR.string.all),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.all),
-                modifier = Modifier.weight(1f)
-            )
-            WatchingHistoryTabButton(
-                text = stringResource(HomeR.string.movies),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.movies),
-                modifier = Modifier.weight(1f)
-            )
-            WatchingHistoryTabButton(
-                text = stringResource(HomeR.string.tv_shows),
-                onClick = onTabClick,
-                isSelected = selectedTab == stringResource(HomeR.string.tv_shows),
-                modifier = Modifier.weight(1f)
+                onClick = { onTabClick(null) },
+                isSelected = selectedTab == null,
             )
         }
-    }
-}
-
-@Composable
-private fun WatchingHistoryTabButton(
-    text: String,
-    onClick: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    isSelected: Boolean = false,
-) {
-    val animatedTextColor by animateColorAsState(
-        targetValue = if (isSelected) com.sanaa.designsystem.design_system.theme.Theme.colors.title else com.sanaa.designsystem.design_system.theme.Theme.colors.hint,
-    )
-
-    val animatedLineWidthDp by animateFloatAsState(
-        targetValue = if (isSelected) 1f else 0f,
-    )
-
-    val interactionSource = remember { MutableInteractionSource() }
-    
-    Column(
-        modifier = modifier
-            .clickable(
-                interactionSource = interactionSource,
-                indication = null
-            ) { onClick(text) }
-            .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = text,
-            color = animatedTextColor,
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Box(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth(animatedLineWidthDp)
-                .background(
-                    color = com.sanaa.designsystem.design_system.theme.Theme.colors.primary,
-                    shape = RoundedCornerShape(1.dp)
-                )
-        )
+        item {
+            ToggleableChip(
+                text = stringResource(HomeR.string.movies),
+                onClick = { onTabClick(MediaTypeUi.MOVIE) },
+                isSelected = selectedTab == MediaTypeUi.MOVIE,
+            )
+        }
+        item {
+            ToggleableChip(
+                text = stringResource(HomeR.string.tv_shows),
+                onClick = { onTabClick(MediaTypeUi.TV_SHOW) },
+                isSelected = selectedTab == MediaTypeUi.TV_SHOW,
+            )
+        }
     }
 }
 
@@ -269,7 +222,7 @@ fun WatchingHistoryGrid(
     onItemClick: (MediaItem) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(2),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.padding(8.dp)
