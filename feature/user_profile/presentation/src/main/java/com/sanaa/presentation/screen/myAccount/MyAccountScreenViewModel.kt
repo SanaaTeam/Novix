@@ -137,7 +137,7 @@ class MyAccountScreenViewModel @Inject constructor(
         emitEffect(MyAccountScreenEffect.NavigateToLogin)
     }
 
-    override fun onLogoutButtonClicked() {
+    override fun onLogoutButtonClick() {
         tryToExecute(
             callee = {
                 logOutUseCase.logout()
@@ -145,7 +145,11 @@ class MyAccountScreenViewModel @Inject constructor(
             onSuccess = {
                 updateUserStatus()
             },
-            onError = {  },
+            onError = {e->
+                updateState {
+                    it.copy()
+                }
+            },
         )
     }
 

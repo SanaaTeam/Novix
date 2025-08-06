@@ -15,5 +15,5 @@ interface MyAccountScreenInteractionsListener {
     fun onSaveContentRestrictionClick()
     fun onClickAppearance()
     fun onLoginButtonClick()
-    fun onLogoutButtonClicked()
+    fun onLogoutButtonClick()
 }
