@@ -67,9 +67,7 @@ datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
 uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
-espressoCore = "3.7.0"
 runtimeAndroid = "1.8.3"
-cameraCore = "1.4.2"
 foundationAndroid = "1.8.3"
 
 [libraries]
