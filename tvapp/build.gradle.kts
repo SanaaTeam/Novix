@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
 }
+
 val localProperties = Properties()
 val keysFile = rootProject.file("keys.properties")
 val defaultFile = rootProject.file("default.properties")
@@ -30,6 +31,10 @@ android {
         versionCode = libs.versions.versionCode.get().toInt()
         versionName = libs.versions.versionName.get()
 
+        val apiKey = localProperties["TMDB_API_KEY"]?.toString() ?: ""
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
+
     }
 
     buildTypes {
@@ -41,6 +46,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -50,57 +56,83 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
-
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-    implementation(libs.androidx.datastore)
-    implementation(libs.logging.interceptor)
-    implementation(libs.retrofit2.kotlinx.serialization.converter)
-    implementation(projects.designSystem)
-    implementation(projects.domain.vod)
-    implementation(projects.data.repositories.vod)
-    implementation(projects.data.remoteDataSource.vod)
-    implementation(projects.data.localDataSource.vod)
-
-    implementation(projects.imageViewer)
-    implementation(projects.feature.search.api)
-    implementation(projects.feature.mediaDetails.api)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.kotlinx.datetime)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.bundles.ktor)
+
+    implementation(libs.androidx.datastore)
+    implementation(libs.bundles.room)
+
     implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui.compose)
-    implementation(libs.androidx.ui.compose.graphics)
-    implementation(libs.androidx.ui.compose.tooling.preview)
+    implementation(libs.bundles.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.coil.compose)
     implementation(libs.androidx.tv.foundation)
     implementation(libs.androidx.tv.material)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
     debugImplementation(libs.androidx.ui.compose.tooling)
     debugImplementation(libs.androidx.ui.compose.test.manifest)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.compose.test.junit4)
+    androidTestImplementation(libs.androidx.junit)
 
-    // Paging 3
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
-
-    testImplementation(libs.bundles.test)
-    testImplementation(libs.bundles.test.runtime)
-
-    testImplementation(libs.turbine)
-    implementation(libs.kotlinx.datetime)
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
+    implementation(libs.firebase.perf)
+
+    implementation(libs.tensorflow.lite.task.vision)
+
     implementation(libs.timber)
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
 
+    implementation(projects.designSystem)
+    implementation(projects.imageViewer)
 
+    implementation(projects.domain.vod)
+    implementation(projects.data.repositories.vod)
+    implementation(projects.data.remoteDataSource.vod)
+    implementation(projects.data.localDataSource.vod)
+
+    implementation(projects.domain.identity)
+    implementation(projects.data.repositories.identity)
+    implementation(projects.data.remoteDataSource.identity)
+    implementation(projects.data.localDataSource.identity)
+
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.mediaDetails.presentation)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.userProfile.presentation)
+    implementation(projects.feature.playlists.api)
+    implementation(projects.feature.playlists.presentation)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.authentication.presentation)
+    implementation(projects.preferences)
+
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
 }
