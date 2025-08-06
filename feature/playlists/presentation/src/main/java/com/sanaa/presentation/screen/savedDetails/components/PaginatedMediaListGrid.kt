@@ -18,7 +18,6 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.presentation.providersSaved.LocalSafeContentThreshold
 import com.sanaa.presentation.screen.savedDetails.components.chips.SaveIconChip
 import com.sanaa.presentation.screen.savedDetails.state.MediaItem
 
@@ -46,8 +45,8 @@ fun PaginatedMediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-                        isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                        safeContentThreshold = LocalSafeContentThreshold.current,
+                        // isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                        //   safeContentThreshold = LocalSafeContentThreshold.current,
                         contentDescription = media.title,
                         placeholderContent = {
                             RemoteImagePlaceholder(Modifier.fillMaxSize())
