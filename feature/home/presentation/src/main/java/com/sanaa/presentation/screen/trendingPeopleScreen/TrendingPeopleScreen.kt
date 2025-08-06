@@ -1,14 +1,12 @@
-package com.sanaa.presentation.screen.celebritiesScreen
+package com.sanaa.presentation.screen.trendingPeopleScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -37,8 +36,8 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
-fun CelebritiesScreen(
-    viewModel: CelebritiesViewModel = hiltViewModel()
+fun TrendingPeopleScreen(
+    viewModel: TrendingPeopleViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
@@ -53,11 +52,11 @@ fun CelebritiesScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is CelebritiesScreenEffects.NavigateBack -> {
+                is TrendingPeopleScreenEffects.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                is CelebritiesScreenEffects.NavigateToActorDetails -> {
+                is TrendingPeopleScreenEffects.NavigateToActorDetails -> {
                     detailsApi.launch(
                         context = navController.context,
                         id = effect.actorId,
@@ -68,65 +67,59 @@ fun CelebritiesScreen(
         }
     }
 
-    CelebritiesContent(
+    TrendingPeopleScreenContent(
         state = state.value, interactionListener = viewModel
     )
 }
 
 @Composable
-fun CelebritiesContent(
-    state: CelebritiesScreenUiState,
-    interactionListener: CelebritiesScreenInteractionListener,
+fun TrendingPeopleScreenContent(
+    state: TrendingPeopleScreenUiState,
+    interactionListener: TrendingPeopleScreenInteractionListener,
 ) {
-    val celebrities = state.celebrities.collectAsLazyPagingItems()
+    val celebrities = state.people.collectAsLazyPagingItems()
 
-    NovixScaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
-        ) {
+    NovixScaffold(
+        topBar = {
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.arrow_left_04),
+                        icon = painterResource(id = R.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 },
                 screenTitle = stringResource(id = R.string.trending_people),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .systemBarsPadding()
+                    .padding(top = 12.dp)
             )
+        },
+        modifier = Modifier.systemBarsPadding()
 
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(), contentAlignment = Alignment.Center
-            ) {
-                AnimatedContent(
-                    targetState = state.isLoading to state.isNoInternetConnection,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    contentAlignment = Alignment.Center
-                ) { (loading, disconnected) ->
-                    when {
-                        disconnected -> {
-                            NetworkDisconnectionContact(TODO())
-                        }
+    ) {
+        AnimatedContent(
+            targetState = state.isLoading to state.isNoInternetConnection,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) { (loading, disconnected) ->
+            when {
+                disconnected -> {
+                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                }
 
-                        loading -> {
-                            LoadingIndicator()
-                        }
+                loading -> {
+                    LoadingIndicator()
+                }
 
-                        else -> {
-                            PersonList(
-                                persons = celebrities,
-                                onItemClick = interactionListener::onActorClick
-                            )
-                        }
-                    }
+                else -> {
+                    PersonList(
+                        persons = celebrities,
+                        onItemClick = interactionListener::onActorClick
+                    )
                 }
             }
         }
     }
+
 }

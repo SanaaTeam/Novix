@@ -1,61 +1,51 @@
-package com.sanaa.presentation.screen.celebritiesScreen
+package com.sanaa.presentation.screen.trendingPeopleScreen
 
-import android.util.Log
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.PersonUiState
 import com.sanaa.presentation.state.toState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class CelebritiesViewModel @Inject constructor(
+class TrendingPeopleViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<CelebritiesScreenUiState, CelebritiesScreenEffects>(
-    initialState = CelebritiesScreenUiState(),
+) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffects>(
+    initialState = TrendingPeopleScreenUiState(),
     defaultDispatcher = dispatcher
-), CelebritiesScreenInteractionListener {
+), TrendingPeopleScreenInteractionListener {
 
     init {
         loadActors()
     }
 
-    override fun onBackClick() {
-        emitEffect(CelebritiesScreenEffects.NavigateBack)
-    }
-
-    override fun onActorClick(actorId: Int) {
-        emitEffect(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
-    }
-
-
     private fun loadActors() {
         tryToCollect(
-            callee = { loadActorsOperation() },
-            onCollect = ::onActorsLoaded,
+            callee = ::loadActorsOperation,
+            onCollect = ::onLoadActorsSuccess,
             onError = ::onDataLoadError
         )
     }
 
     private fun loadActorsOperation(): Flow<PagingData<PersonUiState>> {
         return createPagingFlow(
-            pagingSourceFactory = { createActorsPagingSource() },
+            pagingSourceFactory = ::createActorsPagingSource,
             mapper = Actor::toState
         )
     }
 
-    private fun onActorsLoaded(pagingData: PagingData<PersonUiState>) {
-        updateState { it.copy(celebrities = flowOf(pagingData)) }
+    private fun onLoadActorsSuccess(pagingData: PagingData<PersonUiState>) {
+        updateState { it.copy(people = flowOf(pagingData)) }
     }
 
     private fun onDataLoadError(e: Throwable) {
@@ -73,6 +63,14 @@ class CelebritiesViewModel @Inject constructor(
                 error = e.message
             )
         }
+    }
+
+    override fun onBackClick() {
+        emitEffect(TrendingPeopleScreenEffects.NavigateBack)
+    }
+
+    override fun onActorClick(actorId: Int) {
+        emitEffect(TrendingPeopleScreenEffects.NavigateToActorDetails(actorId))
     }
 
     override fun onRetryClick() {
