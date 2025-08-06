@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen
 
-import com.sanaa.presentation.R
+import com.sanaa.feature.onboarding.presentation.R
 import com.sanaa.presentation.component.OnBoardingPageContentItem
 import com.sanaa.presentation.onbordingBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
