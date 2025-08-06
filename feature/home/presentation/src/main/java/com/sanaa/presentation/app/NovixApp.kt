@@ -24,6 +24,7 @@ import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
@@ -31,6 +32,7 @@ import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.Conti
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
+import com.sanaa.presentation.screen.WatchingHistoryScreen
 
 @Composable
 fun NovixApp(
@@ -99,6 +101,10 @@ private fun AppNavigation(
 
         composable<ContinueWatchingMediaScreenRoute> {
             ContinueWatchingMediaScreen()
+        }
+
+        composable<WatchingHistoryScreenRoute> {
+            WatchingHistoryScreen()
         }
     }
 }

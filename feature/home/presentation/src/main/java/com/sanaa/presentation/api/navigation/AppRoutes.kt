@@ -22,3 +22,6 @@ object TopRatedMediaScreenRoute : AppRoute()
 @Serializable
 object ContinueWatchingMediaScreenRoute : AppRoute()
 
+@Serializable
+object WatchingHistoryScreenRoute : AppRoute()
+

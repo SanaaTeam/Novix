@@ -34,8 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.platform.LocalContext
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.api.navigation.LocalAppNavController
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
@@ -66,6 +66,12 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.PaddingValues
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
+import com.sanaa.presentation.shared_component.OnBlurContent
+import androidx.compose.ui.graphics.Color
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 
 @Composable
 fun WatchingHistoryScreen(
@@ -73,12 +79,12 @@ fun WatchingHistoryScreen(
     viewModel: WatchingHistoryViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
+    val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .fromApplication(appContext, ProfileApiEntryPoint::class.java)
             .detailsApi()
     }
 
@@ -163,7 +169,7 @@ private fun WatchingHistoryScreenContent(
                         text = stringResource(HomeR.string.no_history_yet),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
-                        color = com.sanaa.designsystem.design_system.theme.Theme.colors.hint
+                        color = Theme.colors.hint
                     )
                 }
             } else {
@@ -173,6 +179,9 @@ private fun WatchingHistoryScreenContent(
                         if (selectedMediaType == null || media.mediaTypeUi == selectedMediaType) {
                             interactionListener.onMediaClick(media.id, media.mediaTypeUi)
                         }
+                    },
+                    onSaveIconClick = { media ->
+                        interactionListener.onSaveIconClick(media)
                     }
                 )
             }
@@ -219,7 +228,8 @@ fun WatchingHistoryTabs(
 @Composable
 fun WatchingHistoryGrid(
     items: LazyPagingItems<MediaItem>,
-    onItemClick: (MediaItem) -> Unit
+    onItemClick: (MediaItem) -> Unit,
+    onSaveIconClick: (MediaItem) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -235,20 +245,44 @@ fun WatchingHistoryGrid(
             item?.let { mediaItem ->
                 MediaPosterCard(
                     onCardClick = { onItemClick(mediaItem) },
+                    topLeftContent = {
+                        SaveIconChip(
+                            isSaved = mediaItem.isSaved,
+                            onClick = { onSaveIconClick(mediaItem) }
+                        )
+                    },
                     posterImage = {
-                        if (!mediaItem.imageUrl.isNullOrEmpty()) {
-                            RemoteBlurredSensitiveImage(
-                                imageUrl = mediaItem.imageUrl!!,
-                                contentDescription = stringResource(HomeR.string.movie_poster),
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        } else {
+                        if (mediaItem.imageUrl.isNullOrEmpty()) {
                             Image(
                                 painter = painterResource(R.drawable.icon_placeholder_light),
                                 contentDescription = stringResource(HomeR.string.movie_poster),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
+                        } else {
+                            RemoteBlurredSensitiveImage(
+                                imageUrl = mediaItem.imageUrl,
+                                contentDescription = stringResource(HomeR.string.movie_poster),
+                                modifier = Modifier.fillMaxWidth(),
+                                sensitiveContentThreshold = 0.2f,
+                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                safeContentThreshold = LocalSafeContentThreshold.current,
+                                placeholderContent = {
+                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                },
+                                errorContent = {
+                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                },
+                            ) {
+                                OnBlurContent(
+                                    hintText = stringResource(HomeR.string.unsuitable_image),
+                                    textStyle = Theme.textStyle.body.small.copy(
+                                        color = Color(0x99FFFFFF)
+                                    ),
+                                    iconSize = 24.dp,
+                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                )
+                            }
                         }
                     }
                 )
