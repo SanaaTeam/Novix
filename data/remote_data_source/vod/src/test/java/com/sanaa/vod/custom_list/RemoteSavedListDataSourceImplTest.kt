@@ -47,10 +47,10 @@ class RemoteSavedListDataSourceImplTest {
 
     @Test
     fun `fetchUserLists() should return list of saved lists dto`() = runTest {
-        coEvery { apiService.getUserLists(ACCOUNT_ID, SESSION_ID, 1) } returns
+        coEvery { apiService.getUserLists(SESSION_ID, 1) } returns
                 ListApiResponse(results = dummyLists)
 
-        val lists = dataSource.fetchUserLists(SESSION_ID, ACCOUNT_ID, 1)
+        val lists = dataSource.fetchUserLists(SESSION_ID, 1)
 
         assertEquals(2, lists.size)
     }

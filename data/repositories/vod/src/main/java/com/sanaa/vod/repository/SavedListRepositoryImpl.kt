@@ -23,17 +23,19 @@ class SavedListRepositoryImpl @Inject constructor(
     private val savedMovieStatusProvider: SavedMovieStatusProvider
 ) : SavedListRepository {
 
-    override suspend fun getSavedLists(): List<SavedList> = safeCall("Failed to fetch saved lists") {
-        remoteSavedListDataSource
-            .fetchUserLists(obtainSessionId())
-            .map { it.toEntity() }
-    }
+    override suspend fun getSavedLists(): List<SavedList> =
+        safeCall("Failed to fetch saved lists") {
+            remoteSavedListDataSource
+                .fetchUserLists(obtainSessionId())
+                .map { it.toEntity() }
+        }
 
-    override suspend fun createSavedList(title: String): SavedList = safeCall("Failed to create list") {
-        remoteSavedListDataSource
-            .createList(obtainSessionId(), title)
-            .toEntity()
-    }
+    override suspend fun createSavedList(title: String): SavedList =
+        safeCall("Failed to create list") {
+            remoteSavedListDataSource
+                .createList(obtainSessionId(), title)
+                .toEntity()
+        }
 
     override suspend fun deleteSavedList(listId: Int) {
         safeCall("Failed to delete list") {

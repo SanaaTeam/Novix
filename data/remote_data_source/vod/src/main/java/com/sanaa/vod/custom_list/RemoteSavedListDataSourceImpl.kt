@@ -5,8 +5,6 @@ import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
-import kotlinx.coroutines.delay
-
 import javax.inject.Inject
 
 class RemoteSavedListDataSourceImpl @Inject constructor(

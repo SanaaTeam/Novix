@@ -53,6 +53,6 @@ class SavedMovieStatusProviderImpl @Inject constructor(
             .toSet()
     }
 
-    override fun markSaved(id: Int)   = _savedIds.update { it + id }
+    override fun markSaved(id: Int) = _savedIds.update { it + id }
     override fun markUnsaved(id: Int) = _savedIds.update { it - id }
 }
