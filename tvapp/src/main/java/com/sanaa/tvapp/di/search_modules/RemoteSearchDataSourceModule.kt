@@ -1,4 +1,4 @@
-package com.sanaa.tvapp.di
+package com.sanaa.tvapp.di.search_modules
 
 import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.vod.search.SearchApiService
@@ -13,7 +13,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RemoteTvSearchDataSourceModule {
+abstract class RemoteSearchDataSourceModule {
+
     @Binds
     abstract fun bindSearchRemoteDataSource(
         searchRemoteDataSourceImplementation: SearchRemoteDataSourceImpl

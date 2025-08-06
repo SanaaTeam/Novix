@@ -1,8 +1,7 @@
 package com.sanaa.tvapp.di
 
-import android.net.http.HttpResponseCache.install
+
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.sanaa.data.remotedatasource.vod.BuildConfig
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.network.interceptor.APIKeyInterceptor
@@ -11,6 +10,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -19,11 +26,11 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Singleton
+import com.sanaa.tvapp.BuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)
-object TvNetworkModule {
-
+object NetworkModule {
 
     @Provides
     @Singleton
