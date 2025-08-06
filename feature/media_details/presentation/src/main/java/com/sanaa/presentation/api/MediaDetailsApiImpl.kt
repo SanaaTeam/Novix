@@ -16,7 +16,6 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.main.DetailsViewModel
 import com.sanaa.presentation.navigation.DetailsNavHost
 import dagger.hilt.android.AndroidEntryPoint
-import repository.UserPreferencesRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,9 +34,6 @@ class MediaDetailsApiImpl @Inject constructor() : MediaDetailsApi {
 class MediaDetailsActivity : AppCompatActivity() {
 
     private val viewModel: DetailsViewModel by viewModels()
-
-    @Inject
-    lateinit var userPreference: UserPreferencesRepository
 
     companion object {
         private const val EXTRA_START_ROUTE = "extra_start_route"

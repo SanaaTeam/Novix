@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.text.AppText
@@ -41,7 +42,8 @@ fun NotLoggedInStateComponent(
                 text = stringResource(R.string.please_login_to_access_your_account_details_and_other_features),
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp),
+                textAlign = TextAlign.Center
             )
             OutlinedButton(
                 text = stringResource(R.string.login),
