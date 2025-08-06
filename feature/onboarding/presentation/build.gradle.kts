@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sanaa.presentation"
+    namespace = "com.sanaa.feature.onboarding.presentation"
 }
 
 dependencies {
