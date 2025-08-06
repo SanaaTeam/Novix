@@ -85,7 +85,7 @@ private fun PreviewSaveChip() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            SaveIconChip(isSaved = isSaved, onClick = { isSaved = !isSaved })
+            SaveIconChip(isSaved = true, onClick = { isSaved = !isSaved })
             SaveIconChip(isSaved = false, onClick = {})
         }
     }

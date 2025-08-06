@@ -1,0 +1,47 @@
+package com.sanaa.presentation.bottomsheet.addEditBookmark
+
+import com.sanaa.presentation.BaseViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import usecase.custom_list.ManageSavedListsUseCase
+import javax.inject.Inject
+
+@HiltViewModel
+class AddBookmarkListViewModel @Inject constructor(
+    private val manageSavedListsUseCase: ManageSavedListsUseCase
+) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
+
+    fun onListTitleChanged(title: String) {
+        updateState {
+            it.copy(
+                listTitle = title,
+                isAddButtonEnabled = title.isNotBlank()
+            )
+        }
+    }
+
+    fun resetState() {
+        updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
+    }
+
+    fun onAddClicked() {
+        if (!state.value.isAddButtonEnabled) return
+
+        updateState { it.copy(isLoading = true, errorMessage = null) }
+        val currentTitle = state.value.listTitle.trim()
+        tryToExecute(
+            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            onSuccess = {
+                resetState()
+                emitEffect(Unit)
+            },
+            onError = {
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = "Failed to create list. Please try again."
+                    )
+                }
+            }
+        )
+    }
+}
