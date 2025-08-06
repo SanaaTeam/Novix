@@ -4,7 +4,6 @@ import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
 import com.sanaa.vod.repository.mapper.custom_list.toEntity
-import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Movie
 import kotlinx.coroutines.flow.first
@@ -38,12 +37,9 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun getAllMoviesInList(listId: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch list items") {
-            remoteSavedListDataSource.fetchListItems(listId).map {
-                remoteMovieDataSource.fetchMovieDetails(
-                    it.toEntity().id
-                ).toEntity()
-            }
+            remoteSavedListDataSource.fetchListItems(listId, page).map { it.toEntity() }
         }
+
 
     override suspend fun addMovieToList(listId: Int, movieId: Int): Boolean =
         safeCall("Failed to add movie to list") {
