@@ -25,20 +25,20 @@ class ManageSavedListsUseCaseTest {
     @Test
     fun `getSavedLists should call repository and return list`() = runTest {
         val expected = listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Favs"))
-        coEvery { savedListRepository.getSavedLists(ACCOUNT_ID) } returns expected
+        coEvery { savedListRepository.getSavedLists() } returns expected
 
-        val result = manageSavedListsUseCase.getSavedLists(ACCOUNT_ID)
+        val result = manageSavedListsUseCase.getSavedLists()
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
     fun `getSavedLists should throw when repository fails`() = runTest {
-        coEvery { savedListRepository.getSavedLists(ACCOUNT_ID) } throws
+        coEvery { savedListRepository.getSavedLists() } throws
                 RetrievingDataFailureException("Error")
 
         assertThrows<RetrievingDataFailureException> {
-            manageSavedListsUseCase.getSavedLists(ACCOUNT_ID)
+            manageSavedListsUseCase.getSavedLists()
         }
     }
 
@@ -62,6 +62,6 @@ class ManageSavedListsUseCaseTest {
 
     private companion object {
         const val ACCOUNT_ID = 123L
-        val DUMMY_LIST = SavedList(id = 1, title = "Watch-Later")
+        val DUMMY_LIST = SavedList(id = 1, title = "Watch-Later", itemCount = 5)
     }
 }
