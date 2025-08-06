@@ -59,13 +59,10 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
-            viewModel.updateUserStatus()
+            activity?.recreate()
         },
         loggedInAsGuest = {
-            viewModel.updateUserStatus()
-        },
-        onBackClicked = {
-            (context as? Activity)?.finishAffinity()
+            activity?.recreate()
         }
     )
 
@@ -104,7 +101,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 launcher.launch(authApi.getLaunchIntent(context))
             }
             MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
-                launcher.launch(authApi.getLaunchIntent(context, AuthStartRoute.Welcome))
+                activity?.recreate()
             }
 
             null -> {}
