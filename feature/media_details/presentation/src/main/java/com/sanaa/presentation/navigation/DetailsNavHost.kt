@@ -1,6 +1,7 @@
 package com.sanaa.presentation.navigation
 
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -48,15 +49,15 @@ fun DetailsNavHost(startRoute: StartRoute, id: Int) {
 
 
     val navColor = Theme.colors.surface
-    val isSystemInDarkTheme = LocalThemeProvider.current
+    val isDarkTheme = LocalThemeProvider.current
     val view = LocalView.current
-    val activity = view.context as? ComponentActivity
-    LaunchedEffect(Unit) {
+    val activity = view.context as? AppCompatActivity
+    LaunchedEffect(isDarkTheme) {
         activity?.window?.also { window ->
             window.navigationBarColor = navColor.toArgb()
             WindowInsetsControllerCompat(window, view).apply {
-                isAppearanceLightStatusBars = !isSystemInDarkTheme
-                isAppearanceLightNavigationBars = !isSystemInDarkTheme
+                isAppearanceLightStatusBars = !isDarkTheme
+                isAppearanceLightNavigationBars = !isDarkTheme
             }
         }
     }
