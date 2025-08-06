@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen
+package com.sanaa.presentation.screen.watchingHistory
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -6,63 +6,52 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.R
-import androidx.compose.foundation.Image
-import androidx.compose.ui.layout.ContentScale
-import com.sanaa.designsystem.design_system.theme.NovixTheme
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.paging.compose.LazyPagingItems
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.platform.LocalContext
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
-import com.sanaa.presentation.state.MediaTypeUi
-import com.sanaa.presentation.state.WatchingHistoryUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.viewmodel.WatchingHistoryViewModel
-import dagger.hilt.android.EntryPointAccessors
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Alignment
-import androidx.compose.material3.Text
-import androidx.compose.ui.text.style.TextAlign
-
-import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
-import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
-import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
-import androidx.compose.ui.graphics.Color
+import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
+import com.sanaa.designsystem.design_system.component.text.AppText
+import com.sanaa.designsystem.design_system.component.top_bar.TopBar
+import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.providers.LocalSafeContentThreshold
-import com.sanaa.presentation.components.RemoteImagePlaceholder
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.model.MediaItemUiModel
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
+import com.sanaa.presentation.screen.myRating.component.RemoteImagePlaceholder
+import dagger.hilt.android.EntryPointAccessors
+
 
 @Composable
 fun WatchingHistoryScreen(
@@ -82,7 +71,7 @@ fun WatchingHistoryScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ContinueWatchingScreenEffect.NavigateToMediaDetails -> {
+                is WatchingHistoryScreenEffect.NavigateToMediaDetails -> {
                     val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
                     detailsApi.launch(
                         context = navController.context,
@@ -90,28 +79,25 @@ fun WatchingHistoryScreen(
                         startRoute = startRoute
                     )
                 }
-                is ContinueWatchingScreenEffect.NavigateBack -> {
+                is WatchingHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
-                }
-                null -> {
                 }
             }
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
         WatchingHistoryScreenContent(
             state = state.value,
             interactionListener = viewModel,
             modifier = modifier,
         )
-    }
+
 }
 
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
-    interactionListener: WatchingHistoryViewModel,
+    interactionListener: WatchingHistoryInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     val watchedItems = state.watchingHistory.collectAsLazyPagingItems()
@@ -158,9 +144,9 @@ private fun WatchingHistoryScreenContent(
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text(
+                    AppText(
                         text = stringResource(id = R.string.no_history_yet),
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = Theme.textStyle.body.large,
                         textAlign = TextAlign.Center,
                         color = Theme.colors.hint
                     )
@@ -175,7 +161,7 @@ private fun WatchingHistoryScreenContent(
                     },
                     onSaveIconClick = { media ->
                         interactionListener.onSaveIconClick(media)
-                    }
+                    },
                 )
             }
         }
@@ -220,15 +206,15 @@ fun WatchingHistoryTabs(
 
 @Composable
 fun WatchingHistoryGrid(
-    items: LazyPagingItems<MediaItem>,
-    onItemClick: (MediaItem) -> Unit,
-    onSaveIconClick: (MediaItem) -> Unit
+    onItemClick: (MediaItemUiModel) -> Unit,
+    onSaveIconClick: (MediaItemUiModel) -> Unit,
+    items: LazyPagingItems<MediaItemUiModel>,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 158.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+
     ) {
         items(
             count = items.itemCount,
@@ -252,9 +238,7 @@ fun WatchingHistoryGrid(
                             imageUrl = mediaItem.imageUrl.orEmpty(),
                             modifier = Modifier.fillMaxWidth(),
                             sensitiveContentThreshold = 0.2f,
-                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                            safeContentThreshold = LocalSafeContentThreshold.current,
-                            contentDescription = mediaItem.title,
+                            contentDescription = "poster",
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
