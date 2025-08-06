@@ -20,16 +20,21 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
+import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
+import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun PlaylistDetailsScreen(
@@ -43,12 +48,23 @@ fun PlaylistDetailsScreen(
 
     val navController = LocalNavControllerProvider.current
 
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(context, PlaylistsApiEntryPoint::class.java)
+            .detailsApi()
+    }
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
                 PlaylistDetailsScreenEffect.NavigateBack -> {
-                    navController.previousBackStackEntry?.savedStateHandle?.set("list_deleted", true)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("delete_success", true)
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "list_deleted",
+                        true
+                    )
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "delete_success",
+                        true
+                    )
                     navController.popBackStack()
                 }
 
@@ -58,6 +74,15 @@ fun PlaylistDetailsScreen(
 
                 PlaylistDetailsScreenEffect.ShowSuccessSnackBar -> {
                     snack = SnackData(message = editedListSuccessMsg, isError = false)
+                }
+
+                is PlaylistDetailsScreenEffect.NavigateToMediaDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = it.mediaId,
+                        startRoute = StartRoute.MOVIE
+                    )
+
                 }
             }
         }
@@ -76,7 +101,7 @@ fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState = SavedDetailsScreenUiState(),
     interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
-    ) {
+) {
     val movieList = state.movieList.collectAsLazyPagingItems()
 
 
@@ -97,7 +122,7 @@ fun PlaylistDetailsContent(
 
             SavedDetailsListSectionContent(
                 mediaList = movieList,
-                onMediaClick = { interactionListener.onMediaClick(it.id) },
+                onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
                 onSaveIconClick = { interactionListener.onSaveIconClick(it) }
             )
 
