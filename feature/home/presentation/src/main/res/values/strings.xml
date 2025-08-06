@@ -12,10 +12,10 @@
     <string name="people">People</string>
     <string name="trending_people">Trending people</string>
     <string name="continue_watching">Continue watching</string>
+    <string name="watching_history">Watching history</string>
     <string name="what_you_want_to_watch">What you want to watch?</string>
     <string name="up_upcoming">Upcoming</string>"
     <string name="popular">Popular</string>
-    <string name="what_to_watch">What you want to watch?</string>
     <string name="request_login">Please login to save to list</string>
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"

@@ -1,9 +1,9 @@
-package com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen
+package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 
-interface ContinueWatchingScreenInteractionListener {
+interface WatchingHistoryScreenInteractionListener {
     fun onMediaTabSelection(mediaTypeUi: MediaTypeUi)
     fun onMovieGenreClick(id: Int?)
     fun onTvShowGenreClick(id: Int?)

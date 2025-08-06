@@ -16,8 +16,22 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
+
+fun Modifier.fillWidthOfParent(parentPadding: Dp) = layout { measurable, constraints ->
+    val newMaxWidth = constraints.maxWidth + 2 * parentPadding.roundToPx()
+
+    val newConstraints = constraints.copy(maxWidth = newMaxWidth)
+
+    val placeable = measurable.measure(newConstraints)
+
+    layout(constraints.maxWidth, placeable.height) {
+        placeable.place(-parentPadding.roundToPx(), 0)
+    }
+}
 
 fun Modifier.shimmerEffect(
     widthOfShadowBrush: Int = 500,

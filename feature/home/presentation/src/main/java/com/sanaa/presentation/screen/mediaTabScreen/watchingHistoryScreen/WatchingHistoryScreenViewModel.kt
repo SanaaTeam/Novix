@@ -1,10 +1,11 @@
-package com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen
+package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,16 +20,16 @@ import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 @HiltViewModel
-class ContinueWatchingMediaScreenViewModel @Inject constructor(
+class WatchingHistoryScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<ContinueWatchingMediaScreenUiState, ContinueWatchingScreenEffect>(
-    ContinueWatchingMediaScreenUiState(),
+) : BaseViewModel<WatchingHistoryScreenUiState, WatchingHistoryScreenEffect>(
+    WatchingHistoryScreenUiState(),
     dispatcher
-), ContinueWatchingScreenInteractionListener {
+), WatchingHistoryScreenInteractionListener {
 
     init {
         fetchMovieGenres()
@@ -39,63 +40,72 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryMovies(genreId = genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
-                }
-            },
+            callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            onCollect = { ::onFetchMoviesSuccess },
             onError = { ::onLoadDataError }
         )
+    }
+
+    private fun onFetchMoviesSuccess(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
+        }
     }
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryTvSeries(genreId = genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
-                }
-            },
+            callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
+            onCollect = { ::onFetchTvShowsSuccess },
             onError = { ::onLoadDataError }
         )
+    }
+
+    private fun onFetchTvShowsSuccess(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
+        }
     }
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageMovieUseCase.getMovieGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(movieGenres = genres, isLoading = false)
-                }
-            },
+            callee = { ::fetchMovieGenresOperation },
+            onSuccess = { ::onFetchMovieGenresSuccess },
             onError = { ::onLoadDataError }
-
         )
+    }
+
+    private suspend fun fetchMovieGenresOperation(): List<Genre> {
+        updateState {
+            it.copy(isLoading = true)
+        }
+        return manageMovieUseCase.getMovieGenres()
+    }
+
+    private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false)
+        }
     }
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(tvShowGenres = genres, isLoading = false)
-                }
-            },
+            callee = { ::fetchTvShowGenresOperation },
+            onSuccess = { ::onFetchTvShowGenresSuccess },
             onError = { ::onLoadDataError }
         )
+    }
+
+    private suspend fun fetchTvShowGenresOperation(): List<Genre> {
+        updateState {
+            it.copy(isLoading = true)
+        }
+        return manageTvSeriesUseCase.getSeriesGenres()
+    }
+
+    private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false)
+        }
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
@@ -103,21 +113,21 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     }
 
     override fun onMovieGenreClick(id: Int?) {
-        if (id != state.value.movieSelectedGenreId) {
-            updateState { it.copy(movieSelectedGenreId = id) }
-            fetchMovies(id)
-        }
+        if (id == state.value.movieSelectedGenreId) return
+
+        updateState { it.copy(movieSelectedGenreId = id) }
+        fetchMovies(id)
     }
 
     override fun onTvShowGenreClick(id: Int?) {
-        if (id != state.value.tvShowSelectedGenreId) {
-            updateState { it.copy(tvShowSelectedGenreId = id) }
-            fetchTvShows(id)
-        }
+        if (id == state.value.tvShowSelectedGenreId) return
+
+        updateState { it.copy(tvShowSelectedGenreId = id) }
+        fetchTvShows(id)
     }
 
     override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(ContinueWatchingScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+        emitEffect(WatchingHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
@@ -129,23 +139,25 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        emitEffect(ContinueWatchingScreenEffect.NavigateBack)
+        emitEffect(WatchingHistoryScreenEffect.NavigateBack)
     }
 
-
-    private suspend fun loadWatchedHistoryMovies(
+    private suspend fun loadMediaHistory(
+        mediaType: MediaType,
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
+
         val user = try {
             getLoggedInUserUseCase.getLoggedInUser()
         } catch (_: NoLoggedInUserException) {
             null
         }
         if (user == null) return flowOf(emptyList())
+
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
-            mediaType = MediaType.MOVIE,
+            mediaType = mediaType,
             username = user.username
         )
     }
@@ -158,23 +170,4 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
             )
         }
     }
-
-    private suspend fun loadWatchedHistoryTvSeries(
-        genreId: Int?
-    ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
-
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = MediaType.TV_SERIES,
-            username = user.username
-        )
-    }
-
 }

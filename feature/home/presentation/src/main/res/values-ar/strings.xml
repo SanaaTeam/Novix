@@ -12,10 +12,12 @@
     <string name="people">المشاهير</string>
     <string name="trending_people">المشاهير</string>
     <string name="continue_watching">متابعة المشاهدة</string>
+    <string name="watching_history">سجل المشاهدة</string>
     <string name="what_you_want_to_watch">ما الذي ترغب بمشاهدته؟</string>
     <string name="up_upcoming">قادم</string>"
     <string name="popular">مشهور</string>
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
+    <string name="error_message">حدث خطأ</string>
 </resources>

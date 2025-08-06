@@ -27,8 +27,8 @@ import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
-import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingMediaScreen
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
+import com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen.WatchingHistoryScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
 
@@ -98,7 +98,7 @@ private fun AppNavigation(
         }
 
         composable<ContinueWatchingMediaScreenRoute> {
-            ContinueWatchingMediaScreen()
+            WatchingHistoryScreen()
         }
     }
 }
