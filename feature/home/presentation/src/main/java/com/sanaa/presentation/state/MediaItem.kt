@@ -6,6 +6,7 @@ data class MediaItem(
     val imageUrl: String?,
     val rating: String? = null,
     val mediaTypeUi: MediaTypeUi,
+    val isSaved: Boolean = false
 )
 
 enum class MediaTypeUi {

@@ -83,9 +83,12 @@ fun MixedMediaSection(
                                 enter = slideInHorizontally() + fadeIn(),
                                 exit = slideOutHorizontally() + fadeOut()
                             ) {
-                                SaveIconChip(
-                                    onClick = { onSaveIconClicked(item) }
-                                )
+                                if(item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                                    SaveIconChip(
+                                        onClick = { onSaveIconClicked(item) },
+                                        isSaved = item.isSaved
+                                    )
+                                }
                             }
                         }
                     },

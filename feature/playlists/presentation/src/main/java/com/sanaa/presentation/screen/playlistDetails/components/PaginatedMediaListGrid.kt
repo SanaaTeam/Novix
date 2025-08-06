@@ -65,7 +65,7 @@ fun PaginatedMediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }) },
+                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }, isSaved = media.isSaved) },
                 onCardClick = { onMediaClick(media) })
         }
     }

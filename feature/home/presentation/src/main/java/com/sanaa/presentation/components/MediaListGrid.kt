@@ -22,6 +22,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 
 import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun MediaListGrid(
@@ -66,7 +67,14 @@ fun MediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }) },
+                topLeftContent = {
+                    if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                        SaveIconChip(
+                            onClick = { onSaveIconClick(media) },
+                            isSaved = media.isSaved
+                        )
+                    }
+                },
                 onCardClick = { onMediaClick(media) })
         }
     }

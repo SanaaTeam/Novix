@@ -42,6 +42,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -58,6 +59,7 @@ import com.sanaa.presentation.util.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
+
 @Composable
 fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel()
@@ -108,7 +110,7 @@ private fun HandleMovieDetailsEffects(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
+    val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
             viewModel.updateUserStatus()
         },
@@ -156,7 +158,7 @@ private fun HandleMovieDetailsEffects(
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> onShowSuccess()
                 is MovieDetailsUiEffect.ShowErrorSnackBar -> onShowError()
 
-                 MovieDetailsUiEffect.NavigateToLogin -> {
+                MovieDetailsUiEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
@@ -204,7 +206,7 @@ fun MovieDetailsContent(
 
             MovieTopBar(
                 interactionListener = interactionListener,
-                movieId = state.movieDetails.id,
+                movie = state.movieDetails,
                 modifier = Modifier.background(color = animatedColor)
             )
 
@@ -284,7 +286,7 @@ fun MovieDetailsContent(
 @Composable
 fun MovieTopBar(
     interactionListener: MovieDetailsScreenInteractionListener,
-    movieId: Int,
+    movie: MovieUiModel,
     modifier: Modifier = Modifier,
 ) {
     TopBar(
@@ -296,8 +298,11 @@ fun MovieTopBar(
         },
         rightContent = {
             TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_save),
-                onClick = { interactionListener.onBookmarkClick(movieId) }
+                icon = if (movie.isBookmarked)
+                    painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
+                else
+                    painterResource(R.drawable.icon_save),
+                onClick = { interactionListener.onBookmarkClick(movie.id) }
             )
         },
         modifier = modifier

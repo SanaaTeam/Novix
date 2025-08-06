@@ -19,7 +19,7 @@ fun Movie.toUiModel(
         releaseDate = releaseDate.toString(),
         duration = duration,
         genres = genres.map { it.toUiModel() },
-        isBookmarked = isBookmarked,
+        isBookmarked = isSaved,
         trailerUrl = trailerUrl,
         posterUrl = posterImageUrl
     )
