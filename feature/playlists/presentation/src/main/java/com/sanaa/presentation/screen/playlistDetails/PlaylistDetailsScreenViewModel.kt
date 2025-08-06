@@ -7,6 +7,7 @@ import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
+import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -72,8 +73,9 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     override fun onMediaClick(
         mediaId: Int,
+        mediaType: MediaTypeUi
     ) {
-        //  TODO("Not yet implemented")
+        emitEffect(PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType))
     }
 
     override fun onSaveIconClick(mediaItem: MediaItem) {
@@ -108,5 +110,6 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
             manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page)
         }
     }
+
 
 }
