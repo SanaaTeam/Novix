@@ -16,9 +16,6 @@ dependencies {
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
     implementation(projects.feature.mediaDetails.api)
-    implementation(projects.feature.home.presentation)
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.domain.vod)
     implementation(projects.domain.identity)
     implementation(projects.designSystem)
 
