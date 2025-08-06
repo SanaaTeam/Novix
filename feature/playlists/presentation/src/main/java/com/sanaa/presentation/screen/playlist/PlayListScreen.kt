@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -39,7 +40,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     val navController = LocalNavControllerProvider.current
     val addListViewModel: AddBookmarkListViewModel = hiltViewModel()
 
-    val previousBackStackEntry = navController.previousBackStackEntry
 
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -55,31 +55,23 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
         }
     )
 
-    LaunchedEffect(previousBackStackEntry) {
-        previousBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("list_deleted")
-            ?.observeForever { deleted ->
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { navController.currentBackStackEntry }
+            .collect { backStackEntry ->
+
+                val deleted = backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") ?: false
+
                 if (deleted) {
                     viewModel.loadSavedLists()
-                    Log.i("LaunchedEffect", "loadSavedLists: ${viewModel.loadSavedLists()}")
+                    viewModel.onListDeletedSuccessfully()
 
-                    val deleteSuccess = previousBackStackEntry
-                        .savedStateHandle
-                        .get<Boolean>("delete_success") ?: false
-
-                    if (deleteSuccess) {
-                        viewModel.onListDeletedSuccessfully()
-                        Log.i("LaunchedEffect", "onListDeletedSuccessfully: ${ viewModel.onListDeletedSuccessfully()}")
-                    } else {
-                        viewModel.onListDeletedFailed()
-                        Log.i("LaunchedEffect", "PlaylistScreen: ")
-
-                    }
-
-                    previousBackStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
-                    previousBackStackEntry.savedStateHandle.remove<Boolean>("delete_success")
+                    backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
+                    backStackEntry?.savedStateHandle?.remove<Boolean>("delete_success")
                 }
             }
     }
+
 
 
 
@@ -96,6 +88,8 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
             }
         }
     }
+
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {

@@ -93,8 +93,6 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onListDeletedSuccessfully() {
-        savedStateHandle.set("list_deleted", true)
-        savedStateHandle.set("delete_success", true)
         emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
     }
 

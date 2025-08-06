@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.playlist
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -51,11 +50,6 @@ class PlayListScreenViewModel @Inject constructor(
     fun onListDeletedSuccessfully() {
         loadSavedLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
-        Log.i("TAG", "onListDeletedSuccessfully: ")
-    }
-
-    fun onListDeletedFailed() {
-        emitEffect(PlayListScreenEffect.ShowErrorToDeleteListSnackBar)
     }
 
     override fun onFabBottomSheetClicked() {
