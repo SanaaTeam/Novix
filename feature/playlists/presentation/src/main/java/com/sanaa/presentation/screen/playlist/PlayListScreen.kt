@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.playlist
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -63,7 +62,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 val deleted = backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") ?: false
 
                 if (deleted) {
-                    viewModel.loadSavedLists()
                     viewModel.onListDeletedSuccessfully()
 
                     backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
@@ -105,7 +103,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 PlayListScreenEffect.ShowSuccessToAddListSnackBar -> {
                     snack = SnackData(message = addedToListSuccessMsg, isError = false)
                 }
-
 
                 PlayListScreenEffect.ShowErrorToDeleteListSnackBar -> {
                     snack = SnackData(message = deleteListFailedMsg, isError = true)
