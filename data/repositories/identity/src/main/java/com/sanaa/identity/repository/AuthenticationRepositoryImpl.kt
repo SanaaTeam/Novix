@@ -7,6 +7,7 @@ import com.sanaa.identity.dataSoruce.local.mapper.toEntity
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateSessionResponse
+import com.sanaa.identity.util.getAvatarUrl
 import com.sanaa.identity.util.wrapApiCall
 import entity.User
 import exceptions.NoLoggedInUserException
@@ -31,7 +32,8 @@ class AuthenticationRepositoryImpl @Inject constructor(
                     UserDto(
                         id = account.id,
                         name = account.name.orEmpty(),
-                        username = account.username.orEmpty()
+                        username = account.username.orEmpty(),
+                        profileImageUrl = account.getAvatarUrl().orEmpty()
                     )
                 )
             }
@@ -46,12 +48,16 @@ class AuthenticationRepositoryImpl @Inject constructor(
 
     override suspend fun getLoggedUser(): User {
         return userLocalDataSource.getLoggedUser()
-            ?.toEntity()
-            ?: throw NoLoggedInUserException()
+            ?.toEntity() ?: throw NoLoggedInUserException()
     }
 
     override suspend fun isLoggedIn(): Boolean = wrapApiCall {
         return userLocalDataSource.getLoggedUser() != null
+    }
+
+    override suspend fun logout() {
+        userLocalDataSource.deleteUser()
+        preferences.clearSession()
     }
 
     private suspend fun saveSession(session: CreateSessionResponse) {

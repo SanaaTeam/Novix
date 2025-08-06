@@ -12,8 +12,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -23,7 +24,6 @@ fun PosterCard(
     imageUrl: String?,
     onCardClick: () -> Unit = {},
     onSaveClick: () -> Unit = {}
-
 ) {
 
     MediaPosterCard(
@@ -32,12 +32,13 @@ fun PosterCard(
             .width(158.dp)
             .height(210.dp),
         posterImage = {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = imageUrl ?: "",
                 modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
-                contentDescription = stringResource(com.sanaa.designsystem.R.string.movies),
+                sensitiveContentThreshold = 0.2f,
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                safeContentThreshold = LocalSafeContentThreshold.current,
+                contentDescription = null,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
                 },

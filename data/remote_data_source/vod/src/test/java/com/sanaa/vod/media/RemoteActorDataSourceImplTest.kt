@@ -1,9 +1,9 @@
 package com.sanaa.vod.media
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.media.actor.ActorApiService
 import com.sanaa.vod.media.actor.RemoteActorDataSourceImpl
 import com.sanaa.vod.media.actor.response.ActorCastCreditsResponse

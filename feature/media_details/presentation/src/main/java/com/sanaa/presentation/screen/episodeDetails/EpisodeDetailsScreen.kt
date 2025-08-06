@@ -2,6 +2,10 @@ package com.sanaa.presentation.screen.episodeDetails
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +39,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
@@ -49,6 +55,7 @@ import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun EpisodeDetailsScreen(
@@ -102,7 +109,6 @@ fun EpisodeDetailsScreen(
                 }
 
                 EpisodeDetailsEffects.NavigateToLogin -> {
-                    // Launch authentication activity
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
@@ -123,6 +129,12 @@ fun EpisodeDetailsScreen(
 private fun EpisodeDetailsScreenContent(
     interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState
 ) {
+    val scrollState = rememberScrollState()
+    val animatedColor by animateColorAsState(
+        targetValue = if (scrollState.value > 200) Theme.colors.surface else Color.Transparent,
+        animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+    )
+
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() }) {
         Box(
@@ -133,7 +145,7 @@ private fun EpisodeDetailsScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_back),
+                        icon = painterResource(designR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
 
                     )
@@ -142,7 +154,8 @@ private fun EpisodeDetailsScreenContent(
                         icon = painterResource(R.drawable.icon_save), onClick = {
                             interactionListener.onSavedClick(state.seriesId)
                         })
-                }, modifier = Modifier
+                }, modifier = Modifier.
+                    background(animatedColor)
                     .systemBarsPadding()
                     .zIndex(10f)
             )
@@ -170,7 +183,7 @@ private fun EpisodeDetailsScreenContent(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .verticalScroll(rememberScrollState())
+                            .verticalScroll(scrollState)
                     ) {
                         Column(
                             modifier = Modifier

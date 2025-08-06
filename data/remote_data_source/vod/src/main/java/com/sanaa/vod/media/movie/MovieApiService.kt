@@ -1,15 +1,16 @@
 package com.sanaa.vod.media.movie
 
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
-import com.sanaa.vod.dataSource.remote.dto.MovieDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
-import com.sanaa.vod.dataSource.remote.dto.ReviewDto
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
+import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
+import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import com.sanaa.vod.media.movie.request.MovieRateRequest
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -102,4 +103,11 @@ interface MovieApiService {
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<MovieDto>
+
+    @Headers("Content-Type: application/json;charset=utf-8")
+    @DELETE("movie/{movie_id}/rating")
+    suspend fun deleteMovieRating(
+        @Path("movie_id") movieId: Int,
+        @Query("session_id") sessionId: String
+    ): RatingResponse
 }

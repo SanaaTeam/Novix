@@ -14,7 +14,14 @@ plugins {
 }
 
 val localProperties = Properties()
-localProperties.load(FileInputStream(rootProject.file("keys.properties")))
+val keysFile = rootProject.file("keys.properties")
+val defaultFile = rootProject.file("default.properties")
+when {
+    keysFile.exists() -> localProperties.load(FileInputStream(keysFile))
+    defaultFile.exists() -> localProperties.load(FileInputStream(defaultFile))
+    else -> throw GradleException("No keys.properties or default.properties found!")
+}
+
 android {
     namespace = libs.versions.namespace.get()
 
@@ -42,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.designSystem)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.androidx.datastore)
@@ -108,5 +116,12 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.converter.gson)
+    implementation( libs.androidx.appcompat)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
+}
+tasks.withType(Test::class.java).configureEach {
+    useJUnitPlatform()
 
 }

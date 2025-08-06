@@ -28,8 +28,8 @@ interface TvSeriesRepository {
     suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries>
     suspend fun getPopularSeries(page: Int): List<TvSeries>
     suspend fun getSeriesGenres(): List<Genre>
-    suspend fun getSeriesRate(accountId: Long): List<TvSeries>
-    suspend fun getEpisodesRate(accountId: Long): List<Episode>
+    suspend fun getSeriesRate(accountId: Long, seriesId: Int): Int?
+    suspend fun getEpisodesRate(accountId: Long, seasonNumber: Int, episodeNumber: Int): Int?
     suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean
     suspend fun addTvEpisodeRate(
         seriesId: Int,
@@ -37,5 +37,6 @@ interface TvSeriesRepository {
         episodeNumber: Int,
         rating: Float
     ): Boolean
-
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries>
+    suspend fun deleteTvSeriesRate(seriesId: Int): Boolean
 }

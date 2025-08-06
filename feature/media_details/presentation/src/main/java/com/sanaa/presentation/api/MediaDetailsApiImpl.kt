@@ -4,11 +4,16 @@ import android.app.ActivityOptions
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.presentation.main.DetailsViewModel
 import com.sanaa.presentation.navigation.DetailsNavHost
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -20,13 +25,15 @@ class MediaDetailsApiImpl @Inject constructor() : MediaDetailsApi {
         val intent = MediaDetailsActivity.createIntent(context, startRoute, id)
         context.startActivity(
             intent,
-            ActivityOptions.makeSceneTransitionAnimation(context as? ComponentActivity).toBundle()
+            ActivityOptions.makeSceneTransitionAnimation(context as? AppCompatActivity).toBundle()
         )
     }
 }
 
 @AndroidEntryPoint
-class MediaDetailsActivity : ComponentActivity() {
+class MediaDetailsActivity : AppCompatActivity() {
+
+    private val viewModel: DetailsViewModel by viewModels()
 
     companion object {
         private const val EXTRA_START_ROUTE = "extra_start_route"
@@ -42,7 +49,6 @@ class MediaDetailsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
 
         val startRoute = intent.getStringExtra(EXTRA_START_ROUTE)?.let { StartRoute.valueOf(it) }
@@ -54,7 +60,15 @@ class MediaDetailsActivity : ComponentActivity() {
         }
 
         setContent {
-            DetailsNavHost(startRoute = startRoute, id = mediaId)
+            val state = viewModel.state.collectAsStateWithLifecycle()
+            CompositionLocalProvider(
+                LocalThemeProvider provides state.value.isDarkTheme,
+                LocalSafeContentThreshold provides state.value.safeContentThreshold
+            ) {
+                NovixTheme(isDarkMode = state.value.isDarkTheme) {
+                    DetailsNavHost(startRoute = startRoute, id = mediaId)
+                }
+            }
         }
     }
 }

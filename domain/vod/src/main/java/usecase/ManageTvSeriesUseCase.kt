@@ -1,7 +1,6 @@
 package usecase
 
 import entity.Actor
-import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
@@ -49,16 +48,24 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.getSeriesGenres()
     }
 
-    suspend fun getSeriesRate(accountId: Long): List<TvSeries> {
-        return tvSeriesRepo.getSeriesRate(accountId)
+    suspend fun getSeriesRate(accountId: Long, seriesId: Int): Int {
+        return tvSeriesRepo.getSeriesRate(accountId, seriesId) ?: 0
     }
 
-    suspend fun getEpisodesRate(accountId: Long): List<Episode> {
-        return tvSeriesRepo.getEpisodesRate(accountId)
+    suspend fun getEpisodesRate(accountId: Long, seasonNumber: Int, episodeNumber: Int): Int {
+        return tvSeriesRepo.getEpisodesRate(accountId, seasonNumber, episodeNumber) ?: 0
     }
 
     suspend fun addTvSeriesRate(seriesId: Int, rating: Float): Boolean {
         return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
+    }
+
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
+        return tvSeriesRepo.getUserRatedTvSeries(accountId,sessionId)
+    }
+
+    suspend fun deleteTvSeriesRate(seriesId: Int): Boolean {
+        return tvSeriesRepo.deleteTvSeriesRate(seriesId)
     }
 
     private companion object {

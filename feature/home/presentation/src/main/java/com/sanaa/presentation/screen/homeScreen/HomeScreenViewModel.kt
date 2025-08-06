@@ -11,19 +11,19 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
-import exceptions.NoNetworkException
 import exceptions.NoLoggedInUserException
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import usecase.GetLoggedInUserUseCase
 import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
-import javax.inject.Inject
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
@@ -35,6 +35,7 @@ class HomeScreenViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
+    defaultDispatcher = dispatcher
 ), HomeScreenInteractionListener {
 
     init {

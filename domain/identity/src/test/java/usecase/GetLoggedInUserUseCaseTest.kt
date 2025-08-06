@@ -25,7 +25,8 @@ class GetLoggedInUserUseCaseTest {
         val expectedUser = User(
             id = 1,
             name = "Novix User",
-            username = "novix"
+            username = "novix",
+            profileImageUrl = "Url"
         )
         coEvery { repository.getLoggedUser() } returns expectedUser
 

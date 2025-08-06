@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -60,14 +62,15 @@ fun HomeScreenContent(
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val context = LocalContext.current
-    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            interactionListener.onAuthActivityFinishedWithResult()
-        },
-        loggedInAsGuest = {
-            interactionListener.onAuthActivityFinishedWithResult()
-        }
-    )
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
+        launchAuthActivityForResult(
+            loggedInWithSessionId = {
+                interactionListener.onAuthActivityFinishedWithResult()
+            },
+            loggedInAsGuest = {
+                interactionListener.onAuthActivityFinishedWithResult()
+            }
+        )
 
     LaunchedEffect(upcomingMovies.loadState) {
         if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
@@ -78,11 +81,16 @@ fun HomeScreenContent(
         }
     }
 
-    NovixScaffold(backgroundShapes = {}, topBar = {
-        HomeTopBar(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-        )
-    }) {
+    NovixScaffold(
+        topBar = {
+            HomeTopBar(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .navigationBarsPadding()
+                    .statusBarsPadding()
+            )
+        },
+        backgroundShapes = {}) {
 
         if (state.isNoInternet) {
             NetworkDisconnectionContact(
@@ -180,7 +188,9 @@ fun HomeScreenContent(
                                 interactionListener.onSaveIconClick(it)
                             },
                             onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                            modifier = Modifier.fillWidthOfParent(16.dp).padding(top = 24.dp),
+                            modifier = Modifier
+                                .fillWidthOfParent(16.dp)
+                                .padding(top = 24.dp),
                         )
                     }
                 }

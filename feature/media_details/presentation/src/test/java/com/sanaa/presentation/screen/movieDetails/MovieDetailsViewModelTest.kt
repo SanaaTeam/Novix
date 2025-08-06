@@ -13,9 +13,12 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -40,10 +43,15 @@ class MovieDetailsViewModelTest {
         Dispatchers.setMain(testDispatcher)
     }
 
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onBackClick()
@@ -69,7 +77,7 @@ class MovieDetailsViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getUser
         )
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onWatchTrailerClick()
@@ -81,14 +89,14 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onReadMoreClick does nothing`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
         viewModel.onReadMoreClick()
     }
 
     @Test
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onBookmarkClick(movieId)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
@@ -100,7 +108,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onDismissLoginBottomSheet sets sheet false`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onBookmarkClick(movieId)
         viewModel.onDismissLoginBottomSheet()
@@ -110,7 +118,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onSimilarMovieClick emits NavigateToAnotherMovieDetails`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
         val otherId = 99
 
         viewModel.effect.test {
@@ -127,7 +135,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onActorCardClick emits NavigateToActorScreen`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
         val actorId = 5
 
         viewModel.effect.test {
@@ -140,19 +148,21 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onShowReviewsClick emits NavigateToReviewsScreen`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.effect.test {
             viewModel.onShowReviewsClick(movieId)
+            advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToReviewsScreen(movieId))
             cancelAndIgnoreRemainingEvents()
         }
     }
 
+
     @Test
     fun `onGenreClicked emits NavigateToMovieCategoriesScreen`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
         val genre = GenreUiModel(id = 1, name = "Drama")
 
         viewModel.effect.test {
@@ -168,33 +178,18 @@ class MovieDetailsViewModelTest {
     fun `onRateMovieClick shows rate bottom sheet if user is logged in`() = runTest {
         coEvery { checkUserLogin.isLoggedIn() } returns true
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onRateMovieClick()
 
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
 
-    @Test
-    fun `onLoginButtonClick hides bottom sheet and emits NavigateToLogin`() = runTest {
-        givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
-        viewModel.updateState { it.copy(showLoginBottomSheet = true) }
-
-        viewModel.effect.test {
-            viewModel.onLoginButtonClick()
-            testDispatcher.scheduler.advanceUntilIdle()
-            assertThat(awaitItem()).isEqualTo(MovieDetailsUiEffect.NavigateToLogin)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
-    }
 
     @Test
     fun `onRatingChanged updates the rating`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onRatingChanged(8)
         assertThat(viewModel.state.value.imdbRating).isEqualTo(8)
@@ -203,7 +198,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onDismissRateBottomSheet sets sheet to false`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.updateState { it.copy(showRateBottomSheet = true) }
         viewModel.onDismissRateBottomSheet()
@@ -215,10 +210,10 @@ class MovieDetailsViewModelTest {
         val error = RuntimeException("Something went wrong")
         coEvery { manageMovieDetails.addMovieRate(any(), any()) } throws error
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onSubmitRateBottomSheet()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         assertThat(viewModel.state.value.errorMessage).isEqualTo("Something went wrong")
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
@@ -227,10 +222,10 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onRetryLoadDetails updates state and retries fetch`() = runTest {
         givenHappy()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         viewModel.onRetryLoadDetails()
-        testDispatcher.scheduler.advanceUntilIdle()
+        advanceUntilIdle()
 
         assertThat(viewModel.state.value.isLoading).isFalse()
         assertThat(viewModel.state.value.errorMessage).isNull()

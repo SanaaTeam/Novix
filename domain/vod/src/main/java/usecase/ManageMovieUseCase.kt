@@ -47,12 +47,20 @@ class ManageMovieUseCase @Inject constructor(
         return movieRepo.getMovieGenres()
     }
 
-    suspend fun getMoviesRate(accountId: Long): List<Movie> {
-        return movieRepo.getMoviesRate(accountId)
+    suspend fun getMovieRate(accountId: Long, movieId: Int): Int {
+        return movieRepo.getMovieRate(accountId, movieId) ?: 0
     }
 
     suspend fun addMovieRate(movieId: Int, rating: Float): Boolean {
         return movieRepo.addMovieRate(movieId = movieId, rating = rating)
+    }
+
+    suspend fun getUserRatedMovies(): List<Movie> {
+        return movieRepo.getUserRatedMovies()
+    }
+
+    suspend fun deleteMovieRate(movieId: Int): Boolean {
+        return movieRepo.deleteMovieRate(movieId)
     }
 
     private companion object {

@@ -17,5 +17,6 @@ data class TopRatedMediaScreenUiState(
     val tvShowSelectedGenreId: Int? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val showBottomSheet: Boolean = false
+    val showLoginBottomSheet: Boolean = false,
+    val userIsLoggedIn: Boolean = false
 )

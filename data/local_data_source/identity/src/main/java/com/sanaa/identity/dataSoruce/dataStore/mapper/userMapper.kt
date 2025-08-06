@@ -7,6 +7,7 @@ fun User.toDto(): UserDto {
     return UserDto(
         id = this.id,
         name = this.name,
-        username = this.username
+        username = this.username,
+        profileImageUrl = this.profileImageUrl
     )
 }

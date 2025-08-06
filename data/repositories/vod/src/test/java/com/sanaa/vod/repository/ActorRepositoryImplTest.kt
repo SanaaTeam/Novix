@@ -2,10 +2,11 @@ package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.preferences.service.LanguageProvider
-import com.sanaa.vod.dataSource.remote.actor.RemoteActorDataSource
-import com.sanaa.vod.dataSource.remote.dto.ActorCastCreditDto
-import com.sanaa.vod.dataSource.remote.dto.ActorDto
+import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
+import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
 import exceptions.RetrievingDataFailureException
@@ -15,7 +16,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import java.net.UnknownHostException
 
 class ActorRepositoryImplTest {
 
@@ -180,6 +180,7 @@ class ActorRepositoryImplTest {
 
         assertThat(result).hasSize(2)
     }
+
     @Test
     fun `getGalleryImageUrls returns mapped image URLs successfully`() = runTest {
         val sampleDtoList = listOf(
@@ -198,10 +199,23 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getTrendingActors returns empty list`() = runTest {
+    fun `getTrendingActors returns empty list when there is no data available`() = runTest {
+        coEvery { remoteDataSource.fetchTrendingPeople(any()) } returns emptyList()
+
         val result = repository.getTrendingActors(1)
 
         assertThat(result).isEmpty()
+    }
+
+    @Test
+    fun `getTrendingActors returns data when available`() = runTest {
+        val page = 1
+        val actorList = listOf(sampleActorDto)
+        coEvery { remoteDataSource.fetchTrendingPeople(page) } returns actorList
+
+        val result = repository.getTrendingActors(page)
+
+        assertThat(result).isEqualTo(actorList.map { it.toEntity() })
     }
 
     companion object {

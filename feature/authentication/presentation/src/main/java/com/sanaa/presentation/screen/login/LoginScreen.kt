@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.login
 
+import android.app.Activity.RESULT_CANCELED
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,8 +54,12 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                LoginScreenEffects.NavigateBack ->
-                    navController.popBackStack()
+                LoginScreenEffects.NavigateBack -> {
+                    val previousAuthScreen = navController.previousBackStackEntry
+                    previousAuthScreen?.let {
+                        navController.popBackStack()
+                    }?:onFinish(RESULT_CANCELED)
+                }
 
                 LoginScreenEffects.ReturnLoggedInResultCode -> {
                     onFinish(RESULT_LOGGED_WITH_SESSION_ID)

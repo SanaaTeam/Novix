@@ -83,7 +83,6 @@ class AuthenticationRepositoryImplTest {
         val guestSessionId = "guest_123"
         coEvery { apiService.createGuestSession() } returns CreateGuestSessionResponse(
             success = true,
-            statusCode = null,
             expiresAt = null,
             guestSessionId = guestSessionId
         )
@@ -93,4 +92,16 @@ class AuthenticationRepositoryImplTest {
 
         coVerify(exactly = 1) { preferencesManager.updateSessionId(guestSessionId) }
     }
+
+    @Test
+    fun `logout should call delete user from datasource and clear from preferences manager`() =
+        runTest {
+            coEvery { userLocalDataSource.deleteUser() } returns Unit
+            coEvery { preferencesManager.clearSession() } returns Unit
+            repository.logout()
+
+            coVerify(exactly = 1) { userLocalDataSource.deleteUser() }
+            coVerify(exactly = 1) { preferencesManager.clearSession() }
+        }
+
 }

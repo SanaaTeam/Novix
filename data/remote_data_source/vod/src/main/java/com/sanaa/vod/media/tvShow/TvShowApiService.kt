@@ -1,9 +1,9 @@
 package com.sanaa.vod.media.tvShow
 
-import com.sanaa.vod.dataSource.remote.dto.EpisodeDto
 import com.sanaa.vod.dataSource.remote.dto.RatingResponse
-import com.sanaa.vod.dataSource.remote.dto.SeasonDto
-import com.sanaa.vod.dataSource.remote.dto.TvShowDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.SeasonDto
+import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.tvShow.request.TvShowRateRequest
 import com.sanaa.vod.media.tvShow.response.GenreTvShowResponse
@@ -14,6 +14,7 @@ import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
 import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -127,4 +128,11 @@ interface TvShowApiService {
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<EpisodeDto>
+
+    @Headers("Content-Type: application/json;charset=utf-8")
+    @DELETE("tv/{tvShow_id}/rating")
+    suspend fun deleteTvShowRating(
+        @Path("tvShow_id") tvShowId: Int,
+        @Query("session_id") sessionId: String
+    ): RatingResponse
 }

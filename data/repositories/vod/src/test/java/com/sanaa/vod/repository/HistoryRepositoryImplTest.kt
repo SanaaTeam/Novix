@@ -1,13 +1,12 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.vod.dataSource.local.continueWatch.dto.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toDto
-import com.sanaa.vod.dataSource.local.continueWatch.mapper.toEntity
-import com.sanaa.vod.dataSource.local.search.LocalHistoryDataSource
-import com.sanaa.vod.dataSource.local.search.dto.QueryLocalDto
-import com.sanaa.vod.dataSource.local.search.dto.RecentViewedLocalDto
-import com.sanaa.vod.mapper.search.toEntity
+import com.sanaa.vod.dataSource.local.history.LocalHistoryDataSource
+import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
+import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
+import com.sanaa.vod.repository.mapper.history.toDto
+import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import entity.MediaHistoryItem
 import exceptions.FailedToAddException
@@ -135,7 +134,12 @@ class HistoryRepositoryImplTest {
         repository.addRecentViewedMedia(recentViewed.toEntity())
 
         coVerify {
-            localDataSource.insertRecentViewed(recentViewed)
+            localDataSource.insertRecentViewed(match {
+                it.id == recentViewed.id &&
+                it.imageUrl == recentViewed.imageUrl &&
+                it.isSaved == recentViewed.isSaved &&
+                it.mediaType == recentViewed.mediaType
+            })
         }
     }
 
@@ -197,7 +201,13 @@ class HistoryRepositoryImplTest {
             )
 
             coVerify {
-                localDataSource.insertWatchedMediaHistory(watchedMedia)
+                localDataSource.insertWatchedMediaHistory(match {
+                    it.id == watchedMedia.id &&
+                    it.posterImageUrl == watchedMedia.posterImageUrl &&
+                    it.mediaType == watchedMedia.mediaType &&
+                    it.username == watchedMedia.username &&
+                    it.genres == watchedMedia.genres
+                })
             }
         }
 
@@ -219,9 +229,9 @@ class HistoryRepositoryImplTest {
         val username = "username"
         val mediaType = MediaType.MOVIE
         val genreId: Int? = null
-        coEvery { localDataSource.getWatchedMediaHistory(username, mediaType, genreId) } returns flowOf(
-            givenWatchedMedia
-        )
+        coEvery {
+            localDataSource.getWatchedMediaHistory(username, mediaType, genreId)
+        } returns flowOf(givenWatchedMedia)
 
         val expected = givenWatchedMedia.map { it.toEntity() }
         val result = repository.getWatchedMediaHistory(username, mediaType, genreId)
@@ -243,50 +253,50 @@ class HistoryRepositoryImplTest {
     }
 
 
-    val givenRecentViewed = listOf(
-        RecentViewedLocalDto(
-            id = 1,
-            imageUrl = "imageUrl1",
-            isSaved = true,
-            mediaType = MediaType.MOVIE.name,
-        ),
-        RecentViewedLocalDto(
-            id = 2,
-            imageUrl = "imageUrl2",
-            isSaved = false,
-            mediaType = MediaType.MOVIE.name,
+    private companion object {
+        val givenRecentViewed = listOf(
+            RecentViewedLocalDto(
+                id = 1,
+                imageUrl = "imageUrl1",
+                isSaved = true,
+                mediaType = MediaType.MOVIE.name,
+            ),
+            RecentViewedLocalDto(
+                id = 2,
+                imageUrl = "imageUrl2",
+                isSaved = false,
+                mediaType = MediaType.MOVIE.name,
+            )
         )
-    )
 
-    val givenQueries = listOf(
-        QueryLocalDto(id = 1, query = "query1", timestamp = 1L),
-        QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
-    )
+        val givenQueries = listOf(
+            QueryLocalDto(id = 1, query = "query1", timestamp = 1L),
+            QueryLocalDto(id = 2, query = "query2", timestamp = 2L)
+        )
 
 
-    val givenWatchedMedia = listOf(
-        WatchedMediaHistoryLocalDto(
+        val givenWatchedMedia = listOf(
+            WatchedMediaHistoryLocalDto(
+                id = 1,
+                posterImageUrl = "imageUrl1",
+                mediaType = MediaType.MOVIE.name,
+                username = "zack",
+                genres = "11,12",
+            ),
+            WatchedMediaHistoryLocalDto(
+                id = 2,
+                posterImageUrl = "imageUrl2",
+                mediaType = MediaType.TV_SERIES.name,
+                username = "mark",
+                genres = "15,20",
+            )
+        )
+
+        val mediaItem = MediaHistoryItem(
             id = 1,
             posterImageUrl = "imageUrl1",
-            mediaType = MediaType.MOVIE.name,
-            username = "zack",
-            genres = "11,12",
-        ),
-        WatchedMediaHistoryLocalDto(
-            id = 2,
-            posterImageUrl = "imageUrl2",
-            mediaType = MediaType.TV_SERIES.name,
-            username = "mark",
-            genres = "15,20",
+            mediaType = MediaType.MOVIE,
+            genres = emptyList()
         )
-    )
-
-    val mediaItem = MediaHistoryItem(
-        id = 1,
-        posterImageUrl = "imageUrl1",
-        mediaType = MediaType.MOVIE,
-        genres = emptyList()
-    )
-
-
+    }
 }
