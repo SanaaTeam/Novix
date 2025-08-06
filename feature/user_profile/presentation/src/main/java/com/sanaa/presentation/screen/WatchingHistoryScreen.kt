@@ -53,6 +53,9 @@ import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.Conti
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import androidx.compose.ui.graphics.Color
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
@@ -222,9 +225,9 @@ fun WatchingHistoryGrid(
     onSaveIconClick: (MediaItem) -> Unit
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        columns = GridCells.Adaptive(minSize = 158.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier.padding(8.dp)
     ) {
         items(
@@ -234,6 +237,9 @@ fun WatchingHistoryGrid(
             val item = items[index]
             item?.let { mediaItem ->
                 MediaPosterCard(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(0.7f),
                     onCardClick = { onItemClick(mediaItem) },
                     topLeftContent = {
                         SaveIconChip(
@@ -242,37 +248,28 @@ fun WatchingHistoryGrid(
                         )
                     },
                     posterImage = {
-                        if (mediaItem.imageUrl.isNullOrEmpty()) {
-                            Image(
-                                painter = painterResource(R.drawable.icon_placeholder_light),
-                                contentDescription = stringResource(id = R.string.movie_poster),
-                                modifier = Modifier.fillMaxSize(),
-                                contentScale = ContentScale.Crop
+                        RemoteBlurredSensitiveImage(
+                            imageUrl = mediaItem.imageUrl.orEmpty(),
+                            modifier = Modifier.fillMaxWidth(),
+                            sensitiveContentThreshold = 0.2f,
+                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                            safeContentThreshold = LocalSafeContentThreshold.current,
+                            contentDescription = mediaItem.title,
+                            placeholderContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                            errorContent = {
+                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                            },
+                        ) {
+                            OnBlurContent(
+                                hintText = stringResource(id = R.string.unsuitable_image),
+                                textStyle = Theme.textStyle.body.small.copy(
+                                    color = Color(0x99FFFFFF)
+                                ),
+                                iconSize = 24.dp,
+                                icon = painterResource(R.drawable.icon_eye_slash),
                             )
-                        } else {
-                            RemoteBlurredSensitiveImage(
-                                imageUrl = mediaItem.imageUrl!!,
-                                contentDescription = stringResource(id = R.string.movie_poster),
-                                modifier = Modifier.fillMaxWidth(),
-                                sensitiveContentThreshold = 0.2f,
-                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                safeContentThreshold = LocalSafeContentThreshold.current,
-                                placeholderContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                                errorContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                            ) {
-                                OnBlurContent(
-                                    hintText = stringResource(id = R.string.unsuitable_image),
-                                    textStyle = Theme.textStyle.body.small.copy(
-                                        color = Color(0x99FFFFFF)
-                                    ),
-                                    iconSize = 24.dp,
-                                    icon = painterResource(R.drawable.icon_eye_slash),
-                                )
-                            }
                         }
                     }
                 )

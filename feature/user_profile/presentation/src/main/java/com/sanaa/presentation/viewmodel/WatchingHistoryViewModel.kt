@@ -52,7 +52,6 @@ class WatchingHistoryViewModel @Inject constructor(
 
     fun onBackClick() {
         _effect.value = ContinueWatchingScreenEffect.NavigateBack
-        _effect.value = null
     }
 
     private fun loadWatchingHistory() {
@@ -64,13 +63,13 @@ class WatchingHistoryViewModel @Inject constructor(
                     val mediaItems = mediaHistoryItems.map { historyItem ->
                         MediaItem(
                             id = historyItem.id,
+                            title = "",
                             imageUrl = historyItem.posterImageUrl,
                             mediaTypeUi = when (historyItem.mediaType) {
                                 MediaType.MOVIE -> MediaTypeUi.MOVIE
                                 MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
                             },
-                            isSaved = historyItem.isSaved,
-                            title = "",
+                            isSaved = historyItem.isSaved
                         )
                     }
                     PagingData.from(mediaItems)
@@ -112,7 +111,6 @@ class WatchingHistoryViewModel @Inject constructor(
                 }
                 _state.value = _state.value.copy(watchingHistory = pagingFlow.cachedIn(viewModelScope))
             } catch (e: NoLoggedInUserException) {
-                // User not logged in, show empty state
                 _state.value = _state.value.copy(watchingHistory = flowOf(PagingData.empty<MediaItem>()))
             } catch (e: Exception) {
                 _state.value = _state.value.copy(watchingHistory = flowOf(PagingData.empty<MediaItem>()))
