@@ -10,7 +10,7 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase
-) : BaseViewModel<SaveToListUiState, Unit>(SaveToListUiState()) {
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()) {
 
     init {
         loadPlaylists()
@@ -60,7 +60,7 @@ class SaveToListViewModel @Inject constructor(
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
-                emitEffect(Unit)
+                emitEffect(SaveToListEffect.AddedSuccessfully)
             },
             onError = {
                 updateState {
@@ -69,6 +69,7 @@ class SaveToListViewModel @Inject constructor(
                         errorMessage = "Failed to add item to list."
                     )
                 }
+                emitEffect(SaveToListEffect.FailedToAdd)
             }
         )
     }

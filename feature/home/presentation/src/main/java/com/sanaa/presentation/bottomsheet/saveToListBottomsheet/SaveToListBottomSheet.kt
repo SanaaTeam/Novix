@@ -45,6 +45,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
+    onSuccess: () -> Unit = {},
+    onFailure: () -> Unit = {},
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -55,6 +57,19 @@ fun SaveToListBottomSheet(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             onDismiss()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                SaveToListEffect.AddedSuccessfully -> {
+                    onSuccess()
+                    onDismiss()
+                }
+
+                SaveToListEffect.FailedToAdd -> onFailure()
+            }
         }
     }
 

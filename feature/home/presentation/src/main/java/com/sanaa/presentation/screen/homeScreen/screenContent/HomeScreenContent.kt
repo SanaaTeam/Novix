@@ -234,6 +234,18 @@ fun HomeScreenContent(
             isVisible = state.showSaveToListBottomSheet,
             onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
             onCreateNewListClick = { interactionListener.onCreateNewListClick() },
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
             mediaId = state.selectedMediaId.toLong(),
         )
     }
