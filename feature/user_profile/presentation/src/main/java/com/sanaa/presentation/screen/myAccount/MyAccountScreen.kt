@@ -127,7 +127,12 @@ fun MyAccountScreenContent(
             )
         } else {
             Column {
-                MyAccountUserInfo(uiState.currentUser)
+                MyAccountUserInfo(
+                    uiState.currentUser,
+                    onLogoutClick = {
+                        interactionsListener.onLogoutButtonClicked()
+                    }
+                )
 
                 VerticalList(
                     items = listOf(
@@ -290,11 +295,27 @@ private fun AccountScreenContentPreview() {
         override fun onLoginButtonClick() {
         }
 
+        override fun onLogoutButtonClicked() {
+
+        }
+
     }
     NovixTheme(isSystemInDarkTheme()) {
         NovixScaffold {
             MyAccountScreenContent(
                 uiState = MyAccountScreenUiState(
+                    currentUser = UserUiState(
+                        username = "mostafa nema",
+                        imageUrl = " "
+                    ),
+                    showChangeLanguageBottomSheet = false,
+                    showContentRestrictionBottomSheet = false,
+                    showChangeThemeBottomSheet = false,
+                    selectedLanguage = "en",
+                    selectedContentRestriction = ContentRestrictionUiState.UNRESTRICTED,
+                    selectedTheme = ThemeUiState.DARK,
+                    isLoading = false,
+                    isUserLoggedIn = true
                 ), interactionsListener = interactionsListener
             )
         }

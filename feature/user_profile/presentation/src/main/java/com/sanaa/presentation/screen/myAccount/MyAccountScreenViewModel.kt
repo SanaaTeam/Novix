@@ -6,10 +6,12 @@ import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import repository.ContentRestriction
 import repository.Language
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
+import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class MyAccountScreenViewModel @Inject constructor(
     val mangeUserPreference: MangeUserPreferenceUseCase,
     val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    val logOutUseCase: LogOutUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -120,7 +123,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private suspend fun saveContentRestriction() {
-        val newRestriction = repository.ContentRestriction.entries.first {
+        val newRestriction = ContentRestriction.entries.first {
             it.name == state.value.selectedContentRestriction?.name
         }
         mangeUserPreference.setContentRestriction(newRestriction)
@@ -132,6 +135,18 @@ class MyAccountScreenViewModel @Inject constructor(
 
     override fun onLoginButtonClick() {
         emitEffect(MyAccountScreenEffect.NavigateToLogin)
+    }
+
+    override fun onLogoutButtonClicked() {
+        tryToExecute(
+            callee = {
+                logOutUseCase.logout()
+            },
+            onSuccess = {
+                updateUserStatus()
+            },
+            onError = {  },
+        )
     }
 
     fun updateUserStatus() {
