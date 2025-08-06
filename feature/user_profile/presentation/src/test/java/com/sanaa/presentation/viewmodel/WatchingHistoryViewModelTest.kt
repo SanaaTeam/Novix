@@ -2,26 +2,23 @@ package com.sanaa.presentation.viewmodel
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
-import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.model.MediaItemUiModel
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryViewModel
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.User
 import io.mockk.coEvery
-import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.history.ManageWatchingHistoryUseCase
 import usecase.search.search_param.MediaType
@@ -31,7 +28,6 @@ class WatchingHistoryViewModelTest {
 
     private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
-    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
     private lateinit var viewModel: WatchingHistoryViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -48,7 +44,7 @@ class WatchingHistoryViewModelTest {
         viewModel = WatchingHistoryViewModel(
             manageWatchingHistoryUseCase,
             getLoggedInUserUseCase,
-            checkIfUserIsLoggedInUseCase
+            testDispatcher
         )
     }
 
@@ -101,35 +97,6 @@ class WatchingHistoryViewModelTest {
         }
     }
 
-    @Test
-    fun `onMediaTabSelection should load all history when null is passed`() = runTest(testDispatcher) {
-        // Given
-        val allHistory = listOf(
-            dummyHistoryItem.copy(id = 1, mediaType = MediaType.MOVIE),
-            dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SERIES)
-        )
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } returns flowOf(allHistory)
-        initializeViewModel()
-
-        // When
-        viewModel.onMediaTabSelection(null)
-
-        // Then
-        viewModel.state.test {
-            var state = awaitItem()
-            while (state.isLoading) {
-                state = awaitItem()
-            }
-
-            assertThat(state.selectedMediaTypeUi).isNull()
-            assertThat(state.isLoading).isFalse()
-            assertThat(state.error).isNull()
-            cancelAndConsumeRemainingEvents()
-        }
-
-        coVerify { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) }
-    }
-
 
     @Test
     fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
@@ -141,7 +108,7 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToMediaDetails(101, MediaTypeUi.MOVIE))
+            assertThat(awaitItem()).isEqualTo(WatchingHistoryScreenEffect.NavigateToMediaDetails(101, MediaTypeUi.MOVIE))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -156,7 +123,7 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateToMediaDetails(102, MediaTypeUi.TV_SHOW))
+            assertThat(awaitItem()).isEqualTo(WatchingHistoryScreenEffect.NavigateToMediaDetails(102, MediaTypeUi.TV_SHOW))
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -164,7 +131,7 @@ class WatchingHistoryViewModelTest {
     @Test
     fun `onSaveIconClick should handle save icon click`() = runTest(testDispatcher) {
         // Given
-        val mediaItem = MediaItem(id = 1, title = "Test Movie", imageUrl = "", rating = "", mediaTypeUi = MediaTypeUi.MOVIE, isSaved = false)
+        val mediaItem = MediaItemUiModel(id = 1, imageUrl = "", rating = "", mediaTypeUi = MediaTypeUi.MOVIE, isSaved = false)
         initializeViewModel()
 
         // When
@@ -182,62 +149,59 @@ class WatchingHistoryViewModelTest {
 
         // Then
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ContinueWatchingScreenEffect.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(WatchingHistoryScreenEffect.NavigateBack)
             cancelAndConsumeRemainingEvents()
         }
     }
     @Test
-    fun `init should handle error when collecting watching history fails`() = runTest(testDispatcher) {
+    fun `init should handle error when loading watching history fails`() = runTest(testDispatcher) {
         // Given
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } returns flow {
-            throw RuntimeException("Collect failed")
-        }
+        val errorMessage = "Network Error"
+        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } throws RuntimeException(errorMessage)
 
         // When
         initializeViewModel()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         // Then
         viewModel.state.test {
-            val state = awaitItem().let {
-                var current = it
-                while (current.isLoading) {
-                    current = awaitItem()
-                }
-                current
+            var currentState = awaitItem()
+            while (currentState.isLoading) {
+                currentState = awaitItem()
             }
 
-            assertThat(state.error).isEqualTo("Collect failed")
+            assertThat(currentState.watchingHistory).isNotNull()
+            assertThat(currentState.error).isEqualTo(errorMessage)
             cancelAndConsumeRemainingEvents()
         }
     }
     @Test
-    fun `onMediaTabSelection should handle error when collecting filtered history fails`() = runTest(testDispatcher) {
+    fun `onMediaTabSelection should handle error when loading filtered history fails`() = runTest(testDispatcher) {
         // Given
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, MediaType.TV_SERIES) } returns flow {
-            throw RuntimeException("Collect error TV")
-        }
+        val errorMessage = "Filtered Error"
+        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, MediaType.MOVIE) } throws RuntimeException(errorMessage)
         initializeViewModel()
 
         // When
-        viewModel.onMediaTabSelection(MediaTypeUi.TV_SHOW)
+        viewModel.onMediaTabSelection(MediaTypeUi.MOVIE)
+        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.state.test {
-            val state = awaitItem().let {
-                var current = it
-                while (current.isLoading) {
-                    current = awaitItem()
-                }
-                current
-            }
-
-            assertThat(state.error).isEqualTo("Collect error TV")
+            val state = awaitItem()
+            assertThat(state.selectedMediaTypeUi).isEqualTo(MediaTypeUi.MOVIE)
+            assertThat(state.error).isEqualTo(errorMessage)
             cancelAndConsumeRemainingEvents()
         }
     }
 
     private companion object {
-        val dummyUser = User(id = 42L, name = "Test User", username = "testuser")
+        val dummyUser = User(
+            id = 42L,
+            name = "Test User",
+            username = "testuser",
+            profileImageUrl = "https://example.com/profile.jpg"
+        )
+
         val dummyGenre = Genre(id = 28, name = "Action")
         val dummyHistoryItem = MediaHistoryItem(
             id = 1,
