@@ -109,5 +109,4 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.converter.gson)
 
-    implementation(projects.feature.onboarding.presentation)
 }

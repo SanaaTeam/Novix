@@ -33,7 +33,7 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.component.carousel.CarouselDots
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.R
+import com.sanaa.feature.onboarding.presentation.R
 import com.sanaa.presentation.component.CircleShapeBlur
 import com.sanaa.presentation.component.DialogContainer
 import com.sanaa.presentation.component.OnBoardingPageContentItem
