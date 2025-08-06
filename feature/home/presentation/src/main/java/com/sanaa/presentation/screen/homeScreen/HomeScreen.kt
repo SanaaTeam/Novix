@@ -15,7 +15,6 @@ import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
-import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaTypeUi
@@ -83,7 +82,8 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                    navController.navigate(WatchingHistoryScreenRoute)
+                   
+                    navController.navigate("watching_history_screen")
                 }
 
                 else -> {
