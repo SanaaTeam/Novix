@@ -9,6 +9,7 @@
         android:required="false" />
 
     <application
+        android:name=".TvApp"
         android:allowBackup="true"
         android:banner="@mipmap/ic_logo"
         android:icon="@mipmap/ic_logo"
