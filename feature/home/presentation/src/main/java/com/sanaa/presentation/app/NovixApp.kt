@@ -32,7 +32,6 @@ import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.Conti
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
-import com.sanaa.presentation.screen.WatchingHistoryScreen
 
 @Composable
 fun NovixApp(
@@ -103,8 +102,5 @@ private fun AppNavigation(
             ContinueWatchingMediaScreen()
         }
 
-        composable<WatchingHistoryScreenRoute> {
-            WatchingHistoryScreen()
-        }
     }
 }

@@ -36,7 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
@@ -47,19 +47,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
-import com.sanaa.feature.home.presentation.R as HomeR
+
 import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.layout.PaddingValues
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
-import com.sanaa.presentation.api.LocalSafeContentThreshold
-import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
-import com.sanaa.presentation.shared_component.OnBlurContent
 import androidx.compose.ui.graphics.Color
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
+import com.sanaa.presentation.components.RemoteImagePlaceholder
 
 @Composable
 fun WatchingHistoryScreen(
@@ -89,6 +89,8 @@ fun WatchingHistoryScreen(
                 }
                 is ContinueWatchingScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+                null -> {
                 }
             }
         }
@@ -123,7 +125,7 @@ private fun WatchingHistoryScreenContent(
                     onClick = { interactionListener.onBackClick() }
                 )
             },
-            screenTitle = stringResource(HomeR.string.watching_history),
+            screenTitle = stringResource(id = R.string.watching_history),
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
@@ -154,7 +156,7 @@ private fun WatchingHistoryScreenContent(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = stringResource(HomeR.string.no_history_yet),
+                        text = stringResource(id = R.string.no_history_yet),
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = Theme.colors.hint
@@ -191,21 +193,21 @@ fun WatchingHistoryTabs(
     ) {
         item {
             ToggleableChip(
-                text = stringResource(HomeR.string.all),
+                text = stringResource(id = R.string.all),
                 onClick = { onTabClick(null) },
                 isSelected = selectedTab == null,
             )
         }
         item {
             ToggleableChip(
-                text = stringResource(HomeR.string.movies),
+                text = stringResource(id = R.string.movies),
                 onClick = { onTabClick(MediaTypeUi.MOVIE) },
                 isSelected = selectedTab == MediaTypeUi.MOVIE,
             )
         }
         item {
             ToggleableChip(
-                text = stringResource(HomeR.string.tv_shows),
+                text = stringResource(id = R.string.tv_shows),
                 onClick = { onTabClick(MediaTypeUi.TV_SHOW) },
                 isSelected = selectedTab == MediaTypeUi.TV_SHOW,
             )
@@ -243,14 +245,14 @@ fun WatchingHistoryGrid(
                         if (mediaItem.imageUrl.isNullOrEmpty()) {
                             Image(
                                 painter = painterResource(R.drawable.icon_placeholder_light),
-                                contentDescription = stringResource(HomeR.string.movie_poster),
+                                contentDescription = stringResource(id = R.string.movie_poster),
                                 modifier = Modifier.fillMaxSize(),
                                 contentScale = ContentScale.Crop
                             )
                         } else {
                             RemoteBlurredSensitiveImage(
-                                imageUrl = mediaItem.imageUrl,
-                                contentDescription = stringResource(HomeR.string.movie_poster),
+                                imageUrl = mediaItem.imageUrl!!,
+                                contentDescription = stringResource(id = R.string.movie_poster),
                                 modifier = Modifier.fillMaxWidth(),
                                 sensitiveContentThreshold = 0.2f,
                                 isBlurEnabled = LocalSafeContentThreshold.current != 0f,
@@ -263,7 +265,7 @@ fun WatchingHistoryGrid(
                                 },
                             ) {
                                 OnBlurContent(
-                                    hintText = stringResource(HomeR.string.unsuitable_image),
+                                    hintText = stringResource(id = R.string.unsuitable_image),
                                     textStyle = Theme.textStyle.body.small.copy(
                                         color = Color(0x99FFFFFF)
                                     ),
