@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sanaa.api"
+    namespace = "com.sanaa.feature.onboarding.api"
     compileSdk = 35
 
     defaultConfig {
