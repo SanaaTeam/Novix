@@ -39,10 +39,10 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.myAccount.UserUiState
 
 @Composable
-fun MyAccountUserInfo(user: UserUiState,onLogoutClick:()-> Unit={}) {
+fun MyAccountUserInfo(user: UserUiState, onLogoutClick: () -> Unit = {}) {
     var showLogoutButton by remember { mutableStateOf(false) }
-    Box (
-    ){
+    Box(
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -90,8 +90,7 @@ fun MyAccountUserInfo(user: UserUiState,onLogoutClick:()-> Unit={}) {
                     .clip(RoundedCornerShape(4.dp))
                     .clickable {
                         showLogoutButton = !showLogoutButton
-                    }
-                ,
+                    },
                 painter = painterResource(id = R.drawable.more_vertical),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(Theme.colors.body)
@@ -103,7 +102,7 @@ fun MyAccountUserInfo(user: UserUiState,onLogoutClick:()-> Unit={}) {
                 .padding(end = 20.dp, top = 45.dp)
                 .size(172.dp, 46.dp)
                 .align(Alignment.TopEnd)
-        ){
+        ) {
             AnimatedVisibility(
                 visible = showLogoutButton,
                 enter = fadeIn(),
@@ -128,8 +127,8 @@ fun UserInfoPreview(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun LogoutButton(modifier: Modifier = Modifier,onLogoutClick: () -> Unit={}) {
-    Row (
+fun LogoutButton(modifier: Modifier = Modifier, onLogoutClick: () -> Unit = {}) {
+    Row(
         modifier = modifier
             .fillMaxSize()
             .background(
@@ -142,13 +141,12 @@ fun LogoutButton(modifier: Modifier = Modifier,onLogoutClick: () -> Unit={}) {
                 shape = RoundedCornerShape(8.dp)
             )
             .padding(horizontal = 12.dp)
-            .clickable{
+            .clickable {
                 onLogoutClick()
-            }
-        ,
+            },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
-    ){
+    ) {
         Image(
             painter = painterResource(R.drawable.icon_logout),
             contentDescription = "logout button"
