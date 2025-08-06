@@ -1,14 +1,16 @@
 package com.sanaa.presentation.screen.watchingHistory
 
-import androidx.paging.PagingData
 import com.sanaa.presentation.model.MediaItemUiModel
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 
 data class WatchingHistoryUiState(
-    val watchingHistory: Flow<PagingData<MediaItemUiModel>> = flowOf(PagingData.Companion.empty()),
-    val selectedMediaTypeUi: MediaTypeUi? = null,
+    val selectedMediaTypeUi: MediaTypeUi = MediaTypeUi.MOVIE,
+    val movieList: List<MediaItemUiModel> = emptyList(),
+    val tvShowList: List<MediaItemUiModel> = emptyList(),
+    val movieGenres: List<GenreUiState> = emptyList(),
+    val tvShowGenres: List<GenreUiState> = emptyList(),
+    val movieSelectedGenreId: Int? = null,
+    val tvShowSelectedGenreId: Int? = null,
     val isLoading: Boolean = false,
     val error: String? = null
 )
