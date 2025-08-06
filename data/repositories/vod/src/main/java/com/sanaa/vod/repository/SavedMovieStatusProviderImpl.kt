@@ -8,6 +8,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import repository.SavedMovieStatusProvider
@@ -51,4 +52,7 @@ class SavedMovieStatusProviderImpl @Inject constructor(
             .flatten()
             .toSet()
     }
+
+    override fun markSaved(id: Int)   = _savedIds.update { it + id }
+    override fun markUnsaved(id: Int) = _savedIds.update { it - id }
 }
