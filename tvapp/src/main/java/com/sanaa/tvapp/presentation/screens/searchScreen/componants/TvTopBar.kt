@@ -22,17 +22,21 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 
 @Composable
-fun TvTopBar(modifier: Modifier = Modifier) {
+fun TvTopBar(
+    modifier: Modifier = Modifier,
+    selectedTabIndex: Int,
+    onTabSelected: (Int) -> Unit
+) {
     Row(
-        modifier = Modifier.fillMaxWidth()
-            .padding(vertical = 16.dp, horizontal = 36.dp)
-        ,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp, horizontal = 36.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         TvTabs(
             categories = listOf("Movies", "TV Shows", "Actors"),
-            selectedIndex = 0,
-            onCategorySelected = {}
+            selectedIndex = selectedTabIndex,
+            onCategorySelected = onTabSelected
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -58,7 +62,10 @@ fun TvTopBar(modifier: Modifier = Modifier) {
 @Composable
 private fun TvTopBarPrev() {
     NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        TvTopBar()
+        TvTopBar(
+            selectedTabIndex = 0,
+            onTabSelected = {}
+        )
 
     }
 }
