@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
@@ -24,7 +24,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase
-) : BaseViewModel<WatchingHistoryUiState, MediaTabScreenEffect>(
+) : BaseViewModel<WatchingHistoryUiState, ContinueWatchingScreenEffect>(
     initialState = WatchingHistoryUiState(
         watchingHistory = flowOf(PagingData.empty<MediaItem>())
     )
@@ -127,7 +127,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
         viewModelScope.launch {
-            emitEffect(MediaTabScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+            emitEffect(ContinueWatchingScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
         }
     }
 
@@ -138,7 +138,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     fun onBackClick() {
         viewModelScope.launch {
-            emitEffect(MediaTabScreenEffect.NavigateBack)
+            emitEffect(ContinueWatchingScreenEffect.NavigateBack)
         }
     }
 }

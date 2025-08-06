@@ -19,7 +19,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.presentation.components.cards.MediaPosterCard
 import com.sanaa.designsystem.R
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
@@ -36,7 +35,6 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.screen.mediaTabScreen.MediaTabScreenEffect
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
@@ -60,6 +58,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
 import com.sanaa.feature.home.presentation.R as HomeR
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
+import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 
 @Composable
 fun WatchingHistoryScreen(
@@ -79,7 +79,7 @@ fun WatchingHistoryScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MediaTabScreenEffect.NavigateToMediaDetails -> {
+                is ContinueWatchingScreenEffect.NavigateToMediaDetails -> {
                     val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
                     detailsApi.launch(
                         context = navController.context,
@@ -87,7 +87,7 @@ fun WatchingHistoryScreen(
                         startRoute = startRoute
                     )
                 }
-                is MediaTabScreenEffect.NavigateBack -> {
+                is ContinueWatchingScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
             }
@@ -279,7 +279,7 @@ fun WatchingHistoryGrid(
         ) { index ->
             val item = items[index]
             item?.let { mediaItem ->
-            MediaPosterCard(
+                MediaPosterCard(
                     onCardClick = { onItemClick(mediaItem) },
                     posterImage = {
                         Image(
