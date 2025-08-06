@@ -19,6 +19,9 @@ import org.junit.jupiter.api.Test
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
+import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.GetLoggedInUserUseCase
+import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
 
 @ExperimentalCoroutinesApi
@@ -27,6 +30,9 @@ class MyAccountScreenViewModelTest {
     private lateinit var viewModel: MyAccountScreenViewModel
     private val testDispatcher = UnconfinedTestDispatcher()
     private val mangeUserPreference: MangeUserPreferenceUseCase = mockk(relaxed = true)
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
+    private val logOutUseCase: LogOutUseCase = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -36,7 +42,13 @@ class MyAccountScreenViewModelTest {
         coEvery { mangeUserPreference.getTheme() } returns flowOf(Theme.DARK)
         coEvery { mangeUserPreference.getContentRestriction() } returns flowOf(ContentRestriction.RESTRICTED)
 
-        viewModel = MyAccountScreenViewModel(mangeUserPreference, testDispatcher)
+        viewModel = MyAccountScreenViewModel(
+            mangeUserPreference,
+            checkIfUserIsLoggedInUseCase,
+            getLoggedInUserUseCase,
+            logOutUseCase,
+            testDispatcher,
+        )
     }
 
     @Test
