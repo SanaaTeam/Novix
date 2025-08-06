@@ -8,3 +8,6 @@ data class MediaItem(
 )
 
 
+enum class MediaTypeUi {
+    MOVIE, TV_SHOW
+}
