@@ -29,6 +29,7 @@ class LocalUserDataSourceImpl @Inject constructor(
                 .setId(user.id)
                 .setUsername(user.username)
                 .setName(user.name)
+                .setProfileImageUrl(user.profileImageUrl)
                 .build()
         }
     }

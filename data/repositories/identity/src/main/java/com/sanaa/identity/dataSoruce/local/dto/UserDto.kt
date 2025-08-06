@@ -11,4 +11,6 @@ data class UserDto(
     val name: String,
     @SerialName("username")
     val username: String,
+    @SerialName("profile-image-url")
+    val profileImageUrl: String
 )
