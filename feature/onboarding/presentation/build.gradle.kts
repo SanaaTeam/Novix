@@ -17,7 +17,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
 
     implementation(libs.bundles.compose)
-    implementation(libs.androidx.compose.material3.material3)
     implementation(libs.androidx.ui.compose.foundation)
 
     implementation(platform(libs.androidx.compose.bom))
