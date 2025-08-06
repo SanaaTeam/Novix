@@ -32,13 +32,11 @@ fun AccountNavHost(
                     ChangePasswordWebView(url = "https://www.themoviedb.org/settings/profile")
                 }
 
+                composable<WatchingHistoryScreenRoute> {
+                    WatchingHistoryScreen()
+                }
+
             }
         }
-        composable<WatchingHistoryScreenRoute> {
-            WatchingHistoryScreen()
-        }
-
-    }
-}
     }
 }
