@@ -3,6 +3,8 @@ package com.sanaa.presentation.screen.homeScreen
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
@@ -16,8 +18,10 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -32,7 +36,8 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -45,8 +50,26 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
+
+        viewModelScope.launch {
+            savedMovieStatusProvider.savedIds.collect { savedIds ->
+                updateState { current ->
+                    current.copy(
+                        popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
+                        topRatingMedia = current.topRatingMedia.map { it.withSaved(savedIds) },
+                        continueWatchingMedia = current.continueWatchingMedia.map {
+                            it.withSaved(
+                                savedIds
+                            )
+                        }
+                    )
+                }
+            }
+        }
     }
 
+    private fun MediaItem.withSaved(savedIds: Set<Int>) =
+        copy(isSaved = savedIds.contains(id))
 
     fun updateUserLoggingStatus() {
         viewModelScope.launch {
@@ -140,21 +163,24 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun fetchUpcomingMovies(
-        genreId: Int? = null
-    ) {
-        tryToCollect(
-            callee = { loadUpcomingMovies(genreId) },
-            onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        upcomingMovies = flowOf(mediaList),
-                    )
-                }
+
+
+    private fun fetchUpcomingMovies(genreId: Int? = null) {
+        tryToExecute(
+            callee = {
+                loadUpcomingMovies(genreId)                      // Flow<PagingData<MediaItem>>
+                    .combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                        pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
+                    }
+                    .cachedIn(viewModelScope)                    // اختيارى: يَحفظ الـPaging فى الكاش
             },
-            onError = ::onErrorLoadingData,
+            onSuccess = { flowWithSaved ->
+                updateState { it.copy(upcomingMovies = flowWithSaved) }
+            },
+            onError = ::onErrorLoadingData
         )
     }
+
 
     private suspend fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
         val user = try {

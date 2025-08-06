@@ -2,6 +2,7 @@ package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 import com.sanaa.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import repository.SavedMovieStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -9,7 +10,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase
+    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()) {
 
     init {
@@ -60,6 +62,8 @@ class SaveToListViewModel @Inject constructor(
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
+                savedMovieStatusProvider.markSaved(mediaId.toInt())
+                loadPlaylists()
                 emitEffect(SaveToListEffect.AddedSuccessfully)
             },
             onError = {
