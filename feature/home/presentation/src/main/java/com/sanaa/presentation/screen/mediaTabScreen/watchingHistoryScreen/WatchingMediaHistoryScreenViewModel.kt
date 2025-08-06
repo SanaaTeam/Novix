@@ -20,29 +20,29 @@ import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 @HiltViewModel
-class WatchingHistoryScreenViewModel @Inject constructor(
+class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<WatchingHistoryScreenUiState, WatchingHistoryScreenEffect>(
-    WatchingHistoryScreenUiState(),
+) : BaseViewModel<WatchingMediaHistoryScreenUiState, WatchingMediaHistoryScreenEffect>(
+    WatchingMediaHistoryScreenUiState(),
     dispatcher
-), WatchingHistoryScreenInteractionListener {
+), WatchingMediaHistoryScreenInteractionListener {
 
     init {
-        fetchMovieGenres()
-        fetchTvShowGenres()
         fetchMovies()
         fetchTvShows()
+        fetchMovieGenres()
+        fetchTvShowGenres()
     }
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
             callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
-            onCollect = { ::onFetchMoviesSuccess },
-            onError = { ::onLoadDataError }
+            onCollect = ::onFetchMoviesSuccess,
+            onError = ::onLoadDataError
         )
     }
 
@@ -55,8 +55,8 @@ class WatchingHistoryScreenViewModel @Inject constructor(
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
             callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
-            onCollect = { ::onFetchTvShowsSuccess },
-            onError = { ::onLoadDataError }
+            onCollect = ::onFetchTvShowsSuccess,
+            onError = ::onLoadDataError
         )
     }
 
@@ -68,9 +68,9 @@ class WatchingHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = { ::fetchMovieGenresOperation },
-            onSuccess = { ::onFetchMovieGenresSuccess },
-            onError = { ::onLoadDataError }
+            callee = ::fetchMovieGenresOperation,
+            onSuccess = ::onFetchMovieGenresSuccess,
+            onError = ::onLoadDataError
         )
     }
 
@@ -89,9 +89,9 @@ class WatchingHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = { ::fetchTvShowGenresOperation },
-            onSuccess = { ::onFetchTvShowGenresSuccess },
-            onError = { ::onLoadDataError }
+            callee = ::fetchTvShowGenresOperation,
+            onSuccess = ::onFetchTvShowGenresSuccess,
+            onError = ::onLoadDataError
         )
     }
 
@@ -127,7 +127,7 @@ class WatchingHistoryScreenViewModel @Inject constructor(
     }
 
     override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(WatchingHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
@@ -139,7 +139,7 @@ class WatchingHistoryScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        emitEffect(WatchingHistoryScreenEffect.NavigateBack)
+        emitEffect(WatchingMediaHistoryScreenEffect.NavigateBack)
     }
 
     private suspend fun loadMediaHistory(

@@ -17,18 +17,18 @@ import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.navigation.AppNavigation
 import com.sanaa.presentation.api.navigation.AppRoute
-import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoute
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.api.navigation.WatchingMediaHistoryScreenRoute
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
-import com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen.WatchingHistoryScreen
+import com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen.WatchingMediaHistoryScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
 
@@ -97,8 +97,8 @@ private fun AppNavigation(
             TopRatedMediaScreen()
         }
 
-        composable<ContinueWatchingMediaScreenRoute> {
-            WatchingHistoryScreen()
+        composable<WatchingMediaHistoryScreenRoute> {
+            WatchingMediaHistoryScreen()
         }
     }
 }

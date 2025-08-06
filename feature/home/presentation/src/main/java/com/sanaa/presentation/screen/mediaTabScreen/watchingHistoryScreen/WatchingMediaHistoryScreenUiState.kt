@@ -4,7 +4,7 @@ import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 
-data class WatchingHistoryScreenUiState(
+data class WatchingMediaHistoryScreenUiState(
     val selectedMediaTypeUi: MediaTypeUi = MediaTypeUi.MOVIE,
     val movieList: List<MediaItem> = emptyList(),
     val tvShowList: List<MediaItem> = emptyList(),

@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,9 +37,9 @@ import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
-fun WatchingHistoryScreen(
+fun WatchingMediaHistoryScreen(
     modifier: Modifier = Modifier,
-    viewModel: WatchingHistoryScreenViewModel = hiltViewModel(),
+    viewModel: WatchingMediaHistoryScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -55,11 +55,11 @@ fun WatchingHistoryScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is WatchingHistoryScreenEffect.NavigateBack -> {
+                is WatchingMediaHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                is WatchingHistoryScreenEffect.NavigateToMediaDetails -> {
+                is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
                     when (effect.mediaTypeUi) {
                         MediaTypeUi.MOVIE -> {
                             detailsApi.launch(
@@ -83,8 +83,8 @@ fun WatchingHistoryScreen(
     }
 
     NovixTheme(isSystemInDarkTheme()) {
-        WatchingHistoryScreenContent(
-            title = stringResource(R.string.continue_watching),
+        WatchingMediaHistoryScreenContent(
+            title = stringResource(R.string.watching_history),
             state = state.value,
             interactionListener = viewModel,
             modifier = modifier,
@@ -93,10 +93,10 @@ fun WatchingHistoryScreen(
 }
 
 @Composable
-private fun WatchingHistoryScreenContent(
+private fun WatchingMediaHistoryScreenContent(
     title: String,
-    state: WatchingHistoryScreenUiState,
-    interactionListener: WatchingHistoryScreenInteractionListener,
+    state: WatchingMediaHistoryScreenUiState,
+    interactionListener: WatchingMediaHistoryScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     val topRatedTvShows = state.tvShowList
@@ -112,15 +112,13 @@ private fun WatchingHistoryScreenContent(
                     )
                 },
                 screenTitle = title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
+                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
             )
         },
-        modifier = modifier.padding(top = 12.dp),
-        ) {
+        modifier = modifier.systemBarsPadding(),
+    ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
 
             MediaTabs(
@@ -135,9 +133,7 @@ private fun WatchingHistoryScreenContent(
                     fadeIn(animationSpec = tween(150, delayMillis = 150))
                         .togetherWith(fadeOut(animationSpec = tween(150)))
                 },
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 8.dp)
+                modifier = Modifier.fillMaxSize()
             ) { selectedMediaType ->
                 when (selectedMediaType) {
 
