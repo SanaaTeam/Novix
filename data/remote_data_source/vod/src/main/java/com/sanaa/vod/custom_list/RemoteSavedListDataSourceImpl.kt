@@ -45,6 +45,11 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
     override suspend fun removeItem(sessionId: String, listId: Int, movieId: Int) =
         savedListApiService.removeItem(listId, sessionId, AddOrRemoveItemBody(movieId)).success
 
+    override suspend fun isItemSaved(listId: Int, movieId: Int, sessionId: String): Boolean =
+        savedListApiService
+            .checkItemStatus(listId, movieId, sessionId)
+            .itemPresent
+
     private tailrec suspend fun attemptAddItem(
         sessionId: String,
         listId: Int,

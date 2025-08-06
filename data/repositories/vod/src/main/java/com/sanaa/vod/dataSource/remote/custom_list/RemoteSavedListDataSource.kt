@@ -20,4 +20,6 @@ interface RemoteSavedListDataSource {
     suspend fun addItem(sessionId: String, listId: Int, movieId: Int): Boolean
 
     suspend fun removeItem(sessionId: String, listId: Int, movieId: Int): Boolean
+
+    suspend fun isItemSaved(listId: Int, movieId: Int, sessionId: String): Boolean
 }
