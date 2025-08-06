@@ -16,6 +16,4 @@ interface LocalHistoryDataSource {
     suspend fun deleteAllQueries()
     suspend fun insertWatchedMediaHistory(item: WatchedMediaHistoryLocalDto)
     suspend fun getWatchedMediaHistory(username: String, mediaType: MediaType?, genreId: Int?): Flow<List<WatchedMediaHistoryLocalDto>>
-    
-    suspend fun updateLastWatchedTime(username: String, mediaId: Int, mediaType: MediaType)
 }

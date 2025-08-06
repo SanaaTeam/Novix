@@ -59,21 +59,4 @@ class LocalHistoryDataSourceImpl @Inject constructor(
         return watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType?.name, genreId?.toString())
     }
 
-    override suspend fun updateLastWatchedTime(
-        username: String,
-        mediaId: Int,
-        mediaType: MediaType
-    ) {
-       
-        val updatedItem = WatchedMediaHistoryLocalDto(
-            id = mediaId,
-            username = username,
-            posterImageUrl = "",
-            mediaType = mediaType.name,
-            genres = "", 
-            isSaved = false, 
-            timestamp = System.currentTimeMillis()
-        )
-        watchedMediaHistoryDao.insertWatchedMediaHistory(updatedItem)
-    }
 }
