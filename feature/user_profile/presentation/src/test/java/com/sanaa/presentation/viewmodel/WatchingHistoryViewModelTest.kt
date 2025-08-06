@@ -15,19 +15,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.GetLoggedInUserUseCase
-import usecase.history.ManageWatchingHistoryUseCase
+import usecase.ManageMovieUseCase
+import usecase.ManageTvSeriesUseCase
+import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 
 @ExperimentalCoroutinesApi
 class WatchingHistoryViewModelTest {
 
-    private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase = mockk(relaxed = true)
+    private val manageWatchingHistoryUseCase: ManageWatchedMediaHistoryUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
+    private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
+    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
 
     private lateinit var viewModel: WatchingHistoryViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -37,22 +42,30 @@ class WatchingHistoryViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(any(), any()) } returns flowOf(dummyHistoryItems)
+        coEvery { manageWatchingHistoryUseCase.getMediaHistory(any(),any(),any()) } returns flowOf(dummyHistoryItems)
     }
 
     private fun initializeViewModel() {
         viewModel = WatchingHistoryViewModel(
-            manageWatchingHistoryUseCase,
-            getLoggedInUserUseCase,
-            testDispatcher
+            manageWatchedMediaHistoryUseCase = manageWatchingHistoryUseCase,
+            getLoggedInUserUseCase = getLoggedInUserUseCase,
+            manageMovieUseCase = manageMovieUseCase,
+            manageTvSeriesUseCase = manageTvSeriesUseCase,
+            dispatcher = testDispatcher
         )
     }
+
 
     @Test
     fun `init should load watching history and update state on success`() = runTest(testDispatcher) {
         // Given
         val historyItems = listOf(dummyHistoryItem.copy(id = 1), dummyHistoryItem.copy(id = 2))
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } returns flowOf(historyItems)
+        coEvery { manageWatchingHistoryUseCase.getMediaHistory(
+            genreId = 1,
+            mediaType = MediaType.MOVIE,
+            username = "user"
+        )
+        } returns flowOf(historyItems)
 
         // When
         initializeViewModel()
@@ -77,7 +90,7 @@ class WatchingHistoryViewModelTest {
     fun `onMediaTabSelection should update selected media type and load filtered history`() = runTest(testDispatcher) {
         // Given
         val moviesHistory = listOf(dummyHistoryItem.copy(id = 1, mediaType = MediaType.MOVIE))
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, MediaType.MOVIE) } returns flowOf(moviesHistory)
+        coEvery { manageWatchingHistoryUseCase.getMediaHistory(dummyUser.username, MediaType.MOVIE,dummyGenre.id) } returns flowOf(moviesHistory)
         initializeViewModel()
 
         // When
@@ -154,45 +167,104 @@ class WatchingHistoryViewModelTest {
         }
     }
     @Test
-    fun `init should handle error when loading watching history fails`() = runTest(testDispatcher) {
+    fun `onMovieGenreClick should update selected genre and fetch movies if genre is different`() = runTest(testDispatcher) {
         // Given
-        val errorMessage = "Network Error"
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, null) } throws RuntimeException(errorMessage)
+        val newGenreId = 99
+        val movieHistory = listOf(dummyHistoryItem.copy(id = 1))
 
-        // When
-        initializeViewModel()
-        testDispatcher.scheduler.advanceUntilIdle()
-        // Then
-        viewModel.state.test {
-            var currentState = awaitItem()
-            while (currentState.isLoading) {
-                currentState = awaitItem()
-            }
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery {
+            manageWatchingHistoryUseCase.getMediaHistory(
+                genreId = newGenreId,
+                mediaType = MediaType.MOVIE,
+                username = dummyUser.username
+            )
+        } returns flowOf(movieHistory)
 
-            assertThat(currentState.watchingHistory).isNotNull()
-            assertThat(currentState.error).isEqualTo(errorMessage)
-            cancelAndConsumeRemainingEvents()
-        }
-    }
-    @Test
-    fun `onMediaTabSelection should handle error when loading filtered history fails`() = runTest(testDispatcher) {
-        // Given
-        val errorMessage = "Filtered Error"
-        coEvery { manageWatchingHistoryUseCase.getWatchingHistory(dummyUser.username, MediaType.MOVIE) } throws RuntimeException(errorMessage)
         initializeViewModel()
 
         // When
-        viewModel.onMediaTabSelection(MediaTypeUi.MOVIE)
+        viewModel.onMovieGenreClick(newGenreId)
+
         testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.state.test {
             val state = awaitItem()
-            assertThat(state.selectedMediaTypeUi).isEqualTo(MediaTypeUi.MOVIE)
-            assertThat(state.error).isEqualTo(errorMessage)
+            assertThat(state.movieSelectedGenreId).isEqualTo(newGenreId)
+            assertThat(state.movieList).hasSize(1)
             cancelAndConsumeRemainingEvents()
         }
     }
+
+
+    @Test
+    fun `onTvShowGenreClick should update selected genre and fetch tv shows if genre is different`() = runTest(testDispatcher) {
+        // Given
+        val newGenreId = 77
+        val tvShowHistory = listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SERIES))
+
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery {
+            manageWatchingHistoryUseCase.getMediaHistory(
+                genreId = newGenreId,
+                mediaType = MediaType.TV_SERIES,
+                username = dummyUser.username
+            )
+        } returns flowOf(tvShowHistory)
+
+        initializeViewModel()
+
+        // When
+        viewModel.onTvShowGenreClick(newGenreId)
+
+        advanceUntilIdle()
+
+        // Then
+        viewModel.state.test {
+            val state = awaitItem()
+            assertThat(state.tvShowSelectedGenreId).isEqualTo(newGenreId)
+            assertThat(state.tvShowList).hasSize(1)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onMovieGenreClick should do nothing if selected genre is same as current`() = runTest(testDispatcher) {
+        // Given
+        val currentGenreId = 28
+        initializeViewModel()
+
+        // When
+        viewModel.onMovieGenreClick(currentGenreId)
+
+        // Then
+        viewModel.state.test {
+            val initialState = awaitItem()
+            assertThat(initialState.movieSelectedGenreId).isEqualTo(currentGenreId)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onTvShowGenreClick should do nothing if selected genre is same as current`() = runTest(testDispatcher) {
+        // Given
+        val currentGenreId = 28
+        initializeViewModel()
+
+        // When
+        viewModel.onTvShowGenreClick(currentGenreId)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        // Then
+        viewModel.state.test {
+            val initialState = awaitItem()
+            assertThat(initialState.tvShowSelectedGenreId).isEqualTo(currentGenreId)
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+
 
     private companion object {
         val dummyUser = User(
