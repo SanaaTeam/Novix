@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.paging.compose.LazyPagingItems
@@ -41,21 +42,9 @@ import com.sanaa.presentation.state.WatchingHistoryUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.viewmodel.WatchingHistoryViewModel
 import dagger.hilt.android.EntryPointAccessors
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
 import com.sanaa.feature.home.presentation.R as HomeR
@@ -63,7 +52,6 @@ import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.PaddingValues
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.presentation.api.LocalSafeContentThreshold
@@ -280,7 +268,7 @@ fun WatchingHistoryGrid(
                                         color = Color(0x99FFFFFF)
                                     ),
                                     iconSize = 24.dp,
-                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                    icon = painterResource(R.drawable.icon_eye_slash),
                                 )
                             }
                         }
