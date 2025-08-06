@@ -23,9 +23,9 @@ class ManageSavedListItemsUseCaseTest {
 
     @Test
     fun `getAllItemsInSavedList should call repository and return movies`() = runTest {
-        coEvery { savedListRepository.getAllMoviesInList(LIST_ID) } returns DUMMY_MOVIES
+        coEvery { savedListRepository.getAllMoviesInList(LIST_ID, PAGE) } returns DUMMY_MOVIES
 
-        val result = manageSavedListItemsUseCase.getAllItemsInSavedList(LIST_ID)
+        val result = manageSavedListItemsUseCase.getAllItemsInSavedList(LIST_ID, PAGE)
 
         assertThat(result).isEqualTo(DUMMY_MOVIES)
     }
@@ -52,6 +52,7 @@ class ManageSavedListItemsUseCaseTest {
 
     private companion object {
         const val LIST_ID = 1
+        const val PAGE = 1
         const val MOVIE_ID = 278
 
         val DUMMY_MOVIES = listOf(
