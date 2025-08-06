@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.playlist
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
@@ -31,11 +32,14 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val addedToListSuccessMsg = stringResource(R.string.added_to_list_successfully)
     val addedToListFailedMsg = stringResource(R.string.added_to_list_failed)
+    val deleteListFailedMsg = stringResource(R.string.deleted_list_failed)
+    val deleteListSuccessMsg = stringResource(R.string.deleted_list_successfully)
     val context = LocalContext.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val navController = LocalNavControllerProvider.current
-
     val addListViewModel: AddBookmarkListViewModel = hiltViewModel()
+
+    val previousBackStackEntry = navController.previousBackStackEntry
 
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -50,6 +54,34 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
             viewModel.updateUserStatus()
         }
     )
+
+    LaunchedEffect(previousBackStackEntry) {
+        previousBackStackEntry?.savedStateHandle?.getLiveData<Boolean>("list_deleted")
+            ?.observeForever { deleted ->
+                if (deleted) {
+                    viewModel.loadSavedLists()
+                    Log.i("LaunchedEffect", "loadSavedLists: ${viewModel.loadSavedLists()}")
+
+                    val deleteSuccess = previousBackStackEntry
+                        .savedStateHandle
+                        .get<Boolean>("delete_success") ?: false
+
+                    if (deleteSuccess) {
+                        viewModel.onListDeletedSuccessfully()
+                        Log.i("LaunchedEffect", "onListDeletedSuccessfully: ${ viewModel.onListDeletedSuccessfully()}")
+                    } else {
+                        viewModel.onListDeletedFailed()
+                        Log.i("LaunchedEffect", "PlaylistScreen: ")
+
+                    }
+
+                    previousBackStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
+                    previousBackStackEntry.savedStateHandle.remove<Boolean>("delete_success")
+                }
+            }
+    }
+
+
 
     LaunchedEffect(Unit) {
         addListViewModel.effect.collect {
@@ -72,16 +104,28 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
 
-                PlayListScreenEffect.ShowErrorSnackBar -> {
+                PlayListScreenEffect.ShowErrorToAddListSnackBar -> {
                     snack = SnackData(addedToListFailedMsg, isError = true)
                 }
 
-                PlayListScreenEffect.ShowSuccessSnackBar -> {
+                PlayListScreenEffect.ShowSuccessToAddListSnackBar -> {
                     snack = SnackData(addedToListSuccessMsg, isError = false)
                 }
 
+
+                PlayListScreenEffect.ShowErrorToDeleteListSnackBar -> {
+                    snack = SnackData(deleteListFailedMsg, isError = true)
+
+                }
+
+                PlayListScreenEffect.ShowSuccessToDeleteListSnackBar -> {
+                    snack = SnackData(deleteListSuccessMsg, isError = false)
+
+                }
+
                 is PlayListScreenEffect.NavigateToSavedDetails ->
-                    navController.navigate(SavedDetailsScreenRoute(it.listId,it.title).route())
+                    navController.navigate(SavedDetailsScreenRoute(it.listId, it.title).route())
+
             }
         }
 

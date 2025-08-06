@@ -16,4 +16,6 @@
     <string name="all">All</string>
     <string name="movies">Movies</string>
     <string name="tvshows">TV shows</string>
+    <string name="deleted_list_failed">Deleted list Failed</string>
+    <string name="deleted_list_successfully">Deleted list successfully</string>
 </resources>

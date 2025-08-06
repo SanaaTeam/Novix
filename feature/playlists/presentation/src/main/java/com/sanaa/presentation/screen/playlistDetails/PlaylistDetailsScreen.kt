@@ -25,6 +25,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
+import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
@@ -72,7 +73,6 @@ fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState = SavedDetailsScreenUiState(),
     interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
-
     ) {
     val movieList = state.movieList.collectAsLazyPagingItems()
 
@@ -81,7 +81,8 @@ fun PlaylistDetailsContent(
         topBar = {
             PlaylistDetailsTopBar(
                 title = state.title.orEmpty(),
-                interactionListener = interactionListener
+                interactionListener = interactionListener,
+                onDeleteListClicked = { interactionListener.onDeleteListClicked() }
             )
         }
     ) {
@@ -98,12 +99,22 @@ fun PlaylistDetailsContent(
             )
 
         }
+        DeleteConfirmationBottomSheet(
+            isVisible = state.showBottomSheet,
+            listId = state.listId?.toLong(),
+            onDismiss = { interactionListener.onDismissBottomSheet() },
+            onDeleteSuccess = { interactionListener.onListDeletedSuccessfully() }
+        )
     }
 }
 
 
 @Composable
-fun PlaylistDetailsTopBar(title: String, interactionListener: PlaylistDetailsInteractionListener) {
+fun PlaylistDetailsTopBar(
+    title: String,
+    interactionListener: PlaylistDetailsInteractionListener,
+    onDeleteListClicked: () -> Unit
+) {
     TopBar(
         leftContent = {
             TopBarClickableIcon(
@@ -117,12 +128,8 @@ fun PlaylistDetailsTopBar(title: String, interactionListener: PlaylistDetailsInt
                 horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 TopBarClickableIcon(
-                    icon = painterResource(R.drawable.pencil_edit),
-                    onClick = {}
-                )
-                TopBarClickableIcon(
                     icon = painterResource(R.drawable.icon_deleat),
-                    onClick = { }
+                    onClick = { onDeleteListClicked() }
                 )
             }
 

@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.playlist
 
+import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -18,12 +20,13 @@ class PlayListScreenViewModel @Inject constructor(
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
     PlayListScreenInteractionListener {
+
     init {
         loadSavedLists()
         updateUserStatus()
     }
 
-    private fun loadSavedLists() = tryToExecute(
+    fun loadSavedLists() = tryToExecute(
         dispatcher = Dispatchers.IO,
         callee = {
             val savedLists = manageSavedListsUseCase.getSavedLists().map {
@@ -38,11 +41,21 @@ class PlayListScreenViewModel @Inject constructor(
 
     fun onListAdded() {
         loadSavedLists()
-        emitEffect(PlayListScreenEffect.ShowSuccessSnackBar)
+        emitEffect(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
     }
 
     fun onListAddFailed() {
-        emitEffect(PlayListScreenEffect.ShowErrorSnackBar)
+        emitEffect(PlayListScreenEffect.ShowErrorToAddListSnackBar)
+    }
+
+    fun onListDeletedSuccessfully() {
+        loadSavedLists()
+        emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
+        Log.i("TAG", "onListDeletedSuccessfully: ")
+    }
+
+    fun onListDeletedFailed() {
+        emitEffect(PlayListScreenEffect.ShowErrorToDeleteListSnackBar)
     }
 
     override fun onFabBottomSheetClicked() {
@@ -59,7 +72,7 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
     override fun onItemListClicked(listId: Int, title: String) {
-        emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId,title))
+        emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
 
     private suspend fun getUserState() {

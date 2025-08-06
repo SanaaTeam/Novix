@@ -16,12 +16,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistDetailsScreenViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState()),
@@ -36,6 +38,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     init {
         loadItemsInSaved(listId)
+        updateState { it.copy(listId = listId) }
     }
 
 
@@ -78,6 +81,20 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
+        emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
+    }
+
+    override fun onDeleteListClicked() {
+        updateState { it.copy(showBottomSheet = true) }
+    }
+
+    override fun onDismissBottomSheet() {
+        updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onListDeletedSuccessfully() {
+        savedStateHandle.set("list_deleted", true)
+        savedStateHandle.set("delete_success", true)
         emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
     }
 

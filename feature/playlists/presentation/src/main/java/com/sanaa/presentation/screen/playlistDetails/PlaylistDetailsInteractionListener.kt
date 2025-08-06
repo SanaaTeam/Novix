@@ -6,4 +6,7 @@ interface PlaylistDetailsInteractionListener {
     fun onMediaClick(mediaId: Int)
     fun onSaveIconClick(mediaItem: MediaItem)
     fun onBackClick()
+    fun onDeleteListClicked()
+    fun onDismissBottomSheet()
+    fun onListDeletedSuccessfully()
 }

@@ -16,4 +16,6 @@
     <string name="all">الكل</string>
     <string name="movies">الافلام</string>
     <string name="tvshows">البرامج</string>
+    <string name="deleted_list_failed">فشل في حذف القائمة</string>
+    <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
 </resources>

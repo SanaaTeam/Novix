@@ -10,4 +10,5 @@ data class SavedDetailsScreenUiState(
     val errorMessage: String? = null,
     val showBottomSheet: Boolean = false,
     val title: String? = null,
+    val listId: Int? = null
 )
