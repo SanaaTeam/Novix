@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.sanaa.feature.home.presentation.R as HomeR
 import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 
 @Composable
 fun WatchingHistoryScreen(
@@ -282,12 +283,20 @@ fun WatchingHistoryGrid(
                 MediaPosterCard(
                     onCardClick = { onItemClick(mediaItem) },
                     posterImage = {
-                        Image(
-                            painter = painterResource(R.drawable.icon_placeholder_light),
-                            contentDescription = stringResource(HomeR.string.movie_poster),
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = ContentScale.Crop
-                        )
+                        if (!mediaItem.imageUrl.isNullOrEmpty()) {
+                            RemoteBlurredSensitiveImage(
+                                imageUrl = mediaItem.imageUrl!!,
+                                contentDescription = stringResource(HomeR.string.movie_poster),
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            Image(
+                                painter = painterResource(R.drawable.icon_placeholder_light),
+                                contentDescription = stringResource(HomeR.string.movie_poster),
+                                modifier = Modifier.fillMaxSize(),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
                     }
                 )
             }

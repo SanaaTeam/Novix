@@ -24,6 +24,7 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.history.ManageWatchingHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,6 +33,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
+    private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
@@ -270,6 +272,11 @@ class MovieDetailsViewModel @Inject constructor(
         manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
             mediaHistoryItem = movie.toHistory(),
             username = user.username
+        )
+        manageWatchingHistoryUseCase.updateLastWatchedTime(
+            username = user.username,
+            mediaId = movie.id,
+            mediaType = usecase.search.search_param.MediaType.MOVIE
         )
     }
 

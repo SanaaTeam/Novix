@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.presentation.screen.myAccount.MyAccountScreen
 import com.sanaa.presentation.screen.myRating.MyRatingScreen
+import com.sanaa.presentation.screen.WatchingHistoryScreen
 @Composable
 fun AccountNavHost() {
 val appNavController = rememberNavController()
@@ -22,6 +23,10 @@ CompositionLocalProvider(LocalNavControllerProvider provides appNavController) {
 
         composable<MyRatingScreenRoute> {
             MyRatingScreen()
+        }
+
+        composable<WatchingHistoryScreenRoute> {
+            WatchingHistoryScreen()
         }
 
     }
