@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -21,7 +20,6 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
-import usecase.history.ManageWatchingHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,7 +29,6 @@ class SeriesViewModel @Inject constructor(
     private val getUser: GetLoggedInUserUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
-    private val manageWatchingHistoryUseCase: ManageWatchingHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
@@ -305,10 +302,6 @@ class SeriesViewModel @Inject constructor(
             mediaHistoryItem = tvSeries.toHistory(),
             username = user.username
         )
-        manageWatchingHistoryUseCase.updateLastWatchedTime(
-            username = user.username,
-            mediaId = tvSeries.id,
-            mediaType = usecase.search.search_param.MediaType.TV_SERIES
-        )
+
     }
 }
