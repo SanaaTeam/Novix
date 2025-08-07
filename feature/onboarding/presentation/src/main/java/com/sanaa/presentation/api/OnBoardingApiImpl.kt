@@ -14,14 +14,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Singleton
 
+
 @Singleton
 class OnBoardingApiImpl @Inject constructor() : OnboardingApi{
     override fun getLaunchIntent(context: Context): Intent {
         return Intent(context,OnBoardingActivity::class.java)
     }
 }
-
-
 
 @AndroidEntryPoint
 class OnBoardingActivity : AppCompatActivity(){
@@ -38,6 +37,5 @@ class OnBoardingActivity : AppCompatActivity(){
                 )
             }
         }
-
     }
 }
