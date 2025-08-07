@@ -79,7 +79,6 @@ private fun WatchingHistoryScreenContent(
     interactionListener: WatchingHistoryInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    // Correctly initialize the variables from the state
     val watchedMovies = state.movieList
     val watchedTvShows = state.tvShowList
 
