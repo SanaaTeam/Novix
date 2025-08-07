@@ -142,6 +142,9 @@ class MyAccountScreenViewModel @Inject constructor(
             callee = {
                 logOutUseCase.logout()
             },
+            onSuccess = {
+                emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+            }
         )
     }
 
