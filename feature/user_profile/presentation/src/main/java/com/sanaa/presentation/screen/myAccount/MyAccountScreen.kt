@@ -28,6 +28,7 @@ import com.sanaa.presentation.api.navigation.ChangePasswordScreenRoute
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
@@ -78,9 +79,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             }
 
             NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
-            NavigateToWatchingHistory -> {
-            }
-
+            NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
             is MyAccountScreenEffect.UpdateAppTheme -> {
                 if (it.isDarkMode) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

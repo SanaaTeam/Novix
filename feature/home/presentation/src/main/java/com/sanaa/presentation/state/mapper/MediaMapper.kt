@@ -31,7 +31,8 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
     title = "",
     imageUrl = posterImageUrl,
     rating = "",
-    mediaTypeUi = mediaType.toState()
+    mediaTypeUi = mediaType.toState(),
+    isSaved = isSaved
 )
 
 fun MediaType.toState(): MediaTypeUi = when (this) {
