@@ -15,14 +15,15 @@ import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.test.resetMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -194,7 +195,7 @@ class SeriesViewModelTest {
 
     @Test
     fun `onRateClicked sets showRateBottomSheet true when user is logged in`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns true
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
         givenHappyViewModel()
         advanceUntilIdle()
         viewModel.onRateClicked()

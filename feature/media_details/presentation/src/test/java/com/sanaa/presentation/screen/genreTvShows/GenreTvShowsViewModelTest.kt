@@ -8,6 +8,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -47,7 +48,7 @@ class GenreTvShowsViewModelTest {
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
         val category = genreList[0]
         coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), any()) } returns emptyList()
-        coEvery { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns false
+        coEvery { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
