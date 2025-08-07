@@ -46,7 +46,6 @@ class PlayListScreenViewModel @Inject constructor(
     fun onListDeletedSuccessfully() {
         loadSavedLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
-        Log.i("PlaylistScreen", "onListDeletedSuccessfully: ")
     }
 
 
