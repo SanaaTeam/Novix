@@ -8,31 +8,17 @@
     <string name="trending_tvshows">Trending TV shows</string>
     <string name="movies">Movies</string>
     <string name="tvshows">TV shows</string>
-    <string name="tv_shows">TV Shows</string>
     <string name="unsuitable_image">Unsuitable image</string>
     <string name="people">People</string>
     <string name="trending_people">Trending people</string>
     <string name="continue_watching">Continue watching</string>
-    <string name="watching_history">Watching history</string>
     <string name="what_you_want_to_watch">What you want to watch?</string>
     <string name="up_upcoming">Upcoming</string>"
     <string name="popular">Popular</string>
     <string name="request_login">Please login to save to list</string>
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"
-    <string name="error_message">Something went wrong</string>
     <string name="movie_poster">Movie poster</string>
-
-    <!-- Watching History -->
     <string name="watching_history">Watching history</string>
-    <string name="no_watching_history">No watching history yet</string>
-    <string name="no_history_yet">No watching history yet</string>
-    <string name="failed_to_load_watching_history">Failed to load watching history</string>
-    <string name="onboarding_title_1">Discover best movies and series</string>
-    <string name="onboarding_desc_1">Browse the latest releases, trends, and content tailored to your taste — all in one place.</string>
-    <string name="onboarding_title_2">Search easily... and watch to your taste</string>
-    <string name="onboarding_desc_2">Use smart search and filters to find exactly what you love — action, drama, crime, anime and more!</string>
-    <string name="onboarding_title_3">Rate, save, and create your own lists</string>
-    <string name="onboarding_desc_3">Rate movies, track your viewing history, and easily save your favorite lists.</string>
-    <string name="skip">Skip</string>
+
 </resources>
