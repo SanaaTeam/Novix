@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -24,6 +24,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
@@ -121,64 +122,67 @@ private fun TopRatedMediaScreenContent(
 ) {
     val topRatedTvShows = state.tvShowList.collectAsLazyPagingItems()
     val topRatedMovies = state.movieList.collectAsLazyPagingItems()
-    Column(
-        modifier = modifier.padding(top = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+    NovixScaffold(
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
+        },
+        modifier = modifier.systemBarsPadding(),
     ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-        TopBar(
-            leftContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(id = R.drawable.icon_back),
-                    onClick = interactionListener::onBackClick
-                )
-            },
-            screenTitle = title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-        )
+            MediaTabs(
+                onTabClick = interactionListener::onMediaTabSelection,
+                selectedTab = state.selectedMediaTypeUi,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        MediaTabs(
-            onTabClick = interactionListener::onMediaTabSelection,
-            selectedTab = state.selectedMediaTypeUi,
-            modifier = Modifier.fillMaxWidth()
-        )
+            AnimatedContent(
+                targetState = state.selectedMediaTypeUi,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .togetherWith(fadeOut(animationSpec = tween(150)))
+                },
+            ) { selectedMediaType ->
+                when (selectedMediaType) {
 
-        AnimatedContent(
-            targetState = state.selectedMediaTypeUi,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, delayMillis = 150))
-                    .togetherWith(fadeOut(animationSpec = tween(150)))
-            },
-            modifier = Modifier.padding(top = 8.dp)
-        ) { selectedMediaType ->
-            when (selectedMediaType) {
+                    MediaTypeUi.MOVIE -> {
+                        PaginatedMediaListSectionContent(
+                            genres = state.movieGenres,
+                            mediaList = topRatedMovies,
+                            selectedGenreId = state.movieSelectedGenreId,
+                            onGenreClick = interactionListener::onMovieGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                        )
+                    }
 
-                MediaTypeUi.MOVIE -> {
-                    PaginatedMediaListSectionContent(
-                        genres = state.movieGenres,
-                        mediaList = topRatedMovies,
-                        selectedGenreId = state.movieSelectedGenreId,
-                        onGenreClick = interactionListener::onMovieGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                    )
-                }
-
-                MediaTypeUi.TV_SHOW -> {
-                    PaginatedMediaListSectionContent(
-                        genres = state.tvShowGenres,
-                        mediaList = topRatedTvShows,
-                        selectedGenreId = state.tvShowSelectedGenreId,
-                        onGenreClick = interactionListener::onTvShowGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                    )
+                    MediaTypeUi.TV_SHOW -> {
+                        PaginatedMediaListSectionContent(
+                            genres = state.tvShowGenres,
+                            mediaList = topRatedTvShows,
+                            selectedGenreId = state.tvShowSelectedGenreId,
+                            onGenreClick = interactionListener::onTvShowGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                        )
+                    }
                 }
             }
         }

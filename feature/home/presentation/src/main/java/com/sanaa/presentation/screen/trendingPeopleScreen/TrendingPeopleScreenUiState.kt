@@ -9,5 +9,4 @@ data class TrendingPeopleScreenUiState(
     val isLoading: Boolean = false,
     val people: Flow<PagingData<PersonUiState>> = flowOf(PagingData.empty()),
     val isNoInternetConnection: Boolean = false,
-    val error: String? = null
 )

@@ -1,11 +1,11 @@
 package com.sanaa.presentation.base
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 class BasePagingSourceForHome<T : Any>(
-    private val fetchItems: suspend (page: Int) -> List<T>
+    private val orError: ((Throwable) -> Unit)? = null,
+    private val fetchItems: suspend (page: Int) -> List<T>,
 ) : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
@@ -26,6 +26,7 @@ class BasePagingSourceForHome<T : Any>(
                 nextKey = if (items.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
+            orError?.invoke(e)
             LoadResult.Error(e)
         }
     }

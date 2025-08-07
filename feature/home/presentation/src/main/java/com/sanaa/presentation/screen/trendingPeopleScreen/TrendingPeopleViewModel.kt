@@ -13,12 +13,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingPeopleViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffects>(
     initialState = TrendingPeopleScreenUiState(),
@@ -45,23 +47,21 @@ class TrendingPeopleViewModel @Inject constructor(
     }
 
     private fun onLoadActorsSuccess(pagingData: PagingData<PersonUiState>) {
-        updateState { it.copy(people = flowOf(pagingData)) }
+        updateState {
+            it.copy(
+                people = flowOf(pagingData),
+                isNoInternetConnection = false,
+            )
+        }
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = true,
-                error = null
-            )
-        }
-        else updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = false,
-                error = e.message
-            )
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(TrendingPeopleScreenEffects.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(TrendingPeopleScreenEffects.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
 
@@ -77,8 +77,9 @@ class TrendingPeopleViewModel @Inject constructor(
         loadActors()
     }
 
-    private fun createActorsPagingSource(): PagingSource<Int, Actor> {
-        return BasePagingSourceForHome { page ->
+    private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
+        return BasePagingSourceForHome(orError = onError)
+        { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }
     }

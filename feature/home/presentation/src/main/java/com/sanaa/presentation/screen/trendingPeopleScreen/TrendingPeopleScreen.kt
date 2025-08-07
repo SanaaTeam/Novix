@@ -4,13 +4,17 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,13 +26,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
@@ -49,6 +54,8 @@ fun TrendingPeopleScreen(
             .detailsApi()
     }
 
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -63,21 +70,34 @@ fun TrendingPeopleScreen(
                         startRoute = StartRoute.ACTOR
                     )
                 }
+
+                is TrendingPeopleScreenEffects.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+
+                }
             }
         }
     }
 
-    TrendingPeopleScreenContent(
-        state = state.value, interactionListener = viewModel
-    )
+    Box(modifier = Modifier.systemBarsPadding()) {
+
+        TrendingPeopleScreenContent(
+            state = state.value, interactionListener = viewModel
+        )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 }
 
 @Composable
 fun TrendingPeopleScreenContent(
     state: TrendingPeopleScreenUiState,
     interactionListener: TrendingPeopleScreenInteractionListener,
+    modifier: Modifier = Modifier
 ) {
-    val celebrities = state.people.collectAsLazyPagingItems()
+    val people = state.people.collectAsLazyPagingItems()
 
     NovixScaffold(
         topBar = {
@@ -89,37 +109,30 @@ fun TrendingPeopleScreenContent(
                     )
                 },
                 screenTitle = stringResource(id = R.string.trending_people),
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
-        },
-        modifier = Modifier.systemBarsPadding()
-
+        }
     ) {
         AnimatedContent(
-            targetState = state.isLoading to state.isNoInternetConnection,
+            targetState = state.isNoInternetConnection,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
-        ) { (loading, disconnected) ->
+        ) { isDisconnected ->
             when {
-                disconnected -> {
+                isDisconnected && (people.itemCount == 0) -> {
                     NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-                }
-
-                loading -> {
-                    LoadingIndicator()
                 }
 
                 else -> {
                     PersonList(
-                        persons = celebrities,
+                        persons = people,
                         onItemClick = interactionListener::onActorClick
                     )
                 }
             }
         }
     }
-
 }
