@@ -79,9 +79,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             }
 
             NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
-            NavigateToWatchingHistory -> {navController.navigate(WatchingHistoryScreenRoute)
-            }
-
+            NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
             is MyAccountScreenEffect.UpdateAppTheme -> {
                 if (it.isDarkMode) {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
