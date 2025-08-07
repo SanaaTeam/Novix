@@ -39,7 +39,7 @@ import com.sanaa.presentation.component.DialogContainer
 import com.sanaa.presentation.component.OnBoardingPageContentItem
 
 @Composable
-fun OnBoardingScreen(
+fun OnboardingScreen(
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
