@@ -2,6 +2,8 @@ package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 import com.sanaa.presentation.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import repository.SavedMovieStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
@@ -11,8 +13,9 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()) {
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(),dispatcher) {
 
     init {
         loadPlaylists()
