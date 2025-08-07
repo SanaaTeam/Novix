@@ -19,7 +19,12 @@
 
     <string name="unsuitable_image">"unsuitable image "</string>
     <string name="my_account">My account</string>
-    <string name="watching_history">Watching history</string>
+    <string name="watching_history">Watching History</string>
+    <string name="no_history_yet">No history yet</string>
+    <string name="all">All</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+    <string name="movie_poster">Movie Poster</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>
     <string name="change_password">Change password</string>

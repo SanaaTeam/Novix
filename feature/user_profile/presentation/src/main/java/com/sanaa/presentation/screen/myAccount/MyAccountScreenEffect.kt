@@ -14,4 +14,5 @@ sealed interface MyAccountScreenEffect {
     ): MyAccountScreenEffect
 
     object NavigateToLogin : MyAccountScreenEffect
+    object PopBackStackToWelcomeScreen: MyAccountScreenEffect
 }
