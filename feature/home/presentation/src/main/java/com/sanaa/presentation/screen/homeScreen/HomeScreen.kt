@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -9,6 +10,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.StartRoute
+import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.api.navigation.PlayListScreenRoute
@@ -26,18 +28,12 @@ fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
     val navController = LocalAppNavController.current
-    val mainNavController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
-    }
-    val playListApi: PlaylistsFeatureApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .playListApi()
     }
     val authApi = remember {
         EntryPointAccessors.fromApplication(
@@ -90,11 +86,11 @@ fun HomeScreen(
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
 
-                    navController.navigate("watching_history_screen")
+                    navController.navigate(ContinueWatchingMediaScreenRoute)
                 }
 
                 HomeScreenEffect.NavigateToPlayListScreen -> {
-                    mainNavController.navigate(PlayListScreenRoute)
+                    navController.navigate(PlayListScreenRoute)
                 }
             }
         }

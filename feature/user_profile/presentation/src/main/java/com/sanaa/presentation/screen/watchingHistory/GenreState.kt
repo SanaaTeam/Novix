@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.watchingHistory
 
-data class GenreUiState(
+data class GenreState(
     val id: Int,
     val name: String,
 )

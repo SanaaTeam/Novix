@@ -15,7 +15,6 @@ fun MediaHistoryItem.toDto(username: String, time: Long = TimeUtils.getCurrentTi
         posterImageUrl = this.posterImageUrl,
         mediaType = this.mediaType.name,
         genres = genresString,
-        isSaved = this.isSaved,
         timestamp = time
     )
 }
@@ -34,7 +33,6 @@ fun WatchedMediaHistoryLocalDto.toEntity(): MediaHistoryItem {
         posterImageUrl = this.posterImageUrl,
         mediaType = MediaType.valueOf(this.mediaType),
         genres = genreList,
-        isSaved = this.isSaved,
         lastWatchedAt = kotlinx.datetime.Instant.fromEpochMilliseconds(this.timestamp)
     )
 }

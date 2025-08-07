@@ -29,8 +29,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
-import com.sanaa.presentation.screen.watchingHistory.component.MediaListSectionContent
-import com.sanaa.presentation.screen.watchingHistory.component.MediaTabs
+import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
+import com.sanaa.presentation.screen.watchingHistory.component.GridSection
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -100,7 +100,7 @@ private fun WatchingHistoryScreenContent(
                 .statusBarsPadding()
         )
 
-        MediaTabs(
+        FilterTab(
             onTabClick = { mediaTypeUi ->
                 interactionListener.onMediaTabSelection(mediaTypeUi)
             },
@@ -118,7 +118,7 @@ private fun WatchingHistoryScreenContent(
         ) { selectedMediaType ->
             when (selectedMediaType) {
                 MediaTypeUi.MOVIE -> {
-                    MediaListSectionContent(
+                    GridSection(
                         genres = state.movieGenres,
                         mediaList = watchedMovies,
                         selectedGenreId = state.movieSelectedGenreId,
@@ -131,7 +131,7 @@ private fun WatchingHistoryScreenContent(
                     )
                 }
                 MediaTypeUi.TV_SHOW -> {
-                    MediaListSectionContent(
+                    GridSection(
                         genres = state.tvShowGenres,
                         mediaList = watchedTvShows,
                         selectedGenreId = state.tvShowSelectedGenreId,
