@@ -9,17 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,9 +28,7 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
@@ -57,8 +49,6 @@ fun HomeScreenContent(
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
-    val errorMessage = stringResource(R.string.error_message)
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
@@ -71,26 +61,22 @@ fun HomeScreenContent(
             }
         )
 
-    LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
-            snack = SnackData(
-                message = errorMessage, isError = true
-
-            )
-        }
-    }
-
     NovixScaffold(
         topBar = {
             HomeTopBar(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .systemBarsPadding()
             )
         },
         backgroundShapes = {}) {
 
-        if (state.isNoInternet) {
+        if (
+            state.isNoInternetConnection
+            && upcomingMovies.itemCount == 0
+            && state.popularMedia.isEmpty()
+            && state.topRatingMedia.isEmpty()
+            && state.continueWatchingMedia.isEmpty()
+            ){
             NetworkDisconnectionContact(
                 onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize()
             )
@@ -103,7 +89,7 @@ fun HomeScreenContent(
                 ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                if (state.isLoading) item(span = { GridItemSpan(maxLineSpan) }) {
+                if (state.isLoadingPopular) item(span = { GridItemSpan(maxLineSpan) }) {
                     PopularMediaSectionPlaceholder(
                         modifier = Modifier.fillWidthOfParent(16.dp)
                     )
@@ -131,10 +117,10 @@ fun HomeScreenContent(
                         modifier = Modifier
                             .fillWidthOfParent(16.dp)
                             .padding(top = 8.dp),
-                        isLoading = state.isLoading
+                        isLoading = state.isLoadingHistory
                     )
                 }
-                if (state.isLoading) item(span = { GridItemSpan(maxLineSpan) }) {
+                if (state.isLoadingTopRated) item(span = { GridItemSpan(maxLineSpan) }) {
                     MediaSliderSectionPlaceholder(
                         modifier = Modifier
                             .fillWidthOfParent(16.dp)
@@ -162,7 +148,7 @@ fun HomeScreenContent(
                             onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
                     }
                 }
-                if (state.isLoading) {
+                if (state.isLoadingHistory) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         MediaSliderSectionPlaceholder(
                             modifier = Modifier
@@ -199,13 +185,13 @@ fun HomeScreenContent(
                     onGenreClick = interactionListener::onMovieGenreClick,
                     onSaveIconClick = interactionListener::onSaveIconClick,
                     onMovieClick = interactionListener::onMediaClick,
-                    isLoading = state.isLoading
+                    isLoading = state.isLoadingUpcoming
                 )
             }
         }
     }
     if (upcomingMovies.loadState.append is LoadState.Error
-        || upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet
+        || upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternetConnection
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -218,15 +204,10 @@ fun HomeScreenContent(
                 modifier = Modifier
                     .width(52.dp)
                     .align(Alignment.BottomCenter)
-                    .padding(
-                        bottom = 16.dp
-                    ),
+                    .padding(bottom = 16.dp),
             )
         }
     }
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
-
 
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,

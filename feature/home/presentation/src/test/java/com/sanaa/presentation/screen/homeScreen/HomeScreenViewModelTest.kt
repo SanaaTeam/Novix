@@ -24,6 +24,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -41,6 +42,7 @@ class HomeScreenViewModelTest {
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -71,6 +73,7 @@ class HomeScreenViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
+            stringProvider,
             testDispatcher
         )
     }
@@ -99,7 +102,7 @@ class HomeScreenViewModelTest {
             }
 
             assertThat(successState.popularMedia).hasSize(2)
-            assertThat(successState.isLoading).isFalse()
+            assertThat(successState.isLoadingPopular).isFalse()
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -192,13 +195,13 @@ class HomeScreenViewModelTest {
         viewModel.state.test {
             val state = awaitItem().let {
                 var current = it
-                while (!current.isNoInternet) {
+                while (!current.isNoInternetConnection) {
                     current = awaitItem()
                 }
                 current
             }
 
-            assertThat(state.isNoInternet).isTrue()
+            assertThat(state.isNoInternetConnection).isTrue()
 
             cancelAndConsumeRemainingEvents()
         }

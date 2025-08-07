@@ -1,8 +1,14 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -14,6 +20,8 @@ import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.api.navigation.WatchingMediaHistoryScreenRoute
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaTypeUi
@@ -38,8 +46,9 @@ fun HomeScreen(
         ).authenticationApi()
     }
 
-
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -83,14 +92,24 @@ fun HomeScreen(
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
                     navController.navigate(WatchingMediaHistoryScreenRoute)
                 }
+
+                is HomeScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+                }
             }
         }
     }
 
+    Box(modifier = Modifier.systemBarsPadding()) {
+        HomeScreenContent(
+            state = state.value,
+            interactionListener = viewModel,
+            authApi = authApi
+        )
 
-    HomeScreenContent(
-        state = state.value,
-        interactionListener = viewModel,
-        authApi = authApi
-    )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 }
