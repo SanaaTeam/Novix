@@ -7,7 +7,7 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import entity.MediaHistoryItem
-import exceptions.NoLoggedInUserException
+import entity.User
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,10 +35,27 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 ), WatchingMediaHistoryScreenInteractionListener {
 
     init {
+        updateUserLoggingStatus()
         fetchMovies()
         fetchTvShows()
         fetchMovieGenres()
         fetchTvShowGenres()
+    }
+
+    fun updateUserLoggingStatus() {
+        tryToCollect(
+            callee = getLoggedInUserUseCase::getLoggedInUser,
+            onCollect = ::updateUsername,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun updateUsername(user: User) {
+        updateState {
+            it.copy(
+                username = user.username
+            )
+        }
     }
 
     private fun fetchMovies(genreId: Int? = null) {
@@ -51,7 +68,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchMoviesSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(movieList = mediaList.map { it.toState() }, isLoading = false, showRefreshButton = false)
+            it.copy(
+                movieList = mediaList.map { it.toState() },
+                isLoading = false,
+                showRefreshButton = false
+            )
         }
     }
 
@@ -65,7 +86,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowsSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false, showRefreshButton = false)
+            it.copy(
+                tvShowList = mediaList.map { it.toState() },
+                isLoading = false,
+                showRefreshButton = false
+            )
         }
     }
 
@@ -86,7 +111,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false, showRefreshButton = false)
+            it.copy(
+                movieGenres = genres.map { it.toState() },
+                isLoading = false,
+                showRefreshButton = false
+            )
         }
     }
 
@@ -107,7 +136,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false, showRefreshButton = false)
+            it.copy(
+                tvShowGenres = genres.map { it.toState() },
+                isLoading = false,
+                showRefreshButton = false
+            )
         }
     }
 
@@ -156,19 +189,15 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         mediaType: MediaType,
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
 
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
+        if (state.value.username == null) return flowOf(emptyList())
+
+        updateState { it.copy(isLoading = true) }
 
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = mediaType,
-            username = user.username
+            username = state.value.username.orEmpty()
         )
     }
 

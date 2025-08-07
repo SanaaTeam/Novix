@@ -15,5 +15,6 @@ data class WatchingMediaHistoryScreenUiState(
     val isLoading: Boolean = false,
     val showRefreshButton: Boolean = false,
     val isNoInternetConnection: Boolean = false,
-    val showBottomSheet: Boolean = false
+    val showBottomSheet: Boolean = false,
+    val username: String? = null
 )
