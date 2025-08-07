@@ -1,11 +1,12 @@
 package com.sanaa.presentation.screen.myAccount
 
-import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,7 +20,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -31,6 +31,7 @@ import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute
+import com.sanaa.presentation.provider.LocalThemeMode
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
@@ -87,7 +88,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 activity?.recreate()
             }
 
-            NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
+            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
             NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
             is MyAccountScreenEffect.UpdateAppTheme -> {
                 if (it.isDarkMode) {
@@ -100,6 +101,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             MyAccountScreenEffect.NavigateToLogin -> {
                 launcher.launch(authApi.getLaunchIntent(context))
             }
+
             MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
                 activity?.recreate()
             }
@@ -130,7 +132,9 @@ fun MyAccountScreenContent(
                 onLoginClick = { interactionsListener.onLoginButtonClick() }
             )
         } else {
-            Column {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState())
+            ) {
                 MyAccountUserInfo(
                     uiState.currentUser,
                     onLogoutClick = {
@@ -141,7 +145,7 @@ fun MyAccountScreenContent(
                 VerticalList(
                     items = listOf(
                         AccountOptionItem(
-                            painter = painterResource(R.drawable.time_schedule),
+                            painter = painterResource(R.drawable.icon_clock),
                             title = stringResource(R.string.watching_history),
                             onClick = { interactionsListener.onClickWatchingHistory() }),
                         AccountOptionItem(
@@ -153,17 +157,29 @@ fun MyAccountScreenContent(
                             title = stringResource(R.string.content_restriction),
                             onClick = { interactionsListener.onClickContentRestriction() }),
                         AccountOptionItem(
-                            painter = painterResource(R.drawable.lock_key),
+                            painter = painterResource(R.drawable.icon_lock),
                             title = stringResource(R.string.change_password),
                             onClick = { interactionsListener.onClickChangePassword() }),
                         AccountOptionItem(
                             painter = painterResource(R.drawable.icon_moon),
                             title = stringResource(R.string.appearance),
-                            onClick = { interactionsListener.onClickAppearance() }),
+                            onClick = { interactionsListener.onClickAppearance() },
+                            description = if (LocalThemeMode.current) stringResource(
+                                R.string.dark
+                            ) else stringResource(
+                                R.string.light
+                            )
+                        ),
                         AccountOptionItem(
                             painter = painterResource(R.drawable.language_circle),
                             title = stringResource(R.string.language),
-                            onClick = { interactionsListener.onClickLanguageSetting() }),
+                            onClick = { interactionsListener.onClickLanguageSetting() },
+                            description = if (uiState.savedLanguage == "ar") stringResource(
+                                R.string.ar
+                            ) else stringResource(
+                                R.string.eng
+                            )
+                        ),
                     )
                 )
                 SelectionBottomSheet(

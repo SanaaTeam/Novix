@@ -25,10 +25,16 @@ data class AccountOptionItem(
     val painter: Painter,
     val title: String,
     val onClick: () -> Unit,
+    val description: String? = null
 )
 
 @Composable
-fun AccountOption(painter: Painter, title: String, onClick: () -> Unit) {
+fun AccountOption(
+    painter: Painter,
+    title: String,
+    description: String? = null,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .clickable {
@@ -43,7 +49,7 @@ fun AccountOption(painter: Painter, title: String, onClick: () -> Unit) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(RoundedCornerShape(12.dp))
-                .background(Theme.colors.iconBackgroundLow)
+                .background(Theme.colors.surface)
                 .border(
                     1.dp,
                     Theme.colors.stroke,
@@ -60,10 +66,18 @@ fun AccountOption(painter: Painter, title: String, onClick: () -> Unit) {
         }
 
         AppText(
-            modifier = Modifier,
+            modifier = Modifier.weight(1f),
             text = title,
             color = Theme.colors.title,
             style = Theme.textStyle.title.medium
         )
+        description?.let {
+            AppText(
+                modifier = Modifier,
+                text = it,
+                color = Theme.colors.hint,
+                style = Theme.textStyle.label.small
+            )
+        }
     }
 }
