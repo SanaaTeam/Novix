@@ -16,20 +16,24 @@ class VodStringProviderImplTest {
 
     @BeforeEach
     fun setUp() {
-        // Setup mock responses for getString
-        every { context.getString(R.string.no_internet_connection_error) } returns "No internet connection."
-        every { context.getString(R.string.something_went_wrong_error) } returns "Something went wrong."
+        every { context.getString(R.string.no_internet_connection_error) } returns NO_INTERNET_CONNECTION_ERROR
+        every { context.getString(R.string.something_went_wrong_error) } returns SOMETHING_WENT_WRONG_ERROR
 
         stringProvider = VodStringProviderImpl(context)
     }
 
     @Test
-    fun `noInternetConnectionError returns expected string`() {
+    fun `noInternetConnectionError should return expected string`() {
         assertEquals("No internet connection.", stringProvider.noInternetConnectionError)
     }
 
     @Test
-    fun `somethingWentWrongError returns expected string`() {
-        assertEquals("Something went wrong.", stringProvider.somethingWentWrongError)
+    fun `somethingWentWrongError should return expected string`() {
+        assertEquals(SOMETHING_WENT_WRONG_ERROR, stringProvider.somethingWentWrongError)
+    }
+
+    private companion object {
+        const val NO_INTERNET_CONNECTION_ERROR = "No internet connection."
+        const val SOMETHING_WENT_WRONG_ERROR = "Something went wrong."
     }
 }
