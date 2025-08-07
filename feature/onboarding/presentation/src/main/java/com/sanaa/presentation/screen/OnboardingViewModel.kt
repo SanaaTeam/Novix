@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 
 
 @HiltViewModel
-class OnBoardingViewModel @Inject constructor(
+class OnboardingViewModel @Inject constructor(
     private val
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<OnboardingUiState>(OnboardingUiState(), dispatcher),

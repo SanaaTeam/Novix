@@ -41,7 +41,7 @@ import com.sanaa.presentation.component.OnBoardingPageContentItem
 @Composable
 fun OnBoardingScreen(
     modifier: Modifier = Modifier,
-    viewModel: OnBoardingViewModel = hiltViewModel()
+    viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
