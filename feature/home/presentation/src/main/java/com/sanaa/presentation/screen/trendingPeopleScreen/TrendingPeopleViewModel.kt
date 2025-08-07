@@ -22,7 +22,7 @@ class TrendingPeopleViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffects>(
+) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffect>(
     initialState = TrendingPeopleScreenUiState(),
     defaultDispatcher = dispatcher
 ), TrendingPeopleScreenInteractionListener {
@@ -58,19 +58,19 @@ class TrendingPeopleViewModel @Inject constructor(
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
             updateState { it.copy(isNoInternetConnection = true) }
-            emitEffect(TrendingPeopleScreenEffects.ShowError(message = stringProvider.noInternetConnectionError))
+            emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
             updateState { it.copy(isNoInternetConnection = false) }
-            emitEffect(TrendingPeopleScreenEffects.ShowError(message = stringProvider.somethingWentWrongError))
+            emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
 
     override fun onBackClick() {
-        emitEffect(TrendingPeopleScreenEffects.NavigateBack)
+        emitEffect(TrendingPeopleScreenEffect.NavigateBack)
     }
 
     override fun onActorClick(actorId: Int) {
-        emitEffect(TrendingPeopleScreenEffects.NavigateToActorDetails(actorId))
+        emitEffect(TrendingPeopleScreenEffect.NavigateToActorDetails(actorId))
     }
 
     override fun onRetryClick() {

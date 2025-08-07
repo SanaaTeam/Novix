@@ -60,11 +60,11 @@ fun TrendingPeopleScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is TrendingPeopleScreenEffects.NavigateBack -> {
+                is TrendingPeopleScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                is TrendingPeopleScreenEffects.NavigateToActorDetails -> {
+                is TrendingPeopleScreenEffect.NavigateToActorDetails -> {
                     detailsApi.launch(
                         context = navController.context,
                         id = effect.actorId,
@@ -72,7 +72,7 @@ fun TrendingPeopleScreen(
                     )
                 }
 
-                is TrendingPeopleScreenEffects.ShowError -> {
+                is TrendingPeopleScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
             }

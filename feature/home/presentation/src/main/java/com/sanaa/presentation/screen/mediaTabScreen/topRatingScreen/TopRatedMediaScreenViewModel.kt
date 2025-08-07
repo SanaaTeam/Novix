@@ -66,7 +66,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItem>>) {
         updateState {
-            it.copy(movieList = mediaList, isLoading = false)
+            it.copy(movieList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
     }
 
@@ -80,7 +80,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItem>>) {
         updateState {
-            it.copy(tvShowList = mediaList, isLoading = false)
+            it.copy(tvShowList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
     }
 
@@ -101,7 +101,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false)
+            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
         }
     }
 
@@ -122,7 +122,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false)
+            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
         }
     }
 

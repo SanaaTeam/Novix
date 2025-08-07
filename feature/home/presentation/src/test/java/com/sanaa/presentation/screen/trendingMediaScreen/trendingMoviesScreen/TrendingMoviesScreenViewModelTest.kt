@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
-import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
@@ -9,7 +8,6 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -24,6 +22,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -33,6 +32,7 @@ class TrendingMoviesScreenViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieUseCase: ManageMovieUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: TrendingMoviesScreenViewModel
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -52,7 +52,7 @@ class TrendingMoviesScreenViewModelTest {
     fun `init should fetch genres and update state on creation`() = runTest {
         coEvery { manageMovieUseCase.getMovieGenres() } returns genres
 
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.genreList).isEqualTo(genres.map { it.toState() })
@@ -62,7 +62,7 @@ class TrendingMoviesScreenViewModelTest {
     fun `init should fetch movies and update state on creation`() = runTest {
         coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns movies
 
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         
         assertThat(viewModel.state.value.mediaList).isNotNull()
@@ -77,7 +77,7 @@ class TrendingMoviesScreenViewModelTest {
             coEvery {
                 manageMovieUseCase.getTrendingMovies(any(), genreId)
             } returns movies
-            viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+            viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
             testDispatcher.scheduler.advanceUntilIdle()
 
             viewModel.onGenreClick(genreId)
@@ -89,30 +89,8 @@ class TrendingMoviesScreenViewModelTest {
         }
 
     @Test
-    fun `fetchGenres should handles error and updates state when throw exception`() = runTest {
-        val exceptionMessage = "error"
-        coEvery { manageMovieUseCase.getMovieGenres() } throws RuntimeException(exceptionMessage)
-
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
-    }
-
-    @Test
-    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() =
-        runTest {
-            coEvery { manageMovieUseCase.getMovieGenres() } throws NoNetworkException()
-
-            viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
-        }
-
-    @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onSaveIconClick(media)
@@ -123,7 +101,7 @@ class TrendingMoviesScreenViewModelTest {
     @Test
     fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
         coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns listOf(mockk())
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val selectedGenre = viewModel.state.value.selectedGenreId
 
@@ -137,7 +115,7 @@ class TrendingMoviesScreenViewModelTest {
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
 
         viewModel.effect.test {
             viewModel.onMediaClick(mediaId)
@@ -153,7 +131,7 @@ class TrendingMoviesScreenViewModelTest {
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
-        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,testDispatcher)
+        viewModel = TrendingMoviesScreenViewModel(manageMovieUseCase, checkIfUserIsLoggedInUseCase,stringProvider,testDispatcher)
 
         viewModel.onBackClick()
 

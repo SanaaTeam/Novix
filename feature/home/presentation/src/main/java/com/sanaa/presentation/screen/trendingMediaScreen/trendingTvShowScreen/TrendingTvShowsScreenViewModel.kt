@@ -89,7 +89,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData)) }
+        updateState { it.copy(mediaList = flowOf(pagingData), isLoading = false, isNoInternetConnection = false) }
     }
 
     override fun onGenreClick(id: Int?) {
