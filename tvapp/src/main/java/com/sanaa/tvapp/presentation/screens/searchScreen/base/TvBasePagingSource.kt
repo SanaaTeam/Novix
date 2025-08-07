@@ -1,9 +1,9 @@
-package com.sanaa.presentation.base
+package com.sanaa.tvapp.presentation.screens.searchScreen.base
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
-class BasePagingSource<T : Any>(
+class TvBasePagingSource <T : Any>(
     private val fetchItems: suspend (page: Int) -> List<T>
 ) : PagingSource<Int, T>() {
 
@@ -32,3 +32,5 @@ class BasePagingSource<T : Any>(
         private const val STARTING_PAGE_INDEX = 1
     }
 }
+
+

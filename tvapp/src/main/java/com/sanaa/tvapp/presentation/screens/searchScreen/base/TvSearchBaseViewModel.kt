@@ -1,4 +1,4 @@
-package com.sanaa.presentation.base
+package com.sanaa.tvapp.presentation.screens.searchScreen.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class BaseViewModel<T, E>(
+abstract class TvSearchBaseViewModel <T, E>(
     initialState: T,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {

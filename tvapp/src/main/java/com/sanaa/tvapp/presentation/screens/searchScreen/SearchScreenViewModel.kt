@@ -7,9 +7,9 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.presentation.base.BasePagingSource
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
+import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvBasePagingSource
+import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SearchTvScreenUiState, Unit>(
+) : TvSearchBaseViewModel<SearchTvScreenUiState, Unit>(
     SearchTvScreenUiState(),
     dispatcher
 ), SearchScreenInteractionListener {
@@ -176,19 +176,19 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
-        return BasePagingSource { page ->
+        return TvBasePagingSource { page ->
             searchUseCase.searchActors(query = query, page = page)
         }
     }
 
     fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
-        return BasePagingSource { page ->
+        return TvBasePagingSource { page ->
             searchUseCase.searchTvShows(query = query, page = page)
         }
     }
 
     fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
-        return BasePagingSource { page ->
+        return TvBasePagingSource { page ->
             searchUseCase.searchMovies(
                 query = query,
                 page = page,
