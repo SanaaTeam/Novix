@@ -26,6 +26,17 @@ class PreferencesManagerImpl @Inject constructor(
     override val accountId: Flow<Long> = context.dataStore.data
         .map { preferences -> preferences[ACCOUNT_ID] ?: -1L }
 
+    override val isFirstLaunch: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[IS_FIRST_LAUNCH] ?: true
+        }
+
+    override suspend fun disableFirstLaunch() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_FIRST_LAUNCH] = false
+        }
+    }
+
 
     override suspend fun updateSessionId(value: String) {
         context.dataStore.edit { prefs ->
@@ -56,5 +67,6 @@ class PreferencesManagerImpl @Inject constructor(
         val SESSION_ID = stringPreferencesKey("SESSION_ID")
         val IS_GUEST = booleanPreferencesKey("IS_GUEST")
         val ACCOUNT_ID = longPreferencesKey("account_id")
+        val IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
     }
 }

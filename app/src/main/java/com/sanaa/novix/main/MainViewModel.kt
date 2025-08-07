@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    val mangeUserPreference: MangeUserPreferenceUseCase,
+    private val mangeUserPreference: MangeUserPreferenceUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MainUiState())
