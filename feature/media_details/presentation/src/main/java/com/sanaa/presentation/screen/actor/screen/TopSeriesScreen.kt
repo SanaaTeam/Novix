@@ -59,14 +59,7 @@ fun TopSeriesScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserLoggingStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserLoggingStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 

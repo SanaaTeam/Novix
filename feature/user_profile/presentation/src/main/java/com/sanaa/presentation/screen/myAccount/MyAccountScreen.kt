@@ -72,6 +72,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             NavigateToChangePasswordSetting -> {
                 navController.navigate(ChangePasswordScreenRoute)
             }
+
             NavigateToContentRestrictionSetting -> {
             }
 
@@ -85,7 +86,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 activity?.recreate()
             }
 
-            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+            NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
             NavigateToWatchingHistory -> {
             }
 

@@ -50,14 +50,7 @@ fun SearchScreen(
         SearchApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            searchViewModel.updateUserStatus()
-        },
-        loggedInAsGuest = {
-            searchViewModel.updateUserStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
 
 
