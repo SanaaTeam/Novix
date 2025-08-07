@@ -125,7 +125,6 @@ fun TrendingPeopleScreenContent(
                 isDisconnected && (people.itemCount == 0) -> {
                     NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                 }
-
                 else -> {
                     PersonList(
                         persons = people,
