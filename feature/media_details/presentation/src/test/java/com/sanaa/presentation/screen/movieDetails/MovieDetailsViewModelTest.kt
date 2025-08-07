@@ -12,6 +12,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -176,7 +177,7 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun `onRateMovieClick shows rate bottom sheet if user is logged in`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns true
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
         givenHappy()
         advanceUntilIdle()
 

@@ -12,13 +12,15 @@ import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
-import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -45,7 +47,7 @@ class MovieDetailsViewModel @Inject constructor(
     init {
         fetchMovieDetails(movieId)
         fetchUserRating()
-        updateUserStatus()
+        updateUserLoginState()
     }
 
     override fun onBackClick() {
@@ -142,7 +144,7 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 loadMovieDetails(movieId)
-                     },
+            },
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
@@ -183,16 +185,12 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private  fun fetchUserRating()  {
+    private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
-            tryToExecute(
-                callee = {
-                    getCurrentUserRating(movieId)
-                },
-                onSuccess = { rating->
-                    updateState {
-                        it.copy(imdbRating = rating)
-                    }
+            tryToCollect(
+                callee = { getCurrentUserRating(movieId) },
+                onCollect = { rating ->
+                    updateState { it.copy(imdbRating = rating) }
                 },
             )
 
@@ -226,13 +224,22 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private suspend fun getCurrentUserRating(movieId: Int): Int {
-        val userId = getLoggedInUserUseCase.getLoggedInUser().id
-        return try {
-            manageMovieDetails.getMovieRate(userId, movieId)
-        } catch (e: Exception) {
-            0
-        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getCurrentUserRating(movieId: Int): Flow<Int> {
+        return getLoggedInUserUseCase.getLoggedInUser()
+            .flatMapLatest { user ->
+                flow {
+                    try {
+                        val rating = manageMovieDetails.getMovieRate(
+                            user.id,
+                            movieId
+                        )
+                        emit(rating)
+                    } catch (_: Exception) {
+                        emit(0)
+                    }
+                }
+            }
     }
 
     private suspend fun submitMovieRating() {
@@ -248,27 +255,29 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
-    fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
-    }
 
-    private suspend fun addMovieToHistory(movie: Movie) {
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) {
-            return
-        }
-        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-            mediaHistoryItem = movie.toHistory(),
-            username = user.username
+    private fun addMovieToHistory(movie: Movie) {
+        tryToCollect(
+            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            onCollect = { user ->
+                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+                    mediaHistoryItem = movie.toHistory(),
+                    username = user.username
+                )
+            }
         )
     }
 
