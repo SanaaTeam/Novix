@@ -22,7 +22,8 @@ fun NetworkDisconnectionContact(
     onRetryClick: () -> Unit,
     modifier: Modifier = Modifier,
     errorTitle: String = stringResource(id = R.string.offline_title),
-    errorMessage: String = stringResource(id = R.string.offline_subtitle)
+    errorMessage: String = stringResource(id = R.string.offline_subtitle),
+    useDarkTheme: Boolean = isSystemInDarkTheme()
 ) {
     ErrorStateContent(
         onRetryClick = onRetryClick,
@@ -30,7 +31,7 @@ fun NetworkDisconnectionContact(
         errorTitle = errorTitle,
         errorMessage = errorMessage
     ) {
-        val iconPainter = if (isSystemInDarkTheme()) {
+        val iconPainter = if (useDarkTheme) {
             painterResource(id = R.drawable.disconnect_dark_icon)
         } else {
             painterResource(id = R.drawable.disconnect_light_icon)
