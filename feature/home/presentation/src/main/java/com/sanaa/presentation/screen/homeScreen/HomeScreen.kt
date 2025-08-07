@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -10,7 +9,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.api.navigation.PlayListScreenRoute
@@ -91,12 +89,8 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                   
+
                     navController.navigate("watching_history_screen")
-                }
-
-                else -> {
-
                 }
 
                 HomeScreenEffect.NavigateToPlayListScreen -> {
