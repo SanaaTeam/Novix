@@ -144,7 +144,7 @@ class WatchingHistoryViewModelTest {
     @Test
     fun `onSaveIconClick should handle save icon click`() = runTest(testDispatcher) {
         // Given
-        val mediaItem = MediaItemUiModel(id = 1, imageUrl = "", rating = "", mediaTypeUi = MediaTypeUi.MOVIE, isSaved = false)
+        val mediaItem = MediaItemUiModel(id = 1, imageUrl = "", rating = "", mediaTypeUi = MediaTypeUi.MOVIE)
         initializeViewModel()
 
         // When
@@ -280,6 +280,5 @@ class WatchingHistoryViewModelTest {
             posterImageUrl = "test_url",
             mediaType = MediaType.MOVIE,
             genres = listOf(dummyGenre),
-            isSaved = false
         )
     }}
