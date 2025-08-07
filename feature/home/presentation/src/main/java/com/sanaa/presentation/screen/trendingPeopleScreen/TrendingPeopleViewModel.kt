@@ -78,7 +78,7 @@ class TrendingPeopleViewModel @Inject constructor(
     }
 
     private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
-        return BasePagingSourceForHome(orError = onError)
+        return BasePagingSourceForHome(onError = onError)
         { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }

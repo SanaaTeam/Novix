@@ -73,7 +73,6 @@ fun TrendingPeopleScreen(
 
                 is TrendingPeopleScreenEffects.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
-
                 }
             }
         }
@@ -82,7 +81,8 @@ fun TrendingPeopleScreen(
     Box(modifier = Modifier.systemBarsPadding()) {
 
         TrendingPeopleScreenContent(
-            state = state.value, interactionListener = viewModel
+            state = state.value,
+            interactionListener = viewModel
         )
         NovixAnimatedSnackBarHost(
             data = snack,

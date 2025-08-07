@@ -11,13 +11,14 @@ import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiSt
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import entity.Movie
 import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class TrendingMoviesScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
@@ -93,6 +95,12 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
     }
 
+    override fun onRetryClick() {
+        updateUserLoggingStatus()
+        fetchGenres()
+        loadMovies()
+    }
+
     override fun onLoginButtonClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateToLogin)
     }
@@ -121,23 +129,17 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = true
-            )
-        }
-        else updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = false,
-                error = e.message
-            )
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
 
-    private fun createMoviesPagingSource(): PagingSource<Int, Movie> {
-        return BasePagingSourceForHome { page ->
+    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }
     }

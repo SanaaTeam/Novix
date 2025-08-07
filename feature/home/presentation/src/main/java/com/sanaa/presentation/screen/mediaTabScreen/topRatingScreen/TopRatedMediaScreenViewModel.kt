@@ -9,12 +9,14 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import entity.Movie
 import entity.TvSeries
+import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -25,6 +27,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
     initialState = TopRatedMediaScreenUiState(),
@@ -39,7 +42,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         fetchTvShows()
     }
 
-    fun updateUserLoggingStatus(){
+    fun updateUserLoggingStatus() {
         viewModelScope.launch {
             val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
             updateState {
@@ -50,6 +53,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
         onDismissBottomSheet()
     }
+
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
             callee = {
@@ -59,11 +63,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                     it.copy(movieList = mediaList, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -76,11 +76,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                     it.copy(tvShowList = mediaList, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -97,11 +93,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                     it.copy(movieGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -118,11 +110,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                     it.copy(tvShowGenres = genres, isLoading = false)
                 }
             },
-            onError = { exception ->
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -149,7 +137,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
             updateState {
                 it.copy(
                     showLoginBottomSheet = true
@@ -200,12 +188,19 @@ class TopRatedMediaScreenViewModel @Inject constructor(
             mapper = TvSeries::toState
         )
     }
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+        }
+    }
 
 
-    private fun createMoviePagingDataSource(
-        genreId: Int?
-    ): PagingSource<Int, Movie> {
-        return BasePagingSourceForHome { page ->
+    private fun createMoviePagingDataSource(genreId: Int?, onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTopRatedMovies(
                 page = page,
                 genreId = genreId
@@ -213,9 +208,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createTvShowPagingDataSource(
-        genreId: Int?
-    ): PagingSource<Int, TvSeries> {
+    private fun createTvShowPagingDataSource(genreId: Int?): PagingSource<Int, TvSeries> {
         return BasePagingSourceForHome { page ->
             manageTvSeriesUseCase.getTopRatedTvSeries(
                 page = page,

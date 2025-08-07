@@ -11,13 +11,14 @@ import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiSt
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import entity.TvSeries
 import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class TrendingTvShowsScreenViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
@@ -38,7 +40,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         loadTvShows()
     }
 
-    fun updateUserLoggingStatus(){
+    fun updateUserLoggingStatus() {
         viewModelScope.launch {
             val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
             updateState {
@@ -80,7 +82,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
             updateState {
                 it.copy(
                     showBottomSheet = true
@@ -91,6 +93,12 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     override fun onBackClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
+    }
+
+    override fun onRetryClick() {
+        updateUserLoggingStatus()
+        fetchGenres()
+        loadTvShows()
     }
 
     override fun onLoginButtonClick() {
@@ -121,23 +129,17 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = true
-            )
-        }
-        else updateState {
-            it.copy(
-                isLoading = false,
-                isNoInternetConnection = false,
-                error = e.message
-            )
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
 
-    private fun createTvShowsPagingSource(): PagingSource<Int, TvSeries> {
-        return BasePagingSourceForHome { page ->
+    private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
+        return BasePagingSourceForHome(onError= onError) { page ->
             manageTvSeriesUseCase.getTrendingTvSeries(
                 page = page,
                 genreId = state.value.selectedGenreId

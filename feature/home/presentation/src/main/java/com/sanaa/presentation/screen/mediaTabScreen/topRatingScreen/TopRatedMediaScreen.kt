@@ -6,13 +6,17 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -30,8 +34,10 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaTabs
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
@@ -68,6 +74,8 @@ fun TopRatedMediaScreen(
         }
     )
 
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -91,25 +99,36 @@ fun TopRatedMediaScreen(
                     navController.popBackStack()
                 }
 
-                TopRatedScreenEffect.NavigateToLogin -> {
+                is TopRatedScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
+                }
+                is TopRatedScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
                 }
             }
         }
     }
-    TopRatedMediaScreenContent(
-        title = stringResource(R.string.top_rated),
-        state = state.value,
-        interactionListener = viewModel,
-        modifier = modifier,
-    )
-    RequestToLoginBottomSheet(
-        isVisible = state.value.showLoginBottomSheet,
-        onDismiss = viewModel::onDismissBottomSheet,
-        onLoginButtonClick = {
-            viewModel.onLoginButtonClick()
-        }
-    )
+
+    Box(modifier = Modifier.systemBarsPadding()) {
+        TopRatedMediaScreenContent(
+            title = stringResource(R.string.top_rated),
+            state = state.value,
+            interactionListener = viewModel,
+            modifier = modifier,
+        )
+        RequestToLoginBottomSheet(
+            isVisible = state.value.showLoginBottomSheet,
+            onDismiss = viewModel::onDismissBottomSheet,
+            onLoginButtonClick = {
+                viewModel.onLoginButtonClick()
+            }
+        )
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 }
 
 

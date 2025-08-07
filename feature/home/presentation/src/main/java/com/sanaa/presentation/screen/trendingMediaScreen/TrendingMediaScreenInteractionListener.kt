@@ -7,7 +7,7 @@ interface MediaListScreenInteractionListener {
     fun onMediaClick(id: Int)
     fun onSaveIconClick(media: MediaItem)
     fun onBackClick()
+    fun onRetryClick()
     fun onLoginButtonClick()
     fun onDismissBottomSheet()
-
 }

@@ -4,7 +4,7 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 class BasePagingSourceForHome<T : Any>(
-    private val orError: ((Throwable) -> Unit)? = null,
+    private val onError: ((Throwable) -> Unit)? = null,
     private val fetchItems: suspend (page: Int) -> List<T>,
 ) : PagingSource<Int, T>() {
 
@@ -26,7 +26,7 @@ class BasePagingSourceForHome<T : Any>(
                 nextKey = if (items.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
-            orError?.invoke(e)
+            onError?.invoke(e)
             LoadResult.Error(e)
         }
     }
