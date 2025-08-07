@@ -26,4 +26,9 @@
     <string name="onboarding_title_3">قيّم، احفظ، وأنشئ قوائمك الخاصة</string>
     <string name="onboarding_desc_3">قيّم الأفلام، تابع سجل مشاهداتك، واحفظ قوائمك المفضلة بسهولة.</string>
     <string name="skip">تخطي</string>
+    <string name="movie_poster">ملصق الفيلم</string>
+    <string name="watching_history">سجل المشاهدات</string>
+    <string name="no_watching_history">لا توجد مشاهدات بعد</string>
+    <string name="no_history_yet">لا توجد مشاهدات بعد</string>
+    <string name="failed_to_load_watching_history">فشل في تحميل سجل المشاهدات</string>
 </resources>

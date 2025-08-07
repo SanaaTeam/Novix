@@ -1,13 +1,14 @@
 package usecase
 
 import entity.User
+import kotlinx.coroutines.flow.Flow
 import repository.AuthenticationRepository
 import javax.inject.Inject
 
 class GetLoggedInUserUseCase @Inject constructor(
     private val authenticationRepository: AuthenticationRepository
 ) {
-    suspend fun getLoggedInUser(): User {
+     fun getLoggedInUser(): Flow<User> {
         return authenticationRepository.getLoggedUser()
     }
 }

@@ -143,20 +143,9 @@ class MyAccountScreenViewModel @Inject constructor(
                 logOutUseCase.logout()
             },
             onSuccess = {
-                updateUserStatus()
-            },
-            onError = {e->
-                updateState {
-                    it.copy()
-                }
-            },
+                emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+            }
         )
-    }
-
-    fun updateUserStatus() {
-        val isLoggedIn = runBlocking { checkIfUserIsLoggedInUseCase.isLoggedIn() }
-        fetchUserData()
-        updateState { it.copy(isUserLoggedIn = isLoggedIn) }
     }
 
     private suspend fun fetchUserPreference() {
@@ -204,20 +193,22 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun checkUserLoggedIn() {
-        tryToExecute(
-            callee = {
-                checkIfUserIsLoggedInUseCase.isLoggedIn()
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
             },
-            onSuccess = { isLoggedIn ->
-                updateState { it.copy(isUserLoggedIn = isLoggedIn) }
-            }
         )
     }
 
     private fun fetchUserData() {
-        tryToExecute(
+        tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
-            onSuccess = ::onLoadUserDataSuccess
+            onCollect = ::onLoadUserDataSuccess
         )
     }
 

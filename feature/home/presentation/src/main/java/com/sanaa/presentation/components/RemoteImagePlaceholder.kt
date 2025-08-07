@@ -28,7 +28,7 @@ fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
             painter = painterResource(id = placeholderResId),
             contentDescription = "Remote Image Placeholder",
             contentScale = ContentScale.None,
-            modifier = modifier.size(56.dp)
+            modifier = Modifier.size(56.dp)
         )
     }
 }

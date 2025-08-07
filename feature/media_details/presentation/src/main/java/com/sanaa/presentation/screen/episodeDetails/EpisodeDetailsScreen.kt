@@ -73,14 +73,7 @@ fun EpisodeDetailsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserStatus()
-        }
-    )
+    val launcher =  launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {

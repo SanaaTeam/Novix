@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.series
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -11,7 +10,6 @@ import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
-import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -44,7 +42,7 @@ class SeriesViewModel @Inject constructor(
     init {
         loadSeries()
         fetchUserRating()
-        updateUserStatus()
+        updateUserLoginState()
     }
 
     override fun onBackClicked() {
@@ -175,7 +173,7 @@ class SeriesViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 fetchSeriesDetails()
-                     },
+            },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
@@ -197,21 +195,22 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
-    private  fun fetchUserRating()  {
+    private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
-            tryToExecute(
-                callee = {
-                    getCurrentUserRating(seriesId)
-                },
-                onSuccess = {rating->
-                    updateState {
-                        it.copy(imdbRating = rating)
-                    }
+            tryToCollect(
+                callee = { getUser.getLoggedInUser() },
+                onCollect = { user ->
+                    tryToExecute(
+                        callee = { manageTvSeriesDetails.getSeriesRate(user.id, seriesId) },
+                        onSuccess = { rating ->
+                            updateState { it.copy(imdbRating = rating) }
+                        },
+                    )
                 },
             )
-
         }
     }
+
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 
@@ -248,17 +247,6 @@ class SeriesViewModel @Inject constructor(
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 
-    private suspend fun getCurrentUserRating(seriesId: Int): Int {
-        val userId = getUser.getLoggedInUser().id
-        return try {
-            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
-
-        } catch (e: Exception) {
-            0
-        }
-
-    }
-
 
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
@@ -272,9 +260,17 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     private fun promptLogin(type: LoginPromptType) {
@@ -286,22 +282,17 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
-    }
 
-    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) {
-            return
-        }
-        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-            mediaHistoryItem = tvSeries.toHistory(),
-            username = user.username
+    private fun addTvSeriesToHistory(tvSeries: TvSeries) {
+        tryToCollect(
+            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            onCollect = { user ->
+                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+                    mediaHistoryItem = tvSeries.toHistory(),
+                    username = user.username
+                )
+            }
         )
+
     }
 }

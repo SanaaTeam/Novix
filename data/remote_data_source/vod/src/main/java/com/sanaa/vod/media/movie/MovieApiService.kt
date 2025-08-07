@@ -104,7 +104,6 @@ interface MovieApiService {
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<MovieDto>
 
-    @Headers("Content-Type: application/json;charset=utf-8")
     @DELETE("movie/{movie_id}/rating")
     suspend fun deleteMovieRating(
         @Path("movie_id") movieId: Int,
