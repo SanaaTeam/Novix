@@ -3,6 +3,8 @@ package com.sanaa.presentation.bottomsheet.addEditBookmark
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.MediaItem
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import repository.SavedMovieStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -11,7 +13,8 @@ import javax.inject.Inject
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val savedMovieStatusProvider: SavedMovieStatusProvider,
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState(),dispatcher) {
 
     fun onListTitleChanged(title: String) {
         updateState {
