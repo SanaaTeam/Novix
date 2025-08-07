@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen.componants
 
 import androidx.compose.foundation.focusable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +25,8 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 fun SearchTextField(
     text: String,
     onTextChange: (String) -> Unit = {},
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(text = text)) }
 
     if (textFieldValue.text != text) {
@@ -47,9 +47,8 @@ fun SearchTextField(
             .height(42.dp)
             .focusable()
             .padding(horizontal = 36.dp)
-            .fillMaxWidth(),
-
-        )
+            .fillMaxWidth()
+    )
 }
 
 @Preview(device = Devices.TV_1080p)

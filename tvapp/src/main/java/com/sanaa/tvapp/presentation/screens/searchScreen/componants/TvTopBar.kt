@@ -28,7 +28,7 @@ fun TvTopBar(
     onTabSelected: (Int) -> Unit
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp, horizontal = 36.dp),
         verticalAlignment = Alignment.CenterVertically

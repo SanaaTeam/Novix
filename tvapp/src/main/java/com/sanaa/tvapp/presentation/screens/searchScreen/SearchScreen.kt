@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +27,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.foundation.lazy.list.TvLazyColumn
+import androidx.tv.foundation.lazy.list.TvLazyRow
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -71,6 +73,7 @@ fun SearchScreenContent(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(top = 40.dp)
             .background(Theme.colors.surface),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -86,13 +89,12 @@ fun SearchScreenContent(
                 searchListener.onSearchQueryChanged(it)
             },
             modifier = Modifier
-                .focusable(interactionSource = interactionSource)
         )
 
         when (uiState.selectedTabIndex) {
             SearchTvScreenUiState.MOVIE_INDEX -> {
-                TvLazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                TvLazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(moviesPagingData.itemCount) { index ->
@@ -131,8 +133,8 @@ fun SearchScreenContent(
             }
 
             SearchTvScreenUiState.TV_SHOW_INDEX -> {
-                TvLazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                TvLazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(tvShowsPagingData.itemCount) { index ->
@@ -171,8 +173,8 @@ fun SearchScreenContent(
             }
 
             SearchTvScreenUiState.ACTOR_INDEX -> {
-                TvLazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                TvLazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(actorsPagingData.itemCount) { index ->
