@@ -78,7 +78,6 @@ class PlaylistDetailsScreenViewModelTest {
         viewModel = PlaylistDetailsScreenViewModel(
             savedStateHandle = savedStateHandle,
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
-            manageSavedListsUseCase = manageSavedListsUseCase,
             dispatcher = testDispatcher
         )
     }
