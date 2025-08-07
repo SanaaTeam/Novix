@@ -29,6 +29,7 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
@@ -169,38 +170,45 @@ private fun TopRatedMediaScreenContent(
             )
 
             AnimatedContent(
-                targetState = state.selectedMediaTypeUi,
+                targetState = state.selectedMediaTypeUi to state.isNoInternetConnection,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(150, delayMillis = 150))
                         .togetherWith(fadeOut(animationSpec = tween(150)))
                 },
-            ) { selectedMediaType ->
+            ) { (selectedMediaType, isNoInternetConnection) ->
                 when (selectedMediaType) {
-
                     MediaTypeUi.MOVIE -> {
-                        PaginatedMediaListSectionContent(
-                            genres = state.movieGenres,
-                            mediaList = topRatedMovies,
-                            selectedGenreId = state.movieSelectedGenreId,
-                            onGenreClick = interactionListener::onMovieGenreClick,
-                            onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                            },
-                            onSaveIconClick = interactionListener::onSaveIconClick,
-                        )
+                        if (isNoInternetConnection && (topRatedMovies.itemCount == 0)) {
+                            NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                        } else {
+                            PaginatedMediaListSectionContent(
+                                genres = state.movieGenres,
+                                mediaList = topRatedMovies,
+                                selectedGenreId = state.movieSelectedGenreId,
+                                onGenreClick = interactionListener::onMovieGenreClick,
+                                onMediaClick = { media ->
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                },
+                                onSaveIconClick = interactionListener::onSaveIconClick,
+                            )
+                        }
                     }
 
                     MediaTypeUi.TV_SHOW -> {
-                        PaginatedMediaListSectionContent(
-                            genres = state.tvShowGenres,
-                            mediaList = topRatedTvShows,
-                            selectedGenreId = state.tvShowSelectedGenreId,
-                            onGenreClick = interactionListener::onTvShowGenreClick,
-                            onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                            },
-                            onSaveIconClick = interactionListener::onSaveIconClick,
-                        )
+                        if (isNoInternetConnection && (topRatedTvShows.itemCount == 0)) {
+                            NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                        } else {
+                            PaginatedMediaListSectionContent(
+                                genres = state.tvShowGenres,
+                                mediaList = topRatedTvShows,
+                                selectedGenreId = state.tvShowSelectedGenreId,
+                                onGenreClick = interactionListener::onTvShowGenreClick,
+                                onMediaClick = { media ->
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                },
+                                onSaveIconClick = interactionListener::onSaveIconClick,
+                            )
+                        }
                     }
                 }
             }

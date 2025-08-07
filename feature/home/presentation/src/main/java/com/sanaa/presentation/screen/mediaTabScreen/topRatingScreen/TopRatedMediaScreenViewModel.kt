@@ -9,6 +9,7 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
@@ -54,64 +55,75 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         onDismissBottomSheet()
     }
 
+
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = {
-                loadTopRatedMovies(genreId = genreId)
-            }, onSuccess = { mediaList ->
-                updateState {
-                    it.copy(movieList = mediaList, isLoading = false)
-                }
-            },
+            callee = { loadTopRatedMovies(genreId = genreId) },
+            onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
+    }
+
+    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+        updateState {
+            it.copy(movieList = mediaList, isLoading = false)
+        }
     }
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
-            callee = {
-                loadTopRatedTvSeries(genreId = genreId)
-            }, onSuccess = { mediaList ->
-                updateState {
-                    it.copy(tvShowList = mediaList, isLoading = false)
-                }
-            },
+            callee = { loadTopRatedTvSeries(genreId = genreId) },
+            onSuccess = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
+    }
+
+    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+        updateState {
+            it.copy(tvShowList = mediaList, isLoading = false)
+        }
     }
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageMovieUseCase.getMovieGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(movieGenres = genres, isLoading = false)
-                }
-            },
+            callee = ::fetchMovieGenresOperation,
+            onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
+    private suspend fun fetchMovieGenresOperation(): List<Genre> {
+        updateState {
+            it.copy(isLoading = true)
+        }
+        return manageMovieUseCase.getMovieGenres()
+    }
+
+    private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false)
+        }
+    }
+
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(tvShowGenres = genres, isLoading = false)
-                }
-            },
+            callee = ::fetchTvShowGenresOperation,
+            onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
+    }
+
+    private suspend fun fetchTvShowGenresOperation(): List<Genre> {
+        updateState {
+            it.copy(isLoading = true)
+        }
+        return manageTvSeriesUseCase.getSeriesGenres()
+    }
+
+    private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
+        updateState {
+            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false)
+        }
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
@@ -119,10 +131,10 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onMovieGenreClick(id: Int?) {
-        if (id != state.value.movieSelectedGenreId) {
-            updateState { it.copy(movieSelectedGenreId = id) }
-            fetchMovies(id)
-        }
+        if (id == state.value.movieSelectedGenreId) return
+
+        updateState { it.copy(movieSelectedGenreId = id) }
+        fetchMovies(id)
     }
 
     override fun onTvShowGenreClick(id: Int?) {
@@ -160,6 +172,13 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
+    override fun onRetryClick() {
+        updateUserLoggingStatus()
+        fetchMovieGenres()
+        fetchTvShowGenres()
+        fetchMovies()
+        fetchTvShows()
+    }
 
     private fun loadTopRatedMovies(
         genreId: Int?
@@ -181,13 +200,12 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         updateState { it.copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = {
-                createTvShowPagingDataSource(
-                    genreId = genreId
-                )
+                createTvShowPagingDataSource(genreId = genreId)
             },
             mapper = TvSeries::toState
         )
     }
+
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
             updateState { it.copy(isNoInternetConnection = true) }
@@ -199,7 +217,10 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
 
-    private fun createMoviePagingDataSource(genreId: Int?, onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+    private fun createMoviePagingDataSource(
+        genreId: Int?,
+        onError: ((Throwable) -> Unit)? = ::onDataLoadError
+    ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTopRatedMovies(
                 page = page,
@@ -208,8 +229,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createTvShowPagingDataSource(genreId: Int?): PagingSource<Int, TvSeries> {
-        return BasePagingSourceForHome { page ->
+    private fun createTvShowPagingDataSource(
+        genreId: Int?,
+        onError: ((Throwable) -> Unit)? = ::onDataLoadError
+    ): PagingSource<Int, TvSeries> {
+        return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTopRatedTvSeries(
                 page = page,
                 genreId = genreId
