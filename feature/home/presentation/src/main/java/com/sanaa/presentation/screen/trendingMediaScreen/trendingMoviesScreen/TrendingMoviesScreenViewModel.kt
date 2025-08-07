@@ -85,19 +85,21 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (state.value.userIsLoggedIn) {
+        if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaId = media.id
                 )
             }
-        } else {
-            updateState {
-                it.copy(
-                    showBottomSheet = true
-                )
-            }
+//            savedMovieStatusProvider.markSaved(media.id)
         }
     }
 
@@ -142,10 +144,6 @@ class TrendingMoviesScreenViewModel @Inject constructor(
             },
             onError = ::onDataLoadError
         )
-    }
-
-    private fun onMoviesLoaded(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData)) }
     }
 
     private fun onDataLoadError(e: Throwable) {

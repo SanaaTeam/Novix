@@ -71,6 +71,8 @@ fun TrendingMoviesScreen(
         interactionListener = viewModel,
         modifier = modifier,
     )
+    val currentState = state
+    val selectedId = currentState.value.selectedMediaId ?: 0
 
     if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
         SaveToListBottomSheet(
@@ -80,10 +82,10 @@ fun TrendingMoviesScreen(
             onCreateNewListClick = viewModel::onCreateNewListClick
         )
     }
-
     AddBookmarkListBottomSheet(
         isVisible = state.value.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+        mediaId = selectedId
     )
 }
 
