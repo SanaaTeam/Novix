@@ -27,8 +27,7 @@ dagger = "2.56.2"
 # Dependancies versions
 agp = "8.10.1"
 paging = "3.3.6"
-composeBomVersion = "2024.06.00"
-foundationLayoutAndroid = "1.6.8"
+foundationLayoutAndroid = "1.8.3"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
 kotlin = "2.0.21"
@@ -67,8 +66,10 @@ datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
 uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
-tvFoundation = "1.0.0-alpha07"
-tvMaterial = "1.0.0-alpha07"
+
+composeBomVersion = "2025.07.00"
+tvMaterial        = "1.0.1"
+tvFoundation = "1.0.0-alpha11"
 
 [libraries]
 # AndroidX
