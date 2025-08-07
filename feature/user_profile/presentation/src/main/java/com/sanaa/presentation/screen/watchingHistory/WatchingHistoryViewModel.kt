@@ -12,6 +12,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -136,7 +137,7 @@ class WatchingHistoryViewModel @Inject constructor(
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.MOVIE,
-            username = user.username
+            username = user.first().username
         )
     }
 
@@ -154,7 +155,7 @@ class WatchingHistoryViewModel @Inject constructor(
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.TV_SERIES,
-            username = user.username
+            username = user.first().username
         )
     }
 
