@@ -63,7 +63,14 @@ fun HomeScreenContent(
 
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
-        launchAuthActivityForResult()
+        launchAuthActivityForResult(
+            loggedInWithSessionId =  {
+
+            },
+            loggedInAsGuest = {
+
+            },
+        )
 
     LaunchedEffect(upcomingMovies.loadState) {
         if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {

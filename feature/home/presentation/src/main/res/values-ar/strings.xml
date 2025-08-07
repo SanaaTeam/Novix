@@ -25,4 +25,12 @@
     <string name="no_watching_history">لا توجد مشاهدات بعد</string>
     <string name="no_history_yet">لا توجد مشاهدات بعد</string>
     <string name="failed_to_load_watching_history">فشل في تحميل سجل المشاهدات</string>
+    <string name="error_message">شيئا ما خاطئ</string>
+    <string name="onboarding_title_1">اكتشف أفضل الأفلام والمسلسلات</string>
+    <string name="onboarding_desc_1">تصفح أحدث الإصدارات والاتجاهات والمحتوى المناسب لذوقك — كل ذلك في مكان واحد.</string>
+    <string name="onboarding_title_2">ابحث بسهولة... وشاهد ما يناسبك</string>
+    <string name="onboarding_desc_2">استخدم البحث الذكي والفلاتر للعثور على ما تحب — أكشن، دراما، جريمة، أنمي والمزيد!</string>
+    <string name="onboarding_title_3">قيّم، احفظ، وأنشئ قوائمك الخاصة</string>
+    <string name="onboarding_desc_3">قيّم الأفلام، تابع سجل مشاهداتك، واحفظ قوائمك المفضلة بسهولة.</string>
+    <string name="skip">تخطي</string>
 </resources>

@@ -123,4 +123,5 @@ dependencies {
 }
 tasks.withType(Test::class.java).configureEach {
     useJUnitPlatform()
+
 }
