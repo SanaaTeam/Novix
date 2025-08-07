@@ -119,8 +119,9 @@ fun CategoryTabContent(
                     onMovieClick = { recent, movie ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = { interactionsListener.onSaveMoviesClicked() }
-                )
+                    onSaveIconClicked = { movie ->
+                        interactionsListener.onSaveIconClick(movie)
+                    })
             }
         }
 
@@ -135,7 +136,7 @@ fun CategoryTabContent(
                     onTvShowClick = { recent, tvShow ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = {  }
+                    onSaveIconClicked = { }
                 )
             }
         }
