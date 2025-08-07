@@ -41,7 +41,7 @@ class WatchingHistoryViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
         coEvery { manageWatchingHistoryUseCase.getMediaHistory(any(),any(),any()) } returns flowOf(dummyHistoryItems)
     }
 
@@ -172,7 +172,7 @@ class WatchingHistoryViewModelTest {
         val newGenreId = 99
         val movieHistory = listOf(dummyHistoryItem.copy(id = 1))
 
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
         coEvery {
             manageWatchingHistoryUseCase.getMediaHistory(
                 genreId = newGenreId,
@@ -204,7 +204,7 @@ class WatchingHistoryViewModelTest {
         val newGenreId = 77
         val tvShowHistory = listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SERIES))
 
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
         coEvery {
             manageWatchingHistoryUseCase.getMediaHistory(
                 genreId = newGenreId,
