@@ -13,6 +13,5 @@ fun MediaHistoryItem.toMediaItemUiModel(): MediaItemUiModel {
             MediaType.MOVIE -> MediaTypeUi.MOVIE
             MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
         },
-        isSaved = this.isSaved
     )
 }

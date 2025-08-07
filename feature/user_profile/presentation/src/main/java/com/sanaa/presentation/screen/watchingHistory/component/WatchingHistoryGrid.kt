@@ -66,7 +66,6 @@ fun WatchingHistoryGrid(
                     },
                     topLeftContent = {
                         SaveIconChip(
-                            isSaved = it.isSaved,
                             onClick = { onSaveIconClick(it) }
                         )
                     },
