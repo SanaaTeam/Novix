@@ -116,7 +116,7 @@ fun TopRatedMediaScreen(
     AddBookmarkListBottomSheet(
         isVisible = state.value.showAddListBottomSheet,
         onDismiss = viewModel::onDismissAddListBottomSheet,
-        mediaId = state.value.selectedMediaToSave!!.id
+        mediaId = state.value.selectedMediaToSave?.id ?: 0
     )
 
 }

@@ -79,7 +79,6 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
             callee = {
@@ -162,21 +161,23 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (state.value.userIsLoggedIn) {
+        if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = media
                 )
             }
-        } else {
-            updateState {
-                it.copy(
-                    showLoginBottomSheet = true
-                )
-            }
         }
     }
+
 
     override fun onDismissSaveToListBottomSheet() {
         updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
