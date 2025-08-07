@@ -31,7 +31,6 @@ class SavedMovieStatusProviderImplTest {
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
 
-    data class SavedListItem(val id: Int)
 
     @Before
     fun setUp() {
