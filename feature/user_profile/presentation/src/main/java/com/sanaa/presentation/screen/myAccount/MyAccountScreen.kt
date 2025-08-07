@@ -79,7 +79,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             }
 
             NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
-            NavigateToWatchingHistory -> {
+            NavigateToWatchingHistory -> {navController.navigate(WatchingHistoryScreenRoute)
             }
 
             is MyAccountScreenEffect.UpdateAppTheme -> {
