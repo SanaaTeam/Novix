@@ -12,7 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,8 +34,10 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaTabs
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
@@ -46,6 +51,7 @@ fun TopRatedMediaScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -104,12 +110,26 @@ fun TopRatedMediaScreen(
             viewModel.onLoginButtonClick()
         }
     )
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
     state.value.selectedMediaToSave?.let { mediaItem ->
         SaveToListBottomSheet(
             isVisible = state.value.showSaveToListBottomSheet,
             mediaId = mediaItem.id.toLong(),
             onDismiss = viewModel::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = viewModel::onCreateNewListClick
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
         )
     }
 

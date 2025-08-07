@@ -235,17 +235,20 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (state.value.userIsLoggedIn) {
-            updateState {
-                it.copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong()
-                )
+            if (media.isSaved) {
+                savedMovieStatusProvider.markUnsaved(media.id)
+            } else {
+                updateState {
+                    it.copy(
+                        showSaveToListBottomSheet = true,
+                        selectedMediaId = media.id.toLong()
+                    )
+                }
             }
         } else {
             emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
         }
     }
-
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
     }
