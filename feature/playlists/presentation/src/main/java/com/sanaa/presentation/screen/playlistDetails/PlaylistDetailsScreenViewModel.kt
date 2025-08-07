@@ -17,14 +17,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.custom_list.ManageSavedListItemsUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState()),
@@ -42,10 +40,8 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState { it.copy(listId = listId) }
     }
 
-
     private fun loadItemsInSaved(categoryId: Int) {
         tryToCollect(
-
             callee = {
                 loadSavedMovies(categoryId)
             },

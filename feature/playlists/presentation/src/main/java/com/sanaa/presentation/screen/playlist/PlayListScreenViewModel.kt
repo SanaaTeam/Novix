@@ -3,10 +3,8 @@ package com.sanaa.presentation.screen.playlist
 import android.util.Log
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
@@ -14,15 +12,13 @@ import javax.inject.Inject
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
     PlayListScreenInteractionListener {
 
     init {
         loadSavedLists()
-        updateUserStatus()
+        getUserState()
     }
 
     fun loadSavedLists() = tryToExecute(
@@ -54,7 +50,6 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
 
-
     override fun onFabBottomSheetClicked() {
         updateState { it.copy(showAddBottomSheet = true) }
     }
@@ -72,12 +67,15 @@ class PlayListScreenViewModel @Inject constructor(
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
 
-    private suspend fun getUserState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private fun getUserState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isUserLoggedIn ->
+                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+            }
+        )
+
     }
 
-    fun updateUserStatus() {
-        tryToExecute(callee = ::getUserState)
-    }
+
 }

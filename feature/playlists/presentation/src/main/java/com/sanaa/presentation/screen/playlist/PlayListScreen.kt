@@ -45,21 +45,15 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
         PlayListApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
 
     LaunchedEffect(Unit) {
         snapshotFlow { navController.currentBackStackEntry }
             .collect { backStackEntry ->
 
-                val deleted = backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") ?: false
+                val deleted =
+                    backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") ?: false
 
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()

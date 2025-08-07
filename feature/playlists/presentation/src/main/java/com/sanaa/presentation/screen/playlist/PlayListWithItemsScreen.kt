@@ -18,8 +18,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.screen.playlist.componants.MyListItem
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.screen.playlist.componants.MyListItem
 
 @Composable
 fun PlayListWithItemsScreen(
@@ -53,14 +53,14 @@ fun PlayListWithItemsScreen(
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 items(lists) { list ->
                     MyListItem(
-                        onItemClick = { onItemClick(list.id,list.title) },
+                        onItemClick = { onItemClick(list.id, list.title) },
                         title = list.title,
                         count = list.mediaCount
                     )
                 }
             }
         }
-        if (isVisible){
+        if (isVisible) {
             AddBookmarkListBottomSheet(
                 isVisible = isVisible,
                 onDismiss = onDismissAddBottomSheet
@@ -75,26 +75,26 @@ private fun PlayListWithItemsScreenPrev() {
     NovixTheme(
         isSystemInDarkTheme()
     ) {
-     /*   PlayListWithItemsScreen(
-            lists = listOf(
-                PlayListUiModel(
-                    id = 1,
-                    title = "My List",
-                    mediaCount = 10
-                ),
-                PlayListUiModel(
-                    id = 2,
-                    title = "My List",
-                    mediaCount = 10
-                ),
-                PlayListUiModel(
-                    id = 3,
-                    title = "My List",
-                    mediaCount = 10
-                ),
-            ),
-            onItemClick = onItemClick ={0,"j"}
+        /*   PlayListWithItemsScreen(
+               lists = listOf(
+                   PlayListUiModel(
+                       id = 1,
+                       title = "My List",
+                       mediaCount = 10
+                   ),
+                   PlayListUiModel(
+                       id = 2,
+                       title = "My List",
+                       mediaCount = 10
+                   ),
+                   PlayListUiModel(
+                       id = 3,
+                       title = "My List",
+                       mediaCount = 10
+                   ),
+               ),
+               onItemClick = onItemClick ={0,"j"}
 
-        )*/
+           )*/
     }
 }
