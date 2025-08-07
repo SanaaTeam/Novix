@@ -83,11 +83,15 @@ fun OnBoardingScreenContent(
                 .statusBarsPadding(),
             topBar = {
                 if (pagerState.currentPage != state.pageList.lastIndex) {
-                    TextButton(
-                        text = stringResource(id = R.string.skip),
-                        onClick = interactionListener::onSkipClick,
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
-                    )
+                    Row (
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp)
+                    ){
+                        TextButton(
+                            text = stringResource(id = R.string.skip),
+                            onClick = interactionListener::onSkipClick,
+                        )
+                    }
                 }
             }
 
@@ -160,7 +164,7 @@ fun OnBoardingScreenContent(
                         if (pagerState.currentPage != 0)
 
                             OutlinedButton(
-                                icon = painterResource(id = R.drawable.icon_left_arrow),
+                                icon = painterResource(id = R.drawable.icon_back),
                                 text = null,
                                 onClick = { interactionListener.onBackClick() },
                                 modifier = Modifier
@@ -182,7 +186,15 @@ fun OnBoardingScreenContent(
 
 
 
-@Preview(showBackground = true, heightDp = 800, widthDp = 360)
+@Preview(
+    showBackground = true,
+    heightDp = 800,
+    widthDp = 360
+)
+@Preview(
+    name = "Arabic Preview",
+    locale = "ar"
+)
 @Composable
 private fun Preview() {
     NovixTheme {
@@ -205,7 +217,7 @@ private fun Preview() {
                         imageRes = R.drawable.onboarding_3
                     )
                 ),
-                currentPageIndex = 0,
+                currentPageIndex = 1,
                 isSkipable = false
             ),
             interactionListener = object : OnboardingInteractionsListener {
