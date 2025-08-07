@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
@@ -61,6 +64,12 @@ fun HomeScreenContent(
             }
         )
 
+    val showNoInternetScreen = (state.isNoInternetConnection
+            && upcomingMovies.itemCount == 0
+            && state.popularMedia.isEmpty()
+            && state.topRatingMedia.isEmpty()
+            && state.continueWatchingMedia.isEmpty())
+
     NovixScaffold(
         topBar = {
             HomeTopBar(
@@ -70,145 +79,145 @@ fun HomeScreenContent(
         },
         backgroundShapes = {}) {
 
-        if (
-            state.isNoInternetConnection
-            && upcomingMovies.itemCount == 0
-            && state.popularMedia.isEmpty()
-            && state.topRatingMedia.isEmpty()
-            && state.continueWatchingMedia.isEmpty()
-            ){
-            NetworkDisconnectionContact(
-                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Adaptive(minSize = 140.dp),
-                contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp, bottom = 12.dp
-                ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (state.isLoadingPopular) item(span = { GridItemSpan(maxLineSpan) }) {
-                    PopularMediaSectionPlaceholder(
-                        modifier = Modifier.fillWidthOfParent(16.dp)
-                    )
-                }
-                else item(span = { GridItemSpan(maxLineSpan) }) {
-                    PopularMediaSection(
-                        mediaItems = state.popularMedia, onMediaClick = {
-                            interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                        }, onSaveIconClicked = {
-                            interactionListener.onSaveIconClick(it)
-                        }, modifier = Modifier.fillWidthOfParent(16.dp)
-                    )
-                }
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    WhatToWatchSection(
-                        onMoviesClicked = {
-                            interactionListener.onMoviesCardClicked()
-                        },
-                        onTvShowsClicked = {
-                            interactionListener.onTvShowsCardClicked()
-                        },
-                        onPeopleClicked = {
-                            interactionListener.onPeopleCardClicked()
-                        },
-                        modifier = Modifier
-                            .fillWidthOfParent(16.dp)
-                            .padding(top = 8.dp),
-                        isLoading = state.isLoadingHistory
-                    )
-                }
-                if (state.isLoadingTopRated) item(span = { GridItemSpan(maxLineSpan) }) {
-                    MediaSliderSectionPlaceholder(
-                        modifier = Modifier
-                            .fillWidthOfParent(16.dp)
-                            .padding(
-                                top = 24.dp
-                            ),
-                    )
-                }
-                else {
+        AnimatedContent(
+            targetState = showNoInternetScreen,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) { isDisconnected ->
+            if (isDisconnected) {
+                NetworkDisconnectionContact(
+                    onRetryClick = interactionListener::onRetryClick,
+                    modifier = Modifier.fillMaxSize()
+                )
+            } else {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Adaptive(minSize = 140.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp, end = 16.dp, bottom = 12.dp
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (state.isLoadingPopular) item(span = { GridItemSpan(maxLineSpan) }) {
+                        PopularMediaSectionPlaceholder(
+                            modifier = Modifier.fillWidthOfParent(16.dp)
+                        )
+                    }
+                    else item(span = { GridItemSpan(maxLineSpan) }) {
+                        PopularMediaSection(
+                            mediaItems = state.popularMedia, onMediaClick = {
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                            }, onSaveIconClicked = {
+                                interactionListener.onSaveIconClick(it)
+                            }, modifier = Modifier.fillWidthOfParent(16.dp)
+                        )
+                    }
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        MixedMediaSection(
-                            headerLabel = stringResource(R.string.top_rated),
+                        WhatToWatchSection(
+                            onMoviesClicked = {
+                                interactionListener.onMoviesCardClicked()
+                            },
+                            onTvShowsClicked = {
+                                interactionListener.onTvShowsCardClicked()
+                            },
+                            onPeopleClicked = {
+                                interactionListener.onPeopleCardClicked()
+                            },
+                            modifier = Modifier
+                                .fillWidthOfParent(16.dp)
+                                .padding(top = 8.dp),
+                            isLoading = state.isLoadingHistory
+                        )
+                    }
+                    if (state.isLoadingTopRated) item(span = { GridItemSpan(maxLineSpan) }) {
+                        MediaSliderSectionPlaceholder(
                             modifier = Modifier
                                 .fillWidthOfParent(16.dp)
                                 .padding(
                                     top = 24.dp
                                 ),
-                            mediaItems = state.topRatingMedia,
-                            onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                            },
-                            onSaveIconClicked = {
-                                interactionListener.onSaveIconClick(it)
-                            },
-                            onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
-                    }
-                }
-                if (state.isLoadingHistory) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        MediaSliderSectionPlaceholder(
-                            modifier = Modifier
-                                .fillWidthOfParent(16.dp)
-                                .padding(
-                                    top = 24.dp, bottom = 24.dp
-                                ),
                         )
                     }
-                } else {
-                    if (state.continueWatchingMedia.isNotEmpty()) item(span = {
-                        GridItemSpan(maxLineSpan)
-                    }) {
-                        MixedMediaSection(
-                            headerLabel = stringResource(R.string.continue_watching),
-                            mediaItems = state.continueWatchingMedia,
-                            onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                            },
-                            onSaveIconClicked = {
-                                interactionListener.onSaveIconClick(it)
-                            },
-                            onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                            modifier = Modifier
-                                .fillWidthOfParent(16.dp)
-                                .padding(top = 24.dp),
-                        )
+                    else {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            MixedMediaSection(
+                                headerLabel = stringResource(R.string.top_rated),
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(
+                                        top = 24.dp
+                                    ),
+                                mediaItems = state.topRatingMedia,
+                                onMediaClick = {
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                },
+                                onSaveIconClicked = {
+                                    interactionListener.onSaveIconClick(it)
+                                },
+                                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+                        }
                     }
+                    if (state.isLoadingHistory) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            MediaSliderSectionPlaceholder(
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(
+                                        top = 24.dp, bottom = 24.dp
+                                    ),
+                            )
+                        }
+                    } else {
+                        if (state.continueWatchingMedia.isNotEmpty()) item(span = {
+                            GridItemSpan(maxLineSpan)
+                        }) {
+                            MixedMediaSection(
+                                headerLabel = stringResource(R.string.continue_watching),
+                                mediaItems = state.continueWatchingMedia,
+                                onMediaClick = {
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                },
+                                onSaveIconClicked = {
+                                    interactionListener.onSaveIconClick(it)
+                                },
+                                onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(top = 24.dp),
+                            )
+                        }
+                    }
+                    upcomingSection(
+                        upcomingMovies = upcomingMovies,
+                        movieGenres = state.movieGenres,
+                        movieSelectedGenreId = state.movieSelectedGenreId,
+                        onGenreClick = interactionListener::onMovieGenreClick,
+                        onSaveIconClick = interactionListener::onSaveIconClick,
+                        onMovieClick = interactionListener::onMediaClick,
+                        isLoading = state.isLoadingUpcoming
+                    )
                 }
-                upcomingSection(
-                    upcomingMovies = upcomingMovies,
-                    movieGenres = state.movieGenres,
-                    movieSelectedGenreId = state.movieSelectedGenreId,
-                    onGenreClick = interactionListener::onMovieGenreClick,
-                    onSaveIconClick = interactionListener::onSaveIconClick,
-                    onMovieClick = interactionListener::onMediaClick,
-                    isLoading = state.isLoadingUpcoming
+            }
+        }
+        if (upcomingMovies.loadState.hasError && !showNoInternetScreen) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                PrimaryButton(
+                    text = null,
+                    icon = painterResource(R.drawable.icon_refresh),
+                    onClick = upcomingMovies::retry,
+                    modifier = Modifier
+                        .width(52.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 16.dp),
                 )
             }
         }
-    }
-    if (upcomingMovies.loadState.append is LoadState.Error
-        || upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternetConnection
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            PrimaryButton(
-                text = null,
-                icon = painterResource(R.drawable.icon_refresh),
-                onClick = upcomingMovies::retry,
-                modifier = Modifier
-                    .width(52.dp)
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 16.dp),
-            )
-        }
-    }
 
+    }
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,
