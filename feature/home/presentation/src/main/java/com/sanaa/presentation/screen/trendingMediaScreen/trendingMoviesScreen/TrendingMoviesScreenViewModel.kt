@@ -99,7 +99,6 @@ class TrendingMoviesScreenViewModel @Inject constructor(
                     selectedMediaId = media.id
                 )
             }
-//            savedMovieStatusProvider.markSaved(media.id)
         }
     }
 

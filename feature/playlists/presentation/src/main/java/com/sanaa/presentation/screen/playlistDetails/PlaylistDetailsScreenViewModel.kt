@@ -1,8 +1,11 @@
 package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
@@ -15,7 +18,9 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
+import repository.SavedMovieStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import javax.inject.Inject
 
@@ -23,6 +28,7 @@ import javax.inject.Inject
 class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState()),
@@ -40,15 +46,21 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState { it.copy(listId = listId) }
     }
 
-    private fun loadItemsInSaved(categoryId: Int) {
-        tryToCollect(
+    private fun loadItemsInSaved(listId: Int) {
+        tryToExecute(
             callee = {
-                loadSavedMovies(categoryId)
+                val moviesPagingFlow = createPagingFlow(
+                    pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
+                    mapper = Movie::toUiModel
+                )
+                moviesPagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                    pagingData.map { mediaItem ->
+                        mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+                    }
+                }.cachedIn(viewModelScope)
             },
-            onCollect = { movies ->
-                updateState {
-                    it.copy(movieList = flowOf(movies), title = title, isLoading = false)
-                }
+            onSuccess = { moviesFlow ->
+                updateState { it.copy(movieList = moviesFlow, isLoading = false) }
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
@@ -75,7 +87,35 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(mediaItem: MediaItem) {
-        //   TODO("Not yet implemented")
+        if (mediaItem.isSaved) {
+            savedMovieStatusProvider.markUnsaved(mediaItem.id)
+
+            tryToExecute(
+                callee = {
+                    manageSavedListItemsUseCase.removeMovieFromSavedList(
+                        listId = listId,
+                        movieId = mediaItem.id
+                    )
+                },
+                onSuccess = {
+                    emitEffect(PlaylistDetailsScreenEffect.RefreshList)
+                },
+                onError = {
+                    savedMovieStatusProvider.markSaved(mediaItem.id)
+                }
+            )
+        }
+    }
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onBackClick() {
@@ -95,11 +135,17 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
-        return createPagingFlow(
+        val moviesPagingFlow = createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
             mapper = Movie::toUiModel
         )
+        return moviesPagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { mediaItem ->
+                mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+            }
+        }.cachedIn(viewModelScope)
     }
+
 
     private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
