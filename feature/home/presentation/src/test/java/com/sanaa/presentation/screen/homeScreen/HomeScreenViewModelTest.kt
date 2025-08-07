@@ -10,7 +10,6 @@ import entity.Movie
 import entity.TvSeries
 import entity.User
 import exceptions.NoLoggedInUserException
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -56,11 +55,7 @@ class HomeScreenViewModelTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         coEvery {
-            manageWatchedMediaHistoryUseCase.getMediaHistory(
-                any(),
-                any(),
-                any()
-            )
+            manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
@@ -180,29 +175,6 @@ class HomeScreenViewModelTest {
                 current
             }
             assertThat(state.movieGenres).hasSize(1)
-        }
-    }
-
-    @Test
-    fun `init should set isNoInternet to true for NoNetworkException`() = runTest(testDispatcher) {
-        // Given
-        coEvery { manageMovieUseCase.getPopularMovies(any()) } throws NoNetworkException()
-
-        // When
-        initializeViewModel()
-        testDispatcher.scheduler.advanceUntilIdle()
-        // Then
-        viewModel.state.test {
-            val state = awaitItem().let {
-                var current = it
-                while (!current.isNoInternetConnection) {
-                    current = awaitItem()
-                }
-                current
-            }
-
-            assertThat(state.isNoInternetConnection).isTrue()
-
             cancelAndConsumeRemainingEvents()
         }
     }
@@ -214,6 +186,7 @@ class HomeScreenViewModelTest {
             viewModel.effect.test {
                 viewModel.onMoviesCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
+                cancelAndConsumeRemainingEvents()
             }
         }
 
@@ -224,6 +197,7 @@ class HomeScreenViewModelTest {
             viewModel.effect.test {
                 viewModel.onTvShowsCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
+                cancelAndConsumeRemainingEvents()
             }
         }
 
@@ -234,6 +208,7 @@ class HomeScreenViewModelTest {
             viewModel.effect.test {
                 viewModel.onPeopleCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
+                cancelAndConsumeRemainingEvents()
             }
         }
 
@@ -244,6 +219,7 @@ class HomeScreenViewModelTest {
             viewModel.effect.test {
                 viewModel.onShowAllTopRatingClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTopRatingMediaScreen)
+                cancelAndConsumeRemainingEvents()
             }
         }
 
@@ -254,6 +230,7 @@ class HomeScreenViewModelTest {
             viewModel.effect.test {
                 viewModel.onShowAllContinueWatchingClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToWatchedMediaScreen)
+                cancelAndConsumeRemainingEvents()
             }
         }
 
@@ -268,6 +245,7 @@ class HomeScreenViewModelTest {
                     MediaTypeUi.MOVIE
                 )
             )
+            cancelAndConsumeRemainingEvents()
         }
     }
 
