@@ -28,6 +28,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
@@ -102,6 +104,20 @@ fun TopRatedMediaScreen(
             viewModel.onLoginButtonClick()
         }
     )
+    state.value.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = state.value.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick
+        )
+    }
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.value.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet
+    )
+
 }
 
 
