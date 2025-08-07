@@ -9,6 +9,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
+import com.sanaa.vod.dataSource.remote.dto.RatingResponse
 import com.sanaa.vod.dataSource.remote.dto.VideoDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
@@ -22,6 +23,7 @@ import exceptions.RetrievingDataFailureException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -361,7 +363,58 @@ class MovieRepositoryImplTest {
 
         coVerify(exactly = 1) { local.cacheGenres(any(), any()) }
     }
+    @Test
+    fun `getMovieRate should return rating if movie is rated`() = runTest {
+        coEvery { preferences.sessionId } returns flowOf("abc123")
+        coEvery { remote.fetchMoviesRate(any(), any()) } returns listOf(
+            MovieDto(id = 1, title = "Fight club", rating = 7f)
+        )
 
+        val result = repository.getMovieRate(accountId = 123, movieId = 1)
+
+        assertThat(result).isEqualTo(7)
+    }
+    @Test
+    fun `addMovieRate should returns true on success`() = runTest {
+        coEvery { preferences.sessionId } returns flowOf("session")
+        coEvery { remote.sendMovieRate(1, "session", 5f) } returns RatingResponse(
+            isSuccess = true,
+            statusCode = 1,
+            statusMessage = "Success"
+        )
+
+        val result = repository.addMovieRate(1, 5f)
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `addMovieRate should returns false on failure`() = runTest {
+        coEvery { preferences.sessionId } returns flowOf("session")
+        coEvery { remote.sendMovieRate(1, "session", 5f) } returns RatingResponse(
+            isSuccess = false,
+            statusCode = 400,
+            statusMessage = "Invalid rating"
+        )
+
+        val result = repository.addMovieRate(1, 5f)
+
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `deleteMovieRate should returns true on success`() = runTest {
+        coEvery { preferences.sessionId } returns flowOf("session")
+        coEvery { remote.deleteMovieRate(1, "session") } returns RatingResponse(
+            isSuccess = true,
+            statusCode = 200,
+            statusMessage = "Deleted"
+        )
+
+        val result = repository.deleteMovieRate(1)
+
+        assertThat(result).isTrue()
+    }
     companion object {
         private val sampleMovieDto = MovieDto(id = 1, title = "Fight club")
         private val sampleMovieLocalDto = MovieLocalDto(
