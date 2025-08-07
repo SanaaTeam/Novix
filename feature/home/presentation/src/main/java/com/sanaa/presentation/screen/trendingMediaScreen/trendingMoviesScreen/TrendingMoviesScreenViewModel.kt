@@ -8,6 +8,7 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
+import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,7 +41,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         loadMovies()
     }
 
-    fun updateUserLoggingStatus(){
+    fun updateUserLoggingStatus() {
         viewModelScope.launch {
             val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
             updateState {
@@ -53,28 +54,50 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageMovieUseCase.getMovieGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(genreList = genres, isLoading = false)
-                }
-            },
+            callee = ::loadGenresOperation,
+            onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    override fun onGenreClick(id: Int?) {
-        if (id != state.value.selectedGenreId) {
-            updateState {
-                it.copy(selectedGenreId = id)
-            }
-            loadMovies()
+    private suspend fun loadGenresOperation(): List<GenreUiState> {
+        updateState {
+            it.copy(isLoading = true)
         }
+        return manageMovieUseCase.getMovieGenres().map { it.toState() }
+    }
+
+    private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
+        updateState {
+            it.copy(genreList = genres, isLoading = false, isNoInternetConnection = false)
+        }
+    }
+
+    private fun loadMovies() {
+        tryToCollect(
+            callee = ::loadMoviesOperation,
+            onCollect = ::onLoadMoviesSuccess,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createMoviesPagingSource() },
+            mapper = Movie::toState
+        )
+    }
+
+    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
+        updateState { it.copy(mediaList = flowOf(pagingData)) }
+    }
+
+    override fun onGenreClick(id: Int?) {
+        if (id == state.value.selectedGenreId) return
+        updateState {
+            it.copy(selectedGenreId = id)
+        }
+        loadMovies()
     }
 
     override fun onMediaClick(id: Int) {
@@ -82,7 +105,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
             updateState {
                 it.copy(
                     showBottomSheet = true
@@ -107,25 +130,6 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
-    }
-
-    private fun loadMovies() {
-        tryToCollect(
-            callee = ::loadMoviesOperation,
-            onCollect = ::onMoviesLoaded,
-            onError = ::onDataLoadError
-        )
-    }
-
-    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
-        return createPagingFlow(
-            pagingSourceFactory = { createMoviesPagingSource() },
-            mapper = Movie::toState
-        )
-    }
-
-    private fun onMoviesLoaded(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData)) }
     }
 
     private fun onDataLoadError(e: Throwable) {

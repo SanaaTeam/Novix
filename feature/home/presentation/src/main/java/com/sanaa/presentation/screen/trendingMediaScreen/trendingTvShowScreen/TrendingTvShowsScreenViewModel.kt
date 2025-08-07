@@ -8,6 +8,7 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
+import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,28 +54,50 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(isLoading = true)
-                }
-                manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(genreList = genres, isLoading = false)
-                }
-            },
+            callee = ::loadGenresOperation,
+            onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    override fun onGenreClick(id: Int?) {
-        if (id != state.value.selectedGenreId) {
-            updateState {
-                it.copy(selectedGenreId = id)
-            }
-            loadTvShows()
+    private suspend fun loadGenresOperation(): List<GenreUiState> {
+        updateState {
+            it.copy(isLoading = true)
         }
+        return manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
+    }
+
+    private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
+        updateState {
+            it.copy(genreList = genres, isLoading = false, isNoInternetConnection = false)
+        }
+    }
+
+    private fun loadTvShows() {
+        tryToCollect(
+            callee = ::loadTvShowsOperation,
+            onCollect = ::onLoadTvShowsSuccess,
+            onError = ::onDataLoadError
+        )
+    }
+
+    private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
+        return createPagingFlow(
+            pagingSourceFactory = { createTvShowsPagingSource() },
+            mapper = TvSeries::toState
+        )
+    }
+
+    private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
+        updateState { it.copy(mediaList = flowOf(pagingData)) }
+    }
+
+    override fun onGenreClick(id: Int?) {
+        if (id == state.value.selectedGenreId) return
+        updateState {
+            it.copy(selectedGenreId = id)
+        }
+        loadTvShows()
     }
 
     override fun onMediaClick(id: Int) {
@@ -109,24 +132,6 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState { it.copy(showBottomSheet = false) }
     }
 
-    private fun loadTvShows() {
-        tryToCollect(
-            callee = ::loadTvShowsOperation,
-            onCollect = ::onTvShowsLoaded,
-            onError = ::onDataLoadError
-        )
-    }
-
-    private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
-        return createPagingFlow(
-            pagingSourceFactory = { createTvShowsPagingSource() },
-            mapper = TvSeries::toState
-        )
-    }
-
-    private fun onTvShowsLoaded(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData)) }
-    }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
@@ -139,7 +144,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
-        return BasePagingSourceForHome(onError= onError) { page ->
+        return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTrendingTvSeries(
                 page = page,
                 genreId = state.value.selectedGenreId
