@@ -20,4 +20,11 @@
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"
     <string name="error_message">Something went wrong</string>
+    <string name="onboarding_title_1">Discover best movies and series</string>
+    <string name="onboarding_desc_1">Browse the latest releases, trends, and content tailored to your taste — all in one place.</string>
+    <string name="onboarding_title_2">Search easily... and watch to your taste</string>
+    <string name="onboarding_desc_2">Use smart search and filters to find exactly what you love — action, drama, crime, anime and more!</string>
+    <string name="onboarding_title_3">Rate, save, and create your own lists</string>
+    <string name="onboarding_desc_3">Rate movies, track your viewing history, and easily save your favorite lists.</string>
+    <string name="skip">Skip</string>
 </resources>

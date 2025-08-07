@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="onboarding_title_0">اكتشف أفضل الأفلام والمسلسلات</string>
+    <string name="onboarding_desc_0">تصفح أحدث الإصدارات، وأهم الترندات، والمحتوى المخصص لذوقك — كل ذلك في مكان واحد.</string>
+
+    <string name="onboarding_title_1">ابحث بسهولة… وشاهد ما يناسب ذوقك</string>
+    <string name="onboarding_desc_1">استخدم البحث الذكي والفلاتر للعثور على ما تحبه تمامًا — أكشن، دراما، جريمة، أنمي والمزيد!</string>
+
+    <string name="onboarding_title_2">قيّم، واحفظ، وأنشئ قوائمك الخاصة</string>
+    <string name="onboarding_desc_2">قيّم الأفلام، تتبّع سجل مشاهداتك، واحتفظ بقوائمك المفضلة بكل سهولة.</string>
+
+    <string name="skip">تخطي</string>
+</resources>
