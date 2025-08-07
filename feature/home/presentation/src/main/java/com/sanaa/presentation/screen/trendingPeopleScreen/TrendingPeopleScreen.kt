@@ -33,6 +33,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
@@ -116,20 +117,20 @@ fun TrendingPeopleScreenContent(
         }
     ) {
         AnimatedContent(
-            targetState = state.isNoInternetConnection,
+            targetState = state.isNoInternetConnection && (people.itemCount == 0),
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
-        ) { isDisconnected ->
-            when {
-                isDisconnected && (people.itemCount == 0) -> {
-                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-                }
-                else -> {
-                    PersonList(
-                        persons = people,
-                        onItemClick = interactionListener::onActorClick
-                    )
+        ) { showNoInternetScreen ->
+            if (showNoInternetScreen) {
+                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+            } else {
+                PersonList(
+                    persons = people,
+                    onItemClick = interactionListener::onActorClick
+                )
+                if (people.loadState.hasError) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
             }
         }

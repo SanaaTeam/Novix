@@ -100,7 +100,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
         val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }
-        val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }
+        val topRatedTvSeries =
+            manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }
 
         return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
     }
@@ -188,23 +189,23 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    override fun onMoviesCardClicked() {
+    override fun onMoviesCardClick() {
         emitEffect(HomeScreenEffect.NavigateToMoviesScreen)
     }
 
-    override fun onTvShowsCardClicked() {
+    override fun onTvShowsCardClick() {
         emitEffect(HomeScreenEffect.NavigateToTvShowsScreen)
     }
 
-    override fun onPeopleCardClicked() {
+    override fun onPeopleCardClick() {
         emitEffect(HomeScreenEffect.NavigateToPeopleScreen)
     }
 
-    override fun onShowAllTopRatingClicked() {
+    override fun onShowAllTopRatingClick() {
         emitEffect(HomeScreenEffect.NavigateToTopRatingMediaScreen)
     }
 
-    override fun onShowAllContinueWatchingClicked() {
+    override fun onShowAllContinueWatchingClick() {
         emitEffect(HomeScreenEffect.NavigateToWatchedMediaScreen)
     }
 
@@ -230,7 +231,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClick() {
-        updateState { it.copy(isNoInternetConnection = false) }
         fetchPopularMediaData()
         fetchTopRatedMediaData()
         fetchWatchedMediaData()

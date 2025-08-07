@@ -4,13 +4,12 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 
 interface HomeScreenInteractionListener {
-    fun onMoviesCardClicked()
-    fun onTvShowsCardClicked()
-    fun onPeopleCardClicked()
+    fun onMoviesCardClick()
+    fun onTvShowsCardClick()
+    fun onPeopleCardClick()
 
-    fun onShowAllTopRatingClicked()
-    fun onShowAllContinueWatchingClicked()
-
+    fun onShowAllTopRatingClick()
+    fun onShowAllContinueWatchingClick()
 
     fun onMovieGenreClick(id: Int?)
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)

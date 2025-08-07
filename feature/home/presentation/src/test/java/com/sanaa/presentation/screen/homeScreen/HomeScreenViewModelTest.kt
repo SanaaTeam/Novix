@@ -212,7 +212,7 @@ class HomeScreenViewModelTest {
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onMoviesCardClicked()
+                viewModel.onMoviesCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
             }
         }
@@ -222,7 +222,7 @@ class HomeScreenViewModelTest {
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onTvShowsCardClicked()
+                viewModel.onTvShowsCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
             }
         }
@@ -232,7 +232,7 @@ class HomeScreenViewModelTest {
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onPeopleCardClicked()
+                viewModel.onPeopleCardClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
             }
         }
@@ -242,7 +242,7 @@ class HomeScreenViewModelTest {
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onShowAllTopRatingClicked()
+                viewModel.onShowAllTopRatingClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTopRatingMediaScreen)
             }
         }
@@ -252,7 +252,7 @@ class HomeScreenViewModelTest {
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
-                viewModel.onShowAllContinueWatchingClicked()
+                viewModel.onShowAllContinueWatchingClick()
                 assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToWatchedMediaScreen)
             }
         }

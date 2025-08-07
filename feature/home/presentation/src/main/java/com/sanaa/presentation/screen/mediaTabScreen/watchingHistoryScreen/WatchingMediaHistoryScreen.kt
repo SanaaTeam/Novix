@@ -35,6 +35,7 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
@@ -87,7 +88,6 @@ fun WatchingMediaHistoryScreen(
 
                 is WatchingMediaHistoryScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
-
                 }
             }
         }
@@ -115,8 +115,8 @@ private fun WatchingMediaHistoryScreenContent(
     interactionListener: WatchingMediaHistoryScreenInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    val topRatedTvShows = state.tvShowList
-    val topRatedMovies = state.movieList
+    val tvShows = state.tvShowList
+    val movies = state.movieList
 
     NovixScaffold(
         topBar = {
@@ -158,7 +158,7 @@ private fun WatchingMediaHistoryScreenContent(
                     MediaTypeUi.MOVIE -> {
                         MediaListSectionContent(
                             genres = state.movieGenres,
-                            mediaList = topRatedMovies,
+                            mediaList = movies,
                             selectedGenreId = state.movieSelectedGenreId,
                             onGenreClick = interactionListener::onMovieGenreClick,
                             onMediaClick = { media ->
@@ -172,7 +172,7 @@ private fun WatchingMediaHistoryScreenContent(
                     MediaTypeUi.TV_SHOW -> {
                         MediaListSectionContent(
                             genres = state.tvShowGenres,
-                            mediaList = topRatedTvShows,
+                            mediaList = tvShows,
                             selectedGenreId = state.tvShowSelectedGenreId,
                             onGenreClick = interactionListener::onTvShowGenreClick,
                             onMediaClick = { media ->
@@ -182,6 +182,9 @@ private fun WatchingMediaHistoryScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     }
+                }
+                if (state.showRefreshButton) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
             }
         }

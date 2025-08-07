@@ -19,6 +19,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
@@ -52,34 +53,33 @@ fun TrendingMediaScreenContent(
     ) {
 
         AnimatedContent(
-            targetState = state.isNoInternetConnection,
+            targetState = state.isNoInternetConnection && trendingMedia.itemCount == 0,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
-        ) { isDisconnected ->
-            when {
-                isDisconnected && (trendingMedia.itemCount == 0) -> {
-                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+        ) { showNoInternetScreen ->
+            if (showNoInternetScreen) {
+                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+            } else {
+                PaginatedMediaListSectionContent(
+                    genres = state.genreList,
+                    mediaList = trendingMedia,
+                    selectedGenreId = state.selectedGenreId,
+                    onGenreClick = interactionListener::onGenreClick,
+                    onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
+                    onSaveIconClick = interactionListener::onSaveIconClick,
+                )
+                if (trendingMedia.loadState.hasError) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
 
-                else -> {
-                    PaginatedMediaListSectionContent(
-                        genres = state.genreList,
-                        mediaList = trendingMedia,
-                        selectedGenreId = state.selectedGenreId,
-                        onGenreClick = interactionListener::onGenreClick,
-                        onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                    )
-
-                    RequestToLoginBottomSheet(
-                        isVisible = state.showBottomSheet,
-                        onDismiss = interactionListener::onDismissBottomSheet,
-                        onLoginButtonClick = {
-                            interactionListener.onLoginButtonClick()
-                        }
-                    )
-                }
+                RequestToLoginBottomSheet(
+                    isVisible = state.showBottomSheet,
+                    onDismiss = interactionListener::onDismissBottomSheet,
+                    onLoginButtonClick = {
+                        interactionListener.onLoginButtonClick()
+                    }
+                )
             }
         }
     }

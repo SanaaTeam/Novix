@@ -51,7 +51,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchMoviesSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(movieList = mediaList.map { it.toState() }, isLoading = false)
+            it.copy(movieList = mediaList.map { it.toState() }, isLoading = false, showRefreshButton = false)
         }
     }
 
@@ -65,7 +65,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowsSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false)
+            it.copy(tvShowList = mediaList.map { it.toState() }, isLoading = false, showRefreshButton = false)
         }
     }
 
@@ -86,7 +86,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false)
+            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false, showRefreshButton = false)
         }
     }
 
@@ -107,7 +107,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false)
+            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false, showRefreshButton = false)
         }
     }
 
@@ -145,6 +145,13 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         emitEffect(WatchingMediaHistoryScreenEffect.NavigateBack)
     }
 
+    override fun onRetryClick() {
+        fetchMovies()
+        fetchTvShows()
+        fetchMovieGenres()
+        fetchTvShowGenres()
+    }
+
     private suspend fun loadMediaHistory(
         mediaType: MediaType,
         genreId: Int?
@@ -167,10 +174,10 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true) }
+            updateState { it.copy(isNoInternetConnection = true, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
-            updateState { it.copy(isNoInternetConnection = false) }
+            updateState { it.copy(isNoInternetConnection = false, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }

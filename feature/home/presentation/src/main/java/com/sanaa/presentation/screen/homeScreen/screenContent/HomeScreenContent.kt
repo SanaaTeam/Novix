@@ -9,11 +9,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,16 +19,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
@@ -77,7 +74,8 @@ fun HomeScreenContent(
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             )
         },
-        backgroundShapes = {}) {
+        backgroundShapes = {}
+    ) {
 
         AnimatedContent(
             targetState = showNoInternetScreen,
@@ -116,13 +114,13 @@ fun HomeScreenContent(
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         WhatToWatchSection(
                             onMoviesClicked = {
-                                interactionListener.onMoviesCardClicked()
+                                interactionListener.onMoviesCardClick()
                             },
                             onTvShowsClicked = {
-                                interactionListener.onTvShowsCardClicked()
+                                interactionListener.onTvShowsCardClick()
                             },
                             onPeopleClicked = {
-                                interactionListener.onPeopleCardClicked()
+                                interactionListener.onPeopleCardClick()
                             },
                             modifier = Modifier
                                 .fillWidthOfParent(16.dp)
@@ -155,7 +153,7 @@ fun HomeScreenContent(
                                 onSaveIconClicked = {
                                     interactionListener.onSaveIconClick(it)
                                 },
-                                onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
+                                onViewAllClick = { interactionListener.onShowAllTopRatingClick() })
                         }
                     }
                     if (state.isLoadingHistory) {
@@ -181,7 +179,7 @@ fun HomeScreenContent(
                                 onSaveIconClicked = {
                                     interactionListener.onSaveIconClick(it)
                                 },
-                                onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
+                                onViewAllClick = { interactionListener.onShowAllContinueWatchingClick() },
                                 modifier = Modifier
                                     .fillWidthOfParent(16.dp)
                                     .padding(top = 24.dp),
@@ -201,22 +199,8 @@ fun HomeScreenContent(
             }
         }
         if (upcomingMovies.loadState.hasError && !showNoInternetScreen) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                PrimaryButton(
-                    text = null,
-                    icon = painterResource(R.drawable.icon_refresh),
-                    onClick = upcomingMovies::retry,
-                    modifier = Modifier
-                        .width(52.dp)
-                        .align(Alignment.BottomCenter)
-                        .padding(bottom = 16.dp),
-                )
-            }
+            RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
-
     }
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,

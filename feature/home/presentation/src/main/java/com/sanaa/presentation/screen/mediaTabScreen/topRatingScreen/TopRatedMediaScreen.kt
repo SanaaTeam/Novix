@@ -37,6 +37,7 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
@@ -191,6 +192,9 @@ private fun TopRatedMediaScreenContent(
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )
+                            if (topRatedMovies.loadState.hasError) {
+                                RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                            }
                         }
                     }
 
@@ -208,6 +212,9 @@ private fun TopRatedMediaScreenContent(
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )
+                            if (topRatedTvShows.loadState.hasError) {
+                                RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                            }
                         }
                     }
                 }
