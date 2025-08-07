@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -82,8 +81,8 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                   
-                    navController.navigate("watching_history_screen")
+
+                    navController.navigate(ContinueWatchingMediaScreenRoute)
                 }
 
                 else -> {
