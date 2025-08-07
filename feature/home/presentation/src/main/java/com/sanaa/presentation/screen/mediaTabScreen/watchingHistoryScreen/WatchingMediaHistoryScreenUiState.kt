@@ -13,6 +13,6 @@ data class WatchingMediaHistoryScreenUiState(
     val movieSelectedGenreId: Int? = null,
     val tvShowSelectedGenreId: Int? = null,
     val isLoading: Boolean = false,
-    val error: String? = null,
+    val isNoInternetConnection: Boolean = false,
     val showBottomSheet: Boolean = false
 )

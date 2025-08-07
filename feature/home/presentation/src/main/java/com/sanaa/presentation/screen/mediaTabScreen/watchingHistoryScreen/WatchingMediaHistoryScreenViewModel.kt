@@ -8,10 +8,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -25,6 +27,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<WatchingMediaHistoryScreenUiState, WatchingMediaHistoryScreenEffect>(
     WatchingMediaHistoryScreenUiState(),
@@ -42,7 +45,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
             onCollect = ::onFetchMoviesSuccess,
-            onError = ::onLoadDataError
+            onError = ::onDataLoadError
         )
     }
 
@@ -56,7 +59,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
-            onError = ::onLoadDataError
+            onError = ::onDataLoadError
         )
     }
 
@@ -70,7 +73,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         tryToExecute(
             callee = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
-            onError = ::onLoadDataError
+            onError = ::onDataLoadError
         )
     }
 
@@ -91,7 +94,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         tryToExecute(
             callee = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
-            onError = ::onLoadDataError
+            onError = ::onDataLoadError
         )
     }
 
@@ -162,12 +165,13 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onLoadDataError(exception: Throwable) {
-        updateState {
-            it.copy(
-                error = exception.message,
-                isLoading = false
-            )
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
 }

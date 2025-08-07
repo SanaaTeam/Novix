@@ -5,8 +5,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,11 +30,12 @@ import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
@@ -51,6 +55,8 @@ fun WatchingMediaHistoryScreen(
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
     }
+
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -78,16 +84,26 @@ fun WatchingMediaHistoryScreen(
                         }
                     }
                 }
+
+                is WatchingMediaHistoryScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+
+                }
             }
         }
     }
+    Box(modifier = modifier.systemBarsPadding()) {
 
-    NovixTheme(isSystemInDarkTheme()) {
         WatchingMediaHistoryScreenContent(
             title = stringResource(R.string.watching_history),
             state = state.value,
             interactionListener = viewModel,
-            modifier = modifier,
+            modifier = Modifier,
+        )
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
         )
     }
 }
@@ -112,10 +128,12 @@ private fun WatchingMediaHistoryScreenContent(
                     )
                 },
                 screenTitle = title,
-                modifier = Modifier.fillMaxWidth().padding(top = 12.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
             )
         },
-        modifier = modifier.systemBarsPadding(),
+        modifier = modifier,
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
