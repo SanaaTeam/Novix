@@ -41,9 +41,12 @@ import com.sanaa.presentation.component.OnBoardingPageContentItem
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
+    onFinishOnBoarding:()->Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    if (state.onboardingIsFinished) onFinishOnBoarding()
 
     OnBoardingScreenContent(
         state = state,
@@ -80,7 +83,6 @@ fun OnBoardingScreenContent(
                 .statusBarsPadding(),
             topBar = {
                 if (pagerState.currentPage != state.pageList.lastIndex) {
-
                     TextButton(
                         text = stringResource(id = R.string.skip),
                         onClick = interactionListener::onSkipClick,

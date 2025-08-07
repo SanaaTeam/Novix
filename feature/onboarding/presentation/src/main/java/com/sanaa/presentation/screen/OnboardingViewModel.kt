@@ -7,11 +7,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<OnboardingUiState>(OnboardingUiState(), dispatcher),
     OnboardingInteractionsListener {
@@ -53,11 +55,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun onSkipClick() {
-        updateState { it.copy(isSkipable = true) }
-
-        tryToExecute(
-            callee = {}
-        )
+        updateState { it.copy(isSkipable = true, onboardingIsFinished = true) }
     }
 
     override fun setCurrentPage(pageIndex: Int) {
