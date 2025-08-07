@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.presentation.screen.state.mapper.toUiState
+import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvBasePagingSource
 import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel

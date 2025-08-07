@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.state.mapper
+package com.sanaa.tvapp.presentation.screens.searchScreen.mapper
 
 import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
 import entity.TvSeries
