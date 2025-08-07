@@ -1,8 +1,7 @@
-package com.sanaa.presentation.screen.bottomsheets.addEditBookmark
+package com.sanaa.presentation.bottomsheets.addEditBookmark
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
