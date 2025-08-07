@@ -9,8 +9,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -42,7 +47,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     init {
         loadEpisode(seriesId, seasonNumber, episodeNumber)
-        updateUserStatus()
+        updateUserLoginState()
     }
 
 
@@ -139,6 +144,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         )
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) =
         coroutineScope {
             updateState { it.copy(isLoading = true) }
@@ -167,7 +173,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             val guests = guestsDeferred.await()
             val images = imagesDeferred.await()
             val trailerUrl = trailerDeferred.await()
-            val currentEpisodesRating = ratingDeferred.await()
+            val currentEpisodesRating = ratingDeferred.await().first()
 
             updateState {
                 it.copy(
@@ -181,13 +187,23 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
         }
 
-    private suspend fun getCurrentUserRating(): Int {
-        return try {
-            val userId = getUser.getLoggedInUser().id
-            manageTvSeriesDetails.getEpisodesRate(userId, seasonNumber, episodeNumber)
-        } catch (e: Exception) {
-            0
-        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getCurrentUserRating(): Flow<Int> {
+        return getUser.getLoggedInUser()
+            .flatMapLatest { user ->
+                flow {
+                    try {
+                        val rating = manageTvSeriesDetails.getEpisodesRate(
+                            user.id,
+                            seasonNumber,
+                            episodeNumber
+                        )
+                        emit(rating)
+                    } catch (e: Exception) {
+                        emit(0)
+                    }
+                }
+            }
     }
 
     private suspend fun submitEpisodeRating() {
@@ -204,13 +220,17 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
-    }
-
-    fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     private fun promptLogin(type: LoginPromptType) {

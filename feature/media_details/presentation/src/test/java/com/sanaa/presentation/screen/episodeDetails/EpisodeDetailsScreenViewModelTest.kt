@@ -11,6 +11,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -154,7 +155,7 @@ class EpisodeDetailsScreenViewModelTest {
 
     @Test
     fun `onRateClicked when user is logged in shows RateBottomSheet`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns true
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
         givenHappyViewModel()
         testDispatcher.scheduler.advanceUntilIdle()
         viewModel.onRateClicked()
@@ -204,7 +205,7 @@ class EpisodeDetailsScreenViewModelTest {
                 any()
             )
         } throws NoNetworkException()
-        coEvery { checkUserLogin.isLoggedIn() } returns false
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(

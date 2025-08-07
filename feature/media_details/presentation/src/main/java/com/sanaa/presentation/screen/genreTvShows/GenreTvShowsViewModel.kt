@@ -1,18 +1,16 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
@@ -36,15 +34,17 @@ class GenreTvShowsViewModel @Inject constructor(
         getTvShowsByGenreId(genreId)
     }
 
-    fun updateUserLoggingStatus(){
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+    fun updateUserLoggingStatus() {
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     override fun onSaveIconClick() {

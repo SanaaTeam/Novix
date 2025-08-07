@@ -55,14 +55,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
         ProfileApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
 
     LaunchedEffect(effect) {
@@ -70,6 +63,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             NavigateToChangePasswordSetting -> {
                 navController.navigate(ChangePasswordScreenRoute)
             }
+
             NavigateToContentRestrictionSetting -> {
             }
 
@@ -83,7 +77,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 activity?.recreate()
             }
 
-            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+            NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
             NavigateToWatchingHistory -> {
             }
 
