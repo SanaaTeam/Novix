@@ -38,15 +38,17 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         loadTvShows()
     }
 
-    fun updateUserLoggingStatus() {
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+    fun updateUserLoggingStatus(){
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     private fun fetchGenres() {

@@ -59,7 +59,6 @@ import com.sanaa.presentation.util.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
-
 @Composable
 fun MovieDetailsScreen(
     viewModel: MovieDetailsViewModel = hiltViewModel()
@@ -110,14 +109,7 @@ private fun HandleMovieDetailsEffects(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -158,7 +150,7 @@ private fun HandleMovieDetailsEffects(
                 is MovieDetailsUiEffect.ShowSuccessSnackBar -> onShowSuccess()
                 is MovieDetailsUiEffect.ShowErrorSnackBar -> onShowError()
 
-                MovieDetailsUiEffect.NavigateToLogin -> {
+                 MovieDetailsUiEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }

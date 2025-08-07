@@ -61,7 +61,7 @@ class SearchViewModel @Inject constructor(
         observeRecentSearchHistory()
         observeSelectedTheme()
         observeContentRestriction()
-        updateUserStatus()
+        getUserState()
     }
 
     override fun onSearchQueryChanged(query: String) {
@@ -403,14 +403,19 @@ class SearchViewModel @Inject constructor(
             )
     }
 
-    private suspend fun getUserState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private fun getUserState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
-    fun updateUserStatus() {
-        tryToExecute(callee = ::getUserState)
-    }
 
     private companion object {
         private const val PAGE_SIZE = 20

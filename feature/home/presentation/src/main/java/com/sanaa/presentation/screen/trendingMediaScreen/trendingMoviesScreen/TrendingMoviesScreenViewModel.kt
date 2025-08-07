@@ -13,6 +13,7 @@ import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiSt
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -42,15 +43,17 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         loadMovies()
     }
 
-    fun updateUserLoggingStatus() {
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+    fun updateUserLoggingStatus(){
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     private fun fetchGenres() {

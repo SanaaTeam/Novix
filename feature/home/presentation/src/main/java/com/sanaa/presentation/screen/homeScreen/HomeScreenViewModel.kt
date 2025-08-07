@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
-
 import androidx.lifecycle.viewModelScope
+
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
@@ -13,11 +13,13 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
-import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -72,17 +74,19 @@ class HomeScreenViewModel @Inject constructor(
         copy(isSaved = savedIds.contains(id))
 
     fun updateUserLoggingStatus() {
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn,
-                    showBottomSheet = false
-                )
-            }
-        }
-    }
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged,
+                        showBottomSheet = false
 
+                    )
+                }
+            },
+        )
+    }
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -182,14 +186,19 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private suspend fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(user.username, null, null)
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loadWatchedMediaHistory(): Flow<List<MediaHistoryItem>> {
+        return getLoggedInUserUseCase.getLoggedInUser()
+            .flatMapLatest { user ->
+                manageWatchedMediaHistoryUseCase.getMediaHistory(
+                    username = user.username,
+                    genreId = null,
+                    mediaType = null
+                )
+            }
+            .catch { e ->
+                emit(emptyList())
+            }
     }
 
 
@@ -256,10 +265,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
-    }
-
-    override fun onAuthActivityFinishedWithResult() {
-        updateUserLoggingStatus()
     }
 
 

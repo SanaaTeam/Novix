@@ -19,5 +19,4 @@ interface HomeScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onRetryClick()
-    fun onAuthActivityFinishedWithResult()
 }

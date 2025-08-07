@@ -10,7 +10,7 @@ import com.sanaa.api.AuthenticationApi
 
 
 @Composable
-fun launchAuthActivityForResult(loggedInWithSessionId:()-> Unit,loggedInAsGuest:()-> Unit) :ManagedActivityResultLauncher<Intent, ActivityResult>{
+fun launchAuthActivityForResult(loggedInWithSessionId:()-> Unit = {},loggedInAsGuest:()-> Unit = {}) :ManagedActivityResultLauncher<Intent, ActivityResult>{
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {result ->

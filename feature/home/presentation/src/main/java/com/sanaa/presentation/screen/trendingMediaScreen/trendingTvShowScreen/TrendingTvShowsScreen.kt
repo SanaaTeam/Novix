@@ -39,14 +39,7 @@ fun TrendingTvShowsScreen(
         HomeApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserLoggingStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserLoggingStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
