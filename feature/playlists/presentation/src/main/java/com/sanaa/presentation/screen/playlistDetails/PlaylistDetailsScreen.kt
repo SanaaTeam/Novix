@@ -2,9 +2,8 @@ package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,7 +15,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -106,12 +104,13 @@ fun PlaylistDetailsContent(
 
 
     NovixScaffold(
+
         topBar = {
             PlaylistDetailsTopBar(
                 title = state.title.orEmpty(),
                 interactionListener = interactionListener,
-                onDeleteListClicked = { interactionListener.onDeleteListClicked() }
             )
+
         }
     ) {
         Column(
@@ -141,31 +140,25 @@ fun PlaylistDetailsContent(
 fun PlaylistDetailsTopBar(
     title: String,
     interactionListener: PlaylistDetailsInteractionListener,
-    onDeleteListClicked: () -> Unit
 ) {
     TopBar(
         leftContent = {
             TopBarClickableIcon(
                 icon = painterResource(R.drawable.icon_back),
-                onClick = { interactionListener.onBackClick() }
+                onClick = interactionListener::onBackClick
             )
         },
         screenTitle = title,
         rightContent = {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                TopBarClickableIcon(
-                    icon = painterResource(R.drawable.icon_deleat),
-                    onClick = { onDeleteListClicked() },
-                    tint = Theme.colors.statusColors.redAccent
-                )
-            }
-
+            TopBarClickableIcon(
+                icon = painterResource(R.drawable.icon_deleat),
+                onClick = { interactionListener.onDeleteListClicked() },
+                tint = Theme.colors.statusColors.redAccent
+            )
         },
         modifier = Modifier
-            .systemBarsPadding()
-            .zIndex(10f)
+            .statusBarsPadding()
+            .padding(vertical = 12.dp)
     )
 }
 
