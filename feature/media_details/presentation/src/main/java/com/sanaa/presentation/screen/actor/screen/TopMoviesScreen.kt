@@ -15,6 +15,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,11 +38,16 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -62,14 +70,15 @@ fun TopMoviesScreen(
     val launcher = launchAuthActivityForResult()
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val selectedMedia = uiState.selectedMediaToSave
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
 
     TopMoviesContent(
         state = uiState,
         onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
-        onSaveIconClick = {
-            viewModel.onSaveClicked()
-        }
+        onSaveIconClick = viewModel::onSaveClicked,
     )
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
@@ -78,14 +87,42 @@ fun TopMoviesScreen(
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    SaveToListBottomSheet(
+        isVisible = uiState.showSaveToListBottomSheet,
+        mediaId = selectedMedia?.id?.toLong() ?: 0,
+        onDismiss = viewModel::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = viewModel::onCreateNewListClick,
+        onSuccess = {
+            snack = SnackData(
+                message = "Added to list successfully",
+                isError = false
+            )
+        },
+        onFailure = {
+            snack = SnackData(
+                message = "Added to list failed",
+                isError = true
+            )
+        },
+    )
+    if (uiState.showAddListBottomSheet && selectedMedia != null) {
+        AddBookmarkListBottomSheet(
+            isVisible = uiState.showAddListBottomSheet,
+            onDismiss = viewModel::onDismissAddListBottomSheet,
+            mediaId = selectedMedia.id
+        )
+    }
 }
+
 
 @Composable
 private fun TopMoviesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onSaveIconClick: () -> Unit,
+    onSaveIconClick: (MovieUiModel) -> Unit
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -98,7 +135,8 @@ private fun TopMoviesContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back), onClick = onBackClick
+                        icon = painterResource(id = designR.drawable.icon_back),
+                        onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),
@@ -166,9 +204,10 @@ private fun TopMoviesContent(
                                         }
                                     },
                                     topLeftContent = {
-                                        SaveIconChip(onClick = {
-                                            onSaveIconClick()
-                                        })
+                                        SaveIconChip(
+                                            isSaved = movie.isSaved,
+                                            onClick = { onSaveIconClick(movie) }
+                                        )
                                     },
                                     onCardClick = {
                                         navController.navigate(MovieDetailsScreenRoute(movie.id).route())

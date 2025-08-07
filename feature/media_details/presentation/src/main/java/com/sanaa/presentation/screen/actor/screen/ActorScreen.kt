@@ -24,8 +24,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -41,6 +41,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -59,6 +60,7 @@ import com.sanaa.presentation.screen.actor.componants.PosterCard
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
+import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
@@ -75,7 +77,7 @@ fun ActorScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-   val launcher =  launchAuthActivityForResult()
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -132,7 +134,7 @@ private fun ActorScreenContent(
     modifier: Modifier = Modifier,
 ) {
 
-    val lazyState =  rememberLazyListState()
+    val lazyState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
     val animatedColor by animateColorAsState(
         targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
@@ -179,7 +181,10 @@ private fun ActorScreenContent(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             LoadingIndicator()
                         }
                     }
@@ -213,7 +218,7 @@ private fun ActorScreenContent(
                                     overview = bio,
                                     onReadMore = { /* expand */ },
                                     modifier = Modifier
-                                        .padding(start = 16.dp, end = 16.dp,top=16.dp)
+                                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
                                         .fillMaxWidth()
                                 )
                             }
@@ -238,7 +243,9 @@ private fun ActorScreenContent(
                             ) { movie ->
                                 PosterCard(movie.posterUrl, onCardClick = {
                                     listener.onMovieClicked(movie.id)
-                                }, onSaveClick = listener::onSaveClicked)
+                                }, topLeftContent = {
+                                    SaveIconChip(onClick = { listener.onSaveClicked(movie) })
+                                })
                             }
                         }
 
@@ -250,7 +257,7 @@ private fun ActorScreenContent(
                             ) { series ->
                                 PosterCard(series.posterPath, onCardClick = {
                                     listener.onSeriesClicked(series.id)
-                                }, onSaveClick = listener::onSaveClicked)
+                                },)
                             }
                         }
                     }
