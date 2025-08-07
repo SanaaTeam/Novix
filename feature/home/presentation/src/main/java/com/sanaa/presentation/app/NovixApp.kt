@@ -101,9 +101,7 @@ private fun AppNavigation(
         composable<ContinueWatchingMediaScreenRoute> {
             ContinueWatchingMediaScreen()
         }
-
-        composable("watching_history_screen") {
-        }
+        
 
     }
 }
