@@ -51,7 +51,7 @@ fun SaveToListBottomSheet(
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: SaveToListViewModel = hiltViewModel()
+    val viewModel: SavetoListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
@@ -63,12 +63,12 @@ fun SaveToListBottomSheet(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                SaveToListEffect.AddedSuccessfully -> {
+                SavetoListEffect.AddedSuccessfully -> {
                     onSuccess()
                     onDismiss()
                 }
 
-                SaveToListEffect.FailedToAdd -> onFailure()
+                SavetoListEffect.FailedToAdd -> onFailure()
             }
         }
     }
@@ -91,7 +91,7 @@ fun SaveToListBottomSheet(
 @Composable
 private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
-    state: SavetoListUiState,
+    state: SaveToListUiState,
     onDismiss: () -> Unit,
     onPlaylistSelected: (Long) -> Unit,
     onAddClick: () -> Unit,
@@ -218,14 +218,14 @@ private fun PlaylistItem(
 @Composable
 private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
-        PlayListUiItem(id = 1, title = "My favorite", itemCount = 12),
-        PlayListUiItem(id = 2, title = "My movies", itemCount = 5),
-        PlayListUiItem(id = 3, title = "Watch Later", itemCount = 23)
+        PlaylistUiItem(id = 1, title = "My favorite", itemCount = 12),
+        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5),
+        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23)
     )
 
     var state by remember {
         mutableStateOf(
-            SavetoListUiState(
+            SaveToListUiState(
                 playlists = playlists,
                 selectedListId = 1,
                 isAddButtonEnabled = true

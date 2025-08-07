@@ -135,7 +135,7 @@ fun CategoryTabContent(
                     onTvShowClick = { recent, tvShow ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = { interactionsListener::onSaveSeriesClicked }
+                    onSaveIconClicked = {  }
                 )
             }
         }

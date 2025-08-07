@@ -1,6 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import com.sanaa.presentation.savedBase.BaseViewModel
+import com.sanaa.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -10,12 +10,12 @@ import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class SaveToListViewModel @Inject constructor(
+class SavetoListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SavetoListUiState, SaveToListEffect>(SavetoListUiState(),dispatcher) {
+) : BaseViewModel<SaveToListUiState, SavetoListEffect>(SaveToListUiState(),dispatcher) {
 
     init {
         loadPlaylists()
@@ -28,7 +28,7 @@ class SaveToListViewModel @Inject constructor(
             callee = { manageSavedListsUseCase.getSavedLists() },
             onSuccess = { domainLists ->
                 val uiLists = domainLists.map { savedList ->
-                    PlayListUiItem(
+                    PlaylistUiItem(
                         id = savedList.id.toLong(),
                         title = savedList.title,
                         itemCount = savedList.itemCount
@@ -67,7 +67,7 @@ class SaveToListViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false) }
                 savedMovieStatusProvider.markSaved(mediaId.toInt())
                 loadPlaylists()
-                emitEffect(SaveToListEffect.AddedSuccessfully)
+                emitEffect(SavetoListEffect.AddedSuccessfully)
             },
             onError = {
                 updateState {
@@ -76,7 +76,7 @@ class SaveToListViewModel @Inject constructor(
                         errorMessage = "Failed to add item to list."
                     )
                 }
-                emitEffect(SaveToListEffect.FailedToAdd)
+                emitEffect(SavetoListEffect.FailedToAdd)
             }
         )
     }

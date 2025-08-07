@@ -26,11 +26,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
+import repository.SavedMovieStatusProvider
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
@@ -49,6 +51,7 @@ class SearchViewModel @Inject constructor(
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -100,15 +103,36 @@ class SearchViewModel @Inject constructor(
         emitEffect(SearchScreenEffects.NavigateToLogin)
     }
 
-    override fun onSaveSeriesClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
+
+
+    override fun onSaveIconClick(media: MovieUiModel) {
+        if (!state.value.isUserLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
+            savedMovieStatusProvider.markSaved(media.id)
             updateState {
                 it.copy(
-                    showLoginBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = media
                 )
             }
         }
+    }
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onSaveMoviesClicked() {
@@ -324,10 +348,15 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
-        return createPagingFlow(
+        val moviesPagingFlow = createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
+        return moviesPagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { movie ->
+                movie.copy(isSaved = savedIds.contains(movie.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
