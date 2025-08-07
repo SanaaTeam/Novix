@@ -19,5 +19,12 @@
     <string name="request_login">يرجى تسجيل الدخول للحفظ في القائمة</string>
     <string name="add_to_list">اضافة الى القائمة</string>"
     <string name="login">تسجيل دخول</string>
-    <string name="error_message">حدث خطأ</string>
+    <string name="error_message">شيئا ما خاطئ</string>
+    <string name="onboarding_title_1">اكتشف أفضل الأفلام والمسلسلات</string>
+    <string name="onboarding_desc_1">تصفح أحدث الإصدارات والاتجاهات والمحتوى المناسب لذوقك — كل ذلك في مكان واحد.</string>
+    <string name="onboarding_title_2">ابحث بسهولة... وشاهد ما يناسبك</string>
+    <string name="onboarding_desc_2">استخدم البحث الذكي والفلاتر للعثور على ما تحب — أكشن، دراما، جريمة، أنمي والمزيد!</string>
+    <string name="onboarding_title_3">قيّم، احفظ، وأنشئ قوائمك الخاصة</string>
+    <string name="onboarding_desc_3">قيّم الأفلام، تابع سجل مشاهداتك، واحفظ قوائمك المفضلة بسهولة.</string>
+    <string name="skip">تخطي</string>
 </resources>

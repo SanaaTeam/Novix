@@ -133,7 +133,7 @@ class HomeScreenViewModelTest {
     @Test
     fun `init should fetch watched history when user is logged in`() = runTest(testDispatcher) {
         val historyItems = listOf(dummyHistoryItem)
-        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns dummyUser
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(
                 dummyUser.username,

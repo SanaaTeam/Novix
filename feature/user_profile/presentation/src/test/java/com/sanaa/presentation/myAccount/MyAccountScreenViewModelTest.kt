@@ -21,6 +21,7 @@ import repository.Language
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
+import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
 
 @ExperimentalCoroutinesApi
@@ -31,6 +32,7 @@ class MyAccountScreenViewModelTest {
     private val mangeUserPreference: MangeUserPreferenceUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
+    private val logOutUseCase: LogOutUseCase = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -44,6 +46,7 @@ class MyAccountScreenViewModelTest {
             mangeUserPreference,
             checkIfUserIsLoggedInUseCase,
             getLoggedInUserUseCase,
+            logOutUseCase,
             testDispatcher,
         )
     }

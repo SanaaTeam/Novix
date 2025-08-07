@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -44,17 +43,18 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     fun updateUserLoggingStatus() {
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
         onDismissBottomSheet()
     }
-
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(

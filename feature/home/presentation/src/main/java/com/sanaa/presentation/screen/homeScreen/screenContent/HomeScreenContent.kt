@@ -53,12 +53,12 @@ fun HomeScreenContent(
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
         launchAuthActivityForResult(
-            loggedInWithSessionId = {
-                interactionListener.onAuthActivityFinishedWithResult()
+            loggedInWithSessionId =  {
+
             },
             loggedInAsGuest = {
-                interactionListener.onAuthActivityFinishedWithResult()
-            }
+
+            },
         )
 
     val showNoInternetScreen = (state.isNoInternetConnection

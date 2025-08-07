@@ -6,10 +6,12 @@ import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import repository.ContentRestriction
 import repository.Language
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
+import usecase.LogOutUseCase
 import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class MyAccountScreenViewModel @Inject constructor(
     val mangeUserPreference: MangeUserPreferenceUseCase,
     val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    val logOutUseCase: LogOutUseCase,
     val dispatcher: CoroutineDispatcher,
 ) : BaseViewModel<MyAccountScreenUiState, MyAccountScreenEffect>(
     MyAccountScreenUiState(), dispatcher
@@ -120,7 +123,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private suspend fun saveContentRestriction() {
-        val newRestriction = repository.ContentRestriction.entries.first {
+        val newRestriction = ContentRestriction.entries.first {
             it.name == state.value.selectedContentRestriction?.name
         }
         mangeUserPreference.setContentRestriction(newRestriction)
@@ -134,10 +137,15 @@ class MyAccountScreenViewModel @Inject constructor(
         emitEffect(MyAccountScreenEffect.NavigateToLogin)
     }
 
-    fun updateUserStatus() {
-        val isLoggedIn = runBlocking { checkIfUserIsLoggedInUseCase.isLoggedIn() }
-        fetchUserData()
-        updateState { it.copy(isUserLoggedIn = isLoggedIn) }
+    override fun onLogoutButtonClick() {
+        tryToExecute(
+            callee = {
+                logOutUseCase.logout()
+            },
+            onSuccess = {
+                emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+            }
+        )
     }
 
     private suspend fun fetchUserPreference() {
@@ -185,20 +193,22 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun checkUserLoggedIn() {
-        tryToExecute(
-            callee = {
-                checkIfUserIsLoggedInUseCase.isLoggedIn()
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
             },
-            onSuccess = { isLoggedIn ->
-                updateState { it.copy(isUserLoggedIn = isLoggedIn) }
-            }
         )
     }
 
     private fun fetchUserData() {
-        tryToExecute(
+        tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
-            onSuccess = ::onLoadUserDataSuccess
+            onCollect = ::onLoadUserDataSuccess
         )
     }
 

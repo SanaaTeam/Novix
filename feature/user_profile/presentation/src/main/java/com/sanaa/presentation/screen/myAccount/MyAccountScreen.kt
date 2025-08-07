@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.myAccount
 
+import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -57,10 +59,10 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     val launcher = launchAuthActivityForResult(
         loggedInWithSessionId = {
-            viewModel.updateUserStatus()
+            activity?.recreate()
         },
         loggedInAsGuest = {
-            viewModel.updateUserStatus()
+            activity?.recreate()
         }
     )
 
@@ -70,6 +72,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             NavigateToChangePasswordSetting -> {
                 navController.navigate(ChangePasswordScreenRoute)
             }
+
             NavigateToContentRestrictionSetting -> {
             }
 
@@ -83,7 +86,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 activity?.recreate()
             }
 
-            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+            NavigateToMyRating ->   navController.navigate(MyRatingScreenRoute)
             NavigateToWatchingHistory -> {
             }
 
@@ -98,9 +101,11 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
             MyAccountScreenEffect.NavigateToLogin -> {
                 launcher.launch(authApi.getLaunchIntent(context))
             }
+            MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
+                activity?.recreate()
+            }
 
             null -> {}
-
         }
     }
 
@@ -127,7 +132,12 @@ fun MyAccountScreenContent(
             )
         } else {
             Column {
-                MyAccountUserInfo(uiState.currentUser)
+                MyAccountUserInfo(
+                    uiState.currentUser,
+                    onLogoutClick = {
+                        interactionsListener.onLogoutButtonClick()
+                    }
+                )
 
                 VerticalList(
                     items = listOf(
@@ -290,11 +300,27 @@ private fun AccountScreenContentPreview() {
         override fun onLoginButtonClick() {
         }
 
+        override fun onLogoutButtonClick() {
+
+        }
+
     }
     NovixTheme(isSystemInDarkTheme()) {
         NovixScaffold {
             MyAccountScreenContent(
                 uiState = MyAccountScreenUiState(
+                    currentUser = UserUiState(
+                        username = "mostafa nema",
+                        imageUrl = " "
+                    ),
+                    showChangeLanguageBottomSheet = false,
+                    showContentRestrictionBottomSheet = false,
+                    showChangeThemeBottomSheet = false,
+                    selectedLanguage = "en",
+                    selectedContentRestriction = ContentRestrictionUiState.UNRESTRICTED,
+                    selectedTheme = ThemeUiState.DARK,
+                    isLoading = false,
+                    isUserLoggedIn = true
                 ), interactionsListener = interactionsListener
             )
         }
