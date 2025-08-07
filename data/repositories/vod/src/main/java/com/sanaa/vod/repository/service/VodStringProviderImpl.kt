@@ -1,0 +1,17 @@
+package com.sanaa.vod.repository.service
+
+import android.content.Context
+import com.sanaa.data.repositories.vod.R
+import dagger.hilt.android.qualifiers.ApplicationContext
+import service.VodStringProvider
+import javax.inject.Inject
+
+class VodStringProviderImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : VodStringProvider {
+    override val noInternetConnectionError: String
+        get() = context.getString(R.string.no_internet_connection_error)
+
+    override val somethingWentWrongError: String
+        get() = context.getString(R.string.something_went_wrong_error)
+}
