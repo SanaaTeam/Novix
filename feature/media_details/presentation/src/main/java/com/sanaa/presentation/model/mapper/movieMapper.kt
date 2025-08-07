@@ -32,7 +32,6 @@ fun Movie.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.MOVIE,
-        isSaved = false,
         lastWatchedAt = Clock.System.now()
     )
 }

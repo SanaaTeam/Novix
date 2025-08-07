@@ -22,7 +22,7 @@ import com.sanaa.presentation.model.MediaItemUiModel
 import com.sanaa.presentation.screen.myRating.component.RemoteImagePlaceholder
 
 @Composable
-fun MediaListGrid(
+fun WatchingHistoryGrid(
     mediaList: List<MediaItemUiModel>,
     modifier: Modifier = Modifier,
     onMediaClick: (MediaItemUiModel) -> Unit = {},

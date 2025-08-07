@@ -28,7 +28,7 @@ import com.sanaa.feature.userprofile.presentation.R
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 
 @Composable
-fun MediaTabs(
+fun FilterTab(
     onTabClick: (MediaTypeUi) -> Unit,
     modifier: Modifier = Modifier,
     selectedTab: MediaTypeUi = MediaTypeUi.MOVIE,
@@ -118,5 +118,5 @@ fun Divider(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun MediaTabsPreview() {
-    MediaTabs(onTabClick = {})
+    FilterTab(onTabClick = {})
 }

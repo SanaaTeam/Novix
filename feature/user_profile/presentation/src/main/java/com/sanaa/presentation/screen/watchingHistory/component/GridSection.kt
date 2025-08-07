@@ -12,11 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.feature.userprofile.presentation.R
 import com.sanaa.presentation.model.MediaItemUiModel
-import com.sanaa.presentation.screen.watchingHistory.GenreUiState
+import com.sanaa.presentation.screen.watchingHistory.GenreState
 
 @Composable
-fun MediaListSectionContent(
-    genres: List<GenreUiState>,
+fun GridSection(
+    genres: List<GenreState>,
     mediaList: List<MediaItemUiModel>,
     selectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
@@ -49,7 +49,7 @@ fun MediaListSectionContent(
                 )
             }
         }
-        MediaListGrid(
+        WatchingHistoryGrid(
             mediaList = mediaList,
             onMediaClick = onMediaClick,
             onSaveIconClick = onSaveIconClick,

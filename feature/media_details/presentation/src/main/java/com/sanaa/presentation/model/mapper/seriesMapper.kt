@@ -50,7 +50,6 @@ fun TvSeries.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl.orEmpty(),
         mediaType = MediaType.TV_SERIES,
-        isSaved = false,
         lastWatchedAt = Clock.System.now()
     )
 }

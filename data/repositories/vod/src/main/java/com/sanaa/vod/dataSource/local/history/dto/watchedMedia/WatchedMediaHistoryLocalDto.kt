@@ -17,8 +17,6 @@ data class WatchedMediaHistoryLocalDto(
     @ColumnInfo(name = "genres")
     val genres: String,
 
-    @ColumnInfo(name = "is_saved")
-    val isSaved: Boolean = false,
 
     @ColumnInfo(name = "timestamp")
     val timestamp: Long = TimeUtils.getCurrentTimeStamp()
