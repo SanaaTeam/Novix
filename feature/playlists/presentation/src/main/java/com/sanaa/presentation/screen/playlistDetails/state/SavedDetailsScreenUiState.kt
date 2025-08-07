@@ -10,5 +10,8 @@ data class SavedDetailsScreenUiState(
     val errorMessage: String? = null,
     val showBottomSheet: Boolean = false,
     val title: String? = null,
-    val listId: Int? = null
+    val listId: Int? = null,
+    val showSaveToListBottomSheet: Boolean = false,
+    val showAddListBottomSheet: Boolean = false,
+    val selectedMediaToSave: MediaItem? = null
 )

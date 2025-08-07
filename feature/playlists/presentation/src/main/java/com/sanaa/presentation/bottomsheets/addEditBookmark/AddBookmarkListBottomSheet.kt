@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
+    mediaId: Int,
 ) {
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
@@ -55,7 +56,7 @@ fun AddBookmarkListBottomSheet(
         onDismiss = handleDismiss,
         state = state,
         onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = viewModel::onAddClicked
+        onAddClick = {viewModel.onAddClicked(mediaId)}
     )
 }
 

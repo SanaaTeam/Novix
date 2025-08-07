@@ -63,7 +63,8 @@ fun PlayListWithItemsScreen(
         if (isVisible) {
             AddBookmarkListBottomSheet(
                 isVisible = isVisible,
-                onDismiss = onDismissAddBottomSheet
+                onDismiss = onDismissAddBottomSheet,
+                mediaId = 0
             )
         }
     }

@@ -10,4 +10,7 @@ interface PlaylistDetailsInteractionListener {
     fun onDeleteListClicked()
     fun onDismissBottomSheet()
     fun onListDeletedSuccessfully()
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
 }

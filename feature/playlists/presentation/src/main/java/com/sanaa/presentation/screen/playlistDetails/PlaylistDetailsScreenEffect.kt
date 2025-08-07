@@ -10,4 +10,5 @@ sealed interface PlaylistDetailsScreenEffect {
     data class NavigateToMediaDetails(val mediaId: Int, val mediaTypeUi: MediaTypeUi) :
         PlaylistDetailsScreenEffect
 
+    object RefreshList : PlaylistDetailsScreenEffect
 }

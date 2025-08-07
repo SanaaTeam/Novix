@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -27,9 +28,13 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData
+import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors
@@ -39,6 +44,7 @@ fun PlaylistDetailsScreen(
     viewModel: PlaylistDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val movieList = state.value.movieList.collectAsLazyPagingItems()
     val editedListSuccessMsg = stringResource(R.string.edited_to_list_successfully)
     val editedListFailedMsg = stringResource(R.string.edited_to_list_failed)
     val context = LocalContext.current
@@ -82,13 +88,45 @@ fun PlaylistDetailsScreen(
                     )
 
                 }
+
+                is PlaylistDetailsScreenEffect.RefreshList -> {
+                    movieList.refresh()
+                }
             }
         }
 
     }
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    if (state.value.showSaveToListBottomSheet && state.value.selectedMediaToSave?.id != null) {
+        SaveToListBottomSheet(
+            isVisible = state.value.showSaveToListBottomSheet,
+            mediaId = state.value.selectedMediaToSave?.id?.toLong() ?: 0,
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+    }
+    AddBookmarkListBottomSheet(
+        isVisible = state.value.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+        mediaId = state.value.selectedMediaToSave?.id ?: 0
+    )
 
     PlaylistDetailsContent(
         state = state.value,
+        movieList = movieList,
         interactionListener = viewModel
     )
 }
@@ -97,10 +135,11 @@ fun PlaylistDetailsScreen(
 @Composable
 fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState = SavedDetailsScreenUiState(),
+    movieList: LazyPagingItems<MediaItem>,
     interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    val movieList = state.movieList.collectAsLazyPagingItems()
+//    val movieList = state.movieList.collectAsLazyPagingItems()
 
 
     NovixScaffold(
