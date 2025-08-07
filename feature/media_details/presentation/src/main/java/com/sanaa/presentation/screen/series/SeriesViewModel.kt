@@ -293,5 +293,6 @@ class SeriesViewModel @Inject constructor(
                 )
             }
         )
+
     }
 }

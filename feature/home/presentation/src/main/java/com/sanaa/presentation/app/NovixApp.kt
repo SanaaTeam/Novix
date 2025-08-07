@@ -24,6 +24,7 @@ import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
+
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreen
@@ -100,5 +101,7 @@ private fun AppNavigation(
         composable<ContinueWatchingMediaScreenRoute> {
             ContinueWatchingMediaScreen()
         }
+        
+
     }
 }

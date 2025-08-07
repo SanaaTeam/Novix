@@ -8,6 +8,7 @@
     <string name="trending_tvshows">Trending TV shows</string>
     <string name="movies">Movies</string>
     <string name="tvshows">TV shows</string>
+    <string name="tv_shows">TV Shows</string>
     <string name="unsuitable_image">Unsuitable image</string>
     <string name="people">People</string>
     <string name="trending_people">Trending people</string>
@@ -20,6 +21,13 @@
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"
     <string name="error_message">Something went wrong</string>
+    <string name="movie_poster">Movie poster</string>
+
+    <!-- Watching History -->
+    <string name="watching_history">Watching history</string>
+    <string name="no_watching_history">No watching history yet</string>
+    <string name="no_history_yet">No watching history yet</string>
+    <string name="failed_to_load_watching_history">Failed to load watching history</string>
     <string name="onboarding_title_1">Discover best movies and series</string>
     <string name="onboarding_desc_1">Browse the latest releases, trends, and content tailored to your taste — all in one place.</string>
     <string name="onboarding_title_2">Search easily... and watch to your taste</string>
