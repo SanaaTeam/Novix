@@ -96,4 +96,5 @@ class HistoryRepositoryImpl @Inject constructor(
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }
     }
+
 }

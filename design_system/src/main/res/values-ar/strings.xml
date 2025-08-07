@@ -22,6 +22,11 @@
 
     <string name="my_account">حسابي</string>
     <string name="watching_history">سجل المشاهدة</string>
+    <string name="no_history_yet">لا توجد مشاهدات حالياً</string>
+    <string name="all">الكل</string>
+    <string name="movies">الأفلام</string>
+    <string name="tv_shows">المسلسلات</string>
+    <string name="movie_poster">ملصق الفيلم</string>
     <string name="my_rating">تقيماتي</string>
     <string name="content_restriction">تقييد المحتوى</string>
     <string name="change_password">تغيير كلمة المرور</string>
