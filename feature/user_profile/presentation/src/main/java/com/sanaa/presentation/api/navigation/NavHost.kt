@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.sanaa.presentation.screen.changePassword.ChangePasswordWebView
 import com.sanaa.presentation.screen.myAccount.MyAccountScreen
 import com.sanaa.presentation.screen.myRating.MyRatingScreen
-
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreen
 @Composable
 fun AccountNavHost(
     resetKey: Any = Unit,
@@ -30,6 +30,10 @@ fun AccountNavHost(
                 }
                 composable(ChangePasswordScreenRoute::class) {
                     ChangePasswordWebView(url = "https://www.themoviedb.org/settings/profile")
+                }
+
+                composable<WatchingHistoryScreenRoute> {
+                    WatchingHistoryScreen()
                 }
 
             }

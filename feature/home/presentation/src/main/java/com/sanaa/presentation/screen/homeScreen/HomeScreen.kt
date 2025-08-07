@@ -91,7 +91,12 @@ fun HomeScreen(
                 }
 
                 HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                    navController.navigate(ContinueWatchingMediaScreenRoute)
+                   
+                    navController.navigate("watching_history_screen")
+                }
+
+                else -> {
+
                 }
 
                 HomeScreenEffect.NavigateToPlayListScreen -> {

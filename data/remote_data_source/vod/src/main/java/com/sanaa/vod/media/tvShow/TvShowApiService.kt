@@ -129,7 +129,6 @@ interface TvShowApiService {
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<EpisodeDto>
 
-    @Headers("Content-Type: application/json;charset=utf-8")
     @DELETE("tv/{tvShow_id}/rating")
     suspend fun deleteTvShowRating(
         @Path("tvShow_id") tvShowId: Int,

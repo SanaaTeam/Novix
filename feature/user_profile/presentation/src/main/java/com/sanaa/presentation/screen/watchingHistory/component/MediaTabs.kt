@@ -1,0 +1,122 @@
+package com.sanaa.presentation.screen.watchingHistory.component
+
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.feature.userprofile.presentation.R
+import com.sanaa.presentation.screen.myRating.MediaTypeUi
+
+@Composable
+fun MediaTabs(
+    onTabClick: (MediaTypeUi) -> Unit,
+    modifier: Modifier = Modifier,
+    selectedTab: MediaTypeUi = MediaTypeUi.MOVIE,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        Divider()
+        Row(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TabButton(
+                text = stringResource(R.string.movies),
+                onClick = onTabClick,
+                isSelected = selectedTab == MediaTypeUi.MOVIE,
+                mediaTypeUi = MediaTypeUi.MOVIE,
+                modifier = Modifier.weight(1f)
+            )
+            TabButton(
+                text = stringResource(R.string.tv_shows),
+                onClick = onTabClick,
+                isSelected = selectedTab == MediaTypeUi.TV_SHOW,
+                mediaTypeUi = MediaTypeUi.TV_SHOW,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun TabButton(
+    text: String,
+    onClick: (MediaTypeUi) -> Unit,
+    modifier: Modifier = Modifier,
+    mediaTypeUi: MediaTypeUi,
+    isSelected: Boolean = false,
+    selectedTextColor: Color = Theme.colors.title,
+    notSelectedTextColor: Color = Theme.colors.hint,
+) {
+    val animatedTextColor by animateColorAsState(
+        targetValue = if (isSelected) selectedTextColor else notSelectedTextColor,
+    )
+
+    val animatedLineWidthDp by animateFloatAsState(
+        targetValue = if (isSelected) 1f else 0f,
+    )
+    Box(
+        modifier = modifier
+            .fillMaxHeight()
+            .clickable(
+                onClick = { onClick(mediaTypeUi) },
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() }
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        BasicText(
+            text = text,
+            style = Theme.textStyle.label.medium.copy(animatedTextColor),
+        )
+        Box(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .height(3.dp)
+                .fillMaxWidth(animatedLineWidthDp)
+                .background(Theme.colors.primary, RoundedCornerShape(100.dp))
+                .align(Alignment.BottomCenter)
+        )
+    }
+}
+
+@Composable
+fun Divider(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(0.5.dp)
+            .background(Theme.colors.stroke),
+    )
+}
+
+@Preview
+@Composable
+fun MediaTabsPreview() {
+    MediaTabs(onTabClick = {})
+}
