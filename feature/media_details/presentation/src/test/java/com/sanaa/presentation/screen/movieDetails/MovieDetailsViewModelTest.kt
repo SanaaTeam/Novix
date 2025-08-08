@@ -73,7 +73,9 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
-
+        savedMovieStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
