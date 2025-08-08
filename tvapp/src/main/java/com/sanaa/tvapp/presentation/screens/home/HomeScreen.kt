@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -44,35 +43,34 @@ import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-    ) {
         when {
             state.isNoInternet -> {
                 NetworkDisconnectionContact(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+
+                        .verticalScroll(scrollState),
                     onRetryClick = {}
                 )
             }
 
             state.isLoading -> {
-                HomeScreenLoading()
+                HomeScreenLoading(
+                    modifier = Modifier
+                        .verticalScroll(scrollState),
+                )
             }
 
             else -> {
                 HomeScreenContent(state)
             }
-        }
     }
-
 }
 
 @Composable
-private fun HomeScreenLoading() {
+private fun HomeScreenLoading(modifier: Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
