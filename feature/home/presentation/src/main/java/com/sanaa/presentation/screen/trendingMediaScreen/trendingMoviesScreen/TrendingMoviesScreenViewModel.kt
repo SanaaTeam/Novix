@@ -3,6 +3,8 @@ package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
@@ -16,10 +18,11 @@ import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import service.VodStringProvider
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -29,6 +32,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
@@ -87,7 +91,11 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource() },
             mapper = Movie::toState
-        )
+        ).combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { mediaItem ->
+                mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
@@ -110,12 +118,33 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
+        if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
-                    showBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaId = media.id
                 )
             }
         }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onBackClick() {
@@ -146,8 +175,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
-        return BasePagingSourceForHome(onError = onError) { page ->
+    private fun createMoviesPagingSource(): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }
     }

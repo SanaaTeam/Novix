@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.api.navigation.PlayListScreenRoute
 import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
@@ -93,9 +94,12 @@ fun HomeScreen(
                     navController.navigate(WatchingMediaHistoryScreenRoute)
                 }
 
+                HomeScreenEffect.NavigateToPlayListScreen -> {
+                    navController.navigate(PlayListScreenRoute)
+                }
+
                 is HomeScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
-                }
             }
         }
     }

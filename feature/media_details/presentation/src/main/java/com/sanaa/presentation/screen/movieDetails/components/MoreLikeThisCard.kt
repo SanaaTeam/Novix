@@ -21,7 +21,7 @@ import com.sanaa.presentation.model.MovieUiModel
 @Composable
 fun MoreLikeThisCard(
     movie: MovieUiModel,
-    onBookmarkClick: () -> Unit,
+    onBookmarkClick: (MovieUiModel) -> Unit,
     onMovieClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -57,7 +57,7 @@ fun MoreLikeThisCard(
         topLeftContent = {
             SaveIconChip(
                 isSaved = movie.isBookmarked,
-                onClick = onBookmarkClick
+                onClick = { onBookmarkClick(movie) }
             )
         }
     )

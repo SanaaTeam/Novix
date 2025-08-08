@@ -1,7 +1,10 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.GenreUiState
@@ -17,8 +20,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
+import repository.SavedMovieStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -35,7 +41,8 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -48,8 +55,25 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
+        viewModelScope.launch {
+            savedMovieStatusProvider.savedIds.collect { savedIds ->
+                updateState { current ->
+                    current.copy(
+                        popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
+                        topRatingMedia = current.topRatingMedia.map { it.withSaved(savedIds) },
+                        continueWatchingMedia = current.continueWatchingMedia.map {
+                            it.withSaved(
+                                savedIds
+                            )
+                        }
+                    )
+                }
+            }
+        }
     }
 
+    private fun MediaItem.withSaved(savedIds: Set<Int>) =
+        copy(isSaved = savedIds.contains(id))
 
     fun updateUserLoggingStatus() {
         tryToCollect(
@@ -156,7 +180,12 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadUpcomingMovies(genreId) },
+            callee = {
+                loadUpcomingMovies(genreId).combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                    pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
+                }
+                    .cachedIn(viewModelScope)
+            },
             onCollect = ::onFetchUpcomingMoviesSuccess,
             onError = ::onDataLoadError,
         )
@@ -226,13 +255,32 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showBottomSheet = true) }
+        if (state.value.userIsLoggedIn) {
+            if (media.isSaved) {
+                savedMovieStatusProvider.markUnsaved(media.id)
+            } else {
+                updateState {
+                    it.copy(
+                        showSaveToListBottomSheet = true,
+                        selectedMediaId = media.id.toLong()
+                    )
+                }
+            }
+        } else {
+            emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
         }
     }
 
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false) }
+    }
+
+    override fun onCreateNewListClick() {
+        TODO("Not yet implemented")
     }
 
     override fun onRetryClick() {

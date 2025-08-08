@@ -54,7 +54,7 @@ fun HomeScreenContent(
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
         launchAuthActivityForResult(
-            loggedInWithSessionId =  {
+            loggedInWithSessionId = {
 
             },
             loggedInAsGuest = {
@@ -205,6 +205,8 @@ fun HomeScreenContent(
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
     }
+
+
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,

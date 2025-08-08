@@ -67,9 +67,6 @@ fun TopSeriesScreen(
         state = uiState,
         onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
-        onSaveIconClick = {
-            viewModel.onSaveClicked()
-        }
     )
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
@@ -85,7 +82,6 @@ private fun TopSeriesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onSaveIconClick: () -> Unit,
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -165,9 +161,7 @@ private fun TopSeriesContent(
                                         }
                                     },
                                     topLeftContent = {
-                                        SaveIconChip(onClick = {
-                                            onSaveIconClick()
-                                        })
+
                                     },
                                     onCardClick = {
                                         navController.navigate(

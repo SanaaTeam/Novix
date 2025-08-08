@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.actors
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import entity.Actor
@@ -10,17 +11,20 @@ import entity.Actor.Gender
 import entity.Movie
 import entity.TvSeries
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.test.resetMain
 import kotlinx.datetime.LocalDate
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -33,6 +37,7 @@ class ActorViewModelTest {
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorViewModel
     private val actorId = 77
+    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
 
     @BeforeEach
     fun setUp() {
@@ -109,7 +114,7 @@ class ActorViewModelTest {
     @Test
     fun `onSaveClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveClicked()
+        viewModel.onSaveClicked(fakeMovie)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
@@ -119,10 +124,17 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummySeries
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-
+        savedMovieStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
         val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
-        viewModel = ActorViewModel(savedStateHandle, manageActorDetailsUseCase,checkIfUserIsLoggedInUseCase)
+        viewModel = ActorViewModel(
+            savedStateHandle,
+            manageActorDetailsUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedMovieStatusProvider
+        )
     }
 
     companion object {
@@ -178,6 +190,20 @@ class ActorViewModelTest {
                 seasonsCount = 2,
                 rating = 0
             )
+        )
+        val fakeMovie = MovieUiModel(
+            id = 123,
+            title = "Test Movie",
+            overview = "This is a test movie overview.",
+            rating = "8.5",
+            releaseDate = "2025-01-01",
+            duration = null,
+            posterUrls = listOf("poster.jpg"),
+            genres = emptyList(),
+            isBookmarked = false,
+            trailerUrl = null,
+            posterUrl = "poster.jpg",
+            isSaved = false
         )
 
         private val dummyGallery = listOf("/g1.jpg", "/g2.jpg")

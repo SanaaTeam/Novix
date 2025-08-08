@@ -1,7 +1,10 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
@@ -15,7 +18,8 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import repository.SavedMovieStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -26,6 +30,7 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -58,7 +63,13 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedMovies(genreId = genreId) },
+            callee = {
+                loadTopRatedMovies(genreId = genreId).combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                    pagingData.map { mediaItem ->
+                        mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+                    }
+                }.cachedIn(viewModelScope)
+            },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -101,7 +112,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                movieGenres = genres.map { it.toState() },
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
@@ -122,7 +137,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                tvShowGenres = genres.map { it.toState() },
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
@@ -150,13 +169,35 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
-                    showLoginBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = media
                 )
             }
         }
     }
+
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
 
     override fun onBackClick() {
         emitEffect(TopRatedScreenEffect.NavigateBack)

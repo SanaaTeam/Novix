@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
 import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.CreateListResponseDto
+import com.sanaa.vod.custom_list.response.ItemStatusResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
@@ -47,10 +48,10 @@ class RemoteSavedListDataSourceImplTest {
 
     @Test
     fun `fetchUserLists() should return list of saved lists dto`() = runTest {
-        coEvery { apiService.getUserLists(ACCOUNT_ID, SESSION_ID, 1) } returns
+        coEvery { apiService.getUserLists(SESSION_ID, 1) } returns
                 ListApiResponse(results = dummyLists)
 
-        val lists = dataSource.fetchUserLists(SESSION_ID, ACCOUNT_ID, 1)
+        val lists = dataSource.fetchUserLists(SESSION_ID, 1)
 
         assertEquals(2, lists.size)
     }
@@ -119,6 +120,29 @@ class RemoteSavedListDataSourceImplTest {
 
         assertThat(success).isTrue()
     }
+
+    @Test
+    fun `isItemSaved returns true when item is present in the list`() = runTest {
+        coEvery {
+            apiService.checkItemStatus(LIST_ID, MOVIE_ID, SESSION_ID)
+        } returns ItemStatusResponseDto(id = "some_id", itemPresent = true)
+
+        val result = dataSource.isItemSaved(LIST_ID, MOVIE_ID, SESSION_ID)
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `isItemSaved returns false when item is NOT present in the list`() = runTest {
+        coEvery {
+            apiService.checkItemStatus(LIST_ID, MOVIE_ID, SESSION_ID)
+        } returns ItemStatusResponseDto(id = "some_id", itemPresent = false)
+
+        val result = dataSource.isItemSaved(LIST_ID, MOVIE_ID, SESSION_ID)
+
+        assertThat(result).isFalse()
+    }
+
 
     private companion object {
         const val SESSION_ID = "session-123"
