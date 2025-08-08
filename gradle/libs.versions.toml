@@ -1,5 +1,6 @@
 [versions]
 # Project Config
+appcompatVersion = "1.6.1"
 compileSdk = "35"
 converterGson = "3.0.0"
 datastore = "1.1.7"
@@ -67,12 +68,15 @@ datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
 uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
+runtimeAndroid = "1.8.3"
+foundationAndroid = "1.8.3"
 tvFoundation = "1.0.0-alpha07"
 tvMaterial = "1.0.0-alpha07"
 
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -187,6 +191,8 @@ androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-te
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.0.0" }
 androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "tvFoundation" }
 androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 

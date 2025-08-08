@@ -9,8 +9,10 @@ import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -133,21 +135,23 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
     }
 
 
-    private suspend fun loadWatchedHistoryMovies(
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loadWatchedHistoryMovies(
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
+        return getLoggedInUserUseCase.getLoggedInUser().flatMapLatest {
+            manageWatchedMediaHistoryUseCase.getMediaHistory(
+                genreId = genreId,
+                mediaType = MediaType.MOVIE,
+                username = it.username
+            )
+        }.catch {
+            if (it is NoLoggedInUserException) {
+                emit(emptyList())
+
+            }
         }
-        if (user == null) return flowOf(emptyList())
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = MediaType.MOVIE,
-            username = user.username
-        )
     }
 
     private fun onLoadDataError(exception: Throwable) {
@@ -159,22 +163,21 @@ class ContinueWatchingMediaScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadWatchedHistoryTvSeries(
-        genreId: Int?
-    ): Flow<List<MediaHistoryItem>> {
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun loadWatchedHistoryTvSeries(genreId: Int?): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return flowOf(emptyList())
 
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = MediaType.TV_SERIES,
-            username = user.username
-        )
+        return getLoggedInUserUseCase.getLoggedInUser()
+            .flatMapLatest { user ->
+                manageWatchedMediaHistoryUseCase.getMediaHistory(
+                    genreId = genreId,
+                    mediaType = MediaType.TV_SERIES,
+                    username = user.username
+                )
+            }
+            .catch { e ->
+                emit(emptyList())
+            }
     }
-
 }
+

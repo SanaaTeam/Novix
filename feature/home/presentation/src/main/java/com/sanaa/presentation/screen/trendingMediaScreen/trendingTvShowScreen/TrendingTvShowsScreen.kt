@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -12,12 +11,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.AppNavigation
+import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -41,14 +39,7 @@ fun TrendingTvShowsScreen(
         HomeApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserLoggingStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserLoggingStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -65,19 +56,17 @@ fun TrendingTvShowsScreen(
                     navController.popBackStack()
                 }
 
-                TrendingMediaScreenEffect.NavigateToLogin -> {
+                is TrendingMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
     }
 
-    NovixTheme(isSystemInDarkTheme()) {
-        TrendingMediaScreenContent(
-            title = stringResource(R.string.trending_tvshows),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
-        )
-    }
+    TrendingMediaScreenContent(
+        title = stringResource(R.string.trending_tvshows),
+        state = state.value,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
 }

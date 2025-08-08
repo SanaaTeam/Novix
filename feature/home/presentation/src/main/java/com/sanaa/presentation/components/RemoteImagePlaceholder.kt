@@ -1,7 +1,6 @@
 package com.sanaa.presentation.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -12,9 +11,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.presentation.providers.LocalThemeProvider
+
 @Composable
 fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
-    val isDarkTheme = isSystemInDarkTheme()
+    val isDarkTheme = LocalThemeProvider.current
     val placeholderResId = if (isDarkTheme)
         R.drawable.icon_placeholder_dark
     else
@@ -27,7 +28,7 @@ fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
             painter = painterResource(id = placeholderResId),
             contentDescription = "Remote Image Placeholder",
             contentScale = ContentScale.None,
-            modifier = modifier.size(56.dp)
+            modifier = Modifier.size(56.dp)
         )
     }
 }

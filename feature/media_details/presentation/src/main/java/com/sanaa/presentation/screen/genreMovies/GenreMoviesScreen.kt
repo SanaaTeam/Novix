@@ -1,11 +1,9 @@
 package com.sanaa.presentation.screen.genreMovies
 
-import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +29,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -40,10 +37,11 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
@@ -52,6 +50,7 @@ import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun GenreMoviesScreen(
@@ -63,17 +62,11 @@ fun GenreMoviesScreen(
     val context = LocalContext.current
 
     val authApi = EntryPointAccessors
-        .fromApplication(context, DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+        .fromApplication(
+            context, DetailsApiEntryPoint::class.java
+        ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserLoggingStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserLoggingStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -90,11 +83,10 @@ fun GenreMoviesScreen(
         }
     }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        GenreMoviesScreenContent(
-            state = state.value, interactionListener = viewModel
-        )
-    }
+    GenreMoviesScreenContent(
+        state = state.value, interactionListener = viewModel
+    )
+
 
 }
 
@@ -114,7 +106,7 @@ fun GenreMoviesScreenContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
+                        icon = painterResource(id = designR.drawable.icon_back),
                         onClick = { interactionListener.onBackClick() })
                 }, screenTitle = state.title.orEmpty(), modifier = Modifier
                     .fillMaxWidth()
@@ -136,7 +128,8 @@ fun GenreMoviesScreenContent(
                         if (state.noInternetConnection) {
                             NetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClicked() },
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
                             )
                         } else {
                             Box(
@@ -165,11 +158,12 @@ fun GenreMoviesScreenContent(
                                 val movie = pagedMovies[index] ?: return@items
                                 MediaPosterCard(
                                     posterImage = {
-                                        RemoteBlurredHaramImageViewer(
+                                        RemoteBlurredSensitiveImage(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxWidth(),
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
+                                            sensitiveContentThreshold = 0.2f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
                                             contentDescription = movie.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

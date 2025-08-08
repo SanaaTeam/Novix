@@ -15,11 +15,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
-import com.sanaa.presentation.components.cards.MediaPosterCard
-import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
+
 import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun MediaListGrid(
@@ -40,11 +43,12 @@ fun MediaListGrid(
         itemsIndexed(mediaList, key = { index, _ -> index }) { index, media ->
             MediaPosterCard(
                 posterImage = {
-                    RemoteBlurredHaramImageViewer(
+                    RemoteBlurredSensitiveImage(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
-                        haramThreshold = 0.2f,
-                        nonHaramThreshold = 0.7f,
+                        sensitiveContentThreshold = 0.2f,
+                        isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                        safeContentThreshold = LocalSafeContentThreshold.current,
                         contentDescription = media.title,
                         placeholderContent = {
                             RemoteImagePlaceholder(Modifier.fillMaxSize())
@@ -63,7 +67,14 @@ fun MediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }) },
+                topLeftContent = {
+                    if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                        SaveIconChip(
+                            onClick = { onSaveIconClick(media) },
+                            isSaved = media.isSaved
+                        )
+                    }
+                },
                 onCardClick = { onMediaClick(media) })
         }
     }

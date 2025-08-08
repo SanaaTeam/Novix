@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.mediaTabScreen.continueWatchingScreen.ContinueWatchingScreenEffect
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
@@ -11,9 +10,11 @@ import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,6 +23,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -35,12 +37,17 @@ class TopRatedMediaScreenViewModelTest {
     private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: TopRatedMediaScreenViewModel
+    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
         manageTvSeriesUseCase = mockk(relaxed = true)
+        savedMovieStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
     }
 
     @AfterEach
@@ -53,7 +60,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageMovieUseCase.getMovieGenres() } returns genres
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.movieGenres).isEqualTo(genres.map { it.toState() })
@@ -64,7 +77,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns tvGenres
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.tvShowGenres).isEqualTo(tvGenres.map { it.toState() })
@@ -75,7 +94,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns movies
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         val pagingData = viewModel.state.value.movieList
@@ -88,7 +113,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns tvShows
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         val pagingData = viewModel.state.value.tvShowList
@@ -102,7 +133,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageMovieUseCase.getTopRatedMovies(any(), genreId) } returns movies
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onMovieGenreClick(genreId)
@@ -119,7 +156,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), genreId) } returns tvShows
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onTvShowGenreClick(genreId)
@@ -136,7 +179,13 @@ class TopRatedMediaScreenViewModelTest {
         coEvery { manageMovieUseCase.getMovieGenres() } throws RuntimeException(errorMsg)
 
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.error).isEqualTo(errorMsg)
@@ -145,7 +194,13 @@ class TopRatedMediaScreenViewModelTest {
     @Test
     fun `onSaveIconClick should show bottom sheet`() = runTest {
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, testDispatcher)
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.onSaveIconClick(media)
@@ -159,6 +214,7 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
+                savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 testDispatcher
             )

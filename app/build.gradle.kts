@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.designSystem)
     implementation(libs.retrofit)
     implementation(libs.okhttp)
     implementation(libs.androidx.datastore)
@@ -64,6 +65,8 @@ dependencies {
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.search.api)
     implementation(projects.feature.authentication.api)
+    implementation(projects.feature.onboarding.api)
+    implementation(projects.feature.onboarding.presentation)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.authentication.presentation)
@@ -115,4 +118,11 @@ dependencies {
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.converter.gson)
+    implementation( libs.androidx.appcompat)
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
+}
+tasks.withType(Test::class.java).configureEach {
+    useJUnitPlatform()
 }

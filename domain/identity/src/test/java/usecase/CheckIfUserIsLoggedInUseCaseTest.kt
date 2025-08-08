@@ -3,6 +3,8 @@ package usecase
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -19,18 +21,18 @@ class CheckIfUserIsLoggedInUseCaseTest {
 
     @Test
     fun `isLoggedIn() should return true when user is logged in`() = runTest {
-        coEvery { repository.isLoggedIn() } returns true
+        coEvery { repository.isLoggedIn() } returns flowOf(true)
 
-        val result = useCase.isLoggedIn()
+        val result = useCase.isLoggedIn().first()
 
         assertThat(result).isTrue()
     }
 
     @Test
     fun `isLoggedIn() should return false when user is not logged in`() = runTest {
-        coEvery { repository.isLoggedIn() } returns false
+        coEvery { repository.isLoggedIn() } returns flowOf(false)
 
-        val result = useCase.isLoggedIn()
+        val result = useCase.isLoggedIn().first()
 
         assertThat(result).isFalse()
     }

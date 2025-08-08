@@ -2,14 +2,15 @@ package com.sanaa.presentation.screen.homeScreen.screenContent
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -34,6 +35,7 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
@@ -41,6 +43,7 @@ import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
+import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
 import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
@@ -55,19 +58,21 @@ fun HomeScreenContent(
     interactionListener: HomeScreenInteractionListener,
     authApi: AuthenticationApi,
 ) {
+
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     val errorMessage = stringResource(R.string.error_message)
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val context = LocalContext.current
-    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            interactionListener.onAuthActivityFinishedWithResult()
-        },
-        loggedInAsGuest = {
-            interactionListener.onAuthActivityFinishedWithResult()
-        }
-    )
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
+        launchAuthActivityForResult(
+            loggedInWithSessionId =  {
+
+            },
+            loggedInAsGuest = {
+
+            },
+        )
 
     LaunchedEffect(upcomingMovies.loadState) {
         if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
@@ -78,14 +83,21 @@ fun HomeScreenContent(
         }
     }
 
-    NovixScaffold(topBar = {
-        HomeTopBar(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-        )
-    }) {
+    NovixScaffold(
+        topBar = {
+            HomeTopBar(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .navigationBarsPadding()
+                    .statusBarsPadding()
+            )
+        },
+        backgroundShapes = {}) {
+
         if (state.isNoInternet) {
             NetworkDisconnectionContact(
-                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize()
+                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize(),
+                useDarkTheme = LocalThemeProvider.current
             )
         } else {
             LazyVerticalGrid(
@@ -219,13 +231,31 @@ fun HomeScreenContent(
     }
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
-
+    if (state.showSaveToListBottomSheet) {
+        SaveToListBottomSheet(
+            isVisible = state.showSaveToListBottomSheet,
+            onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
+            onCreateNewListClick = { interactionListener.onCreateNewListClick() },
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+            mediaId = state.selectedMediaId.toLong(),
+        )
+    }
 
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,
         onLoginButtonClick = {
-            Log.d("test99", "HomeScreenContent: launching loging start route")
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )

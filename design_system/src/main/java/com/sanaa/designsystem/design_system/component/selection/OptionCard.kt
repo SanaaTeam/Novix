@@ -35,6 +35,7 @@ fun OptionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
+    description: String? = null
 ) {
     val animatedBackgroundColor by animateColorAsState(
         targetValue = if (isSelected) Theme.colors.primaryVariant else Color.Unspecified,
@@ -47,7 +48,7 @@ fun OptionCard(
         animationSpec = tween(durationMillis = 20)    )
 
 
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(color = animatedBackgroundColor, shape = RoundedCornerShape(12.dp))
@@ -62,14 +63,22 @@ fun OptionCard(
                 indication = null,
                 onClick = onClick
             )
-            .padding(horizontal = 12.dp)
-            .height(56.dp), contentAlignment = Alignment.CenterStart
+            .padding(horizontal = 12.dp, vertical = 16.dp),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             text = label,
             style = Theme.textStyle.label.large,
             color = Theme.colors.body
         )
+        description?.let {
+            Text(
+                text = it,
+                style = Theme.textStyle.label.small,
+                color = Theme.colors.hint
+            )
+        }
     }
 }
 

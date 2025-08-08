@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.feature.search.api)
     implementation(projects.feature.mediaDetails.api)
 
+    implementation(libs.material3)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.core.ktx)

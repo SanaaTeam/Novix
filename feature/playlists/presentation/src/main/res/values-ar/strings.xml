@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_list_is_empty">قائمتي فارغة</string>
+    <string name="saved_list">القائمة المحفوظة</string>
+    <string name="there_is_no_saved_list_yet_click_on_button_to_add_a_new_list">لا توجد أي قائمة محفوظة بعد، اضغط على زر + لإضافة قائمة جديدة!</string>
+    <string name="please_login_to_create_lists_and_add_your_favorite_items_to_it">يرجى تسجيل الدخول لإنشاء قوائم وإضافة العناصر المفضلة إليها!</string>
+    <string name="my_lists">قوائمي</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="added_to_list_successfully">تمت إضافة القائمة بنجاح</string>
+    <string name="added_to_list_failed">فشلت إضافة القائمة</string>
+    <string name="edited_to_list_successfully">تم تحديث القائمة بنجاح</string>
+    <string name="edited_to_list_failed">فشلت تحديث القائمة</string>
+
+    <string name="arrow_right">سهم</string>
+    <string name="my_list">قائمتي</string>
+    <string name="all">الكل</string>
+    <string name="movies">الافلام</string>
+    <string name="tvshows">البرامج</string>
+    <string name="deleted_list_failed">فشل في حذف القائمة</string>
+    <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+</resources>

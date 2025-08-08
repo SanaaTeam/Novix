@@ -1,8 +1,11 @@
 package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.vod.dataSource.local.cache.LocalCachedContentDataSource
+import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Category
 import com.sanaa.vod.dataSource.remote.RemoteTvShowDataSource
-import com.sanaa.vod.repository.mapper.media.toDomain
+import com.sanaa.vod.repository.mapper.cachedContent.toEntity
+import com.sanaa.vod.repository.mapper.cachedContent.toLocalDto
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
@@ -17,6 +20,7 @@ import javax.inject.Inject
 
 class TvShowRepositoryImpl @Inject constructor(
     private val remoteDataSource: RemoteTvShowDataSource,
+    private val localCachedContentDataSource: LocalCachedContentDataSource,
     private val preferences: PreferencesManager
 ) : TvSeriesRepository {
 
@@ -40,7 +44,7 @@ class TvShowRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getTvSeriesCast(id: Int): List<Actor> = safeCall("Cast not found") {
-        remoteDataSource.getTvShowCast(id).map { it.toDomain() }
+        remoteDataSource.getTvShowCast(id).map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): Season =
@@ -65,17 +69,33 @@ class TvShowRepositoryImpl @Inject constructor(
         seriesId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<Actor> = safeCall("Guests not found") {
         remoteDataSource.getEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber)
-            .map { it.toDomain() }
+            .map { it.toEntity() }
     }
 
     override suspend fun getTvSeriesTrailer(id: Int): String? =
         safeCall(errorMessage = "Trailer not found") {
-            remoteDataSource.getTvShowVideosUrls(id).toDomain()
+            remoteDataSource.getTvShowVideosUrls(id).toEntity()
         }
 
     override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
         safeCall("Failed to fetch TvSeries TopRated") {
-            remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }
+           if (page == 1 && genreId == null) {
+                val cachedMovies =
+                    localCachedContentDataSource.getCachedTvShows(category = Category.TOP_RATED_MEDIA)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toEntity() }
+                }
+
+            }
+
+            return remoteDataSource.fetchTopRatedTvShows(page, genreId).map { it.toEntity() }.also {
+                if (page == 1 && genreId == null) {
+                    localCachedContentDataSource.cacheTvShow(
+                        tvShows = it.map { it.toLocalDto() },
+                        category = Category.TOP_RATED_MEDIA
+                    )
+                }
+            }
         }
 
 
@@ -86,12 +106,38 @@ class TvShowRepositoryImpl @Inject constructor(
 
     override suspend fun getPopularSeries(page: Int): List<TvSeries> =
         safeCall("Failed to fetch TvSeries Popular") {
-            remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }
+            if (page == 1) {
+                val cachedMovies =
+                    localCachedContentDataSource.getCachedTvShows(category = Category.POPULAR_MEDIA)
+                if (cachedMovies.isNotEmpty()) {
+                    return cachedMovies.map { it.toEntity() }
+                }
+            }
+
+            return remoteDataSource.fetchPopularTvShows(page).map { it.toEntity() }.also {
+                if (page == 1) {
+                    localCachedContentDataSource.cacheTvShow(
+                        tvShows = it.map { it.toLocalDto() },
+                        category = Category.POPULAR_MEDIA
+                    )
+                }
+            }
         }
 
     override suspend fun getSeriesGenres(): List<Genre> {
         return safeCall("Genres not found") {
             remoteDataSource.getTvShowGenres().map { it.toEntity() }
+            val cachedGenres = localCachedContentDataSource.getCachedGenres(category = Category.TV_SHOW_GENRES)
+            if (cachedGenres.isNotEmpty()) {
+                return cachedGenres.map { it.toEntity() }
+            }
+
+            return remoteDataSource.getTvShowGenres().map { it.toEntity() }.also {
+                localCachedContentDataSource.cacheGenres(
+                    genres = it.map { it.toLocalDto() },
+                    category = Category.TV_SHOW_GENRES
+                )
+            }
         }
     }
 
@@ -143,6 +189,19 @@ class TvShowRepositoryImpl @Inject constructor(
                 sessionId = sessionId,
                 rating = rating
             ).isSuccess
+        }
+    }
+
+    override suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
+        return safeCall("Failed to fetch user rated tv shows") {
+            remoteDataSource.getTvShowRate(accountId, sessionId).map { it.toEntity() }
+        }
+    }
+
+    override suspend fun deleteTvSeriesRate(seriesId: Int): Boolean {
+        return safeCall("Failed to delete tv series rate") {
+            val sessionId = preferences.sessionId.first()
+            remoteDataSource.deleteTvSeriesRate(seriesId, sessionId).isSuccess
         }
     }
 }

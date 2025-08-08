@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.novix.android.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -9,6 +11,12 @@ android {
 
 dependencies {
     implementation(projects.feature.playlists.api)
+    implementation(projects.designSystem)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.imageViewer)
+    implementation(projects.domain.vod)
+    implementation(projects.domain.identity)
 
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)
@@ -19,6 +27,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
+    testImplementation(libs.junit.jupiter)
     androidTestImplementation(libs.androidx.junit)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
@@ -35,4 +44,9 @@ dependencies {
 
     testImplementation(libs.turbine)
     implementation(libs.kotlinx.datetime)
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.slf4j.api)
 }

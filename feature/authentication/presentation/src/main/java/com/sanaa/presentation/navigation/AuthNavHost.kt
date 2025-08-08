@@ -1,8 +1,6 @@
 package com.sanaa.presentation.navigation
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -10,7 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.AuthStartRoute
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.login.LoginScreen
 import com.sanaa.presentation.screen.welcome.WelcomeScreen
@@ -20,7 +17,7 @@ import com.sanaa.presentation.webview.WebViewScreen
 @Composable
 fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
     val navController = rememberNavController()
-    val startDestination = when(startRoute){
+    val startDestination = when (startRoute) {
         AuthStartRoute.Welcome -> WelcomeRoute()
         AuthStartRoute.Login -> LoginRoute
         AuthStartRoute.SignUp -> SignUpRoute
@@ -28,31 +25,29 @@ fun AuthNavHost(onAuthResult: (Int) -> Unit, startRoute: AuthStartRoute) {
     }
 
     CompositionLocalProvider(LocalNavControllerProvider provides navController) {
-        NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-            NavHost(
-                navController = navController,
-                startDestination = startDestination,
-                modifier = Modifier.background(Theme.colors.surface)
-            ) {
-                composable(WelcomeRoute::class) {
-                    WelcomeScreen(
-                        onFinish = onAuthResult
-                    )
-                }
+        NavHost(
+            navController = navController,
+            startDestination = startDestination,
+            modifier = Modifier.background(Theme.colors.surface)
+        ) {
+            composable(WelcomeRoute::class) {
+                WelcomeScreen(
+                    onFinish = onAuthResult
+                )
+            }
 
-                composable(LoginRoute::class) {
-                    LoginScreen(
-                        onFinish = onAuthResult
-                    )
-                }
+            composable(LoginRoute::class) {
+                LoginScreen(
+                    onFinish = onAuthResult
+                )
+            }
 
-                composable(SignUpRoute::class) { entry ->
-                    WebViewScreen(url = "https://www.themoviedb.org/signup")
-                }
+            composable(SignUpRoute::class) { entry ->
+                WebViewScreen(url = "https://www.themoviedb.org/signup")
+            }
 
-                composable(ForgetPasswordRoute::class) { entry ->
-                    ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password")
-                }
+            composable(ForgetPasswordRoute::class) { entry ->
+                ResetPasswordWebViewScreen(url = "https://www.themoviedb.org/reset-password")
             }
         }
     }
