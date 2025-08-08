@@ -4,6 +4,7 @@ import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.OnboardingApi
+import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.UserProfileFeatureApi
@@ -11,6 +12,7 @@ import com.sanaa.presentation.api.AuthenticationApiImpl
 import com.sanaa.presentation.api.HomeFeatureApiImpl
 import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.presentation.api.OnBoardingApiImpl
+import com.sanaa.presentation.api.PlaylistsFeatureApiImpl
 import com.sanaa.presentation.api.SearchFeatureApiImpl
 import com.sanaa.presentation.api.SearchNavigatorApiImpl
 import com.sanaa.presentation.api.UserProfileFeatureApiImpl
@@ -65,4 +67,10 @@ abstract class ApiModule {
     abstract fun bindUserProfileApi(
         userProfileApiImpl: UserProfileFeatureApiImpl
     ): UserProfileFeatureApi
+
+    @Binds
+    @Singleton
+    abstract fun bindPlayListFeatureApi(
+        playlistsFeatureApiImpl: PlaylistsFeatureApiImpl
+    ): PlaylistsFeatureApi
 }

@@ -20,7 +20,10 @@ data class MovieDetailsUiState(
     val guestSessionId: String = "",
     val isUserLoggedIn: Boolean = false,
     val isRatingSubmitted: Boolean = false,
-    val loginPromptType: LoginPromptType? = null
+    val loginPromptType: LoginPromptType? = null,
+    val showSaveToListBottomSheet: Boolean = false,
+    val showAddListBottomSheet: Boolean = false,
+    val selectedMediaId: Int? = null
 ) {
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0

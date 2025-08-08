@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen
 
+import android.media.browse.MediaBrowser.MediaItem
+import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
 interface SearchScreenInteractionsListener {
@@ -14,8 +16,11 @@ interface SearchScreenInteractionsListener {
     fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
     fun onLoginButtonClick()
-    fun onSaveSeriesClicked()
     fun onSaveMoviesClicked()
     fun onBottomSheetDismiss()
+    fun onSaveIconClick(media: MovieUiModel)
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
 
 }
