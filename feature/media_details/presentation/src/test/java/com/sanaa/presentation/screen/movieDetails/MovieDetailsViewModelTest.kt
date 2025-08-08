@@ -4,14 +4,17 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
+import com.sanaa.presentation.model.MovieUiModel
 import entity.Actor
 import entity.Actor.Gender
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -22,6 +25,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -38,6 +42,7 @@ class MovieDetailsViewModelTest {
         mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
+    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
 
     @BeforeEach
     fun setUp() {
@@ -76,7 +81,9 @@ class MovieDetailsViewModelTest {
             manageMovieDetails,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
-            getUser
+
+            getUser,
+            savedMovieStatusProvider
         )
         advanceUntilIdle()
 
@@ -99,7 +106,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         advanceUntilIdle()
 
-        viewModel.onBookmarkClick(movieId)
+        viewModel.onBookmarkClick(fakeMovie)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
 
         viewModel.onRateMovieClick()
@@ -111,7 +118,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         advanceUntilIdle()
 
-        viewModel.onBookmarkClick(movieId)
+        viewModel.onBookmarkClick(fakeMovie)
         viewModel.onDismissLoginBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -239,7 +246,9 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-
+        savedMovieStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -248,8 +257,10 @@ class MovieDetailsViewModelTest {
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
-            dispatcher = testDispatcher
-        )
+            savedMovieStatusProvider,
+            dispatcher = testDispatcher,
+
+            )
     }
 
     companion object {
@@ -282,4 +293,20 @@ class MovieDetailsViewModelTest {
         private val dummyImages = listOf("/img1.png", "/img2.png")
         private const val dummyTrailer = "http://trailer.url"
     }
+
+    val fakeMovie = MovieUiModel(
+        id = 123,
+        title = "Test Movie",
+        overview = "This is a test movie overview.",
+        rating = "8.5",
+        releaseDate = "2025-01-01",
+        duration = null,
+        posterUrls = listOf("poster.jpg"),
+        genres = emptyList(),
+        isBookmarked = false,
+        trailerUrl = null,
+        posterUrl = "poster.jpg",
+        isSaved = false
+    )
+
 }
