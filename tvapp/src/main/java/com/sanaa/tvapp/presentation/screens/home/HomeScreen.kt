@@ -102,7 +102,8 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 top = 24.dp,
                 bottom = 16.dp
             ),
-            state.featuredCarousel
+            state.featuredCarousel,
+            state.popularMedia
         ) {}
 
         Title(

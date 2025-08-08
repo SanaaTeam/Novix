@@ -1,6 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.home.component
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.focusable
@@ -12,10 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -31,22 +35,28 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
+import com.sanaa.designsystem.design_system.component.carousel.CarouselDots
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.home.FeaturedCarouselState
+import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun FeaturedCarousel(
     modifier: Modifier = Modifier,
     featuredCarouselState: FeaturedCarouselState,
+    mediaItems: List<MediaItem>,
     onSeeDetails: () -> Unit,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
     val brushColor = listOf(Theme.colors.surfaceHigh.copy(0.0f), Theme.colors.surfaceHigh)
+    val pagerState = rememberPagerState(pageCount = { mediaItems.size })
+    val coroutineScope = rememberCoroutineScope()
 
     Card(
         modifier = modifier
@@ -116,6 +126,25 @@ fun FeaturedCarousel(
                     Button(onSeeDetails)
                 }
             }
+
+            CarouselDots(
+                totalDots = mediaItems.size,
+                selectedIndex = pagerState.currentPage,
+                modifier = Modifier
+                    .padding(16.dp)
+                    .align(Alignment.BottomEnd),
+                onDotClick = { index ->
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(
+                            page = index,
+                            animationSpec = tween(
+                                durationMillis = 600,
+                                easing = FastOutSlowInEasing
+                            )
+                        )
+                    }
+                }
+            )
         }
     }
 }
