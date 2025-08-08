@@ -116,14 +116,15 @@ class TopRatedMediaScreenViewModelTest {
     @Test
     fun `fetchTvShows should update media list with tv shows`() = runTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns tvShows
-        TopRatedMediaScreenViewModel(
-            manageMovieUseCase,
-            manageTvSeriesUseCase,
-            savedMovieStatusProvider,
-            checkIfUserIsLoggedInUseCase,
-            stringProvider,
-            testDispatcher
-        )
+        viewModel =
+            TopRatedMediaScreenViewModel(
+                manageMovieUseCase,
+                manageTvSeriesUseCase,
+                savedMovieStatusProvider,
+                checkIfUserIsLoggedInUseCase,
+                stringProvider,
+                testDispatcher
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         val pagingData = viewModel.state.value.tvShowList
