@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">نوفيكس</string>
+    <string name="see_detail">عرض التفاصيل</string>
+    <string name="top_rated">الاعلى تقييمًا</string>
+    <string name="watching_history">سجل المشاهدة</string>
+
 </resources>
