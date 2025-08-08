@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -40,7 +39,7 @@ fun ImdbRatingSelector(
     currentRating: Int,
     onRatingChanged: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
-    maxRating: Int = 5,
+    maxRating: Int = 10,
 ) {
     var rowSize by remember { mutableStateOf(IntSize.Zero) }
     val layoutDirection = LocalLayoutDirection.current
@@ -58,7 +57,8 @@ fun ImdbRatingSelector(
         ) {
             Row(
                 modifier = Modifier
-                    .wrapContentWidth()
+                    .padding(horizontal = 8.dp)
+                    .fillMaxWidth()
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures(
                             onDragEnd = { },
@@ -82,7 +82,7 @@ fun ImdbRatingSelector(
                             }
                         )
                     },
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 for (rating in 1..maxRating) {
                     Star(
