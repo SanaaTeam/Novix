@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.playlist
 
-import android.util.Log
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -70,11 +69,10 @@ class PlayListScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
+                loadSavedLists()
                 updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
             }
         )
 
     }
-
-
 }
