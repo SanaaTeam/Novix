@@ -112,4 +112,10 @@ dependencies {
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
     testImplementation(libs.turbine)
+
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.tv.foundation)
+    implementation(libs.androidx.tv.material)
+    implementation(libs.kotlinx.datetime)
 }

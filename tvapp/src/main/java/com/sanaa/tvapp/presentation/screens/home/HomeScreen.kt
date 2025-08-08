@@ -41,9 +41,9 @@ import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 
 @Composable
-fun HomeScreen(homeViewModel: HomeViewModel = hiltViewModel()) {
+fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
-    val state by homeViewModel.state.collectAsStateWithLifecycle()
+    val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
     Box(
         modifier = Modifier
             .fillMaxSize()
