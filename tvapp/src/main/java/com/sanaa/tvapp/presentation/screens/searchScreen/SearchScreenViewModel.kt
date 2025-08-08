@@ -8,8 +8,8 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
-import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvBasePagingSource
-import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
+import com.sanaa.tvapp.base.TvBasePagingSource
+import com.sanaa.tvapp.base.TvBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : TvSearchBaseViewModel<SearchTvScreenUiState, Unit>(
+) : TvBaseViewModel<SearchTvScreenUiState, Unit>(
     SearchTvScreenUiState(),
     dispatcher
 ), SearchScreenInteractionListener {
