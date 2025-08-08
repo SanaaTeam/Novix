@@ -37,6 +37,7 @@ import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.providers.LocalThemeProvider
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
@@ -123,7 +124,10 @@ fun TrendingPeopleScreenContent(
             modifier = Modifier.fillMaxSize(),
         ) { showNoInternetScreen ->
             if (showNoInternetScreen) {
-                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                NetworkDisconnectionContact(
+                    onRetryClick = interactionListener::onRetryClick,
+                    useDarkTheme = LocalThemeProvider.current,
+                )
             } else {
                 PersonList(
                     persons = people,

@@ -33,6 +33,7 @@ class MyAccountScreenViewModel @Inject constructor(
         )
         checkUserLoggedIn()
         fetchUserData()
+        loadSavedLang()
     }
 
     override fun onClickChangePassword() {
@@ -148,6 +149,7 @@ class MyAccountScreenViewModel @Inject constructor(
         )
     }
 
+
     private suspend fun fetchUserPreference() {
         updateState { it.copy(isLoading = true) }
 
@@ -221,5 +223,14 @@ class MyAccountScreenViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    private fun loadSavedLang() {
+        tryToCollect(
+            callee = { mangeUserPreference.getLanguage() },
+            onCollect = { saveLanguage ->
+                updateState { it.copy(savedLanguage = saveLanguage.code) }
+            }
+        )
     }
 }

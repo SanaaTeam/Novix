@@ -24,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.component.section_header.InlineAction
 import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.component.slider.CarouselSlider
@@ -32,8 +34,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
-import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 
@@ -97,7 +98,8 @@ fun MixedMediaSection(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
                             sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = 0.7f,
+                            safeContentThreshold = LocalSafeContentThreshold.current,
+                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
