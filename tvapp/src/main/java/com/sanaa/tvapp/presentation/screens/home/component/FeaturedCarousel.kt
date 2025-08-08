@@ -40,6 +40,7 @@ import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun FeaturedCarousel(
+    modifier: Modifier = Modifier,
     featuredCarouselState: FeaturedCarouselState,
     onSeeDetails: () -> Unit,
 ) {
@@ -48,7 +49,7 @@ fun FeaturedCarousel(
     val brushColor = listOf(Theme.colors.surfaceHigh.copy(0.0f), Theme.colors.surfaceHigh)
 
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         interactionSource = interactionSource,
         onClick = {},

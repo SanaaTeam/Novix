@@ -89,20 +89,31 @@ private fun HomeScreenLoading(modifier: Modifier) {
 @Composable
 fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
     val scrollState = rememberScrollState()
+    val sidePaddings = 36.dp
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .verticalScroll(scrollState)
-            .padding(horizontal = 24.dp)
     ) {
-        FeaturedCarousel(state.featuredCarousel) {}
+        FeaturedCarousel(
+            modifier = Modifier.padding(
+                start = sidePaddings,
+                end = sidePaddings,
+                top = 24.dp,
+                bottom = 16.dp
+            ),
+            state.featuredCarousel
+        ) {}
 
-        Title(stringResource(R.string.top_rated))
+        Title(
+            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+            title = stringResource(R.string.top_rated)
+        )
 
         LazyRow(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 12.dp
+                start = sidePaddings, end = sidePaddings, bottom = 12.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -115,12 +126,15 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
         }
 
         if (state.continueWatchingMedia.isNotEmpty()) {
-            Title(stringResource(R.string.watching_history))
+            Title(
+                modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+                title = stringResource(R.string.watching_history)
+            )
 
             LazyRow(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp, bottom = 12.dp
+                    start = sidePaddings, end = sidePaddings, bottom = 12.dp
                 ),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -133,12 +147,15 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             }
         }
 
-        Title(stringResource(R.string.up_upcoming))
+        Title(
+            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+            title = stringResource(R.string.up_upcoming)
+        )
 
         LazyRow(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 12.dp
+                start = sidePaddings, end = sidePaddings, bottom = 12.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -186,7 +203,7 @@ private fun ImageList(item: MediaItem) {
                 shape = RoundedCornerShape(12.dp),
             ),
         ),
-        scale = CardDefaults.scale(focusedScale = 1.01f),
+        scale = CardDefaults.scale(focusedScale = 1.05f),
     ) {
         RemoteBlurredSensitiveImage(
             imageUrl = item.imageUrl ?: "",
