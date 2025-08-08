@@ -67,6 +67,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -84,6 +85,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -101,6 +103,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -113,13 +116,14 @@ class TopRatedMediaScreenViewModelTest {
     @Test
     fun `fetchTvShows should update media list with tv shows`() = runTest {
         coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns tvShows
-            TopRatedMediaScreenViewModel(
-                manageMovieUseCase,
-                manageTvSeriesUseCase,
-                savedMovieStatusProvider,
-                checkIfUserIsLoggedInUseCase,
-                testDispatcher
-            )
+        TopRatedMediaScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            savedMovieStatusProvider,
+            checkIfUserIsLoggedInUseCase,
+            stringProvider,
+            testDispatcher
+        )
         testDispatcher.scheduler.advanceUntilIdle()
 
         val pagingData = viewModel.state.value.tvShowList
@@ -138,7 +142,8 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
-                testDispatcher,
+                stringProvider,
+                testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
 
@@ -161,6 +166,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -181,6 +187,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -198,6 +205,7 @@ class TopRatedMediaScreenViewModelTest {
                 manageTvSeriesUseCase,
                 savedMovieStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
 

@@ -18,11 +18,11 @@ import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
-import service.VodStringProvider
 import repository.SavedMovieStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -100,7 +100,11 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
         updateState {
-            it.copy(mediaList = flowOf(pagingData), isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                mediaList = flowOf(pagingData),
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
@@ -116,8 +120,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
     }
 
+
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn) {
         if (!state.value.userIsLoggedIn) {
             updateState { it.copy(showBottomSheet = true) }
             return
@@ -133,18 +137,6 @@ class TrendingMoviesScreenViewModel @Inject constructor(
                 )
             }
         }
-    }
-
-    override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
-    }
-
-    override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
-    }
-
-    override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onBackClick() {
@@ -165,6 +157,18 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
             updateState { it.copy(isNoInternetConnection = true) }
@@ -175,8 +179,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createMoviesPagingSource(): PagingSource<Int, Movie> {
-        return BasePagingSourceForHome { page ->
+    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+        return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }
     }
