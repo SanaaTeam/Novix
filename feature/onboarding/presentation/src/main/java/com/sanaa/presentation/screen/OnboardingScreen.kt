@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,7 +27,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,109 +79,109 @@ fun OnBoardingScreenContent(
         snapshotFlow { pagerState.currentPage }
             .collect { interactionListener.setCurrentPage(it) }
     }
-    NovixTheme(isSystemInDarkTheme()) {
-        NovixScaffold(
-            modifier = modifier
-                .navigationBarsPadding()
-                .fillMaxSize(),
+    NovixScaffold(
+        modifier = modifier
+            .navigationBarsPadding()
+            .fillMaxSize(),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .systemBarsPadding(),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .systemBarsPadding(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircleShapeBlur(
-                    modifier = Modifier.align(Alignment.Center).height(300.dp)
-                )
 
-                if (state.pageList.isNotEmpty()) {
-                    HorizontalPager(
-                        state = pagerState,
+            if (state.pageList.isNotEmpty()) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 100.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) { page ->
+                    Column(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 100.dp)
-                            .verticalScroll(rememberScrollState()),
-                        ) { page ->
-                        Column(
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+
+                        Box(
                             modifier = Modifier
-                                .fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
                         ) {
-
-
-
-                            Box(
+                            CircleShapeBlur(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .align(Alignment.CenterHorizontally),
-                                contentAlignment = Alignment.Center
-                            ) {
+                                    .align(Alignment.Center)
+                                    .height(300.dp)
+                            )
 
-                                Image(
-                                    painter = painterResource(state.pageList[page].imageRes),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Inside,
-                                    modifier = Modifier.width(244.dp)
-                                )
-                            }
-
-                            DialogContainer(
-                                pageContent = state.pageList[page]
+                            Image(
+                                painter = painterResource(state.pageList[page].imageRes),
+                                contentDescription = null,
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier.width(244.dp)
                             )
                         }
-                    }
-                }
-                if (pagerState.currentPage != state.pageList.lastIndex) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, top = 16.dp)
-                            .align(Alignment.TopStart),
-                    ) {
-                        TextButton(
-                            text = stringResource(id = R.string.skip),
-                            onClick = interactionListener::onSkipClick,
+
+                        DialogContainer(
+                            pageContent = state.pageList[page],
+                            modifier = Modifier
                         )
                     }
                 }
+            }
 
+            if (pagerState.currentPage != state.pageList.lastIndex) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 40.dp)
-                        .align(Alignment.BottomStart),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(start = 16.dp, top = 16.dp)
+                        .align(Alignment.TopStart),
+                ) {
+                    TextButton(
+                        text = stringResource(id = R.string.skip),
+                        onClick = interactionListener::onSkipClick,
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 40.dp)
+                    .align(Alignment.BottomStart),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+
+                CarouselDots(
+                    totalDots = 3,
+                    selectedIndex = pagerState.currentPage,
+                )
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
 
-                    CarouselDots(
-                        totalDots = 3,
-                        selectedIndex = pagerState.currentPage,
-                    )
+                    if (pagerState.currentPage != 0)
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-
-                        if (pagerState.currentPage != 0)
-
-                            OutlinedButton(
-                                icon = painterResource(id = R.drawable.icon_back),
-                                text = null,
-                                onClick = { interactionListener.onBackClick() },
-                                modifier = Modifier
-                            )
-
-                        PrimaryButton(
-                            icon = painterResource(id = R.drawable.icon_right_arrow),
+                        OutlinedButton(
+                            icon = painterResource(id = R.drawable.icon_back),
                             text = null,
-                            onClick = { interactionListener.onNextPageClick() },
+                            onClick = { interactionListener.onBackClick() },
                             modifier = Modifier
                         )
-                    }
+
+                    PrimaryButton(
+                        icon = painterResource(id = R.drawable.icon_right_arrow),
+                        text = null,
+                        onClick = { interactionListener.onNextPageClick() },
+                        modifier = Modifier
+                    )
                 }
             }
         }
