@@ -21,4 +21,10 @@
     <string name="what_to_watch">ماذا تريد ان تشاهد ؟</string>
     <string name="login">تسجيل دخول</string>
     <string name="movie_poster">ملصق الفيلم</string>
+
+    <!-- Watching History -->
+    <string name="no_watching_history">لا توجد مشاهدات بعد</string>
+    <string name="no_history_yet">لا توجد مشاهدات بعد</string>
+    <string name="failed_to_load_watching_history">فشل في تحميل سجل المشاهدات</string>
+    <string name="error_message">شيئا ما خاطئ</string>
 </resources>

@@ -11,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<OnboardingUiState>(OnboardingUiState(), dispatcher),
     OnboardingInteractionsListener {
@@ -53,11 +52,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun onSkipClick() {
-        updateState { it.copy(isSkipable = true) }
-
-        tryToExecute(
-            callee = {}
-        )
+        updateState { it.copy(isSkipable = true, onboardingIsFinished = true) }
     }
 
     override fun setCurrentPage(pageIndex: Int) {

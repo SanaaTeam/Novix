@@ -21,4 +21,7 @@
     <string name="movie_poster">Movie poster</string>
     <string name="watching_history">Watching history</string>
 
+    <string name="no_watching_history">No watching history yet</string>
+    <string name="no_history_yet">No watching history yet</string>
+    <string name="failed_to_load_watching_history">Failed to load watching history</string>
 </resources>
