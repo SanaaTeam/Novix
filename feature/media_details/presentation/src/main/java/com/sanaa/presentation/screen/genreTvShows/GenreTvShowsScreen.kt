@@ -41,6 +41,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -127,7 +128,8 @@ fun GenreTvShowsScreenContent(
                         if (state.noInternetConnection) {
                             NetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClick() },
-                                modifier = Modifier.fillMaxSize()
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
                             )
                         } else {
                             Box(

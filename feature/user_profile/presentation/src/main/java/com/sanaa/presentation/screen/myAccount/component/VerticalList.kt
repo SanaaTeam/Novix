@@ -15,17 +15,15 @@ import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
 fun VerticalList(items: List<AccountOptionItem>) {
-    val verticalScroll = rememberScrollState()
     Column(
         modifier = Modifier
-            .padding(top = 8.dp)
-            .verticalScroll(verticalScroll)
     ) {
         items.forEachIndexed { index, item ->
             AccountOption(
                 painter = item.painter,
                 title = item.title,
-                onClick = item.onClick
+                onClick = item.onClick,
+                description = item.description
             )
 
             if (index != items.lastIndex)
