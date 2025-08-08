@@ -14,7 +14,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
@@ -22,7 +22,7 @@ import usecase.custom_list.custom_list_param.SavedList
 class AddBookmarkListViewModelTest {
 
     private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
-    private val savedMovieStatusProvider: SavedMovieStatusProvider = mockk(relaxed = true)
+    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: AddBookmarkListViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -77,7 +77,7 @@ class AddBookmarkListViewModelTest {
         viewModel.onAddClicked(123)
 
         coVerify(exactly = 0) { manageSavedListsUseCase.createSavedList(any()) }
-        verify(exactly = 0) { savedMovieStatusProvider.markSaved(any()) }
+        verify(exactly = 0) { savedListsStatusProvider.markItemSaved(any()) }
         assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
@@ -97,7 +97,7 @@ class AddBookmarkListViewModelTest {
                 assertThat(awaitItem()).isEqualTo(Unit)
 
                 coVerify(exactly = 1) { manageSavedListsUseCase.createSavedList(listTitle) }
-                verify(exactly = 1) { savedMovieStatusProvider.markSaved(mediaId) }
+                verify(exactly = 1) { savedListsStatusProvider.markItemSaved(mediaId) }
 
                 val state = viewModel.state.value
                 assertThat(state.listTitle).isEmpty()
@@ -132,7 +132,7 @@ class AddBookmarkListViewModelTest {
     private fun initViewModel() {
         viewModel = AddBookmarkListViewModel(
             manageSavedListsUseCase = manageSavedListsUseCase,
-            savedMovieStatusProvider = savedMovieStatusProvider,
+            listsStatusProvider = savedListsStatusProvider,
             dispatcher = testDispatcher
         )
     }

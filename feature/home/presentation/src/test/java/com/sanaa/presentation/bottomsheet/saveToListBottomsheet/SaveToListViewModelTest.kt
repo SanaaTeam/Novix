@@ -4,27 +4,27 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaveToListViewModelTest {
 
-    private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true)
-    private val savedMovieStatusProvider: SavedMovieStatusProvider = mockk(relaxed = true)
+    private val listsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: SaveToListViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -35,29 +35,18 @@ class SaveToListViewModelTest {
     }
 
     @Test
-    fun `init on success loads playlists and updates state`() = runTest {
+    fun `init loads playlists and updates state`() = runTest {
         val fakeLists = listOf(SavedList(id = 1, title = "Favorites", itemCount = 10))
-        coEvery { manageSavedListsUseCase.getSavedLists() } returns fakeLists
+        val fakeStateFlow = MutableStateFlow(fakeLists)
+        coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
 
         initViewModel()
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertThat(state.isLoading).isFalse()
         assertThat(state.playlists).hasSize(1)
         assertThat(state.playlists.first().title).isEqualTo("Favorites")
-    }
-
-    @Test
-    fun `init on failure updates state with error message`() = runTest {
-        coEvery { manageSavedListsUseCase.getSavedLists() } throws RuntimeException("Network Error")
-
-        initViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
         assertThat(state.isLoading).isFalse()
-        assertThat(state.errorMessage).isEqualTo("Failed to load lists.")
     }
 
     @Test
@@ -72,32 +61,54 @@ class SaveToListViewModelTest {
     }
 
     @Test
-    fun `onAddClicked on success adds item, reloads, marks saved, and emits success effect`() = runTest {
-        initViewModel()
-        viewModel.onPlaylistSelected(1L)
-        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true
+    fun `onAddClicked on success adds item, reloads, marks saved, and emits success effect`() =
+        runTest {
+            val fakeLists = listOf(SavedList(id = 1, title = "Favorites", itemCount = 10))
+            val fakeStateFlow = MutableStateFlow(fakeLists)
+            coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
 
-        viewModel.effect.test {
-            viewModel.onAddClicked(mediaId = 789L)
+            coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true
+            coEvery { listsStatusProvider.refreshLists() } returns Unit
+            every { listsStatusProvider.markItemSaved(any()) } returns Unit
+
+            initViewModel()
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(SaveToListEffect.AddedSuccessfully)
+            viewModel.onPlaylistSelected(1L)
 
-            coVerify(exactly = 1) { manageSavedListItemsUseCase.addMovieToSavedList(1, 789) }
-            verify(exactly = 1) { savedMovieStatusProvider.markSaved(789) }
-            coVerify(exactly = 2) { manageSavedListsUseCase.getSavedLists() } // Once in init, once in reload
+            viewModel.effect.test {
+                viewModel.onAddClicked(mediaId = 789L)
+                advanceUntilIdle()
 
-            assertThat(viewModel.state.value.isLoading).isFalse()
+                assertThat(awaitItem()).isEqualTo(SaveToListEffect.AddedSuccessfully)
+
+                coVerify(exactly = 1) { manageSavedListItemsUseCase.addMovieToSavedList(1, 789) }
+                verify(exactly = 1) { listsStatusProvider.markItemSaved(789) }
+                coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
+
+                assertThat(viewModel.state.value.isLoading).isFalse()
+            }
         }
-    }
 
     @Test
     fun `onAddClicked on failure updates error state and emits failure effect`() = runTest {
+        coEvery {
+            manageSavedListItemsUseCase.addMovieToSavedList(
+                any(),
+                any()
+            )
+        } throws RuntimeException("API Error")
+        every { listsStatusProvider.markItemSaved(any()) } returns Unit
+
+        val fakeLists = listOf<SavedList>()
+        val fakeStateFlow = MutableStateFlow(fakeLists)
+        coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
+
         initViewModel()
-        viewModel.onPlaylistSelected(1L)
-        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } throws RuntimeException("API Error")
+        advanceUntilIdle()
 
         viewModel.effect.test {
+            viewModel.onPlaylistSelected(1L)
             viewModel.onAddClicked(mediaId = 789L)
             advanceUntilIdle()
 
@@ -111,9 +122,8 @@ class SaveToListViewModelTest {
 
     private fun initViewModel() {
         viewModel = SaveToListViewModel(
-            manageSavedListsUseCase = manageSavedListsUseCase,
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
-            savedMovieStatusProvider = savedMovieStatusProvider,
+            listsStatusProvider = listsStatusProvider,
             dispatcher = testDispatcher
         )
     }

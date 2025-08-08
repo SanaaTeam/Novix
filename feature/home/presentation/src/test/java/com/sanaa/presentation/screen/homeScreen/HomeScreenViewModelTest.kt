@@ -27,7 +27,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -49,7 +49,7 @@ class HomeScreenViewModelTest {
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @BeforeEach
@@ -69,7 +69,7 @@ class HomeScreenViewModelTest {
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
-        savedMovieStatusProvider = mockk(relaxed = true) {
+        savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
     }
@@ -82,7 +82,7 @@ class HomeScreenViewModelTest {
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
             testDispatcher,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
         )
     }
 
