@@ -1,4 +1,4 @@
-package com.sanaa.novix.di
+package com.sanaa.tvapp.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.sanaa.novix.logging.CrashReportingTree
