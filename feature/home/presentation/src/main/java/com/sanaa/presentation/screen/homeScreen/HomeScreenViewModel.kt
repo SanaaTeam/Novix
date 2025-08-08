@@ -240,7 +240,8 @@ class HomeScreenViewModel @Inject constructor(
                 updateState {
                     it.copy(
                         showSaveToListBottomSheet = true,
-                        selectedMediaId = media.id.toLong()
+                        selectedMediaId = media.id.toLong(),
+                        selectedMediaToSave = media
                     )
                 }
             }
@@ -258,7 +259,11 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onCreateNewListClick() {
-        // TODO("Not yet implemented")
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onRetryClick() {
