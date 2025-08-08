@@ -60,4 +60,6 @@
     <string name="create_new_list">إنشاء قائمة جديدة</string>
 
 
+    <string name="eng">الإنكليزية</string>
+    <string name="ar">العربية</string>
 </resources>

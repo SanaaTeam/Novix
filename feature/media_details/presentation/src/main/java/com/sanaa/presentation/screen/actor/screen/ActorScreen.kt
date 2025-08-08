@@ -44,6 +44,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -184,7 +185,8 @@ private fun ActorScreenContent(
                     if (state.noInternetConnection) {
                         NetworkDisconnectionContact(
                             onRetryClick = { listener.onRetryClicked() },
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
                         )
                     } else {
                         Box(
