@@ -10,9 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
@@ -43,27 +44,28 @@ import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
-        when {
-            state.isNoInternet -> {
-                NetworkDisconnectionContact(
-                    modifier = Modifier
-                        .fillMaxSize()
+    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
+    when {
+        state.isNoInternet -> {
+            NetworkDisconnectionContact(
+                modifier = Modifier
+                    .fillMaxSize()
 
-                        .verticalScroll(scrollState),
-                    onRetryClick = {}
-                )
-            }
+                    .verticalScroll(scrollState),
+                onRetryClick = {}
+            )
+        }
 
-            state.isLoading -> {
-                HomeScreenLoading(
-                    modifier = Modifier
-                        .verticalScroll(scrollState),
-                )
-            }
+        state.isLoading -> {
+            HomeScreenLoading(
+                modifier = Modifier
+                    .verticalScroll(scrollState),
+            )
+        }
 
-            else -> {
-                HomeScreenContent(state)
-            }
+        else -> {
+            HomeScreenContent(state, upcomingMovies)
+        }
     }
 }
 
@@ -76,29 +78,29 @@ private fun HomeScreenLoading(modifier: Modifier) {
     ) {
         FeaturedCarouselShimmer()
 
-        TitleShimmer()
-        ImageListShimmer()
-
-        TitleShimmer()
-        ImageListShimmer()
+        repeat(3) {
+            TitleShimmer()
+            ImageListShimmer()
+        }
     }
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun HomeScreenContent(state: HomeScreenUiState) {
+fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    val scrollState = rememberScrollState()
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(scrollState)
             .padding(horizontal = 24.dp)
     ) {
         FeaturedCarousel(state.featuredCarousel) {}
 
         Title(stringResource(R.string.top_rated))
 
-        LazyVerticalGrid(
+        LazyRow(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = 140.dp),
             contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp, bottom = 12.dp
             ),
@@ -112,21 +114,40 @@ fun HomeScreenContent(state: HomeScreenUiState) {
             }
         }
 
-        Title(stringResource(R.string.watching_history))
+        if (state.continueWatchingMedia.isNotEmpty()) {
+            Title(stringResource(R.string.watching_history))
 
-        LazyVerticalGrid(
+            LazyRow(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = 16.dp, end = 16.dp, bottom = 12.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(
+                    items = state.continueWatchingMedia,
+                    key = { it.id }
+                ) {
+                    ImageList(it)
+                }
+            }
+        }
+
+        Title(stringResource(R.string.up_upcoming))
+
+        LazyRow(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = 140.dp),
             contentPadding = PaddingValues(
                 start = 16.dp, end = 16.dp, bottom = 12.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(
-                items = state.continueWatchingMedia,
-                key = { it.id }
-            ) {
-                ImageList(it)
+                count = upcomingMovies.itemCount,
+            ) { index ->
+                upcomingMovies[index]?.let {
+                    ImageList(it)
+                }
             }
         }
     }
