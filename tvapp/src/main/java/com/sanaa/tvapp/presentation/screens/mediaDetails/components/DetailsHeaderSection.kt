@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
@@ -36,7 +38,7 @@ fun DetailsHeaderSection(
     Box(modifier = modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth().height(420.dp)
                 .align(Alignment.TopEnd)
         ) {
             RemoteBlurredHaramImageViewer(
@@ -79,7 +81,7 @@ fun DetailsHeaderSection(
         }
         Column(
             modifier = Modifier
-                .padding(horizontal = 48.dp, vertical = 24.dp)
+                .padding(horizontal = 36.dp, vertical = 24.dp)
                 .fillMaxWidth(0.5f)
                 .align(Alignment.BottomStart),
         ) {
@@ -93,7 +95,7 @@ fun DetailsHeaderSection(
     }
 }
 
-@Preview
+@Preview(device = Devices.TV_1080p, showBackground = false)
 @Composable
 private fun Preview(modifier: Modifier = Modifier) {
     Column(

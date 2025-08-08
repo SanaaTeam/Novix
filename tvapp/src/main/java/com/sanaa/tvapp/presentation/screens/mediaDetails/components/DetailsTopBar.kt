@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,16 +14,15 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTabs
 
 @Composable
 fun DetailsTopBar(
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -35,7 +33,7 @@ fun DetailsTopBar(
     ) {
 
         BackButton(
-            onBackClick = {},
+            onBackClick = onBackClick,
         )
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -63,6 +61,6 @@ fun DetailsTopBar(
 @Composable
 fun DetailsTopBarPreview(modifier: Modifier = Modifier) {
     NovixTheme(isDarkMode = true) {
-        DetailsTopBar()
+        DetailsTopBar(onBackClick = {})
     }
 }

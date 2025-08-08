@@ -15,7 +15,7 @@ fun MovieDetailsScreen(modifier: Modifier = Modifier) {
         NovixScaffold(
             modifier = Modifier.padding(top = 40.dp),
             topBar = {
-                DetailsTopBar()
+                DetailsTopBar({})
             }
         ) {
 
