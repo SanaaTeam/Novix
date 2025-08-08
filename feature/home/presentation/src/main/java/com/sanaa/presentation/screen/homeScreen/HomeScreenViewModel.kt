@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
-import androidx.lifecycle.viewModelScope
 
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
@@ -19,9 +19,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -87,6 +86,7 @@ class HomeScreenViewModel @Inject constructor(
             },
         )
     }
+
     private fun fetchPopularMediaData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -166,7 +166,6 @@ class HomeScreenViewModel @Inject constructor(
             onError = ::onErrorLoadingData,
         )
     }
-
 
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
@@ -249,6 +248,7 @@ class HomeScreenViewModel @Inject constructor(
             emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
         }
     }
+
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
     }
@@ -258,7 +258,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onCreateNewListClick() {
-        TODO("Not yet implemented")
+        // TODO("Not yet implemented")
     }
 
     override fun onRetryClick() {
