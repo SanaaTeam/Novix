@@ -1,4 +1,4 @@
-package com.sanaa.tvapp.presentation.screens.searchScreen.base
+package com.sanaa.tvapp.base
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
