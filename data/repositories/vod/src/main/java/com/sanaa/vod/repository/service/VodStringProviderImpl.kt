@@ -16,8 +16,8 @@ class VodStringProviderImpl @Inject constructor(
         get() = context.getString(R.string.something_went_wrong_error)
 
     override val addToListFailed: String
-        get() = context.getString(R.string.no_internet_connection_error)
+        get() = context.getString(R.string.add_to_list_failed)
 
     override val addToListSuccess: String
-        get() = context.getString(R.string.something_went_wrong_error)
+        get() = context.getString(R.string.add_to_list_success)
 }
