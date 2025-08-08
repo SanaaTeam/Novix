@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
+import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,7 +16,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             NovixTheme {
 //                SearchScreen()
-                TvShowScreen()
+//                TvShowScreen()
+                MovieDetailsScreen()
             }
 
         }

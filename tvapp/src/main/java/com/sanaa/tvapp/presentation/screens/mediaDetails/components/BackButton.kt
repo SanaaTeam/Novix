@@ -1,4 +1,4 @@
-package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components
+package com.sanaa.tvapp.presentation.screens.mediaDetails.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Icon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 
@@ -23,15 +24,16 @@ fun BackButton(
     Box(
         modifier = modifier
             .clip(CircleShape)
-            .background(Theme.colors.onPrimary)
+            .background(Theme.colors.iconBackgroundLow)
             .clickable { onBackClick() }
             .padding(12.dp),
         contentAlignment = Alignment.Center
     ) {
-        Image(
+        Icon(
             modifier = Modifier.size(20.dp),
             painter = androidx.compose.ui.res.painterResource(R.drawable.icon_back_tringle),
             contentDescription = null,
+            tint = Theme.colors.title
         )
     }
 }
