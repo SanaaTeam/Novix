@@ -101,6 +101,10 @@ fun HomeScreen(
                 is HomeScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
+
+                is HomeScreenEffect.ShowSuccess -> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }

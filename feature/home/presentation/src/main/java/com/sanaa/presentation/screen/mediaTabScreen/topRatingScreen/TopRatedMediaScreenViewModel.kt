@@ -185,6 +185,14 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
+    override fun onSaveToListSuccess() {
+        emitEffect(TopRatedScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.addToListFailed))
+    }
+
 
     override fun onDismissSaveToListBottomSheet() {
         updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }

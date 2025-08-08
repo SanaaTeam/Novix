@@ -120,6 +120,15 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         }
     }
 
+
+    override fun onSaveToListSuccess() {
+        emitEffect(TrendingMediaScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.addToListFailed))
+    }
+
     override fun onBackClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
     }

@@ -16,10 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,10 +28,8 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
@@ -68,9 +62,6 @@ fun HomeScreenContent(
 
             },
         )
-
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-
 
     val showNoInternetScreen = (state.isNoInternetConnection
             && upcomingMovies.itemCount == 0
@@ -224,24 +215,13 @@ fun HomeScreenContent(
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+
     SaveToListBottomSheet(
         isVisible = state.showSaveToListBottomSheet,
         onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
         onCreateNewListClick = { interactionListener.onCreateNewListClick() },
-        onSuccess = {
-            snack = SnackData(
-                message = "Added to list successfully",
-                isError = false
-            )
-        },
-        onFailure = {
-            snack = SnackData(
-                message = "Added to list failed",
-                isError = true
-            )
-        },
+        onSuccess = interactionListener::onSaveToListSuccess,
+        onFailure = interactionListener::onSaveToListFailure,
         mediaId = state.selectedMediaId.toLong(),
     )
 }

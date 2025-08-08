@@ -9,6 +9,8 @@ interface TopRatedScreenInteractionListener {
     fun onTvShowGenreClick(id: Int?)
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
     fun onSaveIconClick(media: MediaItem)
+    fun onSaveToListSuccess()
+    fun onSaveToListFailure()
     fun onBackClick()
     fun onLoginButtonClick()
     fun onDismissBottomSheet()

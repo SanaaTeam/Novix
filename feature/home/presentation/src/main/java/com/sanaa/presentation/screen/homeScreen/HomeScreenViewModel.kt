@@ -279,6 +279,14 @@ class HomeScreenViewModel @Inject constructor(
         updateState { it.copy(showSaveToListBottomSheet = false) }
     }
 
+    override fun onSaveToListSuccess() {
+        emitEffect(HomeScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(HomeScreenEffect.ShowError(message = stringProvider.addToListFailed))
+    }
+
     override fun onCreateNewListClick() {
         TODO("Not yet implemented")
     }
