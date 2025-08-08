@@ -6,28 +6,25 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
+import androidx.activity.viewModels
+import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
-import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
-import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
+import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
+    @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        actionBar?.hide()
         setContent {
-            NovixTheme(isSystemInDarkTheme()) {
-//                SearchScreen()
-//                TvShowScreen()
-                MovieDetailsScreen()
+            NovixTheme(true) {
+                HomeScreen()
             }
-
         }
     }
 }

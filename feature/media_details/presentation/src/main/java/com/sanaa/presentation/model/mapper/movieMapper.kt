@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import com.sanaa.presentation.model.MovieUiModel
 import entity.MediaHistoryItem
 import entity.Movie
+import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
@@ -19,7 +20,7 @@ fun Movie.toUiModel(
         releaseDate = releaseDate.toString(),
         duration = duration,
         genres = genres.map { it.toUiModel() },
-        isBookmarked = isBookmarked,
+        isBookmarked = isSaved,
         trailerUrl = trailerUrl,
         posterUrl = posterImageUrl
     )
@@ -30,6 +31,7 @@ fun Movie.toHistory(): MediaHistoryItem {
         id = id,
         genres = genres,
         posterImageUrl = posterImageUrl,
-        mediaType = MediaType.MOVIE
+        mediaType = MediaType.MOVIE,
+        lastWatchedAt = Clock.System.now()
     )
 }

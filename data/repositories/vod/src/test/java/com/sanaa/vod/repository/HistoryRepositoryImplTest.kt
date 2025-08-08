@@ -201,7 +201,13 @@ class HistoryRepositoryImplTest {
             )
 
             coVerify {
-                localDataSource.insertWatchedMediaHistory(watchedMedia)
+                localDataSource.insertWatchedMediaHistory(match {
+                    it.id == watchedMedia.id &&
+                    it.posterImageUrl == watchedMedia.posterImageUrl &&
+                    it.mediaType == watchedMedia.mediaType &&
+                    it.username == watchedMedia.username &&
+                    it.genres == watchedMedia.genres
+                })
             }
         }
 

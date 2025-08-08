@@ -49,3 +49,6 @@ include(":data:local_data_source:identity")
 include(":data:remote_data_source:identity")
 include(":data:repositories:identity")
 include(":tvapp")
+
+include(":feature:onboarding:api")
+include(":feature:onboarding:presentation")

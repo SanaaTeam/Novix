@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -9,16 +8,15 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class GenreMoviesViewModel @Inject constructor(
@@ -39,23 +37,26 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(categoryId)
     }
 
-    fun updateUserLoggingStatus(){
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+    fun updateUserLoggingStatus() {
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
+
     override fun onRetryClicked() {
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
         fetchMovies(categoryId)
     }
 
     override fun onSaveIconClick() {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
             updateState { it.copy(showBottomSheet = true) }
         }
     }

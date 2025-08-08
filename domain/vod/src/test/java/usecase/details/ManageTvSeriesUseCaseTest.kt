@@ -442,7 +442,49 @@ class ManageTvSeriesUseCaseTest {
 
         assertThat(result[0].createdDate).isEqualTo(LocalDate(2023, 5, 20))
     }
+    @Test
+    fun `getUserRatedTvSeries should return rated tv series when available`() = runTest {
+        val accountId = 123L
+        val sessionId = "session_abc"
+        val expected = listOf(mockk<TvSeries>(), mockk<TvSeries>())
+        coEvery { tvSeriesRepository.getUserRatedTvSeries(accountId, sessionId) } returns expected
 
+        val result = manageTvSeriesDetailsUseCase.getUserRatedTvSeries(accountId, sessionId)
+
+        assertThat(result).isEqualTo(expected)
+    }
+
+    @Test
+    fun `getUserRatedTvSeries should return empty list when none rated`() = runTest {
+        val accountId = 123L
+        val sessionId = "session_abc"
+        coEvery { tvSeriesRepository.getUserRatedTvSeries(accountId, sessionId) } returns emptyList()
+
+        val result = manageTvSeriesDetailsUseCase.getUserRatedTvSeries(accountId, sessionId)
+
+        assertThat(result).isEmpty()
+    }
+
+
+    @Test
+    fun `deleteTvSeriesRate should return true when deletion is successful`() = runTest {
+        val seriesId = 10
+        coEvery { tvSeriesRepository.deleteTvSeriesRate(seriesId) } returns true
+
+        val result = manageTvSeriesDetailsUseCase.deleteTvSeriesRate(seriesId)
+
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `deleteTvSeriesRate should return false when deletion fails`() = runTest {
+        val seriesId = 11
+        coEvery { tvSeriesRepository.deleteTvSeriesRate(seriesId) } returns false
+
+        val result = manageTvSeriesDetailsUseCase.deleteTvSeriesRate(seriesId)
+
+        assertThat(result).isFalse()
+    }
 
     companion object {
         val dummyGenre = Genre(

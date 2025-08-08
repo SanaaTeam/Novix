@@ -22,6 +22,8 @@ dependencies {
     implementation(projects.feature.playlists.api)
     implementation(projects.feature.authentication.api)
 
+    implementation(libs.material3)
+
     implementation(libs.bundles.compose)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -32,7 +34,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.kotlinx.datetime)
 
-    androidTestImplementation(libs.androidx.junit)
 
     implementation(libs.bundles.compose)
     implementation(libs.androidx.ui.compose.foundation)

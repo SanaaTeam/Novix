@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Novix</string>
+    <string name="see_detail">See details</string>
+    <string name="top_rated">Top rating</string>
+    <string name="watching_history">Watching history</string>
     <string name="unsuitable_image">Unsuitable image</string>
     <string name="welcome_back">Welcome back</string>
     <string name="no_internet_connection_error">No Internet Connection</string>

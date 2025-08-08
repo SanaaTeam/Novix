@@ -10,6 +10,7 @@ import com.sanaa.vod.media.movie.response.MovieApiResponse
 import com.sanaa.vod.media.movie.response.MovieCastResponse
 import com.sanaa.vod.media.movie.response.MovieImagesResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -102,4 +103,10 @@ interface MovieApiService {
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<MovieDto>
+
+    @DELETE("movie/{movie_id}/rating")
+    suspend fun deleteMovieRating(
+        @Path("movie_id") movieId: Int,
+        @Query("session_id") sessionId: String
+    ): RatingResponse
 }

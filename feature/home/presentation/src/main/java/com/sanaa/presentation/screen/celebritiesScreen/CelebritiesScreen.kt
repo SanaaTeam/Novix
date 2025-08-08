@@ -32,6 +32,7 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.providers.LocalThemeProvider
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 
@@ -111,7 +112,10 @@ fun CelebritiesContent(
                 ) { (loading, disconnected) ->
                     when {
                         disconnected -> {
-                            NetworkDisconnectionContact(TODO())
+                            NetworkDisconnectionContact(
+                                useDarkTheme = LocalThemeProvider.current,
+                                onRetryClick ={interactionListener.onRetryClick()},
+                            )
                         }
 
                         loading -> {

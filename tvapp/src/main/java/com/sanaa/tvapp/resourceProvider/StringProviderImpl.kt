@@ -7,7 +7,7 @@ import service.StringProvider
 import javax.inject.Inject
 
 class StringProviderImpl @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
 ) : StringProvider {
     override val welcomeBack: String
         get() = context.getString(R.string.welcome_back)

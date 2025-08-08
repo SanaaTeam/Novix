@@ -8,8 +8,6 @@ data class CreateGuestSessionResponse(
     @SerialName("success")
     val success: Boolean,
 
-    @SerialName("status_code")
-    val statusCode: Int?,
 
     @SerialName("expires_at")
     val expiresAt: String?,

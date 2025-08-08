@@ -80,6 +80,9 @@ val excludedPackages = listOf(
     "com.sanaa.presentation.cards.**",
 
     "com.sanaa.presentation.screen.login.**",
+    "com.sanaa.presentation.screen.myRating.MyRatingScreen*",
+    "com.sanaa.presentation.screen.myRating.MyRatingScreenUiState*",
+    "com.sanaa.presentation.screen.myRating.component.**",
     "com.sanaa.presentation.screen.login.components.**",
     "com.sanaa.presentation.screen.login_base.**",
     "com.sanaa.presentation.screen.welcome.**",
@@ -105,6 +108,14 @@ val profileScreenPackages = listOf(
     "com.sanaa.presentation.screen.myAccount.component.**",
 )
 
+val playlistScreenPackages = listOf(
+    "com.sanaa.presentation.screen.playlist*",
+    "com.sanaa.presentation.screen.playlist.componants.**",
+
+    "com.sanaa.presentation.screen.playlistDetails*",
+    "com.sanaa.presentation.screen.playlistDetails.components.**",
+)
+
 allprojects {
     apply(plugin = "org.jetbrains.kotlinx.kover")
     kover {
@@ -113,7 +124,8 @@ allprojects {
                 excludes {
                     classes(
                         excludedPackages +
-                                profileScreenPackages
+                                profileScreenPackages +
+                                playlistScreenPackages
                     )
                 }
             }

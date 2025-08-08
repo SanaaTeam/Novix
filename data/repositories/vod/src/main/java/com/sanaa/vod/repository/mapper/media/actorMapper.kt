@@ -9,7 +9,7 @@ import entity.Movie
 import entity.TvSeries
 import kotlinx.datetime.LocalDate
 
-fun ActorDto.toDomain(): Actor = Actor(
+fun ActorDto.toEntity(): Actor = Actor(
     id = id,
     imageUrl = getFullImageUrl(profileImagePath),
     name = name ?: "Unknown name",

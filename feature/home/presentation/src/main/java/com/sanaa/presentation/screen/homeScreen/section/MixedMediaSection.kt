@@ -24,16 +24,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.component.section_header.InlineAction
 import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.component.slider.CarouselSlider
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
-import com.sanaa.presentation.components.cards.MediaPosterCard
-import com.sanaa.presentation.components.chips.SaveIconChip
+import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 
@@ -83,9 +84,12 @@ fun MixedMediaSection(
                                 enter = slideInHorizontally() + fadeIn(),
                                 exit = slideOutHorizontally() + fadeOut()
                             ) {
-                                SaveIconChip(
-                                    onClick = { onSaveIconClicked(item) }
-                                )
+                                if(item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                                    SaveIconChip(
+                                        onClick = { onSaveIconClicked(item) },
+                                        isSaved = item.isSaved
+                                    )
+                                }
                             }
                         }
                     },
@@ -93,11 +97,12 @@ fun MixedMediaSection(
                         onMediaClick(item)
                     },
                     posterImage = {
-                        RemoteBlurredHaramImageViewer(
+                        RemoteBlurredSensitiveImage(
                             imageUrl = item.imageUrl.orEmpty(),
                             modifier = Modifier,
-                            haramThreshold = 0.2f,
-                            nonHaramThreshold = 0.7f,
+                            sensitiveContentThreshold = 0.2f,
+                            safeContentThreshold = LocalSafeContentThreshold.current,
+                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
