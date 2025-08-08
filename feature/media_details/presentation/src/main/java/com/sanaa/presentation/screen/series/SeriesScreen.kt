@@ -44,6 +44,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
@@ -198,7 +199,8 @@ fun SeriesScreenContent(
                     if (state.noInternetConnection) {
                         NetworkDisconnectionContact(
                             onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
                         )
                     } else {
                         LoadingIndicator(

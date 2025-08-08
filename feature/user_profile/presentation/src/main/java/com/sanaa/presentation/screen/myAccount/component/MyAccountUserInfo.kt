@@ -78,7 +78,7 @@ fun MyAccountUserInfo(user: UserUiState, onLogoutClick: () -> Unit = {}) {
 
             AppText(
                 modifier = Modifier.weight(1f),
-                text = user.username.orEmpty(),
+                text = "@${user.username.orEmpty()}",
                 color = Theme.colors.title,
                 style = Theme.textStyle.title.medium
             )
@@ -130,20 +130,22 @@ fun UserInfoPreview(modifier: Modifier = Modifier) {
 fun LogoutButton(modifier: Modifier = Modifier, onLogoutClick: () -> Unit = {}) {
     Row(
         modifier = modifier
+            .clip(
+                RoundedCornerShape(8.dp)
+            )
             .fillMaxSize()
+            .clickable {
+                onLogoutClick()
+            }
             .background(
                 color = Theme.colors.surface,
-                shape = RoundedCornerShape(8.dp)
             )
             .border(
                 width = 1.dp,
                 color = Theme.colors.stroke,
-                shape = RoundedCornerShape(8.dp)
             )
-            .padding(horizontal = 12.dp)
-            .clickable {
-                onLogoutClick()
-            },
+            .padding(horizontal = 12.dp),
+
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.myRating.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -11,11 +10,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
+import com.sanaa.presentation.provider.LocalThemeMode
 
 @Composable
 fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
 
-    val placeholderResId = if (isSystemInDarkTheme())
+    val placeholderResId = if (LocalThemeMode.current)
         R.drawable.icon_placeholder_dark
     else
         R.drawable.icon_placeholder_light

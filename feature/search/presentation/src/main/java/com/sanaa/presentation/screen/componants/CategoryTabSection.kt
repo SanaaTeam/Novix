@@ -66,7 +66,10 @@ fun CategoryTabSection(
 
             uiState.noInternetConnection -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NetworkDisconnectionContact(onRetryClick = { interactionsListener.retrySearch() })
+                    NetworkDisconnectionContact(
+                        onRetryClick = { interactionsListener.retrySearch() },
+                        useDarkTheme = LocalThemeProvider.current
+                    )
                 }
             }
 
@@ -164,7 +167,7 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
         contentAlignment = Alignment.Center
     ) {
         if (loadStateError.error is NoNetworkException) {
-            NetworkDisconnectionContact(onRetryClick = onRetryClick)
+            NetworkDisconnectionContact(onRetryClick = onRetryClick,   useDarkTheme = LocalThemeProvider.current)
         } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,

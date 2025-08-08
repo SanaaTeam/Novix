@@ -18,12 +18,17 @@ import com.sanaa.designsystem.design_system.component.button.OutlinedButton
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.userprofile.presentation.R
+import com.sanaa.presentation.provider.LocalThemeMode
 
 @Composable
 fun NotLoggedInStateComponent(
     onLoginClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val placeholderResId = if (LocalThemeMode.current)
+        R.drawable.users_placeholder
+    else
+        R.drawable.users_placeholder_light
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -34,7 +39,7 @@ fun NotLoggedInStateComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.users_placeholder),
+                painter = painterResource(placeholderResId),
                 contentDescription = null,
                 modifier = Modifier.size(128.dp)
             )

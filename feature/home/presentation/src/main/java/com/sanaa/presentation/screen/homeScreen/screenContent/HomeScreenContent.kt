@@ -42,6 +42,7 @@ import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
+import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.homeScreen.HomeScreenInteractionListener
 import com.sanaa.presentation.screen.homeScreen.HomeScreenUiState
 import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
@@ -94,7 +95,8 @@ fun HomeScreenContent(
 
         if (state.isNoInternet) {
             NetworkDisconnectionContact(
-                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize()
+                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize(),
+                useDarkTheme = LocalThemeProvider.current
             )
         } else {
             LazyVerticalGrid(
