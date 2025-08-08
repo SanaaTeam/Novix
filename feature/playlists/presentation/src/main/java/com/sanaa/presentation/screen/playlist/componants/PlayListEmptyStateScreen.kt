@@ -5,8 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -58,8 +57,7 @@ fun PlayListEmptyStateScreen(
     ) {
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 200.dp),
+                .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -69,9 +67,7 @@ fun PlayListEmptyStateScreen(
             )
 
             AppText(
-                modifier = Modifier
-                    .padding(horizontal = 68.dp)
-                    .offset(y = (-30).dp),
+                modifier = Modifier.padding(start = 32.dp, end = 32.dp, bottom = 24.dp),
                 text = messageText,
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body,
@@ -85,13 +81,11 @@ fun PlayListEmptyStateScreen(
                 )
             }
         }
-        if (isVisible){
-            AddBookmarkListBottomSheet(
-                isVisible = isVisible,
-                onDismiss = onDismissAddBottomSheet,
-                mediaId = 0
-            )
-        }
+        AddBookmarkListBottomSheet(
+            isVisible = isVisible,
+            onDismiss = onDismissAddBottomSheet,
+            mediaId = 0
+        )
     }
 }
 
