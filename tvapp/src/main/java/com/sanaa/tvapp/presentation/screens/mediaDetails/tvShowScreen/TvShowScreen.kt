@@ -33,7 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
-import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.text.AppText
@@ -131,7 +130,7 @@ fun TvShowScreenContent(
 ) {
 
     NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
+        backgroundShapes = { },
     ) {
         Box(
             modifier = Modifier
