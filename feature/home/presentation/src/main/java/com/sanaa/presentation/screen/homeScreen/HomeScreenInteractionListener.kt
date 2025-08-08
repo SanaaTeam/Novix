@@ -17,6 +17,7 @@ interface HomeScreenInteractionListener {
     fun onSaveIconClick(media: MediaItem)
     fun onDismissBottomSheet()
     fun onDismissSaveToListBottomSheet()
+    fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
     fun onRetryClick()
 }

@@ -21,5 +21,7 @@ data class HomeScreenUiState(
     val isNoInternet: Boolean = false,
     val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
+    val selectedMediaToSave: MediaItem? = null,
+    val showAddListBottomSheet: Boolean = false,
     val selectedMediaId: Long = 0L
 )
