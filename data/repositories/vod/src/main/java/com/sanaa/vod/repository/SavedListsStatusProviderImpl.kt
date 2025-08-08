@@ -11,16 +11,16 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SavedMovieStatusProviderImpl @Inject constructor(
+class SavedListsStatusProviderImpl @Inject constructor(
     private val remoteSavedListDataSource: RemoteSavedListDataSource,
     private val preferencesManager: PreferencesManager
-) : SavedMovieStatusProvider {
+) : SavedListsStatusProvider {
 
     private val _savedIds = MutableStateFlow(emptySet<Int>())
     override val savedIds: StateFlow<Set<Int>> = _savedIds

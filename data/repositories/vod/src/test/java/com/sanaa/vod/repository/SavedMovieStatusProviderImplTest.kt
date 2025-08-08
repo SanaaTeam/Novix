@@ -20,7 +20,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedMovieStatusProviderImplTest {
@@ -29,7 +29,7 @@ class SavedMovieStatusProviderImplTest {
 
     private lateinit var remoteSavedListDataSource: RemoteSavedListDataSource
     private lateinit var preferencesManager: PreferencesManager
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @Before
@@ -39,7 +39,7 @@ class SavedMovieStatusProviderImplTest {
         remoteSavedListDataSource = mockk()
         preferencesManager = mockk()
 
-        savedMovieStatusProvider = SavedMovieStatusProviderImpl(
+        savedListsStatusProvider = SavedListsStatusProviderImpl(
             remoteSavedListDataSource,
             preferencesManager
         )
@@ -65,11 +65,11 @@ class SavedMovieStatusProviderImplTest {
         coEvery { remoteSavedListDataSource.fetchListItems(1, null) } returns list1Items
         coEvery { remoteSavedListDataSource.fetchListItems(2, null) } returns list2Items
 
-        savedMovieStatusProvider.refresh()
+        savedListsStatusProvider.refreshItems()
         advanceUntilIdle()
 
         val expectedIds = setOf(101, 102, 201, 202)
-        assertEquals(expectedIds, savedMovieStatusProvider.savedIds.value)
+        assertEquals(expectedIds, savedListsStatusProvider.savedIds.value)
     }
 
     @Test
@@ -82,7 +82,7 @@ class SavedMovieStatusProviderImplTest {
         coEvery { remoteSavedListDataSource.fetchUserLists(sessionId) } returns userLists
         coEvery { remoteSavedListDataSource.fetchListItems(1, null) } returns items
 
-        val result = savedMovieStatusProvider.isSaved(999)
+        val result = savedListsStatusProvider.isItemSaved(999)
         advanceUntilIdle()
 
         assertTrue(result)
@@ -98,7 +98,7 @@ class SavedMovieStatusProviderImplTest {
         coEvery { remoteSavedListDataSource.fetchUserLists(sessionId) } returns userLists
         coEvery { remoteSavedListDataSource.fetchListItems(1, null) } returns items
 
-        val result = savedMovieStatusProvider.isSaved(123)
+        val result = savedListsStatusProvider.isItemSaved(123)
         advanceUntilIdle()
 
         assertFalse(result)
@@ -106,16 +106,16 @@ class SavedMovieStatusProviderImplTest {
 
     @Test
     fun `markSaved should add id to savedIds`() = runTest {
-        savedMovieStatusProvider.markSaved(55)
-        assertTrue(savedMovieStatusProvider.savedIds.value.contains(55))
+        savedListsStatusProvider.markItemSaved(55)
+        assertTrue(savedListsStatusProvider.savedIds.value.contains(55))
     }
 
     @Test
     fun `markUnsaved should remove id from savedIds`() = runTest {
-        savedMovieStatusProvider.markSaved(99)
-        assertTrue(savedMovieStatusProvider.savedIds.value.contains(99))
+        savedListsStatusProvider.markItemSaved(99)
+        assertTrue(savedListsStatusProvider.savedIds.value.contains(99))
 
-        savedMovieStatusProvider.markUnsaved(99)
-        assertFalse(savedMovieStatusProvider.savedIds.value.contains(99))
+        savedListsStatusProvider.markItemUnsaved(99)
+        assertFalse(savedListsStatusProvider.savedIds.value.contains(99))
     }
 }
