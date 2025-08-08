@@ -7,11 +7,12 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import entity.MediaHistoryItem
-import entity.User
+import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
@@ -35,27 +36,10 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 ), WatchingMediaHistoryScreenInteractionListener {
 
     init {
-        updateUserLoggingStatus()
         fetchMovies()
         fetchTvShows()
         fetchMovieGenres()
         fetchTvShowGenres()
-    }
-
-    fun updateUserLoggingStatus() {
-        tryToCollect(
-            callee = getLoggedInUserUseCase::getLoggedInUser,
-            onCollect = ::updateUsername,
-            onError = ::onDataLoadError
-        )
-    }
-
-    private fun updateUsername(user: User) {
-        updateState {
-            it.copy(
-                username = user.username
-            )
-        }
     }
 
     private fun fetchMovies(genreId: Int? = null) {
@@ -189,16 +173,19 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         mediaType: MediaType,
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
-
-        if (state.value.username == null) return flowOf(emptyList())
-
         updateState { it.copy(isLoading = true) }
+      return try {
+            return getLoggedInUserUseCase.getLoggedInUser().first().run {
+                 manageWatchedMediaHistoryUseCase.getMediaHistory(
+                    genreId = genreId,
+                    mediaType = mediaType,
+                    username = username
+                )
+            }
 
-        return manageWatchedMediaHistoryUseCase.getMediaHistory(
-            genreId = genreId,
-            mediaType = mediaType,
-            username = state.value.username.orEmpty()
-        )
+        } catch (_: NoLoggedInUserException){
+            flowOf(emptyList())
+        }
     }
 
     private fun onDataLoadError(e: Throwable) {
