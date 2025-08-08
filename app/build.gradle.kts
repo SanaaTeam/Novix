@@ -65,6 +65,8 @@ dependencies {
     implementation(projects.feature.home.presentation)
     implementation(projects.feature.search.api)
     implementation(projects.feature.authentication.api)
+    implementation(projects.feature.onboarding.api)
+    implementation(projects.feature.onboarding.presentation)
     implementation(projects.domain.vod)
     implementation(projects.feature.search.presentation)
     implementation(projects.feature.authentication.presentation)
@@ -123,5 +125,4 @@ dependencies {
 }
 tasks.withType(Test::class.java).configureEach {
     useJUnitPlatform()
-
 }

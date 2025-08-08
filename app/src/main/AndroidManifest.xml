@@ -28,6 +28,7 @@
         </activity>
         <activity android:name="com.sanaa.presentation.api.MediaDetailsActivity" />
         <activity android:name="com.sanaa.presentation.api.AuthActivity" />
+        <activity android:name="com.sanaa.presentation.api.OnBoardingActivity" />
     </application>
 
 </manifest>
