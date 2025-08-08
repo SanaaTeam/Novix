@@ -3,9 +3,10 @@ package com.sanaa.tvapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
-import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreenContent
+import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph
+import com.sanaa.tvapp.presentation.screens.navigation.TvNavigation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,9 +15,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NovixTheme {
-                SearchScreen()
+            val navController = rememberNavController()
+            TvNavigation(navController = navController) {
+                TvNavGraph(navController = navController)
             }
-
+            }
         }
     }
 }
