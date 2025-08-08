@@ -31,7 +31,7 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
@@ -169,7 +169,7 @@ private fun ImageList(item: MediaItem) {
         ),
         scale = CardDefaults.scale(focusedScale = 1.01f),
     ) {
-        RemoteBlurredHaramImageViewer(
+        RemoteBlurredSensitiveImage(
             imageUrl = item.imageUrl ?: "",
             contentDescription = item.title
         )

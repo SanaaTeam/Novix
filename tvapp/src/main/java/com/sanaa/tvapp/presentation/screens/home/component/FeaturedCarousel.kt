@@ -32,7 +32,7 @@ import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.home.FeaturedCarouselState
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
@@ -66,7 +66,7 @@ fun FeaturedCarousel(
         scale = CardDefaults.scale(focusedScale = 1.01f),
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 modifier = Modifier.height(316.dp),
                 imageUrl = featuredCarouselState.imageUrl,
                 contentDescription = featuredCarouselState.movieDescription,
