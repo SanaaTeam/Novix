@@ -1,7 +1,10 @@
 package com.sanaa.designsystem.design_system.theme
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import com.sanaa.designsystem.design_system.theme.color.LocalNovixColors
 import com.sanaa.designsystem.design_system.theme.color.darkSchemaColors
 import com.sanaa.designsystem.design_system.theme.color.lightSchemaColors
@@ -18,6 +21,8 @@ fun NovixTheme(
         LocalNovixColors provides colorScheme,
         LocalNovixTextStyle provides defaultTextStyle,
     ) {
-        content()
+        Box(modifier = Modifier.background(Theme.colors.surface)) {
+            content()
+        }
     }
 }
