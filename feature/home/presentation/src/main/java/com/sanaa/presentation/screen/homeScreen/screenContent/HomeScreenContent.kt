@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.AuthStartRoute
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
@@ -56,7 +55,6 @@ fun HomeScreenContent(
     interactionListener: HomeScreenInteractionListener,
     authApi: AuthenticationApi,
 ) {
-
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
     val errorMessage = stringResource(R.string.error_message)
     var snack by remember { mutableStateOf<SnackData?>(null) }
@@ -85,7 +83,6 @@ fun HomeScreenContent(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
         )
     }) {
-
         if (state.isNoInternet) {
             NetworkDisconnectionContact(
                 onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize()
