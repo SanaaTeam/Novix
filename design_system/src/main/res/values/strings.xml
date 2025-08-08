@@ -46,4 +46,17 @@
     <string name="eng">ENG</string>
     <string name="ar">AR</string>
 
+    <string name="add_new_list">Add new list</string>
+    <string name="list_title">List title</string>
+    <string name="my_favorite_placeholder">My favorite</string>
+    <string name="add">Add</string>
+    <string name="edit_list">Edit list</string>
+
+    <string name="delete_list">Delete list</string>
+    <string name="delete_list_confirmation_message">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
+    <string name="delete">Delete</string>
+
+    <string name="save_to_list">Save to list</string>
+    <string name="create_new_list">Create new list</string>
+
 </resources>

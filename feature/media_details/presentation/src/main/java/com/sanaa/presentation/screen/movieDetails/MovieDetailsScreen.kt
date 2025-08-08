@@ -43,6 +43,9 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -71,6 +74,7 @@ fun MovieDetailsScreen(
     val navController = LocalNavControllerProvider.current
 
     var snack by remember { mutableStateOf<SnackData?>(null) }
+    val selectedMedia = state.selectedMediaId
 
     HandleMovieDetailsEffects(
         viewModel = viewModel,
@@ -90,6 +94,32 @@ fun MovieDetailsScreen(
             data = snack,
             onDismiss = { snack = null }
         )
+
+        SaveToListBottomSheet(
+            isVisible = state.showSaveToListBottomSheet,
+            mediaId = selectedMedia?.toLong() ?: 0,
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+        if (state.showAddListBottomSheet && selectedMedia != null) {
+            AddBookmarkListBottomSheet(
+                isVisible = state.showAddListBottomSheet,
+                onDismiss = viewModel::onDismissAddListBottomSheet,
+                mediaId = selectedMedia
+            )
+        }
     }
 }
 
@@ -199,7 +229,7 @@ fun MovieDetailsContent(
 
             MovieTopBar(
                 interactionListener = interactionListener,
-                movieId = state.movieDetails.id,
+                movie = state.movieDetails,
                 modifier = Modifier.background(color = animatedColor)
             )
 
@@ -280,7 +310,7 @@ fun MovieDetailsContent(
 @Composable
 fun MovieTopBar(
     interactionListener: MovieDetailsScreenInteractionListener,
-    movieId: Int,
+    movie: MovieUiModel,
     modifier: Modifier = Modifier,
 ) {
     TopBar(
@@ -292,8 +322,11 @@ fun MovieTopBar(
         },
         rightContent = {
             TopBarClickableIcon(
-                icon = painterResource(R.drawable.icon_save),
-                onClick = { interactionListener.onBookmarkClick(movieId) }
+                icon = if (movie.isBookmarked)
+                    painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
+                else
+                    painterResource(R.drawable.icon_save),
+                onClick = { interactionListener.onBookmarkClick(movie) }
             )
         },
         modifier = modifier

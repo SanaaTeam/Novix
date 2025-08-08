@@ -23,7 +23,7 @@ import com.sanaa.presentation.shared_component.cards.SaveIconChip
 fun PosterCard(
     imageUrl: String?,
     onCardClick: () -> Unit = {},
-    onSaveClick: () -> Unit = {}
+    topLeftContent: @Composable () -> Unit = {},
 ) {
 
     MediaPosterCard(
@@ -56,6 +56,6 @@ fun PosterCard(
                 )
             }
         },
-        topLeftContent = { SaveIconChip(onClick = onSaveClick) }
+        topLeftContent = { topLeftContent() }
     )
 }

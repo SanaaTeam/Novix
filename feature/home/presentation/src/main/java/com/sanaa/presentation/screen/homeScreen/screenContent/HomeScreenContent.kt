@@ -35,6 +35,7 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
@@ -230,7 +231,26 @@ fun HomeScreenContent(
     }
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
-
+    if (state.showSaveToListBottomSheet) {
+        SaveToListBottomSheet(
+            isVisible = state.showSaveToListBottomSheet,
+            onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
+            onCreateNewListClick = { interactionListener.onCreateNewListClick() },
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+            mediaId = state.selectedMediaId.toLong(),
+        )
+    }
 
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,

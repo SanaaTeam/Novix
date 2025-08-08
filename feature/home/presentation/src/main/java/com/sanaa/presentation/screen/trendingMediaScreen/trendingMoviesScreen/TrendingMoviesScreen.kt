@@ -2,7 +2,10 @@ package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -13,11 +16,14 @@ import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
 import dagger.hilt.android.EntryPointAccessors
-
 
 @Composable
 fun TrendingMoviesScreen(
@@ -26,6 +32,8 @@ fun TrendingMoviesScreen(
 ) {
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -58,7 +66,7 @@ fun TrendingMoviesScreen(
                     navController.popBackStack()
                 }
 
-                TrendingMediaScreenEffect.NavigateToLogin -> {
+                is TrendingMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
@@ -69,6 +77,33 @@ fun TrendingMoviesScreen(
         state = state.value,
         interactionListener = viewModel,
         modifier = modifier,
+    )
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
+        SaveToListBottomSheet(
+            isVisible = state.value.showSaveToListBottomSheet,
+            mediaId = state.value.selectedMediaId!!.toLong(),
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+    }
+    AddBookmarkListBottomSheet(
+        isVisible = state.value.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+        mediaId = state.value.selectedMediaId ?: 0
     )
 }
 

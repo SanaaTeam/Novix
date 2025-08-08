@@ -56,7 +56,7 @@ fun TrendingTvShowsScreen(
                     navController.popBackStack()
                 }
 
-                TrendingMediaScreenEffect.NavigateToLogin -> {
+                is TrendingMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
