@@ -28,7 +28,7 @@ class OnBoardingActivity : AppCompatActivity(){
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            NovixTheme(isDarkMode = isSystemInDarkTheme()) {
+            NovixTheme(isDarkMode = true) {
                 OnboardingScreen(
                     onFinishOnBoarding = {
                         setResult(RESULT_OK)
