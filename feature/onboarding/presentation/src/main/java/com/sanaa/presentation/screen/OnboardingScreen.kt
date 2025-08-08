@@ -13,9 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +46,7 @@ import com.sanaa.presentation.component.OnBoardingPageContentItem
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
-    onFinishOnBoarding:()->Unit,
+    onFinishOnBoarding: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -78,31 +81,17 @@ fun OnBoardingScreenContent(
         snapshotFlow { pagerState.currentPage }
             .collect { interactionListener.setCurrentPage(it) }
     }
-    NovixTheme (isSystemInDarkTheme()){
+    NovixTheme(isSystemInDarkTheme()) {
         NovixScaffold(
             modifier = modifier
-                .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding(),
-            topBar = {
-                if (pagerState.currentPage != state.pageList.lastIndex) {
-                    Row (
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(start = 16.dp, top = 16.dp)
-                    ){
-                        TextButton(
-                            text = stringResource(id = R.string.skip),
-                            onClick = interactionListener::onSkipClick,
-                        )
-                    }
-                }
-            }
-
+                .navigationBarsPadding()
+                .fillMaxSize(),
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(bottom = 40.dp),
+                    .systemBarsPadding()
+                    .verticalScroll(rememberScrollState()),
 
                 contentAlignment = Alignment.Center
             ) {
@@ -112,15 +101,18 @@ fun OnBoardingScreenContent(
                         state = pagerState,
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(bottom = 100.dp)
                     ) { page ->
                         Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
 
                             Box(
                                 modifier = Modifier
-                                    .height( 300.dp)
+                                    .height(300.dp)
                                     .fillMaxWidth()
                                     .align(Alignment.CenterHorizontally),
                                 contentAlignment = Alignment.Center
@@ -145,11 +137,25 @@ fun OnBoardingScreenContent(
                         }
                     }
                 }
+                if (pagerState.currentPage != state.pageList.lastIndex) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp)
+                            .align(Alignment.TopStart),
+                    ) {
+                        TextButton(
+                            text = stringResource(id = R.string.skip),
+                            onClick = interactionListener::onSkipClick,
+                        )
+                    }
+                }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
+                        .padding(bottom = 40.dp)
                         .align(Alignment.BottomStart),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
