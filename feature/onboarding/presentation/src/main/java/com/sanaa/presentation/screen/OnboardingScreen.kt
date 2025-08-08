@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -90,9 +89,7 @@ fun OnBoardingScreenContent(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .systemBarsPadding()
-                    .verticalScroll(rememberScrollState()),
-
+                    .systemBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -102,7 +99,8 @@ fun OnBoardingScreenContent(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(bottom = 100.dp)
-                    ) { page ->
+                            .verticalScroll(rememberScrollState()),
+                        ) { page ->
                         Column(
                             modifier = Modifier
                                 .fillMaxSize(),
