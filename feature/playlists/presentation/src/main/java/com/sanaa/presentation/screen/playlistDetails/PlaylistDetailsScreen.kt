@@ -25,7 +25,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData

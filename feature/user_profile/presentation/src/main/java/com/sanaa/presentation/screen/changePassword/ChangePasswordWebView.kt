@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.userprofile.presentation.R
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 
 @Composable
 fun ChangePasswordWebView(

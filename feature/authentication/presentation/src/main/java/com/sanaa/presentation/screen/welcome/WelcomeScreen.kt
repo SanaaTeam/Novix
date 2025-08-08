@@ -16,7 +16,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.api.AuthenticationApi.Companion.RESULT_LOGGED_AS_GUEST
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.LoginRoute
 import com.sanaa.presentation.screen.welcome.components.WelcomeFooter
 import com.sanaa.presentation.screen.welcome.components.WelcomeSection

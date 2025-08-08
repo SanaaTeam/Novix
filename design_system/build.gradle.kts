@@ -12,6 +12,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.compose.material3.material3)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.material3.window.size.class1)
     implementation(libs.androidx.material3.adaptive.navigation.suite)

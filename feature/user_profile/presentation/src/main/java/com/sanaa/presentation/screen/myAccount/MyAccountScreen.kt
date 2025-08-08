@@ -27,7 +27,7 @@ import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.api.navigation.ChangePasswordScreenRoute
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute

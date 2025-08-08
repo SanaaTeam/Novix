@@ -11,7 +11,7 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.authentication.presentation.R
-import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

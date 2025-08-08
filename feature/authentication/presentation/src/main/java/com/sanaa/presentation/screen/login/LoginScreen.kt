@@ -29,7 +29,7 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundS
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.navigation.ForgetPasswordRoute
-import com.sanaa.presentation.navigation.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SignUpRoute
 import com.sanaa.presentation.screen.login.components.LoginActions
 import com.sanaa.presentation.screen.login.components.LoginHeader

@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
+import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsScreenRoute
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
 import com.sanaa.presentation.screen.playlist.PlayListScreenViewModel
