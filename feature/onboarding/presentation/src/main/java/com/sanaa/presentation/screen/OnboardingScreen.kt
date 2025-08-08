@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen
 
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,10 +9,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,9 +44,12 @@ import com.sanaa.presentation.component.OnBoardingPageContentItem
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
+    onFinishOnBoarding: () -> Unit,
     viewModel: OnboardingViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    if (state.onboardingIsFinished) onFinishOnBoarding()
 
     OnBoardingScreenContent(
         state = state,
@@ -73,104 +79,109 @@ fun OnBoardingScreenContent(
         snapshotFlow { pagerState.currentPage }
             .collect { interactionListener.setCurrentPage(it) }
     }
-    NovixTheme (isSystemInDarkTheme()){
-        NovixScaffold(
-            modifier = modifier
+    NovixScaffold(
+        modifier = modifier
+            .navigationBarsPadding()
+            .fillMaxSize(),
+    ) {
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding(),
-            topBar = {
-                if (pagerState.currentPage != state.pageList.lastIndex) {
+                .systemBarsPadding(),
+            contentAlignment = Alignment.Center
+        ) {
 
+            if (state.pageList.isNotEmpty()) {
+                HorizontalPager(
+                    state = pagerState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 100.dp)
+                        .verticalScroll(rememberScrollState()),
+                ) { page ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.CenterHorizontally),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircleShapeBlur(
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .height(300.dp)
+                            )
+
+                            Image(
+                                painter = painterResource(state.pageList[page].imageRes),
+                                contentDescription = null,
+                                contentScale = ContentScale.Inside,
+                                modifier = Modifier.width(244.dp)
+                            )
+                        }
+
+                        DialogContainer(
+                            pageContent = state.pageList[page],
+                            modifier = Modifier
+                        )
+                    }
+                }
+            }
+
+            if (pagerState.currentPage != state.pageList.lastIndex) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp)
+                        .align(Alignment.TopStart),
+                ) {
                     TextButton(
                         text = stringResource(id = R.string.skip),
                         onClick = interactionListener::onSkipClick,
-                        modifier = Modifier.padding(start = 16.dp, top = 16.dp)
                     )
                 }
             }
 
-        ) {
-            Box(
+            Row(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 40.dp),
-
-                contentAlignment = Alignment.Center
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 40.dp)
+                    .align(Alignment.BottomStart),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
-                if (state.pageList.isNotEmpty()) {
-                    HorizontalPager(
-                        state = pagerState,
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) { page ->
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-
-                            Box(
-                                modifier = Modifier
-                                    .height( 300.dp)
-                                    .fillMaxWidth()
-                                    .align(Alignment.CenterHorizontally),
-                                contentAlignment = Alignment.Center
-                            ) {
-
-                                CircleShapeBlur(
-                                    modifier = Modifier
-                                        .matchParentSize()
-                                )
-
-                                Image(
-                                    painter = painterResource(state.pageList[page].imageRes),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Inside,
-                                    modifier = Modifier.height(182.dp)
-                                )
-                            }
-
-                            DialogContainer(
-                                pageContent = state.pageList[page]
-                            )
-                        }
-                    }
-                }
+                CarouselDots(
+                    totalDots = 3,
+                    selectedIndex = pagerState.currentPage,
+                )
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                        .align(Alignment.BottomStart),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
 
-                    CarouselDots(
-                        totalDots = 3,
-                        selectedIndex = pagerState.currentPage,
-                    )
+                    if (pagerState.currentPage != 0)
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    ) {
-
-                        if (pagerState.currentPage != 0)
-
-                            OutlinedButton(
-                                icon = painterResource(id = R.drawable.icon_left_arrow),
-                                text = null,
-                                onClick = { interactionListener.onBackClick() },
-                                modifier = Modifier
-                            )
-
-                        PrimaryButton(
-                            icon = painterResource(id = R.drawable.icon_right_arrow),
+                        OutlinedButton(
+                            icon = painterResource(id = R.drawable.icon_back),
                             text = null,
-                            onClick = { interactionListener.onNextPageClick() },
+                            onClick = { interactionListener.onBackClick() },
                             modifier = Modifier
                         )
-                    }
+
+                    PrimaryButton(
+                        icon = painterResource(id = R.drawable.icon_right_arrow),
+                        text = null,
+                        onClick = { interactionListener.onNextPageClick() },
+                        modifier = Modifier
+                    )
                 }
             }
         }
@@ -178,9 +189,15 @@ fun OnBoardingScreenContent(
 }
 
 
-
-
-@Preview(showBackground = true, heightDp = 800, widthDp = 360)
+@Preview(
+    showBackground = true,
+    heightDp = 800,
+    widthDp = 360
+)
+@Preview(
+    name = "Arabic Preview",
+    locale = "ar"
+)
 @Composable
 private fun Preview() {
     NovixTheme {
@@ -203,7 +220,7 @@ private fun Preview() {
                         imageRes = R.drawable.onboarding_3
                     )
                 ),
-                currentPageIndex = 0,
+                currentPageIndex = 1,
                 isSkipable = false
             ),
             interactionListener = object : OnboardingInteractionsListener {
