@@ -36,7 +36,6 @@ fun PlayListWithItemsScreen(
                 screenTitle = stringResource(R.string.my_lists),
                 modifier = Modifier
                     .statusBarsPadding()
-                    .padding(vertical = 12.dp)
             )
         },
         floatingActionButton = {
