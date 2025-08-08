@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -92,6 +93,9 @@ fun OnBoardingScreenContent(
                     .systemBarsPadding(),
                 contentAlignment = Alignment.Center
             ) {
+                CircleShapeBlur(
+                    modifier = Modifier.align(Alignment.Center).height(300.dp)
+                )
 
                 if (state.pageList.isNotEmpty()) {
                     HorizontalPager(
@@ -108,18 +112,14 @@ fun OnBoardingScreenContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
 
+
+
                             Box(
                                 modifier = Modifier
-                                    .height(300.dp)
                                     .fillMaxWidth()
                                     .align(Alignment.CenterHorizontally),
                                 contentAlignment = Alignment.Center
                             ) {
-
-                                CircleShapeBlur(
-                                    modifier = Modifier
-                                        .matchParentSize()
-                                )
 
                                 Image(
                                     painter = painterResource(state.pageList[page].imageRes),
