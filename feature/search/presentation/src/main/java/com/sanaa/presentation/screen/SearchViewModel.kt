@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
@@ -51,7 +51,7 @@ class SearchViewModel @Inject constructor(
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -112,9 +112,9 @@ class SearchViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedMovieStatusProvider.markUnsaved(media.id)
+            savedListsStatusProvider.markItemUnsaved(media.id)
         } else {
-            savedMovieStatusProvider.markSaved(media.id)
+            savedListsStatusProvider.markItemSaved(media.id)
             updateState {
                 it.copy(
                     showSaveToListBottomSheet = true,
@@ -352,7 +352,7 @@ class SearchViewModel @Inject constructor(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
-        return moviesPagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+        return moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
             pagingData.map { movie ->
                 movie.copy(isSaved = savedIds.contains(movie.id))
             }

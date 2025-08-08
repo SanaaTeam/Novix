@@ -3,14 +3,14 @@ package com.sanaa.presentation.screen.playlist
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val listsStatusProvider: SavedListsStatusProvider
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
     PlayListScreenInteractionListener {
@@ -20,13 +20,15 @@ class PlayListScreenViewModel @Inject constructor(
         getUserState()
     }
 
-    fun loadSavedLists() = tryToExecute(
+    fun loadSavedLists() = tryToCollect(
         dispatcher = Dispatchers.IO,
-        callee = {
-            val savedLists = manageSavedListsUseCase.getSavedLists().map {
-                it.toUiModel()
+        callee = { listsStatusProvider.savedLists },
+        onCollect = { savedLists ->
+            updateState {
+                it.copy(isLoading = false, lists = savedLists.map {
+                    it.toUiModel()
+                })
             }
-            updateState { it.copy(isLoading = false, lists = savedLists) }
         },
         onError = { err ->
             updateState { it.copy(isLoading = false, errorMessage = err.message) }
@@ -34,7 +36,7 @@ class PlayListScreenViewModel @Inject constructor(
     )
 
     fun onListAdded() {
-        loadSavedLists()
+        refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
     }
 
@@ -43,7 +45,7 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
     fun onListDeletedSuccessfully() {
-        loadSavedLists()
+        refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
     }
 
@@ -69,10 +71,19 @@ class PlayListScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
-                loadSavedLists()
+                refreshLists()
                 updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
             }
         )
 
+    }
+
+    private fun refreshLists() {
+        tryToExecute(
+            callee = { listsStatusProvider.refreshLists() },
+            onSuccess = {
+                loadSavedLists()
+            }
+        )
     }
 }

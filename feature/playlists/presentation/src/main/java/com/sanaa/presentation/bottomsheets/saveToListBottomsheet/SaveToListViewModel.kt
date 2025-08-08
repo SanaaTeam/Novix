@@ -4,7 +4,7 @@ import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SavetoListUiState, SaveToListEffect>(SavetoListUiState(),dispatcher) {
 
@@ -65,7 +65,7 @@ class SaveToListViewModel @Inject constructor(
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
-                savedMovieStatusProvider.markSaved(mediaId.toInt())
+                savedListsStatusProvider.markItemSaved(mediaId.toInt())
                 loadPlaylists()
                 emitEffect(SaveToListEffect.AddedSuccessfully)
             },
