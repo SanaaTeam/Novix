@@ -221,18 +221,6 @@ fun GenreMoviesScreenContent(
                             mediaId = mediaItem.id.toLong(),
                             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
                             onCreateNewListClick = interactionListener::onCreateNewListClick,
-                            onSuccess = {
-                                snack = SnackData(
-                                    message = "Added to list successfully",
-                                    isError = false
-                                )
-                            },
-                            onFailure = {
-                                snack = SnackData(
-                                    message = "Added to list failed",
-                                    isError = true
-                                )
-                            },
                         )
                     }
 

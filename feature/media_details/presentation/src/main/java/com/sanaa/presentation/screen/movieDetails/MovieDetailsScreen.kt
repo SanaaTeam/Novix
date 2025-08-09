@@ -55,7 +55,6 @@ import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
 import com.sanaa.presentation.shared_component.BottomContainer
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
@@ -90,28 +89,11 @@ fun MovieDetailsScreen(
             interactionListener = viewModel
         )
 
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
             mediaId = selectedMedia?.toLong() ?: 0,
             onDismiss = viewModel::onDismissSaveToListBottomSheet,
             onCreateNewListClick = viewModel::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
         )
         if (state.showAddListBottomSheet && selectedMedia != null) {
             AddBookmarkListBottomSheet(
