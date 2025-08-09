@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
