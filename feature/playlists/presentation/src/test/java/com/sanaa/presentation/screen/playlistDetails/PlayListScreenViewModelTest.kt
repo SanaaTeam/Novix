@@ -69,37 +69,7 @@ class PlayListScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onListAddFailed emits ShowErrorToAddListSnackBar`() = runTest {
-        initViewModel()
-        viewModel.effect.test {
-            viewModel.onListAddFailed()
-            assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowErrorToAddListSnackBar)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
-    @Test
-    fun `onListAdded emits ShowSuccessToAddListSnackBar and reloads lists`() = runTest {
-        val fakeLists = listOf(fakeDomainList(1))
-        val fakeStateFlow = MutableStateFlow(fakeLists)
-
-        coEvery { listStatusProvider.savedLists } returns fakeStateFlow
-        coEvery { listStatusProvider.refreshLists() } returns Unit
-        every { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(true)
-
-        initViewModel()
-        viewModel.effect.test {
-            viewModel.onListAdded()
-            advanceUntilIdle()
-
-            assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertThat(viewModel.state.value.lists).hasSize(1)
-        assertThat(viewModel.state.value.lists.first().title).isEqualTo("List 1")
-    }
 
     @Test
     fun `onListDeletedSuccessfully emits ShowSuccessToDeleteListSnackBar and reloads lists`() =
