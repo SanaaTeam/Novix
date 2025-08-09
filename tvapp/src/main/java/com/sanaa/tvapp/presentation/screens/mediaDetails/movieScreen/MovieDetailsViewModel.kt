@@ -35,7 +35,7 @@ class MovieDetailsViewModel @Inject constructor(
 //        "movieId is required in SavedStateHandle"
 //    }
 
-    val movieId = 102
+    val movieId = 986206
 
     init {
         fetchMovieDetails(movieId)
