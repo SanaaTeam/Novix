@@ -41,7 +41,8 @@ import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimm
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.state.MediaTypeUi
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
@@ -60,18 +61,29 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
                 is HomeScreenEffect.NavigateToMediaDetails -> {
                     when (effect.mediaTypeUi) {
                         MediaTypeUi.MOVIE -> {
-                            navController.navigate(
-                                ScreensRoute.MovieDetails(effect.id)
-                            )
+                            navController.navigate(MovieDetails(effect.id))
                         }
                         MediaTypeUi.TV_SHOW -> {
-                            navController.navigate(
-                                ScreensRoute.TvShowDetails(effect.id)
-                            )
+                            navController.navigate(TvShowDetails(effect.id))
                         }
                     }
                 }
-                else -> {}
+                is HomeScreenEffect.NavigateToMoviesScreen -> {
+//                    navController.navigate(MovieDetails(effect.id))
+                }
+                is HomeScreenEffect.NavigateToTvShowsScreen -> {
+//                    navController.navigate(TvShowDetails(effect.id))
+
+                }
+                is HomeScreenEffect.NavigateToPeopleScreen -> {
+//                    navController.navigate(ActorDetails(effect.id))
+                }
+                is HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
+                }
+                is HomeScreenEffect.NavigateToWatchedMediaScreen -> {
+                }
+                is HomeScreenEffect.NavigateToPlayListScreen -> {
+                }
             }
         }
     }
