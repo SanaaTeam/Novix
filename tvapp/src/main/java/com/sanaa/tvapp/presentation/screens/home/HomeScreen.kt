@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,9 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,20 +19,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
+import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.state.MediaItem
@@ -44,65 +46,76 @@ import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-    ) {
-        when {
-            state.isNoInternet -> {
-                NetworkDisconnectionContact(
-                    modifier = Modifier.fillMaxSize(),
-                    onRetryClick = {}
-                )
-            }
+    val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
+    when {
+        state.isNoInternet -> {
+            NetworkDisconnectionContact(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
+                onRetryClick = {}
+            )
+        }
 
-            state.isLoading -> {
-                HomeScreenLoading()
-            }
+        state.isLoading -> {
+            HomeScreenLoading(
+                modifier = Modifier
+                    .verticalScroll(scrollState),
+            )
+        }
 
-            else -> {
-                HomeScreenContent(state)
-            }
+        else -> {
+            HomeScreenContent(state, upcomingMovies)
         }
     }
-
 }
 
 @Composable
-private fun HomeScreenLoading() {
+private fun HomeScreenLoading(modifier: Modifier) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(24.dp)
     ) {
         FeaturedCarouselShimmer()
 
-        TitleShimmer()
-        ImageListShimmer()
-
-        TitleShimmer()
-        ImageListShimmer()
+        repeat(3) {
+            TitleShimmer()
+            ImageListShimmer()
+        }
     }
 }
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun HomeScreenContent(state: HomeScreenUiState) {
+fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    val scrollState = rememberScrollState()
+    val sidePaddings = 36.dp
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+            .verticalScroll(scrollState)
     ) {
-        FeaturedCarousel(state.featuredCarousel) {}
+        PopularMoviesCarousel(
+            modifier = Modifier.padding(
+                start = sidePaddings,
+                end = sidePaddings,
+                top = 24.dp,
+                bottom = 16.dp
+            ),
+            mediaItems = state.popularMedia,
+            onShowDetails = {}
+        )
 
-        Title(stringResource(R.string.top_rated))
+        Title(
+            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+            title = stringResource(R.string.top_rated)
+        )
 
-        LazyVerticalGrid(
+        LazyRow(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = 140.dp),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 12.dp
+                start = sidePaddings, end = sidePaddings, bottom = 12.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -114,21 +127,46 @@ fun HomeScreenContent(state: HomeScreenUiState) {
             }
         }
 
-        Title(stringResource(R.string.watching_history))
+        if (state.continueWatchingMedia.isNotEmpty()) {
+            Title(
+                modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+                title = stringResource(R.string.watching_history)
+            )
 
-        LazyVerticalGrid(
+            LazyRow(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(
+                    start = sidePaddings, end = sidePaddings, bottom = 12.dp
+                ),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(
+                    items = state.continueWatchingMedia,
+                    key = { it.id }
+                ) {
+                    ImageList(it)
+                }
+            }
+        }
+
+        Title(
+            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+            title = stringResource(R.string.up_upcoming)
+        )
+
+        LazyRow(
             modifier = Modifier.fillMaxSize(),
-            columns = GridCells.Adaptive(minSize = 140.dp),
             contentPadding = PaddingValues(
-                start = 16.dp, end = 16.dp, bottom = 12.dp
+                start = sidePaddings, end = sidePaddings, bottom = 12.dp
             ),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             items(
-                items = state.continueWatchingMedia,
-                key = { it.id }
-            ) {
-                ImageList(it)
+                count = upcomingMovies.itemCount,
+            ) { index ->
+                upcomingMovies[index]?.let {
+                    ImageList(it)
+                }
             }
         }
     }
@@ -167,11 +205,20 @@ private fun ImageList(item: MediaItem) {
                 shape = RoundedCornerShape(12.dp),
             ),
         ),
-        scale = CardDefaults.scale(focusedScale = 1.01f),
+        scale = CardDefaults.scale(focusedScale = 1.05f),
     ) {
         RemoteBlurredSensitiveImage(
             imageUrl = item.imageUrl ?: "",
             contentDescription = item.title
-        )
+        ) {
+            OnBlurContent(
+                hintText = stringResource(com.sanaa.designsystem.R.string.unsuitable_image),
+                textStyle = Theme.textStyle.body.small.copy(
+                    color = Color(0x99FFFFFF)
+                ),
+                iconSize = 24.dp,
+                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+            )
+        }
     }
 }
