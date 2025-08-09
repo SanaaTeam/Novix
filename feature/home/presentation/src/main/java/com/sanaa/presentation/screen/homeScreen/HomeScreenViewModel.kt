@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.homeScreen
 
+import android.util.Log
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -74,8 +75,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadPopularMediaOperation(): List<MediaItem> {
-        val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }
-        val popularTvSeries = manageTvSeriesUseCase.getPopularSeries(1).map { it.toState() }
+        val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
+        val popularTvSeries = manageTvSeriesUseCase.getPopularSeries(1).map { it.toState() }.take(5)
 
         return (popularMovies + popularTvSeries).sortedByDescending { media -> media.rating }
     }
@@ -85,7 +86,7 @@ class HomeScreenViewModel @Inject constructor(
             it.copy(
                 isLoadingPopular = false,
                 isNoInternetConnection = false,
-                popularMedia = mediaList.take(10)
+                popularMedia = mediaList
             )
         }
     }
@@ -100,9 +101,8 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
-        val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }
-        val topRatedTvSeries =
-            manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }
+        val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }.take(5)
+        val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }.take(5)
 
         return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
     }
@@ -112,7 +112,7 @@ class HomeScreenViewModel @Inject constructor(
             it.copy(
                 isLoadingTopRated = false,
                 isNoInternetConnection = false,
-                topRatingMedia = mediaList.take(10)
+                topRatingMedia = mediaList
             )
         }
     }
@@ -245,6 +245,7 @@ class HomeScreenViewModel @Inject constructor(
 
 
     private fun onDataLoadError(e: Throwable) {
+        Log.d("TAG", "onDataLoadError: ${e.message}")
         if (e is NoNetworkException) {
             updateState { it.copy(isNoInternetConnection = true) }
             emitEffect(HomeScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
