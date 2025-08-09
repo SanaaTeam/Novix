@@ -1,8 +1,9 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
@@ -16,6 +17,8 @@ import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.combine
+import repository.SavedListsStatusProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -28,6 +31,7 @@ import javax.inject.Inject
 class TrendingMoviesScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
@@ -87,7 +91,11 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource() },
             mapper = Movie::toState
-        )
+        ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { mediaItem ->
+                mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
@@ -110,12 +118,32 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedListsStatusProvider.markItemUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
-                    showBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaId = media.id
                 )
             }
         }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onBackClick() {

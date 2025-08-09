@@ -180,7 +180,7 @@ fun MovieDetailsGridContent(
                 MoreLikeThisCard(
                     movie = item,
                     modifier = Modifier.padding(bottom = 12.dp),
-                    onBookmarkClick = { interactionListener.onBookmarkClick(item.id) },
+                    onBookmarkClick = { movieItem -> interactionListener.onBookmarkClick(movieItem) },
                     onMovieClick = { interactionListener.onSimilarMovieClick(item.id) },
                 )
             }

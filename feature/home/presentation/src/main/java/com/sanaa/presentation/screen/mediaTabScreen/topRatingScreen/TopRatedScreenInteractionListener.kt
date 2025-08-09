@@ -13,4 +13,7 @@ interface TopRatedScreenInteractionListener {
     fun onLoginButtonClick()
     fun onDismissBottomSheet()
     fun onRetryClick()
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
 }

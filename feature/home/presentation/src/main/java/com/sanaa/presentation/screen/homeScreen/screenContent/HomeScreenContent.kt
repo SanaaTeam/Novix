@@ -28,6 +28,9 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.components.RefreshButton
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
@@ -54,7 +57,7 @@ fun HomeScreenContent(
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
         launchAuthActivityForResult(
-            loggedInWithSessionId =  {
+            loggedInWithSessionId = {
 
             },
             loggedInAsGuest = {
@@ -205,6 +208,32 @@ fun HomeScreenContent(
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
     }
+    state.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = state.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = interactionListener::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+    }
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0
+    )
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,

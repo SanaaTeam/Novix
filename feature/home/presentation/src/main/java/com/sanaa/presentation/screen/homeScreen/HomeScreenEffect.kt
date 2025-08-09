@@ -13,4 +13,6 @@ sealed interface HomeScreenEffect {
     object NavigateToTopRatingMediaScreen : HomeScreenEffect
     object NavigateToWatchedMediaScreen : HomeScreenEffect
     data class ShowError(val message: String) : HomeScreenEffect
+    object  NavigateToPlayListScreen: HomeScreenEffect
+
 }

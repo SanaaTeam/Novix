@@ -1,7 +1,13 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
@@ -15,8 +21,11 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import service.VodStringProvider
+import kotlinx.coroutines.flow.combine
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -26,6 +35,7 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -58,7 +68,13 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedMovies(genreId = genreId) },
+            callee = { loadTopRatedMovies(genreId = genreId)
+                .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+                    pagingData.map { mediaItem ->
+                        mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+                    }
+                }.cachedIn(viewModelScope)
+                     },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -150,13 +166,35 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedListsStatusProvider.markItemUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
-                    showLoginBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = media
                 )
             }
         }
     }
+
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
 
     override fun onBackClick() {
         emitEffect(TopRatedScreenEffect.NavigateBack)

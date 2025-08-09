@@ -15,14 +15,16 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import repository.SavedListsStatusProvider
 
 class SearchRepositoryImplTest {
     private lateinit var searchRepository: SearchRepositoryImpl
+    private var savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val remoteDataSource: SearchRemoteDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        searchRepository = SearchRepositoryImpl(remoteDataSource)
+        searchRepository = SearchRepositoryImpl(remoteDataSource, savedListsStatusProvider)
     }
 
 

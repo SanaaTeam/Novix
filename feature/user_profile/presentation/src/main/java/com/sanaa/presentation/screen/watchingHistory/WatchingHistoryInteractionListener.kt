@@ -10,4 +10,7 @@ interface WatchingHistoryInteractionListener {
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
     fun onSaveIconClick(mediaItem: MediaItemUiModel)
     fun onBackClick()
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
 }

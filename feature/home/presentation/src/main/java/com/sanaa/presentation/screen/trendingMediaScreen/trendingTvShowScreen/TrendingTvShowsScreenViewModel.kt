@@ -134,6 +134,21 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+    override fun onDismissSaveToListBottomSheet() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCreateNewListClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        TODO("Not yet implemented")
+    }
+
+    private fun onTvShowsLoaded(pagingData: PagingData<MediaItem>) {
+        updateState { it.copy(mediaList = flowOf(pagingData)) }
+    }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {

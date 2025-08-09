@@ -7,51 +7,69 @@ import com.sanaa.vod.repository.mapper.custom_list.toEntity
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Movie
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import repository.SavedListRepository
-import usecase.custom_list.custom_list_param.*
+import repository.SavedListsStatusProvider
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListDataSource: RemoteSavedListDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
-    private val preferencesManager: PreferencesManager
+    private val preferencesManager: PreferencesManager,
+    private val savedListsStatusProvider: SavedListsStatusProvider
 ) : SavedListRepository {
 
-    private suspend fun sessionId(): String = preferencesManager.sessionId.first()
-
-    override suspend fun getSavedLists(accountId: Long): List<SavedList> =
+    override suspend fun getSavedLists(): List<SavedList> =
         safeCall("Failed to fetch saved lists") {
-            remoteSavedListDataSource.fetchUserLists(sessionId(), accountId).map { it.toEntity() }
+            remoteSavedListDataSource
+                .fetchUserLists(obtainSessionId())
+                .map { it.toEntity() }
         }
 
     override suspend fun createSavedList(title: String): SavedList =
         safeCall("Failed to create list") {
-            remoteSavedListDataSource.createList(sessionId(), title).toEntity()
+            remoteSavedListDataSource
+                .createList(obtainSessionId(), title)
+                .toEntity()
         }
 
     override suspend fun deleteSavedList(listId: Int) {
         safeCall("Failed to delete list") {
-            remoteSavedListDataSource.deleteList(sessionId(), listId)
+            remoteSavedListDataSource.deleteList(obtainSessionId(), listId)
+            savedListsStatusProvider.refreshItems()
         }
     }
 
-    override suspend fun getAllMoviesInList(listId: Int): List<Movie> =
+    override suspend fun getAllMoviesInList(listId: Int, page: Int): List<Movie> =
         safeCall("Failed to fetch list items") {
-            remoteSavedListDataSource.fetchListItems(listId).map {
-                remoteMovieDataSource.fetchMovieDetails(
-                    it.toEntity().id
-                ).toEntity()
+            val listItems = remoteSavedListDataSource.fetchListItems(listId, page)
+            coroutineScope {
+                listItems.map { listItem ->
+                    async {
+                        val movie = remoteMovieDataSource.fetchMovieDetails(listItem.id).toEntity()
+                        movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
+                    }
+                }.awaitAll()
             }
         }
 
     override suspend fun addMovieToList(listId: Int, movieId: Int): Boolean =
         safeCall("Failed to add movie to list") {
-            remoteSavedListDataSource.addItem(sessionId(), listId, movieId)
+            remoteSavedListDataSource
+                .addItem(obtainSessionId(), listId, movieId)
+                .also { success -> if (success) savedListsStatusProvider.refreshItems() }
         }
 
     override suspend fun removeMovieFromList(listId: Int, movieId: Int): Boolean =
-        safeCall("Failed to remove item from list") {
-            remoteSavedListDataSource.removeItem(sessionId(), listId, movieId)
+        safeCall("Failed to remove movie from list") {
+            remoteSavedListDataSource
+                .removeItem(obtainSessionId(), listId, movieId)
+                .also { success -> if (success) savedListsStatusProvider.refreshItems() }
         }
+
+    private suspend fun obtainSessionId(): String = preferencesManager.sessionId.first()
 }

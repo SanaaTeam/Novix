@@ -10,4 +10,7 @@ interface MediaListScreenInteractionListener {
     fun onRetryClick()
     fun onLoginButtonClick()
     fun onDismissBottomSheet()
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
 }

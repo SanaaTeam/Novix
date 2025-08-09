@@ -25,6 +25,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun PaginatedMediaListGrid(
@@ -70,7 +71,14 @@ fun PaginatedMediaListGrid(
                         )
                     }
                 },
-                topLeftContent = { SaveIconChip(onClick = { onSaveIconClick(media) }) },
+                topLeftContent = {
+                    if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                        SaveIconChip(
+                            onClick = { onSaveIconClick(media) },
+                            isSaved = media.isSaved
+                        )
+                    }
+                },
                 onCardClick = { onMediaClick(media) })
         }
 

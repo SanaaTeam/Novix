@@ -15,5 +15,8 @@ interface HomeScreenInteractionListener {
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
     fun onSaveIconClick(media: MediaItem)
     fun onDismissBottomSheet()
+    fun onDismissSaveToListBottomSheet()
+    fun onDismissAddListBottomSheet()
+    fun onCreateNewListClick()
     fun onRetryClick()
 }

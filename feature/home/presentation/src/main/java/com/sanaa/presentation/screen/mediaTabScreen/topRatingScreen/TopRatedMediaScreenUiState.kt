@@ -18,5 +18,8 @@ data class TopRatedMediaScreenUiState(
     val isLoading: Boolean = false,
     val isNoInternetConnection: Boolean = false,
     val showLoginBottomSheet: Boolean = false,
-    val userIsLoggedIn: Boolean = false
+    val userIsLoggedIn: Boolean = false,
+    val showSaveToListBottomSheet: Boolean = false,
+    val showAddListBottomSheet: Boolean = false,
+    val selectedMediaToSave: MediaItem? = null,
 )

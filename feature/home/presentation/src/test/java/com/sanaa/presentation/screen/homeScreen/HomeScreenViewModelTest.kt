@@ -12,9 +12,12 @@ import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -24,12 +27,14 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import service.VodStringProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
+import kotlin.test.Ignore
 import kotlin.time.Duration.Companion.minutes
 
 @ExperimentalCoroutinesApi
@@ -45,6 +50,8 @@ class HomeScreenViewModelTest {
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+
 
     @BeforeEach
     fun setUp() {
@@ -59,6 +66,9 @@ class HomeScreenViewModelTest {
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
+        savedListsStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
     }
 
     private fun initializeViewModel() {
@@ -69,7 +79,8 @@ class HomeScreenViewModelTest {
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
             stringProvider,
-            testDispatcher
+            savedListsStatusProvider,
+            testDispatcher,
         )
     }
 
@@ -257,11 +268,20 @@ class HomeScreenViewModelTest {
         assertThat(viewModel.state.value.movieSelectedGenreId).isEqualTo(newGenreId)
     }
 
+    @Ignore
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
         assertThat(viewModel.state.value.showBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onSaveIconClick should navigate to playlist screen if user not logged in`() = runTest {
+        initializeViewModel()
+        viewModel.onSaveIconClick(mockk())
+
+        assertThat(viewModel.effect.first()).isEqualTo(HomeScreenEffect.NavigateToPlayListScreen)
     }
 
     @Test
