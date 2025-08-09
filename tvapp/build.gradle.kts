@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.tv.foundation)
     implementation(libs.androidx.tv.material)
+    implementation(libs.androidx.material3)
+
     debugImplementation(libs.androidx.ui.compose.tooling)
     debugImplementation(libs.androidx.ui.compose.test.manifest)
     androidTestImplementation(platform(libs.androidx.compose.bom))
