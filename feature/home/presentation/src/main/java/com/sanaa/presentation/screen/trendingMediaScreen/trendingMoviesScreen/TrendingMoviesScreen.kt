@@ -113,4 +113,5 @@ fun TrendingMoviesScreen(
             )
         }
     }
+}
 
