@@ -1,9 +1,11 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
@@ -14,7 +16,15 @@ class AddBookmarkListViewModel @Inject constructor(
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
-) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(AddBookmarkListUiState(), dispatcher) {
+) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(
+    AddBookmarkListUiState(),
+    dispatcher
+) {
+    init {
+        viewModelScope.launch {
+            savedListsStatusProvider.refreshLists()
+        }
+    }
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -34,21 +44,27 @@ class AddBookmarkListViewModel @Inject constructor(
 
         updateState { it.copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
+
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
+            onSuccess = { createdList ->
                 resetState()
-                emitEffect(AddBookmarksEffect.AddFailure)
                 savedListsStatusProvider.markItemSaved(mediaId)
+                savedListsStatusProvider.addList(createdList)
+
+                viewModelScope.launch {
+                    savedListsStatusProvider.refreshLists()
+                }
+                emitEffect(AddBookmarksEffect.AddSuccess)
             },
             onError = {
                 updateState {
-                    emitEffect(AddBookmarksEffect.AddFailure)
                     it.copy(
                         isLoading = false,
                         errorMessage = "Failed to create list. Please try again."
                     )
                 }
+                emitEffect(AddBookmarksEffect.AddFailure)
             }
         )
     }
