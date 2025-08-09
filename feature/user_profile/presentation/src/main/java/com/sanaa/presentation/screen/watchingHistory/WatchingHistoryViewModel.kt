@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import repository.SavedMovieStatusProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -26,8 +27,10 @@ class WatchingHistoryViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+
+    ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
     dispatcher
 ), WatchingHistoryInteractionListener {
@@ -45,7 +48,10 @@ class WatchingHistoryViewModel @Inject constructor(
                 loadWatchedHistoryMovies(genreId)
             }, onCollect = { mediaList ->
                 updateState {
-                    it.copy(movieList = mediaList.map { it.toMediaItemUiModel() }, isLoading = false)
+                    it.copy(
+                        movieList = mediaList.map { it.toMediaItemUiModel() },
+                        isLoading = false
+                    )
                 }
             },
             onError = { ::onLoadDataError }
@@ -58,7 +64,10 @@ class WatchingHistoryViewModel @Inject constructor(
                 loadWatchedHistoryTvSeries(genreId)
             }, onCollect = { mediaList ->
                 updateState {
-                    it.copy(tvShowList = mediaList.map { it.toMediaItemUiModel() }, isLoading = false)
+                    it.copy(
+                        tvShowList = mediaList.map { it.toMediaItemUiModel() },
+                        isLoading = false
+                    )
                 }
             },
             onError = { ::onLoadDataError }
@@ -117,7 +126,16 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(mediaItem: MediaItemUiModel) {
-
+        if (mediaItem.isSaved) {
+            savedMovieStatusProvider.markUnsaved(mediaItem.id)
+        } else {
+            updateState {
+                it.copy(
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = mediaItem
+                )
+            }
+        }
     }
 
     override fun onBackClick() {
@@ -166,5 +184,18 @@ class WatchingHistoryViewModel @Inject constructor(
                 isLoading = false
             )
         }
+    }
+
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 }
