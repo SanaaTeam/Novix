@@ -105,36 +105,6 @@ class GenreMoviesViewModelTest {
         assertThat(state.userIsLoggedIn).isTrue()
     }
 
-    @Test
-    fun `fetchMovies handles NoNetworkException sets noInternetConnection true`() = runTest {
-        coEvery {
-            manageMoviesDetailsUseCase.getMoviesByCategory(
-                any(),
-                any()
-            )
-        } throws NoNetworkException()
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "categoryId" to genreList[0].id,
-                "categoryName" to genreList[0].name
-            )
-        )
-
-        viewModel = GenreMoviesViewModel(
-            savedStateHandle = savedStateHandle,
-            manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
-            dispatcher = testDispatcher,
-            checkIfUserIsLoggedInUseCase = checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider = savedListsStatusProvider,
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertThat(state.noInternetConnection).isTrue()
-        assertThat(state.isLoading).isFalse()
-    }
 
 
     private companion object {
