@@ -1,26 +1,30 @@
 package com.sanaa.presentation.screen.actor
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.model.mapper.toUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import usecase.CheckIfUserIsLoggedInUseCase
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import repository.SavedMovieStatusProvider
+import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
-    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase
-    ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
@@ -30,18 +34,32 @@ class ActorViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         loadDetails()
-    }
-
-    fun updateUserLoggingStatus(){
         viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
+            savedMovieStatusProvider.savedIds.collect { savedIds ->
+                updateState { current ->
+                    current.copy(
+                        topMovies = current.topMovies.map { movie ->
+                            movie.copy(isSaved = savedIds.contains(movie.id))
+                        }
+                    )
+                }
             }
         }
     }
+
+    fun updateUserLoggingStatus() {
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
+    }
+
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
     }
@@ -75,10 +93,37 @@ class ActorViewModel @Inject constructor(
         emitEffect(ActorScreenEffects.NavigateToLogin)
     }
 
-    override fun onSaveClicked() {
-        if (!state.value.userIsLoggedIn){
+    override fun onSaveClicked(movie: MovieUiModel) {
+
+    if (!state.value.userIsLoggedIn) {
             updateState { it.copy(showLoginBottomSheet = true) }
+            return
         }
+
+        if (movie.isSaved) {
+            savedMovieStatusProvider.markUnsaved(movie.id)
+        } else {
+            updateState {
+                it.copy(
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = movie
+                )
+            }
+        }
+        Log.i("MMMANCY", "CLICKED: ")
+
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onRetryClicked() {

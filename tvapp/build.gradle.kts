@@ -9,6 +9,9 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.firebase.perf)
 }
 
 val localProperties = Properties()
@@ -137,4 +140,6 @@ dependencies {
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
     testImplementation(libs.turbine)
+    implementation(libs.conscrypt.android)
+
 }

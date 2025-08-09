@@ -40,6 +40,7 @@ fun WelcomeScreen(
                 }
 
                 WelcomeScreenEffects.ReturnGuestResultCode -> {
+
                     onFinish(RESULT_LOGGED_AS_GUEST)
                 }
 

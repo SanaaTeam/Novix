@@ -24,4 +24,7 @@ class StringProviderImpl @Inject constructor(
 
     override val somethingWentWrongError: String
         get() = context.getString(R.string.something_went_wrong_error)
+
+    override val loginSuccess: String
+        get() = context.getString(R.string.login_success)
 }

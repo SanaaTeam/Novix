@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.designSystem)
     implementation(projects.imageViewer)
 
+    implementation(libs.material3)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

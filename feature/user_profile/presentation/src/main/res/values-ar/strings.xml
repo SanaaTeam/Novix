@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="delete_rating_message">تم حذف التقييم بنجاح</string>
+    <string name="error_delete_rating_message">فشل في حذف التقييم</string>
+    <string name="my_rating">تقييماتى</string>
+    <string name="all">الكل</string>
+    <string name="movies">الافلام</string>
+    <string name="tv_shows">المسلسلات</string>
+    <string name="change_password">تغيير رمز المرور</string>
+
+    <string name="please_login_to_access_your_account_details_and_other_features">يرجى تسجيل الدخول للوصول إلى تفاصيل حسابك والميزات الأخرى!</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="logout">تسجيل خروج</string>
+</resources>

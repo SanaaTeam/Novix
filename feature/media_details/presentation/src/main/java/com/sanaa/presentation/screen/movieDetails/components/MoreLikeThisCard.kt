@@ -10,8 +10,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -20,7 +21,7 @@ import com.sanaa.presentation.model.MovieUiModel
 @Composable
 fun MoreLikeThisCard(
     movie: MovieUiModel,
-    onBookmarkClick: () -> Unit,
+    onBookmarkClick: (MovieUiModel) -> Unit,
     onMovieClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -29,11 +30,12 @@ fun MoreLikeThisCard(
         modifier = modifier,
         onCardClick = onMovieClick,
         posterImage = {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = movie.posterUrl.orEmpty(),
                 modifier = Modifier.fillMaxWidth(),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
+                sensitiveContentThreshold = 0.2f,
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                safeContentThreshold = LocalSafeContentThreshold.current,
                 contentDescription = movie.title,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
@@ -55,7 +57,7 @@ fun MoreLikeThisCard(
         topLeftContent = {
             SaveIconChip(
                 isSaved = movie.isBookmarked,
-                onClick = onBookmarkClick
+                onClick = { onBookmarkClick(movie) }
             )
         }
     )

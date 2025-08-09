@@ -6,4 +6,5 @@ interface StringProvider {
     val invalidUserNameAndPasswordError: String
     val enterUserNameAndPasswordError: String
     val somethingWentWrongError: String
+    val loginSuccess: String
 }

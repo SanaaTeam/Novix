@@ -26,11 +26,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import repository.ContentRestriction
+import repository.SavedMovieStatusProvider
+import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
 import usecase.history.history_param.SearchHistory
 import usecase.search.ManageRecentViewedUseCase
@@ -45,7 +50,9 @@ class SearchViewModel @Inject constructor(
     private val manageRecentViewedUseCase: ManageRecentViewedUseCase,
     private val manageSearchHistoryUseCase: ManageHistoryUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
     dispatcher
@@ -55,7 +62,9 @@ class SearchViewModel @Inject constructor(
         observeSearchQueryChanges()
         observeRecentViewedItems()
         observeRecentSearchHistory()
-        updateUserStatus()
+        observeSelectedTheme()
+        observeContentRestriction()
+        getUserState()
     }
 
     override fun onSearchQueryChanged(query: String) {
@@ -94,15 +103,36 @@ class SearchViewModel @Inject constructor(
         emitEffect(SearchScreenEffects.NavigateToLogin)
     }
 
-    override fun onSaveSeriesClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
+
+
+    override fun onSaveIconClick(media: MovieUiModel) {
+        if (!state.value.isUserLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
+            savedMovieStatusProvider.markSaved(media.id)
             updateState {
                 it.copy(
-                    showLoginBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = media
                 )
             }
         }
+    }
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onSaveMoviesClicked() {
@@ -137,7 +167,6 @@ class SearchViewModel @Inject constructor(
         updateState { it.copy(searchQuery = query) }
         loadMediaByTab(query)
     }
-
 
 
     override fun onBottomSheetDismiss() {
@@ -319,10 +348,15 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun loadMoviesOperation(query: String): Flow<PagingData<MovieUiModel>> {
-        return createPagingFlow(
+        val moviesPagingFlow = createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
+        return moviesPagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { movie ->
+                movie.copy(isSaved = savedIds.contains(movie.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
@@ -370,17 +404,55 @@ class SearchViewModel @Inject constructor(
         updateState { it.copy(isLoading = false, noInternetConnection = false) }
     }
 
-    private suspend fun getUserState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
-    }
-    fun updateUserStatus(){
-        tryToExecute(callee = ::getUserState)
+    private fun observeSelectedTheme() {
+        tryToCollect(
+            callee = mangeUserPreferenceUseCase::getTheme,
+            onCollect = { isDarkMode -> updateState { it.copy(isDarkMode = isDarkMode == Theme.DARK) } },
+            onError = ::onDataLoadError
+        )
+
     }
 
-    companion object {
+    private fun observeContentRestriction() {
+        tryToCollect(
+            callee = mangeUserPreferenceUseCase::getContentRestriction,
+            onCollect = { contentRestriction ->
+                updateState {
+                    it.copy(
+                        safeContentThreshold =
+                            when (contentRestriction) {
+                                ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+                                ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+                                ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+                            }
+                    )
+                }
+            },
+
+            )
+    }
+
+    private fun getUserState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
+    }
+
+
+    private companion object {
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0
         const val TV_SHOW_INDEX = 1
+
+        const val STRICT_CONTENT_THRESHOLD = 0.9f
+        const val MODERATE_CONTENT_THRESHOLD = 0.5f
+        const val UNRESTRICTED_CONTENT_THRESHOLD = 0.0f
     }
 }

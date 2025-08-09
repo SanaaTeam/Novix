@@ -1,4 +1,3 @@
-
 package com.sanaa.designsystem.design_system.component.base_bottomsheet
 
 import androidx.compose.foundation.background
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 
 private val ScrimColor = Color(0x99000000)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BaseBottomSheet(
@@ -39,7 +39,7 @@ fun BaseBottomSheet(
             onDismissRequest = onDismiss,
             sheetState = sheetState,
             scrimColor = ScrimColor,
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
             containerColor = Theme.colors.surface,
             dragHandle = {
                 Row(
@@ -55,7 +55,7 @@ fun BaseBottomSheet(
                             .width(32.dp)
                             .background(
                                 color = Theme.colors.body,
-                                shape = RoundedCornerShape(100.dp)
+                                shape = RoundedCornerShape(topStart = 100.dp, topEnd = 100.dp)
                             )
                     )
                 }

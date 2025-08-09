@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.componants
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,7 +20,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Error
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.tab.Tab
 import com.sanaa.feature.search.presentation.R
-import com.sanaa.designsystem.R as RDesignSystem
+import com.sanaa.presentation.provider.LocalThemeProvider
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -31,6 +30,7 @@ import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.MOVIE_I
 import com.sanaa.presentation.screen.state.SearchScreenUiState.Companion.TV_SHOW_INDEX
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import exceptions.NoNetworkException
+import com.sanaa.designsystem.R as RDesignSystem
 
 @Composable
 fun CategoryTabSection(
@@ -63,9 +63,13 @@ fun CategoryTabSection(
                     LoadingIndicator()
                 }
             }
+
             uiState.noInternetConnection -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    NetworkDisconnectionContact(onRetryClick = { interactionsListener.retrySearch() })
+                    NetworkDisconnectionContact(
+                        onRetryClick = { interactionsListener.retrySearch() },
+                        useDarkTheme = LocalThemeProvider.current
+                    )
                 }
             }
 
@@ -118,8 +122,9 @@ fun CategoryTabContent(
                     onMovieClick = { recent, movie ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = {interactionsListener.onSaveMoviesClicked()}
-                )
+                    onSaveIconClicked = { movie ->
+                        interactionsListener.onSaveIconClick(movie)
+                    })
             }
         }
 
@@ -134,7 +139,7 @@ fun CategoryTabContent(
                     onTvShowClick = { recent, tvShow ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = {interactionsListener::onSaveSeriesClicked}
+                    onSaveIconClicked = { }
                 )
             }
         }
@@ -163,7 +168,7 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
         contentAlignment = Alignment.Center
     ) {
         if (loadStateError.error is NoNetworkException) {
-            NetworkDisconnectionContact(onRetryClick = onRetryClick)
+            NetworkDisconnectionContact(onRetryClick = onRetryClick,   useDarkTheme = LocalThemeProvider.current)
         } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,
@@ -176,14 +181,13 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
 
 @Composable
 private fun NoSearchResultContent() {
-    val isDarkTheme = isSystemInDarkTheme()
-    val iconRss =if (isDarkTheme)
+    val iconRss = if (LocalThemeProvider.current)
         RDesignSystem.drawable.ic_no_search_result_dark
-        else {
+    else {
         RDesignSystem.drawable.ic_no_search_result
     }
     EmptySearchContent(
-        icon =painterResource(id = iconRss),
+        icon = painterResource(id = iconRss),
         text = stringResource(id = RDesignSystem.string.no_search_result_message)
     )
 }

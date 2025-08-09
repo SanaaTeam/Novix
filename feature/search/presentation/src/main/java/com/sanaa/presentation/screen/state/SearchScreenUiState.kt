@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.state
 
+import android.media.browse.MediaBrowser.MediaItem
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -17,8 +18,13 @@ data class SearchScreenUiState(
     val error: String? = null,
     val lastTabIndex: Int = -1,
     val showLoginBottomSheet: Boolean = false,
-    val isUserLoggedIn: Boolean = false
-    ) {
+    val isUserLoggedIn: Boolean = false,
+    val isDarkMode: Boolean = false,
+    val safeContentThreshold: Float = 0f,
+    val showSaveToListBottomSheet: Boolean = false,
+    val showAddListBottomSheet: Boolean = false,
+    val selectedMediaToSave: MovieUiModel? = null
+) {
 
     companion object {
         const val MOVIE_INDEX = 0
@@ -32,6 +38,7 @@ data class MovieUiModel(
     val title: String,
     val imageUrl: String,
     val rating: String,
+    val isSaved: Boolean = false
 )
 
 data class ActorUiModel(

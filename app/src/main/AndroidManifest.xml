@@ -18,6 +18,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
+            android:configChanges="uiMode|screenSize|orientation"
             android:theme="@style/Theme.StartingScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,6 +28,7 @@
         </activity>
         <activity android:name="com.sanaa.presentation.api.MediaDetailsActivity" />
         <activity android:name="com.sanaa.presentation.api.AuthActivity" />
+        <activity android:name="com.sanaa.presentation.api.OnBoardingActivity" />
     </application>
 
 </manifest>

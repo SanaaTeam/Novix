@@ -23,7 +23,7 @@ class MovieMapperTest {
             genres = listOf(GenreDto(28, "Action"), GenreDto(12, "Adventure"))
         )
 
-        val movie = dto.toDomain()
+        val movie = dto.toEntity()
 
         assertEquals(1, movie.id)
         assertEquals("Inception", movie.title)

@@ -7,6 +7,7 @@ fun UserDto.toEntity(): User {
     return User(
         id = id,
         name = name,
-        username = username
+        username = username,
+        profileImageUrl = profileImageUrl
     )
 }

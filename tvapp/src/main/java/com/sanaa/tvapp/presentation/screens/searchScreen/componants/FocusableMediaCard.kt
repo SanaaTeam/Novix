@@ -26,7 +26,7 @@ import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 
 @Composable
@@ -59,13 +59,13 @@ fun FocusableMediaCard(
             ),
             shape = CardDefaults.shape(RoundedCornerShape(12.dp))
         ) {
-            RemoteBlurredHaramImageViewer(
+            RemoteBlurredSensitiveImage(
                 imageUrl = imageUrl,
                 modifier = Modifier
                     .width(200.dp)
                     .height(300.dp),
-                haramThreshold = 0.2f,
-                nonHaramThreshold = 0.7f,
+                sensitiveContentThreshold = 0.2f,
+                safeContentThreshold = 0.7f,
                 placeholderContent = {
                     RemoteImagePlaceholder(
                         modifier = Modifier

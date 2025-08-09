@@ -14,7 +14,8 @@ fun Movie.toState(): MediaItem = MediaItem(
     title = title,
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
-    mediaTypeUi = MediaTypeUi.MOVIE
+    mediaTypeUi = MediaTypeUi.MOVIE,
+    isSaved = isSaved
 )
 
 @SuppressLint("DefaultLocale")
@@ -31,7 +32,7 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
     title = "",
     imageUrl = posterImageUrl,
     rating = "",
-    mediaTypeUi = mediaType.toState()
+    mediaTypeUi = mediaType.toState(),
 )
 
 fun MediaType.toState(): MediaTypeUi = when (this) {

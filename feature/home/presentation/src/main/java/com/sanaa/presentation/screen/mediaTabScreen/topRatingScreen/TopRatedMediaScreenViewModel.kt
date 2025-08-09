@@ -3,18 +3,21 @@ package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import entity.Movie
 import entity.TvSeries
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.combine
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -24,6 +27,7 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
@@ -39,24 +43,32 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         fetchTvShows()
     }
 
-    fun updateUserLoggingStatus(){
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+    fun updateUserLoggingStatus() {
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
         onDismissBottomSheet()
     }
+
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
             callee = {
                 loadTopRatedMovies(genreId = genreId)
-            }, onSuccess = { mediaList ->
+                    .combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                        pagingData.map { mediaItem ->
+                            mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+                        }
+                    }.cachedIn(viewModelScope)
+            }, onSuccess = { mediaListFlow ->
                 updateState {
-                    it.copy(movieList = mediaList, isLoading = false)
+                    it.copy(movieList = mediaListFlow, isLoading = false)
                 }
             },
             onError = { exception ->
@@ -149,14 +161,36 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showLoginBottomSheet = true) }
+            return
+        }
+
+        if (media.isSaved) {
+            savedMovieStatusProvider.markUnsaved(media.id)
+        } else {
             updateState {
                 it.copy(
-                    showLoginBottomSheet = true
+                    showSaveToListBottomSheet = true,
+                    selectedMediaToSave = media
                 )
             }
         }
     }
+
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
 
     override fun onBackClick() {
         emitEffect(TopRatedScreenEffect.NavigateBack)

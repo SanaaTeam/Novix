@@ -13,5 +13,6 @@ data class Movie(
     val releaseDate: LocalDate,
     val overview: String = "",
     val trailerUrl: String? = null,
-    val rating: Int?
+    val rating: Int?,
+    val isSaved: Boolean = false
 )

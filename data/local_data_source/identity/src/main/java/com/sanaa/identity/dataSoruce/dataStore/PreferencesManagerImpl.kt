@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
@@ -22,6 +23,21 @@ class PreferencesManagerImpl @Inject constructor(
     override val isGuest: Flow<Boolean> = context.dataStore.data
         .map { preferences -> preferences[IS_GUEST] == true }
 
+    override val accountId: Flow<Long> = context.dataStore.data
+        .map { preferences -> preferences[ACCOUNT_ID] ?: -1L }
+
+    override val isFirstLaunch: Flow<Boolean> = context.dataStore.data
+        .map { preferences ->
+            preferences[IS_FIRST_LAUNCH] ?: true
+        }
+
+    override suspend fun disableFirstLaunch() {
+        context.dataStore.edit { preferences ->
+            preferences[IS_FIRST_LAUNCH] = false
+        }
+    }
+
+
     override suspend fun updateSessionId(value: String) {
         context.dataStore.edit { prefs ->
             prefs[SESSION_ID] = value
@@ -34,6 +50,11 @@ class PreferencesManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun setAccountId(value: Long) {
+        context.dataStore.edit { prefs ->
+            prefs[ACCOUNT_ID] = value
+        }
+    }
     override suspend fun clearSession() {
         context.dataStore.edit { prefs->
             prefs[SESSION_ID] = ""
@@ -45,5 +66,7 @@ class PreferencesManagerImpl @Inject constructor(
         private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("storeData")
         val SESSION_ID = stringPreferencesKey("SESSION_ID")
         val IS_GUEST = booleanPreferencesKey("IS_GUEST")
+        val ACCOUNT_ID = longPreferencesKey("account_id")
+        val IS_FIRST_LAUNCH = booleanPreferencesKey("is_first_launch")
     }
 }
