@@ -11,6 +11,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
 import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
+import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +27,8 @@ class MainActivity : ComponentActivity() {
 //                MovieDetailsScreen()
 //                TvShowScreen()
 //                EpisodeDetailsScreen()
-                LoginScreenTv()
+//                LoginScreenTv()
+                SearchScreen()
             }
         }
     }
