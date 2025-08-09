@@ -1,12 +1,13 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper
 
 import android.annotation.SuppressLint
-import com.sanaa.presentation.model.mapper.toUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import entity.Movie
 
 @SuppressLint("DefaultLocale")
-fun Movie.toDetailsUiModel():MovieDetailsUiModel{
+fun Movie.toDetailsUiModel(
+    trailerUrl: String? = null,
+):MovieDetailsUiModel{
     return MovieDetailsUiModel(
         id = id,
         title = title,

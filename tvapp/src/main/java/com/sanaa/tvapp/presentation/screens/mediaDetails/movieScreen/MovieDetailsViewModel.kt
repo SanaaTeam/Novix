@@ -1,18 +1,13 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
-import com.sanaa.presentation.details_base.BasePagingSource
-import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.tvapp.base.TvBasePagingSource
 import com.sanaa.tvapp.base.TvBaseViewModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
@@ -21,11 +16,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,11 +31,14 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ) ,MovieDetailsScreenInteractionListener{
 
-    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
-        "movieId is required in SavedStateHandle"
-    }
+//    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+//        "movieId is required in SavedStateHandle"
+//    }
+
+    val movieId = 102
 
     init {
+        fetchMovieDetails(movieId)
         updateUserStatus()
     }
 
@@ -94,7 +89,7 @@ class MovieDetailsViewModel @Inject constructor(
 
         updateState {
             it.copy(
-                movieDetails = movie.toUiModel(isBookmarked = false, trailerUrl = trailerUrl),
+                movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
@@ -103,16 +98,16 @@ class MovieDetailsViewModel @Inject constructor(
 
     }
 
-    private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
+    private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieDetailsUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
-            mapper = Movie::toUiModel
+            mapper = Movie::toDetailsUiModel
         )
     }
 
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
-        return BasePagingSource { page ->
+        return TvBasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
         }
     }
@@ -147,9 +142,14 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private  fun updateUserLoginState() {
+        tryToCollect(
+            callee = {checkUserLogin.isLoggedIn()},
+            onCollect = { loggedIn->
+                updateState { it.copy(isUserLoggedIn = loggedIn) }
+            },
+            onError = {  },
+        )
     }
 
     fun updateUserStatus() {
