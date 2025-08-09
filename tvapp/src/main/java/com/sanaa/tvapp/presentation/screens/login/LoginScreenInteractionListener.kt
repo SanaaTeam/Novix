@@ -5,4 +5,5 @@ interface LoginScreenInteractionListener {
     fun onPasswordChanged(newPassword: String)
     fun onTogglePasswordVisibility()
     fun onLoginClicked()
+    fun onContinueClicked()
 }

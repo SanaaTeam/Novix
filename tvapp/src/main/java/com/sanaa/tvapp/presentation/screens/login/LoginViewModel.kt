@@ -1,6 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.login
 
 import android.util.Log
+import com.sanaa.presentation.screen.welcome.WelcomeScreenEffects
 import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.InvalidUserOrPasswordException
@@ -58,7 +59,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun onDataLoadError(throwable: Throwable) {
-        Log.e("Login", "Login failed", throwable)
         updateState { prev ->
             val updated = prev.copy(isLoading = false)
             updated.copy(canSubmit = isSubmitAllowed(updated))
@@ -77,6 +77,8 @@ class LoginViewModel @Inject constructor(
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
     }
+
+    override fun onContinueClicked() = emitEffect(LoginScreenEffects.ReturnGuestResultCode)
 
     private fun isSubmitAllowed(uiState: LoginUiState): Boolean =
         uiState.username.isNotBlank() &&
