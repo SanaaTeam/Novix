@@ -14,6 +14,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -23,6 +24,7 @@ class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
@@ -55,11 +57,6 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(categoryId)
     }
 
-    override fun onSaveIconClick() {
-        if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showBottomSheet = true) }
-        }
-    }
 
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
@@ -68,6 +65,33 @@ class GenreMoviesViewModel @Inject constructor(
     override fun onLoginButtonClick() {
         updateState { it.copy(showBottomSheet = false) }
         emitEffect(GenreMoviesEffects.NavigateToLogin)
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onSaveIconClick(media: MovieUiModel) {
+        if (state.value.userIsLoggedIn) {
+            if (media.isSaved) {
+                savedListsStatusProvider.markItemUnsaved(media.id)
+            } else {
+                updateState {
+                    it.copy(
+                        showSaveToListBottomSheet = true,
+                        selectedMovieToSave = media
+                    )
+                }
+            }
+        }
     }
 
     override fun onBackClick() {
