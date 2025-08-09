@@ -7,6 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.sanaa.designsystem.design_system.component.text.AppText
 
+
 @Composable
 fun HomeScreen() {
     Box(
@@ -16,6 +17,7 @@ fun HomeScreen() {
         AppText(text = "Home Screen")
     }
 }
+
 @Composable
 fun SettingsScreen() {
     Box(
@@ -25,6 +27,7 @@ fun SettingsScreen() {
         AppText(text = "Settings Screen")
     }
 }
+
 @Composable
 fun FavoritesScreen() {
     Box(

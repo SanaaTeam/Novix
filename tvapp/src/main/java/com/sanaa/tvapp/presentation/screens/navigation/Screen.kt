@@ -13,5 +13,4 @@ sealed class Screen(
     object Categories : Screen("categories", "Categories", R.drawable.icon_category)
     object MyList : Screen("myList", "My List", R.drawable.icon_save)
     object MyAccount : Screen("myAccount", "My Account", R.drawable.icon_account)
-
 }

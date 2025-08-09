@@ -31,6 +31,7 @@ import com.sanaa.presentation.screen.homeScreen.HomeScreen
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 
+
 @Composable
 fun MainScreen() {
 
@@ -42,7 +43,6 @@ fun MainScreen() {
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .searchApi()
     }
-
 
     CompositionLocalProvider(LocalMainNavController provides navController) {
         NovixTheme(isSystemInDarkTheme()) {

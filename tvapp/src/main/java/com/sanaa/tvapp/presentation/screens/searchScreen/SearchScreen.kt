@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -26,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.tv.foundation.lazy.list.TvLazyColumn
 import androidx.tv.foundation.lazy.list.TvLazyRow
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme

@@ -38,5 +38,3 @@ fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
 fun RemoteImagePlaceholderPreview() {
     RemoteImagePlaceholder()
 }
-
-

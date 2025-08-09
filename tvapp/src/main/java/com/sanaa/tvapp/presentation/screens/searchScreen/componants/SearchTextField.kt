@@ -61,5 +61,4 @@ private fun SearchTextFieldPrev() {
             onTextChange = { text = it }
         )
     }
-
 }

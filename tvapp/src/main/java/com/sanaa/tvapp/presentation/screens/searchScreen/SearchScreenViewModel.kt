@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import usecase.search.SearchUseCase
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
