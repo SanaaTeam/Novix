@@ -1,10 +1,10 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper
 
 import android.annotation.SuppressLint
-import com.sanaa.presentation.util.formatLocalizedDate
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.SeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
+import com.sanaa.tvapp.util.formatLocalizedDate
 import entity.Episode
 import entity.MediaHistoryItem
 import entity.Season

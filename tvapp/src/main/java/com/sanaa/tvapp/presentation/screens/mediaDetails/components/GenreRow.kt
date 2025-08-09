@@ -41,7 +41,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
                     }
                 )
                 if (index != genres.lastIndex) {
-                    com.sanaa.presentation.shared_component.DotSeparator()
+                    DotSeparator()
                 }
             }
         }

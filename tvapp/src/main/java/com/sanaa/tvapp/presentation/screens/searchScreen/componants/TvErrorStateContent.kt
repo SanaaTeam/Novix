@@ -11,8 +11,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.paging.LoadState
 import com.sanaa.designsystem.design_system.component.screen_state_content.ErrorStateContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.feature.search.presentation.R
 import exceptions.NoNetworkException
+import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
  fun TvErrorStateContent(loadStateError: LoadState.Error, onRetryClick: () -> Unit) {
@@ -28,8 +28,8 @@ import exceptions.NoNetworkException
         } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,
-                errorTitle = stringResource(R.string.error_general_title),
-                errorMessage = stringResource(R.string.error_general_message)
+                errorTitle = stringResource(designSystemResource.string.error_general_title),
+                errorMessage = stringResource(designSystemResource.string.error_general_message)
             )
         }
     }

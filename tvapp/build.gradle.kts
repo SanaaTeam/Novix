@@ -64,6 +64,8 @@ android {
 }
 
 dependencies {
+    projectsDependencies()
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)
@@ -84,8 +86,7 @@ dependencies {
     implementation(libs.bundles.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
-    implementation(libs.androidx.tv.foundation)
-    implementation(libs.androidx.tv.material)
+    implementation(libs.bundles.tv.compose)
     implementation(libs.androidx.material3)
 
     debugImplementation(libs.androidx.ui.compose.tooling)
@@ -110,36 +111,22 @@ dependencies {
 
     implementation(libs.timber)
 
-    implementation(projects.designSystem)
-    implementation(projects.imageViewer)
-
-    implementation(projects.domain.vod)
-    implementation(projects.data.repositories.vod)
-    implementation(projects.data.remoteDataSource.vod)
-    implementation(projects.data.localDataSource.vod)
-
-    implementation(projects.domain.identity)
-    implementation(projects.data.repositories.identity)
-    implementation(projects.data.remoteDataSource.identity)
-    implementation(projects.data.localDataSource.identity)
-
-    implementation(projects.feature.home.api)
-    implementation(projects.feature.home.presentation)
-    implementation(projects.feature.search.api)
-    implementation(projects.feature.search.presentation)
-    implementation(projects.feature.mediaDetails.api)
-    implementation(projects.feature.mediaDetails.presentation)
-    implementation(projects.feature.userProfile.api)
-    implementation(projects.feature.userProfile.presentation)
-    implementation(projects.feature.playlists.api)
-    implementation(projects.feature.playlists.presentation)
-    implementation(projects.feature.authentication.api)
-    implementation(projects.feature.authentication.presentation)
-    implementation(projects.preferences)
-
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
     testImplementation(libs.turbine)
     implementation(libs.conscrypt.android)
+}
 
+private fun DependencyHandlerScope.projectsDependencies() {
+    implementation(projects.designSystem)
+    implementation(projects.imageViewer)
+    implementation(projects.domain.vod)
+    implementation(projects.data.repositories.vod)
+    implementation(projects.data.remoteDataSource.vod)
+    implementation(projects.data.localDataSource.vod)
+    implementation(projects.domain.identity)
+    implementation(projects.data.repositories.identity)
+    implementation(projects.data.remoteDataSource.identity)
+    implementation(projects.data.localDataSource.identity)
+    implementation(projects.preferences)
 }

@@ -4,12 +4,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +24,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Border
@@ -34,13 +37,15 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
+import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
+import com.sanaa.tvapp.presentation.screens.home.component.MediaTab
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
-import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
+import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
+import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.state.MediaItem
-import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
+import com.sanaa.designsystem.R as dosingSystemResource
+import com.sanaa.tvapp.R as tvResource
 
 @Composable
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
@@ -71,26 +76,11 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun HomeScreenLoading(modifier: Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        FeaturedCarouselShimmer()
-
-        repeat(3) {
-            TitleShimmer()
-            ImageListShimmer()
-        }
-    }
-}
-
-@OptIn(ExperimentalTvMaterial3Api::class)
-@Composable
 fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
-    val scrollState = rememberScrollState()
     val sidePaddings = 36.dp
+    val scrollState = rememberScrollState()
+    val navController = rememberNavController()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,20 +97,27 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             onShowDetails = {}
         )
 
-        Title(
-            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-            title = stringResource(R.string.top_rated)
-        )
+        MediaTab(sidePaddings, navController)
 
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = sidePaddings, end = sidePaddings, bottom = 12.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
+            composable(route = HomeMoviesTapRoute::class) {
+                HomeMovies(state, upcomingMovies)
+            }
+
+            composable(route = HomeTvShowsTapRoute::class) {
+                HomeTvShows(state, upcomingMovies)
+            }
+        }
+    }
+}
+
+
+@Composable
+fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    Column {
+        MediaSection(title = stringResource(tvResource.string.top_rated)) {
             items(
-                items = state.topRatingMedia,
+                items = state.topRatingMovies,
                 key = { it.id }
             ) {
                 ImageList(it)
@@ -128,18 +125,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
         }
 
         if (state.continueWatchingMedia.isNotEmpty()) {
-            Title(
-                modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-                title = stringResource(R.string.watching_history)
-            )
-
-            LazyRow(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = sidePaddings, end = sidePaddings, bottom = 12.dp
-                ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+            MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
                     items = state.continueWatchingMedia,
                     key = { it.id }
@@ -149,18 +135,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             }
         }
 
-        Title(
-            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-            title = stringResource(R.string.up_upcoming)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = sidePaddings, end = sidePaddings, bottom = 12.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
             items(
                 count = upcomingMovies.itemCount,
             ) { index ->
@@ -173,18 +148,62 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 }
 
 @Composable
-fun ImageListShimmer() {
-    Row {
-        repeat(10) {
-            PlaceholderWithShimmerEffect(
-                modifier = Modifier.padding(end = 20.dp, bottom = 24.dp),
-                width = 153.dp,
-                height = 231.dp,
-                borderColor = Color.Transparent,
-            )
+fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    Column {
+        MediaSection(title = stringResource(tvResource.string.top_rated)) {
+            items(
+                items = state.topRatingTvShows,
+                key = { it.id }
+            ) {
+                ImageList(it)
+            }
+        }
+
+        if (state.continueWatchingMedia.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.watching_history)) {
+                items(
+                    items = state.continueWatchingMedia,
+                    key = { it.id }
+                ) {
+                    ImageList(it)
+                }
+            }
+        }
+
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
+            items(
+                count = upcomingMovies.itemCount,
+            ) { index ->
+                upcomingMovies[index]?.let {
+                    ImageList(it)
+                }
+            }
         }
     }
 }
+
+@Composable
+private fun MediaSection(
+    title: String,
+    content: LazyListScope.() -> Unit,
+) {
+    val sidePaddings = 36.dp
+
+    Title(
+        modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+        title = title
+    )
+
+    LazyRow(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = sidePaddings, end = sidePaddings, bottom = 12.dp
+        ),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        content = content
+    )
+}
+
 
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
@@ -212,12 +231,12 @@ private fun ImageList(item: MediaItem) {
             contentDescription = item.title
         ) {
             OnBlurContent(
-                hintText = stringResource(com.sanaa.designsystem.R.string.unsuitable_image),
+                hintText = stringResource(dosingSystemResource.string.unsuitable_image),
                 textStyle = Theme.textStyle.body.small.copy(
                     color = Color(0x99FFFFFF)
                 ),
                 iconSize = 24.dp,
-                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                icon = painterResource(dosingSystemResource.drawable.icon_eye_slash),
             )
         }
     }

@@ -13,7 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
-import com.sanaa.tvapp.presentation.screens.login.SnackData
+import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.delay
 
 @Composable

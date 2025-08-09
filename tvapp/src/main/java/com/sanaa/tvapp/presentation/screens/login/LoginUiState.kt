@@ -9,8 +9,3 @@ data class LoginUiState(
     val isLoading: Boolean = false,
     val canSubmit: Boolean = false,
 )
-
-data class SnackData(
-    val message: String,
-    val isError: Boolean
-)

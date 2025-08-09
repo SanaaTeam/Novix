@@ -13,4 +13,21 @@
     <string name="enter_username_password_error">Please enter username and password</string>
     <string name="something_went_wrong_error">Something went wrong, please try again later</string>
     <string name="more_like_this">More like this</string>
+    <string name="rate_it">Rate it</string>
+    <string name="submit">Submit</string>
+    <string name="cast">Cast</string>
+    <string name="select_how_much_you_like_it">Select how much you like it</string>
+    <string name="play_trailer">Play trailer</string>
+    <string name="episode_number">Episode %d</string>
+    <string name="submit_rating_successfully">Submit rating successfully</string>
+    <string name="submit_rating_failed">Submit rating failed</string>
+    <string name="guest_of_honor">Guest of Honor</string>
+    <string name="minutes_duration">%s m</string>
+    <string name="season">Season</string>
+    <string name="season_number">S%d</string>
+    <string name="episodes_count">%d Episodes</string>
+    <string name="login">Login</string>
+    <string name="app_icon">app icon</string>
+    <string name="continue_as_guest">Continue as guest</string>
+
 </resources>
