@@ -1,11 +1,8 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import androidx.lifecycle.viewModelScope
-import android.util.Log
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
@@ -24,11 +21,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
-import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -88,7 +84,6 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(
                         userIsLoggedIn = isLogged,
                         showBottomSheet = false
-
                     )
                 }
             },
@@ -190,8 +185,8 @@ class HomeScreenViewModel @Inject constructor(
                 .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                     pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
                 }
-                .cachedIn(viewModelScope)
-                     },
+                    .cachedIn(viewModelScope)
+            },
             onCollect = ::onFetchUpcomingMoviesSuccess,
             onError = ::onDataLoadError,
         )
@@ -286,6 +281,14 @@ class HomeScreenViewModel @Inject constructor(
         updateState { it.copy(showSaveToListBottomSheet = false) }
     }
 
+    override fun onSaveToListSuccess() {
+        emitEffect(HomeScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(HomeScreenEffect.ShowError(message = stringProvider.addToListFailed))
+    }
+
     override fun onCreateNewListClick() {
         updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
@@ -304,7 +307,6 @@ class HomeScreenViewModel @Inject constructor(
 
 
     private fun onDataLoadError(e: Throwable) {
-        Log.d("TAG", "onDataLoadError: ${e.message}")
         if (e is NoNetworkException) {
             updateState { it.copy(isNoInternetConnection = true) }
             emitEffect(HomeScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))

@@ -1,11 +1,8 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
@@ -22,10 +19,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
-import service.VodStringProvider
-import kotlinx.coroutines.flow.combine
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -74,7 +69,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                         mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
                     }
                 }.cachedIn(viewModelScope)
-                     },
+            },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -180,6 +175,14 @@ class TopRatedMediaScreenViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun onSaveToListSuccess() {
+        emitEffect(TopRatedScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.addToListFailed))
     }
 
 

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -17,11 +18,10 @@ import entity.Movie
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.combine
-import repository.SavedListsStatusProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
+import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -134,16 +134,12 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+    override fun onSaveToListSuccess() {
+        emitEffect(TrendingMediaScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
     }
 
-    override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
-    }
-
-    override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+    override fun onSaveToListFailure() {
+        emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.addToListFailed))
     }
 
     override fun onBackClick() {
@@ -162,6 +158,18 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     private fun onDataLoadError(e: Throwable) {

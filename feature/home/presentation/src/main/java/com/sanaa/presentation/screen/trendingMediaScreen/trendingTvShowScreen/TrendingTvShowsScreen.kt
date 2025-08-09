@@ -72,6 +72,10 @@ fun TrendingTvShowsScreen(
                 is TrendingMediaScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
+
+                is TrendingMediaScreenEffect.ShowSuccess -> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }

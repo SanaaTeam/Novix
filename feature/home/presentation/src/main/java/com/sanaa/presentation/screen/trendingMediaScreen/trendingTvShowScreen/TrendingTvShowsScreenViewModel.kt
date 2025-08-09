@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
@@ -18,7 +17,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageTvSeriesUseCase
@@ -91,7 +89,13 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData), isLoading = false, isNoInternetConnection = false) }
+        updateState {
+            it.copy(
+                mediaList = flowOf(pagingData),
+                isLoading = false,
+                isNoInternetConnection = false
+            )
+        }
     }
 
     override fun onGenreClick(id: Int?) {
@@ -116,6 +120,15 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         }
     }
 
+
+    override fun onSaveToListSuccess() {
+        emitEffect(TrendingMediaScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+    }
+
+    override fun onSaveToListFailure() {
+        emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.addToListFailed))
+    }
+
     override fun onBackClick() {
         emitEffect(TrendingMediaScreenEffect.NavigateBack)
     }
@@ -134,6 +147,17 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState { it.copy(showBottomSheet = false) }
     }
 
+
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) {
+            updateState { it.copy(isNoInternetConnection = true) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+        } else {
+            updateState { it.copy(isNoInternetConnection = false) }
+            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+        }
+    }
+
     override fun onDismissSaveToListBottomSheet() {
         TODO("Not yet implemented")
     }
@@ -144,20 +168,6 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     override fun onDismissAddListBottomSheet() {
         TODO("Not yet implemented")
-    }
-
-    private fun onTvShowsLoaded(pagingData: PagingData<MediaItem>) {
-        updateState { it.copy(mediaList = flowOf(pagingData)) }
-    }
-
-    private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
-        } else {
-            updateState { it.copy(isNoInternetConnection = false) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
-        }
     }
 
     private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {

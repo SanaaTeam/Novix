@@ -14,6 +14,8 @@ interface HomeScreenInteractionListener {
     fun onMovieGenreClick(id: Int?)
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
     fun onSaveIconClick(media: MediaItem)
+    fun onSaveToListSuccess()
+    fun onSaveToListFailure()
     fun onDismissBottomSheet()
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()

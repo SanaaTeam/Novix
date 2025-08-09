@@ -23,8 +23,8 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import service.VodStringProvider
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -184,7 +184,6 @@ class TopRatedMediaScreenViewModelTest {
     @Test
     fun `onSaveIconClick should show bottom sheet`() = runTest {
         viewModel =
-            TopRatedMediaScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase,checkIfUserIsLoggedInUseCase, savedListsStatusProvider, stringProvider, testDispatcher)
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,

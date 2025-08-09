@@ -102,6 +102,9 @@ fun TopRatedMediaScreen(
                 is TopRatedScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
+                is TopRatedScreenEffect.ShowSuccess-> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }
@@ -122,28 +125,20 @@ fun TopRatedMediaScreen(
         )
 
         NovixAnimatedSnackBarHost(
-            data = snack, onDismiss = { snack = null })
-
+            data = snack,
+            onDismiss = { snack = null }
+        )
         state.value.selectedMediaToSave?.let { mediaItem ->
             SaveToListBottomSheet(
                 isVisible = state.value.showSaveToListBottomSheet,
                 mediaId = mediaItem.id.toLong(),
                 onDismiss = viewModel::onDismissSaveToListBottomSheet,
                 onCreateNewListClick = viewModel::onCreateNewListClick,
-                onSuccess = {
-                    snack = SnackData(
-                        message = "Added to list successfully",
-                        isError = false
-                    )
-                },
-                onFailure = {
-                    snack = SnackData(
-                        message = "Added to list failed",
-                        isError = true
-                    )
-                },
+                onSuccess = viewModel::onSaveToListSuccess,
+                onFailure = viewModel::onSaveToListFailure,
             )
         }
+
         AddBookmarkListBottomSheet(
             isVisible = state.value.showAddListBottomSheet,
             onDismiss = viewModel::onDismissAddListBottomSheet,
