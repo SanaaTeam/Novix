@@ -118,4 +118,21 @@ dependencies {
     implementation(libs.androidx.tv.foundation)
     implementation(libs.androidx.tv.material)
     implementation(libs.kotlinx.datetime)
+
+
+    implementation(projects.feature.home.api)
+    implementation(projects.feature.home.presentation)
+    implementation(projects.feature.search.api)
+    implementation(projects.feature.search.presentation)
+    implementation(projects.feature.mediaDetails.api)
+    implementation(projects.feature.mediaDetails.presentation)
+    implementation(projects.feature.userProfile.api)
+    implementation(projects.feature.userProfile.presentation)
+    implementation(projects.feature.playlists.api)
+    implementation(projects.feature.playlists.presentation)
+    implementation(projects.feature.authentication.api)
+    implementation(projects.feature.authentication.presentation)
+    implementation(projects.preferences)
+    implementation(libs.conscrypt.android)
+
 }

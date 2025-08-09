@@ -6,9 +6,9 @@
         <item name="postSplashScreenTheme">@android:style/Theme.Material.NoActionBar</item>
     </style>
 
-    <style name="Theme.Novix" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:statusBarColor">@color/background</item>
-        <item name="android:windowLightStatusBar">true</item>
-        <item name="android:windowBackground">@color/background</item>
-    </style>
+<!--    <style name="Theme.Novix" parent="Theme.Material3.DayNight.NoActionBar">-->
+<!--        <item name="android:statusBarColor">@color/background</item>-->
+<!--        <item name="android:windowLightStatusBar">true</item>-->
+<!--        <item name="android:windowBackground">@color/background</item>-->
+<!--    </style>-->
 </resources>

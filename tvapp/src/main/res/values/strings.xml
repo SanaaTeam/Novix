@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Novix</string>
-    <string name="unsuitable_image">Unsuitable image</string>
-    <string name="welcome_back">Welcome back</string>
-    <string name="no_internet_connection_error">No Internet Connection</string>
-    <string name="invalid_username_password_error">Invalid user name or password</string>
-    <string name="enter_username_password_error">Please enter username and password</string>
-    <string name="something_went_wrong_error">Something went wrong, please try again later</string>
     <string name="login_success">Login Success</string>
     <string name="see_detail">See details</string>
     <string name="top_rated">Top rating</string>
