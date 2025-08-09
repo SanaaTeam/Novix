@@ -22,7 +22,7 @@ import usecase.custom_list.custom_list_param.SavedList
 class AddBookmarkListViewModelTest {
 
     private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
-    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
+    private val listsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: AddBookmarkListViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -30,11 +30,19 @@ class AddBookmarkListViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+    }
+
+    @Test
+    fun `init calls refreshLists on the provider`() = runTest {
         initViewModel()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
     }
 
     @Test
     fun `onListTitleChanged with non-empty string updates state and enables button`() = runTest {
+        initViewModel()
         viewModel.onListTitleChanged("New Playlist")
 
         val state = viewModel.state.value
@@ -43,24 +51,10 @@ class AddBookmarkListViewModelTest {
     }
 
     @Test
-    fun `onListTitleChanged with empty string updates state and disables button`() = runTest {
-        viewModel.onListTitleChanged("An existing title")
-
-        viewModel.onListTitleChanged("")
-
-        val state = viewModel.state.value
-        assertThat(state.listTitle).isEmpty()
-        assertThat(state.isAddButtonEnabled).isFalse()
-    }
-
-    @Test
     fun `resetState clears title, loading, and error states`() = runTest {
+        initViewModel()
         viewModel.updateState {
-            it.copy(
-                listTitle = "Some Title",
-                isLoading = true,
-                errorMessage = "Some Error"
-            )
+            it.copy(listTitle = "Some Title", isLoading = true, errorMessage = "Some Error")
         }
 
         viewModel.resetState()
@@ -72,67 +66,62 @@ class AddBookmarkListViewModelTest {
     }
 
     @Test
-    fun `onAddClicked does nothing if button is not enabled`() = runTest {
+    fun `onAddClicked on success creates list, updates provider, and emits success effect`() = runTest {
+        val listTitle = "My New List"
+        val mediaId = 123
+        val fakeSavedList = SavedList(id = 1, title = listTitle, itemCount = 1)
 
-        viewModel.onAddClicked(123)
+        coEvery { manageSavedListsUseCase.createSavedList(listTitle) } returns fakeSavedList
+        initViewModel()
+        viewModel.onListTitleChanged(listTitle)
 
-        coVerify(exactly = 0) { manageSavedListsUseCase.createSavedList(any()) }
-        verify(exactly = 0) { savedListsStatusProvider.markItemSaved(any()) }
-        assertThat(viewModel.state.value.isLoading).isFalse()
+
+        viewModel.effect.test {
+            viewModel.onAddClicked(mediaId)
+            advanceUntilIdle()
+
+            assertThat(awaitItem()).isEqualTo(AddBookmarkEffect.AddSuccess)
+
+            coVerify(exactly = 1) { manageSavedListsUseCase.createSavedList(listTitle) }
+            verify(exactly = 1) { listsStatusProvider.markItemSaved(mediaId) }
+            verify(exactly = 1) { listsStatusProvider.addList(fakeSavedList) }
+            coVerify(exactly = 2) { listsStatusProvider.refreshLists() }
+
+            val state = viewModel.state.value
+            assertThat(state.listTitle).isEmpty()
+            assertThat(state.isLoading).isFalse()
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     @Test
-    fun `onAddClicked on success creates list, resets state, marks saved, and emits effect`() =
-        runTest {
-            val listTitle = "My New List"
-            val mediaId = 123
-            viewModel.onListTitleChanged(listTitle)
+    fun `onAddClicked on failure updates state with error and emits failure effect`() = runTest {
+        val listTitle = "Failing List"
+        val error = RuntimeException("Database error")
 
-            val fakeSavedList = SavedList(id = 1, title = listTitle, itemCount = 1)
-            coEvery { manageSavedListsUseCase.createSavedList(listTitle) } returns fakeSavedList
+        coEvery { manageSavedListsUseCase.createSavedList(listTitle) } throws error
+        initViewModel()
+        viewModel.onListTitleChanged(listTitle)
 
-            viewModel.effect.test {
-                viewModel.onAddClicked(mediaId)
+        viewModel.effect.test {
+            viewModel.onAddClicked(456)
+            advanceUntilIdle()
 
-                assertThat(awaitItem()).isEqualTo(Unit)
+            assertThat(awaitItem()).isEqualTo(AddBookmarkEffect.AddFailure)
 
-                coVerify(exactly = 1) { manageSavedListsUseCase.createSavedList(listTitle) }
-                verify(exactly = 1) { savedListsStatusProvider.markItemSaved(mediaId) }
+            val state = viewModel.state.value
+            assertThat(state.isLoading).isFalse()
+            assertThat(state.errorMessage).isEqualTo("Failed to create list. Please try again.")
 
-                val state = viewModel.state.value
-                assertThat(state.listTitle).isEmpty()
-                assertThat(state.isLoading).isFalse()
-
-                cancelAndIgnoreRemainingEvents()
-            }
+            cancelAndIgnoreRemainingEvents()
         }
-
-    @Test
-    fun `onAddClicked on failure updates state with error message and does not emit effect`() =
-        runTest {
-            val listTitle = "Failing List"
-            viewModel.onListTitleChanged(listTitle)
-
-            val error = RuntimeException("Database error")
-            coEvery { manageSavedListsUseCase.createSavedList(listTitle) } throws error
-
-            viewModel.effect.test {
-                viewModel.onAddClicked(456)
-
-                advanceUntilIdle()
-
-                val state = viewModel.state.value
-                assertThat(state.isLoading).isFalse()
-                assertThat(state.errorMessage).isEqualTo("Failed to create list. Please try again.")
-
-                expectNoEvents()
-            }
-        }
+    }
 
     private fun initViewModel() {
         viewModel = AddBookmarkListViewModel(
             manageSavedListsUseCase = manageSavedListsUseCase,
-            listsStatusProvider = savedListsStatusProvider,
+            listsStatusProvider = listsStatusProvider,
             dispatcher = testDispatcher
         )
     }

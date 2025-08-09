@@ -16,7 +16,7 @@ class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState(), dispatcher) {
+) : BaseViewModel<AddBookmarkListUiState, AddBookmarkEffect>(AddBookmarkListUiState(), dispatcher) {
 
 
     init {
@@ -47,7 +47,7 @@ class AddBookmarkListViewModel @Inject constructor(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
-                emitEffect(Unit)
+                emitEffect(AddBookmarkEffect.AddSuccess)
                 listsStatusProvider.markItemSaved(mediaId)
                 listsStatusProvider.addList(
                     SavedList(
@@ -67,6 +67,7 @@ class AddBookmarkListViewModel @Inject constructor(
                         errorMessage = "Failed to create list. Please try again."
                     )
                 }
+                emitEffect(AddBookmarkEffect.AddFailure)
             }
         )
     }

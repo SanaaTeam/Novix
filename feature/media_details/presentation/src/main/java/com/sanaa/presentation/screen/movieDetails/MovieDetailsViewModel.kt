@@ -61,7 +61,7 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState { current ->
                     current.copy(
                         movieDetails = current.movieDetails.copy(
-                            isBookmarked = savedIds.contains(current.movieDetails.id)
+                            isSaved = savedIds.contains(current.movieDetails.id)
                         )
                     )
                 }
@@ -87,7 +87,7 @@ class MovieDetailsViewModel @Inject constructor(
             return
         }
 
-        if (movie.isBookmarked) {
+        if (movie.isSaved) {
             savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
@@ -216,12 +216,12 @@ class MovieDetailsViewModel @Inject constructor(
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
         val pagingFlow = createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
-            mapper = Movie::toUiModel
+            mapper = { movie -> movie.toUiModel() }
         )
 
         return pagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
             pagingData.map { movieUiModel ->
-                movieUiModel.copy(isBookmarked = savedIds.contains(movieUiModel.id))
+                movieUiModel.copy(isSaved = savedIds.contains(movieUiModel.id))
             }
         }.cachedIn(viewModelScope)
     }
@@ -258,16 +258,19 @@ class MovieDetailsViewModel @Inject constructor(
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
+        val currentSavedIds = savedListsStatusProvider.savedIds.value
+        val isMovieSaved = currentSavedIds.contains(movie.id)
+
         addMovieToHistory(movie)
         updateState {
             it.copy(
-                movieDetails = movie.toUiModel(isBookmarked = false, trailerUrl = trailerUrl),
+                movieDetails = movie.toUiModel(trailerUrl = trailerUrl)
+                    .copy(isSaved = isMovieSaved),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
             )
         }
-
     }
 
 

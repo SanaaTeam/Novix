@@ -54,15 +54,18 @@ fun PlaylistDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                PlaylistDetailsScreenEffect.NavigateBack -> {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "list_deleted",
-                        true
-                    )
+                is PlaylistDetailsScreenEffect.NavigateBackAfterDelete -> {
                     navController.previousBackStackEntry?.savedStateHandle?.set(
                         "delete_success",
                         true
                     )
+                    navController.previousBackStackEntry?.savedStateHandle?.set(
+                        "list_deleted",
+                        true
+                    )
+                    navController.popBackStack()
+                }
+                is PlaylistDetailsScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 

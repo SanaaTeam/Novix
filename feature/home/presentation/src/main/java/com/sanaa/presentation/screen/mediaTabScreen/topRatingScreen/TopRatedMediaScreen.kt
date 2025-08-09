@@ -55,6 +55,7 @@ fun TopRatedMediaScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -70,8 +71,6 @@ fun TopRatedMediaScreen(
     ).authenticationApi()
 
     val launcher = launchAuthActivityForResult()
-
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -96,7 +95,7 @@ fun TopRatedMediaScreen(
                     navController.popBackStack()
                 }
 
-                is TopRatedScreenEffect.NavigateToLogin -> {
+                TopRatedScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
                 is TopRatedScreenEffect.ShowError -> {
@@ -107,6 +106,27 @@ fun TopRatedMediaScreen(
                 }
             }
         }
+    }
+    TopRatedMediaScreenContent(
+        title = stringResource(R.string.top_rated),
+        state = state.value,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
+    RequestToLoginBottomSheet(
+        isVisible = state.value.showLoginBottomSheet,
+        onDismiss = viewModel::onDismissBottomSheet,
+        onLoginButtonClick = {
+            viewModel.onLoginButtonClick()
+        }
+    )
+    state.value.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = state.value.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+        )
     }
 
     Box(modifier = Modifier.systemBarsPadding()) {
@@ -123,28 +143,14 @@ fun TopRatedMediaScreen(
                 viewModel.onLoginButtonClick()
             }
         )
-
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-        state.value.selectedMediaToSave?.let { mediaItem ->
-            SaveToListBottomSheet(
-                isVisible = state.value.showSaveToListBottomSheet,
-                mediaId = mediaItem.id.toLong(),
-                onDismiss = viewModel::onDismissSaveToListBottomSheet,
-                onCreateNewListClick = viewModel::onCreateNewListClick,
-                onSuccess = viewModel::onSaveToListSuccess,
-                onFailure = viewModel::onSaveToListFailure,
-            )
         }
 
-        AddBookmarkListBottomSheet(
-            isVisible = state.value.showAddListBottomSheet,
-            onDismiss = viewModel::onDismissAddListBottomSheet,
-            mediaId = state.value.selectedMediaToSave?.id ?: 0
-        )
-    }
+    AddBookmarkListBottomSheet(
+        isVisible = state.value.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+        mediaId = state.value.selectedMediaToSave?.id ?: 0
+    )
+
 }
 
 

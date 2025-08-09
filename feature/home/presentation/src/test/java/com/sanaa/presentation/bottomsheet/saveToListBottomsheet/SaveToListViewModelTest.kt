@@ -29,18 +29,20 @@ class SaveToListViewModelTest {
     private lateinit var viewModel: SaveToListViewModel
     private val testDispatcher = StandardTestDispatcher()
 
+    private val fakePlaylistsFlow = MutableStateFlow<List<SavedList>>(emptyList())
+
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
+        every { listsStatusProvider.savedLists } returns fakePlaylistsFlow
     }
 
     @Test
-    fun `init loads playlists and updates state`() = runTest {
-        val fakeLists = listOf(SavedList(id = 1, title = "Favorites", itemCount = 10))
-        val fakeStateFlow = MutableStateFlow(fakeLists)
-        coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
-
+    fun `init on success loads playlists and updates state`() = runTest {
         initViewModel()
+        val fakeLists = listOf(SavedList(id = 1, title = "Favorites", itemCount = 10))
+
+        fakePlaylistsFlow.value = fakeLists
         advanceUntilIdle()
 
         val state = viewModel.state.value
@@ -61,54 +63,33 @@ class SaveToListViewModelTest {
     }
 
     @Test
-    fun `onAddClicked on success adds item, reloads, marks saved, and emits success effect`() =
-        runTest {
-            val fakeLists = listOf(SavedList(id = 1, title = "Favorites", itemCount = 10))
-            val fakeStateFlow = MutableStateFlow(fakeLists)
-            coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
+    fun `onAddClicked on success adds item, refreshes, marks saved, and emits success effect`() = runTest {
+        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true
+        initViewModel()
+        viewModel.onPlaylistSelected(1L)
 
-            coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true
-            coEvery { listsStatusProvider.refreshLists() } returns Unit
-            every { listsStatusProvider.markItemSaved(any()) } returns Unit
-
-            initViewModel()
+        viewModel.effect.test {
+            viewModel.onAddClicked(mediaId = 789L)
             advanceUntilIdle()
 
-            viewModel.onPlaylistSelected(1L)
+            assertThat(awaitItem()).isEqualTo(SaveToListEffect.AddedSuccessfully)
 
-            viewModel.effect.test {
-                viewModel.onAddClicked(mediaId = 789L)
-                advanceUntilIdle()
+            coVerify(exactly = 1) { manageSavedListItemsUseCase.addMovieToSavedList(1, 789) }
+            verify(exactly = 1) { listsStatusProvider.markItemSaved(789) }
+            coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
 
-                assertThat(awaitItem()).isEqualTo(SaveToListEffect.AddedSuccessfully)
-
-                coVerify(exactly = 1) { manageSavedListItemsUseCase.addMovieToSavedList(1, 789) }
-                verify(exactly = 1) { listsStatusProvider.markItemSaved(789) }
-                coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
-
-                assertThat(viewModel.state.value.isLoading).isFalse()
-            }
+            assertThat(viewModel.state.value.isLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
         }
+    }
 
     @Test
     fun `onAddClicked on failure updates error state and emits failure effect`() = runTest {
-        coEvery {
-            manageSavedListItemsUseCase.addMovieToSavedList(
-                any(),
-                any()
-            )
-        } throws RuntimeException("API Error")
-        every { listsStatusProvider.markItemSaved(any()) } returns Unit
-
-        val fakeLists = listOf<SavedList>()
-        val fakeStateFlow = MutableStateFlow(fakeLists)
-        coEvery { listsStatusProvider.savedLists } returns fakeStateFlow
-
+        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } throws RuntimeException("API Error")
         initViewModel()
-        advanceUntilIdle()
+        viewModel.onPlaylistSelected(1L)
 
         viewModel.effect.test {
-            viewModel.onPlaylistSelected(1L)
             viewModel.onAddClicked(mediaId = 789L)
             advanceUntilIdle()
 
@@ -117,6 +98,7 @@ class SaveToListViewModelTest {
             val state = viewModel.state.value
             assertThat(state.isLoading).isFalse()
             assertThat(state.errorMessage).isEqualTo("Failed to add item to list.")
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
