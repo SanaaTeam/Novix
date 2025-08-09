@@ -24,6 +24,9 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -32,6 +35,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTopBar
 
 

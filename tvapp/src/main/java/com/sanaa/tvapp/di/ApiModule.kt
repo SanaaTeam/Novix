@@ -73,8 +73,5 @@ abstract class ApiModule {
 //    abstract fun bindPreferencesManager(
 //        preferencesManagerImpl: PreferencesManagerImpl
 //    ): PreferencesManager
-    abstract fun bindUserProfileApi(
-        userProfileApiImpl: UserProfileFeatureApiImpl
-    ): UserProfileFeatureApi
 
 }

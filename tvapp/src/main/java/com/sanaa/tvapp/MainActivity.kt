@@ -24,7 +24,8 @@ class MainActivity : ComponentActivity() {
 //                HomeScreen()
 //                MovieDetailsScreen()
 //                TvShowScreen()
-                EpisodeDetailsScreen()
+//                EpisodeDetailsScreen()
+                LoginScreenTv()
             }
         }
     }

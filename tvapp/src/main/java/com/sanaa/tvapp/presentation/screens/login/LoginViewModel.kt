@@ -1,8 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.login
 
-import android.util.Log
-import com.sanaa.presentation.screen.welcome.WelcomeScreenEffects
-import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
+import com.sanaa.tvapp.base.TvBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
@@ -17,7 +15,7 @@ class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
     private val stringProvider: StringProvider,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : TvSearchBaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
+) : TvBaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
     LoginScreenInteractionListener {
 
     override fun onUsernameChanged(newUsername: String) {
