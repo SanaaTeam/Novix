@@ -17,6 +17,6 @@ fun Actor.toActorUiModel() = ActorUiModel(
         birthDate != null -> birthDate!!.toString()
         else -> null
     },
-    placeOfBirth = placeOfBirth,
+    placeOfBirth = placeOfBirth?.toString(),
     biography = biography?.takeIf(String::isNotBlank),
 )

@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsViewModel
 import dagger.hilt.android.AndroidEntryPoint

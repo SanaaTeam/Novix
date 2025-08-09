@@ -37,7 +37,7 @@ fun TvMediaPosterCard(
     title: String = "",
     onCardClick: () -> Unit = {},
     topLeftContent: @Composable () -> Unit = {},
-    PosterImage: @Composable () -> Unit = {}
+    posterImage: @Composable () -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
     Box(
@@ -52,7 +52,7 @@ fun TvMediaPosterCard(
             .onFocusChanged { isFocused = it.isFocused }
             .clickable(onClick = onCardClick)
     ) {
-        PosterImage()
+        posterImage()
         Box(
             modifier = Modifier
                 .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
@@ -85,7 +85,7 @@ private fun PreviewMediaPosterCard() {
         Column(modifier = Modifier.fillMaxSize()) {
             TvMediaPosterCard(
                 title = "ghsjhvj",
-                PosterImage = {
+                posterImage = {
                     Image(
                         painter = painterResource(R.drawable.icon_placeholder_light),
                         contentDescription = null,

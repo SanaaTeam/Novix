@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.components
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +46,7 @@ fun DetailsHeaderSection(
         ) {
             RemoteBlurredHaramImageViewer(
                 imageUrl = backgroundImageUrl,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.TopEnd),
                 haramThreshold = 0.2f,
                 nonHaramThreshold = 0.7f,
                 placeholderContent = {
@@ -65,25 +66,35 @@ fun DetailsHeaderSection(
                     icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                 )
             }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.linearGradient(
-                            listOf(
-                                Theme.colors.surface,
-                                Color.Transparent
-                            ),
-                            start = Offset.Zero.copy(y = 1000f),
-                            end = Offset.Zero.copy(x = 1500f)
-                        )
-                    )
-            )
+            val brushColor = listOf(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Theme.colors.surface)
+            Canvas(modifier = Modifier.matchParentSize()) {
+                drawRect(
+                    brush = Brush.radialGradient(
+                        colors = brushColor,
+                        center = Offset(size.width - size.width/4, size.height - 550.dp.toPx()),
+                        radius = size.maxDimension - size.minDimension
+                    ),
+                    size = size
+                )
+            }
+//            Box(
+//                modifier = Modifier
+//                    .fillMaxSize()
+//                    .background(
+//                        Brush.linearGradient(
+//                            listOf(
+//                                Theme.colors.surface,
+//                                Color.Transparent
+//                            ),
+//                            start = Offset.Zero.copy(y = 1000f),
+//                            end = Offset.Zero.copy(x = 1500f)
+//                        )
+//                    )
+//            )
         }
         Column(
             modifier = Modifier
-                .padding(horizontal = 48.dp, vertical = 24.dp)
+                .padding(horizontal = 36.dp, vertical = 24.dp)
                 .fillMaxWidth(0.5f)
                 .align(Alignment.BottomStart),
         ) {
