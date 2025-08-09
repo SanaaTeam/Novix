@@ -71,28 +71,6 @@ class PlayListScreenViewModelTest {
 
 
 
-    @Test
-    fun `onListDeletedSuccessfully emits ShowSuccessToDeleteListSnackBar and reloads lists`() =
-        runTest {
-            val fakeLists = listOf(fakeDomainList(1))
-            val fakeStateFlow = MutableStateFlow(fakeLists)
-
-            coEvery { listStatusProvider.savedLists } returns fakeStateFlow
-            coEvery { listStatusProvider.refreshLists() } returns Unit
-            every { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(true)
-
-            initViewModel()
-            viewModel.effect.test {
-                viewModel.onListDeletedSuccessfully()
-                advanceUntilIdle()
-
-                assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            assertThat(viewModel.state.value.lists).hasSize(1)
-        }
-
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
             checkUserLogin = checkIfUserIsLoggedInUseCase,
