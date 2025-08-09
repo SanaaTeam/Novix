@@ -26,13 +26,14 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPoste
 @Composable
 fun CastSlider(
     cast: List<ActorUiModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String = stringResource(R.string.cast)
 ) {
     Column(
         modifier = modifier
     ) {
         AppText(
-            text = stringResource(R.string.cast),
+            text = title,
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)

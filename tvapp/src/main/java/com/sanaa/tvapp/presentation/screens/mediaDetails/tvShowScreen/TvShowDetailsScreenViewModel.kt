@@ -4,12 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.tvapp.base.TvBaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
-import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +32,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
 
-    private val seriesId: Int = 1399
+    private val tvShowId: Int = 1399
     //   private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
 //        "seriesId is required in SavedStateHandle"
 //    }
@@ -196,11 +193,11 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(seriesId) }
-        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(seriesId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
-        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
-        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(tvShowId) }
+        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(tvShowId) }
+        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, 1) }
+        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(tvShowId) }
+        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(tvShowId) }
 //        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
         val series = seriesDeferred.await()
@@ -226,7 +223,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
-        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
@@ -245,7 +242,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
-            seriesId = seriesId,
+            seriesId = tvShowId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
