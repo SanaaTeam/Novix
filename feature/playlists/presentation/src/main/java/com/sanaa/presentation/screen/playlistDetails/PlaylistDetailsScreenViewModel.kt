@@ -118,7 +118,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onListDeletedSuccessfully() {
-        emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
+        emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
     }
 
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
@@ -133,6 +133,4 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
             manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page)
         }
     }
-
-
 }
