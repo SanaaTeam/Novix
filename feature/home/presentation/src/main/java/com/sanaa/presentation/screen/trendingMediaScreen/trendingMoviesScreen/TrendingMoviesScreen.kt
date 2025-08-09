@@ -32,7 +32,6 @@ fun TrendingMoviesScreen(
 ) {
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     val detailsApi: MediaDetailsApi = remember {
@@ -78,26 +77,13 @@ fun TrendingMoviesScreen(
         interactionListener = viewModel,
         modifier = modifier,
     )
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+
     if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
         SaveToListBottomSheet(
             isVisible = state.value.showSaveToListBottomSheet,
             mediaId = state.value.selectedMediaId!!.toLong(),
             onDismiss = viewModel::onDismissSaveToListBottomSheet,
             onCreateNewListClick = viewModel::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
         )
     }
     AddBookmarkListBottomSheet(

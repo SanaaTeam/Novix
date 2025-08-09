@@ -39,20 +39,21 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
-    onSuccess: () -> Unit = {},
-    onFailure: () -> Unit = {},
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -60,15 +61,26 @@ fun SaveToListBottomSheet(
         }
     }
 
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 SaveToListEffect.AddedSuccessfully -> {
-                    onSuccess()
                     onDismiss()
+                    snack = SnackData(
+                        message = "Added to list successfully",
+                        isError = false
+                    )
                 }
 
-                SaveToListEffect.FailedToAdd -> onFailure()
+                SaveToListEffect.FailedToAdd -> {
+                    snack = SnackData(
+                        message = "Added to list failed",
+                        isError = true
+                    )
+                }
             }
         }
     }

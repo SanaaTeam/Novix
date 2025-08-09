@@ -37,7 +37,6 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.cards.HomeTopBar
@@ -230,26 +229,12 @@ fun HomeScreenContent(
             )
         }
     }
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
     state.selectedMediaToSave?.let { mediaItem ->
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
             mediaId = mediaItem.id.toLong(),
             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = interactionListener::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
         )
     }
 

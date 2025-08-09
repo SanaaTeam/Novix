@@ -51,7 +51,6 @@ fun TopRatedMediaScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -110,26 +109,12 @@ fun TopRatedMediaScreen(
             viewModel.onLoginButtonClick()
         }
     )
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
     state.value.selectedMediaToSave?.let { mediaItem ->
         SaveToListBottomSheet(
             isVisible = state.value.showSaveToListBottomSheet,
             mediaId = mediaItem.id.toLong(),
             onDismiss = viewModel::onDismissSaveToListBottomSheet,
             onCreateNewListClick = viewModel::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
         )
     }
 
