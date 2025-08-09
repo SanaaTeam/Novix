@@ -16,7 +16,6 @@ retrofit2KotlinxSerializationConverter = "1.0.0"
 slf4jApi = "2.0.17"
 targetSdk = "35"
 truth = "1.4.4"
-composeBomVersion = "2024.06.00"
 versionCode = "1"
 versionName = "1.0"
 javaVersion = "11"
@@ -70,8 +69,10 @@ uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
 runtimeAndroid = "1.8.3"
 foundationAndroid = "1.8.3"
-tvFoundation = "1.0.0-alpha07"
-tvMaterial = "1.0.0-alpha07"
+
+composeBomVersion = "2025.07.00"
+tvMaterial        = "1.0.1"
+tvFoundation = "1.0.0-alpha11"
 
 [libraries]
 # AndroidX

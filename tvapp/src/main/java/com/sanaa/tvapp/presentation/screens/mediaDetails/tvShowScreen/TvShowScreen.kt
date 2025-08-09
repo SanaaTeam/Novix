@@ -46,6 +46,7 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.RateBottomSheet
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
@@ -273,38 +274,6 @@ fun TvShowScreenContent(
                 onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                 onRatingChanged = interactionListener::onRatingChanged
             )
-        }
-    }
-}
-
-@Composable
-private fun GenresRow(genres: List<GenreUiModel>, onGenreClicked: (GenreUiModel) -> Unit) {
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        genres.forEachIndexed { index, genre ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp)
-            ) {
-                AppText(
-                    text = genre.name,
-                    style = Theme.textStyle.label.small,
-                    color = Theme.colors.body,
-                    modifier = Modifier.clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() }
-                    ) {
-                        onGenreClicked(genre)
-                    }
-                )
-                if (index != genres.lastIndex) {
-                    DotSeparator()
-                }
-            }
         }
     }
 }
