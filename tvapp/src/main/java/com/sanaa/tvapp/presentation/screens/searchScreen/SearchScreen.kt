@@ -1,6 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,9 +22,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.FocusableMediaCard
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvTopBar
 
@@ -80,17 +88,38 @@ fun SearchScreenContent(
         when (uiState.selectedTabIndex) {
             SearchTvScreenUiState.MOVIE_INDEX -> {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(moviesPagingData.itemCount) { index ->
                         val movie = moviesPagingData[index]
                         if (movie != null) {
-                            FocusableMediaCard(
-                                imageUrl = movie.imageUrl,
-                                titleText = movie.title,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = { /* your click handler */ }
+                            TvMediaPosterCard(
+                                title = movie.title,
+                                posterImage = {
+                                    RemoteBlurredSensitiveImage(
+                                        imageUrl = movie.imageUrl,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
+                                        placeholderContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        errorContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        contentDescription = movie.title,
+                                    ) {
+                                        OnBlurContent(
+                                            hintText = stringResource(R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small.copy(
+                                                color = Color(0x99FFFFFF)
+                                            ),
+                                            iconSize = 24.dp,
+                                            icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
@@ -99,17 +128,38 @@ fun SearchScreenContent(
 
             SearchTvScreenUiState.TV_SHOW_INDEX -> {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(tvShowsPagingData.itemCount) { index ->
                         val show = tvShowsPagingData[index]
                         if (show != null) {
-                            FocusableMediaCard(
-                                imageUrl = show.imageUrl,
-                                titleText = show.title,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = { /* your click handler */ }
+                            TvMediaPosterCard(
+                                title = show.title,
+                                posterImage = {
+                                    RemoteBlurredSensitiveImage(
+                                        imageUrl = show.imageUrl,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
+                                        placeholderContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        errorContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        contentDescription = show.title,
+                                    ) {
+                                        OnBlurContent(
+                                            hintText = stringResource(R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small.copy(
+                                                color = Color(0x99FFFFFF)
+                                            ),
+                                            iconSize = 24.dp,
+                                            icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
@@ -118,17 +168,38 @@ fun SearchScreenContent(
 
             SearchTvScreenUiState.ACTOR_INDEX -> {
                 LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(20.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
                     items(actorsPagingData.itemCount) { index ->
                         val actor = actorsPagingData[index]
                         if (actor != null) {
-                            FocusableMediaCard(
-                                imageUrl = actor.imageUrl,
-                                titleText = actor.name,
-                                modifier = Modifier.fillMaxWidth(),
-                                onClick = { /* your click handler */ }
+                            TvMediaPosterCard(
+                                title = actor.name,
+                                posterImage = {
+                                    RemoteBlurredSensitiveImage(
+                                        imageUrl = actor.imageUrl,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
+                                        placeholderContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        errorContent = {
+                                            RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                        },
+                                        contentDescription = actor.name,
+                                    ) {
+                                        OnBlurContent(
+                                            hintText = stringResource(R.string.unsuitable_image),
+                                            textStyle = Theme.textStyle.body.small.copy(
+                                                color = Color(0x99FFFFFF)
+                                            ),
+                                            iconSize = 24.dp,
+                                            icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                        )
+                                    }
+                                }
                             )
                         }
                     }

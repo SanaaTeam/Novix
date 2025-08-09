@@ -1,5 +1,6 @@
 package com.sanaa.vod.util
 
+import android.util.Log
 import com.sanaa.vod.util.exceptions.ConnectionException
 import com.sanaa.vod.util.exceptions.ParsingException
 import com.sanaa.vod.util.exceptions.ServerErrorException

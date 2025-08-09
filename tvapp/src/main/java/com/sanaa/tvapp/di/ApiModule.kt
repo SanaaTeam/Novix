@@ -58,13 +58,23 @@ abstract class ApiModule {
 
     @Binds
     @Singleton
+    abstract fun bindPlayListFeatureApi(
+        playlistsFeatureApiImpl: PlaylistsFeatureApiImpl
+    ): PlaylistsFeatureApi
+
+    @Binds
+    @Singleton
     abstract fun bindUserProfileApi(
         userProfileApiImpl: UserProfileFeatureApiImpl
     ): UserProfileFeatureApi
 
-    @Binds
-    @Singleton
-    abstract fun bindPlayListFeatureApi(
-        playlistsFeatureApiImpl: PlaylistsFeatureApiImpl
-    ): PlaylistsFeatureApi
+//    @Binds
+//    @Singleton
+//    abstract fun bindPreferencesManager(
+//        preferencesManagerImpl: PreferencesManagerImpl
+//    ): PreferencesManager
+    abstract fun bindUserProfileApi(
+        userProfileApiImpl: UserProfileFeatureApiImpl
+    ): UserProfileFeatureApi
+
 }

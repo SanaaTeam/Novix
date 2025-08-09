@@ -1,7 +1,13 @@
-package com.sanaa.tvapp.presentation.screens.searchScreen.base
+package com.sanaa.tvapp.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -13,11 +19,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class TvSearchBaseViewModel <T, E>(
+abstract class TvBaseViewModel <T, E>(
     initialState: T,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
@@ -72,5 +79,25 @@ abstract class TvSearchBaseViewModel <T, E>(
         viewModelScope.launch {
             _effect.emit(effect)
         }
+    }
+
+    protected open fun <T : Any, R : Any> createPagingFlow(
+        pagingSourceFactory: () -> PagingSource<Int, T>,
+        mapper: (T) -> R,
+    ): Flow<PagingData<R>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                prefetchDistance = 4,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = pagingSourceFactory
+        ).flow
+            .map { pagingData -> pagingData.map(mapper) }
+            .cachedIn(viewModelScope)
+    }
+
+    companion object {
+        private const val PAGE_SIZE = 20
     }
 }

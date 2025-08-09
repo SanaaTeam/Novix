@@ -2,15 +2,16 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    alias(libs.plugins.novix.android.application)
-    alias(libs.plugins.firebase.appdistribution)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kover)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.firebase.perf)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.kover)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.ksp)
 }
 
 val localProperties = Properties()
@@ -24,47 +25,45 @@ when {
 
 android {
     namespace = "com.sanaa.tvapp"
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
-    lint {
-        checkReleaseBuilds = false
-        abortOnError = false
+    defaultConfig {
+        applicationId = "com.sanaa.tvapp"
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
+        versionCode = libs.versions.versionCode.get().toInt()
+        versionName = libs.versions.versionName.get()
+
+        val apiKey = localProperties["TMDB_API_KEY"]?.toString() ?: ""
+        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
+        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
+
     }
 
     buildTypes {
-        debug {
+        release {
             isMinifyEnabled = false
-            isDebuggable = true
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
-
-            manifestPlaceholders["crashlytics_debug"] = "true"
-            manifestPlaceholders["analytics_debug"] = "true"
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
-    defaultConfig {
-        val apiKey = localProperties["TMDB_API_KEY"].toString()
-        buildConfigField("String", "TMDB_API_KEY", "\"${apiKey.trim()}\"")
-        buildConfigField("String", "TMDB_URL", "\"https://api.themoviedb.org/3/\"")
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+    buildFeatures {
+        compose = true
+        buildConfig = true
     }
 }
 
 dependencies {
-    implementation(projects.designSystem)
-    implementation(projects.imageViewer)
-
-    implementation(projects.domain.vod)
-    implementation(projects.data.repositories.vod)
-    implementation(projects.data.remoteDataSource.vod)
-    implementation(projects.data.localDataSource.vod)
-
-    implementation(projects.domain.identity)
-    implementation(projects.data.repositories.identity)
-    implementation(projects.data.remoteDataSource.identity)
-    implementation(projects.data.localDataSource.identity)
-
-    implementation(projects.preferences)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)
@@ -109,16 +108,18 @@ dependencies {
 
     implementation(libs.timber)
 
-    testImplementation(libs.bundles.test)
-    testImplementation(libs.bundles.test.runtime)
-    testImplementation(libs.turbine)
+    implementation(projects.designSystem)
+    implementation(projects.imageViewer)
 
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.androidx.tv.foundation)
-    implementation(libs.androidx.tv.material)
-    implementation(libs.kotlinx.datetime)
+    implementation(projects.domain.vod)
+    implementation(projects.data.repositories.vod)
+    implementation(projects.data.remoteDataSource.vod)
+    implementation(projects.data.localDataSource.vod)
 
+    implementation(projects.domain.identity)
+    implementation(projects.data.repositories.identity)
+    implementation(projects.data.remoteDataSource.identity)
+    implementation(projects.data.localDataSource.identity)
 
     implementation(projects.feature.home.api)
     implementation(projects.feature.home.presentation)
@@ -133,6 +134,8 @@ dependencies {
     implementation(projects.feature.authentication.api)
     implementation(projects.feature.authentication.presentation)
     implementation(projects.preferences)
-    implementation(libs.conscrypt.android)
 
+    testImplementation(libs.bundles.test)
+    testImplementation(libs.bundles.test.runtime)
+    testImplementation(libs.turbine)
 }
