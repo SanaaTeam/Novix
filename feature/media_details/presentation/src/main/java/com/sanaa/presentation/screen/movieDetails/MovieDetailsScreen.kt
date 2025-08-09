@@ -304,7 +304,7 @@ fun MovieTopBar(
         },
         rightContent = {
             TopBarClickableIcon(
-                icon = if (movie.isBookmarked)
+                icon = if (movie.isSaved)
                     painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
                 else
                     painterResource(R.drawable.icon_save),
@@ -316,10 +316,3 @@ fun MovieTopBar(
             .zIndex(10f)
     )
 }
-
-
-
-
-
-
-
