@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -39,7 +39,7 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedMovieStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -256,7 +256,7 @@ class HomeScreenViewModel @Inject constructor(
     override fun onSaveIconClick(media: MediaItem) {
         if (state.value.userIsLoggedIn) {
             if (media.isSaved) {
-                savedMovieStatusProvider.markUnsaved(media.id)
+                savedMovieStatusProvider.markItemUnsaved(media.id)
             } else {
                 updateState {
                     it.copy(
