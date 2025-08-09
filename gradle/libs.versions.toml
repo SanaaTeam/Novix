@@ -1,6 +1,7 @@
 [versions]
 # Project Config
 compileSdk = "35"
+conscryptAndroid = "2.5.2"
 converterGson = "3.0.0"
 datastore = "1.1.7"
 datastoreVersion = "1.1.1"
@@ -100,6 +101,7 @@ androidx-compose-material3-material3 = { module = "androidx.compose.material3:ma
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
