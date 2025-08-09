@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,12 +30,13 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
+import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.state.MediaItem
@@ -50,7 +52,6 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
             NetworkDisconnectionContact(
                 modifier = Modifier
                     .fillMaxSize()
-
                     .verticalScroll(scrollState),
                 onRetryClick = {}
             )
@@ -95,16 +96,16 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
-        FeaturedCarousel(
+        PopularMoviesCarousel(
             modifier = Modifier.padding(
                 start = sidePaddings,
                 end = sidePaddings,
                 top = 24.dp,
                 bottom = 16.dp
             ),
-            state.featuredCarousel,
-            state.popularMedia
-        ) {}
+            mediaItems = state.popularMedia,
+            onShowDetails = {}
+        )
 
         Title(
             modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
@@ -209,6 +210,15 @@ private fun ImageList(item: MediaItem) {
         RemoteBlurredSensitiveImage(
             imageUrl = item.imageUrl ?: "",
             contentDescription = item.title
-        )
+        ) {
+            OnBlurContent(
+                hintText = stringResource(com.sanaa.designsystem.R.string.unsuitable_image),
+                textStyle = Theme.textStyle.body.small.copy(
+                    color = Color(0x99FFFFFF)
+                ),
+                iconSize = 24.dp,
+                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+            )
+        }
     }
 }
