@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -109,7 +109,7 @@ fun HomeScreen(
         }
     }
 
-    Box(modifier = Modifier.systemBarsPadding()) {
+    Box(modifier = Modifier.statusBarsPadding()) {
         HomeScreenContent(
             state = state.value,
             interactionListener = viewModel,

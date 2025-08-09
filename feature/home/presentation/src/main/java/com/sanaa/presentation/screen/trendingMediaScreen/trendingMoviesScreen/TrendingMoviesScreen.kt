@@ -75,6 +75,7 @@ fun TrendingMoviesScreen(
                 is TrendingMediaScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
+
                 is TrendingMediaScreenEffect.ShowSuccess -> {
                     snack = SnackData(message = effect.message, isError = false)
                 }
@@ -92,7 +93,8 @@ fun TrendingMoviesScreen(
         )
 
         NovixAnimatedSnackBarHost(
-            data = snack, onDismiss = { snack = null }
+            data = snack,
+            onDismiss = { snack = null }
         )
 
         if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
@@ -105,11 +107,11 @@ fun TrendingMoviesScreen(
                 onFailure = viewModel::onSaveToListFailure,
             )
         }
+        AddBookmarkListBottomSheet(
+            isVisible = state.value.showAddListBottomSheet,
+            onDismiss = viewModel::onDismissAddListBottomSheet,
+            mediaId = state.value.selectedMediaId ?: 0
+        )
     }
-    AddBookmarkListBottomSheet(
-        isVisible = state.value.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet,
-        mediaId = state.value.selectedMediaId ?: 0
-    )
 }
 
