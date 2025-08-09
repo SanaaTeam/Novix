@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.playlist
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -10,9 +11,13 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider
+    private val listsStatusProvider: SavedListsStatusProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
-    BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
+    BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(
+        PlayListScreenUiState(),
+        defaultDispatcher = dispatcher
+    ),
     PlayListScreenInteractionListener {
 
     init {
