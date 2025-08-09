@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
@@ -30,6 +31,7 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ) ,MovieDetailsScreenInteractionListener{
+    val TAG = "test99"
 
 //    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
 //        "movieId is required in SavedStateHandle"
@@ -38,6 +40,7 @@ class MovieDetailsViewModel @Inject constructor(
     val movieId = 986206
 
     init {
+        Log.d("test99", "ViewModel initialized")
         fetchMovieDetails(movieId)
         updateUserStatus()
     }
@@ -45,9 +48,12 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun fetchMovieDetails(movieId: Int) {
+        Log.d(TAG, "fetchMovieDetails:called ")
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = { loadMovieDetails(movieId) },
+            callee = {
+                loadMovieDetails(movieId)
+                     },
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
@@ -75,6 +81,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
+        Log.d(TAG, "loadMovieDetails: called")
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
         val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
@@ -87,6 +94,7 @@ class MovieDetailsViewModel @Inject constructor(
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
+        Log.d(TAG, "loadMovieDetails:movie:$movie ")
         updateState {
             it.copy(
                 movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
