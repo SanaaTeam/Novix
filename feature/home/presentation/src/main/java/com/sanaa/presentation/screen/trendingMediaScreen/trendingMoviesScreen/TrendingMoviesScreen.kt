@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,7 +20,6 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
@@ -32,6 +33,7 @@ fun TrendingMoviesScreen(
 ) {
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     val detailsApi: MediaDetailsApi = remember {
@@ -68,6 +70,14 @@ fun TrendingMoviesScreen(
                 is TrendingMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
+
+                is TrendingMediaScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+                }
+
+                is TrendingMediaScreenEffect.ShowSuccess -> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }
@@ -85,11 +95,22 @@ fun TrendingMoviesScreen(
             onDismiss = viewModel::onDismissSaveToListBottomSheet,
             onCreateNewListClick = viewModel::onCreateNewListClick,
         )
+
+        Box(modifier = Modifier.systemBarsPadding()) {
+
+            TrendingMediaScreenContent(
+                title = stringResource(R.string.trending_movies),
+                state = state.value,
+                interactionListener = viewModel,
+                modifier = modifier,
+            )
+
+
+            AddBookmarkListBottomSheet(
+                isVisible = state.value.showAddListBottomSheet,
+                onDismiss = viewModel::onDismissAddListBottomSheet,
+                mediaId = state.value.selectedMediaId ?: 0
+            )
+        }
     }
-    AddBookmarkListBottomSheet(
-        isVisible = state.value.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet,
-        mediaId = state.value.selectedMediaId ?: 0
-    )
-}
 

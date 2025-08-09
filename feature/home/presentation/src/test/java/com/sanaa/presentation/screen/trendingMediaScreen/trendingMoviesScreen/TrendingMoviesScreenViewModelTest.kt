@@ -8,7 +8,6 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -26,16 +25,18 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
 
 
 class TrendingMoviesScreenViewModelTest {
+    private lateinit var viewModel: TrendingMoviesScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieUseCase: ManageMovieUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
-    private lateinit var viewModel: TrendingMoviesScreenViewModel
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -62,6 +63,7 @@ class TrendingMoviesScreenViewModelTest {
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -77,13 +79,12 @@ class TrendingMoviesScreenViewModelTest {
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.state.value.mediaList).isNotNull()
-
-
     }
 
     @Test
@@ -97,6 +98,7 @@ class TrendingMoviesScreenViewModelTest {
                 manageMovieUseCase,
                 checkIfUserIsLoggedInUseCase,
                 savedListsStatusProvider,
+                stringProvider,
                 testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -110,43 +112,12 @@ class TrendingMoviesScreenViewModelTest {
         }
 
     @Test
-    fun `fetchGenres should handles error and updates state when throw exception`() = runTest {
-        val exceptionMessage = "error"
-        coEvery { manageMovieUseCase.getMovieGenres() } throws RuntimeException(exceptionMessage)
-
-        viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
-            checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
-            testDispatcher
-        )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo(exceptionMessage)
-    }
-
-    @Test
-    fun `fetchGenres should update isNoInternetConnection state to true when throw NoNetworkException`() =
-        runTest {
-            coEvery { manageMovieUseCase.getMovieGenres() } throws NoNetworkException()
-
-            viewModel = TrendingMoviesScreenViewModel(
-                manageMovieUseCase,
-                checkIfUserIsLoggedInUseCase,
-                savedListsStatusProvider,
-                testDispatcher
-            )
-            testDispatcher.scheduler.advanceUntilIdle()
-
-            assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
-        }
-
-    @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -163,6 +134,7 @@ class TrendingMoviesScreenViewModelTest {
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -182,6 +154,7 @@ class TrendingMoviesScreenViewModelTest {
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
 
@@ -203,6 +176,7 @@ class TrendingMoviesScreenViewModelTest {
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher
         )
 

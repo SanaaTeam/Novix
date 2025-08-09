@@ -1,14 +1,14 @@
-package com.sanaa.novix.resourceProvider
+package com.sanaa.identity.repository.service
 
 import android.content.Context
+import com.sanaa.identity.R
 import dagger.hilt.android.qualifiers.ApplicationContext
-import com.sanaa.novix.R
-import service.StringProvider
+import service.IdentityStringProvider
 import javax.inject.Inject
 
-class StringProviderImpl @Inject constructor(
-    @ApplicationContext private val context: Context
-) : StringProvider {
+class IdentityStringProviderImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : IdentityStringProvider {
     override val welcomeBack: String
         get() = context.getString(R.string.welcome_back)
 

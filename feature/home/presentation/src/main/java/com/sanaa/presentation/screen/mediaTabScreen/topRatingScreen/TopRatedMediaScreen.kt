@@ -6,10 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +28,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
@@ -36,6 +39,7 @@ import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottom
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
@@ -51,6 +55,7 @@ fun TopRatedMediaScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -93,6 +98,12 @@ fun TopRatedMediaScreen(
                 TopRatedScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
+                is TopRatedScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+                }
+                is TopRatedScreenEffect.ShowSuccess-> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }
@@ -118,6 +129,22 @@ fun TopRatedMediaScreen(
         )
     }
 
+    Box(modifier = Modifier.systemBarsPadding()) {
+        TopRatedMediaScreenContent(
+            title = stringResource(R.string.top_rated),
+            state = state.value,
+            interactionListener = viewModel,
+            modifier = modifier,
+        )
+        RequestToLoginBottomSheet(
+            isVisible = state.value.showLoginBottomSheet,
+            onDismiss = viewModel::onDismissBottomSheet,
+            onLoginButtonClick = {
+                viewModel.onLoginButtonClick()
+            }
+        )
+        }
+
     AddBookmarkListBottomSheet(
         isVisible = state.value.showAddListBottomSheet,
         onDismiss = viewModel::onDismissAddListBottomSheet,
@@ -136,64 +163,80 @@ private fun TopRatedMediaScreenContent(
 ) {
     val topRatedTvShows = state.tvShowList.collectAsLazyPagingItems()
     val topRatedMovies = state.movieList.collectAsLazyPagingItems()
-    Column(
-        modifier = modifier.padding(top = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+    NovixScaffold(
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = title,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
+        },
+        modifier = modifier.systemBarsPadding(),
     ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
-        TopBar(
-            leftContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(id = R.drawable.icon_back),
-                    onClick = interactionListener::onBackClick
-                )
-            },
-            screenTitle = title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-        )
+            MediaTabs(
+                onTabClick = interactionListener::onMediaTabSelection,
+                selectedTab = state.selectedMediaTypeUi,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        MediaTabs(
-            onTabClick = interactionListener::onMediaTabSelection,
-            selectedTab = state.selectedMediaTypeUi,
-            modifier = Modifier.fillMaxWidth()
-        )
+            AnimatedContent(
+                targetState = state.selectedMediaTypeUi to state.isNoInternetConnection,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .togetherWith(fadeOut(animationSpec = tween(150)))
+                },
+            ) { (selectedMediaType, isNoInternetConnection) ->
+                when (selectedMediaType) {
+                    MediaTypeUi.MOVIE -> {
+                        if (isNoInternetConnection && (topRatedMovies.itemCount == 0)) {
+                            NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                        } else {
+                            PaginatedMediaListSectionContent(
+                                genres = state.movieGenres,
+                                mediaList = topRatedMovies,
+                                selectedGenreId = state.movieSelectedGenreId,
+                                onGenreClick = interactionListener::onMovieGenreClick,
+                                onMediaClick = { media ->
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                },
+                                onSaveIconClick = interactionListener::onSaveIconClick,
+                            )
+                            if (topRatedMovies.loadState.hasError) {
+                                RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                            }
+                        }
+                    }
 
-        AnimatedContent(
-            targetState = state.selectedMediaTypeUi,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, delayMillis = 150))
-                    .togetherWith(fadeOut(animationSpec = tween(150)))
-            },
-            modifier = Modifier.padding(top = 8.dp)
-        ) { selectedMediaType ->
-            when (selectedMediaType) {
-
-                MediaTypeUi.MOVIE -> {
-                    PaginatedMediaListSectionContent(
-                        genres = state.movieGenres,
-                        mediaList = topRatedMovies,
-                        selectedGenreId = state.movieSelectedGenreId,
-                        onGenreClick = interactionListener::onMovieGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                    )
-                }
-
-                MediaTypeUi.TV_SHOW -> {
-                    PaginatedMediaListSectionContent(
-                        genres = state.tvShowGenres,
-                        mediaList = topRatedTvShows,
-                        selectedGenreId = state.tvShowSelectedGenreId,
-                        onGenreClick = interactionListener::onTvShowGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                    )
+                    MediaTypeUi.TV_SHOW -> {
+                        if (isNoInternetConnection && (topRatedTvShows.itemCount == 0)) {
+                            NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                        } else {
+                            PaginatedMediaListSectionContent(
+                                genres = state.tvShowGenres,
+                                mediaList = topRatedTvShows,
+                                selectedGenreId = state.tvShowSelectedGenreId,
+                                onGenreClick = interactionListener::onTvShowGenreClick,
+                                onMediaClick = { media ->
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                },
+                                onSaveIconClick = interactionListener::onSaveIconClick,
+                            )
+                            if (topRatedTvShows.loadState.hasError) {
+                                RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                            }
+                        }
+                    }
                 }
             }
         }
