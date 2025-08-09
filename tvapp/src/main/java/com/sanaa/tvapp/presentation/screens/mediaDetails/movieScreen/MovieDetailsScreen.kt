@@ -32,7 +32,6 @@ fun MovieDetailsScreen(
     movieDetailsViewModel:MovieDetailsViewModel = hiltViewModel()
 ) {
     val state = movieDetailsViewModel.state.collectAsState()
-    Log.d("test99", "MovieDetailsScreen:state: ${state.value}")
 
         MovieDetailsContent()
 }

@@ -23,7 +23,6 @@ suspend inline fun <T> wrapApiCall(block: suspend () -> T): T {
     } catch (e: SerializationException) {
         throw ParsingException(message = "Parsing error")
     } catch (e: Exception) {
-        Log.d("test99", "wrapApiCall: e:$e")
         throw UnknownDataSourceException(message = "Unknown error")
     }
 }
