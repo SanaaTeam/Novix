@@ -2,8 +2,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import android.content.Intent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -35,7 +33,6 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
-import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
@@ -47,9 +44,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.RateBottomSheet
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
 
@@ -137,7 +132,6 @@ fun TvShowScreenContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            DetailsTopBar(onBackClick = interactionListener::onBackClicked)
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
@@ -225,7 +219,6 @@ fun TvShowScreenContent(
                                     TrailerAndRateSection(
                                         trailerUrl = state.tvShows.trailerUrl,
                                         onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
-                                        onSetRateClicked = interactionListener::onRateClicked
                                     )
                                 }
                             }
@@ -263,17 +256,7 @@ fun TvShowScreenContent(
                     }
                 }
             }
-        }
-
-        if (state.showRateBottomSheet) {
-            RateBottomSheet(
-                isRateSelected = state.hasUserSelectedRate,
-                imdbRating = state.imdbRating,
-                onDismiss = interactionListener::onDismissAnyBottomSheet,
-                isVisible = state.showRateBottomSheet,
-                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                onRatingChanged = interactionListener::onRatingChanged
-            )
+            DetailsTopBar(onBackClick = interactionListener::onBackClicked)
         }
     }
 }

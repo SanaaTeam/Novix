@@ -1,5 +1,6 @@
-package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
+package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -22,11 +22,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.compose.LazyPagingItems
-import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -40,69 +40,77 @@ import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MovieDetailsScreen(
-    modifier: Modifier = Modifier,
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+fun EpisodeDetailsScreen(
+    viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
 ) {
-    var snack by remember { mutableStateOf<SnackData?>(null) }
+
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+//    val navController = LocalNavControllerProvider.current
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect {
+        viewModel.effect.collectLatest {
             when (it) {
-                MovieDetailsScreenUiEffect.NavigateBack -> {}
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> TODO()
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> TODO()
-                MovieDetailsScreenUiEffect.NavigateToLogin -> TODO()
-                is MovieDetailsScreenUiEffect.OpenTrailer -> TODO()
-                MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
-                MovieDetailsScreenUiEffect.ShowSuccessSnackBar -> TODO()
+                is EpisodeDetailsEffects.NavigateBack -> {
+//                    navController.popBackStack()
+                }
+
+                is EpisodeDetailsEffects.NavigateToActorDetails -> {
+//                    navController.navigate(
+//                        ActorDetailsScreenRoute(it.actorId).route()
+//                    )
+                }
+
+                is EpisodeDetailsEffects.PlayTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
+                    context.startActivity(intent)
+                }
+
+                is EpisodeDetailsEffects.ShowSuccessSnackBar -> {
+                }
+
+                is EpisodeDetailsEffects.ShowErrorSnackBar -> {
+                }
+
+                EpisodeDetailsEffects.NavigateToLogin -> {
+//                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
-
-    Box(modifier = modifier.systemBarsPadding()) {
-        MovieDetailsContent(
-            state = state.value,
-            interactionListener = viewModel
+    Box(modifier = Modifier.systemBarsPadding()) {
+        EpisodeDetailsScreenContent(
+            interactionListener = viewModel, state = state.value
         )
         NovixAnimatedSnackBarHost(
             data = snack,
             onDismiss = { snack = null }
         )
     }
-
 }
 
 @Composable
-fun MovieDetailsContent(
-    state: MovieDetailsScreenUiState,
-    interactionListener: MovieDetailsViewModel,
-    modifier: Modifier = Modifier,
+private fun EpisodeDetailsScreenContent(
+    interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState
 ) {
-    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
-        backgroundShapes = { },
-        modifier = modifier
-    ) {
+        backgroundShapes = { }) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            )
-            { shouldShowLoadingOrError ->
+            ) { shouldShowLoadingOrError ->
                 if (shouldShowLoadingOrError) {
                     if (state.noInternetConnection) {
                         NetworkDisconnectionContact(
@@ -118,29 +126,20 @@ fun MovieDetailsContent(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                    )
-                    {
-                        Column (
-                            modifier = Modifier
-                                .verticalScroll(
-                                state = rememberScrollState()
-                            )
-                        ){
+                            .verticalScroll(state = rememberScrollState())
+                    ) {
+                        Column {
                             DetailsHeaderSection(
-                                backgroundImageUrl = state.movieDetails.posterUrl?:"",
-                                title = state.movieDetails.title,
+                                backgroundImageUrl = state.backgroundImageUrl,
+                                title = stringResource(
+                                    R.string.episode_number,
+                                    state.episode.number
+                                ) + " - ${state.episode.title}",
                             ) {
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-
-                                    GenresRow(
-                                        genres = state.movieDetails.genres,
-                                        onGenreClicked = {
-//                                            interactionListener::onGenreClicked
-                                        }
-                                    )
                                     FlowRow(
                                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                                         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -150,20 +149,19 @@ fun MovieDetailsContent(
                                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                                             verticalAlignment = Alignment.CenterVertically,
                                             modifier = Modifier.padding(bottom = 8.dp)
-                                        )
-                                        {
-                                            state.movieDetails.rating.let {
+                                        ) {
+                                            state.episode.rating?.let { rating ->
                                                 IconWithText(
                                                     iconRes = R.drawable.icon_star,
-                                                    text = state.movieDetails.rating?:"",
+                                                    text = rating,
                                                     textColor = Theme.colors.title,
-                                                    contentDescription = state.movieDetails.rating,
+                                                    contentDescription = rating,
                                                     tint = Theme.colors.statusColors.yellowAccent
                                                 )
 
                                                 DotSeparator()
                                             }
-                                            state.movieDetails.releaseDate.let { releaseDate ->
+                                            state.episode.airDate?.let { releaseDate ->
                                                 IconWithText(
                                                     text = releaseDate,
                                                     iconRes = R.drawable.icon_calender,
@@ -173,43 +171,39 @@ fun MovieDetailsContent(
 
                                                 DotSeparator()
                                             }
+                                            IconWithText(
+                                                text = state.episode.seasonNumber.toString(),
+                                                iconRes = R.drawable.icon_seasons,
+                                                contentDescription = state.episode.seasonNumber.toString(),
+                                                tint = Theme.colors.hint
+                                            )
                                         }
                                     }
                                     Text(
-                                        text = state.movieDetails.overview,
+                                        text = state.episode.overview.orEmpty(),
                                         style = Theme.textStyle.body.small,
                                         color = Theme.colors.body
                                     )
 
                                     TrailerAndRateSection(
-                                        trailerUrl = state.movieDetails.trailerUrl,
-                                        onPlayTrailerClicked = interactionListener::onWatchTrailerClick,
+                                        trailerUrl = state.trailerUrl,
+                                        onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                                     )
                                 }
                             }
-
-                            if (state.cast.isNotEmpty()) {
+                            if (state.guestOfHonor.isNotEmpty()) {
                                 CastSlider(
-                                    cast = state.cast,
+                                    cast = state.guestOfHonor,
+                                    title = stringResource(R.string.guest_of_honor)
                                 )
                             }
-                            MoviesSlider(
-                                moviesPagingData = moviesPagingData,
-                                modifier = Modifier.height(231.dp)
-                            )
                         }
+                        DetailsTopBar(onBackClick = interactionListener::onBackClick)
                     }
                 }
             }
-            DetailsTopBar(onBackClick = interactionListener::onBackClick)
         }
     }
 }
-//
-//@Preview(device = Devices.TV_1080p, showBackground = true)
-//@Composable
-//fun DetailsPreview(modifier: Modifier = Modifier) {
-//    NovixTheme(isSystemInDarkTheme()) {
-//        MovieDetailsContent(state = state.value, interactionListener = viewModel)
-//    }
-//}
+
+
