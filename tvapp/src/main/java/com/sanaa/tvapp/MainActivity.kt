@@ -12,7 +12,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute
+import com.sanaa.tvapp.presentation.screens.navigation.NavBarRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,9 +39,9 @@ class MainActivity : ComponentActivity() {
                 val isLoggedIn by checkIfUserIsLoggedInUseCase.isLoggedIn().collectAsState(initial = false)
 
                 val startDestination = if (isLoggedIn) {
-                    TvAppRoute.Home
+                    NavBarRoute.Home
                 } else {
-                    TvAppRoute.Login
+                    ScreensRoute.Login
                 }
 
                 CompositionLocalProvider(LocalAppNavController provides navController) {

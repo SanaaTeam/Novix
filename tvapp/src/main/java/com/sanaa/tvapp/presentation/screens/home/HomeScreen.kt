@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,20 +35,46 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.state.MediaTypeUi
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
+    val navController = LocalNavControllerProvider.current
+
+    LaunchedEffect(Unit) {
+        homeScreenViewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is HomeScreenEffect.NavigateToMediaDetails -> {
+                    when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> {
+                            navController.navigate(
+                                ScreensRoute.MovieDetails(effect.id)
+                            )
+                        }
+                        MediaTypeUi.TV_SHOW -> {
+                            navController.navigate(
+                                ScreensRoute.TvShowDetails(effect.id)
+                            )
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
     when {
         state.isNoInternet -> {
             NetworkDisconnectionContact(
