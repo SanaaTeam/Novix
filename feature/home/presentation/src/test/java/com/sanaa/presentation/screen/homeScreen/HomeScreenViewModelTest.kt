@@ -26,8 +26,8 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import service.VodStringProvider
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -78,8 +78,8 @@ class HomeScreenViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
-            stringProvider,
             savedListsStatusProvider,
+            stringProvider,
             testDispatcher,
         )
     }
