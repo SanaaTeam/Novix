@@ -14,14 +14,14 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
+import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedMovieStatusProviderImplTest {
@@ -32,7 +32,7 @@ class SavedMovieStatusProviderImplTest {
     private lateinit var preferencesManager: PreferencesManager
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
-    @Before
+    @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
 
@@ -45,7 +45,7 @@ class SavedMovieStatusProviderImplTest {
         )
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
     }
