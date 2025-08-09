@@ -40,6 +40,7 @@ import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.state.MediaItem
+import com.sanaa.tvapp.state.MediaTypeUi
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 
 @Composable
@@ -65,7 +66,9 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
         }
 
         else -> {
-            HomeScreenContent(state, upcomingMovies)
+            HomeScreenContent(onMediaClick = homeScreenViewModel::onMediaClick,
+                state,
+                upcomingMovies)
         }
     }
 }
@@ -88,7 +91,11 @@ private fun HomeScreenLoading(modifier: Modifier) {
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+fun HomeScreenContent(
+    onMediaClick: (id: Int, mediaType: MediaTypeUi) -> Unit,
+    state: HomeScreenUiState,
+    upcomingMovies: LazyPagingItems<MediaItem>
+) {
     val scrollState = rememberScrollState()
     val sidePaddings = 36.dp
     Column(
@@ -104,7 +111,9 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 bottom = 16.dp
             ),
             mediaItems = state.popularMedia,
-            onShowDetails = {}
+            onShowDetails = { mediaItem ->
+                onMediaClick(mediaItem.id, mediaItem.mediaTypeUi)
+            }
         )
 
         Title(
@@ -123,7 +132,10 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 items = state.topRatingMedia,
                 key = { it.id }
             ) {
-                ImageList(it)
+                ImageList(
+                    item = it,
+                    onItemClick = onMediaClick
+                )
             }
         }
 
@@ -144,7 +156,10 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                     items = state.continueWatchingMedia,
                     key = { it.id }
                 ) {
-                    ImageList(it)
+                    ImageList(
+                        item = it,
+                        onItemClick = onMediaClick
+                    )
                 }
             }
         }
@@ -165,8 +180,10 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
                 count = upcomingMovies.itemCount,
             ) { index ->
                 upcomingMovies[index]?.let {
-                    ImageList(it)
-                }
+                    ImageList(
+                        item = it,
+                        onItemClick = onMediaClick
+                    )                }
             }
         }
     }
@@ -188,12 +205,12 @@ fun ImageListShimmer() {
 
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
-private fun ImageList(item: MediaItem) {
+private fun ImageList( onItemClick: (id: Int, mediaType: MediaTypeUi) -> Unit ,item: MediaItem) {
     Card(
         modifier = Modifier
             .width(153.dp)
             .height(231.dp),
-        onClick = {},
+        onClick = { onItemClick(item.id, item.mediaTypeUi) },
         colors = CardDefaults.colors(),
         border = CardDefaults.border(
             border = Border.None,

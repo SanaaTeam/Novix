@@ -48,12 +48,12 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute.ActorDetails
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute.Login
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 
 @Composable
 fun TvShowScreen(
-
+    tvShowId:Int,
     modifier: Modifier = Modifier,
     viewModel: TvShowDetailsScreenViewModel = hiltViewModel(),
 ) {
