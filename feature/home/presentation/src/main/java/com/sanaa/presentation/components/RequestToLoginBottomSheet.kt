@@ -58,7 +58,7 @@ fun RequestToLoginBottomSheet(
                 Image(
                     painter = painterResource
                         (id = loginImageId),
-                    contentDescription = "pleas login light",
+                    contentDescription = "please login",
                     modifier = Modifier.height(100.dp),
                 )
                 BasicText(

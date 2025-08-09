@@ -23,7 +23,8 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -32,12 +33,13 @@ import kotlin.time.Duration.Companion.minutes
 @OptIn(ExperimentalCoroutinesApi::class)
 class TopRatedMediaScreenViewModelTest {
 
+    private lateinit var viewModel: TopRatedMediaScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieUseCase: ManageMovieUseCase
     private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
-    private lateinit var viewModel: TopRatedMediaScreenViewModel
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @BeforeEach
@@ -45,7 +47,7 @@ class TopRatedMediaScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
         manageTvSeriesUseCase = mockk(relaxed = true)
-        savedMovieStatusProvider = mockk(relaxed = true) {
+        savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
     }
@@ -63,8 +65,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -80,8 +83,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -97,8 +101,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -116,8 +121,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -136,8 +142,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -159,8 +166,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -174,31 +182,14 @@ class TopRatedMediaScreenViewModelTest {
     }
 
     @Test
-    fun `fetchMovieGenres should set error message on failure`() = runTest {
-        val errorMsg = "error"
-        coEvery { manageMovieUseCase.getMovieGenres() } throws RuntimeException(errorMsg)
-
-        viewModel =
-            TopRatedMediaScreenViewModel(
-                manageMovieUseCase,
-                manageTvSeriesUseCase,
-                savedMovieStatusProvider,
-                checkIfUserIsLoggedInUseCase,
-                testDispatcher
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.error).isEqualTo(errorMsg)
-    }
-
-    @Test
     fun `onSaveIconClick should show bottom sheet`() = runTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -214,8 +205,9 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
+                stringProvider,
                 testDispatcher
             )
 

@@ -1,20 +1,30 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import kotlinx.coroutines.launch
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState(), dispatcher) {
+) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(
+    AddBookmarkListUiState(),
+    dispatcher
+) {
+    init {
+        viewModelScope.launch {
+            savedListsStatusProvider.refreshLists()
+        }
+    }
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -34,12 +44,18 @@ class AddBookmarkListViewModel @Inject constructor(
 
         updateState { it.copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
+
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
+            onSuccess = { createdList ->
                 resetState()
-                emitEffect(Unit)
-                savedMovieStatusProvider.markSaved(mediaId)
+                savedListsStatusProvider.markItemSaved(mediaId)
+                savedListsStatusProvider.addList(createdList)
+
+                viewModelScope.launch {
+                    savedListsStatusProvider.refreshLists()
+                }
+                emitEffect(AddBookmarksEffect.AddSuccess)
             },
             onError = {
                 updateState {
@@ -48,6 +64,7 @@ class AddBookmarkListViewModel @Inject constructor(
                         errorMessage = "Failed to create list. Please try again."
                     )
                 }
+                emitEffect(AddBookmarksEffect.AddFailure)
             }
         )
     }

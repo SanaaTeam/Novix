@@ -19,7 +19,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 
 class SavedListRepositoryImplTest {
@@ -27,7 +27,7 @@ class SavedListRepositoryImplTest {
     private val prefs: PreferencesManager = mockk(relaxed = true)
     private val remoteLists: RemoteSavedListDataSource = mockk(relaxed = true)
     private val remoteMovies: RemoteMovieDataSource = mockk(relaxed = true)
-    private val savedMovieStatusProvider: SavedMovieStatusProvider = mockk(relaxed = true)
+    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var repository: SavedListRepositoryImpl
 
@@ -49,7 +49,7 @@ class SavedListRepositoryImplTest {
         every { prefs.sessionId } returns MutableStateFlow(SESSION_ID)
 
         repository =
-            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs, savedMovieStatusProvider)
+            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs, savedListsStatusProvider)
     }
 
 
@@ -77,8 +77,8 @@ class SavedListRepositoryImplTest {
         coEvery { remoteLists.fetchListItems(LIST_ID, PAGE) } returns dummyItemsDto
         coEvery { remoteMovies.fetchMovieDetails(1) } returns dummyMovieDto1
         coEvery { remoteMovies.fetchMovieDetails(2) } returns dummyMovieDto2
-        coEvery { savedMovieStatusProvider.isSaved(1) } returns true
-        coEvery { savedMovieStatusProvider.isSaved(2) } returns false
+        coEvery { savedListsStatusProvider.isItemSaved(1) } returns true
+        coEvery { savedListsStatusProvider.isItemSaved(2) } returns false
 
         val movies = repository.getAllMoviesInList(LIST_ID, PAGE)
 

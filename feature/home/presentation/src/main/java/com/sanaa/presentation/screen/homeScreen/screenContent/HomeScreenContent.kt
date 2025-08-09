@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,8 +39,10 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.cards.HomeTopBar
@@ -66,16 +72,21 @@ fun HomeScreenContent(
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
         launchAuthActivityForResult(
-            loggedInWithSessionId =  {
+            loggedInWithSessionId = {
 
             },
             loggedInAsGuest = {
 
             },
         )
+    val showNoInternetScreen = (state.isNoInternetConnection
+            && upcomingMovies.itemCount == 0
+            && state.popularMedia.isEmpty()
+            && state.topRatingMedia.isEmpty()
+            && state.continueWatchingMedia.isEmpty())
 
     LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
+        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternetConnection) {
             snack = SnackData(
                 message = errorMessage, isError = true
 
@@ -88,170 +99,153 @@ fun HomeScreenContent(
             HomeTopBar(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 12.dp)
-                    .navigationBarsPadding()
-                    .statusBarsPadding()
             )
         },
-        backgroundShapes = {}) {
+        backgroundShapes = {}
+    ) {
 
-        if (state.isNoInternet) {
-            NetworkDisconnectionContact(
-                onRetryClick = interactionListener::onRetryClick, modifier = Modifier.fillMaxSize(),
-                useDarkTheme = LocalThemeProvider.current
-            )
-        } else {
-            LazyVerticalGrid(
-                modifier = Modifier.fillMaxSize(),
-                columns = GridCells.Adaptive(minSize = 140.dp),
-                contentPadding = PaddingValues(
-                    start = 16.dp, end = 16.dp, bottom = 12.dp
-                ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                if (state.isLoading) item(span = { GridItemSpan(maxLineSpan) }) {
-                    PopularMediaSectionPlaceholder(
-                        modifier = Modifier.fillWidthOfParent(16.dp)
-                    )
-                }
-                else item(span = { GridItemSpan(maxLineSpan) }) {
-                    PopularMediaSection(
-                        mediaItems = state.popularMedia, onMediaClick = {
-                            interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                        }, onSaveIconClicked = {
-                            interactionListener.onSaveIconClick(it)
-                        }, modifier = Modifier.fillWidthOfParent(16.dp)
-                    )
-                }
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    WhatToWatchSection(
-                        onMoviesClicked = {
-                            interactionListener.onMoviesCardClicked()
-                        },
-                        onTvShowsClicked = {
-                            interactionListener.onTvShowsCardClicked()
-                        },
-                        onPeopleClicked = {
-                            interactionListener.onPeopleCardClicked()
-                        },
-                        modifier = Modifier
-                            .fillWidthOfParent(16.dp)
-                            .padding(top = 8.dp),
-                        isLoading = state.isLoading
-                    )
-                }
-                if (state.isLoading) item(span = { GridItemSpan(maxLineSpan) }) {
-                    MediaSliderSectionPlaceholder(
-                        modifier = Modifier
-                            .fillWidthOfParent(16.dp)
-                            .padding(
-                                top = 24.dp
-                            ),
-                    )
-                }
-                else {
+        AnimatedContent(
+            targetState = showNoInternetScreen,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) { isDisconnected ->
+            if (isDisconnected) {
+                NetworkDisconnectionContact(
+                    onRetryClick = interactionListener::onRetryClick,
+                    modifier = Modifier.fillMaxSize(),
+                    useDarkTheme = LocalThemeProvider.current
+
+                )
+            } else {
+                LazyVerticalGrid(
+                    modifier = Modifier.fillMaxSize(),
+                    columns = GridCells.Adaptive(minSize = 140.dp),
+                    contentPadding = PaddingValues(
+                        start = 16.dp, end = 16.dp, bottom = 12.dp
+                    ),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    if (state.isLoadingPopular) item(span = { GridItemSpan(maxLineSpan) }) {
+                        PopularMediaSectionPlaceholder(
+                            modifier = Modifier.fillWidthOfParent(16.dp)
+                        )
+                    }
+                    else item(span = { GridItemSpan(maxLineSpan) }) {
+                        PopularMediaSection(
+                            mediaItems = state.popularMedia, onMediaClick = {
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                            }, onSaveIconClicked = {
+                                interactionListener.onSaveIconClick(it)
+                            }, modifier = Modifier.fillWidthOfParent(16.dp)
+                        )
+                    }
                     item(span = { GridItemSpan(maxLineSpan) }) {
-                        MixedMediaSection(
-                            headerLabel = stringResource(R.string.top_rated),
+                        WhatToWatchSection(
+                            onMoviesClicked = {
+                                interactionListener.onMoviesCardClick()
+                            },
+                            onTvShowsClicked = {
+                                interactionListener.onTvShowsCardClick()
+                            },
+                            onPeopleClicked = {
+                                interactionListener.onPeopleCardClick()
+                            },
+                            modifier = Modifier
+                                .fillWidthOfParent(16.dp)
+                                .padding(top = 8.dp),
+                            isLoading = state.isLoadingHistory
+                        )
+                    }
+                    if (state.isLoadingTopRated) item(span = { GridItemSpan(maxLineSpan) }) {
+                        MediaSliderSectionPlaceholder(
                             modifier = Modifier
                                 .fillWidthOfParent(16.dp)
                                 .padding(
                                     top = 24.dp
                                 ),
-                            mediaItems = state.topRatingMedia,
-                            onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                            },
-                            onSaveIconClicked = {
-                                interactionListener.onSaveIconClick(it)
-                            },
-                            onViewAllClick = { interactionListener.onShowAllTopRatingClicked() })
-                    }
-                }
-                if (state.isLoading) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        MediaSliderSectionPlaceholder(
-                            modifier = Modifier
-                                .fillWidthOfParent(16.dp)
-                                .padding(
-                                    top = 24.dp, bottom = 24.dp
-                                ),
                         )
                     }
-                } else {
-                    if (state.continueWatchingMedia.isNotEmpty()) item(span = {
-                        GridItemSpan(maxLineSpan)
-                    }) {
-                        MixedMediaSection(
-                            headerLabel = stringResource(R.string.continue_watching),
-                            mediaItems = state.continueWatchingMedia,
-                            onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
-                            },
-                            onSaveIconClicked = {
-                                interactionListener.onSaveIconClick(it)
-                            },
-                            onViewAllClick = { interactionListener.onShowAllContinueWatchingClicked() },
-                            modifier = Modifier
-                                .fillWidthOfParent(16.dp)
-                                .padding(top = 24.dp),
-                        )
+                    else {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            MixedMediaSection(
+                                headerLabel = stringResource(R.string.top_rated),
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(
+                                        top = 24.dp
+                                    ),
+                                mediaItems = state.topRatingMedia,
+                                onMediaClick = {
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                },
+                                onSaveIconClicked = {
+                                    interactionListener.onSaveIconClick(it)
+                                },
+                                onViewAllClick = { interactionListener.onShowAllTopRatingClick() })
+                        }
                     }
+                    if (state.isLoadingHistory) {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
+                            MediaSliderSectionPlaceholder(
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(
+                                        top = 24.dp, bottom = 24.dp
+                                    ),
+                            )
+                        }
+                    } else {
+                        if (state.continueWatchingMedia.isNotEmpty()) item(span = {
+                            GridItemSpan(maxLineSpan)
+                        }) {
+                            MixedMediaSection(
+                                headerLabel = stringResource(R.string.continue_watching),
+                                mediaItems = state.continueWatchingMedia,
+                                onMediaClick = {
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                },
+                                onSaveIconClicked = {
+                                    interactionListener.onSaveIconClick(it)
+                                },
+                                onViewAllClick = { interactionListener.onShowAllContinueWatchingClick() },
+                                modifier = Modifier
+                                    .fillWidthOfParent(16.dp)
+                                    .padding(top = 24.dp),
+                            )
+                        }
+                    }
+                    upcomingSection(
+                        upcomingMovies = upcomingMovies,
+                        movieGenres = state.movieGenres,
+                        movieSelectedGenreId = state.movieSelectedGenreId,
+                        onGenreClick = interactionListener::onMovieGenreClick,
+                        onSaveIconClick = interactionListener::onSaveIconClick,
+                        onMovieClick = interactionListener::onMediaClick,
+                        isLoading = state.isLoadingUpcoming
+                    )
                 }
-                upcomingSection(
-                    upcomingMovies = upcomingMovies,
-                    movieGenres = state.movieGenres,
-                    movieSelectedGenreId = state.movieSelectedGenreId,
-                    onGenreClick = interactionListener::onMovieGenreClick,
-                    onSaveIconClick = interactionListener::onSaveIconClick,
-                    onMovieClick = interactionListener::onMediaClick,
-                    isLoading = state.isLoading
-                )
             }
         }
-    }
-    if (upcomingMovies.loadState.append is LoadState.Error
-        || upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            PrimaryButton(
-                text = null,
-                icon = painterResource(R.drawable.icon_refresh),
-                onClick = upcomingMovies::retry,
-                modifier = Modifier
-                    .width(52.dp)
-                    .align(Alignment.BottomCenter)
-                    .padding(
-                        bottom = 16.dp
-                    ),
-            )
+        if (upcomingMovies.loadState.hasError && !showNoInternetScreen) {
+            RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
     }
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
-    if (state.showSaveToListBottomSheet) {
+
+    state.selectedMediaToSave?.let { mediaItem ->
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            onDismiss = { interactionListener.onDismissSaveToListBottomSheet() },
-            onCreateNewListClick = { interactionListener.onCreateNewListClick() },
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
-            mediaId = state.selectedMediaId.toLong(),
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
     }
 
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0
+    )
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,

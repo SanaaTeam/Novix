@@ -18,4 +18,6 @@
     <string name="tvshows">TV shows</string>
     <string name="deleted_list_failed">Deleted list Failed</string>
     <string name="deleted_list_successfully">Deleted list successfully</string>
+    <string name="created_list_successfully">Created list successfully</string>
+    <string name="failed_to_create_list">Failed to create list</string>
 </resources>

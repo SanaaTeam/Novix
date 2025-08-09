@@ -4,17 +4,17 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarkViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 
-) : BaseViewModel<AddBookmarkUiState, Unit>(AddBookmarkUiState(), dispatcher) {
+) : BaseViewModel<AddBookmarkUiState, AddBookmarkEffects>(AddBookmarkUiState(), dispatcher) {
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -38,11 +38,12 @@ class AddBookmarkViewModel @Inject constructor(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
-                emitEffect(Unit)
-                savedMovieStatusProvider.markSaved(mediaId)
+                emitEffect(AddBookmarkEffects.AddSuccess)
+                savedListsStatusProvider.markItemSaved(mediaId)
             },
             onError = {
                 updateState {
+                    emitEffect(AddBookmarkEffects.AddFailure)
                     it.copy(
                         isLoading = false,
                         errorMessage = "Failed to create list. Please try again."

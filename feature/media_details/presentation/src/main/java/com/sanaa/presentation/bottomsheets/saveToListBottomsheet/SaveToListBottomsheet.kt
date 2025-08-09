@@ -39,36 +39,52 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
-    onSuccess: () -> Unit = {},
-    onFailure: () -> Unit = {},
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: SaveToListsViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+    var successMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.added_to_list_successfully)
+    var failMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.added_to_list_failed)
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             onDismiss()
         }
     }
-
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 SaveToListEffects.AddedSuccessfully -> {
-                    onSuccess()
+                    snack = SnackData(
+                        message = successMessage,
+                        isError = false
+                    )
                     onDismiss()
                 }
 
-                SaveToListEffects.FailedToAdd -> onFailure()
+                SaveToListEffects.FailedToAdd -> {
+                    snack = SnackData(
+                        message = failMessage,
+                        isError = true
+                    )
+                }
+
             }
         }
     }
