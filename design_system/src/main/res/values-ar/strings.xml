@@ -62,4 +62,7 @@
 
     <string name="eng">الإنكليزية</string>
     <string name="ar">العربية</string>
+    <string name="home">الرئيسية</string>
+    <string name="categories">الفئات</string>
+    <string name="my_list">قائمتى</string>
 </resources>
