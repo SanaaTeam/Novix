@@ -14,7 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -28,7 +28,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
 
     ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
@@ -127,7 +127,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     override fun onSaveIconClick(mediaItem: MediaItemUiModel) {
         if (mediaItem.isSaved) {
-            savedMovieStatusProvider.markUnsaved(mediaItem.id)
+            savedListsStatusProvider.markItemUnsaved(mediaItem.id)
         } else {
             updateState {
                 it.copy(

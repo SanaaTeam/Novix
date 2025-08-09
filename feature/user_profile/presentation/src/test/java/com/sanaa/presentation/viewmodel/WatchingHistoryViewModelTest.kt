@@ -22,7 +22,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -37,7 +37,7 @@ class WatchingHistoryViewModelTest {
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     private lateinit var viewModel: WatchingHistoryViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -54,7 +54,7 @@ class WatchingHistoryViewModelTest {
                 any()
             )
         } returns flowOf(dummyHistoryItems)
-        savedMovieStatusProvider = mockk(relaxed = true) {
+        savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
     }
@@ -65,7 +65,7 @@ class WatchingHistoryViewModelTest {
             getLoggedInUserUseCase = getLoggedInUserUseCase,
             manageMovieUseCase = manageMovieUseCase,
             manageTvSeriesUseCase = manageTvSeriesUseCase,
-            savedMovieStatusProvider = savedMovieStatusProvider,
+            savedListsStatusProvider = savedListsStatusProvider,
 
             dispatcher = testDispatcher
         )
