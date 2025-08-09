@@ -17,7 +17,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -27,7 +27,7 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
@@ -61,7 +61,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 loadTopRatedMovies(genreId = genreId)
-                    .combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { mediaItem ->
                             mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
                         }
@@ -167,7 +167,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedMovieStatusProvider.markUnsaved(media.id)
+            savedListsStatusProvider.markItemUnsaved(media.id)
         } else {
             updateState {
                 it.copy(

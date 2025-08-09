@@ -13,7 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -28,9 +31,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.component.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.screen.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet.SaveToListBottomSheet
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection
+import com.sanaa.presentation.screen.watchingHistory.component.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.screen.watchingHistory.component.SnackData
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -41,6 +48,7 @@ fun WatchingHistoryScreen(
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -52,13 +60,15 @@ fun WatchingHistoryScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is WatchingHistoryScreenEffect.NavigateToMediaDetails -> {
-                    val startRoute = if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
+                    val startRoute =
+                        if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
                     detailsApi.launch(
                         context = navController.context,
                         id = effect.id,
                         startRoute = startRoute
                     )
                 }
+
                 is WatchingHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
@@ -70,6 +80,34 @@ fun WatchingHistoryScreen(
         state = state.value,
         interactionListener = viewModel,
         modifier = modifier,
+    )
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    state.value.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = state.value.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = viewModel::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = viewModel::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+    }
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.value.showAddListBottomSheet,
+        onDismiss = viewModel::onDismissAddListBottomSheet,
+        mediaId = state.value.selectedMediaToSave?.id ?: 0
     )
 }
 
@@ -107,7 +145,6 @@ private fun WatchingHistoryScreenContent(
             selectedTab = state.selectedMediaTypeUi,
             modifier = Modifier.fillMaxWidth()
         )
-
         AnimatedContent(
             targetState = state.selectedMediaTypeUi,
             transitionSpec = {
@@ -130,6 +167,7 @@ private fun WatchingHistoryScreenContent(
                         modifier = Modifier.fillMaxSize()
                     )
                 }
+
                 MediaTypeUi.TV_SHOW -> {
                     GridSection(
                         genres = state.tvShowGenres,
@@ -147,3 +185,4 @@ private fun WatchingHistoryScreenContent(
         }
     }
 }
+

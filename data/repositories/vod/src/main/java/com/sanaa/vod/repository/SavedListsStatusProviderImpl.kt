@@ -11,31 +11,59 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SavedMovieStatusProviderImpl @Inject constructor(
+class SavedListsStatusProviderImpl @Inject constructor(
     private val remoteSavedListDataSource: RemoteSavedListDataSource,
     private val preferencesManager: PreferencesManager
-) : SavedMovieStatusProvider {
+) : SavedListsStatusProvider {
 
     private val _savedIds = MutableStateFlow(emptySet<Int>())
     override val savedIds: StateFlow<Set<Int>> = _savedIds
-    private val mutex = Mutex()
+    private val idsMutex = Mutex()
 
-    override suspend fun isSaved(id: Int): Boolean {
-        if (_savedIds.value.isEmpty()) refresh()
+    private val _savedLists = MutableStateFlow<List<SavedList>>(emptyList())
+    override val savedLists: StateFlow<List<SavedList>> = _savedLists
+    private val listsMutex = Mutex()
+
+    override suspend fun isItemSaved(id: Int): Boolean {
+        if (_savedIds.value.isEmpty()) refreshItems()
         return _savedIds.value.contains(id)
     }
 
-    override suspend fun refresh() {
-        mutex.withLock {
+    override suspend fun refreshItems() {
+        idsMutex.withLock {
             if (_savedIds.value.isNotEmpty()) return
             _savedIds.value = fetchAllMoviesIds()
         }
     }
+
+    override suspend fun refreshLists() {
+        listsMutex.withLock {
+            val sessionId = preferencesManager.sessionId.first()
+            val lists = remoteSavedListDataSource.fetchUserLists(sessionId)
+            _savedLists.value = lists.map {
+                SavedList(
+                    id = it.id,
+                    title = it.title,
+                    itemCount = it.itemCount
+                )
+            }
+        }
+    }
+
+    override fun addList(list: SavedList) {
+        _savedLists.update { current ->
+            if (current.any { it.id == list.id }) current else current + list
+        }
+    }
+
+    override fun markItemSaved(id: Int) = _savedIds.update { it + id }
+    override fun markItemUnsaved(id: Int) = _savedIds.update { it - id }
 
     private suspend fun fetchAllMoviesIds(): Set<Int> = coroutineScope {
         val sessionId = preferencesManager.sessionId.first()
@@ -52,7 +80,4 @@ class SavedMovieStatusProviderImpl @Inject constructor(
             .flatten()
             .toSet()
     }
-
-    override fun markSaved(id: Int) = _savedIds.update { it + id }
-    override fun markUnsaved(id: Int) = _savedIds.update { it - id }
 }

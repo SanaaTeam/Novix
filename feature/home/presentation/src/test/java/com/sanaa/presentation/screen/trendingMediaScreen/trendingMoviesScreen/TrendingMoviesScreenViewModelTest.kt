@@ -25,7 +25,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -36,14 +36,14 @@ class TrendingMoviesScreenViewModelTest {
     private lateinit var manageMovieUseCase: ManageMovieUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: TrendingMoviesScreenViewModel
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
-        savedMovieStatusProvider = mockk(relaxed = true) {
+        savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
     }
@@ -61,7 +61,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -76,7 +76,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -96,7 +96,7 @@ class TrendingMoviesScreenViewModelTest {
             viewModel = TrendingMoviesScreenViewModel(
                 manageMovieUseCase,
                 checkIfUserIsLoggedInUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -117,7 +117,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -133,7 +133,7 @@ class TrendingMoviesScreenViewModelTest {
             viewModel = TrendingMoviesScreenViewModel(
                 manageMovieUseCase,
                 checkIfUserIsLoggedInUseCase,
-                savedMovieStatusProvider,
+                savedListsStatusProvider,
                 testDispatcher
             )
             testDispatcher.scheduler.advanceUntilIdle()
@@ -146,7 +146,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -162,7 +162,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -181,7 +181,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
 
@@ -202,7 +202,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel = TrendingMoviesScreenViewModel(
             manageMovieUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedMovieStatusProvider,
+            savedListsStatusProvider,
             testDispatcher
         )
 

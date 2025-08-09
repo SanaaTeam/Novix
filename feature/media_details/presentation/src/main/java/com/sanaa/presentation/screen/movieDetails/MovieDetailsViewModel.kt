@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -40,7 +40,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -57,7 +57,7 @@ class MovieDetailsViewModel @Inject constructor(
         updateUserLoginState()
 
         viewModelScope.launch {
-            savedMovieStatusProvider.savedIds.collect { savedIds ->
+            savedListsStatusProvider.savedIds.collect { savedIds ->
                 updateState { current ->
                     current.copy(
                         movieDetails = current.movieDetails.copy(
@@ -88,7 +88,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
 
         if (movie.isBookmarked) {
-            savedMovieStatusProvider.markUnsaved(movie.id)
+            savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
                 it.copy(
@@ -219,7 +219,7 @@ class MovieDetailsViewModel @Inject constructor(
             mapper = Movie::toUiModel
         )
 
-        return pagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+        return pagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
             pagingData.map { movieUiModel ->
                 movieUiModel.copy(isBookmarked = savedIds.contains(movieUiModel.id))
             }
