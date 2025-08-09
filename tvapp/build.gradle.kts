@@ -138,4 +138,6 @@ dependencies {
     testImplementation(libs.bundles.test)
     testImplementation(libs.bundles.test.runtime)
     testImplementation(libs.turbine)
+    implementation(libs.conscrypt.android)
+
 }

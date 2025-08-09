@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">نوفيكس</string>
+    <string name="unsuitable_image">صورة غير مناسبة</string>
     <string name="see_detail">عرض التفاصيل</string>
     <string name="top_rated">الاعلى تقييمًا</string>
     <string name="watching_history">سجل المشاهدة</string>
@@ -10,4 +11,5 @@
     <string name="invalid_username_password_error">الحساب او كلمة السر غير صحيحة</string>
     <string name="enter_username_password_error">يرجى ادخال الحساب وكلمة السر</string>
     <string name="something_went_wrong_error">حدث خطأ ما، يرجى المحاولة لاحقًا</string>
+    <string name="login_success">تم تسجيل الدخول بنجاح</string>
 </resources>

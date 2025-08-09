@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.di.search_modules
 
+import com.sanaa.tvapp.resourceProvider.StringProviderImpl
 import com.sanaa.vod.repository.HistoryRepositoryImpl
 import com.sanaa.vod.repository.SearchRepositoryImpl
 import dagger.Binds
@@ -8,6 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import repository.HistoryRepository
 import repository.SearchRepository
+import service.StringProvider
 import javax.inject.Singleton
 
 @Module

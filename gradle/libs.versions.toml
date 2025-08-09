@@ -2,6 +2,7 @@
 # Project Config
 appcompatVersion = "1.6.1"
 compileSdk = "35"
+conscryptAndroid = "2.5.2"
 converterGson = "3.0.0"
 datastore = "1.1.7"
 datastoreVersion = "1.1.1"
@@ -101,6 +102,7 @@ androidx-compose-material3-material3 = { module = "androidx.compose.material3:ma
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }

@@ -10,6 +10,8 @@ import kotlinx.coroutines.runBlocking
 import repository.UserPreferencesRepository
 import timber.log.Timber
 import javax.inject.Inject
+import org.conscrypt.Conscrypt
+import java.security.Security
 
 @HiltAndroidApp
 class TvApp: Application() {
@@ -42,5 +44,6 @@ class TvApp: Application() {
             log("App started")
             setCustomKey("app_start_time", System.currentTimeMillis())
         }
+        Security.insertProviderAt(Conscrypt.newProvider(), 1)
     }
 }

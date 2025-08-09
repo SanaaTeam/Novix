@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Novix</string>
+    <string name="login_success">Login Success</string>
     <string name="see_detail">See details</string>
     <string name="top_rated">Top rating</string>
     <string name="watching_history">Watching history</string>
