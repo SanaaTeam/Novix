@@ -5,15 +5,27 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
-import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute
+import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph
+import com.sanaa.tvapp.presentation.screens.navigation.TvNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
+import usecase.CheckIfUserIsLoggedInUseCase
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -21,11 +33,21 @@ class MainActivity : ComponentActivity() {
         actionBar?.hide()
         setContent {
             NovixTheme(isSystemInDarkTheme()) {
-//                HomeScreen()
-//                MovieDetailsScreen()
-//                TvShowScreen()
-//                EpisodeDetailsScreen()
-                LoginScreenTv()
+                val navController = rememberNavController()
+
+                val isLoggedIn by checkIfUserIsLoggedInUseCase.isLoggedIn().collectAsState(initial = false)
+
+                val startDestination = if (isLoggedIn) {
+                    TvAppRoute.Home
+                } else {
+                    TvAppRoute.Login
+                }
+
+                CompositionLocalProvider(LocalAppNavController provides navController) {
+                    TvNavigation {
+                        TvNavGraph(navController = navController, startDestination = startDestination)
+                    }
+                }
             }
         }
     }
