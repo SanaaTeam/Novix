@@ -55,7 +55,7 @@ fun AddBookmarkListBottomSheet(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                AddBookmarkEffect.AddSuccess -> {
+                AddBookmarksEffect.AddSuccess -> {
                     handleDismiss()
                     snack = SnackData(
                         message = "Created list successfully",
@@ -63,7 +63,7 @@ fun AddBookmarkListBottomSheet(
                     )
                 }
 
-                AddBookmarkEffect.AddFailure -> {
+                AddBookmarksEffect.AddFailure -> {
                     snack = SnackData(
                         message = "Failed to create list",
                         isError = true
