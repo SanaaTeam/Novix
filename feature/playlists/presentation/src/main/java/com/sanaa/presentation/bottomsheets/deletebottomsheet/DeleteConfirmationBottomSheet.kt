@@ -13,6 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,6 +31,9 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarksEffect
+import com.sanaa.presentation.screen.playlist.SnackData
+import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -39,11 +45,30 @@ fun DeleteConfirmationBottomSheet(
 ) {
     val viewModel: DeleteListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             onDismiss()
             onDeleteSuccess()
+        }
+    }
+
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                DeleteListEffect.DeleteSuccess -> {}
+
+                DeleteListEffect.DeleteFailure -> {
+                    snack = SnackData(
+                        message = "Failed to create list",
+                        isError = true
+                    )
+                }
+            }
         }
     }
 

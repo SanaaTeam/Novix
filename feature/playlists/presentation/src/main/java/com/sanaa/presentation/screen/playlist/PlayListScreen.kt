@@ -25,6 +25,7 @@ import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListViewMo
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
+import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -47,6 +48,8 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
 
     val launcher = launchAuthActivityForResult()
 
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
 
     LaunchedEffect(Unit) {
         snapshotFlow { navController.currentBackStackEntry }
@@ -57,7 +60,10 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
 
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
-
+                    snack = SnackData(
+                        message = "List deleted successfully",
+                        isError = false
+                    )
                     backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
                     backStackEntry?.savedStateHandle?.remove<Boolean>("delete_success")
                 }
