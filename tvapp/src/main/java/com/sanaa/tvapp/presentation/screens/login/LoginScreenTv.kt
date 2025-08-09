@@ -1,7 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.login
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +42,7 @@ import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackB
 
 @Composable
 fun LoginScreenTv(
+    onFinish: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
@@ -53,7 +54,7 @@ fun LoginScreenTv(
             when (effect) {
                 is LoginScreenEffects.ShowError -> snack = SnackData(effect.message, true)
                 is LoginScreenEffects.ShowSuccess -> snack = SnackData(effect.message, false)
-                LoginScreenEffects.ReturnGuestResultCode -> TODO()
+                LoginScreenEffects.ReturnGuestResultCode ->  onFinish()
             }
         }
     }

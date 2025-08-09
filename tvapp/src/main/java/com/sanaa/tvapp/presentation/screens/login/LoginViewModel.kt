@@ -50,11 +50,12 @@ class LoginViewModel @Inject constructor(
                     val updated = prev.copy(isLoading = false)
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
-                emitEffect(LoginScreenEffects.ShowSuccess(stringProvider.loginSuccess))
+                emitEffect(LoginScreenEffects.ReturnGuestResultCode)
             },
             onError = ::onDataLoadError
         )
     }
+
 
     fun onDataLoadError(throwable: Throwable) {
         updateState { prev ->
@@ -76,8 +77,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    override fun onContinueClicked() = emitEffect(LoginScreenEffects.ReturnGuestResultCode)
-
+    override fun onContinueClicked() {
+        emitEffect(LoginScreenEffects.ReturnGuestResultCode)
+    }
     private fun isSubmitAllowed(uiState: LoginUiState): Boolean =
         uiState.username.isNotBlank() &&
                 uiState.password.isNotBlank() &&
