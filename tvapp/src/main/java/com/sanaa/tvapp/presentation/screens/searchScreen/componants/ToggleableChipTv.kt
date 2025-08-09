@@ -3,8 +3,8 @@ package com.sanaa.tvapp.presentation.screens.searchScreen.componants
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
@@ -31,6 +34,12 @@ fun ToggleableChipTv(
     selectedTextColor: Color = Theme.colors.onPrimary,
     notSelectedTextColor: Color = Theme.colors.body,
 ) {
+    var isFocused by remember { mutableStateOf(false) }
+
+    val borderColor by animateColorAsState(
+        targetValue = if (isFocused) Theme.colors.primary else Color.Transparent
+    )
+
     val animateBackgroundColor by animateColorAsState(
         targetValue = if (isSelected) selectedBackgroundColor else Color.Transparent
     )
@@ -45,9 +54,16 @@ fun ToggleableChipTv(
 
     Box(
         modifier = modifier
-            .focusable()
+            .onFocusChanged { focusState ->
+                isFocused = focusState.isFocused
+            }
             .background(
                 color = animateBackgroundColor,
+                shape = RoundedCornerShape(12.dp)
+            )
+            .border(
+                width = 3.dp,
+                color = borderColor,
                 shape = RoundedCornerShape(12.dp)
             )
             .height(37.dp)
@@ -67,6 +83,7 @@ fun ToggleableChipTv(
         )
     }
 }
+
 @Composable
 @androidx.compose.ui.tooling.preview.Preview(name = "Chip Not Selected", showBackground = true)
 fun PreviewToggleableChip_NotSelected() {
