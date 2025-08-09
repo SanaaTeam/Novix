@@ -190,7 +190,13 @@ fun GenreMoviesScreenContent(
                                             )
                                         }
                                     },
-                                    topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick(it) }) },
+                                    topLeftContent = {
+                                        SaveIconChip(onClick = {
+                                            interactionListener.onSaveIconClick(
+                                                movie
+                                            )
+                                        })
+                                    },
                                     onCardClick = { interactionListener.onMovieClick(movie.id) })
                             }
 
