@@ -42,7 +42,10 @@ fun AddBookmarkListBottomSheet(
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
-
+    var successMessage =
+        stringResource(com.sanaa.feature.home.presentation.R.string.created_list_successfully)
+    var failMessage =
+        stringResource(com.sanaa.feature.home.presentation.R.string.failed_to_create_list)
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
@@ -56,14 +59,14 @@ fun AddBookmarkListBottomSheet(
                 AddBookmarkEffect.AddSuccess -> {
                     handleDismiss()
                     snack = SnackData(
-                        message = "Created list successfully",
+                        message = successMessage,
                         isError = false
                     )
                 }
 
                 AddBookmarkEffect.AddFailure -> {
                     snack = SnackData(
-                        message = "Failed to create list",
+                        message = failMessage,
                         isError = true
                     )
                 }

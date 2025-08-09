@@ -28,4 +28,8 @@
     <string name="no_watching_history">No watching history yet</string>
     <string name="no_history_yet">No watching history yet</string>
     <string name="failed_to_load_watching_history">Failed to load watching history</string>
+    <string name="created_list_successfully">Created list successfully</string>
+    <string name="failed_to_create_list">Failed to create list</string>
+    <string name="added_to_list_successfully">Added to list successfully</string>
+    <string name="added_to_list_failed">Added to list failed</string>
 </resources>

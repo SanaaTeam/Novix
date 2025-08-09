@@ -61,7 +61,7 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
                     snack = SnackData(
-                        message = "List deleted successfully",
+                        message = deleteListSuccessMsg,
                         isError = false
                     )
                     backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")

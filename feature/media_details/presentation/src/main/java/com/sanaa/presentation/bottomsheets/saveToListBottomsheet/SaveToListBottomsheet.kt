@@ -54,6 +54,11 @@ fun SaveToListBottomSheet(
     val viewModel: SaveToListsViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
+    var successMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.added_to_list_successfully)
+    var failMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.added_to_list_failed)
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -67,7 +72,7 @@ fun SaveToListBottomSheet(
             when (effect) {
                 SaveToListEffects.AddedSuccessfully -> {
                     snack = SnackData(
-                        message = "Added to list successfully",
+                        message = successMessage,
                         isError = false
                     )
                     onDismiss()
@@ -75,7 +80,7 @@ fun SaveToListBottomSheet(
 
                 SaveToListEffects.FailedToAdd -> {
                     snack = SnackData(
-                        message = "Added to list failed",
+                        message = failMessage,
                         isError = true
                     )
                 }
