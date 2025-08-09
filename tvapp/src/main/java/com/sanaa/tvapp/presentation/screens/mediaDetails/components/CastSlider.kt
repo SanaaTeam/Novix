@@ -40,7 +40,7 @@ fun CastSlider(
 
         TvLazyRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
+            contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) {
             items(cast) { actor ->
                 TvMediaPosterCard(

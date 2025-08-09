@@ -10,4 +10,5 @@
     <string name="invalid_username_password_error">Invalid user name or password</string>
     <string name="enter_username_password_error">Please enter username and password</string>
     <string name="something_went_wrong_error">Something went wrong, please try again later</string>
+    <string name="more_like_this">More like this</string>
 </resources>

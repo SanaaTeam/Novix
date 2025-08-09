@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +26,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -41,7 +42,9 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 
 @Composable
 fun MovieDetailsScreen(
@@ -86,6 +89,7 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsViewModel
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
         backgroundShapes = { },
@@ -94,12 +98,12 @@ fun MovieDetailsContent(
             modifier = Modifier
                 .fillMaxSize()
         ) {
-
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { shouldShowLoadingOrError ->
+            )
+            { shouldShowLoadingOrError ->
                 if (shouldShowLoadingOrError) {
                     if (state.noInternetConnection) {
                         NetworkDisconnectionContact(
@@ -190,8 +194,14 @@ fun MovieDetailsContent(
                             }
 
                             if (state.cast.isNotEmpty()) {
-                                CastSlider(state.cast)
+                                CastSlider(
+                                    cast = state.cast,
+                                )
                             }
+                            MoviesSlider(
+                                moviesPagingData = moviesPagingData,
+                                modifier = Modifier.height(231.dp)
+                            )
                         }
                     }
                 }
