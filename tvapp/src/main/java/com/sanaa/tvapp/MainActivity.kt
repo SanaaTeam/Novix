@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
             Log.d("test99", "onCreate: ${state.value}")
 
             NovixTheme(true) {
-                HomeScreen()
+//                HomeScreen()
             }
         }
     }

@@ -66,7 +66,7 @@ fun MovieDetailsContent(modifier: Modifier = Modifier) {
                     TrailerAndRateSection()
                 }
             }
-            DetailsTopBar()
+            DetailsTopBar(onBackClick = {})
         }
 
 

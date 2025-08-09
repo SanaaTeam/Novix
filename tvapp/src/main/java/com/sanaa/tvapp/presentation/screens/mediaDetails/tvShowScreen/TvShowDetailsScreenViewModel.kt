@@ -1,12 +1,12 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import androidx.lifecycle.SavedStateHandle
+import com.sanaa.tvapp.base.TvBaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toHistory
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
-import com.sanaa.tvapp.presentation.screens.searchScreen.base.TvSearchBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoLoggedInUserException
@@ -30,7 +30,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : TvSearchBaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
+) : TvBaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
     initialState = TvShowDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
@@ -231,16 +231,16 @@ class TvShowDetailsScreenViewModel @Inject constructor(
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
 
-    private suspend fun getCurrentUserRating(seriesId: Int): Int {
-        val userId = getUser.getLoggedInUser().id
-        return try {
-            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
-
-        } catch (_: Exception) {
-            0
-        }
-
-    }
+//    private suspend fun getCurrentUserRating(seriesId: Int): Int {
+//        val userId = getUser.getLoggedInUser().id
+//        return try {
+//            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
+//
+//        } catch (_: Exception) {
+//            0
+//        }
+//
+//    }
 
 
     private suspend fun submitTvSeriesRating() {
@@ -255,10 +255,10 @@ class TvShowDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
-    }
+//    private suspend fun updateUserLoginState() {
+//        val isUserLoggedIn = checkUserLogin.isLoggedIn()
+//        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+//    }
 
     private fun promptLogin(type: LoginPromptType) {
         updateState {
@@ -268,21 +268,21 @@ class TvShowDetailsScreenViewModel @Inject constructor(
             )
         }
     }
-
-    fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
-    }
-
-    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return
-        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-            mediaHistoryItem = tvSeries.toHistory(),
-            username = user.username
-        )
-    }
+//
+//    fun updateUserStatus() {
+//        tryToExecute(callee = ::updateUserLoginState)
+//    }
+//
+//    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
+//        val user = try {
+//            getLoggedInUserUseCase.getLoggedInUser()
+//        } catch (_: NoLoggedInUserException) {
+//            null
+//        }
+//        if (user == null) return
+//        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+//            mediaHistoryItem = tvSeries.toHistory(),
+//            username = user.username
+//        )
+//    }
 }

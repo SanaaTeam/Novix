@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.model
 
-import com.sanaa.presentation.model.GenreUiModel
 import kotlin.time.Duration
 
 data class MovieDetailsUiModel(

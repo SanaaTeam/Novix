@@ -29,7 +29,7 @@ import androidx.tv.foundation.lazy.list.TvLazyRow
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
@@ -101,11 +101,11 @@ fun SearchScreenContent(
                             TvMediaPosterCard(
                                 title = movie.title,
                                 posterImage = {
-                                    RemoteBlurredHaramImageViewer(
+                                    RemoteBlurredSensitiveImage(
                                         imageUrl = movie.imageUrl,
                                         modifier = Modifier.fillMaxWidth(),
-                                        haramThreshold = 0.2f,
-                                        nonHaramThreshold = 0.7f,
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
                                         placeholderContent = {
                                             RemoteImagePlaceholder(Modifier.fillMaxSize())
                                         },
@@ -141,11 +141,11 @@ fun SearchScreenContent(
                             TvMediaPosterCard(
                                 title = show.title,
                                 posterImage = {
-                                    RemoteBlurredHaramImageViewer(
+                                    RemoteBlurredSensitiveImage(
                                         imageUrl = show.imageUrl,
                                         modifier = Modifier.fillMaxWidth(),
-                                        haramThreshold = 0.2f,
-                                        nonHaramThreshold = 0.7f,
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
                                         placeholderContent = {
                                             RemoteImagePlaceholder(Modifier.fillMaxSize())
                                         },
@@ -181,11 +181,11 @@ fun SearchScreenContent(
                             TvMediaPosterCard(
                                 title = actor.name,
                                 posterImage = {
-                                    RemoteBlurredHaramImageViewer(
+                                    RemoteBlurredSensitiveImage(
                                         imageUrl = actor.imageUrl,
                                         modifier = Modifier.fillMaxWidth(),
-                                        haramThreshold = 0.2f,
-                                        nonHaramThreshold = 0.7f,
+                                        sensitiveContentThreshold = 0.2f,
+                                        safeContentThreshold = 0.7f,
                                         placeholderContent = {
                                             RemoteImagePlaceholder(Modifier.fillMaxSize())
                                         },

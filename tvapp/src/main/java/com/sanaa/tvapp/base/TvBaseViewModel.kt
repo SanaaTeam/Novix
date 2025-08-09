@@ -81,7 +81,7 @@ abstract class TvBaseViewModel <T, E>(
         }
     }
 
-    protected fun <T : Any, R : Any> createPagingFlow(
+    protected open fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
         mapper: (T) -> R,
     ): Flow<PagingData<R>> {
