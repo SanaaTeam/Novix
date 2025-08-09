@@ -200,7 +200,6 @@ class ActorViewModelTest {
             duration = null,
             posterUrls = listOf("poster.jpg"),
             genres = emptyList(),
-            isBookmarked = false,
             trailerUrl = null,
             posterUrl = "poster.jpg",
             isSaved = false
