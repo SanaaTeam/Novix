@@ -18,6 +18,10 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,9 +46,12 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -96,6 +103,7 @@ fun GenreMoviesScreenContent(
     state: GenreMoviesScreenUiState,
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
+    var snack by remember { mutableStateOf<SnackData?>(null) }
     val pagedMovies = state.movies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
@@ -182,7 +190,7 @@ fun GenreMoviesScreenContent(
                                             )
                                         }
                                     },
-                                    topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
+                                    topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick(it) }) },
                                     onCardClick = { interactionListener.onMovieClick(movie.id) })
                             }
 
@@ -200,6 +208,33 @@ fun GenreMoviesScreenContent(
                             }
                         }
                     }
+
+                    state.selectedMovieToSave?.let { mediaItem ->
+                        SaveToListBottomSheet(
+                            isVisible = state.showSaveToListBottomSheet,
+                            mediaId = mediaItem.id.toLong(),
+                            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                            onCreateNewListClick = interactionListener::onCreateNewListClick,
+                            onSuccess = {
+                                snack = SnackData(
+                                    message = "Added to list successfully",
+                                    isError = false
+                                )
+                            },
+                            onFailure = {
+                                snack = SnackData(
+                                    message = "Added to list failed",
+                                    isError = true
+                                )
+                            },
+                        )
+                    }
+
+                    AddBookmarkListBottomSheet(
+                        isVisible = state.showAddListBottomSheet,
+                        onDismiss = interactionListener::onDismissAddListBottomSheet,
+                        mediaId = state.selectedMovieToSave?.id ?: 0
+                    )
                     RequestToLoginBottomSheet(
                         onDismiss = { interactionListener.onBottomSheetDismiss() },
                         onLoginButtonClick = { interactionListener.onLoginButtonClick() },

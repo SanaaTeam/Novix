@@ -55,11 +55,6 @@ class GenreMoviesViewModel @Inject constructor(
         fetchMovies(categoryId)
     }
 
-    override fun onSaveIconClick() {
-        if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showBottomSheet = true) }
-        }
-    }
 
     override fun onBottomSheetDismiss() {
         updateState { it.copy(showBottomSheet = false) }
@@ -68,6 +63,24 @@ class GenreMoviesViewModel @Inject constructor(
     override fun onLoginButtonClick() {
         updateState { it.copy(showBottomSheet = false) }
         emitEffect(GenreMoviesEffects.NavigateToLogin)
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onSaveIconClick(media: MovieUiModel) {
+        if (!state.value.userIsLoggedIn) {
+            updateState { it.copy(showBottomSheet = true) }
+        }
     }
 
     override fun onBackClick() {
