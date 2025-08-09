@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.util.modifier
 
+import android.view.KeyEvent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -16,6 +17,7 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
@@ -78,4 +80,39 @@ fun Modifier.fillWidthOfParent(parentPadding: Dp) = layout { measurable, constra
     layout(constraints.maxWidth, placeable.height) {
         placeable.place(-parentPadding.roundToPx(), 0)
     }
+}
+
+fun Modifier.handleDPadKeyEvents(
+    onLeft: (() -> Unit)? = null,
+    onRight: (() -> Unit)? = null,
+    onEnter: (() -> Unit)? = null
+) = onPreviewKeyEvent {
+    fun onActionUp(block: () -> Unit) {
+        if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
+    }
+
+    when (it.nativeKeyEvent.keyCode) {
+        KeyEvent.KEYCODE_DPAD_LEFT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_LEFT -> {
+            onLeft?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT -> {
+            onRight?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_NUMPAD_ENTER -> {
+            onEnter?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+    }
+
+    false
 }

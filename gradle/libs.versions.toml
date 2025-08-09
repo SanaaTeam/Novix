@@ -28,6 +28,7 @@ dagger = "2.56.2"
 # Dependancies versions
 agp = "8.10.1"
 paging = "3.3.6"
+composeBomVersion = "2024.06.00"
 foundationLayoutAndroid = "1.8.3"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
@@ -69,21 +70,17 @@ uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
 runtimeAndroid = "1.8.3"
 foundationAndroid = "1.8.3"
-
-composeBomVersion = "2025.07.00"
-tvMaterial        = "1.0.1"
-tvFoundation = "1.0.0-alpha11"
+tvFoundation = "1.0.0-alpha12"
+tvMaterial = "1.0.1"
 
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 # Lifecycle
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
-androidx-datastore-v111 = { module = "androidx.datastore:datastore", version.ref = "datastoreVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
@@ -105,8 +102,6 @@ androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.mate
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 # Compose Related

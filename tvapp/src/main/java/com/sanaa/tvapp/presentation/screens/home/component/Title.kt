@@ -11,9 +11,9 @@ import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 
 
 @Composable
-fun Title(title: String) {
+fun Title(title: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier.padding(bottom = 16.dp, top = 16.dp),
+        modifier = modifier,
         text = title,
         color = Theme.colors.title,
         style = Theme.textStyle.title.large

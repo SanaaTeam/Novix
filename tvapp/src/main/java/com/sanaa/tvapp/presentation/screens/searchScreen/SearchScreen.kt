@@ -25,7 +25,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.tv.foundation.lazy.list.TvLazyRow
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -91,7 +92,7 @@ fun SearchScreenContent(
 
         when (uiState.selectedTabIndex) {
             SearchTvScreenUiState.MOVIE_INDEX -> {
-                TvLazyRow(
+                LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
@@ -131,7 +132,7 @@ fun SearchScreenContent(
             }
 
             SearchTvScreenUiState.TV_SHOW_INDEX -> {
-                TvLazyRow(
+                LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {
@@ -171,7 +172,7 @@ fun SearchScreenContent(
             }
 
             SearchTvScreenUiState.ACTOR_INDEX -> {
-                TvLazyRow(
+                LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     contentPadding = PaddingValues(horizontal = 36.dp, vertical = 24.dp)
                 ) {

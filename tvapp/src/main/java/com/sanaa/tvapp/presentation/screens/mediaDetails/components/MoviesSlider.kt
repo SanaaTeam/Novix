@@ -13,7 +13,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
-import androidx.tv.foundation.lazy.list.TvLazyRow
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -36,7 +37,7 @@ fun MoviesSlider(
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
         )
-        TvLazyRow(
+        LazyRow (
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 36.dp, vertical = 8.dp)
         ) {
