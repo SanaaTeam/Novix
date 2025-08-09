@@ -45,9 +45,9 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute.ActorDetails
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute.Login
-import com.sanaa.tvapp.presentation.screens.navigation.TvAppRoute.MovieDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 
 @Composable
 fun MovieDetailsScreen(
@@ -64,7 +64,7 @@ fun MovieDetailsScreen(
             when (it) {
                 MovieDetailsScreenUiEffect.NavigateBack -> { navController.popBackStack()}
                 is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails ->  navController.navigate(MovieDetails(it.movieId))
+                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
                 MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
                 is MovieDetailsScreenUiEffect.OpenTrailer -> TODO()
                 MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
