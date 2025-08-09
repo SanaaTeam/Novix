@@ -26,11 +26,11 @@ fun TvNavigation(content: @Composable () -> Unit) {
     val currentRoute = navBackStackEntry.value?.destination?.route
 
     val screens = listOf(
-        TvAppRoute.Home,
-        TvAppRoute.Search,
-        TvAppRoute.Categories,
-        TvAppRoute.MyList,
-        TvAppRoute.MyAccount
+        NavBarRoute.Home,
+        NavBarRoute.Search,
+        NavBarRoute.Categories,
+        NavBarRoute.MyList,
+        NavBarRoute.MyAccount
     )
 
     NavigationDrawer(
@@ -58,7 +58,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
                         selected = isSelected,
                         onClick = {
                             navController.navigate(screen) {
-                                popUpTo<TvAppRoute.Home>()
+                                popUpTo<NavBarRoute.Home>()
                                 launchSingleTop = true
                             }
                         },
