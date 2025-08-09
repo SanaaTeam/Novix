@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -18,8 +17,7 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flowOf
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -28,7 +26,7 @@ import javax.inject.Inject
 class TrendingMoviesScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
@@ -91,7 +89,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedMovieStatusProvider.markUnsaved(media.id)
+            savedListsStatusProvider.markItemUnsaved(media.id)
         } else {
             updateState {
                 it.copy(
@@ -132,7 +130,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
                 createPagingFlow(
                     pagingSourceFactory = { createMoviesPagingSource() },
                     mapper = Movie::toState
-                ).combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+                ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                     pagingData.map { mediaItem ->
                         mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
                     }
