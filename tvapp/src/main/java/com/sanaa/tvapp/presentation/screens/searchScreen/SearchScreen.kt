@@ -74,7 +74,6 @@ fun SearchScreenContent(
                 text = it
                 searchListener.onSearchQueryChanged(it)
             },
-            modifier = Modifier
         )
 
         when (uiState.selectedTabIndex) {
