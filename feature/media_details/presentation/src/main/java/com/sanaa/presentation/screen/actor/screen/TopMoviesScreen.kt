@@ -1,11 +1,7 @@
 package com.sanaa.presentation.screen.actor.screen
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +15,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,20 +34,26 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundS
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.image_viewer.component.RemoteBlurredHaramImageViewer
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
@@ -62,42 +67,62 @@ fun TopMoviesScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher = launchAuthActivityForResult(
-        loggedInWithSessionId = {
-            viewModel.updateUserLoggingStatus()
-        },
-        loggedInAsGuest = {
-            viewModel.updateUserLoggingStatus()
-        }
-    )
+    val launcher = launchAuthActivityForResult()
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val selectedMedia = uiState.selectedMediaToSave
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    NovixTheme(isDarkMode = isSystemInDarkTheme()) {
-        TopMoviesContent(
-            state = uiState,
-            onBackClick = navigateBack,
-            modifier = Modifier.fillMaxSize(),
-            onSaveIconClick = {
-                viewModel.onSaveClicked()
-            }
-        )
-        RequestToLoginBottomSheet(
-            isVisible = uiState.showLoginBottomSheet,
-            onDismiss = viewModel::onDismissBottomSheet,
-            onLoginButtonClick = {
-                launcher.launch(authApi.getLaunchIntent(context))
-            }
+
+    TopMoviesContent(
+        state = uiState,
+        onBackClick = navigateBack,
+        modifier = Modifier.fillMaxSize(),
+        onSaveIconClick = viewModel::onSaveClicked,
+    )
+    RequestToLoginBottomSheet(
+        isVisible = uiState.showLoginBottomSheet,
+        onDismiss = viewModel::onDismissBottomSheet,
+        onLoginButtonClick = {
+            launcher.launch(authApi.getLaunchIntent(context))
+        }
+    )
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    SaveToListBottomSheet(
+        isVisible = uiState.showSaveToListBottomSheet,
+        mediaId = selectedMedia?.id?.toLong() ?: 0,
+        onDismiss = viewModel::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = viewModel::onCreateNewListClick,
+        onSuccess = {
+            snack = SnackData(
+                message = "Added to list successfully",
+                isError = false
+            )
+        },
+        onFailure = {
+            snack = SnackData(
+                message = "Added to list failed",
+                isError = true
+            )
+        },
+    )
+    if (uiState.showAddListBottomSheet && selectedMedia != null) {
+        AddBookmarkListBottomSheet(
+            isVisible = uiState.showAddListBottomSheet,
+            onDismiss = viewModel::onDismissAddListBottomSheet,
+            mediaId = selectedMedia.id
         )
     }
 }
+
 
 @Composable
 private fun TopMoviesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
-    onSaveIconClick: () -> Unit,
+    onSaveIconClick: (MovieUiModel) -> Unit
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -110,7 +135,8 @@ private fun TopMoviesContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back), onClick = onBackClick
+                        icon = painterResource(id = designR.drawable.icon_back),
+                        onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),
@@ -153,11 +179,12 @@ private fun TopMoviesContent(
                             ) { _, movie ->
                                 MediaPosterCard(
                                     posterImage = {
-                                        RemoteBlurredHaramImageViewer(
+                                        RemoteBlurredSensitiveImage(
                                             imageUrl = movie.posterUrl.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
-                                            haramThreshold = 0.2f,
-                                            nonHaramThreshold = 0.7f,
+                                            sensitiveContentThreshold = 0.2f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
                                             contentDescription = movie.title,
                                             placeholderContent = {
                                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
@@ -177,9 +204,10 @@ private fun TopMoviesContent(
                                         }
                                     },
                                     topLeftContent = {
-                                        SaveIconChip(onClick = {
-                                            onSaveIconClick()
-                                        })
+                                        SaveIconChip(
+                                            isSaved = movie.isSaved,
+                                            onClick = { onSaveIconClick(movie) }
+                                        )
                                     },
                                     onCardClick = {
                                         navController.navigate(MovieDetailsScreenRoute(movie.id).route())

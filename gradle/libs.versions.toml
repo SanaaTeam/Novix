@@ -1,7 +1,7 @@
 [versions]
 # Project Config
+appcompatVersion = "1.6.1"
 compileSdk = "35"
-conscryptAndroid = "2.5.2"
 converterGson = "3.0.0"
 datastore = "1.1.7"
 datastoreVersion = "1.1.1"
@@ -28,7 +28,8 @@ dagger = "2.56.2"
 # Dependancies versions
 agp = "8.10.1"
 paging = "3.3.6"
-foundationLayoutAndroid = "1.8.3"
+composeBomVersion = "2024.06.00"
+foundationLayoutAndroid = "1.6.8"
 junitJupiterApi = "5.13.3"
 junitJupiterEngine = "5.13.3"
 kotlin = "2.0.21"
@@ -67,10 +68,10 @@ datastorePreferences = "1.1.7"
 coreSplashscreen = "1.0.1"
 uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
-
-composeBomVersion = "2025.07.00"
-tvMaterial        = "1.0.1"
-tvFoundation = "1.0.0-alpha11"
+runtimeAndroid = "1.8.3"
+foundationAndroid = "1.8.3"
+tvFoundation = "1.0.0-alpha12"
+tvMaterial = "1.0.1"
 
 [libraries]
 # AndroidX
@@ -80,7 +81,6 @@ androidx-activity-compose = { group = "androidx.activity", name = "activity-comp
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 # Lifecycle
 androidx-datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
-androidx-datastore-v111 = { module = "androidx.datastore:datastore", version.ref = "datastoreVersion" }
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
@@ -101,10 +101,7 @@ androidx-compose-material3-material3 = { module = "androidx.compose.material3:ma
 androidx-material3-adaptive-navigation-suite = { module = "androidx.compose.material3:material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 androidx-material3-window-size-class1 = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-conscrypt-android = { module = "org.conscrypt:conscrypt-android", version.ref = "conscryptAndroid" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
-kotlinx-serialization-json-v160 = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 material3 = { module = "androidx.compose.material3:material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 # Compose Related
@@ -190,6 +187,8 @@ androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-te
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.0.0" }
 androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
+androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 androidx-tv-foundation = { group = "androidx.tv", name = "tv-foundation", version.ref = "tvFoundation" }
 androidx-tv-material = { group = "androidx.tv", name = "tv-material", version.ref = "tvMaterial" }
 

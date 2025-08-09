@@ -5,6 +5,8 @@ import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -25,11 +27,12 @@ class GetLoggedInUserUseCaseTest {
         val expectedUser = User(
             id = 1,
             name = "Novix User",
-            username = "novix"
+            username = "novix",
+            profileImageUrl = "Url"
         )
-        coEvery { repository.getLoggedUser() } returns expectedUser
+        coEvery { repository.getLoggedUser() } returns flowOf(expectedUser)
 
-        val result = useCase.getLoggedInUser()
+        val result = useCase.getLoggedInUser().first()
 
         assertThat(result.id).isEqualTo(expectedUser.id)
     }

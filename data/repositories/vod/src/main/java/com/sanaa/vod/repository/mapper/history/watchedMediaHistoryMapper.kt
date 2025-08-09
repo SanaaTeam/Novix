@@ -32,6 +32,7 @@ fun WatchedMediaHistoryLocalDto.toEntity(): MediaHistoryItem {
         id = this.id,
         posterImageUrl = this.posterImageUrl,
         mediaType = MediaType.valueOf(this.mediaType),
-        genres = genreList
+        genres = genreList,
+        lastWatchedAt = kotlinx.datetime.Instant.fromEpochMilliseconds(this.timestamp)
     )
 }

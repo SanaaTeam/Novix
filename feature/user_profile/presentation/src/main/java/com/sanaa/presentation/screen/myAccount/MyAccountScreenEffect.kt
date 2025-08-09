@@ -5,5 +5,14 @@ sealed interface MyAccountScreenEffect {
     object NavigateToMyRating : MyAccountScreenEffect
     object NavigateToContentRestrictionSetting : MyAccountScreenEffect
     object NavigateToChangePasswordSetting : MyAccountScreenEffect
-    object NavigateToLanguageSetting : MyAccountScreenEffect
+    data class UpdateAppLanguage(
+        val language: String
+    ) : MyAccountScreenEffect
+
+    data class UpdateAppTheme(
+        val isDarkMode: Boolean
+    ): MyAccountScreenEffect
+
+    object NavigateToLogin : MyAccountScreenEffect
+    object PopBackStackToWelcomeScreen: MyAccountScreenEffect
 }

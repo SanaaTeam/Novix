@@ -8,15 +8,13 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -49,7 +47,8 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), 1) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), any()) } returns emptyList()
+        coEvery { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -61,13 +60,13 @@ class GenreTvShowsViewModelTest {
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
             manageTvSeriesUseCase,
-            checkIfUserIsLoggedInUseCase
+            checkIfUserIsLoggedInUseCase,
+            testDispatcher
         )
 
-        advanceUntilIdle()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         viewModel.onSaveIconClick()
-
+        testDispatcher.scheduler.advanceUntilIdle()
         assertTrue(viewModel.state.value.showBottomSheet)
     }
 

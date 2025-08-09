@@ -7,6 +7,8 @@
     <string name="no_search_result_message">No search result, please try with another keyword!</string>
     <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
     <string name="search">Search</string>
+    <string name="error_general_title">sorry something wrong happened..!</string>
+    <string name="error_general_message">please try again latter, we are waiting you with movies and popcorn</string>
     <string name="recent_viewed">Recent viewed</string>
     <string name="clear_all">Clear all</string>
     <string name="recent_search">Recent search</string>
@@ -19,10 +21,42 @@
 
     <string name="unsuitable_image">"unsuitable image "</string>
     <string name="my_account">My account</string>
-    <string name="watching_history">Watching history</string>
+    <string name="watching_history">Watching History</string>
+    <string name="no_history_yet">No history yet</string>
+    <string name="all">All</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+    <string name="movie_poster">Movie Poster</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>
     <string name="change_password">Change password</string>
     <string name="appearance">Appearance</string>
     <string name="language">Language</string>
+    <string name="arabic">Arabic</string>
+    <string name="english">English</string>
+    <string name="strict_restriction">Strict</string>
+    <string name="moderate_restriction">Moderate</string>
+    <string name="unrestricted">Off</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="save">Save</string>
+    <string name="blurs_all_sensitive_content">Blurs all sensitive content.</string>
+    <string name="blurs_explicit_scenes_only">Blurs explicit scenes only.</string>
+    <string name="no_content_is_blurred">No content is blurred.</string>
+    <string name="eng">ENG</string>
+    <string name="ar">AR</string>
+
+    <string name="add_new_list">Add new list</string>
+    <string name="list_title">List title</string>
+    <string name="my_favorite_placeholder">My favorite</string>
+    <string name="add">Add</string>
+    <string name="edit_list">Edit list</string>
+
+    <string name="delete_list">Delete list</string>
+    <string name="delete_list_confirmation_message">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
+    <string name="delete">Delete</string>
+
+    <string name="save_to_list">Save to list</string>
+    <string name="create_new_list">Create new list</string>
+
 </resources>

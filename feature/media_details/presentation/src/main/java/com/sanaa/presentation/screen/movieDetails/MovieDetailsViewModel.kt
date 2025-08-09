@@ -1,8 +1,11 @@
 package com.sanaa.presentation.screen.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -12,13 +15,18 @@ import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
-import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import repository.SavedMovieStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -32,6 +40,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val savedMovieStatusProvider: SavedMovieStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -44,7 +53,20 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        updateUserStatus()
+        fetchUserRating()
+        updateUserLoginState()
+
+        viewModelScope.launch {
+            savedMovieStatusProvider.savedIds.collect { savedIds ->
+                updateState { current ->
+                    current.copy(
+                        movieDetails = current.movieDetails.copy(
+                            isBookmarked = savedIds.contains(current.movieDetails.id)
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onBackClick() {
@@ -59,12 +81,34 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onReadMoreClick() {}
 
-    override fun onBookmarkClick(movieId: Int) {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
+    override fun onBookmarkClick(movie: MovieUiModel) {
+        if (!state.value.isUserLoggedIn) {
             promptLogin(LoginPromptType.BOOKMARK)
+            return
         }
 
+        if (movie.isBookmarked) {
+            savedMovieStatusProvider.markUnsaved(movie.id)
+        } else {
+            updateState {
+                it.copy(
+                    showSaveToListBottomSheet = true,
+                    selectedMediaId = movie.id
+                )
+            }
+        }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        updateState { it.copy(showSaveToListBottomSheet = false) }
+    }
+
+    override fun onCreateNewListClick() {
+        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        updateState { it.copy(showAddListBottomSheet = false) }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -139,7 +183,9 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = { loadMovieDetails(movieId) },
+            callee = {
+                loadMovieDetails(movieId)
+            },
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
@@ -168,15 +214,33 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-        return createPagingFlow(
+        val pagingFlow = createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = Movie::toUiModel
         )
+
+        return pagingFlow.combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { movieUiModel ->
+                movieUiModel.copy(isBookmarked = savedIds.contains(movieUiModel.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
+        }
+    }
+
+    private fun fetchUserRating() {
+        if (state.value.isUserLoggedIn) {
+            tryToCollect(
+                callee = { getCurrentUserRating(movieId) },
+                onCollect = { rating ->
+                    updateState { it.copy(imdbRating = rating) }
+                },
+            )
+
         }
     }
 
@@ -186,14 +250,12 @@ class MovieDetailsViewModel @Inject constructor(
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
         val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
-        val ratingDeferred = async { getCurrentUserRating(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
         val movie = movieDeferred.await()
         val cast = castDeferred.await()
         val images = imagesDeferred.await()
         val trailerUrl = trailerDeferred.await()
-        val currentMovieRating = ratingDeferred.await()
         val similar = similarDeferred.await()
 
         addMovieToHistory(movie)
@@ -203,20 +265,28 @@ class MovieDetailsViewModel @Inject constructor(
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,
-                imdbRating = currentMovieRating
             )
         }
 
     }
 
 
-    private suspend fun getCurrentUserRating(movieId: Int): Int {
-        val userId = getLoggedInUserUseCase.getLoggedInUser().id
-        return try {
-            manageMovieDetails.getMovieRate(userId, movieId)
-        } catch (e: Exception) {
-            0
-        }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun getCurrentUserRating(movieId: Int): Flow<Int> {
+        return getLoggedInUserUseCase.getLoggedInUser()
+            .flatMapLatest { user ->
+                flow {
+                    try {
+                        val rating = manageMovieDetails.getMovieRate(
+                            user.id,
+                            movieId
+                        )
+                        emit(rating)
+                    } catch (_: Exception) {
+                        emit(0)
+                    }
+                }
+            }
     }
 
     private suspend fun submitMovieRating() {
@@ -232,25 +302,29 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateUserLoginState() {
-        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        isUserLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
-    fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
-    }
 
-    private suspend fun addMovieToHistory(movie: Movie) {
-        val user = try {
-            getLoggedInUserUseCase.getLoggedInUser()
-        } catch (_: NoLoggedInUserException) {
-            null
-        }
-        if (user == null) return
-        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-            mediaHistoryItem = movie.toHistory(),
-            username = user.username
+    private fun addMovieToHistory(movie: Movie) {
+        tryToCollect(
+            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            onCollect = { user ->
+                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+                    mediaHistoryItem = movie.toHistory(),
+                    username = user.username
+                )
+            }
         )
     }
 

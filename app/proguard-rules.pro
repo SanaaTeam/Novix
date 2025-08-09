@@ -114,3 +114,50 @@
 # With R8 full mode generic signatures are stripped for classes that are not kept.
 -keep,allowobfuscation,allowshrinking class retrofit2.Response
 -dontwarn com.sanaa.presentation.api.MediaDetailsApiImpl
+
+# Keep Kotlin serialization metadata
+-keep class kotlinx.serialization.** { *; }
+-keep class kotlinx.serialization.internal.** { *; }
+-keepclassmembers class ** {
+    @kotlinx.serialization.Serializable <fields>;
+}
+-keepclasseswithmembers class * {
+    @kotlinx.serialization.Serializable <init>(...);
+}
+# Prevent obfuscation but allow shrinking
+-keepnames class com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
+-keepclassmembers class com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto {
+    <fields>;
+    <methods>;
+}
+# Keep MediaHistoryItem and its fields
+-keepclassmembers class entity.MediaHistoryItem {
+    *;
+}
+
+-keep class entity.MediaHistoryItem { *; }
+-keep class entity.Genre { *; }
+-keep class usecase.search.search_param.MediaType { *; }
+
+# For Room Entities
+-keep class com.sanaa.vod.dataSource.local.history.dto.watchedMedia.** { *; }
+
+# For Entity used with Gson or serialization
+-keep class entity.** { *; }
+
+# Keep enums and generics
+-keepclassmembers enum * { *; }
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+# Keep route classes used with kotlinx.serialization
+-keep class com.sanaa.presentation.api.navigation.** { *; }
+-keepclassmembers class com.sanaa.presentation.api.navigation.** { *; }
+-keep @kotlinx.serialization.Serializable class * { *; }
+-keepattributes *Annotation*
+-keep class com.sanaa.presentation.api.navigation.MainScreenRoute { *; }
+-keep class com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute { *; }
+-keep class com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute { *; }
+-keep class com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute { *; }
+-keep class com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute { *; }
+-keep class com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute { *; }

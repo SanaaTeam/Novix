@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="my_list_is_empty">" my list is empty"</string>
+    <string name="saved_list">Saved list</string>
+    <string name="there_is_no_saved_list_yet_click_on_button_to_add_a_new_list">There is no saved list yet, click on + button to add a new list!</string>
+    <string name="please_login_to_create_lists_and_add_your_favorite_items_to_it">Please login to create lists and add your favorite items to it!</string>
+    <string name="my_lists">My Lists</string>
+    <string name="login">Login</string>
+    <string name="added_to_list_successfully">Added list successfully</string>
+    <string name="added_to_list_failed">Added list Failed</string>
+    <string name="edited_to_list_successfully">Edited list successfully</string>
+    <string name="edited_to_list_failed">Edited list Failed</string>
+
+    <string name="arrow_right">arrow</string>
+    <string name="my_list">My List</string>
+    <string name="all">All</string>
+    <string name="movies">Movies</string>
+    <string name="tvshows">TV shows</string>
+    <string name="deleted_list_failed">Deleted list Failed</string>
+    <string name="deleted_list_successfully">Deleted list successfully</string>
+</resources>

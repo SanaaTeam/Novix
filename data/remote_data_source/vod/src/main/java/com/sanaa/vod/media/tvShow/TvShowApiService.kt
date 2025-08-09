@@ -14,6 +14,7 @@ import com.sanaa.vod.media.tvShow.response.TvShowImagesResponse
 import com.sanaa.vod.media.tvShow.response.TvShowReviewsResponse
 import com.sanaa.vod.media.tvShow.response.TvShowVideosResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -127,4 +128,10 @@ interface TvShowApiService {
         @Path("account_id") accountId: Long,
         @Query("session_id") sessionId: String,
     ): MovieApiResponse<EpisodeDto>
+
+    @DELETE("tv/{tvShow_id}/rating")
+    suspend fun deleteTvShowRating(
+        @Path("tvShow_id") tvShowId: Int,
+        @Query("session_id") sessionId: String
+    ): RatingResponse
 }

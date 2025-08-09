@@ -26,9 +26,11 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.review.components.EmptyReviewsContent
 import com.sanaa.presentation.screen.review.components.ReviewCard
+import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ReviewsScreen(
@@ -64,7 +66,7 @@ fun ReviewsScreenContent(
             TopBar(
                 screenTitle = stringResource(id = R.string.reviews), leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_back),
+                        icon = painterResource(designR.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 })
@@ -79,7 +81,8 @@ fun ReviewsScreenContent(
             if (state.noInternetConnection) {
                 NetworkDisconnectionContact(
                     onRetryClick = { interactionListener.onRetryClicked() },
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    useDarkTheme = LocalThemeProvider.current
                 )
             } else {
                 AnimatedContent(

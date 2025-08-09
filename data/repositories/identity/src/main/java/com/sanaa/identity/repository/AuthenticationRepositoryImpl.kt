@@ -7,9 +7,12 @@ import com.sanaa.identity.dataSoruce.local.mapper.toEntity
 import com.sanaa.identity.network.AuthenticationApiService
 import com.sanaa.identity.network.body.LoginPostBody
 import com.sanaa.identity.network.response.CreateSessionResponse
+import com.sanaa.identity.util.getAvatarUrl
 import com.sanaa.identity.util.wrapApiCall
 import entity.User
 import exceptions.NoLoggedInUserException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import repository.AuthenticationRepository
 import javax.inject.Inject
 
@@ -31,7 +34,8 @@ class AuthenticationRepositoryImpl @Inject constructor(
                     UserDto(
                         id = account.id,
                         name = account.name.orEmpty(),
-                        username = account.username.orEmpty()
+                        username = account.username.orEmpty(),
+                        profileImageUrl = account.getAvatarUrl().orEmpty()
                     )
                 )
             }
@@ -44,13 +48,18 @@ class AuthenticationRepositoryImpl @Inject constructor(
         preferences.updateSessionId(response.guestSessionId)
     }
 
-    override suspend fun getLoggedUser(): User {
+    override fun getLoggedUser(): Flow<User> {
         return userLocalDataSource.getLoggedUser()
-            ?.toEntity() ?: throw NoLoggedInUserException()
+            .map { dto ->
+                dto?.toEntity() ?: throw NoLoggedInUserException()
+            }
+
     }
 
-    override suspend fun isLoggedIn(): Boolean = wrapApiCall {
-        return userLocalDataSource.getLoggedUser() != null
+    override fun isLoggedIn(): Flow<Boolean> {
+        return userLocalDataSource.getLoggedUser().map {
+            it != null
+        }
     }
 
     override suspend fun logout() {

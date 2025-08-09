@@ -58,4 +58,5 @@ class LocalHistoryDataSourceImpl @Inject constructor(
     ): Flow<List<WatchedMediaHistoryLocalDto>> {
         return watchedMediaHistoryDao.getWatchedMediaHistory(username, mediaType?.name, genreId?.toString())
     }
+
 }

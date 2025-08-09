@@ -11,9 +11,9 @@ import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiSt
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import entity.TvSeries
 import exceptions.NoNetworkException
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -39,14 +39,16 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     fun updateUserLoggingStatus(){
-        viewModelScope.launch {
-            val isLoggedIn = checkIfUserIsLoggedInUseCase.isLoggedIn()
-            updateState {
-                it.copy(
-                    userIsLoggedIn = isLoggedIn
-                )
-            }
-        }
+        tryToCollect(
+            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            onCollect = { isLogged ->
+                updateState {
+                    it.copy(
+                        userIsLoggedIn = isLogged
+                    )
+                }
+            },
+        )
     }
 
     private fun fetchGenres() {
@@ -80,7 +82,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        if (!state.value.userIsLoggedIn){
+        if (!state.value.userIsLoggedIn) {
             updateState {
                 it.copy(
                     showBottomSheet = true
@@ -99,6 +101,18 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     override fun onDismissBottomSheet() {
         updateState { it.copy(showBottomSheet = false) }
+    }
+
+    override fun onDismissSaveToListBottomSheet() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onCreateNewListClick() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onDismissAddListBottomSheet() {
+        TODO("Not yet implemented")
     }
 
     private fun loadTvShows() {
