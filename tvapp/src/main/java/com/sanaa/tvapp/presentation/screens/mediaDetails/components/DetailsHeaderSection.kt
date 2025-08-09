@@ -46,7 +46,7 @@ fun DetailsHeaderSection(
         ) {
             RemoteBlurredSensitiveImage(
                 imageUrl = backgroundImageUrl,
-                modifier = Modifier.fillMaxWidth(0.8f).align(Alignment.TopEnd),
+                modifier = Modifier.fillMaxWidth().align(Alignment.TopEnd),
                 sensitiveContentThreshold = 0.2f,
                 safeContentThreshold = 0.7f,
                 placeholderContent = {

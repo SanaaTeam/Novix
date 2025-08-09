@@ -42,7 +42,7 @@ class MovieDetailsViewModel @Inject constructor(
     init {
         Log.d("test99", "ViewModel initialized")
         fetchMovieDetails(movieId)
-        updateUserStatus()
+//        updateUserStatus()
     }
 
 
@@ -67,6 +67,7 @@ class MovieDetailsViewModel @Inject constructor(
                         )
                     }
                 } else {
+                    Log.d(TAG, "fetchMovieDetails: $exception")
                     updateState {
                         it.copy(
                             isLoading = false,
@@ -82,22 +83,22 @@ class MovieDetailsViewModel @Inject constructor(
 
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         Log.d(TAG, "loadMovieDetails: called")
-        val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
+//        val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
         val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
-        val movie = movieDeferred.await()
+//        val movie = movieDeferred.await()
         val cast = castDeferred.await()
         val images = imagesDeferred.await()
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
-        Log.d(TAG, "loadMovieDetails:movie:$movie ")
+//        Log.d(TAG, "loadMovieDetails:movie:$movie ")
         updateState {
             it.copy(
-                movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
+//                movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,

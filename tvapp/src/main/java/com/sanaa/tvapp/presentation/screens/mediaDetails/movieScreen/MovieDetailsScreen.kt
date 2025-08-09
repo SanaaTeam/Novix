@@ -32,12 +32,9 @@ fun MovieDetailsScreen(
     movieDetailsViewModel:MovieDetailsViewModel = hiltViewModel()
 ) {
     val state = movieDetailsViewModel.state.collectAsState()
+    Log.d("test99", "MovieDetailsScreen:state: ${state.value}")
 
-    Text(
-        text = state.value.movieDetails.title
-    )
-    Log.d("test99", "MovieDetailsScreen:${state.value} ")
-//        MovieDetailsContent()
+        MovieDetailsContent()
 }
 
 @Composable
@@ -89,6 +86,6 @@ fun MovieDetailsContent(modifier: Modifier = Modifier) {
 @Composable
 fun DetailsPreview(modifier: Modifier = Modifier) {
     NovixTheme(isSystemInDarkTheme()) {
-        MovieDetailsScreen()
+        MovieDetailsContent()
     }
 }
