@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.bottomsheet.saveToListBottomsheet
+package com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet
 
 data class SaveToListUiState(
     val playlists: List<PlaylistUiItem> = emptyList(),

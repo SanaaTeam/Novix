@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.bottomsheet.saveToListBottomsheet
+package com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

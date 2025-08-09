@@ -32,7 +32,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
 import com.sanaa.presentation.screen.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
-import com.sanaa.presentation.screen.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet.SaveToListBottomSheet
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection

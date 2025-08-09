@@ -1,19 +1,26 @@
 package com.sanaa.presentation.screen.bottomsheet.addEditBookmark
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import kotlinx.coroutines.launch
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState(),dispatcher) {
+    private val listsStatusProvider: SavedListsStatusProvider,
+) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
+
+
+    init {
+        viewModelScope.launch {
+            listsStatusProvider.refreshLists()
+        }
+    }
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -38,7 +45,17 @@ class AddBookmarkListViewModel @Inject constructor(
             onSuccess = {
                 resetState()
                 emitEffect(Unit)
-                savedMovieStatusProvider.markSaved(mediaId)
+                listsStatusProvider.markItemSaved(mediaId)
+                listsStatusProvider.addList(
+                    SavedList(
+                        title = it.title,
+                        itemCount = it.itemCount,
+                        id = it.id
+                    )
+                )
+                viewModelScope.launch {
+                    listsStatusProvider.refreshLists()
+                }
             },
             onError = {
                 updateState {

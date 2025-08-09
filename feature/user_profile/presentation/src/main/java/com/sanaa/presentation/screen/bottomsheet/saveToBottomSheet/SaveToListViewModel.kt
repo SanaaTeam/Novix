@@ -1,51 +1,47 @@
-package com.sanaa.presentation.screen.bottomsheet.saveToListBottomsheet
+package com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import kotlinx.coroutines.launch
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
-    private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
+    private val listsStatusProvider: SavedListsStatusProvider,
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()) {
 
     init {
-        loadPlaylists()
+        observePlaylists()
     }
 
-    private fun loadPlaylists() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
-
-        tryToExecute(
-            callee = { manageSavedListsUseCase.getSavedLists() },
-            onSuccess = { domainLists ->
-                val uiLists = domainLists.map { savedList ->
-                    PlaylistUiItem(
-                        id = savedList.id.toLong(),
-                        title = savedList.title,
-                        itemCount = savedList.itemCount
+    private fun observePlaylists() {
+        tryToCollect(
+            callee = { listsStatusProvider.savedLists },
+            onCollect = { playlist ->
+                updateState {
+                    it.copy(
+                        playlists = playlist.map {
+                            PlaylistUiItem(
+                                title = it.title,
+                                itemCount = it.itemCount,
+                                id = it.id.toLong()
+                            )
+                        }
                     )
                 }
-                updateState { it.copy(isLoading = false, playlists = uiLists) }
             },
-            onError = {
-                updateState { it.copy(isLoading = false, errorMessage = "Failed to load lists.") }
-            }
         )
     }
 
     fun onPlaylistSelected(listId: Long) {
         updateState {
             it.copy(
-                selectedListId = listId, isAddButtonEnabled = true
+                selectedListId = listId,
+                isAddButtonEnabled = true
             )
         }
     }
@@ -65,8 +61,10 @@ class SaveToListViewModel @Inject constructor(
             },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
-                savedMovieStatusProvider.markSaved(mediaId.toInt())
-                loadPlaylists()
+                listsStatusProvider.markItemSaved(mediaId.toInt())
+                viewModelScope.launch {
+                    listsStatusProvider.refreshLists()
+                }
                 emitEffect(SaveToListEffect.AddedSuccessfully)
             },
             onError = {
