@@ -29,6 +29,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.playlist.SnackData
+import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -39,15 +41,35 @@ fun AddBookmarkListBottomSheet(
 ) {
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
 
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
     }
 
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            handleDismiss()
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                AddBookmarkEffect.AddSuccess -> {
+                    handleDismiss()
+                    snack = SnackData(
+                        message = "Created list successfully",
+                        isError = false
+                    )
+                }
+
+                AddBookmarkEffect.AddFailure -> {
+                    snack = SnackData(
+                        message = "Failed to create list",
+                        isError = true
+                    )
+                }
+            }
         }
     }
 
@@ -56,7 +78,7 @@ fun AddBookmarkListBottomSheet(
         onDismiss = handleDismiss,
         state = state,
         onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = {viewModel.onAddClicked(mediaId)}
+        onAddClick = { viewModel.onAddClicked(mediaId) }
     )
 }
 
