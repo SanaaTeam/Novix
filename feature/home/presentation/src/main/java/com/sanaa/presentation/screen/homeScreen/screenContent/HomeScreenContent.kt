@@ -86,7 +86,7 @@ fun HomeScreenContent(
             && state.continueWatchingMedia.isEmpty())
 
     LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternet) {
+        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternetConnection) {
             snack = SnackData(
                 message = errorMessage, isError = true
 
