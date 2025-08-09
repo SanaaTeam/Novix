@@ -1,6 +1,6 @@
 package service
 
-interface StringProvider {
+interface IdentityStringProvider {
     val welcomeBack: String
     val noInternetConnectionError: String
     val invalidUserNameAndPasswordError: String

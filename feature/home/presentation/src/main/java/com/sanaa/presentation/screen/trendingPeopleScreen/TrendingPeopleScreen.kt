@@ -1,35 +1,40 @@
-package com.sanaa.presentation.screen.celebritiesScreen
+package com.sanaa.presentation.screen.trendingPeopleScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.RefreshButton
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.providers.LocalThemeProvider
@@ -38,8 +43,8 @@ import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
-fun CelebritiesScreen(
-    viewModel: CelebritiesViewModel = hiltViewModel()
+fun TrendingPeopleScreen(
+    viewModel: TrendingPeopleViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
@@ -51,84 +56,85 @@ fun CelebritiesScreen(
             .detailsApi()
     }
 
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is CelebritiesScreenEffects.NavigateBack -> {
+                is TrendingPeopleScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                is CelebritiesScreenEffects.NavigateToActorDetails -> {
+                is TrendingPeopleScreenEffect.NavigateToActorDetails -> {
                     detailsApi.launch(
                         context = navController.context,
                         id = effect.actorId,
                         startRoute = StartRoute.ACTOR
                     )
                 }
+
+                is TrendingPeopleScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+                }
             }
         }
     }
 
-    CelebritiesContent(
-        state = state.value, interactionListener = viewModel
-    )
+    Box(modifier = Modifier.systemBarsPadding()) {
+
+        TrendingPeopleScreenContent(
+            state = state.value,
+            interactionListener = viewModel
+        )
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
+    }
 }
 
 @Composable
-fun CelebritiesContent(
-    state: CelebritiesScreenUiState,
-    interactionListener: CelebritiesScreenInteractionListener,
+fun TrendingPeopleScreenContent(
+    state: TrendingPeopleScreenUiState,
+    interactionListener: TrendingPeopleScreenInteractionListener,
+    modifier: Modifier = Modifier
 ) {
-    val celebrities = state.celebrities.collectAsLazyPagingItems()
+    val people = state.people.collectAsLazyPagingItems()
 
-    NovixScaffold {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .navigationBarsPadding()
-        ) {
+    NovixScaffold(
+        topBar = {
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.arrow_left_04),
+                        icon = painterResource(id = R.drawable.icon_back),
                         onClick = interactionListener::onBackClick
                     )
                 },
                 screenTitle = stringResource(id = R.string.trending_people),
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
-                    .systemBarsPadding()
+                    .padding(top = 12.dp)
             )
-
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(), contentAlignment = Alignment.Center
-            ) {
-                AnimatedContent(
-                    targetState = state.isLoading to state.isNoInternetConnection,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() },
-                    contentAlignment = Alignment.Center
-                ) { (loading, disconnected) ->
-                    when {
-                        disconnected -> {
-                            NetworkDisconnectionContact(
-                                useDarkTheme = LocalThemeProvider.current,
-                                onRetryClick ={interactionListener.onRetryClick()},
-                            )
-                        }
-
-                        loading -> {
-                            LoadingIndicator()
-                        }
-
-                        else -> {
-                            PersonList(
-                                persons = celebrities,
-                                onItemClick = interactionListener::onActorClick
-                            )
-                        }
-                    }
+        }
+    ) {
+        AnimatedContent(
+            targetState = state.isNoInternetConnection && (people.itemCount == 0),
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) { showNoInternetScreen ->
+            if (showNoInternetScreen) {
+                NetworkDisconnectionContact(
+                    onRetryClick = interactionListener::onRetryClick,
+                    useDarkTheme = LocalThemeProvider.current,
+                )
+            } else {
+                PersonList(
+                    persons = people,
+                    onItemClick = interactionListener::onActorClick
+                )
+                if (people.loadState.hasError) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
             }
         }

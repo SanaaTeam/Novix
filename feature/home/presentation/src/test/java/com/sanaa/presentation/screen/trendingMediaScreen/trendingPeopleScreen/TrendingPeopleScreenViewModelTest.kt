@@ -1,10 +1,10 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.celebritiesScreen
+package com.sanaa.presentation.screen.trendingMediaScreen.trendingPeopleScreen
 
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesScreenEffects
-import com.sanaa.presentation.screen.celebritiesScreen.CelebritiesViewModel
+import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreenEffect
+import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleViewModel
 import com.sanaa.presentation.state.toState
 import entity.Actor
 import io.mockk.coEvery
@@ -17,17 +17,19 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
+import service.VodStringProvider
 import usecase.ManageActorUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class CelebritiesViewModelTest {
+class TrendingPeopleScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var viewModel: CelebritiesViewModel
+    private lateinit var viewModel: TrendingPeopleViewModel
     private lateinit var manageActorUseCase: ManageActorUseCase
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -39,9 +41,9 @@ class CelebritiesViewModelTest {
     fun `init should fetch actors and update state on creation`() = runTest {
         coEvery { manageActorUseCase.getTrendingActors(any()) } returns actors
 
-        viewModel = CelebritiesViewModel(manageActorUseCase, testDispatcher)
+        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
-        val pagingData = viewModel.state.value.celebrities
+        val pagingData = viewModel.state.value.people
         val items = pagingData.asSnapshot()
 
         assertThat(items.take(actors.size)).isEqualTo(actors.map { it.toState() })
@@ -49,23 +51,23 @@ class CelebritiesViewModelTest {
 
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
-        viewModel = CelebritiesViewModel(manageActorUseCase)
+        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
 
         viewModel.onBackClick()
 
         val effect = viewModel.effect.first()
-        assertEquals(CelebritiesScreenEffects.NavigateBack, effect)
+        assertEquals(TrendingPeopleScreenEffect.NavigateBack, effect)
     }
 
     @Test
     fun `onActorClick should emit NavigateToActorDetails effect with correct id`() = runTest {
         val actorId = 42
-        viewModel = CelebritiesViewModel(manageActorUseCase)
+        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
 
         viewModel.effect.test {
             viewModel.onActorClick(actorId)
             val item = awaitItem()
-            assertThat(item).isEqualTo(CelebritiesScreenEffects.NavigateToActorDetails(actorId))
+            assertThat(item).isEqualTo(TrendingPeopleScreenEffect.NavigateToActorDetails(actorId))
         }
     }
 

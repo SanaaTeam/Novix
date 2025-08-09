@@ -1,5 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,8 +34,6 @@ fun TrendingMoviesScreen(
 ) {
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -50,6 +50,8 @@ fun TrendingMoviesScreen(
     val launcher = launchAuthActivityForResult()
 
     val state = viewModel.state.collectAsStateWithLifecycle()
+
+    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -69,36 +71,40 @@ fun TrendingMoviesScreen(
                 is TrendingMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
+
+                is TrendingMediaScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
+                }
+                is TrendingMediaScreenEffect.ShowSuccess -> {
+                    snack = SnackData(message = effect.message, isError = false)
+                }
             }
         }
     }
-    TrendingMediaScreenContent(
-        title = stringResource(R.string.trending_movies),
-        state = state.value,
-        interactionListener = viewModel,
-        modifier = modifier,
-    )
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
-    if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
-        SaveToListBottomSheet(
-            isVisible = state.value.showSaveToListBottomSheet,
-            mediaId = state.value.selectedMediaId!!.toLong(),
-            onDismiss = viewModel::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = viewModel::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
+
+    Box(modifier = Modifier.systemBarsPadding()) {
+
+        TrendingMediaScreenContent(
+            title = stringResource(R.string.trending_movies),
+            state = state.value,
+            interactionListener = viewModel,
+            modifier = modifier,
         )
+
+        NovixAnimatedSnackBarHost(
+            data = snack, onDismiss = { snack = null }
+        )
+
+        if (state.value.showSaveToListBottomSheet && state.value.selectedMediaId != null) {
+            SaveToListBottomSheet(
+                isVisible = state.value.showSaveToListBottomSheet,
+                mediaId = state.value.selectedMediaId!!.toLong(),
+                onDismiss = viewModel::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = viewModel::onCreateNewListClick,
+                onSuccess = viewModel::onSaveToListSuccess,
+                onFailure = viewModel::onSaveToListFailure,
+            )
+        }
     }
     AddBookmarkListBottomSheet(
         isVisible = state.value.showAddListBottomSheet,
