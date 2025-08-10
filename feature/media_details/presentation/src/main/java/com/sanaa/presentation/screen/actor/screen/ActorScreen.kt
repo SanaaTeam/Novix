@@ -41,10 +41,9 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
@@ -62,7 +61,6 @@ import com.sanaa.presentation.screen.actor.componants.MediaSection
 import com.sanaa.presentation.screen.actor.componants.PosterCard
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.shared_component.ImageSlider
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -263,9 +261,12 @@ private fun ActorScreenContent(
                                 items = state.topTvSeries.take(10),
                                 onActionClick = listener::onTopSeriesClicked
                             ) { series ->
-                                PosterCard(series.posterPath, onCardClick = {
-                                    listener.onSeriesClicked(series.id)
-                                },)
+                                PosterCard(
+                                    series.posterPath,
+                                    onCardClick = {
+                                        listener.onSeriesClicked(series.id)
+                                    },
+                                )
                             }
                         }
                     }
@@ -281,25 +282,12 @@ private fun ActorScreenContent(
                 }
             )
         }
-        NovixAnimatedSnackBarHost(
-            data = snack, onDismiss = { snack = null })
+
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
             mediaId = state.selectedMediaToSave?.id?.toLong() ?: 0,
             onDismiss = listener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = listener::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
         )
         if (state.showAddListBottomSheet && state.selectedMediaToSave?.id != null) {
             AddBookmarkListBottomSheet(

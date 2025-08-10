@@ -109,7 +109,7 @@ fun PopularMoviesCarousel(
             CarouselItemForeground()
             MediaInfo(mediaItem = mediaItem, isFocused = isFocused)
         },
-        autoScrollDurationMillis = 2.seconds.inWholeMilliseconds,
+        autoScrollDurationMillis = 5.seconds.inWholeMilliseconds,
         contentTransformStartToEnd = fadeIn(tween(durationMillis = 500))
             .togetherWith(fadeOut(tween(durationMillis = 500))),
         contentTransformEndToStart = fadeIn(tween(durationMillis = 500))

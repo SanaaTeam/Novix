@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,9 +44,16 @@ import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
+import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.designsystem.R as dosingSystemResource
 import com.sanaa.tvapp.R as tvResource
+import com.sanaa.tvapp.state.MediaTypeUi
+import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
@@ -124,10 +132,10 @@ fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaIt
             }
         }
 
-        if (state.continueWatchingMedia.isNotEmpty()) {
+        if (state.continueWatchingMovies.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMedia,
+                    items = state.continueWatchingMovies,
                     key = { it.id }
                 ) {
                     ImageList(it)
@@ -159,10 +167,10 @@ fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaI
             }
         }
 
-        if (state.continueWatchingMedia.isNotEmpty()) {
+        if (state.continueWatchingTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMedia,
+                    items = state.continueWatchingTvShows,
                     key = { it.id }
                 ) {
                     ImageList(it)

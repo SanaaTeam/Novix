@@ -1,8 +1,9 @@
 [versions]
 # Project Config
+conscryptAndroid = "2.5.2"
+
 appcompatVersion = "1.6.1"
 compileSdk = "35"
-conscryptAndroid = "2.5.2"
 converterGson = "3.0.0"
 datastore = "1.1.7"
 datastoreVersion = "1.1.1"
@@ -73,7 +74,6 @@ runtimeAndroid = "1.8.3"
 foundationAndroid = "1.8.3"
 tvFoundation = "1.0.0-alpha12"
 tvMaterial = "1.0.1"
-
 [libraries]
 # AndroidX
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

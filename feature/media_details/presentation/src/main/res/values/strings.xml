@@ -34,4 +34,8 @@
     <string name="submit_rating_successfully">Submit rating successfully</string>
     <string name="submit_rating_failed">Submit rating failed</string>
     <string name="please_login_to_rate_your_favorite_items">Please login to rate your favorite items.</string>
+    <string name="created_list_successfully">Created list successfully</string>
+    <string name="failed_to_create_list">Failed to create list</string>
+    <string name="added_to_list_successfully">Added to list successfully</string>
+    <string name="added_to_list_failed">Added to list failed</string>
 </resources>

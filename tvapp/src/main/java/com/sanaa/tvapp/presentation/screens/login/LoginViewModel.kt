@@ -6,7 +6,7 @@ import exceptions.InvalidUserOrPasswordException
 import exceptions.NoInternetConnectionException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import service.StringProvider
+import service.IdentityStringProvider
 import usecase.LoginUseCase
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val stringProvider: StringProvider,
+    private val stringProvider: IdentityStringProvider,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TvBaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
     LoginScreenInteractionListener {
@@ -51,11 +51,12 @@ class LoginViewModel @Inject constructor(
                     val updated = prev.copy(isLoading = false)
                     updated.copy(canSubmit = isSubmitAllowed(updated))
                 }
-                emitEffect(LoginScreenEffects.ShowSuccess(stringProvider.loginSuccess))
+                emitEffect(LoginScreenEffects.ReturnGuestResultCode)
             },
             onError = ::onDataLoadError
         )
     }
+
 
     fun onDataLoadError(throwable: Throwable) {
         updateState { prev ->
@@ -77,8 +78,9 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    override fun onContinueClicked() = emitEffect(LoginScreenEffects.ReturnGuestResultCode)
-
+    override fun onContinueClicked() {
+        emitEffect(LoginScreenEffects.ReturnGuestResultCode)
+    }
     private fun isSubmitAllowed(uiState: LoginUiState): Boolean =
         uiState.username.isNotBlank() &&
                 uiState.password.isNotBlank() &&

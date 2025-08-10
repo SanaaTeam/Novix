@@ -13,7 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import javax.inject.Inject
@@ -23,7 +23,7 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider
+    private val savedListsStatusProvider: SavedListsStatusProvider
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -35,7 +35,7 @@ class ActorViewModel @Inject constructor(
         updateUserLoggingStatus()
         loadDetails()
         viewModelScope.launch {
-            savedMovieStatusProvider.savedIds.collect { savedIds ->
+            savedListsStatusProvider.savedIds.collect { savedIds ->
                 updateState { current ->
                     current.copy(
                         topMovies = current.topMovies.map { movie ->
@@ -101,7 +101,7 @@ class ActorViewModel @Inject constructor(
         }
 
         if (movie.isSaved) {
-            savedMovieStatusProvider.markUnsaved(movie.id)
+            savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
                 it.copy(

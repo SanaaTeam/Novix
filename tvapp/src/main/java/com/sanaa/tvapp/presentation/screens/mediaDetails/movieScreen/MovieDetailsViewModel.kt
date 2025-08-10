@@ -112,7 +112,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateBack)
     }
 
     override fun onWatchTrailerClick() {
@@ -120,7 +120,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -128,11 +128,11 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToLogin)
     }
 
     override fun onActorCardClick(actorId: Int) {
-        TODO("Not yet implemented")
+        emitEffect(MovieDetailsScreenUiEffect.NavigateToActorScreen(actorId))
     }
 
     override fun onRetryLoadDetails() {

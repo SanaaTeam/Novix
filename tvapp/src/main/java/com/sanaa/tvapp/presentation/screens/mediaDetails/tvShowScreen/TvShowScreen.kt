@@ -46,11 +46,15 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.state.SnackData
 
 
 @Composable
 fun TvShowScreen(
+    tvShowId:Int,
     modifier: Modifier = Modifier,
     viewModel: TvShowDetailsScreenViewModel = hiltViewModel(),
 ) {
@@ -59,24 +63,24 @@ fun TvShowScreen(
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val navController = LocalAppNavController.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
                 TvShowDetailsScreenEffects.NavigateBack -> {
-//                    TODO()
-                }
+                     navController.popBackStack()
+            }
 
                 is TvShowDetailsScreenEffects.NavigateToActorScreen -> {
-//                    TODO()
-                }
+                    navController.navigate(ActorDetails(it.actorId))                  }
 
                 is TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen -> {
 //                    TODO()
                 }
 
                 TvShowDetailsScreenEffects.NavigateToLogin -> {
-//                    TODO()
+                    navController.navigate(Login)
                 }
 
                 is TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen -> {

@@ -34,7 +34,6 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 fun TvShowsContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     onTvShowClick: (RecentViewedUiModel, TvShowUiModel) -> Unit,
-    onSaveIconClicked: () -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Adaptive(minSize = 140.dp),
@@ -73,11 +72,6 @@ fun TvShowsContent(
                                 icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                             )
                         }
-                    },
-                    topLeftContent = {
-                        SaveIconChip(onClick = {
-                            onSaveIconClicked()
-                        })
                     },
                     onCardClick = {
                         onTvShowClick(

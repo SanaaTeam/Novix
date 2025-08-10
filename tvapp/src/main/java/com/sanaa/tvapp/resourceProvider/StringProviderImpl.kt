@@ -3,12 +3,12 @@ package com.sanaa.tvapp.resourceProvider
 import android.content.Context
 import com.sanaa.tvapp.R
 import dagger.hilt.android.qualifiers.ApplicationContext
-import service.StringProvider
+import service.IdentityStringProvider
 import javax.inject.Inject
 
 class StringProviderImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : StringProvider {
+) : IdentityStringProvider {
     override val welcomeBack: String
         get() = context.getString(R.string.welcome_back)
 

@@ -11,7 +11,7 @@ import javax.inject.Inject
 class DeleteListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<DeleteListUiState, Unit>(DeleteListUiState(),dispatcher) {
+) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(),dispatcher) {
 
     fun onDeleteConfirmed(listId: Long) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
@@ -20,9 +20,10 @@ class DeleteListViewModel @Inject constructor(
             callee = { manageSavedListsUseCase.deleteSavedList(listId.toInt()) },
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
-                emitEffect(Unit)
+                emitEffect(DeleteListEffect.DeleteSuccess)
             },
             onError = { e ->
+                emitEffect(DeleteListEffect.DeleteFailure)
                 updateState {
                     it.copy(
                         isLoading = false,

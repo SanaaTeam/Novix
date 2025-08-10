@@ -43,25 +43,31 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
+
 import com.sanaa.tvapp.state.SnackData
 
 
 @Composable
 fun MovieDetailsScreen(
+    movieId: Int,
     modifier: Modifier = Modifier,
     viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
+    val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                MovieDetailsScreenUiEffect.NavigateBack -> {}
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> TODO()
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> TODO()
-                MovieDetailsScreenUiEffect.NavigateToLogin -> TODO()
+                MovieDetailsScreenUiEffect.NavigateBack -> { navController.popBackStack()}
+                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
+                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
+                MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
                 is MovieDetailsScreenUiEffect.OpenTrailer -> TODO()
                 MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
                 MovieDetailsScreenUiEffect.ShowSuccessSnackBar -> TODO()
