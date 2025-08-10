@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.flowOf
 data class HomeScreenUiState(
     val featuredCarousel: FeaturedCarouselState = FeaturedCarouselState(),
     val popularMedia: List<MediaItem> = emptyList(),
-    val topRatingMedia: List<MediaItem> = emptyList(),
-    val continueWatchingMedia: List<MediaItem> = emptyList(),
+    val topRatingMovies: List<MediaItem> = emptyList(),
+    val topRatingTvShows: List<MediaItem> = emptyList(),
+    val continueWatchingMovies: List<MediaItem> = emptyList(),
+    val continueWatchingTvShows: List<MediaItem> = emptyList(),
     val upcomingMovies: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
     val movieGenres: List<GenreUiState> = emptyList(),
     val movieSelectedGenreId: Int? = null,

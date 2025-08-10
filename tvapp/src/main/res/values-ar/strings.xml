@@ -12,4 +12,22 @@
     <string name="enter_username_password_error">يرجى ادخال الحساب وكلمة السر</string>
     <string name="something_went_wrong_error">حدث خطأ ما، يرجى المحاولة لاحقًا</string>
     <string name="login_success">تم تسجيل الدخول بنجاح</string>
+    <string name="more_like_this">أعمال مشابهة</string>
+    <string name="rate_it">امنح تقييمك</string>
+    <string name="submit">إرسال</string>
+    <string name="cast">طاقم العمل</string>
+    <string name="select_how_much_you_like_it">اختر مدى إعجابك به</string>
+    <string name="play_trailer">عرض المقطع الدعائي</string>
+    <string name="episode_number">الحلقة %d</string>
+    <string name="submit_rating_successfully">تم إرسال التقييم بنجاح</string>
+    <string name="submit_rating_failed">فشل في إرسال التقييم</string>
+    <string name="guest_of_honor">ضيوف الحلقة</string>
+    <string name="minutes_duration">%s د</string>
+    <string name="season">الموسم</string>
+    <string name="season_number">م%d</string>
+    <string name="episodes_count">%d حلقات</string>
+    <string name="login">تسجيل الدخول</string>
+    <string name="app_icon">أيقونة التطبيق</string>
+    <string name="continue_as_guest">المتابعة كضيف</string>
+
 </resources>

@@ -4,12 +4,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -25,6 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.tv.material3.Border
@@ -35,15 +38,19 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.tvapp.R
-import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
+import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
+import com.sanaa.tvapp.presentation.screens.home.component.MediaTab
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
+import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
+import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
+import com.sanaa.designsystem.R as dosingSystemResource
+import com.sanaa.tvapp.R as tvResource
 import com.sanaa.tvapp.state.MediaTypeUi
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 import kotlinx.coroutines.flow.collectLatest
@@ -53,40 +60,6 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
-    val navController = LocalAppNavController.current
-
-    LaunchedEffect(Unit) {
-        homeScreenViewModel.effect.collectLatest { effect ->
-            when (effect) {
-                is HomeScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> {
-                            navController.navigate(MovieDetails(effect.id))
-                        }
-                        MediaTypeUi.TV_SHOW -> {
-                            navController.navigate(TvShowDetails(effect.id))
-                        }
-                    }
-                }
-                is HomeScreenEffect.NavigateToMoviesScreen -> {
-//                    navController.navigate(MovieDetails(effect.id))
-                }
-                is HomeScreenEffect.NavigateToTvShowsScreen -> {
-//                    navController.navigate(TvShowDetails(effect.id))
-
-                }
-                is HomeScreenEffect.NavigateToPeopleScreen -> {
-//                    navController.navigate(ActorDetails(effect.id))
-                }
-                is HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
-                }
-                is HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                }
-                is HomeScreenEffect.NavigateToPlayListScreen -> {
-                }
-            }
-        }
-    }
     when {
         state.isNoInternet -> {
             NetworkDisconnectionContact(
@@ -105,38 +78,17 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
         }
 
         else -> {
-            HomeScreenContent(onMediaClick = homeScreenViewModel::onMediaClick,
-                state,
-                upcomingMovies)
+            HomeScreenContent(state, upcomingMovies)
         }
     }
 }
 
 @Composable
-private fun HomeScreenLoading(modifier: Modifier) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        FeaturedCarouselShimmer()
-
-        repeat(3) {
-            TitleShimmer()
-            ImageListShimmer()
-        }
-    }
-}
-
-@OptIn(ExperimentalTvMaterial3Api::class)
-@Composable
-fun HomeScreenContent(
-    onMediaClick: (id: Int, mediaType: MediaTypeUi) -> Unit,
-    state: HomeScreenUiState,
-    upcomingMovies: LazyPagingItems<MediaItem>
-) {
-    val scrollState = rememberScrollState()
+fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
     val sidePaddings = 36.dp
+    val scrollState = rememberScrollState()
+    val navController = rememberNavController()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,106 +102,125 @@ fun HomeScreenContent(
                 bottom = 16.dp
             ),
             mediaItems = state.popularMedia,
-            onShowDetails = { mediaItem ->
-                onMediaClick(mediaItem.id, mediaItem.mediaTypeUi)
+            onShowDetails = {}
+        )
+
+        MediaTab(sidePaddings, navController)
+
+        NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
+            composable(route = HomeMoviesTapRoute::class) {
+                HomeMovies(state, upcomingMovies)
             }
-        )
 
-        Title(
-            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-            title = stringResource(R.string.top_rated)
-        )
+            composable(route = HomeTvShowsTapRoute::class) {
+                HomeTvShows(state, upcomingMovies)
+            }
+        }
+    }
+}
 
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = sidePaddings, end = sidePaddings, bottom = 12.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+
+@Composable
+fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    Column {
+        MediaSection(title = stringResource(tvResource.string.top_rated)) {
             items(
-                items = state.topRatingMedia,
+                items = state.topRatingMovies,
                 key = { it.id }
             ) {
-                ImageList(
-                    item = it,
-                    onItemClick = onMediaClick
-                )
+                ImageList(it)
             }
         }
 
-        if (state.continueWatchingMedia.isNotEmpty()) {
-            Title(
-                modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-                title = stringResource(R.string.watching_history)
-            )
-
-            LazyRow(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = sidePaddings, end = sidePaddings, bottom = 12.dp
-                ),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
+        if (state.continueWatchingMovies.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMedia,
+                    items = state.continueWatchingMovies,
                     key = { it.id }
                 ) {
-                    ImageList(
-                        item = it,
-                        onItemClick = onMediaClick
-                    )
+                    ImageList(it)
                 }
             }
         }
 
-        Title(
-            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-            title = stringResource(R.string.up_upcoming)
-        )
-
-        LazyRow(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                start = sidePaddings, end = sidePaddings, bottom = 12.dp
-            ),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
             items(
                 count = upcomingMovies.itemCount,
             ) { index ->
                 upcomingMovies[index]?.let {
-                    ImageList(
-                        item = it,
-                        onItemClick = onMediaClick
-                    )                }
+                    ImageList(it)
+                }
             }
         }
     }
 }
 
 @Composable
-fun ImageListShimmer() {
-    Row {
-        repeat(10) {
-            PlaceholderWithShimmerEffect(
-                modifier = Modifier.padding(end = 20.dp, bottom = 24.dp),
-                width = 153.dp,
-                height = 231.dp,
-                borderColor = Color.Transparent,
-            )
+fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+    Column {
+        MediaSection(title = stringResource(tvResource.string.top_rated)) {
+            items(
+                items = state.topRatingTvShows,
+                key = { it.id }
+            ) {
+                ImageList(it)
+            }
+        }
+
+        if (state.continueWatchingTvShows.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.watching_history)) {
+                items(
+                    items = state.continueWatchingTvShows,
+                    key = { it.id }
+                ) {
+                    ImageList(it)
+                }
+            }
+        }
+
+        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
+            items(
+                count = upcomingMovies.itemCount,
+            ) { index ->
+                upcomingMovies[index]?.let {
+                    ImageList(it)
+                }
+            }
         }
     }
 }
 
 @Composable
+private fun MediaSection(
+    title: String,
+    content: LazyListScope.() -> Unit,
+) {
+    val sidePaddings = 36.dp
+
+    Title(
+        modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+        title = title
+    )
+
+    LazyRow(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(
+            start = sidePaddings, end = sidePaddings, bottom = 12.dp
+        ),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        content = content
+    )
+}
+
+
+@Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
-private fun ImageList( onItemClick: (id: Int, mediaType: MediaTypeUi) -> Unit ,item: MediaItem) {
+private fun ImageList(item: MediaItem) {
     Card(
         modifier = Modifier
             .width(153.dp)
             .height(231.dp),
-        onClick = { onItemClick(item.id, item.mediaTypeUi) },
+        onClick = {},
         colors = CardDefaults.colors(),
         border = CardDefaults.border(
             border = Border.None,
@@ -268,12 +239,12 @@ private fun ImageList( onItemClick: (id: Int, mediaType: MediaTypeUi) -> Unit ,i
             contentDescription = item.title
         ) {
             OnBlurContent(
-                hintText = stringResource(com.sanaa.designsystem.R.string.unsuitable_image),
+                hintText = stringResource(dosingSystemResource.string.unsuitable_image),
                 textStyle = Theme.textStyle.body.small.copy(
                     color = Color(0x99FFFFFF)
                 ),
                 iconSize = 24.dp,
-                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                icon = painterResource(dosingSystemResource.drawable.icon_eye_slash),
             )
         }
     }

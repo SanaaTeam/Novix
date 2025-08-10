@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.shared_component.DotSeparator
-import com.sanaa.presentation.shared_component.IconWithText
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
-import com.sanaa.designsystem.R as RDesignSystem
+import com.sanaa.designsystem.R as designSystemResource
+import com.sanaa.tvapp.R
 
 @Composable
 fun EpisodeCard(
@@ -33,9 +33,9 @@ fun EpisodeCard(
 ) {
 
     val placeholderResId = if (isSystemInDarkTheme()) {
-        RDesignSystem.drawable.icon_placeholder_dark
+        designSystemResource.drawable.icon_placeholder_dark
     } else {
-        RDesignSystem.drawable.icon_placeholder_light
+        designSystemResource.drawable.icon_placeholder_light
     }
     Row(
         modifier = modifier,

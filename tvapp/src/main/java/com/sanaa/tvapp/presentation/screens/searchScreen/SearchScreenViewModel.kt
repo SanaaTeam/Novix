@@ -228,6 +228,10 @@ class SearchScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun onSearchResultMediaClicked() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         private const val PAGE_SIZE = 20
         const val MOVIE_INDEX = 0

@@ -12,7 +12,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import repository.SavedListRepository
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class SavedListRepositoryImpl @Inject constructor(
     private val remoteSavedListDataSource: RemoteSavedListDataSource,
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val preferencesManager: PreferencesManager,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider
+    private val savedListsStatusProvider: SavedListsStatusProvider
 ) : SavedListRepository {
 
     override suspend fun getSavedLists(): List<SavedList> =
@@ -40,7 +40,7 @@ class SavedListRepositoryImpl @Inject constructor(
     override suspend fun deleteSavedList(listId: Int) {
         safeCall("Failed to delete list") {
             remoteSavedListDataSource.deleteList(obtainSessionId(), listId)
-            savedMovieStatusProvider.refresh()
+            savedListsStatusProvider.refreshItems()
         }
     }
 
@@ -51,7 +51,7 @@ class SavedListRepositoryImpl @Inject constructor(
                 listItems.map { listItem ->
                     async {
                         val movie = remoteMovieDataSource.fetchMovieDetails(listItem.id).toEntity()
-                        movie.copy(isSaved = savedMovieStatusProvider.isSaved(movie.id))
+                        movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
                     }
                 }.awaitAll()
             }
@@ -61,14 +61,14 @@ class SavedListRepositoryImpl @Inject constructor(
         safeCall("Failed to add movie to list") {
             remoteSavedListDataSource
                 .addItem(obtainSessionId(), listId, movieId)
-                .also { success -> if (success) savedMovieStatusProvider.refresh() }
+                .also { success -> if (success) savedListsStatusProvider.refreshItems() }
         }
 
     override suspend fun removeMovieFromList(listId: Int, movieId: Int): Boolean =
         safeCall("Failed to remove movie from list") {
             remoteSavedListDataSource
                 .removeItem(obtainSessionId(), listId, movieId)
-                .also { success -> if (success) savedMovieStatusProvider.refresh() }
+                .also { success -> if (success) savedListsStatusProvider.refreshItems() }
         }
 
     private suspend fun obtainSessionId(): String = preferencesManager.sessionId.first()

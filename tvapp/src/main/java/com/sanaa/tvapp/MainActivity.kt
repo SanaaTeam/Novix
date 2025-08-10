@@ -16,6 +16,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.NavBarRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavGraph
 import com.sanaa.tvapp.presentation.screens.navigation.TvNavigation
+import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 import jakarta.inject.Inject
 import usecase.CheckIfUserIsLoggedInUseCase

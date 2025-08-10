@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.designsystem.R as designSystemResource
 import kotlin.math.roundToInt
 
 @Composable
@@ -114,7 +114,7 @@ private fun Star(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.outlined_star),
+            painter = painterResource(id = designSystemResource.drawable.outlined_star),
             contentDescription = null,
             modifier = Modifier.size(28.dp),
             colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)
@@ -122,7 +122,7 @@ private fun Star(
 
         AnimatedVisibility(isSelected) {
             Image(
-                painter = painterResource(id = R.drawable.star),
+                painter = painterResource(id = designSystemResource.drawable.star),
                 contentDescription = "Rating $rating",
                 modifier = Modifier.size(28.dp),
                 colorFilter = ColorFilter.tint(Theme.colors.statusColors.yellowAccent)

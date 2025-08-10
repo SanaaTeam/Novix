@@ -216,6 +216,11 @@ novix-android-library = { id = "novix.android.library" }
 novix-android-application = { id = "novix.android.application" }
 
 [bundles]
+tv-compose = [
+    "androidx-tv-material",
+    "androidx-tv-foundation",
+]
+
 compose = [
     "androidx-ui-compose",
     "androidx-ui-compose-graphics",

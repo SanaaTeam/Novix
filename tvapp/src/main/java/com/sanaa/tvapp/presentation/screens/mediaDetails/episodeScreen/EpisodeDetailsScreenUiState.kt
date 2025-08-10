@@ -1,8 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen
 
-import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
+import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.LoginPromptType
 
 
 data class EpisodeDetailsScreenUiState(

@@ -90,7 +90,9 @@ fun PopularMoviesCarousel(
                 isFocused = it.hasFocus
             }
             .handleDPadKeyEvents(onEnter = {
-                onShowDetails(mediaItems[carouselState.activeItemIndex])
+                if (mediaItems.isNotEmpty()) {
+                    onShowDetails(mediaItems[carouselState.activeItemIndex])
+                }
             }),
         itemCount = mediaItems.size,
         carouselState = carouselState,
@@ -106,7 +108,7 @@ fun PopularMoviesCarousel(
             CarouselItemForeground()
             MediaInfo(mediaItem = mediaItem, isFocused = isFocused)
         },
-        autoScrollDurationMillis = 2.seconds.inWholeMilliseconds,
+        autoScrollDurationMillis = 5.seconds.inWholeMilliseconds,
         contentTransformStartToEnd = fadeIn(tween(durationMillis = 500))
             .togetherWith(fadeOut(tween(durationMillis = 500))),
         contentTransformEndToStart = fadeIn(tween(durationMillis = 500))
