@@ -25,11 +25,6 @@ data class TvShowDetailsScreenUiState(
         get() = imdbRating > 0
 }
 
-data class SnackData(
-    val message: String,
-    val isError: Boolean
-)
-
 enum class LoginPromptType {
     RATE,
     BOOKMARK

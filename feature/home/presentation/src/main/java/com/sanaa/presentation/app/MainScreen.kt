@@ -137,7 +137,7 @@ private sealed class BottomNavItem(
     )
 
     object Saved :
-        BottomNavItem(PlayListScreenRoute, R.drawable.icon_save, R.drawable.icon_save_selected)
+        BottomNavItem(PlayListScreenRoute, R.drawable.icon_save_unselected, R.drawable.icon_save_selected)
 
     object Profile : BottomNavItem(
         UserProfileScreenRoute, R.drawable.icon_account, R.drawable.icon_account_selected

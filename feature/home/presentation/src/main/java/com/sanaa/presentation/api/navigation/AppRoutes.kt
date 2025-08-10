@@ -20,7 +20,7 @@ object TrendingPeopleScreenRoute : AppRoute()
 object TopRatedMediaScreenRoute : AppRoute()
 
 @Serializable
-object ContinueWatchingMediaScreenRoute : AppRoute()
+object WatchingMediaHistoryScreenRoute : AppRoute()
 
 
 

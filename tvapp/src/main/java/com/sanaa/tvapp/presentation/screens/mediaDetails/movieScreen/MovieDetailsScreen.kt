@@ -18,7 +18,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,18 +30,18 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.shared_component.DotSeparator
-import com.sanaa.presentation.shared_component.IconWithText
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
+import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesPaginatedSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.state.SnackData
+import com.sanaa.tvapp.R
 
 @Composable
 fun MovieDetailsScreen(
@@ -203,11 +202,3 @@ fun MovieDetailsContent(
         }
     }
 }
-//
-//@Preview(device = Devices.TV_1080p, showBackground = true)
-//@Composable
-//fun DetailsPreview(modifier: Modifier = Modifier) {
-//    NovixTheme(isSystemInDarkTheme()) {
-//        MovieDetailsContent(state = state.value, interactionListener = viewModel)
-//    }
-//}

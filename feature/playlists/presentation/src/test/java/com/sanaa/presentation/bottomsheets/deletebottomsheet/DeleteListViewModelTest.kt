@@ -30,19 +30,17 @@ class DeleteListViewModelTest {
     }
 
     @Test
-    fun `onDeleteConfirmed on success deletes list and emits effect`() = runTest {
+    fun `onDeleteConfirmed on success deletes list and emits success effect`() = runTest {
         val listId = 123L
         coEvery { manageSavedListsUseCase.deleteSavedList(listId.toInt()) } returns Unit
 
         viewModel.effect.test {
             viewModel.onDeleteConfirmed(listId)
-
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(Unit)
+            assertThat(awaitItem()).isEqualTo(DeleteListEffect.DeleteSuccess)
 
             coVerify(exactly = 1) { manageSavedListsUseCase.deleteSavedList(listId.toInt()) }
-
             assertThat(viewModel.state.value.isLoading).isFalse()
 
             cancelAndIgnoreRemainingEvents()
@@ -50,7 +48,7 @@ class DeleteListViewModelTest {
     }
 
     @Test
-    fun `onDeleteConfirmed on failure updates state with error message and does not emit effect`() =
+    fun `onDeleteConfirmed on failure updates state with error and emits failure effect`() =
         runTest {
             val listId = 456L
             val error = RuntimeException("API error")
@@ -58,14 +56,15 @@ class DeleteListViewModelTest {
 
             viewModel.effect.test {
                 viewModel.onDeleteConfirmed(listId)
-
                 advanceUntilIdle()
+
+                assertThat(awaitItem()).isEqualTo(DeleteListEffect.DeleteFailure)
 
                 val state = viewModel.state.value
                 assertThat(state.isLoading).isFalse()
                 assertThat(state.errorMessage).isEqualTo("Failed to delete list. Please try again.")
 
-                expectNoEvents()
+                cancelAndIgnoreRemainingEvents()
             }
         }
 

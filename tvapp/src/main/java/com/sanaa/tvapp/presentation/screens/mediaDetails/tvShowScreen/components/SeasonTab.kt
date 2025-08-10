@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.designsystem.R as designSystemResource
+import com.sanaa.tvapp.R
 
 @Composable
 fun SeasonTab(

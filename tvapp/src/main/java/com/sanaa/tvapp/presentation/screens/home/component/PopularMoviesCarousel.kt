@@ -90,7 +90,9 @@ fun PopularMoviesCarousel(
                 isFocused = it.hasFocus
             }
             .handleDPadKeyEvents(onEnter = {
-                onShowDetails(mediaItems[carouselState.activeItemIndex])
+                if (mediaItems.isNotEmpty()) {
+                    onShowDetails(mediaItems[carouselState.activeItemIndex])
+                }
             }),
         itemCount = mediaItems.size,
         carouselState = carouselState,

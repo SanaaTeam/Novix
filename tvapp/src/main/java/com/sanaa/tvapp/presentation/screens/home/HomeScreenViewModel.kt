@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -39,7 +39,7 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val savedMovieStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
     initialState = HomeScreenUiState(),
     defaultDispatcher = dispatcher
@@ -48,7 +48,8 @@ class HomeScreenViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         fetchPopularMediaData()
-        fetchTopRatedMediaData()
+        fetchTopRatedMovieData()
+        fetchTopRatedTvShowData()
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
@@ -58,7 +59,7 @@ class HomeScreenViewModel @Inject constructor(
                 updateState { current ->
                     current.copy(
                         popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
-                        topRatingMedia = current.topRatingMedia.map { it.withSaved(savedIds) },
+                        topRatingMovies = current.topRatingMovies.map { it.withSaved(savedIds) },
                         continueWatchingMedia = current.continueWatchingMedia.map {
                             it.withSaved(
                                 savedIds
@@ -110,7 +111,7 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private fun fetchTopRatedMediaData() {
+    private fun fetchTopRatedMovieData() {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
@@ -125,7 +126,26 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        topRatingMedia = topRatedMediaList.take(10)
+                        topRatingMovies = topRatedMediaList.take(10)
+                    )
+                }
+            },
+            onError = ::onErrorLoadingData,
+        )
+    }
+
+    private fun fetchTopRatedTvShowData() {
+        updateState { it.copy(isLoading = true, errorMessage = null) }
+        tryToExecute(
+            callee = {
+                manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }
+            },
+            onSuccess = { topRatedMediaList ->
+                updateState {
+                    it.copy(
+                        isLoading = false,
+                        errorMessage = null,
+                        topRatingTvShows = topRatedMediaList.take(10)
                     )
                 }
             },
@@ -236,7 +256,7 @@ class HomeScreenViewModel @Inject constructor(
     override fun onSaveIconClick(media: MediaItem) {
         if (state.value.userIsLoggedIn) {
             if (media.isSaved) {
-                savedMovieStatusProvider.markUnsaved(media.id)
+                savedMovieStatusProvider.markItemUnsaved(media.id)
             } else {
                 updateState {
                     it.copy(
@@ -264,7 +284,8 @@ class HomeScreenViewModel @Inject constructor(
     override fun onRetryClick() {
         updateState { it.copy(isNoInternet = false) }
         fetchPopularMediaData()
-        fetchTopRatedMediaData()
+        fetchTopRatedMovieData()
+        fetchTopRatedTvShowData()
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()

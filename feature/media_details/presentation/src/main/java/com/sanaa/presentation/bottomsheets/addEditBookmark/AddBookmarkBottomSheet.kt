@@ -29,6 +29,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -39,24 +41,46 @@ fun AddBookmarkListBottomSheet(
 ) {
     val viewModel: AddBookmarkViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+    var successMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.created_list_successfully)
+    var failMessage =
+        stringResource(com.sanaa.feature.mediadetails.presentation.R.string.failed_to_create_list)
 
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
     }
 
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            handleDismiss()
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                AddBookmarkEffects.AddSuccess -> {
+                    handleDismiss()
+                    snack = SnackData(
+                        message = successMessage,
+                        isError = false
+                    )
+                }
+
+                AddBookmarkEffects.AddFailure -> {
+                    snack = SnackData(
+                        message = failMessage,
+                        isError = true
+                    )
+                }
+            }
         }
     }
-
     AddBookmarkListBottomSheetContent(
         isVisible = isVisible,
         onDismiss = handleDismiss,
         state = state,
         onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = {viewModel.onAddClicked(mediaId)}
+        onAddClick = { viewModel.onAddClicked(mediaId) }
     )
 }
 
