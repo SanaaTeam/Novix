@@ -37,9 +37,9 @@ import com.sanaa.designsystem.design_system.component.text_field.PasswordTextFie
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.state.SnackData
-import com.sanaa.tvapp.R
 
 @Composable
 fun LoginScreenTv(
@@ -101,57 +101,22 @@ private fun LoginContentTv(
                 .size(88.dp)
         )
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { },
-            colors = CardDefaults.colors(),
-            border = CardDefaults.border(
-                border = Border.None,
-                focusedBorder = Border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = Theme.colors.primary,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            ),
-            scale = CardDefaults.scale(focusedScale = 1.05f),
-            shape = CardDefaults.shape(RoundedCornerShape(12.dp))
-        ) {
-            TextField(
-                value = state.username,
-                onValueChange = listener::onUsernameChanged,
-                icon = painterResource(R.drawable.user_name),
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
+        TextField(
+            value = state.username,
+            onValueChange = listener::onUsernameChanged,
+            icon = painterResource(R.drawable.user_name),
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = { },
-            colors = CardDefaults.colors(),
-            border = CardDefaults.border(
-                border = Border.None,
-                focusedBorder = Border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = Theme.colors.primary,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                ),
-            ),
-            scale = CardDefaults.scale(focusedScale = 1.05f),
-            shape = CardDefaults.shape(RoundedCornerShape(12.dp))
-        ) {
-            PasswordTextField(
+
+        PasswordTextField(
                 value = state.password,
                 icon = painterResource(R.drawable.lock_key),
                 onValueChange = listener::onPasswordChanged,
                 isPasswordVisible = state.isPasswordVisible,
                 onVisibilityToggle = listener::onTogglePasswordVisibility,
                 modifier = Modifier.fillMaxWidth()
-            )
-        }
+        )
 
         Card(
             modifier = Modifier

@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,7 +10,6 @@ import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
 import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 
 @Composable
 fun TvNavGraph(navController: NavHostController, startDestination: Any) {

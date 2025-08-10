@@ -76,8 +76,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
                     }
                 }
             }
-        }
-    ) {
-        content()
-    }
+        },
+        content = content
+    )
 }
