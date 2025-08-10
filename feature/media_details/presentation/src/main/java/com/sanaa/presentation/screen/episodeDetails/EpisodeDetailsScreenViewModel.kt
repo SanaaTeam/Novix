@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -50,6 +52,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         updateUserLoginState()
     }
 
+    private fun fetchUserRating() {
+        viewModelScope.launch {
+            val isLogged = checkUserLogin.isLoggedIn().first()
+            if (isLogged) {
+                tryToCollect(
+                    callee = { getCurrentUserRating() },
+                    onCollect = { rating ->
+                        updateState { it.copy(imdbRating = rating) }
+                    }
+                )
+            }
+        }
+    }
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
@@ -94,7 +109,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
-        loadEpisode(state.value.seriesId, 0, 0)
+        loadEpisode(seriesId, seasonNumber, episodeNumber)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -165,15 +180,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
             val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
             val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
-            val ratingDeferred = async {
-                getCurrentUserRating()
-            }
-
             val episode = episodeDeferred.await()
             val guests = guestsDeferred.await()
             val images = imagesDeferred.await()
             val trailerUrl = trailerDeferred.await()
-            val currentEpisodesRating = ratingDeferred.await().first()
 
             updateState {
                 it.copy(
@@ -182,9 +192,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     seriesId = seriesId,
                     imagesUrl = images,
                     trailerUrl = trailerUrl,
-                    imdbRating = currentEpisodesRating
                 )
             }
+
+            fetchUserRating()
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
