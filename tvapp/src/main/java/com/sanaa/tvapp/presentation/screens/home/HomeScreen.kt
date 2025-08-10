@@ -124,10 +124,10 @@ fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaIt
             }
         }
 
-        if (state.continueWatchingMedia.isNotEmpty()) {
+        if (state.continueWatchingMovies.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMedia,
+                    items = state.continueWatchingMovies,
                     key = { it.id }
                 ) {
                     ImageList(it)
@@ -159,10 +159,10 @@ fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaI
             }
         }
 
-        if (state.continueWatchingMedia.isNotEmpty()) {
+        if (state.continueWatchingTvShows.isNotEmpty()) {
             MediaSection(title = stringResource(tvResource.string.watching_history)) {
                 items(
-                    items = state.continueWatchingMedia,
+                    items = state.continueWatchingTvShows,
                     key = { it.id }
                 ) {
                     ImageList(it)

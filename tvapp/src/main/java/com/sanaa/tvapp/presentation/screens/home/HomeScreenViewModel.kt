@@ -60,7 +60,7 @@ class HomeScreenViewModel @Inject constructor(
                     current.copy(
                         popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
                         topRatingMovies = current.topRatingMovies.map { it.withSaved(savedIds) },
-                        continueWatchingMedia = current.continueWatchingMedia.map {
+                        continueWatchingMovies = current.continueWatchingMovies.map {
                             it.withSaved(
                                 savedIds
                             )
@@ -138,7 +138,7 @@ class HomeScreenViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
-                manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }
+                manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }
             },
             onSuccess = { topRatedMediaList ->
                 updateState {
@@ -162,7 +162,10 @@ class HomeScreenViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = null,
-                        continueWatchingMedia = watchedMediaList.map { it.toState() }
+                        continueWatchingMovies = watchedMediaList.map { it.toState() }
+                            .filter { it.mediaTypeUi == MediaTypeUi.MOVIE },
+                        continueWatchingTvShows = watchedMediaList.map { it.toState() }
+                            .filter { it.mediaTypeUi == MediaTypeUi.TV_SHOW }
                     )
                 }
             },
