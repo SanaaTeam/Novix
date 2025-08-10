@@ -281,8 +281,7 @@ class HomeScreenViewModelTest {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
 
-        assertThat(viewModel.effect.first()).isEqualTo(HomeScreenEffect.NavigateToPlayListScreen)
-    }
+        assertThat(viewModel.state.value.showBottomSheet).isTrue()    }
 
     @Test
     fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
