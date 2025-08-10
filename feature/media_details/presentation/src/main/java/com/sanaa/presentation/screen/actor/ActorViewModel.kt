@@ -132,18 +132,21 @@ class ActorViewModel @Inject constructor(
     }
 
     private fun loadDetails() {
-        updateState { it.copy(isLoading = true) }
+        updateState { it.copy(isLoading = true, noInternetConnection = false, error = null) }
         tryToExecute(
             callee = ::fetchActorDetails,
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
             onError = { e ->
-                updateState { it.copy(isLoading = false) }
+                if (e is exceptions.NoNetworkException) {
+                    updateState { it.copy(isLoading = false, noInternetConnection = true) }
+                } else {
+                    updateState { it.copy(isLoading = false, error = e.message) }
+                }
             }
         )
     }
-
     private suspend fun fetchActorDetails() = coroutineScope {
         val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
