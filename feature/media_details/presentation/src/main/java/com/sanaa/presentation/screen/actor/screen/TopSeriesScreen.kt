@@ -29,12 +29,14 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -43,7 +45,6 @@ import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
@@ -64,8 +65,9 @@ fun TopSeriesScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     TopSeriesContent(
-        state = uiState,
         onBackClick = navigateBack,
+        onRetryClicked = viewModel::onRetryClicked,
+        state = uiState,
         modifier = Modifier.fillMaxSize(),
     )
     RequestToLoginBottomSheet(
@@ -79,9 +81,11 @@ fun TopSeriesScreen(
 
 @Composable
 private fun TopSeriesContent(
+    onBackClick: () -> Unit,
+    onRetryClicked:() -> Unit,
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -94,7 +98,8 @@ private fun TopSeriesContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back), onClick = onBackClick
+                        icon = painterResource(id = designR.drawable.icon_back),
+                        onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_series_picks),
@@ -109,68 +114,77 @@ private fun TopSeriesContent(
             ) {
 
                 AnimatedContent(
-                    state.isLoading,
+                    targetState = Pair(state.isLoading, state.noInternetConnection),
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
+                ) { (isLoading, noInternetConnection) ->
+                    when {
+                        isLoading -> {
+                            LoadingIndicator()
+                        }
 
-                ) { loading ->
-                    if (loading) {
-                        LoadingIndicator()
-                    } else {
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp
+                        noInternetConnection -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = onRetryClicked,
+                                useDarkTheme = LocalThemeProvider.current
                             )
-                        ) {
-                            itemsIndexed(
-                                state.topTvSeries,
-                                key = { index, _ -> index }
-                            ) { _, series ->
-                                MediaPosterCard(
-                                    posterImage = {
-                                        RemoteBlurredSensitiveImage(
-                                            imageUrl = series.posterPath ?: "",
-                                            modifier = Modifier.fillMaxSize(),
-                                            sensitiveContentThreshold = 0.2f,
-                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                            safeContentThreshold = LocalSafeContentThreshold.current,
-                                            contentDescription = series.title,
-                                            placeholderContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                            errorContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                        ) {
-                                            OnBlurContent(
-                                                hintText = stringResource(R.string.unsuitable_image),
-                                                textStyle = Theme.textStyle.body.small.copy(
-                                                    color = Color(0x99FFFFFF)
-                                                ),
-                                                iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                        }
+
+                        else ->
+                            LazyVerticalGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                columns = GridCells.Adaptive(minSize = 140.dp),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(
+                                    12.dp
+                                ),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    12.dp
+                                )
+                            ) {
+                                itemsIndexed(
+                                    state.topTvSeries,
+                                    key = { index, _ -> index }
+                                ) { _, series ->
+                                    MediaPosterCard(
+                                        posterImage = {
+                                            RemoteBlurredSensitiveImage(
+                                                imageUrl = series.posterPath ?: "",
+                                                modifier = Modifier.fillMaxSize(),
+                                                sensitiveContentThreshold = 0.2f,
+                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                                safeContentThreshold = LocalSafeContentThreshold.current,
+                                                contentDescription = series.title,
+                                                placeholderContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                                errorContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                            ) {
+                                                OnBlurContent(
+                                                    hintText = stringResource(R.string.unsuitable_image),
+                                                    textStyle = Theme.textStyle.body.small.copy(
+                                                        color = Color(0x99FFFFFF)
+                                                    ),
+                                                    iconSize = 24.dp,
+                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                                )
+                                            }
+                                        },
+                                        topLeftContent = {
+
+                                        },
+                                        onCardClick = {
+                                            navController.navigate(
+                                                SeriesDetailsScreenRoute(series.id).route()
                                             )
                                         }
-                                    },
-                                    topLeftContent = {
-
-                                    },
-                                    onCardClick = {
-                                        navController.navigate(
-                                            SeriesDetailsScreenRoute(series.id).route()
-                                        )
-                                    }
-                                )
+                                    )
+                                }
                             }
-                        }
                     }
                 }
             }
