@@ -29,7 +29,7 @@ fun PlaylistEmptyScreen(
             showFab = true,
             onFabClick = { onFabClick() },
             isVisible = isVisible,
-            onDismissAddBottomSheet = onDismissAddBottomSheet
+            onDismissAddBottomSheet = onDismissAddBottomSheet,
         )
     }
 }
@@ -37,5 +37,6 @@ fun PlaylistEmptyScreen(
 @Preview
 @Composable
 private fun PlaylistEmptyScreenPrev() {
-    PlaylistEmptyScreen()
+    PlaylistEmptyScreen(
+    )
 }
