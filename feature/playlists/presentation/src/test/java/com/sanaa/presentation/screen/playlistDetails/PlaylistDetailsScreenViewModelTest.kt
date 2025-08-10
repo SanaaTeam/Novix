@@ -30,7 +30,7 @@ class PlaylistDetailsScreenViewModelTest {
 
     @BeforeEach
     fun setUp() {
-        Dispatchers.setMain(StandardTestDispatcher())
+        Dispatchers.setMain(testDispatcher)
         savedStateHandle = SavedStateHandle(
             mapOf(
                 "listId" to 1,
@@ -41,12 +41,7 @@ class PlaylistDetailsScreenViewModelTest {
 
     @Test
     fun `init loads items and sets initial state correctly`() = runTest {
-        coEvery {
-            manageSavedListItemsUseCase.getAllItemsInSavedList(
-                any(),
-                any()
-            )
-        } returns emptyList()
+        coEvery { manageSavedListItemsUseCase.getAllItemsInSavedList(any(), any()) } returns emptyList()
 
         initViewModel()
 
@@ -75,8 +70,7 @@ class PlaylistDetailsScreenViewModelTest {
         viewModel.onMediaClick(mediaId, mediaType)
 
         viewModel.effect.test {
-            val expectedEffect =
-                PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
+            val expectedEffect = PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
             assertThat(awaitItem()).isEqualTo(expectedEffect)
             cancelAndIgnoreRemainingEvents()
         }
@@ -84,7 +78,7 @@ class PlaylistDetailsScreenViewModelTest {
 
     @Test
     fun `onSaveIconClick on success calls use case and reloads items`() = runTest {
-        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true,)
         coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } returns true
         initViewModel()
 
@@ -98,7 +92,7 @@ class PlaylistDetailsScreenViewModelTest {
     @Test
     fun `onSaveIconClick on failure with general error updates error message`() = runTest {
         val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
-        val error = Exception("Database Error")
+        val error = RuntimeException("Database Error")
         coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
         initViewModel()
 
@@ -111,25 +105,19 @@ class PlaylistDetailsScreenViewModelTest {
     }
 
     @Test
-    fun `onSaveIconClick on failure with NoNetworkException sets error message to null`() =
-        runTest {
-            val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
-            val error = NoNetworkException()
-            coEvery {
-                manageSavedListItemsUseCase.removeMovieFromSavedList(
-                    any(),
-                    any()
-                )
-            } throws error
-            initViewModel()
+    fun `onSaveIconClick on failure with NoNetworkException sets error message to null`() = runTest {
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val error = NoNetworkException()
+        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+        initViewModel()
 
-            viewModel.onSaveIconClick(mediaItem)
-            advanceUntilIdle()
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertThat(state.isLoading).isFalse()
-            assertThat(state.errorMessage).isNull()
-        }
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.errorMessage).isNull()
+    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
