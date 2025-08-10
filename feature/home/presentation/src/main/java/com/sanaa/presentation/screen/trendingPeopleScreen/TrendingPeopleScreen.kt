@@ -23,9 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
@@ -123,19 +125,31 @@ fun TrendingPeopleScreenContent(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
         ) { showNoInternetScreen ->
-            if (showNoInternetScreen) {
-                NetworkDisconnectionContact(
-                    onRetryClick = interactionListener::onRetryClick,
-                    useDarkTheme = LocalThemeProvider.current,
-                )
-            } else {
-                PersonList(
-                    persons = people,
-                    onItemClick = interactionListener::onActorClick
-                )
-                if (people.loadState.hasError) {
-                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+            when {
+                showNoInternetScreen -> {
+                    NetworkDisconnectionContact(
+                        onRetryClick = interactionListener::onRetryClick,
+                        useDarkTheme = LocalThemeProvider.current,
+                    )
                 }
+
+                people.loadState.refresh is LoadState.Loading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+                    else ->{
+                        PersonList(
+                            persons = people,
+                            onItemClick = interactionListener::onActorClick
+                        )
+                        if (people.loadState.hasError) {
+                            RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                        }
+                    }
             }
         }
     }
