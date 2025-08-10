@@ -15,30 +15,28 @@ import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 
 @Composable
 fun TvNavGraph(navController: NavHostController, startDestination: Any) {
-    CompositionLocalProvider(LocalNavControllerProvider provides navController) {
-        NavHost(navController = navController, startDestination = startDestination) {
-            composable<NavBarRoute.Home> { HomeScreen() }
-            composable<NavBarRoute.Search> { SearchScreen() }
-            composable<ScreensRoute.Login> {
-                LoginScreenTv(
-                    onFinish = {
-                        navController.navigate(NavBarRoute.Home) {
-                            popUpTo(ScreensRoute.Login) { inclusive = true }
-                        }
+    NavHost(navController = navController, startDestination = startDestination) {
+        composable<NavBarRoute.Home> { HomeScreen() }
+        composable<NavBarRoute.Search> { SearchScreen() }
+        composable<ScreensRoute.Login> {
+            LoginScreenTv(
+                onFinish = {
+                    navController.navigate(NavBarRoute.Home) {
+                        popUpTo(ScreensRoute.Login) { inclusive = true }
                     }
-                )
-            }
-            composable<NavBarRoute.Categories> { }
-            composable<NavBarRoute.MyList> { }
-            composable<NavBarRoute.MyAccount> { }
-            composable<ScreensRoute.MovieDetails> { navBackStackEntry ->
-                val movieId = navBackStackEntry.toRoute<ScreensRoute.MovieDetails>().movieId
-                MovieDetailsScreen(movieId)
-            }
-            composable<ScreensRoute.TvShowDetails> { navBackStackEntry ->
-                val tvShowId = navBackStackEntry.toRoute<ScreensRoute.TvShowDetails>().tvShowId
-                TvShowScreen(tvShowId)
-            }
+                }
+            )
+        }
+        composable<NavBarRoute.Categories> { }
+        composable<NavBarRoute.MyList> { }
+        composable<NavBarRoute.MyAccount> { }
+        composable<ScreensRoute.MovieDetails> { navBackStackEntry ->
+            val movieId = navBackStackEntry.toRoute<ScreensRoute.MovieDetails>().movieId
+            MovieDetailsScreen(movieId)
+        }
+        composable<ScreensRoute.TvShowDetails> { navBackStackEntry ->
+            val tvShowId = navBackStackEntry.toRoute<ScreensRoute.TvShowDetails>().tvShowId
+            TvShowScreen(tvShowId)
         }
     }
 }

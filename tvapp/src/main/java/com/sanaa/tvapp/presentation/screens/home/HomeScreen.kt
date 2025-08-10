@@ -35,12 +35,12 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.home.component.FeaturedCarouselShimmer
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
@@ -53,7 +53,7 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
     val scrollState = rememberScrollState()
     val state by homeScreenViewModel.state.collectAsStateWithLifecycle()
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
-    val navController = LocalNavControllerProvider.current
+    val navController = LocalAppNavController.current
 
     LaunchedEffect(Unit) {
         homeScreenViewModel.effect.collectLatest { effect ->

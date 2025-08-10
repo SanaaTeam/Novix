@@ -33,7 +33,6 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
@@ -45,6 +44,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
@@ -58,7 +58,7 @@ fun MovieDetailsScreen(
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val navController = LocalNavControllerProvider.current
+    val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
