@@ -18,6 +18,7 @@ import usecase.ManageTvSeriesUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
+
 @HiltViewModel
 class TvShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -219,7 +220,6 @@ class TvShowDetailsScreenViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
@@ -238,7 +238,6 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //        }
 //
 //    }
-
 
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(

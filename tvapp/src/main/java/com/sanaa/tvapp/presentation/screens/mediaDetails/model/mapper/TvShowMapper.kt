@@ -11,6 +11,7 @@ import entity.Season
 import entity.TvSeries
 import usecase.search.search_param.MediaType
 
+
 @SuppressLint("DefaultLocale")
 fun TvSeries.toTvShowUiModel(trailerUrl: String? = null) = TvShowDetailsUiModel(
     id = id,

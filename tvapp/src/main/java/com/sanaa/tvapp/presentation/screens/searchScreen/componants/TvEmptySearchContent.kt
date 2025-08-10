@@ -19,15 +19,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
 
 
 @Composable
 fun TvEmptySearchContent(
     modifier: Modifier = Modifier,
-    icon: Painter = painterResource(id = R.drawable.empty_search),
+    icon: Painter = painterResource(id = R.drawable.icon_search_tv),
     text: String = stringResource(id = R.string.empty_search_message),
     topIcon: @Composable () -> Unit = {},
 ) {
@@ -40,7 +40,7 @@ fun TvEmptySearchContent(
         Box(
             modifier = Modifier
                 .padding(bottom = 12.dp)
-                .size(250.dp),
+                .size(150.dp),
 
             contentAlignment = Alignment.Center,
         ) {
@@ -48,13 +48,13 @@ fun TvEmptySearchContent(
                 painter = icon,
                 contentDescription = "Empty Search",
                 modifier = Modifier
-                    .size(250.dp)
+                    .size(150.dp)
             )
             topIcon()
         }
         BasicText(
-            text = text,
-            style = Theme.textStyle.body.large.copy(
+                text = text,
+                style = Theme.textStyle.body.large.copy(
                 color = Theme.colors.body,
                 textAlign = TextAlign.Center
             ),
@@ -62,16 +62,15 @@ fun TvEmptySearchContent(
                 .padding(horizontal = 48.dp)
                 .align(Alignment.CenterHorizontally)
         )
-
     }
 }
 
-@Preview(device = Devices.TV_1080p, showBackground = true )
+@Preview(device = Devices.TV_1080p, showBackground = true)
 @Composable
 fun EmptySearchStatePreview() {
     NovixTheme(isSystemInDarkTheme()) {
         TvEmptySearchContent(
-            icon = painterResource(id = R.drawable.empty_search),
+            icon = painterResource(id = R.drawable.icon_search_tv),
             text = stringResource(id = R.string.empty_search_message)
         )
     }

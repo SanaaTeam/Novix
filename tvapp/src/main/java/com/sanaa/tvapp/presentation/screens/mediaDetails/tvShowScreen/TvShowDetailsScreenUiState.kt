@@ -4,6 +4,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.SeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
 
+
 data class TvShowDetailsScreenUiState(
     val isLoading: Boolean = false,
     val tvShows: TvShowDetailsUiModel = TvShowDetailsUiModel(),

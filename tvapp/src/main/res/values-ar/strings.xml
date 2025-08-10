@@ -29,5 +29,8 @@
     <string name="login">تسجيل الدخول</string>
     <string name="app_icon">أيقونة التطبيق</string>
     <string name="continue_as_guest">المتابعة كضيف</string>
-
+    <string name="empty_search_message">إبدأ التصفح! ابحث عن أفلامك وبرامجك المفضلة</string>
+    <string name="search_hint">بحث…</string>
+    <string name="offline_subtitle">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار</string>
+    <string name="offline_title">عذرًا! يبدو أنك غير متصل بالإنترنت.</string>
 </resources>

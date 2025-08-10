@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+
 abstract class BaseViewModel<T, E>(
     initialState: T,
     private val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,

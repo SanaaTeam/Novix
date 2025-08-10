@@ -21,8 +21,8 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.ActorUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
-import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R
+
 
 @Composable
 fun CastSlider(
@@ -76,4 +76,3 @@ fun CastSlider(
         }
     }
 }
-

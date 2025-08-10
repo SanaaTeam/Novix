@@ -95,6 +95,5 @@ private fun PreviewMediaPosterCard() {
                 }
             )
         }
-
     }
 }

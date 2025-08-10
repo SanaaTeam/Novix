@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 
+
 fun Modifier.shimmerEffect(
     widthOfShadowBrush: Int = 500,
     angleOfAxisY: Float = 270f,
@@ -45,7 +46,6 @@ fun Modifier.shimmerEffect(
     )
 
     val transition = rememberInfiniteTransition()
-
 
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,

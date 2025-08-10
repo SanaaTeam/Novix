@@ -60,6 +60,7 @@ import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 import kotlin.time.Duration.Companion.seconds
 
+
 @OptIn(ExperimentalTvMaterial3Api::class)
 val CarouselSaver = Saver<CarouselState, Int>(
     save = { it.activeItemIndex },
@@ -207,7 +208,6 @@ private fun CarouselItemBackground(movie: MediaItem, modifier: Modifier = Modifi
     }
 }
 
-
 @Composable
 fun BoxScope.CarouselDots(
     totalDots: Int,
@@ -251,7 +251,6 @@ fun FeaturedCarouselShimmer() {
     )
 }
 
-
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
 private fun Button() {
@@ -278,4 +277,3 @@ private fun Button() {
         )
     }
 }
-

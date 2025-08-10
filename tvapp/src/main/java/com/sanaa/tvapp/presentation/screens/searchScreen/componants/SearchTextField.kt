@@ -22,10 +22,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.text_field.TextField
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
+
 
 @Composable
 fun SearchTextField(
@@ -80,5 +81,4 @@ private fun SearchTextFieldPrev() {
             onTextChange = { text = it }
         )
     }
-
 }

@@ -48,6 +48,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
 import com.sanaa.tvapp.state.SnackData
 
+
 @Composable
 fun TvShowScreen(
     modifier: Modifier = Modifier,
@@ -260,4 +261,3 @@ fun TvShowScreenContent(
         }
     }
 }
-

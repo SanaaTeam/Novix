@@ -16,6 +16,7 @@ import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun NovixAnimatedSnackBarHost(
     data: SnackData?,

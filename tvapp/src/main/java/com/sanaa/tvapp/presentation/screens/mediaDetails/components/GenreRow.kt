@@ -47,4 +47,3 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
         }
     }
 }
-
