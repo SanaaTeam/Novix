@@ -4,7 +4,7 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.model
 data class TvShowDetailsUiModel(
     val id: Int = 0,
     val title: String = "",
-    val posterPath: String? = null,
+    val posterUrl: String? = null,
     val rating: String = "",
     val overview: String = "",
     val genres: List<GenreUiModel> = emptyList(),

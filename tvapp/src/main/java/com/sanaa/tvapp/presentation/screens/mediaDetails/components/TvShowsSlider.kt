@@ -18,14 +18,15 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
 
 @Composable
-fun MoviesSlider(
+fun TvShowsSlider(
     title: String,
-    movies: List<MovieDetailsUiModel>,
+    tvShows: List<TvShowDetailsUiModel>,
     onCardClick: (Int) -> Unit = {}
 ) {
     Column(
@@ -42,13 +43,13 @@ fun MoviesSlider(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding = PaddingValues(horizontal = 36.dp)
         ) {
-            itemsIndexed(movies) { index, movie ->
+            itemsIndexed(tvShows) { index, tvShow ->
                 TvMediaPosterCard(
-                    title = movie.title,
-                    onCardClick = { onCardClick(movie.id) },
+                    title = tvShow.title,
+                    onCardClick = { onCardClick(tvShow.id) },
                     posterImage = {
                         RemoteBlurredSensitiveImage(
-                            imageUrl = movie.posterUrl.orEmpty(),
+                            imageUrl = tvShow.posterUrl.orEmpty(),
                             modifier = Modifier.fillMaxWidth(),
                             sensitiveContentThreshold = 0.2f,
                             safeContentThreshold = 0.7f,
@@ -58,10 +59,10 @@ fun MoviesSlider(
                             errorContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())
                             },
-                            contentDescription = movie.title,
+                            contentDescription = tvShow.title,
                         ) {
                             OnBlurContent(
-                                hintText = stringResource(com.sanaa.tvapp.R.string.unsuitable_image),
+                                hintText = stringResource(R.string.unsuitable_image),
                                 textStyle = Theme.textStyle.body.small.copy(
                                     color = Color(0x99FFFFFF)
                                 ),

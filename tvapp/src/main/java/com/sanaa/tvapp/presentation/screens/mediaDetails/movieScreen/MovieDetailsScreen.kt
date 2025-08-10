@@ -21,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -41,7 +40,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesPaginatedSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 
@@ -52,7 +51,6 @@ fun MovieDetailsScreen(
 ) {
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
@@ -193,7 +191,7 @@ fun MovieDetailsContent(
                                     cast = state.cast,
                                 )
                             }
-                            MoviesSlider(
+                            MoviesPaginatedSlider(
                                 moviesPagingData = moviesPagingData,
                                 modifier = Modifier.height(231.dp)
                             )
