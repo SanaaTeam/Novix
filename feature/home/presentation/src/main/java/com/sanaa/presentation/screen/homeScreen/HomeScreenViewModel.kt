@@ -269,7 +269,9 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
         } else {
-            emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
+           updateState {
+               it.copy(showBottomSheet = true)
+           }
         }
     }
 

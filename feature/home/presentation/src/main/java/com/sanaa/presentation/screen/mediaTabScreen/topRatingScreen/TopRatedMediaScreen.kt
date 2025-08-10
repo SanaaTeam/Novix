@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,7 +36,6 @@ import com.sanaa.presentation.api.navigation.LocalAppNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaTabs
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
@@ -98,10 +96,12 @@ fun TopRatedMediaScreen(
                 TopRatedScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
+
                 is TopRatedScreenEffect.ShowError -> {
                     snack = SnackData(message = effect.message, isError = true)
                 }
-                is TopRatedScreenEffect.ShowSuccess-> {
+
+                is TopRatedScreenEffect.ShowSuccess -> {
                     snack = SnackData(message = effect.message, isError = false)
                 }
             }
@@ -113,29 +113,22 @@ fun TopRatedMediaScreen(
         interactionListener = viewModel,
         modifier = modifier,
     )
-    RequestToLoginBottomSheet(
-        isVisible = state.value.showLoginBottomSheet,
-        onDismiss = viewModel::onDismissBottomSheet,
-        onLoginButtonClick = {
-            viewModel.onLoginButtonClick()
-        }
-    )
-    state.value.selectedMediaToSave?.let { mediaItem ->
-        SaveToListBottomSheet(
-            isVisible = state.value.showSaveToListBottomSheet,
-            mediaId = mediaItem.id.toLong(),
-            onDismiss = viewModel::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = viewModel::onCreateNewListClick,
-        )
-    }
 
-    Box(modifier = Modifier.systemBarsPadding()) {
-        TopRatedMediaScreenContent(
-            title = stringResource(R.string.top_rated),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = modifier,
+    if (state.value.userIsLoggedIn) {
+        state.value.selectedMediaToSave?.let { mediaItem ->
+            SaveToListBottomSheet(
+                isVisible = state.value.showSaveToListBottomSheet,
+                mediaId = mediaItem.id.toLong(),
+                onDismiss = viewModel::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = viewModel::onCreateNewListClick,
+            )
+        }
+        AddBookmarkListBottomSheet(
+            isVisible = state.value.showAddListBottomSheet,
+            onDismiss = viewModel::onDismissAddListBottomSheet,
+            mediaId = state.value.selectedMediaToSave?.id ?: 0
         )
+    } else {
         RequestToLoginBottomSheet(
             isVisible = state.value.showLoginBottomSheet,
             onDismiss = viewModel::onDismissBottomSheet,
@@ -143,13 +136,7 @@ fun TopRatedMediaScreen(
                 viewModel.onLoginButtonClick()
             }
         )
-        }
-
-    AddBookmarkListBottomSheet(
-        isVisible = state.value.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet,
-        mediaId = state.value.selectedMediaToSave?.id ?: 0
-    )
+    }
 
 }
 

@@ -21,7 +21,6 @@ import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
-import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListViewModel
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
@@ -38,7 +37,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     val context = LocalContext.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val navController = LocalNavControllerProvider.current
-    val addListViewModel: AddBookmarkListViewModel = hiltViewModel()
 
 
     val authApi = EntryPointAccessors.fromApplication(
@@ -64,30 +62,11 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                         message = deleteListSuccessMsg,
                         isError = false
                     )
-                    backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
-                    backStackEntry?.savedStateHandle?.remove<Boolean>("delete_success")
+                    backStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
+                    backStackEntry.savedStateHandle.remove<Boolean>("delete_success")
                 }
             }
     }
-
-
-
-
-    LaunchedEffect(Unit) {
-        addListViewModel.effect.collect {
-            viewModel.onListAdded()
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        addListViewModel.state.collect { state ->
-            if (state.errorMessage != null) {
-                viewModel.onListAddFailed()
-            }
-        }
-    }
-
-
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
@@ -152,7 +131,6 @@ fun PlaylistScreenContent(
                     onFabClick = { interactionListener.onFabBottomSheetClicked() },
                     isVisible = state.showAddBottomSheet,
                     onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
-
                     )
             }
 
@@ -162,7 +140,8 @@ fun PlaylistScreenContent(
                     isVisible = state.showAddBottomSheet,
                     onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
                     lists = lists,
-                    onItemClick = interactionListener::onItemListClicked
+                    onItemClick = interactionListener::onItemListClicked,
+                    isUserLoggedIn = state.isUserLoggedIn
                 )
             }
         }

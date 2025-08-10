@@ -9,7 +9,7 @@ import com.sanaa.feature.playlists.presentation.R
 
 @Composable
 fun PlayListGuestScreen(
-    onLoginClick: () -> Unit
+    onLoginClick: () -> Unit,
 ) {
     val isDarkTheme = isSystemInDarkTheme()
     NovixTheme(
@@ -25,7 +25,7 @@ fun PlayListGuestScreen(
             messageText = stringResource(R.string.please_login_to_create_lists_and_add_your_favorite_items_to_it),
             imageRes = myListImg,
             showLoginButton = true,
-            onLoginClick = {onLoginClick()}
+            onLoginClick = {onLoginClick()},
         )
     }
 }

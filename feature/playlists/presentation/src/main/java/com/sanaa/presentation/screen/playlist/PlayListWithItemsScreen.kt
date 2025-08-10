@@ -26,6 +26,7 @@ import com.sanaa.presentation.screen.playlist.componants.MyListItem
 fun PlayListWithItemsScreen(
     lists: List<PlayListUiModel>,
     onItemClick: (Int, String) -> Unit,
+    isUserLoggedIn: Boolean,
     onFabClick: () -> Unit = {},
     isVisible: Boolean = false,
     onDismissAddBottomSheet: () -> Unit = {}
@@ -62,13 +63,12 @@ fun PlayListWithItemsScreen(
                 }
             }
         }
-        if (isVisible) {
+        if (isUserLoggedIn)
             AddBookmarkListBottomSheet(
                 isVisible = isVisible,
                 onDismiss = onDismissAddBottomSheet,
                 mediaId = 0
             )
-        }
     }
 }
 
