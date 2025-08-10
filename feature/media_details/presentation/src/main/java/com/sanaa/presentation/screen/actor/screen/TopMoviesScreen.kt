@@ -32,12 +32,14 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.model.MovieUiModel
@@ -78,6 +80,7 @@ fun TopMoviesScreen(
         onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
         onSaveIconClick = viewModel::onSaveClicked,
+        onRetryClicked = viewModel::onRetryClicked
     )
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
@@ -104,10 +107,11 @@ fun TopMoviesScreen(
 
 @Composable
 private fun TopMoviesContent(
+    onBackClick: () -> Unit,
+    onSaveIconClick: (MovieUiModel) -> Unit,
+    onRetryClicked: () -> Unit,
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onSaveIconClick: (MovieUiModel) -> Unit
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -137,68 +141,77 @@ private fun TopMoviesContent(
             ) {
 
                 AnimatedContent(
-                    state.isLoading,
+                    targetState = Pair(state.isLoading, state.noInternetConnection),
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
-
-                ) { loading ->
-                    if (loading) {
-                        LoadingIndicator()
-                    } else {
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            )
-                        ) {
-                            itemsIndexed(
-                                state.topMovies,
-                                key = { index, _ -> index }
-                            ) { _, movie ->
-                                MediaPosterCard(
-                                    posterImage = {
-                                        RemoteBlurredSensitiveImage(
-                                            imageUrl = movie.posterUrl.orEmpty(),
-                                            modifier = Modifier.fillMaxSize(),
-                                            sensitiveContentThreshold = 0.2f,
-                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                            safeContentThreshold = LocalSafeContentThreshold.current,
-                                            contentDescription = movie.title,
-                                            placeholderContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                            errorContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                        ) {
-                                            OnBlurContent(
-                                                hintText = stringResource(R.string.unsuitable_image),
-                                                textStyle = Theme.textStyle.body.small.copy(
-                                                    color = Color(0x99FFFFFF)
-                                                ),
-                                                iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash)
-                                            )
-                                        }
-                                    },
-                                    topLeftContent = {
-                                        SaveIconChip(
-                                            isSaved = movie.isSaved,
-                                            onClick = { onSaveIconClick(movie) }
-                                        )
-                                    },
-                                    onCardClick = {
-                                        navController.navigate(MovieDetailsScreenRoute(movie.id).route())
-                                    })
-                            }
+                ) { (isLoading, noInternetConnection) ->
+                    when {
+                        isLoading -> {
+                            LoadingIndicator()
                         }
+
+                        noInternetConnection -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = onRetryClicked,
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        }
+
+                        else ->
+                            LazyVerticalGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                columns = GridCells.Adaptive(minSize = 140.dp),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(
+                                    12.dp
+                                ),
+                                horizontalArrangement = Arrangement.spacedBy(
+                                    12.dp
+                                )
+                            ) {
+                                itemsIndexed(
+                                    state.topMovies,
+                                    key = { index, _ -> index }
+                                ) { _, movie ->
+                                    MediaPosterCard(
+                                        posterImage = {
+                                            RemoteBlurredSensitiveImage(
+                                                imageUrl = movie.posterUrl.orEmpty(),
+                                                modifier = Modifier.fillMaxSize(),
+                                                sensitiveContentThreshold = 0.2f,
+                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                                safeContentThreshold = LocalSafeContentThreshold.current,
+                                                contentDescription = movie.title,
+                                                placeholderContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                                errorContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                            ) {
+                                                OnBlurContent(
+                                                    hintText = stringResource(R.string.unsuitable_image),
+                                                    textStyle = Theme.textStyle.body.small.copy(
+                                                        color = Color(0x99FFFFFF)
+                                                    ),
+                                                    iconSize = 24.dp,
+                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash)
+                                                )
+                                            }
+                                        },
+                                        topLeftContent = {
+                                            SaveIconChip(
+                                                isSaved = movie.isSaved,
+                                                onClick = { onSaveIconClick(movie) }
+                                            )
+                                        },
+                                        onCardClick = {
+                                            navController.navigate(MovieDetailsScreenRoute(movie.id).route())
+                                        })
+                                }
+                            }
                     }
                 }
             }
