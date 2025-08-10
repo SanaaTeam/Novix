@@ -12,6 +12,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
 import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
+import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
 import dagger.hilt.android.AndroidEntryPoint
 
