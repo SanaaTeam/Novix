@@ -11,7 +11,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import service.StringProvider
+import service.IdentityStringProvider
 import javax.inject.Singleton
 
 @Module
@@ -22,7 +22,7 @@ abstract class ServicesModule {
     @Singleton
     abstract fun bindStringProvider(
         stringProviderImpl: StringProviderImpl
-    ): StringProvider
+    ): IdentityStringProvider
 
     @Binds
     @Singleton
