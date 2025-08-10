@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.playlist
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
@@ -40,8 +41,12 @@ class PlayListScreenViewModel @Inject constructor(
                                 })
                             }
                         },
-                        onError = { err ->
-                            updateState { it.copy(isLoading = false, errorMessage = err.message) }
+                        onError = { e ->
+                            if (e is NoNetworkException) {
+                                updateState { it.copy(isLoading = false, noInternetConnection = true) }
+                            } else {
+                                updateState { it.copy(isLoading = false, errorMessage = e.message) }
+                            }
                         }
                     )
                 }
@@ -75,6 +80,10 @@ class PlayListScreenViewModel @Inject constructor(
 
     override fun onDismissAddBottomSheet() {
         updateState { it.copy(showAddBottomSheet = false) }
+    }
+
+    override fun onRetryLoadSavedLists() {
+        loadSavedLists()
     }
 
     override fun onItemListClicked(listId: Int, title: String) {
