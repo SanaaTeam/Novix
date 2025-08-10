@@ -38,7 +38,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 versionName = ciName ?: libs.findVersion("versionName").get().toString()
 
                 ndk {
-                    abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+                    abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64")
                 }
             }
 

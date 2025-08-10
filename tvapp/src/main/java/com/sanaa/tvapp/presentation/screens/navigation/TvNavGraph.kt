@@ -16,15 +16,6 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable<NavBarRoute.Home> { HomeScreen() }
         composable<NavBarRoute.Search> { SearchScreen() }
-        composable<ScreensRoute.Login> {
-            LoginScreenTv(
-                onFinish = {
-                    navController.navigate(NavBarRoute.Home) {
-                        popUpTo(ScreensRoute.Login) { inclusive = true }
-                    }
-                }
-            )
-        }
         composable<NavBarRoute.Categories> { }
         composable<NavBarRoute.MyList> { }
         composable<NavBarRoute.MyAccount> { }

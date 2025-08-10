@@ -17,8 +17,9 @@
         android:icon="@mipmap/ic_logo"
         android:label="@string/app_name"
         android:supportsRtl="true">
+
         <activity
-            android:name=".MainActivity"
+            android:name=".RouterActivity"
             android:exported="true"
             android:theme="@style/Theme.StartingScreen">
             <intent-filter>
@@ -28,6 +29,17 @@
                 <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".presentation.screens.login.LoginActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.StartingScreen">
+        </activity>
+
     </application>
 
 </manifest>
