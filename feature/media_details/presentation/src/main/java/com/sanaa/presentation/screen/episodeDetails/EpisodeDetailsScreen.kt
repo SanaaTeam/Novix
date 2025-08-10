@@ -201,11 +201,11 @@ private fun EpisodeDetailsScreenContent(
                                 onGenreClicked = {}
                             )
 
-                            state.episode.overview?.let {
+                            state.episode.overview?.takeIf { it.isNotBlank() }?.let { overviewText ->
                                 OverviewSection(
                                     onReadMore = {},
                                     titleResId = R.string.overview,
-                                    overview = it,
+                                    overview = overviewText,
                                     modifier = Modifier.padding(
                                         start = 16.dp, end = 16.dp, top = 16.dp
                                     )
