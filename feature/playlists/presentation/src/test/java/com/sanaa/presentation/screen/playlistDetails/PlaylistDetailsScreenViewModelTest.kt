@@ -162,14 +162,4 @@ class PlaylistDetailsScreenViewModelTest {
     }
 }
 
-private fun createViewModelForTest(
-    manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true),
-    savedStateHandle: SavedStateHandle = SavedStateHandle(),
-    testDispatcher: CoroutineDispatcher = UnconfinedTestDispatcher(),
-): PlaylistDetailsScreenViewModel {
-    return PlaylistDetailsScreenViewModel(
-        savedStateHandle = savedStateHandle,
-        manageSavedListItemsUseCase = manageSavedListItemsUseCase,
-        dispatcher = testDispatcher
-    )
-}
+
