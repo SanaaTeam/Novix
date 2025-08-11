@@ -53,8 +53,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(movieId)
-        fetchUserRating()
-        updateUserLoginState()
+        observeUserState()
 
         viewModelScope.launch {
             savedListsStatusProvider.savedIds.collect { savedIds ->
@@ -305,15 +304,17 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun updateUserLoginState() {
+    private fun observeUserState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState { it.copy(isUserLoggedIn = isLogged) }
                 if (isLogged) {
                     fetchUserRating()
+                } else {
+                    updateState { it.copy(imdbRating = 0) }
                 }
-            },
+            }
         )
     }
 

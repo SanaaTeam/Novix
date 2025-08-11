@@ -24,7 +24,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 fun BottomContainer(
     modifier: Modifier = Modifier,
     trailerUrl: String? = null,
-    isRateSelected: Boolean = false,
+    showRatingButton: Boolean = true,
     onPlayTrailerClicked: () -> Unit = {},
     onSetRateClicked: () -> Unit = {}
 ) {
@@ -41,14 +41,14 @@ fun BottomContainer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            PrimaryButton(
-                text = null,
-                onClick = onSetRateClicked,
-                icon = painterResource(
-                    if (isRateSelected) R.drawable.icon_star else R.drawable.icon_star_outlined
-                ),
-                iconTint = if (isRateSelected) Theme.colors.statusColors.yellowAccent else Theme.colors.onPrimary
-            )
+            if (showRatingButton) {
+                PrimaryButton(
+                    text = null,
+                    onClick = onSetRateClicked,
+                    icon = painterResource(R.drawable.icon_star_outlined),
+                    iconTint = Theme.colors.onPrimary
+                )
+            }
             PrimaryButton(
                 text = stringResource(R.string.play_trailer),
                 isEnabled = trailerUrl != null,

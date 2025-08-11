@@ -41,8 +41,7 @@ class SeriesViewModel @Inject constructor(
 
     init {
         loadSeries()
-        fetchUserRating()
-        updateUserLoginState()
+        observeUserState()
     }
 
     override fun onBackClicked() {
@@ -260,15 +259,17 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private fun updateUserLoginState() {
+    private fun observeUserState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState { it.copy(isUserLoggedIn = isLogged) }
                 if (isLogged) {
                     fetchUserRating()
+                } else {
+                    updateState { it.copy(imdbRating = 0) }
                 }
-            },
+            }
         )
     }
 

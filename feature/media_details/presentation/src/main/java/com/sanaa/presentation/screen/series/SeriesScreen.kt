@@ -287,7 +287,7 @@ fun SeriesScreenContent(
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.series.trailerUrl,
-                isRateSelected = state.hasUserSelectedRate,
+                showRatingButton = !state.hasUserSelectedRate,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                 onSetRateClicked = interactionListener::onRateClicked
             )

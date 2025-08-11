@@ -255,7 +255,7 @@ fun MovieDetailsContent(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
-                isRateSelected = state.hasUserSelectedRate,
+                showRatingButton = !state.hasUserSelectedRate,
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
             if (state.showRateBottomSheet) {
