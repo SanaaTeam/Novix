@@ -1,7 +1,11 @@
 package com.sanaa.presentation.screen.playlistDetails
 
+import SavedDetailsListSectionContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -29,7 +33,7 @@ import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData
-import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors
@@ -39,8 +43,8 @@ fun PlaylistDetailsScreen(
     viewModel: PlaylistDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val editedListSuccessMsg = stringResource(R.string.edited_to_list_successfully)
-    val editedListFailedMsg = stringResource(R.string.edited_to_list_failed)
+    val removedFromListSuccessMsg = stringResource(R.string.removed_from_list_successfully)
+    val removedFromListFailedMsg = stringResource(R.string.removed_from_list_failed)
     val context = LocalContext.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
@@ -65,16 +69,17 @@ fun PlaylistDetailsScreen(
                     )
                     navController.popBackStack()
                 }
+
                 is PlaylistDetailsScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
                 PlaylistDetailsScreenEffect.ShowErrorSnackBar -> {
-                    snack = SnackData(message = editedListFailedMsg, isError = true)
+                    snack = SnackData(message = removedFromListFailedMsg, isError = true)
                 }
 
                 PlaylistDetailsScreenEffect.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = editedListSuccessMsg, isError = false)
+                    snack = SnackData(message = removedFromListSuccessMsg, isError = false)
                 }
 
                 is PlaylistDetailsScreenEffect.NavigateToMediaDetails -> {
@@ -89,17 +94,22 @@ fun PlaylistDetailsScreen(
         }
 
     }
-
-    PlaylistDetailsContent(
-        state = state.value,
-        interactionListener = viewModel
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        PlaylistDetailsContent(
+            state = state.value,
+            interactionListener = viewModel
+        )
+        AnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null },
+        )
+    }
 }
 
 
 @Composable
 fun PlaylistDetailsContent(
-    state: SavedDetailsScreenUiState = SavedDetailsScreenUiState(),
+    state: SavedDetailsScreenUiState,
     interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
 ) {
@@ -107,7 +117,8 @@ fun PlaylistDetailsContent(
 
 
     NovixScaffold(
-
+        modifier = modifier.background(color = Theme.colors.surface),
+        backgroundShapes = {},
         topBar = {
             PlaylistDetailsTopBar(
                 title = state.title.orEmpty(),
@@ -127,6 +138,7 @@ fun PlaylistDetailsContent(
                 onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
                 onSaveIconClick = { interactionListener.onSaveIconClick(it) }
             )
+
 
         }
         DeleteConfirmationBottomSheet(
