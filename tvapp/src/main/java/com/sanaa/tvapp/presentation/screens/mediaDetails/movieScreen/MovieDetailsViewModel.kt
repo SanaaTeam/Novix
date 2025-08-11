@@ -31,11 +31,10 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ) ,MovieDetailsScreenInteractionListener{
 
-//    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
-//        "movieId is required in SavedStateHandle"
-//    }
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+        "movieId is required in SavedStateHandle"
+    }
 
-    val movieId = 1087192
 
     init {
         fetchMovieDetails(movieId)

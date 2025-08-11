@@ -46,6 +46,7 @@ import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
 import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
@@ -87,6 +88,7 @@ fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
 fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
     val sidePaddings = 36.dp
     val scrollState = rememberScrollState()
+    val mainTvNavController = LocalAppNavController.current
     val navController = rememberNavController()
 
     Column(
@@ -109,11 +111,15 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 
         NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
             composable(route = HomeMoviesTapRoute::class) {
-                HomeMovies(state, upcomingMovies)
+                HomeMovies(state, upcomingMovies){id->
+                    mainTvNavController.navigate(ScreensRoute.MovieDetails(id))
+                }
             }
 
             composable(route = HomeTvShowsTapRoute::class) {
-                HomeTvShows(state, upcomingMovies)
+                HomeTvShows(state, upcomingMovies){id->
+                    mainTvNavController.navigate(ScreensRoute.TvShowDetails(id))
+                }
             }
         }
     }
@@ -121,14 +127,23 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 
 
 @Composable
-fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+fun HomeMovies(
+    state: HomeScreenUiState,
+    upcomingMovies: LazyPagingItems<MediaItem>,
+    onItemClick: (Int) -> Unit
+) {
     Column {
         MediaSection(title = stringResource(tvResource.string.top_rated)) {
             items(
                 items = state.topRatingMovies,
                 key = { it.id }
             ) {
-                ImageList(it)
+                ImageList(
+                    it,
+                    onItemClick = {id->
+                        onItemClick(id)
+                    }
+                )
             }
         }
 
@@ -138,7 +153,12 @@ fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaIt
                     items = state.continueWatchingMovies,
                     key = { it.id }
                 ) {
-                    ImageList(it)
+                    ImageList(
+                        it,
+                        onItemClick = {id->
+                            onItemClick(id)
+                        }
+                    )
                 }
             }
         }
@@ -148,7 +168,12 @@ fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaIt
                 count = upcomingMovies.itemCount,
             ) { index ->
                 upcomingMovies[index]?.let {
-                    ImageList(it)
+                    ImageList(
+                        it,
+                        onItemClick = {id->
+                            onItemClick(id)
+                        }
+                    )
                 }
             }
         }
@@ -156,14 +181,23 @@ fun HomeMovies(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaIt
 }
 
 @Composable
-fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaItem>) {
+fun HomeTvShows(
+    state: HomeScreenUiState,
+    upcomingMovies: LazyPagingItems<MediaItem>,
+    onItemClick: (Int) -> Unit
+) {
     Column {
         MediaSection(title = stringResource(tvResource.string.top_rated)) {
             items(
                 items = state.topRatingTvShows,
                 key = { it.id }
             ) {
-                ImageList(it)
+                ImageList(
+                    it,
+                    onItemClick = {id->
+                        onItemClick(id)
+                    }
+                )
             }
         }
 
@@ -173,7 +207,12 @@ fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaI
                     items = state.continueWatchingTvShows,
                     key = { it.id }
                 ) {
-                    ImageList(it)
+                    ImageList(
+                        it,
+                        onItemClick = {id->
+                            onItemClick(id)
+                        }
+                    )
                 }
             }
         }
@@ -183,7 +222,12 @@ fun HomeTvShows(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<MediaI
                 count = upcomingMovies.itemCount,
             ) { index ->
                 upcomingMovies[index]?.let {
-                    ImageList(it)
+                    ImageList(
+                        it,
+                        onItemClick={id->
+
+                        }
+                    )
                 }
             }
         }
@@ -215,12 +259,17 @@ private fun MediaSection(
 
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
-private fun ImageList(item: MediaItem) {
+private fun ImageList(
+    item: MediaItem,
+    onItemClick:(Int)-> Unit
+) {
     Card(
         modifier = Modifier
             .width(153.dp)
             .height(231.dp),
-        onClick = {},
+        onClick = {
+            onItemClick(item.id)
+        },
         colors = CardDefaults.colors(),
         border = CardDefaults.border(
             border = Border.None,

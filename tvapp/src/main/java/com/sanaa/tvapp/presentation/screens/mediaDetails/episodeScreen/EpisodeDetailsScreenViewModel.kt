@@ -32,17 +32,15 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private val tvShowId: Int = 1399
 
-    //    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-//        "seriesId is required in SavedStateHandle"
-//    }
-    private val seasonNumber: Int = 1
-//    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
-//        "seasonNumber is required in SavedStateHandle"
-//    }
-    private val episodeNumber: Int = 3
-//    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
-//        "episodeNumber is required in SavedStateHandle"
-//    }
+        private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
+        "seasonNumber is required in SavedStateHandle"
+    }
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
+        "episodeNumber is required in SavedStateHandle"
+    }
 
     init {
         loadEpisode(tvShowId, seasonNumber, episodeNumber)
