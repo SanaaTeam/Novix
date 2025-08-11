@@ -10,6 +10,7 @@ import service.IdentityStringProvider
 import usecase.LoginUseCase
 import javax.inject.Inject
 
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,

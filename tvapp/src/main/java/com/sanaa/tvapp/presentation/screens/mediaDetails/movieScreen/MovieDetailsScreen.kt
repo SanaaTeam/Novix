@@ -32,6 +32,7 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
@@ -48,8 +49,8 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 
 import com.sanaa.tvapp.state.SnackData
-import com.sanaa.tvapp.R
-import com.sanaa.designsystem.R as designSystemResource
+
+
 @Composable
 fun MovieDetailsScreen(
     movieId: Int,
@@ -84,7 +85,6 @@ fun MovieDetailsScreen(
             onDismiss = { snack = null }
         )
     }
-
 }
 
 @Composable
@@ -93,7 +93,8 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
+    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
+        state.similarMovies.collectAsLazyPagingItems()
 
     NovixScaffold(
         backgroundShapes = { },
@@ -126,14 +127,14 @@ fun MovieDetailsContent(
                             .fillMaxSize()
                     )
                     {
-                        Column (
+                        Column(
                             modifier = Modifier
                                 .verticalScroll(
-                                state = rememberScrollState()
-                            )
-                        ){
+                                    state = rememberScrollState()
+                                )
+                        ) {
                             DetailsHeaderSection(
-                                backgroundImageUrl = state.movieDetails.posterUrl?:"",
+                                backgroundImageUrl = state.movieDetails.posterUrl ?: "",
                                 title = state.movieDetails.title,
                             ) {
                                 Column(
@@ -161,7 +162,7 @@ fun MovieDetailsContent(
                                             state.movieDetails.rating.let {
                                                 IconWithText(
                                                     iconRes = R.drawable.icon_star,
-                                                    text = state.movieDetails.rating?:"",
+                                                    text = state.movieDetails.rating ?: "",
                                                     textColor = Theme.colors.title,
                                                     contentDescription = state.movieDetails.rating,
                                                     tint = Theme.colors.statusColors.yellowAccent
@@ -181,6 +182,7 @@ fun MovieDetailsContent(
                                             }
                                         }
                                     }
+
                                     Text(
                                         text = state.movieDetails.overview,
                                         style = Theme.textStyle.body.small,

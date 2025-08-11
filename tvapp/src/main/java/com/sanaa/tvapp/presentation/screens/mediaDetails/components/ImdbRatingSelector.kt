@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.designsystem.R as designSystemResource
 import kotlin.math.roundToInt
+import com.sanaa.designsystem.R as designSystemResource
 
 @Composable
 fun ImdbRatingSelector(

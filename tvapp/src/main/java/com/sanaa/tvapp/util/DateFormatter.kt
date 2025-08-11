@@ -24,6 +24,7 @@ fun getCurrentLocale(context: Context): Locale {
         context.resources.configuration.locale
     }
 }
+
 fun formatTime(duration: Duration, locale: Locale = Locale.getDefault()): String {
 
     val hours = duration.inWholeHours.toInt()
@@ -55,7 +56,9 @@ fun formatTime(duration: Duration, locale: Locale = Locale.getDefault()): String
             minutes > 0 -> minutesText
             else -> "0 دقيقة"
         }
+
     } else {
+
         fun hourLabel(hour: Int): String = "${hour}h"
         fun minuteLabel(minute: Int): String = "${minute}m"
 

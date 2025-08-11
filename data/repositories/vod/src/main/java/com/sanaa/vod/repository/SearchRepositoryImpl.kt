@@ -6,13 +6,13 @@ import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import repository.SavedListsStatusProvider
+import repository.SavedMovieStatusProvider
 import repository.SearchRepository
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
     private val remoteDataSource: SearchRemoteDataSource,
-    private val savedListsStatusProvider: SavedListsStatusProvider
+    private val savedMovieStatusProvider: SavedMovieStatusProvider
 ) : SearchRepository {
 
     override suspend fun searchActors(query: String, page: Int): List<Actor> = safeCall(query) {
@@ -21,8 +21,7 @@ class SearchRepositoryImpl @Inject constructor(
 
     override suspend fun searchMovies(query: String, page: Int): List<Movie> = safeCall(query) {
         remoteDataSource.searchMovies(query, page).results.map { dto ->
-            val movie = dto.toEntity()
-            movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
+            dto.toEntity()
         }
     }
 

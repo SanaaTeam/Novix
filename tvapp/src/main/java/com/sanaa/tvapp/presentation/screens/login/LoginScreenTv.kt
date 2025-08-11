@@ -44,6 +44,7 @@ import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.state.SnackData
 
+
 @Composable
 fun LoginScreenTv(
     onFinish: () -> Unit,

@@ -29,5 +29,9 @@
     <string name="login">Login</string>
     <string name="app_icon">app icon</string>
     <string name="continue_as_guest">Continue as guest</string>
+    <string name="empty_search_message">Start exploring! Search for your favorite movies, series and shows</string>
+    <string name="search_hint">Search…</string>
+    <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
+    <string name="offline_title">Oops! It looks like you\'re offline.</string>
 
 </resources>

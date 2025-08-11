@@ -35,6 +35,7 @@ fun DetailsTopBar(
         BackButton(
             onBackClick = onBackClick,
         )
+
         Spacer(modifier = Modifier.weight(1f))
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -52,10 +53,7 @@ fun DetailsTopBar(
             )
         }
     }
-
 }
-
-
 
 @Preview(device = Devices.TV_1080p, showBackground = false)
 @Composable

@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen.componants
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +27,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
+
 
 @Composable
 fun FocusableMediaCard(
@@ -92,6 +92,7 @@ fun FocusableMediaCard(
                 )
             }
         }
+
         if (isFocused) {
             Text(
                 text = titleText,

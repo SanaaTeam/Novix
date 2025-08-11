@@ -21,6 +21,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
 
+
 @Composable
 fun TvTopBar(
     modifier: Modifier = Modifier,
@@ -44,7 +45,8 @@ fun TvTopBar(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
-                painter = painterResource(R.drawable.icon_logo), contentDescription = null,
+                painter = painterResource(R.drawable.icon_logo),
+                contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 colorFilter = ColorFilter.tint(Theme.colors.primary)
             )
@@ -55,7 +57,6 @@ fun TvTopBar(
             )
         }
     }
-
 }
 
 @Preview(device = Devices.TV_1080p, showBackground = true)
@@ -66,6 +67,5 @@ private fun TvTopBarPrev() {
             selectedTabIndex = 0,
             onTabSelected = {}
         )
-
     }
 }

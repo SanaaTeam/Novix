@@ -14,6 +14,7 @@ import dagger.hilt.components.SingletonComponent
 import service.IdentityStringProvider
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ServicesModule {

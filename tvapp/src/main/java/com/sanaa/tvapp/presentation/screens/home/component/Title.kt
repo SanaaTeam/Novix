@@ -9,7 +9,6 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 
-
 @Composable
 fun Title(title: String, modifier: Modifier = Modifier) {
     Text(

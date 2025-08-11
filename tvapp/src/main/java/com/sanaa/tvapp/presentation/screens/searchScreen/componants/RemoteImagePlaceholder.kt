@@ -14,6 +14,7 @@ import com.sanaa.designsystem.R
 
 @Composable
 fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
+
     val isDarkTheme = isSystemInDarkTheme()
     val placeholderResId = if (isDarkTheme)
         R.drawable.icon_placeholder_dark
@@ -37,5 +38,3 @@ fun RemoteImagePlaceholder(modifier: Modifier = Modifier) {
 fun RemoteImagePlaceholderPreview() {
     RemoteImagePlaceholder()
 }
-
-

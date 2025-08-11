@@ -51,6 +51,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.state.SnackData
 
+
 @Composable
 fun TvShowScreen(
     tvShowId:Int,
@@ -264,4 +265,3 @@ fun TvShowScreenContent(
         }
     }
 }
-

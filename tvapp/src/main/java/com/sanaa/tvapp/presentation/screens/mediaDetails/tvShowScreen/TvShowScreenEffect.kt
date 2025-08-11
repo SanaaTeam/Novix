@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 
-
 sealed interface TvShowDetailsScreenEffects {
     data class NavigateToActorScreen(val actorId: Int) : TvShowDetailsScreenEffects
     data class NavigateToReviewsScreen(val seriesId: Int) : TvShowDetailsScreenEffects
