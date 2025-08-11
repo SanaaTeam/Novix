@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -225,7 +226,7 @@ fun HomeTvShows(
                     ImageList(
                         it,
                         onItemClick={id->
-
+                            onItemClick(id)
                         }
                     )
                 }
@@ -259,7 +260,7 @@ private fun MediaSection(
 
 @Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
-private fun ImageList(
+ fun ImageList(
     item: MediaItem,
     onItemClick:(Int)-> Unit
 ) {
