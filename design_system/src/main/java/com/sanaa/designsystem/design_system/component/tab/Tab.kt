@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabIndicatorScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,14 +22,16 @@ fun Tab(
     divider: @Composable () -> Unit = {},
     containerColor: Color = Color.Transparent,
     edgePadding: Dp = 8.dp,
-    indicator: @Composable TabIndicatorScope.() -> Unit = {}
+    modifier: Modifier = Modifier
 
-) {
-    Column {
+    ) {
+    Column(
+        modifier = modifier
+    ) {
         PrimaryScrollableTabRow(
             selectedTabIndex = selectedIndex,
             edgePadding = edgePadding,
-            indicator = indicator,
+            indicator = { },
             divider = divider,
             containerColor = containerColor
         ) {

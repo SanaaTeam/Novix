@@ -1,6 +1,7 @@
 package com.sanaa.presentation.navigation
 
 import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.CategoryFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
@@ -17,4 +18,5 @@ interface HomeApiEntryPoint {
     fun authenticationApi(): AuthenticationApi
     fun playListApi(): PlaylistsFeatureApi
     fun userProfileApi(): UserProfileFeatureApi
+    fun categoryApi(): CategoryFeatureApi
 }

@@ -18,4 +18,9 @@
     <string name="tvshows">البرامج</string>
     <string name="deleted_list_failed">فشل في حذف القائمة</string>
     <string name="deleted_list_successfully">تم حذف القائمة بنجاح</string>
+
+    <string name="removed_from_list_successfully">تمت الإزالة من القائمة بنجاح</string>
+    <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
+    <string name="the_list_is_empty">القائمة فارغة</string>
+
 </resources>

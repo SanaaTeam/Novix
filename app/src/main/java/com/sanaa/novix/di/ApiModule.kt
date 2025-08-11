@@ -1,6 +1,7 @@
 package com.sanaa.novix.di
 
 import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.CategoryFeatureApi
 import com.sanaa.api.HomeFeatureApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.OnboardingApi
@@ -9,6 +10,7 @@ import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.SearchNavigatorApi
 import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.presentation.api.AuthenticationApiImpl
+import com.sanaa.presentation.api.CategoryFeatureApiImpl
 import com.sanaa.presentation.api.HomeFeatureApiImpl
 import com.sanaa.presentation.api.MediaDetailsApiImpl
 import com.sanaa.presentation.api.OnBoardingApiImpl
@@ -73,4 +75,10 @@ abstract class ApiModule {
     abstract fun bindPlayListFeatureApi(
         playlistsFeatureApiImpl: PlaylistsFeatureApiImpl
     ): PlaylistsFeatureApi
+
+    @Binds
+    @Singleton
+    abstract fun bindCategoryFeatureApi(
+        categoryFeatureApiImpl: CategoryFeatureApiImpl
+    ): CategoryFeatureApi
 }
