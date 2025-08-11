@@ -51,6 +51,11 @@ class CategoriesScreenViewModel @Inject constructor(
         updateState { it.copy(selectedTabIndex = tabIndex) }
     }
 
+    override fun onRetryClick() {
+        loadTvGenres()
+        loadMovieGenres()
+    }
+
 
     private fun loadTvGenres() {
         updateState { it.copy(isLoading = true) }

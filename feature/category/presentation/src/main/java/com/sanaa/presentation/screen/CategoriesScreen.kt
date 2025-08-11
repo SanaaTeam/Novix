@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.tab.Tab
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.feature.category.presentation.R
@@ -82,37 +83,44 @@ private fun CategoriesScreen(
             stringResource(R.string.movies),
             stringResource(R.string.tv_shows)
         )
-        Column(
-            modifier = Modifier.padding(top = 12.dp)
-        ) {
-            Tab(
-                categories = tabs,
-                selectedIndex = state.selectedTabIndex,
-                onCategorySelected = interactionListener::onTabChanged,
-                modifier = Modifier.padding(bottom = 12.dp)
+
+        if (state.isNoInternet) {
+            NetworkDisconnectionContact(
+                onRetryClick = interactionListener::onRetryClick,
             )
-            Crossfade(
-                targetState = state.isLoading,
+        } else {
+            Column(
+                modifier = Modifier.padding(top = 12.dp)
+            ) {
+                Tab(
+                    categories = tabs,
+                    selectedIndex = state.selectedTabIndex,
+                    onCategorySelected = interactionListener::onTabChanged,
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                Crossfade(
+                    targetState = state.isLoading,
 
-                ) { isLoading ->
-                if (isLoading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LoadingIndicator()
-                    }
+                    ) { isLoading ->
+                    if (isLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingIndicator()
+                        }
 
-                } else {
-                    CategoriesGrid(
-                        categories = if (state.selectedTabIndex ==
-                            CategoriesScreenUiState.MOVIE_TAB_INDEX
+                    } else {
+                        CategoriesGrid(
+                            categories = if (state.selectedTabIndex ==
+                                CategoriesScreenUiState.MOVIE_TAB_INDEX
+                            )
+                                state.movieCategories
+                            else
+                                state.tvCategories,
+                            onCategoryClick = interactionListener::onGenreClicked
                         )
-                            state.movieCategories
-                        else
-                            state.tvCategories,
-                        onCategoryClick = interactionListener::onGenreClicked
-                    )
+                    }
                 }
             }
         }
