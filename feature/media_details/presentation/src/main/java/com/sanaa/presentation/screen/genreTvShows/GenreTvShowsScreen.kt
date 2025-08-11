@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreTvShows
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -71,7 +72,10 @@ fun GenreTvShowsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                GenreTvShowsEffects.NavigateBack -> navController.popBackStack()
+                GenreTvShowsEffects.NavigateBack -> if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
+
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
                     SeriesDetailsScreenRoute(effect.id).route()
                 )

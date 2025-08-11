@@ -14,7 +14,7 @@ object SearchScreenRoute : MainScreenRoutes()
 object PlayListScreenRoute : MainScreenRoutes()
 
 @Serializable
-object SavedContentScreenRoute : MainScreenRoutes()
+object CategoryScreenRoute : MainScreenRoutes()
 
 @Serializable
 object UserProfileScreenRoute : MainScreenRoutes()
