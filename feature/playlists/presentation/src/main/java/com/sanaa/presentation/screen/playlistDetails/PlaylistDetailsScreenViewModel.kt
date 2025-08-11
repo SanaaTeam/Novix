@@ -53,20 +53,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false) }
 
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(errorMessage = exception.message, isLoading = false)
-                    }
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
@@ -128,7 +115,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    internal fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
             updateState { it.copy(isLoading = false, errorMessage = null) }
         } else {
