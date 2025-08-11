@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 
 
@@ -43,7 +44,10 @@ fun BottomContainer(
             PrimaryButton(
                 text = null,
                 onClick = onSetRateClicked,
-            icon = painterResource(if (isRateSelected) R.drawable.icon_star else R.drawable.icon_star_outlined)
+                icon = painterResource(
+                    if (isRateSelected) R.drawable.icon_star else R.drawable.icon_star_outlined
+                ),
+                iconTint = if (isRateSelected) Theme.colors.statusColors.yellowAccent else Theme.colors.onPrimary
             )
             PrimaryButton(
                 text = stringResource(R.string.play_trailer),
