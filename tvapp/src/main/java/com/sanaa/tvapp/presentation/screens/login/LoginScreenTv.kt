@@ -1,10 +1,12 @@
 package com.sanaa.tvapp.presentation.screens.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,7 @@ import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.Text
+import com.sanaa.designsystem.design_system.component.button.common.AnimatedLoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
@@ -55,7 +58,7 @@ fun LoginScreenTv(
             when (effect) {
                 is LoginScreenEffects.ShowError -> snack = SnackData(effect.message, true)
                 is LoginScreenEffects.ShowSuccess -> snack = SnackData(effect.message, false)
-                LoginScreenEffects.ReturnGuestResultCode ->  onFinish()
+                LoginScreenEffects.ReturnGuestResultCode -> onFinish()
             }
         }
     }
@@ -72,12 +75,13 @@ fun LoginScreenTv(
                 state = uiState,
                 listener = viewModel,
             )
-        }
 
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
+            NovixAnimatedSnackBarHost(
+                modifier = Modifier.align(Alignment.TopCenter),
+                data = snack,
+                onDismiss = { snack = null }
+            )
+        }
     }
 }
 
@@ -120,6 +124,7 @@ private fun LoginContentTv(
 
         Button(
             modifier = Modifier.fillMaxWidth(),
+            enabled = state.canSubmit,
             scale = ButtonDefaults.scale(focusedScale = 1.03f),
             shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
             onClick = { listener.onLoginClicked() },
@@ -128,13 +133,26 @@ private fun LoginContentTv(
                 focusedContainerColor = Theme.colors.primary
             ),
         ) {
-            Text(
+            Row(
                 modifier = Modifier.fillMaxWidth(),
-                text = stringResource(R.string.login),
-                style = Theme.textStyle.label.large,
-                color = Theme.colors.onPrimary,
-                textAlign = TextAlign.Center
-            )
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = stringResource(R.string.login),
+                    style = Theme.textStyle.label.large,
+                    color = Theme.colors.onPrimary,
+                    textAlign = TextAlign.Center
+                )
+
+                AnimatedVisibility(state.isLoading) {
+                    AnimatedLoadingIndicator(
+                        modifier = Modifier.padding(start = 8.dp),
+                        iconTint = Theme.colors.onPrimary,
+                        size = 20.dp,
+                    )
+                }
+            }
         }
 
         Button(
