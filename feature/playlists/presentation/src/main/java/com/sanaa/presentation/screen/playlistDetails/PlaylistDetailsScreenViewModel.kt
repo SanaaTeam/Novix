@@ -25,7 +25,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) :
-    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState()),
+    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState(),dispatcher),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
         "listId is required in SavedStateHandle"
