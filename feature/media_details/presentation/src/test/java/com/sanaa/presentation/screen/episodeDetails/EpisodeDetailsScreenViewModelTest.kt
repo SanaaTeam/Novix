@@ -65,7 +65,7 @@ class EpisodeDetailsScreenViewModelTest {
         } returns dummyGuests
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
         coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false) // default login state
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
