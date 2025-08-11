@@ -37,5 +37,11 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
             val tvShowId = navBackStackEntry.toRoute<ScreensRoute.TvShowDetails>().seriesId
             TvShowScreen()
         }
+        composable<ScreensRoute.EpisodeDetails> {navBackStackEntry ->
+            val seriesId = navBackStackEntry.toRoute<ScreensRoute.EpisodeDetails>().seriesId
+            val seasonNumber= navBackStackEntry.toRoute<ScreensRoute.EpisodeDetails>().seasonNumber
+            val episodeNumber= navBackStackEntry.toRoute<ScreensRoute.EpisodeDetails>().episodeNumber
+            EpisodeDetailsScreen()
+        }
     }
 }

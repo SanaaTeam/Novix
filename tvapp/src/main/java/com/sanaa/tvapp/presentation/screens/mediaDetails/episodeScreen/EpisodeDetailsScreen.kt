@@ -195,7 +195,8 @@ private fun EpisodeDetailsScreenContent(
                             if (state.guestOfHonor.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.guestOfHonor,
-                                    title = stringResource(R.string.guest_of_honor)
+                                    title = stringResource(R.string.guest_of_honor),
+                                    onActorCardClicked = {}
                                 )
                             }
                         }

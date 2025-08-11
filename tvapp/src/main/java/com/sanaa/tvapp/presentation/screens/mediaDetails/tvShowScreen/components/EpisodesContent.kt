@@ -32,15 +32,20 @@ fun EpisodesContent(
             modifier = Modifier.padding(bottom = 12.dp)
         )
         episodes.forEach {
+
             EpisodeCard(
-                episode = it, modifier = Modifier
-                    .padding(bottom = 8.dp)
-                    .clickable(
-                        indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
-                        onClick = {
-                            onEpisodeClick(seriesId, it.seasonNumber, it.number)
-                        })
+                episode = it,
+                modifier = Modifier
+                    .padding(bottom = 8.dp),
+                onEpisodeCardClick = {
+                    onEpisodeClick(seriesId, it.seasonNumber, it.number)
+                }
+//                    .clickable(
+//                        indication = null,
+//                        interactionSource = remember { MutableInteractionSource() },
+//                        onClick = {
+//                            onEpisodeClick(seriesId, it.seasonNumber, it.number)
+//                        })
             )
         }
     }

@@ -30,9 +30,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
 
-    private val tvShowId: Int = 1399
 
-        private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
         "seriesId is required in SavedStateHandle"
     }
     private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
@@ -43,7 +42,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     init {
-        loadEpisode(tvShowId, seasonNumber, episodeNumber)
+        loadEpisode(seriesId, seasonNumber, episodeNumber)
 //        updateUserLoginState()
     }
 
