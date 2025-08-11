@@ -22,23 +22,32 @@ class PlayListScreenViewModel @Inject constructor(
 
     init {
         loadSavedLists()
-        getUserState()
     }
 
-    fun loadSavedLists() = tryToCollect(
-        dispatcher = Dispatchers.IO,
-        callee = { listsStatusProvider.savedLists },
-        onCollect = { savedLists ->
-            updateState {
-                it.copy(isLoading = false, lists = savedLists.map {
-                    it.toUiModel()
-                })
+    fun loadSavedLists() =
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isUserLoggedIn ->
+                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+                if (isUserLoggedIn) {
+                    tryToCollect(
+                        dispatcher = Dispatchers.IO,
+                        callee = { listsStatusProvider.savedLists },
+                        onCollect = { savedLists ->
+                            updateState {
+                                it.copy(isLoading = false, lists = savedLists.map {
+                                    it.toUiModel()
+                                })
+                            }
+                        },
+                        onError = { err ->
+                            updateState { it.copy(isLoading = false, errorMessage = err.message) }
+                        }
+                    )
+                }
             }
-        },
-        onError = { err ->
-            updateState { it.copy(isLoading = false, errorMessage = err.message) }
-        }
-    )
+        )
+
 
     fun onListAdded() {
         refreshLists()
@@ -72,16 +81,6 @@ class PlayListScreenViewModel @Inject constructor(
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
 
-    private fun getUserState() {
-        tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isUserLoggedIn ->
-                refreshLists()
-                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
-            }
-        )
-
-    }
 
     private fun refreshLists() {
         tryToExecute(
