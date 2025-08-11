@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.playlistDetails
 
-import SavedDetailsListSectionContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +33,7 @@ import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
 import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
+import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors

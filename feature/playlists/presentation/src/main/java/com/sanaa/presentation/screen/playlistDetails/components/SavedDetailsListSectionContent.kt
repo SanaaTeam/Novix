@@ -1,3 +1,5 @@
+package com.sanaa.presentation.screen.playlistDetails.components
+
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,8 +16,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.feature.playlists.presentation.R
-import com.sanaa.presentation.screen.playlistDetails.components.EmptyListScreen
-import com.sanaa.presentation.screen.playlistDetails.components.PaginatedMediaListGrid
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 
 @Composable
