@@ -52,7 +52,6 @@ import com.sanaa.tvapp.R
 import com.sanaa.designsystem.R as designSystemResource
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
     modifier: Modifier = Modifier,
     viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
@@ -94,7 +93,7 @@ fun MovieDetailsContent(
     modifier: Modifier = Modifier,
 ) {
     val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
-
+    val navController = LocalAppNavController.current
     NovixScaffold(
         backgroundShapes = { },
         modifier = modifier
@@ -197,11 +196,16 @@ fun MovieDetailsContent(
                             if (state.cast.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.cast,
+                                    onActorCardClicked = {id->
+                                        navController.navigate(ActorDetails(id))
+                                    }
                                 )
                             }
                             MoviesSlider(
                                 moviesPagingData = moviesPagingData,
-                                modifier = Modifier.height(231.dp)
+                                onMovieCardClicked = {id->
+                                    navController.navigate(MovieDetails(id))
+                                }
                             )
                         }
                     }
