@@ -92,8 +92,10 @@ class PlaylistDetailsScreenViewModelTest {
     @Test
     fun `onSaveIconClick on failure with general error updates error message`() = runTest {
         val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
-        val error = RuntimeException("Database Error")
+        val errorMessage = "Database Error"
+        val error = RuntimeException(errorMessage)
         coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+
         initViewModel()
 
         viewModel.onSaveIconClick(mediaItem)
@@ -101,7 +103,7 @@ class PlaylistDetailsScreenViewModelTest {
 
         val state = viewModel.state.value
         assertThat(state.isLoading).isFalse()
-        assertThat(state.errorMessage).isEqualTo("Database Error")
+        assertThat(state.errorMessage).isEqualTo(errorMessage)
     }
 
     @Test
