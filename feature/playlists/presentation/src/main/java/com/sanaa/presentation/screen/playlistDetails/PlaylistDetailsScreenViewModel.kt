@@ -23,7 +23,7 @@ import javax.inject.Inject
 class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState(),dispatcher),
     PlaylistDetailsInteractionListener {
@@ -40,36 +40,26 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState { it.copy(listId = listId) }
     }
 
-    private fun loadItemsInSaved(categoryId: Int) {
+    private fun loadItemsInSaved(listId: Int) {
+        updateState { it.copy(isLoading = true) }
         tryToCollect(
             callee = {
-                loadSavedMovies(categoryId)
+                loadSavedMovies(listId)
             },
             onCollect = { movies ->
                 updateState {
-                    it.copy(movieList = flowOf(movies), title = title, isLoading = false)
+                    it.copy(movieList = flowOf(movies))
                 }
+                updateState { it.copy(isLoading = false) }
+
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(errorMessage = exception.message, isLoading = false)
-                    }
-                }
-            }
+            onError = ::onDataLoadError
         )
     }
 
     override fun onMediaClick(
         mediaId: Int,
-        mediaType: MediaTypeUi
+        mediaType: MediaTypeUi,
     ) {
         emitEffect(PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType))
     }
@@ -87,21 +77,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 updateState {
                     it.copy(isLoading = false)
                 }
+                emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
+
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(errorMessage = exception.message, isLoading = false)
-                    }
-                }
-            }
+            onError = ::onDataLoadError
+
         )
     }
 
@@ -122,6 +102,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
+
         return createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
             mapper = Movie::toUiModel
@@ -131,6 +112,16 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page)
+        }
+    }
+
+    internal fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) {
+            updateState { it.copy(isLoading = false, errorMessage = null) }
+        } else {
+            updateState { it.copy(isLoading = false, errorMessage = e.message) }
+            emitEffect(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
+
         }
     }
 }
