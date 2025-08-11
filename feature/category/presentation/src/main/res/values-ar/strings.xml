@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="categories">الفئات</string>
+    <string name="movies">الأفلام</string>
+    <string name="tv_shows">المسلسلات</string>
+</resources>
