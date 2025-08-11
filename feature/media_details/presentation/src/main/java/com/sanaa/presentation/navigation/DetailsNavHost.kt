@@ -1,6 +1,5 @@
 package com.sanaa.presentation.navigation
 
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
@@ -38,16 +37,31 @@ import com.sanaa.presentation.screen.series.SeriesScreen
 import com.sanaa.presentation.screen.series.SeriesViewModel
 
 @Composable
-fun DetailsNavHost(startRoute: StartRoute, id: Int) {
-    val initialRoute = when (startRoute) {
-        StartRoute.SERIES -> SeriesDetailsScreenRoute(id).route()
-        StartRoute.MOVIE -> MovieDetailsScreenRoute(id).route()
-        StartRoute.ACTOR -> ActorDetailsScreenRoute(id).route()
-    }
+fun DetailsNavHost(
+    startRoute: StartRoute? = null,
+    mediaId: Int? = null,
+    genreId: Int? = null,
+    genreName: String? = null,
+    isTvGenre: Boolean = false
+) {
+    val initialRoute = when {
+        startRoute != null && mediaId != null -> when (startRoute) {
+            StartRoute.SERIES -> SeriesDetailsScreenRoute(mediaId).route()
+            StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId).route()
+            StartRoute.ACTOR -> ActorDetailsScreenRoute(mediaId).route()
+        }
 
+        else -> {
+            if (isTvGenre) {
+                GenreTvShowsScreenRoute(genreId!!, genreName!!).route()
+            } else {
+                MovieCategoriesScreenRoute(genreId!!, genreName!!).route()
+            }
+        }
+    }
     val navController = rememberNavController()
 
-
+    /**/
     val navColor = Theme.colors.surface
     val isDarkTheme = LocalThemeProvider.current
     val view = LocalView.current

@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sanaa.api.CategoryFeatureApi
 import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.UserProfileFeatureApi
@@ -22,11 +23,11 @@ import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibili
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.presentation.api.navigation.CategoryScreenRoute
 import com.sanaa.presentation.api.navigation.HomeScreenRoute
 import com.sanaa.presentation.api.navigation.LocalMainNavController
 import com.sanaa.presentation.api.navigation.MainScreenRoutes
 import com.sanaa.presentation.api.navigation.PlayListScreenRoute
-import com.sanaa.presentation.api.navigation.SavedContentScreenRoute
 import com.sanaa.presentation.api.navigation.SearchScreenRoute
 import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
@@ -55,6 +56,12 @@ fun MainScreen() {
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .playListApi()
+    }
+
+    val categoryFeatureApi: CategoryFeatureApi = remember {
+        EntryPointAccessors.fromApplication(
+            appContext, HomeApiEntryPoint::class.java
+        ).categoryApi()
     }
 
 
@@ -86,7 +93,8 @@ fun MainScreen() {
                     playlistsFeatureApi.PlaylistsScreenApi()
 
                 }
-                composable<SavedContentScreenRoute> {
+                composable<CategoryScreenRoute> {
+                    categoryFeatureApi.CategoryScreenApi()
 
                 }
                 composable<UserProfileScreenRoute> {
@@ -102,7 +110,7 @@ private fun AppBottomNavBar(navController: NavController) {
     val navItems = listOf(
         BottomNavItem.Home,
         BottomNavItem.Search,
-        BottomNavItem.Playlists,
+        BottomNavItem.Category,
         BottomNavItem.Saved,
         BottomNavItem.Profile
     )
@@ -137,12 +145,16 @@ private sealed class BottomNavItem(
     object Search :
         BottomNavItem(SearchScreenRoute, R.drawable.icon_search, R.drawable.icon_search_selected)
 
-    object Playlists : BottomNavItem(
-        SavedContentScreenRoute, R.drawable.icon_category, R.drawable.icon_category_selected
+    object Category : BottomNavItem(
+        CategoryScreenRoute, R.drawable.icon_category, R.drawable.icon_category_selected
     )
 
     object Saved :
-        BottomNavItem(PlayListScreenRoute, R.drawable.icon_save_unselected, R.drawable.icon_save_selected)
+        BottomNavItem(
+            PlayListScreenRoute,
+            R.drawable.icon_save_unselected,
+            R.drawable.icon_save_selected
+        )
 
     object Profile : BottomNavItem(
         UserProfileScreenRoute, R.drawable.icon_account, R.drawable.icon_account_selected
