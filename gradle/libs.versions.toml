@@ -70,6 +70,7 @@ uiTestJunit4Android = "1.8.3"
 navigationTestingAndroid = "2.9.2"
 runtimeAndroid = "1.8.3"
 foundationAndroid = "1.8.3"
+espressoCore = "3.6.1"
 
 [libraries]
 # AndroidX
@@ -191,6 +192,7 @@ androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navig
 androidx-navigation-testing-android = { group = "androidx.navigation", name = "navigation-testing-android", version.ref = "navigationTestingAndroid" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
