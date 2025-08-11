@@ -17,7 +17,7 @@ fun CategoriesGrid(
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
+        columns = GridCells.Adaptive(minSize = 128.dp),
         modifier = modifier,
         contentPadding = PaddingValues(
             start = 16.dp,

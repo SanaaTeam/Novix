@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.compnents
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -8,6 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -47,7 +46,7 @@ fun CategoryCard(
 
     Box(
         modifier = modifier
-            .height(68.dp)
+            .aspectRatio(160/68f)
             .border(
                 width = 1.dp, color = Theme.colors.stroke, shape = RoundedCornerShape(12.dp)
             )
@@ -61,24 +60,20 @@ fun CategoryCard(
             contentDescription = category.name,
             contentScale = ContentScale.Crop,
         )
-        Box(
+
+        AppText(
+            text = category.name,
+            style = Theme.textStyle.label.large,
+            color = Theme.colors.onPrimary,
             modifier = Modifier
                 .matchParentSize()
                 .background(boxOverlayBackgroundColor)
-        ) {
-            AppText(
-                text = category.name,
-                style = Theme.textStyle.label.large,
-                color = Theme.colors.onPrimary,
-                modifier = Modifier
-                    .padding(
-                        horizontal = 8.dp, vertical = 8.dp
-                    )
-                    .align(Alignment.TopStart)
-            )
-        }
+                .padding(
+                    horizontal = 8.dp, vertical = 8.dp
+                )
+                .align(Alignment.TopStart)
+        )
     }
-
 }
 
 @PreviewLightDark
