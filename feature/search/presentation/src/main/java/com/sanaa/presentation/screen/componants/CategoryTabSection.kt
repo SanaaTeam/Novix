@@ -139,7 +139,6 @@ fun CategoryTabContent(
                     onTvShowClick = { recent, tvShow ->
                         interactionsListener.onSearchResultMediaClicked(recent)
                     },
-                    onSaveIconClicked = { }
                 )
             }
         }
@@ -168,7 +167,10 @@ private fun ErrorState(loadStateError: LoadState.Error, onRetryClick: () -> Unit
         contentAlignment = Alignment.Center
     ) {
         if (loadStateError.error is NoNetworkException) {
-            NetworkDisconnectionContact(onRetryClick = onRetryClick,   useDarkTheme = LocalThemeProvider.current)
+            NetworkDisconnectionContact(
+                onRetryClick = onRetryClick,
+                useDarkTheme = LocalThemeProvider.current
+            )
         } else {
             ErrorStateContent(
                 onRetryClick = onRetryClick,

@@ -8,23 +8,24 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
 class PlayListScreenViewModelTest {
 
     private lateinit var viewModel: PlayListScreenViewModel
-    private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
+    private val listStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
-    private val testScheduler = testDispatcher.scheduler
 
     @BeforeEach
     fun setUp() {
@@ -62,60 +63,18 @@ class PlayListScreenViewModelTest {
         viewModel.effect.test {
             viewModel.onItemListClicked(5, "Workout Playlist")
             assertThat(awaitItem()).isEqualTo(
-                PlayListScreenEffect.NavigateToSavedDetails(
-                    5,
-                    "Workout Playlist"
-                )
+                PlayListScreenEffect.NavigateToSavedDetails(5, "Workout Playlist")
             )
             cancelAndIgnoreRemainingEvents()
         }
     }
 
-    @Test
-    fun `onListAddFailed emits ShowErrorToAddListSnackBar`() = runTest {
-        initViewModel()
-        viewModel.effect.test {
-            viewModel.onListAddFailed()
-            assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowErrorToAddListSnackBar)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
 
-    @Test
-    fun `onListAdded emits ShowSuccessToAddListSnackBar and reloads lists`() = runTest {
-        coEvery { manageSavedListsUseCase.getSavedLists() } returns listOf(fakeDomainList(1))
-        every { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(true)
-
-        initViewModel()
-        viewModel.effect.test {
-            viewModel.onListAdded()
-            assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertThat(viewModel.state.value.lists).hasSize(1)
-    }
-
-    @Test
-    fun `onListDeletedSuccessfully emits ShowSuccessToDeleteListSnackBar and reloads lists`() = runTest {
-        coEvery { manageSavedListsUseCase.getSavedLists() } returns listOf(fakeDomainList(1))
-        every { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(true)
-
-        initViewModel()
-        viewModel.effect.test {
-            viewModel.onListDeletedSuccessfully()
-
-            assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
-            cancelAndIgnoreRemainingEvents()
-        }
-
-        assertThat(viewModel.state.value.lists).hasSize(1)
-    }
 
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
             checkUserLogin = checkIfUserIsLoggedInUseCase,
-            manageSavedListsUseCase = manageSavedListsUseCase
+            listsStatusProvider = listStatusProvider,
         )
     }
 

@@ -2,39 +2,55 @@ package com.sanaa.presentation.screen.playlist
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val listsStatusProvider: SavedListsStatusProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
-    BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(PlayListScreenUiState()),
+    BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(
+        PlayListScreenUiState(),
+        defaultDispatcher = dispatcher
+    ),
     PlayListScreenInteractionListener {
 
     init {
         loadSavedLists()
-        getUserState()
     }
 
-    fun loadSavedLists() = tryToExecute(
-        dispatcher = Dispatchers.IO,
-        callee = {
-            val savedLists = manageSavedListsUseCase.getSavedLists().map {
-                it.toUiModel()
+    fun loadSavedLists() =
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { isUserLoggedIn ->
+                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+                if (isUserLoggedIn) {
+                    tryToCollect(
+                        dispatcher = Dispatchers.IO,
+                        callee = { listsStatusProvider.savedLists },
+                        onCollect = { savedLists ->
+                            updateState {
+                                it.copy(isLoading = false, lists = savedLists.map {
+                                    it.toUiModel()
+                                })
+                            }
+                        },
+                        onError = { err ->
+                            updateState { it.copy(isLoading = false, errorMessage = err.message) }
+                        }
+                    )
+                }
             }
-            updateState { it.copy(isLoading = false, lists = savedLists) }
-        },
-        onError = { err ->
-            updateState { it.copy(isLoading = false, errorMessage = err.message) }
-        }
-    )
+        )
+
 
     fun onListAdded() {
-        loadSavedLists()
+        refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
     }
 
@@ -43,7 +59,7 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
     fun onListDeletedSuccessfully() {
-        loadSavedLists()
+        refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
     }
 
@@ -65,14 +81,13 @@ class PlayListScreenViewModel @Inject constructor(
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
 
-    private fun getUserState() {
-        tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isUserLoggedIn ->
+
+    private fun refreshLists() {
+        tryToExecute(
+            callee = { listsStatusProvider.refreshLists() },
+            onSuccess = {
                 loadSavedLists()
-                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
             }
         )
-
     }
 }

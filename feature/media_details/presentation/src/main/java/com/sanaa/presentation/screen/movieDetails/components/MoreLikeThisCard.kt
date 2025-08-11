@@ -10,13 +10,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.feature.mediadetails.presentation.R
+import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
-import com.sanaa.presentation.model.MovieUiModel
 
 @Composable
 fun MoreLikeThisCard(
@@ -56,7 +56,7 @@ fun MoreLikeThisCard(
         },
         topLeftContent = {
             SaveIconChip(
-                isSaved = movie.isBookmarked,
+                isSaved = movie.isSaved,
                 onClick = { onBookmarkClick(movie) }
             )
         }

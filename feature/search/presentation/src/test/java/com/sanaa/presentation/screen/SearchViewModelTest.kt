@@ -32,7 +32,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedMovieStatusProvider
+import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
@@ -52,12 +52,12 @@ class SearchViewModelTest {
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var savedMovieStatusProvider: SavedMovieStatusProvider
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
-        savedMovieStatusProvider = mockk(relaxed = true) {
+        savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
         Dispatchers.setMain(testDispatcher)
@@ -68,7 +68,7 @@ class SearchViewModelTest {
             dispatcher = testDispatcher,
             checkUserLogin = checkUserLogin,
             mangeUserPreferenceUseCase = mangeUserPreferenceUseCase,
-            savedMovieStatusProvider = savedMovieStatusProvider
+            savedListsStatusProvider = savedListsStatusProvider
 
 
         )

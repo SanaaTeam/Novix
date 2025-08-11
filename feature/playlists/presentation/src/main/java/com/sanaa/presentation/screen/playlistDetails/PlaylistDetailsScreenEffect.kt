@@ -6,6 +6,7 @@ sealed interface PlaylistDetailsScreenEffect {
     object NavigateBack : PlaylistDetailsScreenEffect
     data object ShowErrorSnackBar : PlaylistDetailsScreenEffect
     data object ShowSuccessSnackBar : PlaylistDetailsScreenEffect
+    object NavigateBackAfterDelete : PlaylistDetailsScreenEffect
 
     data class NavigateToMediaDetails(val mediaId: Int, val mediaTypeUi: MediaTypeUi) :
         PlaylistDetailsScreenEffect
