@@ -28,8 +28,9 @@ import com.sanaa.tvapp.R
 fun CastSlider(
     cast: List<ActorUiModel>,
     modifier: Modifier = Modifier,
-    title: String = stringResource(R.string.cast)
-) {
+    title: String = stringResource(R.string.cast),
+    onActorCardClicked: (Int) -> Unit,
+    ) {
     Column(
         modifier = modifier
     ) {
@@ -47,30 +48,10 @@ fun CastSlider(
             items(cast) { actor ->
                 TvMediaPosterCard(
                     title = actor.name,
-                    posterImage = {
-                        RemoteBlurredSensitiveImage(
-                            imageUrl = actor.imageUrl.orEmpty(),
-                            modifier = Modifier.fillMaxWidth(),
-                            sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = 0.7f,
-                            placeholderContent = {
-                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                            },
-                            errorContent = {
-                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                            },
-                            contentDescription = actor.name,
-                        ) {
-                            OnBlurContent(
-                                hintText = stringResource(com.sanaa.tvapp.R.string.unsuitable_image),
-                                textStyle = Theme.textStyle.body.small.copy(
-                                    color = Color(0x99FFFFFF)
-                                ),
-                                iconSize = 24.dp,
-                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                            )
-                        }
-                    }
+                    imageUrl = actor.imageUrl ?: "",
+                    onCardClick = {
+                        onActorCardClicked(actor.id)
+                    },
                 )
             }
         }
