@@ -224,17 +224,22 @@ private fun EpisodeDetailsScreenContent(
             BottomContainer(
                 trailerUrl = state.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
+                isRateSelected = state.hasUserSelectedRate,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClick,
                 onSetRateClicked = interactionListener::onRateClicked
             )
             if (state.showRateBottomSheet) {
+                var localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
                 RateBottomSheet(
-                    isRateSelected = state.hasUserSelectedRate,
-                    imdbRating = state.imdbRating,
+                    isRateSelected = localRating.value > 0,
+                    imdbRating = localRating.value,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
                     isVisible = state.showRateBottomSheet,
-                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                    onRatingChanged = interactionListener::onRatingChanged
+                    onSubmitButtonClick = {
+                        interactionListener.onRatingChanged(localRating.value)
+                        interactionListener.onSubmitRateBottomSheet()
+                    },
+                    onRatingChanged = { new -> localRating.value = new }
                 )
             }
             if (state.showLoginBottomSheet) {

@@ -309,10 +309,9 @@ class MovieDetailsViewModel @Inject constructor(
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
+                updateState { it.copy(isUserLoggedIn = isLogged) }
+                if (isLogged) {
+                    fetchUserRating()
                 }
             },
         )

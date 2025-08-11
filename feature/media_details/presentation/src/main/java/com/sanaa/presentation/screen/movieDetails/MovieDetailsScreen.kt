@@ -55,6 +55,7 @@ import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
 import com.sanaa.presentation.shared_component.BottomContainer
+import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.util.getCurrentLocale
@@ -102,6 +103,11 @@ fun MovieDetailsScreen(
                 mediaId = selectedMedia
             )
         }
+
+        NovixAnimatedSnackBarHost(
+            data = snack,
+            onDismiss = { snack = null }
+        )
     }
 }
 
@@ -249,16 +255,21 @@ fun MovieDetailsContent(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
                 modifier = Modifier.align(Alignment.BottomCenter),
+                isRateSelected = state.hasUserSelectedRate,
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
             if (state.showRateBottomSheet) {
+                var localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
                 RateBottomSheet(
-                    isRateSelected = state.hasUserSelectedRate,
-                    imdbRating = state.imdbRating,
+                    isRateSelected = localRating.value > 0,
+                    imdbRating = localRating.value,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
                     isVisible = state.showRateBottomSheet,
-                    onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                    onRatingChanged = interactionListener::onRatingChanged
+                    onSubmitButtonClick = {
+                        interactionListener.onRatingChanged(localRating.value)
+                        interactionListener.onSubmitRateBottomSheet()
+                    },
+                    onRatingChanged = { new -> localRating.value = new }
                 )
             }
             if (state.showLoginBottomSheet) {

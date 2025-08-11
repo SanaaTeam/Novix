@@ -287,18 +287,23 @@ fun SeriesScreenContent(
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.series.trailerUrl,
+                isRateSelected = state.hasUserSelectedRate,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                 onSetRateClicked = interactionListener::onRateClicked
             )
         }
         if (state.showRateBottomSheet) {
+            var localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
             RateBottomSheet(
-                isRateSelected = state.hasUserSelectedRate,
-                imdbRating = state.imdbRating,
+                isRateSelected = localRating.value > 0,
+                imdbRating = localRating.value,
                 onDismiss = interactionListener::onDismissAnyBottomSheet,
                 isVisible = state.showRateBottomSheet,
-                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-                onRatingChanged = interactionListener::onRatingChanged
+                onSubmitButtonClick = {
+                    interactionListener.onRatingChanged(localRating.value)
+                    interactionListener.onSubmitRateBottomSheet()
+                },
+                onRatingChanged = { new -> localRating.value = new }
             )
         }
         if (state.showLoginBottomSheet) {
