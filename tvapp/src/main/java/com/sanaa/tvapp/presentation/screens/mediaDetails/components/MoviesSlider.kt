@@ -19,6 +19,8 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.home.ImageList
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPosterCard
@@ -26,13 +28,14 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.componants.TvMediaPoste
 @Composable
 fun MoviesSlider(
     moviesPagingData: LazyPagingItems<MovieDetailsUiModel>,
+    onMovieCardClicked:(Int)->Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
     ) {
         AppText(
-            text = stringResource(com.sanaa.tvapp.R.string.more_like_this),
+            text = stringResource(R.string.more_like_this),
             style = Theme.textStyle.title.medium,
             color = Theme.colors.title,
             modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
@@ -46,30 +49,10 @@ fun MoviesSlider(
                 if (movie != null) {
                     TvMediaPosterCard(
                         title = movie.title,
-                        posterImage = {
-                            RemoteBlurredSensitiveImage(
-                                imageUrl = movie.posterUrl?:"",
-                                modifier = Modifier.fillMaxWidth(),
-                                sensitiveContentThreshold = 0.2f,
-                                safeContentThreshold = 0.7f,
-                                placeholderContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                                errorContent = {
-                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                },
-                                contentDescription = movie.title,
-                            ) {
-                                OnBlurContent(
-                                    hintText = stringResource(com.sanaa.tvapp.R.string.unsuitable_image),
-                                    textStyle = Theme.textStyle.body.small.copy(
-                                        color = Color(0x99FFFFFF)
-                                    ),
-                                    iconSize = 24.dp,
-                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                                )
-                            }
-                        }
+                        imageUrl = movie.posterUrl?:"",
+                        onCardClick = {
+                            onMovieCardClicked(movie.id)
+                        },
                     )
                 }
             }
