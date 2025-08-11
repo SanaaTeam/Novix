@@ -51,3 +51,5 @@ include(":data:repositories:identity")
 
 include(":feature:onboarding:api")
 include(":feature:onboarding:presentation")
+include(":feature:category:api")
+include(":feature:category:presentation")

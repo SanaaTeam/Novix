@@ -2,7 +2,7 @@ package com.sanaa.presentation.api
 
 import androidx.compose.runtime.Composable
 import com.sanaa.api.PlaylistsFeatureApi
-import com.sanaa.presentation.navigation.PlaylistNavHost
+import com.sanaa.presentation.api.navigationSaved.PlaylistNavHost
 import javax.inject.Inject
 import javax.inject.Singleton
 
