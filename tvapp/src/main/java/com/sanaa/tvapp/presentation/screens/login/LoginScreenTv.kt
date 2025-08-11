@@ -21,16 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Border
-import androidx.tv.material3.Card
-import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import com.sanaa.designsystem.design_system.component.button.OutlinedButton
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
+import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.text_field.PasswordTextField
@@ -110,67 +110,54 @@ private fun LoginContentTv(
 
 
         PasswordTextField(
-                value = state.password,
-                icon = painterResource(R.drawable.lock_key),
-                onValueChange = listener::onPasswordChanged,
-                isPasswordVisible = state.isPasswordVisible,
-                onVisibilityToggle = listener::onTogglePasswordVisibility,
-                modifier = Modifier.fillMaxWidth()
+            value = state.password,
+            icon = painterResource(R.drawable.lock_key),
+            onValueChange = listener::onPasswordChanged,
+            isPasswordVisible = state.isPasswordVisible,
+            onVisibilityToggle = listener::onTogglePasswordVisibility,
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 12.dp),
-            onClick = listener::onLoginClicked,
-            colors = CardDefaults.colors(),
-            border = CardDefaults.border(
-                border = Border.None,
-                focusedBorder = Border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = Theme.colors.primary,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                ),
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            scale = ButtonDefaults.scale(focusedScale = 1.03f),
+            shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+            onClick = { listener.onLoginClicked() },
+            colors = ButtonDefaults.colors(
+                containerColor = Theme.colors.iconBackgroundLow,
+                focusedContainerColor = Theme.colors.primary
             ),
-            scale = CardDefaults.scale(focusedScale = 1.05f),
-            shape = CardDefaults.shape(RoundedCornerShape(12.dp))
         ) {
-            PrimaryButton(
+            Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.login),
-                onClick = listener::onLoginClicked,
-                isEnabled = state.canSubmit,
-                isLoading = state.isLoading,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally),
+                style = Theme.textStyle.label.large,
+                color = Theme.colors.onPrimary,
+                textAlign = TextAlign.Center
             )
         }
 
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = listener::onContinueClicked,
-            colors = CardDefaults.colors(),
-            border = CardDefaults.border(
-                border = Border.None,
-                focusedBorder = Border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = Theme.colors.primary,
-                    ),
-                    shape = RoundedCornerShape(12.dp),
-                ),
+        Button(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 4.dp),
+            scale = ButtonDefaults.scale(focusedScale = 1.03f),
+            shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+            onClick = { listener.onContinueClicked() },
+            colors = ButtonDefaults.colors(
+                containerColor = Theme.colors.surface,
+                focusedContainerColor = Theme.colors.primaryVariant
             ),
-            scale = CardDefaults.scale(focusedScale = 1.05f),
-            shape = CardDefaults.shape(RoundedCornerShape(12.dp))
+            border = ButtonDefaults.border(
+                border = Border(BorderStroke(width = 1.dp, color = Theme.colors.stroke))
+            ),
         ) {
-            OutlinedButton(
+            Text(
+                modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.continue_as_guest),
-                onClick = listener::onContinueClicked,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.CenterHorizontally)
+                style = Theme.textStyle.label.large,
+                color = Theme.colors.onPrimary,
+                textAlign = TextAlign.Center
             )
         }
     }
