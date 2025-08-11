@@ -1,20 +1,29 @@
 package com.sanaa.presentation.bottomsheet.addEditBookmark
 
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.state.MediaItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedMovieStatusProvider
+import kotlinx.coroutines.launch
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedMovieStatusProvider: SavedMovieStatusProvider,
+    private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState(),dispatcher) {
+) : BaseViewModel<AddBookmarkListUiState, AddBookmarkEffect>(AddBookmarkListUiState(), dispatcher) {
+
+
+    init {
+        viewModelScope.launch {
+            listsStatusProvider.refreshLists()
+        }
+    }
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -38,8 +47,18 @@ class AddBookmarkListViewModel @Inject constructor(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
-                emitEffect(Unit)
-                savedMovieStatusProvider.markSaved(mediaId)
+                emitEffect(AddBookmarkEffect.AddSuccess)
+                listsStatusProvider.markItemSaved(mediaId)
+                listsStatusProvider.addList(
+                    SavedList(
+                        title = it.title,
+                        itemCount = it.itemCount,
+                        id = it.id
+                    )
+                )
+                viewModelScope.launch {
+                    listsStatusProvider.refreshLists()
+                }
             },
             onError = {
                 updateState {
@@ -48,6 +67,7 @@ class AddBookmarkListViewModel @Inject constructor(
                         errorMessage = "Failed to create list. Please try again."
                     )
                 }
+                emitEffect(AddBookmarkEffect.AddFailure)
             }
         )
     }

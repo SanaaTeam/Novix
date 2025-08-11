@@ -82,11 +82,12 @@ fun PlayListEmptyStateScreen(
                 )
             }
         }
-        AddBookmarkListBottomSheet(
-            isVisible = isVisible,
-            onDismiss = onDismissAddBottomSheet,
-            mediaId = 0
-        )
+        if (!showLoginButton)
+            AddBookmarkListBottomSheet(
+                isVisible = isVisible,
+                onDismiss = onDismissAddBottomSheet,
+                mediaId = 0
+            )
     }
 }
 
@@ -108,7 +109,7 @@ private fun EmptySavedListUserScreenContentPrev() {
             messageText = stringResource(R.string.there_is_no_saved_list_yet_click_on_button_to_add_a_new_list),
             imageRes = myListImg,
             showFab = true,
-            onFabClick = {}
+            onFabClick = {},
         )
     }
 }
@@ -130,7 +131,7 @@ private fun EmptySavedListGuestScreenContentPrev() {
             messageText = stringResource(R.string.please_login_to_create_lists_and_add_your_favorite_items_to_it),
             imageRes = myListImg,
             showLoginButton = true,
-            onLoginClick = {}
+            onLoginClick = {},
         )
     }
 

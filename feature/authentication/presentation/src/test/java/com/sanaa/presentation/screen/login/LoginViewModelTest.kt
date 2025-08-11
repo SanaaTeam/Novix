@@ -13,20 +13,20 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import service.StringProvider
+import service.IdentityStringProvider
 import usecase.LoginUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LoginViewModelTest {
     private val loginUseCase: LoginUseCase = mockk(relaxed = true)
-    private val stringProvider: StringProvider = mockk(relaxed = true)
+    private val identityStringProvider: IdentityStringProvider = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: LoginViewModel
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = LoginViewModel(loginUseCase, stringProvider, ioDispatcher = testDispatcher)
+        viewModel = LoginViewModel(loginUseCase, identityStringProvider, ioDispatcher = testDispatcher)
     }
 
     @Test
@@ -141,7 +141,7 @@ class LoginViewModelTest {
     @Test
     fun `onDataLoadError handles NoInternetConnectionException`() = runTest {
         val errorMessage = "No internet connection"
-        coEvery { stringProvider.noInternetConnectionError } returns errorMessage
+        coEvery { identityStringProvider.noInternetConnectionError } returns errorMessage
         val exception = NoInternetConnectionException()
         viewModel.onDataLoadError(exception)
 
@@ -156,7 +156,7 @@ class LoginViewModelTest {
     @Test
     fun `onDataLoadError handles unknown exception`() = runTest {
         val errorMessage = "Something went wrong"
-        coEvery { stringProvider.somethingWentWrongError } returns errorMessage
+        coEvery { identityStringProvider.somethingWentWrongError } returns errorMessage
         val exception = RuntimeException("Unknown error")
         viewModel.onDataLoadError(exception)
 
@@ -202,7 +202,7 @@ class LoginViewModelTest {
 
         val errorMessage = "Invalid credentials"
         coEvery { loginUseCase.login(username, password) } throws InvalidUserOrPasswordException()
-        coEvery { stringProvider.invalidUserNameAndPasswordError } returns errorMessage
+        coEvery { identityStringProvider.invalidUserNameAndPasswordError } returns errorMessage
 
         viewModel.onLoginClicked()
         viewModel.effect.test {

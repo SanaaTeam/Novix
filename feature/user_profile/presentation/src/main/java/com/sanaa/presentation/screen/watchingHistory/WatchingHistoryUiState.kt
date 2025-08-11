@@ -12,5 +12,9 @@ data class WatchingHistoryUiState(
     val movieSelectedGenreId: Int? = null,
     val tvShowSelectedGenreId: Int? = null,
     val isLoading: Boolean = false,
-    val error: String? = null
+    val error: String? = null,
+    val userIsLoggedIn: Boolean = false,
+    val showSaveToListBottomSheet: Boolean = false,
+    val showAddListBottomSheet: Boolean = false,
+    val selectedMediaToSave: MediaItemUiModel? = null,
 )
