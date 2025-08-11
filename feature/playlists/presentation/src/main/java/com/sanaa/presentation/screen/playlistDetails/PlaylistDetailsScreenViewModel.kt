@@ -57,13 +57,13 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                 if (exception is NoNetworkException) {
                     updateState {
                         it.copy(
-                            isLoading = true,
+                            isLoading = false,
                             errorMessage = null
                         )
                     }
                 } else {
                     updateState {
-                        it.copy(errorMessage = exception.message, isLoading = true)
+                        it.copy(errorMessage = exception.message, isLoading = false)
                     }
                 }
             }
