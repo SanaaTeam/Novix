@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -78,7 +79,10 @@ fun GenreMoviesScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                GenreMoviesEffects.NavigateBack -> navController.popBackStack()
+                GenreMoviesEffects.NavigateBack -> if (!navController.popBackStack()) {
+                    (navController.context as Activity).finish()
+                }
+
                 is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
                     MovieDetailsScreenRoute(effect.id).route()
                 )

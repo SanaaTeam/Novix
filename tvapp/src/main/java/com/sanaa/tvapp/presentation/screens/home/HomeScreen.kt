@@ -1,13 +1,17 @@
 package com.sanaa.tvapp.presentation.screens.home
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
@@ -16,8 +20,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -34,6 +38,7 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -44,16 +49,9 @@ import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
 import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
-import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
-import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.designsystem.R as dosingSystemResource
 import com.sanaa.tvapp.R as tvResource
-import com.sanaa.tvapp.state.MediaTypeUi
-import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(homeScreenViewModel: HomeScreenViewModel = hiltViewModel()) {
@@ -94,11 +92,32 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
             .fillMaxWidth()
             .verticalScroll(scrollState)
     ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 36.dp, vertical = 24.dp)
+                    .align(Alignment.CenterEnd),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Image(
+                    modifier = Modifier
+                        .size(30.dp),
+                    painter = painterResource(tvResource.drawable.novix_logo),
+                    contentDescription = null,
+                )
+
+                Text(
+                    stringResource(tvResource.string.app_name),
+                    color = Theme.colors.title,
+                    style = Theme.textStyle.title.medium,
+                )
+            }
+        }
+
         PopularMoviesCarousel(
             modifier = Modifier.padding(
                 start = sidePaddings,
                 end = sidePaddings,
-                top = 24.dp,
                 bottom = 16.dp
             ),
             mediaItems = state.popularMedia,
@@ -221,7 +240,7 @@ private fun ImageList(item: MediaItem) {
             .width(153.dp)
             .height(231.dp),
         onClick = {},
-        colors = CardDefaults.colors(),
+        colors = CardDefaults.colors(containerColor = Theme.colors.surfaceHigh),
         border = CardDefaults.border(
             border = Border.None,
             focusedBorder = Border(

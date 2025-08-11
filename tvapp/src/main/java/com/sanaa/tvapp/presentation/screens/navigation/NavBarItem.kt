@@ -1,8 +1,10 @@
 package com.sanaa.tvapp.presentation.screens.navigation
 
+import android.graphics.BlurMaskFilter
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -16,10 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Icon
-import androidx.tv.material3.LocalContentColor
 import com.sanaa.designsystem.design_system.theme.Theme
 
 @Composable
@@ -32,12 +37,12 @@ fun NavBarItem(
 ) {
     Box(
         modifier = modifier
-            .height(56.dp)
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = onClick
-            ), contentAlignment = Alignment.BottomCenter
+            ),
+        contentAlignment = Alignment.BottomCenter
     ) {
         Crossfade(
             targetState = isSelected, animationSpec = tween(50, easing = FastOutSlowInEasing)
@@ -52,14 +57,15 @@ fun NavBarItem(
                             .height(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-
+                        OvalShapeBlur(
+                            modifier = Modifier.fillMaxSize()
+                        )
                         Box(
                             modifier = Modifier
                                 .size(4.dp)
                                 .clip(CircleShape)
                                 .background(Theme.colors.primary)
                         )
-
                     }
                     Box(
                         modifier = Modifier
@@ -70,7 +76,7 @@ fun NavBarItem(
                         Icon(
                             painter = painterResource(id = selectedIconRes),
                             contentDescription = null,
-                            tint = LocalContentColor.current,
+                            tint = Theme.colors.primary,
                             modifier = Modifier.size(24.dp)
                         )
                     }
@@ -83,11 +89,32 @@ fun NavBarItem(
                     Icon(
                         painter = painterResource(id = iconRes),
                         contentDescription = null,
-                        tint = LocalContentColor.current,
+                        tint = Theme.colors.title,
                         modifier = Modifier.size(24.dp)
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun OvalShapeBlur(
+    modifier: Modifier = Modifier,
+    color: Color = Theme.colors.primary.copy(alpha = 0.4f),
+    blurRadius: Float = 150f
+) {
+    Canvas(
+        modifier = modifier
+    ) {
+        val paint = android.graphics.Paint().apply {
+            this.color = color.toArgb()
+            maskFilter = BlurMaskFilter(blurRadius, BlurMaskFilter.Blur.NORMAL)
+        }
+        drawIntoCanvas {
+            it.nativeCanvas.drawOval(
+                0f, 0f, size.width, size.height, paint
+            )
         }
     }
 }

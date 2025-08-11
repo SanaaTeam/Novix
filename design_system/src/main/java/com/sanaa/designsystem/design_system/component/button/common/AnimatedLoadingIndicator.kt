@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.R
 
 @Composable
-internal fun AnimatedLoadingIndicator(
+fun AnimatedLoadingIndicator(
     size: Dp = 20.dp,
     icon: Painter = painterResource(id = R.drawable.icon_loading_indicator),
     iconTint: Color = Color.Unspecified,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
     val rotation by infiniteTransition.animateFloat(
