@@ -2,8 +2,8 @@ package com.sanaa.image_viewer.component
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import androidx.annotation.FloatRange
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -11,20 +11,21 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
 import com.sanaa.image_viewer.modifier.blurry
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.launch
 
 /**
  * A composable executes an [ImageRequest] asynchronously and
@@ -62,77 +63,91 @@ fun RemoteBlurredSensitiveImage(
     onBlurContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val classifier = remember { TfLiteImageClassifier(context) }
+    val classifier = remember(context) { TfLiteImageClassifier(context) }
 
-    var bitmapToDisplay by remember { mutableStateOf<Bitmap?>(null) }
-    var isHaram by rememberSaveable { mutableStateOf(false) }
+    var bitmapToBlur by remember(imageUrl) { mutableStateOf<Bitmap?>(null) }
+    var isSensitive by rememberSaveable { mutableStateOf(false) }
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
 
-    LaunchedEffect(imageUrl) {
-        requestState = RequestState.LOADING
+    val coroutineScope = rememberCoroutineScope()
 
-        val result = runCatching {
-            withContext(Dispatchers.IO) {
+    val request = remember(imageUrl) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .allowHardware(false) // Required to get Bitmap from Drawable
+            .build()
+    }
+
+    LaunchedEffect(imageUrl) {
+        if (requestState != RequestState.LOADING) return@LaunchedEffect
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
                 val loader = ImageLoader(context)
-                val request = ImageRequest.Builder(context)
-                    .data(imageUrl)
-                    .allowHardware(false) // Required to get Bitmap from Drawable
-                    .build()
+
                 val response = loader.execute(request)
                 val bitmap = (response.drawable as? BitmapDrawable)?.bitmap
                 if (bitmap != null) {
-                    val classificationResult = classifier.isInappropriateImage(
+                    isSensitive = classifier.isInappropriateImage(
                         bitmap,
                         safeContentThreshold,
                         sensitiveContentThreshold
                     )
-                    Pair(bitmap, classificationResult)
-                } else null
-            }
-        }
 
-        result.onSuccess { pair ->
-            if (pair != null) {
-                bitmapToDisplay = pair.first
-                isHaram = pair.second
-                requestState = RequestState.SUCCESS
-                onSuccess?.invoke()
-            } else {
+//                    store bitmap to blur for older android version
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && isSensitive) {
+                        bitmapToBlur = bitmap
+                    }
+
+                    requestState = RequestState.SUCCESS
+                    onSuccess?.invoke()
+                } else {
+                    throw Exception("failed to fetch image bitmap")
+                }
+
+            } catch (_: Exception) {
                 requestState = RequestState.ERROR
                 onError?.invoke()
             }
-        }.onFailure {
-            requestState = RequestState.ERROR
-            onError?.invoke()
         }
     }
+
+    LaunchedEffect(bitmapToBlur) {
+        //restore bitmap to blur only for older android version
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || !isSensitive) return@LaunchedEffect
+        if (bitmapToBlur != null || requestState != RequestState.SUCCESS) return@LaunchedEffect
+
+        coroutineScope.launch(Dispatchers.IO) {
+            val loader = ImageLoader(context)
+            val response = loader.execute(request)
+            bitmapToBlur = (response.drawable as? BitmapDrawable)?.bitmap
+        }
+    }
+
 
     Box(modifier = modifier.fillMaxSize()) {
         when (requestState) {
             RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
-                bitmapToDisplay?.let { bmp ->
-                    Image(
-                        bitmap = bmp.asImageBitmap(),
-                        contentDescription = contentDescription,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .blurry(
-                                isBlurForced = false,
-                                isImageSafe = !isHaram,
-                                blurRadius = blurRadius,
-                                isBlurEnabled = isBlurEnabled,
-                                bitmap = bmp
-                            ),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                AsyncImage(
+                    model = request,
+                    contentDescription = contentDescription,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .blurry(
+                            isBlurForced = false,
+                            isImageSafe = !isSensitive,
+                            blurRadius = blurRadius,
+                            isBlurEnabled = isBlurEnabled,
+                            bitmap = bitmapToBlur
+                        ),
+                    contentScale = ContentScale.Crop
+                )
             }
 
             RequestState.ERROR -> errorContent()
         }
 
-        if (requestState == RequestState.SUCCESS && isHaram && isBlurEnabled) {
+        if (requestState == RequestState.SUCCESS && isSensitive && isBlurEnabled) {
             onBlurContent()
         }
     }
