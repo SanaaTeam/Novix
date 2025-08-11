@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -17,6 +18,7 @@ import com.sanaa.api.PlaylistsFeatureApi
 import com.sanaa.api.SearchFeatureApi
 import com.sanaa.api.UserProfileFeatureApi
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibility
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
@@ -35,6 +37,7 @@ import dagger.hilt.android.EntryPointAccessors
 fun MainScreen() {
 
     val navController = rememberNavController()
+    val bottomBarVisible = remember { mutableStateOf(true) }
     val appContext = LocalContext.current.applicationContext
 
     val searchFeatureApi: SearchFeatureApi = remember {
@@ -58,13 +61,15 @@ fun MainScreen() {
 
     CompositionLocalProvider(
         LocalMainNavController provides navController,
+        LocalBottomBarVisibility provides bottomBarVisible
     ) {
         NovixScaffold(
             bottomBar = {
-                AppBottomNavBar(
-                    navController = navController
-                )
-            }, modifier = Modifier.navigationBarsPadding()
+                if (bottomBarVisible.value) {
+                    AppBottomNavBar(navController = navController)
+                }
+            },
+            modifier = Modifier.navigationBarsPadding()
         ) { innerPadding ->
             NavHost(
                 navController = navController,
