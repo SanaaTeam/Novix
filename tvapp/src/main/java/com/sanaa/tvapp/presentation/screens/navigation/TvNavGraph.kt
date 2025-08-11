@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
+import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
 import com.sanaa.tvapp.presentation.screens.searchScreen.SearchScreen
@@ -30,11 +31,11 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
         composable<NavBarRoute.MyAccount> { }
         composable<ScreensRoute.MovieDetails> { navBackStackEntry ->
             val movieId = navBackStackEntry.toRoute<ScreensRoute.MovieDetails>().movieId
-            MovieDetailsScreen(movieId)
+            MovieDetailsScreen()
         }
         composable<ScreensRoute.TvShowDetails> { navBackStackEntry ->
-            val tvShowId = navBackStackEntry.toRoute<ScreensRoute.TvShowDetails>().tvShowId
-            TvShowScreen(tvShowId)
+            val tvShowId = navBackStackEntry.toRoute<ScreensRoute.TvShowDetails>().seriesId
+            TvShowScreen()
         }
     }
 }

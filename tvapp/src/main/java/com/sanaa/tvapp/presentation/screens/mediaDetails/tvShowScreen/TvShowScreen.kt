@@ -1,6 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -47,13 +48,13 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.EpisodesContent
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.state.SnackData
 
 @Composable
 fun TvShowScreen(
-    tvShowId:Int,
     modifier: Modifier = Modifier,
     viewModel: TvShowDetailsScreenViewModel = hiltViewModel(),
 ) {
@@ -75,7 +76,11 @@ fun TvShowScreen(
                     navController.navigate(ActorDetails(it.actorId))                  }
 
                 is TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen -> {
-//                    TODO()
+                    navController.navigate(ScreensRoute.EpisodeDetails(
+                        seriesId = it.seriesId,
+                        seasonNumber = it.seasonNumber,
+                        episodeNumber = it.episodeNumber
+                    ))
                 }
 
                 TvShowDetailsScreenEffects.NavigateToLogin -> {
@@ -228,7 +233,12 @@ fun TvShowScreenContent(
                             }
 
                             if (state.cast.isNotEmpty()) {
-                                CastSlider(state.cast)
+                                CastSlider(
+                                    cast = state.cast,
+                                    onActorCardClicked = {id->
+
+                                    }
+                                )
                             }
 
                             SeasonTab(

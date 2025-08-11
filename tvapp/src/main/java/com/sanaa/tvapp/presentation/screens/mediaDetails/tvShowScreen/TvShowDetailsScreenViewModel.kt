@@ -32,9 +32,10 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
 
-       private val tvShowId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
         "seriesId is required in SavedStateHandle"
     }
+
 
     init {
         loadSeries()
@@ -192,11 +193,11 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(tvShowId) }
-        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(tvShowId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, 1) }
-        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(tvShowId) }
-        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(tvShowId) }
+        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(seriesId) }
+        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(seriesId) }
+        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
+        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
+        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
 //        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
         val series = seriesDeferred.await()
@@ -222,7 +223,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
-        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, seasonNumber)
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
@@ -241,7 +242,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
-            seriesId = tvShowId,
+            seriesId = seriesId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
