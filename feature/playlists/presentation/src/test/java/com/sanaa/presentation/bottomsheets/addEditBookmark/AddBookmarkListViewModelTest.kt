@@ -97,7 +97,7 @@ class AddBookmarkListViewModelTest {
     private fun initViewModel() {
         viewModel = AddBookmarkListViewModel(
             manageSavedListsUseCase = manageSavedListsUseCase,
-            savedListsStatusProvider = listsStatusProvider,
+            listsStatusProvider = listsStatusProvider,
             dispatcher = testDispatcher
         )
     }

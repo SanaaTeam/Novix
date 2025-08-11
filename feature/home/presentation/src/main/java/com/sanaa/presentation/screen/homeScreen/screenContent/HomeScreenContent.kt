@@ -9,13 +9,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,20 +24,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
-import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
@@ -71,14 +64,7 @@ fun HomeScreenContent(
 
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
-        launchAuthActivityForResult(
-            loggedInWithSessionId = {
-
-            },
-            loggedInAsGuest = {
-
-            },
-        )
+        launchAuthActivityForResult()
     val showNoInternetScreen = (state.isNoInternetConnection
             && upcomingMovies.itemCount == 0
             && state.popularMedia.isEmpty()
@@ -232,20 +218,22 @@ fun HomeScreenContent(
         }
     }
 
-    state.selectedMediaToSave?.let { mediaItem ->
-        SaveToListBottomSheet(
-            isVisible = state.showSaveToListBottomSheet,
-            mediaId = mediaItem.id.toLong(),
-            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = interactionListener::onCreateNewListClick,
+    if (state.userIsLoggedIn) {
+        state.selectedMediaToSave?.let { mediaItem ->
+            SaveToListBottomSheet(
+                isVisible = state.showSaveToListBottomSheet,
+                mediaId = mediaItem.id.toLong(),
+                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = interactionListener::onCreateNewListClick,
+            )
+        }
+
+        AddBookmarkListBottomSheet(
+            isVisible = state.showAddListBottomSheet,
+            onDismiss = interactionListener::onDismissAddListBottomSheet,
+            mediaId = state.selectedMediaToSave?.id ?: 0
         )
     }
-
-    AddBookmarkListBottomSheet(
-        isVisible = state.showAddListBottomSheet,
-        onDismiss = interactionListener::onDismissAddListBottomSheet,
-        mediaId = state.selectedMediaToSave?.id ?: 0
-    )
     RequestToLoginBottomSheet(
         isVisible = state.showBottomSheet,
         onDismiss = interactionListener::onDismissBottomSheet,
