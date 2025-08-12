@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
+
 data class SearchTvScreenUiState(
     val searchQuery: String = "",
     val selectedTabIndex: Int = 0,

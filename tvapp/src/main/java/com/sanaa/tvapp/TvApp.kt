@@ -13,8 +13,10 @@ import javax.inject.Inject
 import org.conscrypt.Conscrypt
 import java.security.Security
 
+
 @HiltAndroidApp
 class TvApp: Application() {
+
     @Inject
     lateinit var crashlytics: FirebaseCrashlytics
 

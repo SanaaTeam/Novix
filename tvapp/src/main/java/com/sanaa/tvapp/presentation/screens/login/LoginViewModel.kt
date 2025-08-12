@@ -10,10 +10,11 @@ import service.IdentityStringProvider
 import usecase.LoginUseCase
 import javax.inject.Inject
 
+
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
-    private val stringProvider: IdentityStringProvider,
+    private val identityStringProvider: IdentityStringProvider,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TvBaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
     LoginScreenInteractionListener {
@@ -42,8 +43,9 @@ class LoginViewModel @Inject constructor(
                 val password = state.value.password
                 if (userName.isNotBlank() && password.isNotBlank()) {
                     loginUseCase.login(userName, password)
-                } else
-                    throw Exception(stringProvider.enterUserNameAndPasswordError)
+                } else {
+                    throw Exception(identityStringProvider.enterUserNameAndPasswordError)
+                }
             },
             onSuccess = {
                 updateState { prev ->
@@ -63,9 +65,9 @@ class LoginViewModel @Inject constructor(
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
         val message = when (throwable) {
-            is InvalidUserOrPasswordException -> stringProvider.invalidUserNameAndPasswordError
-            is NoInternetConnectionException -> stringProvider.noInternetConnectionError
-            else -> stringProvider.somethingWentWrongError
+            is InvalidUserOrPasswordException -> identityStringProvider.invalidUserNameAndPasswordError
+            is NoInternetConnectionException -> identityStringProvider.noInternetConnectionError
+            else -> identityStringProvider.somethingWentWrongError
         }
         emitEffect(LoginScreenEffects.ShowError(message = message))
     }
@@ -80,6 +82,7 @@ class LoginViewModel @Inject constructor(
     override fun onContinueClicked() {
         emitEffect(LoginScreenEffects.ReturnGuestResultCode)
     }
+
     private fun isSubmitAllowed(uiState: LoginUiState): Boolean =
         uiState.username.isNotBlank() &&
                 uiState.password.isNotBlank() &&

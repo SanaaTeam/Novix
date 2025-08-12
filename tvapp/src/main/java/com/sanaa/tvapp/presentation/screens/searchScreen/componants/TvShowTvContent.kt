@@ -8,7 +8,6 @@ import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
 
-
 @Composable
 fun TvShowTvContent(
     shows: LazyPagingItems<TvShowUiModel>,

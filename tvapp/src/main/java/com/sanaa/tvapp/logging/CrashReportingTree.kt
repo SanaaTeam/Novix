@@ -1,4 +1,4 @@
-package com.sanaa.novix.logging
+package com.sanaa.tvapp.logging
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics

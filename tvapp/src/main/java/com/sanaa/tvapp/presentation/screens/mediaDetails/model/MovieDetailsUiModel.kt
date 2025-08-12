@@ -14,4 +14,3 @@ data class MovieDetailsUiModel(
     val trailerUrl: String? = null,
     val posterUrl: String? = null
 )
-

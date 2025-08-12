@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -16,18 +17,21 @@ import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.delay
 
+
 @Composable
 fun NovixAnimatedSnackBarHost(
+    modifier: Modifier = Modifier,
     data: SnackData?,
     onDismiss: () -> Unit,
-    durationMillis: Long = 2500
+    durationMillis: Long = 2500,
 ) {
     AnimatedVisibility(
         visible = data != null,
         enter = slideInVertically(initialOffsetY = { -it }) + fadeIn(),
         exit = slideOutVertically(targetOffsetY = { -it }) + fadeOut(),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
+            .widthIn(max = 320.dp)
             .padding(top = 12.dp)
             .statusBarsPadding()
     ) {

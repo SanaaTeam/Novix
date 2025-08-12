@@ -9,6 +9,7 @@ import entity.Episode
 import entity.Season
 import entity.TvSeries
 
+
 @SuppressLint("DefaultLocale")
 fun TvSeries.toTvShowUiModel(trailerUrl: String? = null) = TvShowDetailsUiModel(
     id = id,

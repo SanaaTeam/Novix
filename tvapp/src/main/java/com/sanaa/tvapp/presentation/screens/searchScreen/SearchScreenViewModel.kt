@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.map
 import usecase.search.SearchUseCase
 import javax.inject.Inject
 
+
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
@@ -177,13 +178,19 @@ class SearchScreenViewModel @Inject constructor(
 
     private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
         return TvBasePagingSource { page ->
-            searchUseCase.searchActors(query = query, page = page)
+            searchUseCase.searchActors(
+                query = query,
+                page = page
+            )
         }
     }
 
     private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return TvBasePagingSource { page ->
-            searchUseCase.searchTvShows(query = query, page = page)
+            searchUseCase.searchTvShows(
+                query = query,
+                page = page
+            )
         }
     }
 

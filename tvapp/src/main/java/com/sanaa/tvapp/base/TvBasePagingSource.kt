@@ -1,7 +1,9 @@
 package com.sanaa.tvapp.base
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+
 
 class TvBasePagingSource <T : Any>(
     private val fetchItems: suspend (page: Int) -> List<T>
@@ -32,5 +34,3 @@ class TvBasePagingSource <T : Any>(
         private const val STARTING_PAGE_INDEX = 1
     }
 }
-
-

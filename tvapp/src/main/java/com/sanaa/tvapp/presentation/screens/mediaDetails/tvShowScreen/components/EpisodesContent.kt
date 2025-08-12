@@ -11,9 +11,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
-import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.mediaDetails.model.EpisodeUiModel
+
 
 @Composable
 fun EpisodesContent(

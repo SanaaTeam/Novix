@@ -2,7 +2,6 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 
-
 interface TvShowScreenInteractionListener {
     fun onBackClicked()
     fun onActorClicked(actorId: Int)

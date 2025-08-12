@@ -112,6 +112,7 @@ fun SearchScreenContent(
                 searchListener.onSearchQueryChanged(it)
             },
         )
+
         when (uiState.selectedTabIndex) {
             SearchTvScreenUiState.MOVIE_INDEX -> {
                 when {
@@ -163,6 +164,5 @@ fun SearchScreenContent(
                 }
             }
         }
-
     }
 }

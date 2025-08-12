@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 
+
 fun Modifier.shimmerEffect(
     widthOfShadowBrush: Int = 500,
     angleOfAxisY: Float = 270f,
@@ -45,7 +46,6 @@ fun Modifier.shimmerEffect(
     )
 
     val transition = rememberInfiniteTransition()
-
 
     val translateAnimation = transition.animateFloat(
         initialValue = 0f,
@@ -85,7 +85,9 @@ fun Modifier.fillWidthOfParent(parentPadding: Dp) = layout { measurable, constra
 fun Modifier.handleDPadKeyEvents(
     onLeft: (() -> Unit)? = null,
     onRight: (() -> Unit)? = null,
-    onEnter: (() -> Unit)? = null
+    onEnter: (() -> Unit)? = null,
+    onUp: (() -> Unit)? = null,
+    onDown: (() -> Unit)? = null,
 ) = onPreviewKeyEvent {
     fun onActionUp(block: () -> Unit) {
         if (it.nativeKeyEvent.action == KeyEvent.ACTION_UP) block()
@@ -101,6 +103,20 @@ fun Modifier.handleDPadKeyEvents(
 
         KeyEvent.KEYCODE_DPAD_RIGHT, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_RIGHT -> {
             onRight?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_UP, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_UP -> {
+            onUp?.apply {
+                onActionUp(::invoke)
+                return@onPreviewKeyEvent true
+            }
+        }
+
+        KeyEvent.KEYCODE_DPAD_DOWN, KeyEvent.KEYCODE_SYSTEM_NAVIGATION_DOWN -> {
+            onDown?.apply {
                 onActionUp(::invoke)
                 return@onPreviewKeyEvent true
             }

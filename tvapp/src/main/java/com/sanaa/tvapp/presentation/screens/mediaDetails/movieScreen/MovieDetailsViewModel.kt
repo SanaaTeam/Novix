@@ -26,10 +26,10 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : TvBaseViewModel<MovieDetailsScreenUiState,MovieDetailsScreenUiEffect>(
+) : TvBaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
-) ,MovieDetailsScreenInteractionListener{
+), MovieDetailsScreenInteractionListener {
 
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
         "movieId is required in SavedStateHandle"
@@ -42,13 +42,12 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-
     private fun fetchMovieDetails(movieId: Int) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 loadMovieDetails(movieId)
-                     },
+            },
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
@@ -96,7 +95,6 @@ class MovieDetailsViewModel @Inject constructor(
                 similarMovies = similar,
             )
         }
-
     }
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieDetailsUiModel>> {
@@ -106,13 +104,11 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
         return TvBasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
         }
     }
-
 
     override fun onBackClick() {
         emitEffect(MovieDetailsScreenUiEffect.NavigateBack)
@@ -142,14 +138,13 @@ class MovieDetailsViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-
-    private  fun updateUserLoginState() {
+    private fun updateUserLoginState() {
         tryToCollect(
-            callee = {checkUserLogin.isLoggedIn()},
-            onCollect = { loggedIn->
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = { loggedIn ->
                 updateState { it.copy(isUserLoggedIn = loggedIn) }
             },
-            onError = {  },
+            onError = { },
         )
     }
 
@@ -157,7 +152,7 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(callee = ::updateUserLoginState)
     }
 
-    companion object{
+    companion object {
         private const val PAGE_SIZE = 20
     }
 }

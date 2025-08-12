@@ -27,7 +27,6 @@ fun HomeScreenLoading(modifier: Modifier) {
     }
 }
 
-
 @Composable
 fun ImageListShimmer() {
     Row {
