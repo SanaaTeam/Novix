@@ -38,7 +38,7 @@ fun TopMoviesSlider(
                 val movie = movies[index]
                 TvMediaPosterCard(
                     title = movie.title,
-                    imageUrl = movie.posterUrl?:"",
+                    imageUrl = movie.posterUrl.orEmpty(),
                     onCardClick = {
                         onMovieCardClicked(movie.id)
                     },
