@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -55,22 +54,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
-
-        viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState {
-                    copy(
-                        popularMedia = popularMedia.map { it.withSaved(savedIds) },
-                        topRatingMedia = topRatingMedia.map { it.withSaved(savedIds) },
-                        continueWatchingMedia = continueWatchingMedia.map {
-                            it.withSaved(
-                                savedIds
-                            )
-                        }
-                    )
-                }
-            }
-        }
     }
 
     private fun MediaItem.withSaved(savedIds: Set<Int>) =
@@ -80,6 +63,7 @@ class HomeScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
+            onError = ::onDataLoadError
         )
     }
 

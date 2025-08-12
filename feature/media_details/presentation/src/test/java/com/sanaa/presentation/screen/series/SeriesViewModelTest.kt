@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -354,7 +355,7 @@ class SeriesViewModelTest {
                 department = "Acting",
                 character = "Role A",
                 birthDate = LocalDate.parse("1980-01-01"),
-                deathDate = null,
+                deathDate = defaultDate,
                 placeOfBirth = "LA",
                 biography = "Bio"
             )
@@ -367,7 +368,7 @@ class SeriesViewModelTest {
             imdbRating = 8.0f,
             overview = "",
             durationMinutes = null,
-            releaseDate = null,
+            releaseDate = defaultDate,
             stillImagePath = null,
             rating = 0
         )
@@ -377,13 +378,6 @@ class SeriesViewModelTest {
             overview = "S1 overview",
             number = 1,
             episodes = listOf(dummyEpisode)
-        )
-        val dummySeason2 = Season(
-            id = 101,
-            title = "Season 2",
-            overview = "S2 overview",
-            number = 2,
-            episodes = listOf(dummyEpisode.copy(number = 1, seasonNumber = 2))
         )
         val dummyImages = listOf("/img1.jpg", "/img2.jpg")
         const val dummyTrailer = "http://trailer.url/video.mp4"
