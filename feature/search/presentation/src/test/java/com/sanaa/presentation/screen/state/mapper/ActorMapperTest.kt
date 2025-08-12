@@ -4,6 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.ActorUiModel
 import entity.Actor
 import entity.Actor.Gender
+import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
 class ActorMapperTest {
@@ -19,8 +20,8 @@ class ActorMapperTest {
             gender = Gender.MALE,
             department = null,
             character = null,
-            birthDate = null,
-            deathDate = null,
+            birthDate = LocalDate(1, 1, 1),
+            deathDate = LocalDate(1, 1, 1),
             placeOfBirth = null,
             biography = null
         )
