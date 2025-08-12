@@ -155,7 +155,7 @@ class ManageActorUseCaseTest {
             gender = Actor.Gender.MALE,
             character = "Acting",
             birthDate = LocalDate(1980, 1, 1),
-            deathDate = null,
+            deathDate = LocalDate(1, 1, 1),
             placeOfBirth = "Somewhere, USA",
             biography = "A short bio text.",
             department = "Acting"

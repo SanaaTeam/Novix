@@ -3,9 +3,9 @@ package com.sanaa.vod.repository.mapper.history
 import com.sanaa.vod.dataSource.remote.dto.search.MovieSearchDto
 import com.sanaa.vod.dataSource.remote.dto.search.TvShowSearchDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
 import entity.TvSeries
-import kotlinx.datetime.LocalDate
 
 fun MovieSearchDto.toEntity(): Movie {
     return Movie(
@@ -15,7 +15,7 @@ fun MovieSearchDto.toEntity(): Movie {
         genres = emptyList(),
         imdbRating = voteAverage,
         duration = null,
-        releaseDate = parseReleaseDate(releaseDate),
+        releaseDate = getLocalDateOrDefault(releaseDate),
         overview = "",
         trailerUrl = null,
         rating = null
@@ -30,21 +30,8 @@ fun TvShowSearchDto.toEntity(): TvSeries {
         genres = emptyList(),
         imdbRating = voteAverage ?: 0f,
         overview = "",
-        releaseDate = parseReleaseDate(releaseDate),
+        releaseDate = getLocalDateOrDefault(releaseDate),
         seasonsCount = 0,
         rating = null
     )
-}
-
-
-fun parseReleaseDate(dateString: String?): LocalDate {
-    return if (!dateString.isNullOrBlank()) {
-        try {
-            LocalDate.parse(dateString)
-        } catch (e: IllegalArgumentException) {
-            LocalDate(1970, 1, 1)
-        }
-    } else {
-        LocalDate(1970, 1, 1)
-    }
 }

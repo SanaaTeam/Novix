@@ -1,8 +1,8 @@
 package com.sanaa.vod.repository.mapper.media
 
 import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Review
-import kotlinx.datetime.LocalDate
 
 fun ReviewDto.toEntity(): Review {
     return Review(
@@ -12,7 +12,7 @@ fun ReviewDto.toEntity(): Review {
         userHandle = authorDetails.username,
         avatarUrl = buildAvatarUrl(authorDetails.avatarPath),
         rating = authorDetails.rating,
-        createdDate = LocalDate.parse(createdAt.substring(0, 10))
+        createdDate = getLocalDateOrDefault(createdAt.substring(0, 10))
     )
 }
 

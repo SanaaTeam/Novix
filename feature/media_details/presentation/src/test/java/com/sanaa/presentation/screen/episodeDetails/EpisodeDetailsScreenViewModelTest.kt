@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.episodeDetails
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -272,7 +273,7 @@ class EpisodeDetailsScreenViewModelTest {
                 department = "Acting",
                 character = "Role",
                 birthDate = LocalDate.parse("1990-01-01"),
-                deathDate = null,
+                deathDate = defaultDate,
                 placeOfBirth = "City",
                 biography = "Bio"
             )

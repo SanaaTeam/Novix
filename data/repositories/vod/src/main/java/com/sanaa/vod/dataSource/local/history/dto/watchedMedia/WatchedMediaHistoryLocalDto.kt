@@ -2,7 +2,7 @@ package com.sanaa.vod.dataSource.local.history.dto.watchedMedia
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import com.sanaa.vod.util.TimeUtils
+import com.sanaa.vod.util.DateTimeUtils
 
 @Entity(tableName = "watched_media_history", primaryKeys = ["id", "username"])
 data class WatchedMediaHistoryLocalDto(
@@ -18,5 +18,5 @@ data class WatchedMediaHistoryLocalDto(
     val genres: String,
 
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long = TimeUtils.getCurrentTimeStamp()
+    val timestamp: Long = DateTimeUtils.getCurrentTimeStamp()
 )
