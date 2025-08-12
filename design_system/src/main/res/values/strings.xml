@@ -12,21 +12,17 @@
     <string name="recent_viewed">Recent viewed</string>
     <string name="clear_all">Clear all</string>
     <string name="recent_search">Recent search</string>
-    <string name="cancel">Cancel</string>
     <string name="search_hint">Search…</string>
     <string name="read_more">Read more</string>
     <string name="no_review">There is no review!</string>
-    <string name="rating">Rating</string>
     <string name="reviews">Reviews</string>
 
     <string name="unsuitable_image">"unsuitable image "</string>
     <string name="my_account">My account</string>
     <string name="watching_history">Watching History</string>
-    <string name="no_history_yet">No history yet</string>
     <string name="all">All</string>
     <string name="movies">Movies</string>
     <string name="tv_shows">TV Shows</string>
-    <string name="movie_poster">Movie Poster</string>
     <string name="my_rating">My rating</string>
     <string name="content_restriction">Content Restriction</string>
     <string name="change_password">Change password</string>
@@ -50,7 +46,6 @@
     <string name="list_title">List title</string>
     <string name="my_favorite_placeholder">My favorite</string>
     <string name="add">Add</string>
-    <string name="edit_list">Edit list</string>
 
     <string name="delete_list">Delete list</string>
     <string name="delete_list_confirmation_message">Deleting the saved list will remove all items it contains. Are you sure you want to proceed?</string>
