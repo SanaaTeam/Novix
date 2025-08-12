@@ -59,9 +59,6 @@ fun SearchScreen(
 
     val launcher = launchAuthActivityForResult()
 
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-
-
     LaunchedEffect(Unit) {
         searchViewModel.effect.collectLatest { effect ->
             when (effect) {
@@ -103,45 +100,19 @@ fun SearchScreen(
             tvShowsPagingData = tvShowsPagingData,
             actorsPagingData = actorsPagingData,
         )
-        NovixAnimatedSnackBarHost(
-            data = snack, onDismiss = { snack = null })
-        uiState.selectedMediaToSave?.let { mediaItem ->
-            SaveToListBottomSheet(
-                isVisible = uiState.showSaveToListBottomSheet,
-                mediaId = mediaItem.id.toLong(),
-                onDismiss = searchViewModel::onDismissSaveToListBottomSheet,
-                onCreateNewListClick = searchViewModel::onCreateNewListClick,
-                onSuccess = {
-                    snack = SnackData(
-                        message = "Added to list successfully",
-                        isError = false
-                    )
-                },
-                onFailure = {
-                    snack = SnackData(
-                        message = "Added to list failed",
-                        isError = true
-                    )
-                },
-            )
-        }
-
-        AddBookmarkListBottomSheet(
-            isVisible = uiState.showAddListBottomSheet,
-            onDismiss = searchViewModel::onDismissAddListBottomSheet,
-            mediaId = uiState.selectedMediaToSave?.id ?: 0
-        )
     }
 }
 
 @Composable
-fun SearchScreenContent(
+private fun SearchScreenContent(
     uiState: SearchScreenUiState,
     searchListener: SearchScreenInteractionsListener,
     moviesPagingData: LazyPagingItems<MovieUiModel>,
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+
     Column {
         TopBar(
             modifier = Modifier.statusBarsPadding(), screenTitle = stringResource(R.string.search)
@@ -172,8 +143,33 @@ fun SearchScreenContent(
             }
         }
     }
-
-
+    NovixAnimatedSnackBarHost(
+        data = snack, onDismiss = { snack = null })
+    uiState.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = uiState.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = searchListener::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = searchListener::onCreateNewListClick,
+            onSuccess = {
+                snack = SnackData(
+                    message = "Added to list successfully",
+                    isError = false
+                )
+            },
+            onFailure = {
+                snack = SnackData(
+                    message = "Added to list failed",
+                    isError = true
+                )
+            },
+        )
+    }
+    AddBookmarkListBottomSheet(
+        isVisible = uiState.showAddListBottomSheet,
+        onDismiss = searchListener::onDismissAddListBottomSheet,
+        mediaId = uiState.selectedMediaToSave?.id ?: 0
+    )
     RequestToLoginBottomSheet(
         onDismiss = { searchListener.onBottomSheetDismiss() },
         onLoginButtonClick = { searchListener.onLoginButtonClick() },
