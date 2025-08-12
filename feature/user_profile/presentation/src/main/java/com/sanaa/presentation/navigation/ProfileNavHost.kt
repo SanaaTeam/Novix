@@ -12,7 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibility
-import com.sanaa.presentation.MyProfileViewModel
+import com.sanaa.presentation.ProfileViewModel
 import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
 import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.provider.LocalThemeMode
@@ -22,9 +22,9 @@ import com.sanaa.presentation.screen.myRating.MyRatingScreen
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreen
 
 @Composable
-fun AccountNavHost(
+fun ProfileNavHost(
     resetKey: Any = Unit,
-    viewModel: MyProfileViewModel = hiltViewModel()
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
