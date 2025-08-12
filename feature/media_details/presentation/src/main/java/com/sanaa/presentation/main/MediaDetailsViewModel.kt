@@ -27,7 +27,7 @@ class DetailsViewModel @Inject constructor(
         viewModelScope.launch {
             launch {
                 mangeUserPreference.getTheme().collect { theme ->
-                    updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
+                    updateState { copy(isDarkTheme = theme == Theme.DARK) }
                 }
             }
             launch {
@@ -37,14 +37,14 @@ class DetailsViewModel @Inject constructor(
                         ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
                         ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
                     }
-                    updateState { it.copy(safeContentThreshold = threshold) }
+                    updateState { copy(safeContentThreshold = threshold) }
                 }
             }
         }
-        updateState { it.copy(isReady = true) }
+        updateState { copy(isReady = true) }
     }
 
-    private fun updateState(block: (DetailsUiState) -> DetailsUiState) {
+    private fun updateState(block:DetailsUiState.() -> DetailsUiState) {
         _state.value = block(_state.value)
     }
 

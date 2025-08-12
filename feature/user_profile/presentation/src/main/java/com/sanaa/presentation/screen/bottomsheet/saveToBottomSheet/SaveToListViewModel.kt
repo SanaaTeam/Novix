@@ -23,7 +23,7 @@ class SaveToListViewModel @Inject constructor(
             block = { listsStatusProvider.savedLists },
             onCollect = { playlist ->
                 updateState {
-                    it.copy(
+                    copy(
                         playlists = playlist.map {
                             PlaylistUiItem(
                                 title = it.title,
@@ -39,7 +39,7 @@ class SaveToListViewModel @Inject constructor(
 
     fun onPlaylistSelected(listId: Long) {
         updateState {
-            it.copy(
+            copy(
                 selectedListId = listId,
                 isAddButtonEnabled = true
             )
@@ -50,7 +50,7 @@ class SaveToListViewModel @Inject constructor(
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             block = {
@@ -60,7 +60,7 @@ class SaveToListViewModel @Inject constructor(
                 )
             },
             onSuccess = {
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
                 listsStatusProvider.markItemSaved(mediaId.toInt())
                 viewModelScope.launch {
                     listsStatusProvider.refreshLists()
@@ -69,7 +69,7 @@ class SaveToListViewModel @Inject constructor(
             },
             onError = {
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = "Failed to add item to list."
                     )

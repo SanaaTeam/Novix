@@ -17,7 +17,7 @@ import javax.inject.Inject
 class CategoriesScreenViewModel @Inject constructor(
     private val getTvGenresUseCase: ManageTvSeriesUseCase,
     private val getMovieGenresUseCase: ManageMovieUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
     CategoriesScreenUiState(),
     dispatcher
@@ -30,25 +30,23 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     override fun onGenreClicked(category: CategoryUiState) {
-        if (state.value.selectedTabIndex == MOVIE_TAB_INDEX)
-            emitEffect(
+        emitEffect(
+            effect = if (state.value.selectedTabIndex == MOVIE_TAB_INDEX)
                 CategoriesScreenEffects.NavigateToMovieGenreDetails(
                     genreId = category.id,
                     genreName = category.name
                 )
-            )
-        else
-            emitEffect(
+            else
                 CategoriesScreenEffects.NavigateToTvGenreDetails(
                     genreId = category.id,
                     genreName = category.name
                 )
-            )
+        )
     }
 
     override fun onTabChanged(tabIndex: Int) {
         if (state.value.selectedTabIndex == tabIndex) return
-        updateState { it.copy(selectedTabIndex = tabIndex) }
+        updateState { copy(selectedTabIndex = tabIndex) }
     }
 
     override fun onRetryClick() {
@@ -58,7 +56,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     private fun loadTvGenres() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
                 getTvGenresUseCase.getSeriesGenres()
@@ -71,7 +69,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
     private fun onLoadTvGenresSuccess(tvGenres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 tvCategories = tvGenres.map {
                     it.toUiState()
@@ -82,7 +80,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     private fun loadMovieGenres() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
                 getMovieGenresUseCase.getMovieGenres()
@@ -94,7 +92,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
     private fun onLoadMovieGenresSuccess(movieGenres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 movieCategories = movieGenres.map {
                     it.toUiState()
@@ -106,7 +104,7 @@ class CategoriesScreenViewModel @Inject constructor(
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                updateState { it.copy(isNoInternet = true) }
+                updateState { copy(isNoInternet = true) }
             }
         }
     }

@@ -267,7 +267,7 @@ class SeriesViewModelTest {
     fun `onDismissAnyBottomSheet hides both bottom sheets`() = runTest {
         givenHappyViewModel()
         viewModel.updateState {
-            it.copy(showRateBottomSheet = true, showLoginBottomSheet = true)
+            copy(showRateBottomSheet = true, showLoginBottomSheet = true)
         }
 
         viewModel.onDismissAnyBottomSheet()
@@ -283,7 +283,7 @@ class SeriesViewModelTest {
         val errorMsg = "Some error"
 
         viewModel.updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 error = errorMsg,
                 noInternetConnection = true

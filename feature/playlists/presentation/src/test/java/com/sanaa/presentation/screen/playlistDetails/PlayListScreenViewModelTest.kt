@@ -42,7 +42,7 @@ class PlayListScreenViewModelTest {
     @Test
     fun `onDismissAddBottomSheet sets showAddBottomSheet false`() = runTest {
         initViewModel()
-        viewModel.updateState { it.copy(showAddBottomSheet = true) }
+        viewModel.updateState { copy(showAddBottomSheet = true) }
         viewModel.onDismissAddBottomSheet()
         assertThat(viewModel.state.value.showAddBottomSheet).isFalse()
     }

@@ -33,7 +33,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
     defaultDispatcher = dispatcher
@@ -50,7 +50,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState {
-                    it.copy(
+                    copy(
                         userIsLoggedIn = isLogged
                     )
                 }
@@ -67,15 +67,13 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadGenresOperation(): List<GenreUiState> {
-        updateState {
-            it.copy(isLoading = true)
-        }
+        updateState { copy(isLoading = true) }
         return manageMovieUseCase.getMovieGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
         updateState {
-            it.copy(genreList = genres, isLoading = false, isNoInternetConnection = false)
+            copy(genreList = genres, isLoading = false, isNoInternetConnection = false)
         }
     }
 
@@ -100,14 +98,18 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
         updateState {
-            it.copy(mediaList = flowOf(pagingData), isLoading = false, isNoInternetConnection = false)
+            copy(
+                mediaList = flowOf(pagingData),
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
     override fun onGenreClick(id: Int?) {
         if (id == state.value.selectedGenreId) return
         updateState {
-            it.copy(selectedGenreId = id)
+            copy(selectedGenreId = id)
         }
         loadMovies()
     }
@@ -118,7 +120,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showBottomSheet = true) }
+            updateState { copy(showBottomSheet = true) }
             return
         }
 
@@ -126,7 +128,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
             savedListsStatusProvider.markItemUnsaved(media.id)
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaId = media.id
                 )
@@ -157,27 +159,27 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaId = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true) }
+            updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
-            updateState { it.copy(isNoInternetConnection = false) }
+            updateState { copy(isNoInternetConnection = false) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }

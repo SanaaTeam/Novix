@@ -53,7 +53,7 @@ class ProfileViewModel @Inject constructor(
     }
 
 
-    private fun updateState(block: (MyProfileUiState) -> MyProfileUiState) {
+    private fun updateState(block: MyProfileUiState.() -> MyProfileUiState) {
         _state.value = block(_state.value)
     }
 
