@@ -76,7 +76,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
@@ -90,7 +90,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->

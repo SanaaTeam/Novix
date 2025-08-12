@@ -2,17 +2,17 @@ package com.sanaa.presentation.navigation
 
 import kotlinx.serialization.Serializable
 
-open class MyAccountRoutes
+open class ProfileRouts
 @Serializable
-object MyAccountScreenRoute :MyAccountRoutes()
+object MyAccountScreenRoute :ProfileRouts()
 @Serializable
-object MyRatingScreenRoute : MyAccountRoutes()
+object MyRatingScreenRoute : ProfileRouts()
 
 @Serializable
-object WatchingHistoryScreenRoute : MyAccountRoutes()
+object WatchingHistoryScreenRoute : ProfileRouts()
 
 @Serializable
-object ChangePasswordScreenRoute: MyAccountRoutes()
+object ChangePasswordScreenRoute: ProfileRouts()
 
 
 

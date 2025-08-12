@@ -53,7 +53,7 @@ class SaveToListViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            callee = {
+            block = {
                 manageSavedListItemsUseCase.addMovieToSavedList(
                     listId = selectedListId.toInt(),
                     movieId = mediaId.toInt()
