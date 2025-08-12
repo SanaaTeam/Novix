@@ -16,13 +16,17 @@ class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<AddBookmarkListUiState, AddBookmarkEffect>(AddBookmarkListUiState(), dispatcher),AddBookmarkInteractionListener  {
+) : BaseViewModel<AddBookmarkListUiState, AddBookmarkEffect>(AddBookmarkListUiState(), dispatcher),
+    AddBookmarkInteractionListener {
 
 
     init {
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
+        tryToExecute(
+            callee = { listsStatusProvider.refreshLists() },
+            onError = {
+                it.printStackTrace()
+            }
+        )
     }
 
     override fun onListTitleChanged(title: String) {
@@ -34,11 +38,11 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-   override fun resetState() {
+    override fun resetState() {
         updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 
-   override fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { it.copy(isLoading = true, errorMessage = null) }

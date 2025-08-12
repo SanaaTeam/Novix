@@ -48,7 +48,6 @@ fun DeleteConfirmationBottomSheet(
     var failMessage =
         stringResource(com.sanaa.feature.playlists.presentation.R.string.deleted_list_failed)
 
-
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             onDismiss()
