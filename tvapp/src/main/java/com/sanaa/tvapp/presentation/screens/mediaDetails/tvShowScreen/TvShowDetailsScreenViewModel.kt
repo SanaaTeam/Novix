@@ -46,9 +46,6 @@ class TvShowDetailsScreenViewModel @Inject constructor(
         emitEffect(TvShowDetailsScreenEffects.NavigateBack)
     }
 
-    override fun onViewReviewsClicked(seriesId: Int) {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToReviewsScreen(seriesId))
-    }
 
     override fun onActorClicked(actorId: Int) {
         emitEffect(TvShowDetailsScreenEffects.NavigateToActorScreen(actorId))
