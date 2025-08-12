@@ -2,20 +2,17 @@ package com.sanaa.presentation.screen.myAccount
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,7 +21,6 @@ import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
-import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.navigation.ChangePasswordScreenRoute
 import com.sanaa.presentation.navigation.MyRatingScreenRoute
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
@@ -43,12 +39,12 @@ import com.sanaa.presentation.screen.myAccount.component.NotLoggedInStateCompone
 import com.sanaa.presentation.screen.myAccount.component.SelectionBottomSheet
 import com.sanaa.presentation.screen.myAccount.component.UserOptions
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val effect by viewModel.effect.collectAsState(null)
     val navController = LocalNavControllerProvider.current
     val view = LocalView.current
     val activity = view.context as? AppCompatActivity
@@ -70,41 +66,41 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     )
 
 
-    LaunchedEffect(effect) {
-        when (val it = effect) {
-            NavigateToChangePasswordSetting -> {
-                navController.navigate(ChangePasswordScreenRoute)
-            }
-
-            is UpdateAppLanguage -> {
-                val localeList = LocaleListCompat.forLanguageTags(it.language)
-                if (AppCompatDelegate.getApplicationLocales()
-                        .toLanguageTags() != localeList.toLanguageTags()
-                ) {
-                    AppCompatDelegate.setApplicationLocales(localeList)
+    LaunchedEffect(Unit) {
+        viewModel.effect.collectLatest {
+            when (it) {
+                NavigateToChangePasswordSetting -> {
+                    navController.navigate(ChangePasswordScreenRoute)
                 }
-                activity?.recreate()
-            }
 
-            NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
-            NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
-            is MyAccountScreenEffect.UpdateAppTheme -> {
-                if (it.isDarkMode) {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                } else {
-                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                is UpdateAppLanguage -> {
+                    val localeList = LocaleListCompat.forLanguageTags(it.language)
+                    if (AppCompatDelegate.getApplicationLocales()
+                            .toLanguageTags() != localeList.toLanguageTags()
+                    ) {
+                        AppCompatDelegate.setApplicationLocales(localeList)
+                    }
+                    activity?.recreate()
+                }
+
+                NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
+                NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
+                is MyAccountScreenEffect.UpdateAppTheme -> {
+                    if (it.isDarkMode) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    } else {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    }
+                }
+
+                MyAccountScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
+
+                MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
+                    activity?.recreate()
                 }
             }
-
-            MyAccountScreenEffect.NavigateToLogin -> {
-                launcher.launch(authApi.getLaunchIntent(context))
-            }
-
-            MyAccountScreenEffect.PopBackStackToWelcomeScreen -> {
-                activity?.recreate()
-            }
-
-            null -> {}
         }
     }
 
