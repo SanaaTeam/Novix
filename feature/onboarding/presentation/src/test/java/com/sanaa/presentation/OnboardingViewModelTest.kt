@@ -110,6 +110,4 @@ class OnboardingViewModelTest {
             assertThat(updatedState.currentPageIndex).isEqualTo(2)
         }
     }
-
-    private fun TestScope.awaitItem() {}
 }
