@@ -32,7 +32,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
-
+import com.sanaa.feature.home.presentation.R as homeRes
 @Composable
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
@@ -43,9 +43,9 @@ fun AddBookmarkListBottomSheet(
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val successMessage =
-        stringResource(com.sanaa.feature.home.presentation.R.string.created_list_successfully)
+        stringResource(homeRes.string.created_list_successfully)
     val failMessage =
-        stringResource(com.sanaa.feature.home.presentation.R.string.failed_to_create_list)
+        stringResource(homeRes.string.failed_to_create_list)
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
