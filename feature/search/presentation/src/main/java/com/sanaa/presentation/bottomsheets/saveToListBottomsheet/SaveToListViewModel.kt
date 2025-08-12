@@ -10,12 +10,12 @@ import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class SavetoListViewModel @Inject constructor(
+class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SaveToListUiState, SavetoListEffect>(SaveToListUiState(),dispatcher) {
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(),dispatcher) {
 
     init {
         loadPlaylists()
@@ -67,7 +67,7 @@ class SavetoListViewModel @Inject constructor(
                 updateState { it.copy(isLoading = false) }
                 savedListsStatusProvider.markItemSaved(mediaId.toInt())
                 loadPlaylists()
-                emitEffect(SavetoListEffect.AddedSuccessfully)
+                emitEffect(SaveToListEffect.AddedSuccessfully)
             },
             onError = {
                 updateState {
@@ -76,7 +76,7 @@ class SavetoListViewModel @Inject constructor(
                         errorMessage = "Failed to add item to list."
                     )
                 }
-                emitEffect(SavetoListEffect.FailedToAdd)
+                emitEffect(SaveToListEffect.FailedToAdd)
             }
         )
     }

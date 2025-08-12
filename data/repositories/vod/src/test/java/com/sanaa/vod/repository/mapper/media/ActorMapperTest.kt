@@ -63,7 +63,7 @@ class ActorMapperTest {
     fun `toTvSeries maps ActorCastCreditDto to TvSeries correctly`() {
         val dto = ActorCastCreditDto(
             id = 200,
-            posterPath = "/tvposter.jpg",
+            posterPath = "/poster.jpg",
             movieTitle = null,
             tvShowTitle = "Example Series",
             voteAverage = 8.3,

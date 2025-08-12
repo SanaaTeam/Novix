@@ -17,7 +17,7 @@ class TvShowMapperTest {
             id = 1,
             name = "Breaking Bad",
             overview = "High school chemistry teacher turned meth kingpin.",
-            posterPath = "/breakingbad.jpg",
+            posterPath = "/test.jpg",
             voteAverage = 9.5f,
             firstAirDate = "2008-01-20",
             genres = listOf(GenreDto(18, "Drama"), GenreDto(80, "Crime")),

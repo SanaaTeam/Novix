@@ -40,7 +40,7 @@ class OnboardingViewModelTest {
             assertThat(initialState.pageList).isNotEmpty()
             assertThat(initialState.pageList.size).isEqualTo(3)
             assertThat(initialState.currentPageIndex).isEqualTo(0)
-            assertThat(initialState.isSkipable).isFalse()
+            assertThat(initialState.isSkipAble).isFalse()
         }
     }
 
@@ -62,7 +62,7 @@ class OnboardingViewModelTest {
             awaitItem()
             viewModel.onNextPageClick()
             val updatedState = awaitItem()
-            assertThat(updatedState.isSkipable).isTrue()
+            assertThat(updatedState.isSkipAble).isTrue()
         }
     }
 
@@ -97,7 +97,7 @@ class OnboardingViewModelTest {
             awaitItem()
             viewModel.onSkipClick()
             val updatedState = awaitItem()
-            assertThat(updatedState.isSkipable).isTrue()
+            assertThat(updatedState.isSkipAble).isTrue()
         }
     }
 

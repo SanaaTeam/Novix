@@ -183,7 +183,7 @@ class HomeScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { loadUpcomingMovies(genreId)
                 .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                    pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
+                    pagingData.map { it.withSaved(savedIds) }
                 }
                     .cachedIn(viewModelScope)
             },

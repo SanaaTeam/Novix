@@ -34,7 +34,7 @@ class LoginUseCaseTest {
     @Test
     fun `login() should propagate exception when repository throws`() = runTest {
         val userName = "user"
-        val password = "wrongpass"
+        val password = "wrong-pass"
         val exception = RuntimeException("Network error")
         coEvery { authenticationRepository.login(userName, password) } throws exception
 

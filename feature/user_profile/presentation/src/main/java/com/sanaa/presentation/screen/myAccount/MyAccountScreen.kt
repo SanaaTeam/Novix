@@ -325,7 +325,7 @@ private fun AccountScreenContentPreview() {
             MyAccountScreenContent(
                 uiState = MyAccountScreenUiState(
                     currentUser = UserUiState(
-                        username = "mostafa nema",
+                        username = "mostafa name",
                         imageUrl = " "
                     ),
                     showChangeLanguageBottomSheet = false,

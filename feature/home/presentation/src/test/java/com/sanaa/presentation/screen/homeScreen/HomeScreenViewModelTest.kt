@@ -344,7 +344,7 @@ class HomeScreenViewModelTest {
             rating = 0
         )
         val dummyGenre = Genre(id = 28, name = "Action")
-        val dummyUser = User(id = 42L, name = "Test User", username = "testuser", "ImageUrl")
+        val dummyUser = User(id = 42L, name = "Test User", username = "test-user", "ImageUrl")
         val dummyHistoryItem = MediaHistoryItem(
             id = 1,
             posterImageUrl = "",

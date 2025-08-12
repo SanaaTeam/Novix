@@ -110,7 +110,6 @@ class ActorViewModel @Inject constructor(
                 )
             }
         }
-        Log.i("MMMANCY", "CLICKED: ")
 
     }
 

@@ -96,7 +96,7 @@ class MyRatingScreenViewModelTest {
     }
 
     @Test
-    fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
+    fun `onDeleteIconClick for movie failure emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns false
