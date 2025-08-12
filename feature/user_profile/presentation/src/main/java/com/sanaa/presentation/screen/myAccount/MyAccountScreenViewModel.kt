@@ -40,11 +40,11 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onClickContentRestriction() {
-        updateState { it.copy(showContentRestrictionBottomSheet = true) }
+        updateState { copy(showContentRestrictionBottomSheet = true) }
     }
 
     override fun onClickLanguageSetting() {
-        updateState { it.copy(showChangeLanguageBottomSheet = true) }
+        updateState { copy(showChangeLanguageBottomSheet = true) }
     }
 
     override fun onClickMyTopRating() {
@@ -56,12 +56,12 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSelectLanguage(language: String) {
-        updateState { it.copy(selectedLanguage = language) }
+        updateState { copy(selectedLanguage = language) }
     }
 
     override fun onDismissBottomSheet() {
         updateState {
-            it.copy(
+            copy(
                 showContentRestrictionBottomSheet = false,
                 showChangeLanguageBottomSheet = false,
                 showChangeThemeBottomSheet = false
@@ -75,15 +75,15 @@ class MyAccountScreenViewModel @Inject constructor(
                 block = ::saveLanguage,
                 onSuccess = ::onSaveLanguageSuccess
             )
-        else updateState { it.copy(showChangeLanguageBottomSheet = false) }
+        else updateState { copy(showChangeLanguageBottomSheet = false) }
     }
 
     override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
-        updateState { it.copy(selectedContentRestriction = contentRestriction) }
+        updateState { copy(selectedContentRestriction = contentRestriction) }
     }
 
     override fun onSelectTheme(theme: ThemeUiState?) {
-        updateState { it.copy(selectedTheme = theme) }
+        updateState { copy(selectedTheme = theme) }
     }
 
     override fun onSaveThemeClick() {
@@ -92,7 +92,7 @@ class MyAccountScreenViewModel @Inject constructor(
                 block = ::saveTheme,
                 onSuccess = ::onSaveThemeSuccess
             )
-        else updateState { it.copy(showChangeThemeBottomSheet = false) }
+        else updateState { copy(showChangeThemeBottomSheet = false) }
     }
 
     override fun onSaveContentRestrictionClick() {
@@ -100,7 +100,7 @@ class MyAccountScreenViewModel @Inject constructor(
             tryToExecute(
                 block = { saveContentRestriction() },
                 onSuccess = {
-                    updateState { it.copy(showContentRestrictionBottomSheet = false) }
+                    updateState { copy(showContentRestrictionBottomSheet = false) }
                 }
             )
         else ::onSaveContentRestrictionSuccess
@@ -109,7 +109,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
 
     override fun onClickAppearance() {
-        updateState { it.copy(showChangeThemeBottomSheet = true) }
+        updateState { copy(showChangeThemeBottomSheet = true) }
     }
 
     override fun onLoginButtonClick() {
@@ -148,7 +148,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onSaveThemeSuccess(newTheme: Theme) {
-        updateState { it.copy(showChangeThemeBottomSheet = false) }
+        updateState { copy(showChangeThemeBottomSheet = false) }
         emitEffect(
             MyAccountScreenEffect.UpdateAppTheme(
                 isDarkMode = newTheme == Theme.DARK
@@ -157,7 +157,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onSaveLanguageSuccess(newLanguage: Language) {
-        updateState { it.copy(showChangeLanguageBottomSheet = false) }
+        updateState { copy(showChangeLanguageBottomSheet = false) }
         emitEffect(MyAccountScreenEffect.UpdateAppLanguage(newLanguage.code))
     }
 
@@ -176,12 +176,12 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onLoadLanguageSuccess(language: Language) {
-        updateState { it.copy(selectedLanguage = language.code, savedLanguage = language.code) }
+        updateState { copy(selectedLanguage = language.code, savedLanguage = language.code) }
     }
 
     private fun onLoadUserDataSuccess(user: User) {
         updateState {
-            it.copy(
+            copy(
                 currentUser = UserUiState(
                     username = user.username,
                     imageUrl = user.profileImageUrl
@@ -199,7 +199,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
         updateState {
-            it.copy(
+            copy(
                 isUserLoggedIn = isLogged
             )
         }
@@ -207,12 +207,12 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onSaveContentRestrictionSuccess() {
-        updateState { it.copy(showContentRestrictionBottomSheet = false) }
+        updateState { copy(showContentRestrictionBottomSheet = false) }
     }
 
     private fun onLoadContentRestrictionSuccess(contentRestriction: ContentRestriction) {
         updateState {
-            it.copy(
+            copy(
                 selectedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name),
                 savedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name)
             )
@@ -221,7 +221,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun onLoadThemeSuccess(theme: Theme) {
         updateState {
-            it.copy(
+            copy(
                 selectedTheme = ThemeUiState.valueOf(theme.name),
                 savedTheme = ThemeUiState.valueOf(theme.name)
             )

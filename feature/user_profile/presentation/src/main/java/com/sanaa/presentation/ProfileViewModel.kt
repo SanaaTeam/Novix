@@ -28,13 +28,13 @@ class ProfileViewModel @Inject constructor(
             fetchTheme()
             fetchContentRestriction()
         }
-        updateState { it.copy(isReady = true) }
+        updateState { copy(isReady = true) }
     }
 
     private fun fetchTheme() {
         viewModelScope.launch {
             mangeUserPreference.getTheme().collect { theme ->
-                updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
+                updateState { copy(isDarkTheme = theme == Theme.DARK) }
             }
         }
     }
@@ -47,7 +47,7 @@ class ProfileViewModel @Inject constructor(
                     ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
                     ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
                 }
-                updateState { it.copy(safeContentThreshold = threshold) }
+                updateState { copy(safeContentThreshold = threshold) }
             }
         }
     }
