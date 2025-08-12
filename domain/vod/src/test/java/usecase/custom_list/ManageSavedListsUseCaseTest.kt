@@ -61,7 +61,6 @@ class ManageSavedListsUseCaseTest {
     }
 
     private companion object {
-        const val ACCOUNT_ID = 123L
         val DUMMY_LIST = SavedList(id = 1, title = "Watch-Later", itemCount = 5)
     }
 }
