@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
+import com.google.firebase.sessions.api.SessionSubscriber
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -35,8 +36,11 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.ImagesSlider
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TvShowsSlider
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopMoviesSlider
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopTvShowsSlider
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 import com.sanaa.tvapp.state.SnackData
 
 @Composable
@@ -44,13 +48,14 @@ fun ActorScreen(
     viewModel: ActorViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val navController = LocalAppNavController.current
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                ActorScreenEffects.NavigateBack -> TODO()
-                is ActorScreenEffects.NavigateToMovieDetails -> TODO()
-                is ActorScreenEffects.NavigateToSeriesDetails -> TODO()
+                ActorScreenEffects.NavigateBack -> navController.popBackStack()
+                is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetails(effect.movieId))
+                is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetails(effect.seriesId))
                 ActorScreenEffects.NavigateToLogin -> TODO()
             }
         }
@@ -164,17 +169,16 @@ private fun ActorScreenContent(
                         }
 
                         if (state.topMovies.isNotEmpty()) {
-                            MoviesSlider(
-                                moviesPagingData = state.topMovies,
+                            TopMoviesSlider(
+                                movies = state.topMovies,
                                 onMovieCardClicked = listener::onMovieClicked,
-                                modifier = TODO(),
                             )
                         }
                         if (state.topTvShows.isNotEmpty()) {
-                            TvShowsSlider(
+                            TopTvShowsSlider(
                                 title = stringResource(R.string.series),
                                 tvShows = state.topTvShows,
-                                onCardClick = listener::onTvShowClicked
+                                onTvShowCardClicked = listener::onTvShowClicked
                             )
                         }
                     }

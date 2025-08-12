@@ -21,8 +21,7 @@ class ActorViewModel @Inject constructor(
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
 
-    private val actorId: Int = 127451
-//    = checkNotNull(savedStateHandle["actorId"])
+    private val actorId: Int  = checkNotNull(savedStateHandle["actorId"])
 
     init {
         loadDetails()

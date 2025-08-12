@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.login.LoginScreenTv
+import com.sanaa.tvapp.presentation.screens.mediaDetails.actorScreen.ActorScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen.MovieDetailsScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.TvShowScreen
@@ -42,6 +43,11 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
             val seasonNumber= navBackStackEntry.toRoute<ScreensRoute.EpisodeDetails>().seasonNumber
             val episodeNumber= navBackStackEntry.toRoute<ScreensRoute.EpisodeDetails>().episodeNumber
             EpisodeDetailsScreen()
+        }
+
+        composable<ScreensRoute.ActorDetails> {navBackStackEntry ->
+            val actorId = navBackStackEntry.toRoute<ScreensRoute.ActorDetails>().actorId
+            ActorScreen()
         }
     }
 }

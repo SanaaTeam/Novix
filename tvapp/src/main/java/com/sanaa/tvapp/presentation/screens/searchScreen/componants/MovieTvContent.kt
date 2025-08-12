@@ -12,7 +12,7 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.MovieUiModel
 @Composable
 fun MovieTvContent(
     movies: LazyPagingItems<MovieUiModel>,
-    onClick: (MovieUiModel) -> Unit
+    onClick: (Int) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -23,7 +23,7 @@ fun MovieTvContent(
                 FocusableMediaCard(
                     imageUrl = movie.imageUrl,
                     titleText = movie.title,
-                    onClick = { onClick(movie) }
+                    onClick = { onClick(movie.id) }
                 )
             }
         }
