@@ -16,7 +16,7 @@ import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.model.RatedMediaUiModel
-import com.sanaa.presentation.provider.LocalContentRestriction
+import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
 
 @Composable
@@ -28,14 +28,14 @@ fun RatedMediaItem(
 ) {
     MediaPosterCard(
         modifier = modifier,
-        onCardClick = {onCardClick(media.id, media.mediaType)},
+        onCardClick = { onCardClick(media.id, media.mediaType) },
         posterImage = {
             RemoteBlurredSensitiveImage(
                 imageUrl = media.posterImageUrl.orEmpty(),
                 modifier = Modifier.fillMaxSize(),
                 contentDescription = media.title,
-                safeContentThreshold = LocalContentRestriction.current,
-                isBlurEnabled = LocalContentRestriction.current != 0f,
+                safeContentThreshold = LocalSaveContentThreshold.current,
+                isBlurEnabled = LocalSaveContentThreshold.current != 0f,
                 placeholderContent = {
                     RemoteImagePlaceholder(Modifier.fillMaxSize())
                 },
