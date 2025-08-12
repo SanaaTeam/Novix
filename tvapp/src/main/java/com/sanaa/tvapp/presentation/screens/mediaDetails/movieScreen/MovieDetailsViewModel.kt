@@ -110,9 +110,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onBackClick() {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateBack)
-    }
+
 
     override fun onWatchTrailerClick() {
         TODO("Not yet implemented")

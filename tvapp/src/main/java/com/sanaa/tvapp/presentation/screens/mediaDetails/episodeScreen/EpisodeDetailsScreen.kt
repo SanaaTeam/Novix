@@ -40,6 +40,8 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.state.SnackData
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designSystemResource
@@ -51,20 +53,16 @@ fun EpisodeDetailsScreen(
 
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-//    val navController = LocalNavControllerProvider.current
+    val navController = LocalAppNavController.current
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
             when (it) {
-                is EpisodeDetailsEffects.NavigateBack -> {
-//                    navController.popBackStack()
-                }
-
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
-//                    navController.navigate(
-//                        ActorDetailsScreenRoute(it.actorId).route()
-//                    )
+                    navController.navigate(
+                        ScreensRoute.ActorDetails(it.actorId)
+                    )
                 }
 
                 is EpisodeDetailsEffects.PlayTrailer -> {
@@ -200,7 +198,7 @@ private fun EpisodeDetailsScreenContent(
                                 )
                             }
                         }
-                        DetailsTopBar(onBackClick = interactionListener::onBackClick)
+                        DetailsTopBar()
                     }
                 }
             }

@@ -43,9 +43,6 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //        updateUserStatus()
     }
 
-    override fun onBackClicked() {
-        emitEffect(TvShowDetailsScreenEffects.NavigateBack)
-    }
 
 
     override fun onActorClicked(actorId: Int) {

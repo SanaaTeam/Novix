@@ -69,10 +69,6 @@ fun TvShowScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                TvShowDetailsScreenEffects.NavigateBack -> {
-                     navController.popBackStack()
-            }
-
                 is TvShowDetailsScreenEffects.NavigateToActorScreen -> {
                     navController.navigate(ActorDetails(it.actorId))                  }
 
@@ -266,7 +262,7 @@ fun TvShowScreenContent(
                     }
                 }
             }
-            DetailsTopBar(onBackClick = interactionListener::onBackClicked)
+            DetailsTopBar()
         }
     }
 }

@@ -47,9 +47,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
 
-    override fun onBackClick() {
-        emitEffect(EpisodeDetailsEffects.NavigateBack)
-    }
 
     override fun onPlayTrailerClick() {
         emitEffect(EpisodeDetailsEffects.PlayTrailer(state.value.trailerUrl))

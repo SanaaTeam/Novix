@@ -8,7 +8,6 @@ sealed interface TvShowDetailsScreenEffects {
         val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int
     ) : TvShowDetailsScreenEffects
 
-    object NavigateBack : TvShowDetailsScreenEffects
     data class PlayTrailer(val trailerUrl: String?) : TvShowDetailsScreenEffects
     data class NavigateToMovieCategoriesScreen(val category: GenreUiModel) : TvShowDetailsScreenEffects
     data object  ShowErrorSnackBar : TvShowDetailsScreenEffects

@@ -27,9 +27,6 @@ class ActorViewModel @Inject constructor(
         loadDetails()
     }
 
-    override fun onBackClicked() {
-        emitEffect(ActorScreenEffects.NavigateBack)
-    }
 
     override fun onTvShowClicked(id: Int) {
         emitEffect(ActorScreenEffects.NavigateToSeriesDetails(id))

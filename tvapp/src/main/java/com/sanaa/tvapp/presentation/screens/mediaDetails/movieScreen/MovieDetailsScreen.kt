@@ -61,7 +61,6 @@ fun MovieDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                MovieDetailsScreenUiEffect.NavigateBack -> { navController.popBackStack()}
                 is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
                 is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
                 MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
@@ -210,7 +209,7 @@ fun MovieDetailsContent(
                     }
                 }
             }
-            DetailsTopBar(onBackClick = interactionListener::onBackClick)
+            DetailsTopBar()
         }
     }
 }

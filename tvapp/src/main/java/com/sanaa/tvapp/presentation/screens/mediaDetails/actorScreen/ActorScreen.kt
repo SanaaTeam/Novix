@@ -53,7 +53,6 @@ fun ActorScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                ActorScreenEffects.NavigateBack -> navController.popBackStack()
                 is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetails(effect.movieId))
                 is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetails(effect.seriesId))
                 ActorScreenEffects.NavigateToLogin -> TODO()
@@ -139,7 +138,7 @@ private fun ActorScreenContent(
                         ActorScreenSliders(state, listener)
                     }
                 }
-                DetailsTopBar(onBackClick = listener::onBackClicked)
+                DetailsTopBar()
 
                 NovixAnimatedSnackBarHost(
                     data = snack, onDismiss = { snack = null }
