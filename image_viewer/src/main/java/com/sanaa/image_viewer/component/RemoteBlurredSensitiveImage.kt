@@ -3,6 +3,7 @@ package com.sanaa.image_viewer.component
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -15,12 +16,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
-import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
 import com.sanaa.image_viewer.modifier.blurry
@@ -63,6 +64,7 @@ fun RemoteBlurredSensitiveImage(
     onBlurContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val classifier = remember { TfLiteImageClassifier(context) }
     var imageBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     var isSensitive by rememberSaveable { mutableStateOf(false) }
@@ -70,10 +72,7 @@ fun RemoteBlurredSensitiveImage(
 
     var contentThresholdValue by rememberSaveable { mutableFloatStateOf(.7f) }
 
-    val coroutineScope = rememberCoroutineScope()
-
     LaunchedEffect(Unit) {
-
         coroutineScope.launch(Dispatchers.IO) {
             try {
                 if (imageBitmap == null) {
@@ -85,7 +84,7 @@ fun RemoteBlurredSensitiveImage(
                     imageBitmap = (response.drawable as? BitmapDrawable)?.bitmap
                 }
 
-                if (contentThresholdValue != safeContentThreshold || requestState == RequestState.LOADING)
+                if (contentThresholdValue != safeContentThreshold || requestState == RequestState.LOADING) {
                     imageBitmap?.let {
                         isSensitive = classifier.isInappropriateImage(
                             it,
@@ -94,11 +93,10 @@ fun RemoteBlurredSensitiveImage(
                         )
                         contentThresholdValue = safeContentThreshold
                     }
-
-                requestState = RequestState.SUCCESS
-                onSuccess?.invoke()
-
-            } catch (_: Exception) {
+                    requestState = RequestState.SUCCESS
+                    onSuccess?.invoke()
+                }
+            } catch (e: Throwable) {
                 requestState = RequestState.ERROR
                 onError?.invoke()
             }
@@ -109,20 +107,22 @@ fun RemoteBlurredSensitiveImage(
         when (requestState) {
             RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = contentDescription,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .blurry(
-                            isBlurForced = false,
-                            isImageSafe = !isSensitive,
-                            blurRadius = blurRadius,
-                            isBlurEnabled = isBlurEnabled,
-                            bitmap = imageBitmap
-                        ),
-                    contentScale = ContentScale.Crop
-                )
+                imageBitmap?.let {
+                    Image(
+                        bitmap = it.asImageBitmap(),
+                        contentDescription = contentDescription,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .blurry(
+                                isBlurForced = false,
+                                isImageSafe = !isSensitive,
+                                blurRadius = blurRadius,
+                                isBlurEnabled = isBlurEnabled,
+                                bitmap = imageBitmap
+                            ),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
 
             RequestState.ERROR -> errorContent()
