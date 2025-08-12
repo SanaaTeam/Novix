@@ -79,8 +79,8 @@ fun AddBookmarkListBottomSheet(
         isVisible = isVisible,
         onDismiss = handleDismiss,
         state = state,
-        onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = { viewModel.onAddClicked(mediaId) }
+        interactionListener = viewModel,
+        mediaId = mediaId
     )
 }
 
@@ -89,19 +89,10 @@ private fun AddBookmarkListBottomSheetContent(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     state: AddBookmarkUiState,
-    onTitleChanged: (String) -> Unit,
-    onAddClick: () -> Unit,
+    interactionListener: AddBookmarksInteractionListener,
+    mediaId: Int,
     modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember(state.listTitle) {
-        mutableStateOf(
-            TextFieldValue(
-                text = state.listTitle,
-                selection = TextRange(state.listTitle.length)
-            )
-        )
-    }
-
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
@@ -132,12 +123,12 @@ private fun AddBookmarkListBottomSheetContent(
             )
 
             TextField(
-                value = textFieldValue,
+                value = TextFieldValue(
+                    text = state.listTitle,
+                    selection = TextRange(state.listTitle.length)
+                ),
                 onValueChange = { newValue ->
-                    if (textFieldValue.text != newValue.text) {
-                        onTitleChanged(newValue.text)
-                    }
-                    textFieldValue = newValue
+                    interactionListener.onListTitleChanged(newValue.text)
                 },
                 hint = stringResource(R.string.my_favorite_placeholder),
                 icon = painterResource(id = R.drawable.ic_bookmark_list),
@@ -150,7 +141,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -173,8 +164,12 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 listTitle = "",
                 isAddButtonEnabled = false
             ),
-            onTitleChanged = {},
-            onAddClick = {}
+            interactionListener = object : AddBookmarksInteractionListener {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
+            },
+            mediaId = 0
         )
     }
 }
@@ -195,10 +190,12 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             isVisible = true,
             onDismiss = {},
             state = state,
-            onTitleChanged = { newTitle ->
-                state = state.copy(listTitle = newTitle, isAddButtonEnabled = newTitle.isNotBlank())
+            interactionListener = object : AddBookmarksInteractionListener {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
             },
-            onAddClick = {}
+            mediaId = 0
         )
     }
 }

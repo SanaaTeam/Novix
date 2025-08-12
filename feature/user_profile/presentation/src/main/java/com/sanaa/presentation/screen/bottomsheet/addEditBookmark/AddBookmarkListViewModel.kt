@@ -13,7 +13,8 @@ import javax.inject.Inject
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val listsStatusProvider: SavedListsStatusProvider,
-) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
+) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()),
+    AddBookmarksInteractionListeners {
 
 
     init {
@@ -22,7 +23,7 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-    fun onListTitleChanged(title: String) {
+    override fun onListTitleChanged(title: String) {
         updateState {
             it.copy(
                 listTitle = title,
@@ -31,11 +32,11 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-    fun resetState() {
+    override fun resetState() {
         updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 
-    fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { it.copy(isLoading = true, errorMessage = null) }
