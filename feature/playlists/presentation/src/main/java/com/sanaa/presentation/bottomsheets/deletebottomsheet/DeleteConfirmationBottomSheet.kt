@@ -31,7 +31,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarksEffect
 import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
@@ -79,11 +78,8 @@ fun DeleteConfirmationBottomSheet(
         isVisible = isVisible,
         isLoading = state.isLoading,
         onDismiss = onDismiss,
-        onDeleteClick = {
-            listId?.let { id ->
-                viewModel.onDeleteConfirmed(listId = id)
-            }
-        }
+        interactionListener = viewModel,
+        listId = listId ?: 0
     )
 }
 
@@ -92,7 +88,8 @@ private fun DeleteConfirmationBottomSheetContent(
     isVisible: Boolean,
     isLoading: Boolean,
     onDismiss: () -> Unit,
-    onDeleteClick: () -> Unit,
+    interactionListener: DeleteInteractionListener,
+    listId: Long,
     modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
@@ -137,7 +134,9 @@ private fun DeleteConfirmationBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.delete),
-                onClick = onDeleteClick,
+                onClick = {
+                    interactionListener.onDeleteConfirmed(listId)
+                },
                 isEnabled = !isLoading,
                 isLoading = isLoading,
                 modifier = Modifier
@@ -157,10 +156,15 @@ private fun DeleteConfirmationBottomSheetPreview() {
             isVisible = true,
             isLoading = false,
             onDismiss = {},
-            onDeleteClick = {}
+            interactionListener = object : DeleteInteractionListener {
+                override fun onDeleteConfirmed(listId: Long) {
+                }
+
+            }, listId = 0
         )
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
@@ -170,7 +174,11 @@ private fun DeleteConfirmationBottomSheetLoadingPreview() {
             isVisible = true,
             isLoading = true,
             onDismiss = {},
-            onDeleteClick = {}
+            interactionListener = object : DeleteInteractionListener {
+                override fun onDeleteConfirmed(listId: Long) {
+                }
+
+            }, listId = 0
         )
     }
 }

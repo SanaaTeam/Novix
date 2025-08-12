@@ -11,9 +11,9 @@ import javax.inject.Inject
 class DeleteListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(),dispatcher) {
+) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(),dispatcher),DeleteInteractionListener {
 
-    fun onDeleteConfirmed(listId: Long) {
+   override fun onDeleteConfirmed(listId: Long) {
         updateState { it.copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
