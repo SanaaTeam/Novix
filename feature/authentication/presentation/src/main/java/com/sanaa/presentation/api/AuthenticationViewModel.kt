@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    private val userPreference: UserPreferencesRepository
+    private val userPreference: UserPreferencesRepository,
 ) : ViewModel() {
     private val _state = MutableStateFlow(AuthenticationUiState())
     val state = _state.asStateFlow()
@@ -25,13 +25,13 @@ class AuthenticationViewModel @Inject constructor(
         viewModelScope.launch {
             launch {
                 userPreference.getTheme().collect { theme ->
-                    updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
+                    updateState { copy(isDarkTheme = theme == Theme.DARK) }
                 }
             }
         }
     }
 
-    private fun updateState(block: (AuthenticationUiState) -> AuthenticationUiState) {
+    private fun updateState(block: AuthenticationUiState.() -> AuthenticationUiState) {
         _state.value = block(_state.value)
     }
 

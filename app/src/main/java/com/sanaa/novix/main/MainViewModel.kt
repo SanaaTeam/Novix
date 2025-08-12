@@ -28,14 +28,14 @@ class MainViewModel @Inject constructor(
         viewModelScope.launch {
             launch {
                 mangeUserPreference.getTheme().collect { theme ->
-                    updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
+                    updateState { copy(isDarkTheme = theme == Theme.DARK) }
                 }
             }
         }
-        updateState { it.copy(isReady = true) }
+        updateState { copy(isReady = true) }
     }
 
-    private fun updateState(block: (MainUiState) -> MainUiState) {
+    private fun updateState(block: MainUiState.() -> MainUiState) {
         _state.value = block(_state.value)
     }
 }

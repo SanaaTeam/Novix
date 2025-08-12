@@ -44,13 +44,13 @@ class GenreTvShowsViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { it.copy(userIsLoggedIn = isLogged) }
+        updateState { copy(userIsLoggedIn = isLogged) }
     }
 
     override fun onSaveIconClick() {
         if (!state.value.userIsLoggedIn) {
             updateState {
-                it.copy(
+                copy(
                     showBottomSheet = true
                 )
             }
@@ -59,7 +59,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     override fun onRetryClick() {
         updateState {
-            it.copy(
+            copy(
                 noInternetConnection = false,
                 isLoading = true,
                 error = null
@@ -69,11 +69,11 @@ class GenreTvShowsViewModel @Inject constructor(
     }
 
     override fun onBottomSheetDismiss() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
         emitEffect(GenreTvShowsEffects.NavigateToLogin)
     }
 
@@ -95,7 +95,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun onCollectTvShowsByGenreId(tvShows: PagingData<SeriesUiModel>) {
         updateState {
-            it.copy(
+            copy(
                 title = genreName,
                 tvShows = flowOf(tvShows),
                 isLoading = false
@@ -105,9 +105,9 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun onGetShowsByGeneraIdFailed(throwable: Throwable) {
         if (throwable is NoNetworkException) {
-            updateState { it.copy(noInternetConnection = true, isLoading = false, error = null) }
+            updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
         } else {
-            updateState { it.copy(error = throwable.message, isLoading = false) }
+            updateState { copy(error = throwable.message, isLoading = false) }
         }
     }
 

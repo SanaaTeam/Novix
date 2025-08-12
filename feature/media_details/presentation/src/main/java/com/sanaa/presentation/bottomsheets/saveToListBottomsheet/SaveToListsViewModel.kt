@@ -23,7 +23,7 @@ class SaveToListsViewModel @Inject constructor(
     }
 
     private fun loadPlaylists() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             callee = { manageSavedListsUseCase.getSavedLists() },
@@ -40,16 +40,16 @@ class SaveToListsViewModel @Inject constructor(
                 itemCount = savedList.itemCount
             )
         }
-        updateState { it.copy(isLoading = false, playlists = uiLists) }
+        updateState { copy(isLoading = false, playlists = uiLists) }
     }
 
     private fun onErrorAccrue(): (Throwable) -> Unit = {
-        updateState { it.copy(isLoading = false, errorMessage = "Failed to load lists.") }
+        updateState { copy(isLoading = false, errorMessage = "Failed to load lists.") }
     }
 
     fun onPlaylistSelected(listId: Long) {
         updateState {
-            it.copy(
+            copy(
                 selectedListId = listId, isAddButtonEnabled = true
             )
         }
@@ -59,7 +59,7 @@ class SaveToListsViewModel @Inject constructor(
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             callee = addMovieToSavedList(selectedListId, mediaId),
@@ -79,7 +79,7 @@ class SaveToListsViewModel @Inject constructor(
     }
 
     private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
-        updateState { it.copy(isLoading = false) }
+        updateState { copy(isLoading = false) }
         savedListsStatusProvider.markItemSaved(mediaId.toInt())
         loadPlaylists()
         emitEffect(SaveToListEffects.AddedSuccessfully)
@@ -87,7 +87,7 @@ class SaveToListsViewModel @Inject constructor(
 
     private fun onErrorAccrue(throwable: Throwable) {
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 errorMessage = "Failed to add item to list."
             )

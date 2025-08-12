@@ -47,35 +47,35 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { it.copy(userIsLoggedIn = isLogged) }
+        updateState { copy(userIsLoggedIn = isLogged) }
     }
 
 
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         fetchMovies(categoryId)
     }
 
 
     override fun onBottomSheetDismiss() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
         emitEffect(GenreMoviesEffects.NavigateToLogin)
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false) }
+        updateState { copy(showSaveToListBottomSheet = false) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onSaveIconClick(media: MovieUiModel) {
@@ -84,7 +84,7 @@ class GenreMoviesViewModel @Inject constructor(
                 savedListsStatusProvider.markItemUnsaved(media.id)
             } else {
                 updateState {
-                    it.copy(
+                    copy(
                         showSaveToListBottomSheet = true,
                         selectedMovieToSave = media
                     )
@@ -110,7 +110,7 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
             mapper = Movie::toUiModel
@@ -118,20 +118,20 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { it.copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
+        updateState { copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
     }
 
     private fun onFetchMoviesFailed(throwable: Throwable) {
         if (throwable is NoNetworkException) {
             updateState {
-                it.copy(
+                copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             }
         } else {
-            updateState { it.copy(error = throwable.message, isLoading = false) }
+            updateState { copy(error = throwable.message, isLoading = false) }
         }
     }
 

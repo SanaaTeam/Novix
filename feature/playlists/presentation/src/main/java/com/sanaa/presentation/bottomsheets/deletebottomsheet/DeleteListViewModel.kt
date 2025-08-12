@@ -14,7 +14,7 @@ class DeleteListViewModel @Inject constructor(
 ) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(), dispatcher) {
 
     fun onDeleteConfirmed(listId: Long) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             callee = { manageSavedListsUseCase.deleteSavedList(listId.toInt()) },
@@ -24,14 +24,14 @@ class DeleteListViewModel @Inject constructor(
     }
 
     private fun onDeleteConfirmedSuccess(): (Unit) -> Unit = {
-        updateState { it.copy(isLoading = false) }
+        updateState { copy(isLoading = false) }
         emitEffect(DeleteListEffect.DeleteSuccess)
     }
 
     private fun onDeleteConfirmedFailed(throwable: Throwable) {
         emitEffect(DeleteListEffect.DeleteFailure)
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 errorMessage = "Failed to delete list. Please try again."
             )

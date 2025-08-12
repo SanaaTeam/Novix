@@ -35,9 +35,9 @@ class ActorViewModel @Inject constructor(
         loadDetails()
         viewModelScope.launch {
             savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState { current ->
-                    current.copy(
-                        topMovies = current.topMovies.map { movie ->
+                updateState {
+                    copy(
+                        topMovies = topMovies.map { movie ->
                             movie.copy(isSaved = savedIds.contains(movie.id))
                         }
                     )
@@ -54,7 +54,7 @@ class ActorViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { it.copy(userIsLoggedIn = isLogged) }
+        updateState { copy(userIsLoggedIn = isLogged) }
     }
 
 
@@ -83,17 +83,17 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(ActorScreenEffects.NavigateToLogin)
     }
 
     override fun onSaveClicked(movie: MovieUiModel) {
         if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -101,7 +101,7 @@ class ActorViewModel @Inject constructor(
             savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = movie
                 )
@@ -110,28 +110,28 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
 
     private fun loadDetails() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = ::fetchActorDetails,
-            onSuccess = { updateState { it.copy(isLoading = false) } },
-            onError = { e -> updateState { it.copy(isLoading = false) } }
+            onSuccess = { updateState { copy(isLoading = false) } },
+            onError = { e -> updateState { copy(isLoading = false) } }
         )
     }
 
@@ -149,7 +149,7 @@ class ActorViewModel @Inject constructor(
         val gallery = galleryDeferred.await()
 
         updateState {
-            it.copy(
+            copy(
                 actor = actor.toActorUiModel(),
                 topMovies = topMovies.map { m -> m.toUiModel() },
                 topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
