@@ -1,11 +1,11 @@
 package com.sanaa.presentation.screen.myAccount
 
 import com.sanaa.presentation.profileBase.BaseViewModel
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 import repository.ContentRestriction
 import repository.Language
 import repository.Theme
@@ -27,10 +27,9 @@ class MyAccountScreenViewModel @Inject constructor(
 ), MyAccountScreenInteractionsListener {
 
     init {
-        tryToExecute(
-            callee = { fetchUserPreference() },
-            onSuccess = { updateState { it.copy(isLoading = false) } }
-        )
+        fetchLanguage()
+        fetchContentRestriction()
+        fetchTheme()
         checkUserLoggedIn()
         fetchUserData()
         loadSavedLang()
@@ -71,19 +70,12 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSaveLanguageClick() {
-        val previousLanguage = runBlocking { mangeUserPreference.getLanguage().first() }
-        if (previousLanguage.code != state.value.selectedLanguage)
+        if (state.value.savedLanguage != state.value.selectedLanguage)
             tryToExecute(
-                callee = { saveLanguage() },
+                block = ::saveLanguage,
                 onSuccess = ::onSaveLanguageSuccess
             )
         else updateState { it.copy(showChangeLanguageBottomSheet = false) }
-    }
-
-    private suspend fun saveLanguage(): Language {
-        val newLanguage = Language.entries.first { it.code == state.value.selectedLanguage }
-        mangeUserPreference.setLanguage(newLanguage)
-        return newLanguage
     }
 
     override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
@@ -95,40 +87,26 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSaveThemeClick() {
-        val previousTheme = runBlocking { mangeUserPreference.getTheme().first() }
-        if (previousTheme.name != state.value.selectedTheme?.name)
+        if (state.value.savedTheme?.name != state.value.selectedTheme?.name)
             tryToExecute(
-                callee = { saveTheme() },
+                block = ::saveTheme,
                 onSuccess = ::onSaveThemeSuccess
             )
         else updateState { it.copy(showChangeThemeBottomSheet = false) }
     }
 
-    private suspend fun saveTheme(): Theme {
-        val newTheme = Theme.entries.first { it.name == state.value.selectedTheme?.name }
-        mangeUserPreference.setTheme(newTheme)
-        return newTheme
-    }
-
     override fun onSaveContentRestrictionClick() {
-        val previousContentRestriction =
-            runBlocking { mangeUserPreference.getContentRestriction().first() }
-        if (previousContentRestriction.name != state.value.selectedContentRestriction?.name)
+        if (state.value.savedContentRestriction?.name != state.value.selectedContentRestriction?.name)
             tryToExecute(
-                callee = { saveContentRestriction() },
+                block = { saveContentRestriction() },
                 onSuccess = {
                     updateState { it.copy(showContentRestrictionBottomSheet = false) }
                 }
             )
-        else updateState { it.copy(showContentRestrictionBottomSheet = false) }
+        else ::onSaveContentRestrictionSuccess
+
     }
 
-    private suspend fun saveContentRestriction() {
-        val newRestriction = ContentRestriction.entries.first {
-            it.name == state.value.selectedContentRestriction?.name
-        }
-        mangeUserPreference.setContentRestriction(newRestriction)
-    }
 
     override fun onClickAppearance() {
         updateState { it.copy(showChangeThemeBottomSheet = true) }
@@ -140,44 +118,33 @@ class MyAccountScreenViewModel @Inject constructor(
 
     override fun onLogoutButtonClick() {
         tryToExecute(
-            callee = {
-                logOutUseCase.logout()
-            },
+            block = logOutUseCase::logout,
             onSuccess = {
                 emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
             }
         )
     }
 
-
-    private suspend fun fetchUserPreference() {
-        updateState { it.copy(isLoading = true) }
-
-        fetchLanguage()
-        fetchContentRestriction()
-        fetchTheme()
+    private fun fetchLanguage() {
+        tryToCollect(
+            callee = mangeUserPreference::getLanguage,
+            onCollect = ::onLoadLanguageSuccess
+        )
     }
 
-    private suspend fun fetchLanguage() {
-        val language = mangeUserPreference.getLanguage().first()
-        updateState { it.copy(selectedLanguage = language.code) }
+    private fun fetchContentRestriction() {
+        tryToCollect(
+            callee = mangeUserPreference::getContentRestriction,
+            onCollect = ::onLoadContentRestrictionSuccess
+        )
     }
 
-    private suspend fun fetchContentRestriction() {
-        val contentRestriction = mangeUserPreference.getContentRestriction().first()
-        updateState {
-            it.copy(
-                selectedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name)
-            )
-        }
-    }
 
-    private suspend fun fetchTheme() {
-        mangeUserPreference.getTheme().collect { theme ->
-            updateState {
-                it.copy(selectedTheme = ThemeUiState.valueOf(theme.name))
-            }
-        }
+    private fun fetchTheme() {
+        tryToCollect(
+            callee = mangeUserPreference::getTheme,
+            onCollect = ::onLoadThemeSuccess
+        )
     }
 
     private fun onSaveThemeSuccess(newTheme: Theme) {
@@ -196,22 +163,20 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun checkUserLoggedIn() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            callee = checkIfUserIsLoggedInUseCase::isLoggedIn,
+            onCollect = ::onCheckUserLoginSuccess
         )
     }
 
     private fun fetchUserData() {
         tryToCollect(
-            callee = { getLoggedInUserUseCase.getLoggedInUser() },
+            callee = getLoggedInUserUseCase::getLoggedInUser,
             onCollect = ::onLoadUserDataSuccess
         )
+    }
+
+    private fun onLoadLanguageSuccess(language: Language) {
+        updateState { it.copy(selectedLanguage = language.code, savedLanguage = language.code) }
     }
 
     private fun onLoadUserDataSuccess(user: User) {
@@ -227,10 +192,59 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun loadSavedLang() {
         tryToCollect(
-            callee = { mangeUserPreference.getLanguage() },
-            onCollect = { saveLanguage ->
-                updateState { it.copy(savedLanguage = saveLanguage.code) }
-            }
+            callee = mangeUserPreference::getLanguage,
+            onCollect = ::onLoadLanguageSuccess
         )
+    }
+
+    private fun onCheckUserLoginSuccess(isLogged: Boolean) {
+        updateState {
+            it.copy(
+                isUserLoggedIn = isLogged
+            )
+        }
+
+    }
+
+    private fun onSaveContentRestrictionSuccess() {
+        updateState { it.copy(showContentRestrictionBottomSheet = false) }
+    }
+
+    private fun onLoadContentRestrictionSuccess(contentRestriction: ContentRestriction) {
+        updateState {
+            it.copy(
+                selectedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name),
+                savedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name)
+            )
+        }
+    }
+
+    private fun onLoadThemeSuccess(theme: Theme) {
+        updateState {
+            it.copy(
+                selectedTheme = ThemeUiState.valueOf(theme.name),
+                savedTheme = ThemeUiState.valueOf(theme.name)
+            )
+        }
+    }
+
+    private suspend fun saveContentRestriction() {
+        ContentRestriction.entries.first {
+            it.name == state.value.selectedContentRestriction?.name
+        }.also {
+            mangeUserPreference.setContentRestriction(it)
+        }
+    }
+
+    private suspend fun saveLanguage(): Language {
+        return Language.entries.first { it.code == state.value.selectedLanguage }.also {
+            mangeUserPreference.setLanguage(it)
+        }
+    }
+
+    private suspend fun saveTheme(): Theme {
+        return Theme.entries.first { it.name == state.value.selectedTheme?.name }.also {
+            mangeUserPreference.setTheme(it)
+        }
     }
 }
