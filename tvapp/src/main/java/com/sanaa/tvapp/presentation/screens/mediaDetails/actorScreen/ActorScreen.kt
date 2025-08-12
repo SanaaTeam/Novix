@@ -112,7 +112,8 @@ private fun ActorScreenContent(
                         DetailsHeaderSection(
                             state.actor.imageUrl.orEmpty(),
                             title = state.actor.name,
-                        ) {
+                        )
+                        {
                             Column(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -121,34 +122,7 @@ private fun ActorScreenContent(
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
-
-                                    state.actor.department?.let {
-                                        AppText(
-                                            text = it,
-                                            style = Theme.textStyle.label.small,
-                                            color = Theme.colors.body,
-                                        )
-                                    }
-
-                                    state.actor.placeOfBirth?.let {
-                                        DotSeparator()
-                                        IconWithText(
-                                            iconRes = R.drawable.location,
-                                            text = it,
-                                            contentDescription = "",
-                                            tint = Theme.colors.body
-                                        )
-                                    }
-
-                                    state.actor.lifeSpan?.let {
-                                        DotSeparator()
-                                        IconWithText(
-                                            iconRes = R.drawable.birthday_cake,
-                                            text = it,
-                                            contentDescription = "",
-                                            tint = Theme.colors.body
-                                        )
-                                    }
+                                    ActorInfo(state)
                                 }
 
                                 state.actor.biography?.let { bio ->
@@ -161,26 +135,8 @@ private fun ActorScreenContent(
                                 }
                             }
                         }
-                        if (state.galleryImageUrls.isNotEmpty()) {
-                            ImagesSlider(
-                                title = stringResource(R.string.Gallery),
-                                images = state.galleryImageUrls,
-                            )
-                        }
 
-                        if (state.topMovies.isNotEmpty()) {
-                            TopMoviesSlider(
-                                movies = state.topMovies,
-                                onMovieCardClicked = listener::onMovieClicked,
-                            )
-                        }
-                        if (state.topTvShows.isNotEmpty()) {
-                            TopTvShowsSlider(
-                                title = stringResource(R.string.series),
-                                tvShows = state.topTvShows,
-                                onTvShowCardClicked = listener::onTvShowClicked
-                            )
-                        }
+                        ActorScreenSliders(state, listener)
                     }
                 }
                 DetailsTopBar(onBackClick = listener::onBackClicked)
@@ -192,4 +148,64 @@ private fun ActorScreenContent(
         }
     }
 }
+
+@Composable
+private fun ActorScreenSliders(
+    state: ActorScreenUiState,
+    listener: ActorsScreenInteractionListener
+) {
+    if (state.galleryImageUrls.isNotEmpty()) {
+        ImagesSlider(
+            title = stringResource(R.string.Gallery),
+            images = state.galleryImageUrls,
+        )
+    }
+
+    if (state.topMovies.isNotEmpty()) {
+        TopMoviesSlider(
+            movies = state.topMovies,
+            onMovieCardClicked = listener::onMovieClicked,
+        )
+    }
+    if (state.topTvShows.isNotEmpty()) {
+        TopTvShowsSlider(
+            title = stringResource(R.string.series),
+            tvShows = state.topTvShows,
+            onTvShowCardClicked = listener::onTvShowClicked
+        )
+    }
+}
+
+@Composable
+private fun ActorInfo(state: ActorScreenUiState) {
+    state.actor.department?.let {
+        AppText(
+            text = it,
+            style = Theme.textStyle.label.small,
+            color = Theme.colors.body,
+        )
+    }
+
+    state.actor.placeOfBirth?.let {
+        DotSeparator()
+        IconWithText(
+            iconRes = R.drawable.location,
+            text = it,
+            contentDescription = "",
+            tint = Theme.colors.body
+        )
+    }
+
+    state.actor.lifeSpan?.let {
+        DotSeparator()
+        IconWithText(
+            iconRes = R.drawable.birthday_cake,
+            text = it,
+            contentDescription = "",
+            tint = Theme.colors.body
+        )
+    }
+}
+
+
 
