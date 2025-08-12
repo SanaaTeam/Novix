@@ -1,6 +1,7 @@
 package com.sanaa.presentation.model.mapper
 
 import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 
 fun Actor.toActorUiModel() = ActorUiModel(
@@ -13,8 +14,8 @@ fun Actor.toActorUiModel() = ActorUiModel(
     department = department?.toString(),
     character = character,
     lifeSpan = when {
-        birthDate != null && deathDate != null -> "$birthDate - $deathDate"
-        birthDate != null -> birthDate!!.toString()
+        birthDate != defaultDate && deathDate != defaultDate -> "$birthDate - $deathDate"
+        birthDate != defaultDate -> birthDate.toString()
         else -> null
     },
     placeOfBirth = placeOfBirth?.toString(),

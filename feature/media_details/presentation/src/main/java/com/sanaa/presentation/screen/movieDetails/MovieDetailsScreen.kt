@@ -57,7 +57,7 @@ import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridCon
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import com.sanaa.presentation.util.getCurrentLocale
+import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
@@ -305,7 +305,7 @@ fun MovieTopBar(
         rightContent = {
             TopBarClickableIcon(
                 icon = if (movie.isSaved)
-                    painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
+                    painterResource(designR.drawable.icon_saved)
                 else
                     painterResource(R.drawable.icon_save),
                 onClick = { interactionListener.onBookmarkClick(movie) }

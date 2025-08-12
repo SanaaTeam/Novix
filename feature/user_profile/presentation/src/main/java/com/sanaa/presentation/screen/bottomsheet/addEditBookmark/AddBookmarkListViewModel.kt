@@ -15,7 +15,6 @@ class AddBookmarkListViewModel @Inject constructor(
     private val listsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
 
-
     init {
         viewModelScope.launch {
             listsStatusProvider.refreshLists()
@@ -24,7 +23,7 @@ class AddBookmarkListViewModel @Inject constructor(
 
     fun onListTitleChanged(title: String) {
         updateState {
-            it.copy(
+            copy(
                 listTitle = title,
                 isAddButtonEnabled = title.isNotBlank()
             )
@@ -32,39 +31,43 @@ class AddBookmarkListViewModel @Inject constructor(
     }
 
     fun resetState() {
-        updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
+        updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 
     fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
-                resetState()
-                emitEffect(Unit)
-                listsStatusProvider.markItemSaved(mediaId)
-                listsStatusProvider.addList(
-                    SavedList(
-                        title = it.title,
-                        itemCount = it.itemCount,
-                        id = it.id
-                    )
-                )
-                viewModelScope.launch {
-                    listsStatusProvider.refreshLists()
-                }
-            },
-            onError = {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to create list. Please try again."
-                    )
-                }
-            }
+            onSuccess = onAddBookmarkListSuccess(mediaId),
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
+        resetState()
+        emitEffect(Unit)
+        listsStatusProvider.markItemSaved(mediaId)
+        listsStatusProvider.addList(
+            SavedList(
+                title = it.title,
+                itemCount = it.itemCount,
+                id = it.id
+            )
+        )
+        viewModelScope.launch {
+            listsStatusProvider.refreshLists()
+        }
+    }
+
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = "Failed to create list. Please try again."
+            )
+        }
     }
 }
