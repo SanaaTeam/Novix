@@ -135,8 +135,8 @@ fun MovieDetailsContent(
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-
+                                )
+                                {
                                     GenresRow(
                                         genres = state.movieDetails.genres,
                                         onGenreClicked = {

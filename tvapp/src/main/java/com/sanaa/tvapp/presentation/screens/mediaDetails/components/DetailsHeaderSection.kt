@@ -107,7 +107,7 @@ fun DetailsHeaderSection(
 
 @Preview(device = Devices.TV_1080p, showBackground = false)
 @Composable
-private fun Preview(modifier: Modifier = Modifier) {
+private fun HeaderPreview(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .systemBarsPadding()
