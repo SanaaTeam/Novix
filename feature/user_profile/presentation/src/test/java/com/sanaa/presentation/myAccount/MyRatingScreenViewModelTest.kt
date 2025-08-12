@@ -137,7 +137,7 @@ class MyRatingScreenViewModelTest {
 
 
     @Test
-    fun `onDeleteIconClick for tv show throws exception emits error snackbar`() = runTest {
+    fun `onDeleteIconClick for tv show throws exception emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
         coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")

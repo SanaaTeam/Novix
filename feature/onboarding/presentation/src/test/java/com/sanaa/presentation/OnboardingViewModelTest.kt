@@ -55,7 +55,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `onNextPageClick on last page should call onSkipClick and set isSkipable to true`() = runTest {
+    fun `onNextPageClick on last page should call onSkipClick and set isSkipAble to true`() = runTest {
         viewModel.state.test {
             awaitItem()
             viewModel.setCurrentPage(2)
@@ -92,7 +92,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `onSkipClick should set isSkipable to true`() = runTest {
+    fun `onSkipClick should set isSkipAble to true`() = runTest {
         viewModel.state.test {
             awaitItem()
             viewModel.onSkipClick()
