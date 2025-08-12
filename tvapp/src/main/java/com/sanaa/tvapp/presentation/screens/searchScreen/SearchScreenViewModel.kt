@@ -30,7 +30,7 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : TvBaseViewModel<SearchTvScreenUiState, Unit>(
+) : TvBaseViewModel<SearchTvScreenUiState, SearchScreenEffect>(
     SearchTvScreenUiState(),
     dispatcher
 ), SearchScreenInteractionListener {
@@ -175,19 +175,19 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
-    fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
+    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
         return TvBasePagingSource { page ->
             searchUseCase.searchActors(query = query, page = page)
         }
     }
 
-    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
+    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
         return TvBasePagingSource { page ->
             searchUseCase.searchTvShows(query = query, page = page)
         }
     }
 
-    fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
+    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
         return TvBasePagingSource { page ->
             searchUseCase.searchMovies(
                 query = query,
@@ -221,15 +221,20 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     override fun onActorClicked(id: Int) {
-        TODO("Not yet implemented")
+        emitEffect(SearchScreenEffect.NavigateToActorDetails(id))
     }
 
     override fun onLoginButtonClick() {
-        TODO("Not yet implemented")
+        emitEffect(SearchScreenEffect.NavigateToLogin)
     }
 
-    override fun onSearchResultMediaClicked() {
-        TODO("Not yet implemented")
+
+    override fun onMovieClicked(id:Int) {
+        emitEffect(SearchScreenEffect.NavigateToMovieDetails(id))
+    }
+
+    override fun onTvShowClicked(id:Int) {
+        emitEffect(SearchScreenEffect.NavigateToTvShowDetails(id))
     }
 
     companion object {

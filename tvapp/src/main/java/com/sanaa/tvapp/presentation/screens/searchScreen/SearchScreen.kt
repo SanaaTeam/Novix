@@ -5,6 +5,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +19,8 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.ActorTvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.MovieTvContent
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.SearchTextField
@@ -36,15 +39,32 @@ fun SearchScreen(
     val moviesPagingData = uiState.movies.collectAsLazyPagingItems()
     val tvShowsPagingData = uiState.tvShows.collectAsLazyPagingItems()
     val actorsPagingData = uiState.actors.collectAsLazyPagingItems()
-    NovixTheme(isSystemInDarkTheme()) {
-        SearchScreenContent(
-            uiState = uiState,
-            searchListener = searchViewModel,
-            moviesPagingData = moviesPagingData,
-            tvShowsPagingData = tvShowsPagingData,
-            actorsPagingData = actorsPagingData,
-        )
+    val navController = LocalAppNavController.current
+
+
+
+    LaunchedEffect(Unit) {
+        searchViewModel.effect.collect {
+            when(it){
+                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(ScreensRoute.ActorDetails(it.id))
+                SearchScreenEffect.NavigateToLogin -> TODO()
+                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(ScreensRoute.MovieDetails(it.id))
+                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(ScreensRoute.TvShowDetails(it.id))
+            }
     }
+}
+
+
+
+NovixTheme(isSystemInDarkTheme()) {
+    SearchScreenContent(
+        uiState = uiState,
+        searchListener = searchViewModel,
+        moviesPagingData = moviesPagingData,
+        tvShowsPagingData = tvShowsPagingData,
+        actorsPagingData = actorsPagingData,
+    )
+}
 }
 
 @Composable
@@ -96,12 +116,15 @@ fun SearchScreenContent(
             SearchTvScreenUiState.MOVIE_INDEX -> {
                 when {
                     text.isBlank() -> TvEmptySearchContent()
-
                     movieRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    movieRefreshState is LoadState.Error -> TvErrorStateContent(movieRefreshState, searchListener::retrySearch)
+                    movieRefreshState is LoadState.Error -> TvErrorStateContent(
+                        movieRefreshState,
+                        searchListener::retrySearch
+                    )
+
                     isMovieEmpty -> TvEmptySearchContent()
-                    else -> MovieTvContent(moviesPagingData) {
-                        searchListener.onSearchResultMediaClicked()
+                    else -> MovieTvContent(moviesPagingData) { movieId ->
+                        searchListener.onMovieClicked(movieId)
                     }
                 }
             }
@@ -111,10 +134,14 @@ fun SearchScreenContent(
                     text.isBlank() -> TvEmptySearchContent()
 
                     tvShowRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    tvShowRefreshState is LoadState.Error -> TvErrorStateContent(tvShowRefreshState, searchListener::retrySearch)
+                    tvShowRefreshState is LoadState.Error -> TvErrorStateContent(
+                        tvShowRefreshState,
+                        searchListener::retrySearch
+                    )
+
                     isTvEmpty -> TvEmptySearchContent()
-                    else -> TvShowTvContent(tvShowsPagingData) {tvShow->
-                        searchListener.onSearchResultMediaClicked()
+                    else -> TvShowTvContent(tvShowsPagingData) { tvShowId ->
+                        searchListener.onTvShowClicked(tvShowId)
                     }
                 }
             }
@@ -124,7 +151,11 @@ fun SearchScreenContent(
                     text.isBlank() -> TvEmptySearchContent()
 
                     actorRefreshState is LoadState.Loading -> TvLoadingIndicator()
-                    actorRefreshState is LoadState.Error -> TvErrorStateContent(actorRefreshState, searchListener::retrySearch)
+                    actorRefreshState is LoadState.Error -> TvErrorStateContent(
+                        actorRefreshState,
+                        searchListener::retrySearch
+                    )
+
                     isActorEmpty -> TvEmptySearchContent()
                     else -> ActorTvContent(actorsPagingData) {
                         searchListener.onActorClicked(it.id)

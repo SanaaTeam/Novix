@@ -6,5 +6,6 @@ interface SearchScreenInteractionListener {
     fun retrySearch()
     fun onActorClicked(id: Int)
     fun onLoginButtonClick()
-    fun onSearchResultMediaClicked()
+    fun onMovieClicked(id:Int)
+    fun onTvShowClicked(id:Int)
 }
