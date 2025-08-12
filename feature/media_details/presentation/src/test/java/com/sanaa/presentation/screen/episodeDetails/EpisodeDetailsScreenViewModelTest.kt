@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.episodeDetails
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Actor.Gender
 import entity.Episode
@@ -13,13 +14,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.AfterEach
-import kotlinx.coroutines.test.resetMain
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -254,7 +255,7 @@ class EpisodeDetailsScreenViewModelTest {
                 department = "Acting",
                 character = "Role",
                 birthDate = LocalDate.parse("1990-01-01"),
-                deathDate = null,
+                deathDate = defaultDate,
                 placeOfBirth = "City",
                 biography = "Bio"
             )

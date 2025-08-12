@@ -11,8 +11,8 @@ data class Actor(
     val gender: Gender,
     val department: String?,
     val character: String?,
-    val birthDate: LocalDate?,
-    val deathDate: LocalDate?,
+    val birthDate: LocalDate,
+    val deathDate: LocalDate,
     val placeOfBirth: String?,
     val biography: String?
 ) {

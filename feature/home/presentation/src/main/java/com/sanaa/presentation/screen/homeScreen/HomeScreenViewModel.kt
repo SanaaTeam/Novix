@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
@@ -55,22 +54,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchWatchedMediaData()
         fetchMovieGenres()
         fetchUpcomingMovies()
-
-        viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState { current ->
-                    current.copy(
-                        popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
-                        topRatingMedia = current.topRatingMedia.map { it.withSaved(savedIds) },
-                        continueWatchingMedia = current.continueWatchingMedia.map {
-                            it.withSaved(
-                                savedIds
-                            )
-                        }
-                    )
-                }
-            }
-        }
     }
 
     private fun MediaItem.withSaved(savedIds: Set<Int>) =
@@ -87,6 +70,7 @@ class HomeScreenViewModel @Inject constructor(
                     )
                 }
             },
+            onError = ::onDataLoadError
         )
     }
 
@@ -126,8 +110,10 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
-        val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }.take(5)
-        val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }.take(5)
+        val topRatedMovies =
+            manageMovieUseCase.getTopRatedMovies(1, null).map { it.toState() }.take(5)
+        val topRatedTvSeries =
+            manageTvSeriesUseCase.getTopRatedTvSeries(1, null).map { it.toState() }.take(5)
 
         return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
     }
@@ -181,10 +167,11 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadUpcomingMovies(genreId)
-                .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                    pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
-                }
+            callee = {
+                loadUpcomingMovies(genreId)
+                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+                        pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
+                    }
                     .cachedIn(viewModelScope)
             },
             onCollect = ::onFetchUpcomingMoviesSuccess,
@@ -269,9 +256,9 @@ class HomeScreenViewModel @Inject constructor(
                 }
             }
         } else {
-           updateState {
-               it.copy(showBottomSheet = true)
-           }
+            updateState {
+                it.copy(showBottomSheet = true)
+            }
         }
     }
 
