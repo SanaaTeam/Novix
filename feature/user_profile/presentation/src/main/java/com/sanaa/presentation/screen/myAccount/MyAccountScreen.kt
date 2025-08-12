@@ -14,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.core.os.LocaleListCompat
@@ -26,27 +25,29 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.selection.Option
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.theme.NovixTheme
-import com.sanaa.presentation.api.navigation.ChangePasswordScreenRoute
-import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.api.navigation.MyRatingScreenRoute
-import com.sanaa.presentation.api.navigation.ProfileApiEntryPoint
-import com.sanaa.presentation.api.navigation.WatchingHistoryScreenRoute
-import com.sanaa.presentation.provider.LocalThemeMode
+import com.sanaa.presentation.navigation.ChangePasswordScreenRoute
+import com.sanaa.presentation.navigation.MyRatingScreenRoute
+import com.sanaa.presentation.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.navigation.WatchingHistoryScreenRoute
+import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToChangePasswordSetting
-import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToContentRestrictionSetting
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToMyRating
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect.UpdateAppLanguage
-import com.sanaa.presentation.screen.myAccount.component.AccountOptionItem
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.Companion.ARABIC_LANGUAGE_CODE
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.Companion.ENGLISH_LANGUAGE_CODE
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
 import com.sanaa.presentation.screen.myAccount.component.MyAccountUserInfo
 import com.sanaa.presentation.screen.myAccount.component.NotLoggedInStateComponent
 import com.sanaa.presentation.screen.myAccount.component.SelectionBottomSheet
-import com.sanaa.presentation.screen.myAccount.component.VerticalList
+import com.sanaa.presentation.screen.myAccount.component.UserOptions
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
-    val uiState by viewModel.state.collectAsStateWithLifecycle()
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val effect by viewModel.effect.collectAsState(null)
     val navController = LocalNavControllerProvider.current
     val view = LocalView.current
@@ -73,9 +74,6 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
         when (val it = effect) {
             NavigateToChangePasswordSetting -> {
                 navController.navigate(ChangePasswordScreenRoute)
-            }
-
-            NavigateToContentRestrictionSetting -> {
             }
 
             is UpdateAppLanguage -> {
@@ -110,12 +108,13 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
         }
     }
 
-    MyAccountScreenContent(uiState, viewModel)
+    MyAccountScreenContent(state, viewModel)
 }
 
+
 @Composable
-fun MyAccountScreenContent(
-    uiState: MyAccountScreenUiState,
+private fun MyAccountScreenContent(
+    state: MyAccountScreenUiState,
     interactionsListener: MyAccountScreenInteractionsListener,
 ) {
     NovixScaffold(
@@ -126,89 +125,50 @@ fun MyAccountScreenContent(
             )
         }
     ) {
-
-        if (!uiState.isUserLoggedIn) {
+        if (!state.isUserLoggedIn) {
             NotLoggedInStateComponent(
                 onLoginClick = { interactionsListener.onLoginButtonClick() }
             )
         } else {
             Column(
-                modifier = Modifier.verticalScroll(rememberScrollState())
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
             ) {
                 MyAccountUserInfo(
-                    uiState.currentUser,
+                    state.currentUser,
                     onLogoutClick = {
                         interactionsListener.onLogoutButtonClick()
                     }
                 )
-
-                VerticalList(
-                    items = listOf(
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.icon_clock),
-                            title = stringResource(R.string.watching_history),
-                            onClick = { interactionsListener.onClickWatchingHistory() }),
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.star_square),
-                            title = stringResource(R.string.my_rating),
-                            onClick = { interactionsListener.onClickMyTopRating() }),
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.shield_energy),
-                            title = stringResource(R.string.content_restriction),
-                            onClick = { interactionsListener.onClickContentRestriction() }),
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.icon_lock),
-                            title = stringResource(R.string.change_password),
-                            onClick = { interactionsListener.onClickChangePassword() }),
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.icon_moon),
-                            title = stringResource(R.string.appearance),
-                            onClick = { interactionsListener.onClickAppearance() },
-                            description = if (LocalThemeMode.current) stringResource(
-                                R.string.dark
-                            ) else stringResource(
-                                R.string.light
-                            )
-                        ),
-                        AccountOptionItem(
-                            painter = painterResource(R.drawable.language_circle),
-                            title = stringResource(R.string.language),
-                            onClick = { interactionsListener.onClickLanguageSetting() },
-                            description = if (uiState.savedLanguage == "ar") stringResource(
-                                R.string.ar
-                            ) else stringResource(
-                                R.string.eng
-                            )
-                        ),
-                    )
+                UserOptions(
+                    interactionsListener,
+                    state.savedLanguage
                 )
                 SelectionBottomSheet(
-                    isVisible = uiState.showChangeLanguageBottomSheet,
+                    isVisible = state.showChangeLanguageBottomSheet,
                     bottomSheetTitle = stringResource(R.string.language),
                     options = listOf(
                         Option(
-                            label = stringResource(R.string.arabic), value = "ar"
+                            label = stringResource(R.string.arabic), value = ARABIC_LANGUAGE_CODE
                         ),
                         Option(
-                            label = stringResource(R.string.english), value = "en"
+                            label = stringResource(R.string.english), value = ENGLISH_LANGUAGE_CODE
                         ),
                     ),
                     onDismiss = {
                         interactionsListener.onDismissBottomSheet()
                     },
                     onOptionSelected = {
-                        interactionsListener.onSelectLanguage(
-                            it.toString()
-                        )
+                        interactionsListener.onSelectLanguage(it.orEmpty())
                     },
-                    selectedValue = uiState.selectedLanguage,
+                    selectedValue = state.selectedLanguage,
                     onSaveClick = {
                         interactionsListener.onSaveLanguageClick()
                     }
                 )
 
                 SelectionBottomSheet(
-                    isVisible = uiState.showContentRestrictionBottomSheet,
+                    isVisible = state.showContentRestrictionBottomSheet,
                     bottomSheetTitle = stringResource(R.string.content_restriction),
                     options = listOf(
                         Option(
@@ -233,12 +193,12 @@ fun MyAccountScreenContent(
                     onOptionSelected = {
                         interactionsListener.onSelectContentRestriction(it)
                     },
-                    selectedValue = uiState.selectedContentRestriction,
+                    selectedValue = state.selectedContentRestriction,
                     onSaveClick = { interactionsListener.onSaveContentRestrictionClick() }
                 )
 
                 SelectionBottomSheet(
-                    isVisible = uiState.showChangeThemeBottomSheet,
+                    isVisible = state.showChangeThemeBottomSheet,
                     bottomSheetTitle = stringResource(R.string.appearance),
                     options = listOf(
                         Option(
@@ -254,90 +214,12 @@ fun MyAccountScreenContent(
                     onOptionSelected = {
                         interactionsListener.onSelectTheme(it)
                     },
-                    selectedValue = uiState.selectedTheme,
+                    selectedValue = state.selectedTheme,
                     onSaveClick = {
                         interactionsListener.onSaveThemeClick()
                     },
                 )
             }
-        }
-    }
-}
-
-
-@PreviewLightDark
-@Composable
-private fun AccountScreenContentPreview() {
-    val interactionsListener = object : MyAccountScreenInteractionsListener {
-        override fun onClickChangePassword() {
-        }
-
-        override fun onClickContentRestriction() {
-        }
-
-        override fun onClickLanguageSetting() {
-        }
-
-        override fun onClickMyTopRating() {
-        }
-
-        override fun onClickWatchingHistory() {
-        }
-
-        override fun onSelectLanguage(language: String) {
-
-        }
-
-        override fun onDismissBottomSheet() {
-
-        }
-
-        override fun onSaveLanguageClick() {
-        }
-
-        override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
-
-        }
-
-        override fun onSelectTheme(theme: ThemeUiState?) {
-        }
-
-        override fun onSaveThemeClick() {
-        }
-
-        override fun onSaveContentRestrictionClick() {
-        }
-
-        override fun onClickAppearance() {
-
-        }
-
-        override fun onLoginButtonClick() {
-        }
-
-        override fun onLogoutButtonClick() {
-
-        }
-
-    }
-    NovixTheme(isSystemInDarkTheme()) {
-        NovixScaffold {
-            MyAccountScreenContent(
-                uiState = MyAccountScreenUiState(
-                    currentUser = UserUiState(
-                        username = "mostafa nema",
-                        imageUrl = " "
-                    ),
-                    showChangeLanguageBottomSheet = false,
-                    showContentRestrictionBottomSheet = false,
-                    showChangeThemeBottomSheet = false,
-                    selectedLanguage = "en",
-                    selectedContentRestriction = ContentRestrictionUiState.UNRESTRICTED,
-                    selectedTheme = ThemeUiState.DARK,
-                    isLoading = false,
-                    isUserLoggedIn = true
-                ), interactionsListener = interactionsListener
-            )
         }
     }
 }
