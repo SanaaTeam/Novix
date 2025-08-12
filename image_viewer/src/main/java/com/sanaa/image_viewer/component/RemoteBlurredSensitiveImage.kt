@@ -2,13 +2,13 @@ package com.sanaa.image_viewer.component
 
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.os.Build
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,46 +63,40 @@ fun RemoteBlurredSensitiveImage(
     onBlurContent: @Composable () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val classifier = remember(context) { TfLiteImageClassifier(context) }
-
-    var bitmapToBlur by remember(imageUrl) { mutableStateOf<Bitmap?>(null) }
+    val classifier = remember { TfLiteImageClassifier(context) }
+    var imageBitmap by rememberSaveable { mutableStateOf<Bitmap?>(null) }
     var isSensitive by rememberSaveable { mutableStateOf(false) }
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
 
+    var contentThresholdValue by rememberSaveable { mutableFloatStateOf(.7f) }
+
     val coroutineScope = rememberCoroutineScope()
 
-    val request = remember(imageUrl) {
-        ImageRequest.Builder(context)
-            .data(imageUrl)
-            .allowHardware(false) // Required to get Bitmap from Drawable
-            .build()
-    }
+    LaunchedEffect(Unit) {
 
-    LaunchedEffect(imageUrl) {
-        if (requestState != RequestState.LOADING) return@LaunchedEffect
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                val loader = ImageLoader(context)
+                if (imageBitmap == null) {
+                    val request = ImageRequest.Builder(context).data(imageUrl)
+                        .allowHardware(false)
+                        .build()
+                    val loader = ImageLoader(context)
+                    val response = loader.execute(request)
+                    imageBitmap = (response.drawable as? BitmapDrawable)?.bitmap
+                }
 
-                val response = loader.execute(request)
-                val bitmap = (response.drawable as? BitmapDrawable)?.bitmap
-                if (bitmap != null) {
-                    isSensitive = classifier.isInappropriateImage(
-                        bitmap,
-                        safeContentThreshold,
-                        sensitiveContentThreshold
-                    )
-
-//                    store bitmap to blur for older android version
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S && isSensitive) {
-                        bitmapToBlur = bitmap
+                if (contentThresholdValue != safeContentThreshold || requestState == RequestState.LOADING)
+                    imageBitmap?.let {
+                        isSensitive = classifier.isInappropriateImage(
+                            it,
+                            safeContentThreshold,
+                            sensitiveContentThreshold
+                        )
+                        contentThresholdValue = safeContentThreshold
                     }
 
-                    requestState = RequestState.SUCCESS
-                    onSuccess?.invoke()
-                } else {
-                    throw Exception("failed to fetch image bitmap")
-                }
+                requestState = RequestState.SUCCESS
+                onSuccess?.invoke()
 
             } catch (_: Exception) {
                 requestState = RequestState.ERROR
@@ -111,25 +105,12 @@ fun RemoteBlurredSensitiveImage(
         }
     }
 
-    LaunchedEffect(bitmapToBlur) {
-        //restore bitmap to blur only for older android version
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S || !isSensitive) return@LaunchedEffect
-        if (bitmapToBlur != null || requestState != RequestState.SUCCESS) return@LaunchedEffect
-
-        coroutineScope.launch(Dispatchers.IO) {
-            val loader = ImageLoader(context)
-            val response = loader.execute(request)
-            bitmapToBlur = (response.drawable as? BitmapDrawable)?.bitmap
-        }
-    }
-
-
     Box(modifier = modifier.fillMaxSize()) {
         when (requestState) {
             RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
                 AsyncImage(
-                    model = request,
+                    model = imageUrl,
                     contentDescription = contentDescription,
                     modifier = Modifier
                         .fillMaxSize()
@@ -138,7 +119,7 @@ fun RemoteBlurredSensitiveImage(
                             isImageSafe = !isSensitive,
                             blurRadius = blurRadius,
                             isBlurEnabled = isBlurEnabled,
-                            bitmap = bitmapToBlur
+                            bitmap = imageBitmap
                         ),
                     contentScale = ContentScale.Crop
                 )
