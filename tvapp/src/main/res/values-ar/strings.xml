@@ -29,5 +29,7 @@
     <string name="login">تسجيل الدخول</string>
     <string name="app_icon">أيقونة التطبيق</string>
     <string name="continue_as_guest">المتابعة كضيف</string>
+    <string name="Gallery">مجموعة الصور</string>
+    <string name="series">مسلسلات</string>
 
 </resources>

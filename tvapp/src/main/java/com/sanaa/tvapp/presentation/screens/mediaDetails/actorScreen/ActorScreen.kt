@@ -28,16 +28,16 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.shared_component.DotSeparator
-import com.sanaa.presentation.shared_component.IconWithText
-import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBar
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.ImagesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TvShowsSlider
+import com.sanaa.tvapp.state.SnackData
 
 @Composable
 fun ActorScreen(
@@ -158,21 +158,21 @@ private fun ActorScreenContent(
                         }
                         if (state.galleryImageUrls.isNotEmpty()) {
                             ImagesSlider(
-                                title = stringResource(R.string.gallery),
+                                title = stringResource(R.string.Gallery),
                                 images = state.galleryImageUrls,
                             )
                         }
 
                         if (state.topMovies.isNotEmpty()) {
                             MoviesSlider(
-                                title = stringResource(R.string.top_movie_picks),
-                                movies = state.topMovies,
-                                onCardClick = listener::onMovieClicked
+                                moviesPagingData = state.topMovies,
+                                onMovieCardClicked = listener::onMovieClicked,
+                                modifier = TODO(),
                             )
                         }
                         if (state.topTvShows.isNotEmpty()) {
                             TvShowsSlider(
-                                title = stringResource(R.string.top_series_picks),
+                                title = stringResource(R.string.series),
                                 tvShows = state.topTvShows,
                                 onCardClick = listener::onTvShowClicked
                             )
@@ -182,7 +182,8 @@ private fun ActorScreenContent(
                 DetailsTopBar(onBackClick = listener::onBackClicked)
 
                 NovixAnimatedSnackBarHost(
-                    data = snack, onDismiss = { snack = null })
+                    data = snack, onDismiss = { snack = null }
+                )
             }
         }
     }

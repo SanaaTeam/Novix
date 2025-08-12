@@ -29,5 +29,7 @@
     <string name="login">Login</string>
     <string name="app_icon">app icon</string>
     <string name="continue_as_guest">Continue as guest</string>
+    <string name="Gallery">gallery</string>
+    <string name="series">Series</string>
 
 </resources>

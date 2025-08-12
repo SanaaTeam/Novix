@@ -57,7 +57,6 @@ fun MovieDetailsScreen(
 ) {
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
