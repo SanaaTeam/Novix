@@ -15,6 +15,7 @@ class AddBookmarkListViewModel @Inject constructor(
     private val listsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
 
+
     init {
         viewModelScope.launch {
             listsStatusProvider.refreshLists()
@@ -40,34 +41,30 @@ class AddBookmarkListViewModel @Inject constructor(
         updateState { copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = onAddBookmarkListSuccess(mediaId),
-            onError = ::onErrorAccrue
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            onSuccess = {
+                resetState()
+                emitEffect(Unit)
+                listsStatusProvider.markItemSaved(mediaId)
+                listsStatusProvider.addList(
+                    SavedList(
+                        title = it.title,
+                        itemCount = it.itemCount,
+                        id = it.id
+                    )
+                )
+                viewModelScope.launch {
+                    listsStatusProvider.refreshLists()
+                }
+            },
+            onError = {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = "Failed to create list. Please try again."
+                    )
+                }
+            }
         )
-    }
-
-    private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
-        resetState()
-        emitEffect(Unit)
-        listsStatusProvider.markItemSaved(mediaId)
-        listsStatusProvider.addList(
-            SavedList(
-                title = it.title,
-                itemCount = it.itemCount,
-                id = it.id
-            )
-        )
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
-    }
-
-    private fun onErrorAccrue(throwable: Throwable) {
-        updateState {
-            copy(
-                isLoading = false,
-                errorMessage = "Failed to create list. Please try again."
-            )
-        }
     }
 }

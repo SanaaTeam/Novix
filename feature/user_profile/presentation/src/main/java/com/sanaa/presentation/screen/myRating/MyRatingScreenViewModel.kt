@@ -38,7 +38,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun loadRatedMovies() {
         tryToExecute(
-            callee = { manageMovieUseCase.getUserRatedMovies() },
+            block = { manageMovieUseCase.getUserRatedMovies() },
             onSuccess = { movies ->
                 val uiModels = movies.map { it.toRatedMediaUiModel() }
                 updateState { it.copy(ratedMovies = uiModels) }
@@ -52,7 +52,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun loadRatedTvShows() {
         tryToExecute(
-            callee = {
+            block = {
                 val accountId = preferencesManager.accountId.first()
                 val sessionId = preferencesManager.sessionId.first()
 
@@ -100,7 +100,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun deleteRatedMovie(mediaId: Int) {
         tryToExecute(
-            callee = { manageMovieUseCase.deleteMovieRate(mediaId) },
+            block = { manageMovieUseCase.deleteMovieRate(mediaId) },
             onSuccess = { success ->
                     updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
                     emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
@@ -114,7 +114,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun deleteRatedTvShow(mediaId: Int) {
         tryToExecute(
-            callee = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+            block = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
             onSuccess = { success ->
                     updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
                     emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
