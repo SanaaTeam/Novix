@@ -52,14 +52,14 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToCollect(
-        callee: suspend () -> Flow<T>,
+        block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
         viewModelScope.launch(dispatcher + handler) {
-            callee()
+            block()
                 .collectLatest { result ->
                     onCollect(result)
                 }

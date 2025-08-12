@@ -44,7 +44,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadWatchedHistoryMovies(genreId)
             }, onCollect = { mediaList ->
                 updateState {
@@ -60,7 +60,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadWatchedHistoryTvSeries(genreId)
             }, onCollect = { mediaList ->
                 updateState {

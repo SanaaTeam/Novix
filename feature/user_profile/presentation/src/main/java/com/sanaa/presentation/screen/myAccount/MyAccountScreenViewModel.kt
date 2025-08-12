@@ -127,14 +127,14 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun fetchLanguage() {
         tryToCollect(
-            callee = mangeUserPreference::getLanguage,
+            block = mangeUserPreference::getLanguage,
             onCollect = ::onLoadLanguageSuccess
         )
     }
 
     private fun fetchContentRestriction() {
         tryToCollect(
-            callee = mangeUserPreference::getContentRestriction,
+            block = mangeUserPreference::getContentRestriction,
             onCollect = ::onLoadContentRestrictionSuccess
         )
     }
@@ -142,7 +142,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun fetchTheme() {
         tryToCollect(
-            callee = mangeUserPreference::getTheme,
+            block = mangeUserPreference::getTheme,
             onCollect = ::onLoadThemeSuccess
         )
     }
@@ -163,14 +163,14 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun checkUserLoggedIn() {
         tryToCollect(
-            callee = checkIfUserIsLoggedInUseCase::isLoggedIn,
+            block = checkIfUserIsLoggedInUseCase::isLoggedIn,
             onCollect = ::onCheckUserLoginSuccess
         )
     }
 
     private fun fetchUserData() {
         tryToCollect(
-            callee = getLoggedInUserUseCase::getLoggedInUser,
+            block = getLoggedInUserUseCase::getLoggedInUser,
             onCollect = ::onLoadUserDataSuccess
         )
     }
@@ -192,7 +192,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun loadSavedLang() {
         tryToCollect(
-            callee = mangeUserPreference::getLanguage,
+            block = mangeUserPreference::getLanguage,
             onCollect = ::onLoadLanguageSuccess
         )
     }
