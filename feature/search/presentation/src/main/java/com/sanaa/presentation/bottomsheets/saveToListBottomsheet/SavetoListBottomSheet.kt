@@ -45,11 +45,11 @@ import kotlinx.coroutines.flow.collectLatest
 fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
+    modifier: Modifier = Modifier,
     onSuccess: () -> Unit = {},
     onFailure: () -> Unit = {},
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()

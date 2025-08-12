@@ -1,8 +1,8 @@
+package com.sanaa.presentation.screen.homeScreen
+
 import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.homeScreen.HomeScreenEffect
-import com.sanaa.presentation.screen.homeScreen.HomeScreenViewModel
 import com.sanaa.presentation.state.MediaTypeUi
 import entity.Genre
 import entity.MediaHistoryItem
@@ -17,7 +17,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
