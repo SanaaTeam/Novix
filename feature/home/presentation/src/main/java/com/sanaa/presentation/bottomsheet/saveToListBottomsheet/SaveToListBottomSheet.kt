@@ -94,12 +94,8 @@ fun SaveToListBottomSheet(
         isVisible = isVisible,
         state = state,
         onDismiss = onDismiss,
-        onPlaylistSelected = viewModel::onPlaylistSelected,
-        onAddClick = {
-            viewModel.onAddClicked(
-                mediaId = mediaId,
-            )
-        },
+        interactionListener = viewModel,
+        mediaId = mediaId,
         onCreateNewListClick = onCreateNewListClick,
         modifier = modifier
     )
@@ -110,8 +106,8 @@ private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
-    onPlaylistSelected: (Long) -> Unit,
-    onAddClick: () -> Unit,
+    interactionListener: SaveToListInteractionListener,
+    mediaId: Long,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -158,7 +154,7 @@ private fun SaveToListBottomSheetContent(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
                             isSelected = state.selectedListId == playlist.id,
-                            onClick = { onPlaylistSelected(playlist.id) }
+                            onClick = { interactionListener.onPlaylistSelected(playlist.id) }
                         )
                     }
                 }
@@ -166,7 +162,7 @@ private fun SaveToListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled && !state.isLoading,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -255,15 +251,15 @@ private fun SaveToListBottomSheetPreview() {
             isVisible = true,
             state = state,
             onDismiss = {},
-            onPlaylistSelected = { selectedId ->
-                state = state.copy(
-                    selectedListId = selectedId,
-                    isAddButtonEnabled = true
-                )
+            interactionListener = object : SaveToListInteractionListener {
+                override fun onPlaylistSelected(listId: Long) {
+                    state = state.copy(selectedListId = listId)
+                }
+
+                override fun onAddClicked(mediaId: Long) {
+                }
             },
-            onAddClick = {
-                state = state.copy(isLoading = true)
-            },
+            mediaId = 0,
             onCreateNewListClick = {}
         )
     }

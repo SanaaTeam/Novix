@@ -15,7 +15,8 @@ class SaveToListsViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<SaveToListsUiState, SaveToListEffects>(SaveToListsUiState(),dispatcher) {
+) : BaseViewModel<SaveToListsUiState, SaveToListEffects>(SaveToListsUiState(),dispatcher),
+    SaveToListsInteractionListener {
 
     init {
         loadPlaylists()
@@ -42,7 +43,7 @@ class SaveToListsViewModel @Inject constructor(
         )
     }
 
-    fun onPlaylistSelected(listId: Long) {
+    override fun onPlaylistSelected(listId: Long) {
         updateState {
             it.copy(
                 selectedListId = listId, isAddButtonEnabled = true
@@ -50,7 +51,7 @@ class SaveToListsViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(mediaId: Long) {
+    override fun onAddClicked(mediaId: Long) {
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
