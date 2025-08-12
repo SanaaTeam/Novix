@@ -18,7 +18,7 @@ fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
-    overview = overview.toString(),
+    overview = overview,
     rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,

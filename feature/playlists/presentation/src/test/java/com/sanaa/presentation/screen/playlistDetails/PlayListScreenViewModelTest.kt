@@ -77,16 +77,4 @@ class PlayListScreenViewModelTest {
             listsStatusProvider = listStatusProvider,
         )
     }
-
-    private fun fakeDomainList(
-        id: Int = 1,
-        title: String = "List $id",
-        itemCount: Int = 3
-    ): SavedList {
-        return SavedList(
-            id = id,
-            title = title,
-            itemCount = itemCount
-        )
-    }
 }

@@ -16,7 +16,7 @@ fun Movie.toUiModel(
     return MovieUiModel(
         id = id,
         title = title,
-        overview = overview.toString(),
+        overview = overview,
         rating = String.format("%.1f", imdbRating),
         releaseDate = if (releaseDate != defaultDate) releaseDate.toString() else "",
         duration = duration,
