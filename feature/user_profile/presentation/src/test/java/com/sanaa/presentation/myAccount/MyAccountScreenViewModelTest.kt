@@ -99,7 +99,7 @@ class MyAccountScreenViewModelTest {
             coEvery { mangeUserPreference.getLanguage() } returns flowOf(Language.ARABIC)
             coEvery { mangeUserPreference.setLanguage(any()) } returns Unit
 
-            viewModel.updateState { it.copy(selectedLanguage = selectedLanguage.code) }
+            viewModel.updateState { copy(selectedLanguage = selectedLanguage.code) }
 
             viewModel.effect.test {
                 viewModel.onSaveLanguageClick()
@@ -119,7 +119,7 @@ class MyAccountScreenViewModelTest {
             coEvery { mangeUserPreference.getTheme() } returns flowOf(Theme.LIGHT)
             coEvery { mangeUserPreference.setTheme(any()) } returns Unit
 
-            viewModel.updateState { it.copy(selectedTheme = selectedTheme.toUiState()) }
+            viewModel.updateState { copy(selectedTheme = selectedTheme.toUiState()) }
 
             viewModel.effect.test {
                 viewModel.onSaveThemeClick()
@@ -141,7 +141,7 @@ class MyAccountScreenViewModelTest {
             coEvery { mangeUserPreference.setContentRestriction(any()) } returns Unit
 
             viewModel.updateState {
-                it.copy(selectedContentRestriction = ContentRestrictionUiState.valueOf(restriction.name))
+                copy(selectedContentRestriction = ContentRestrictionUiState.valueOf(restriction.name))
             }
 
             viewModel.onSaveContentRestrictionClick()
