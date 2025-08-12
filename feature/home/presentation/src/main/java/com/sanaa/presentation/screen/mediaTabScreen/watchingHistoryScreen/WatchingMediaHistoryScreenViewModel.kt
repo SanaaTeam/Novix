@@ -52,7 +52,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchMoviesSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(
+            copy(
                 movieList = mediaList.map { it.toState() },
                 isLoading = false,
                 showRefreshButton = false
@@ -70,7 +70,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowsSuccess(mediaList: List<MediaHistoryItem>) {
         updateState {
-            it.copy(
+            copy(
                 tvShowList = mediaList.map { it.toState() },
                 isLoading = false,
                 showRefreshButton = false
@@ -88,14 +88,14 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private suspend fun fetchMovieGenresOperation(): List<Genre> {
         updateState {
-            it.copy(isLoading = true)
+            copy(isLoading = true)
         }
         return manageMovieUseCase.getMovieGenres()
     }
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 movieGenres = genres.map { it.toState() },
                 isLoading = false,
                 showRefreshButton = false
@@ -113,14 +113,14 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private suspend fun fetchTvShowGenresOperation(): List<Genre> {
         updateState {
-            it.copy(isLoading = true)
+            copy(isLoading = true)
         }
         return manageTvSeriesUseCase.getSeriesGenres()
     }
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 tvShowGenres = genres.map { it.toState() },
                 isLoading = false,
                 showRefreshButton = false
@@ -129,20 +129,20 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
+        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
         if (id == state.value.movieSelectedGenreId) return
 
-        updateState { it.copy(movieSelectedGenreId = id) }
+        updateState { copy(movieSelectedGenreId = id) }
         fetchMovies(id)
     }
 
     override fun onTvShowGenreClick(id: Int?) {
         if (id == state.value.tvShowSelectedGenreId) return
 
-        updateState { it.copy(tvShowSelectedGenreId = id) }
+        updateState { copy(tvShowSelectedGenreId = id) }
         fetchTvShows(id)
     }
 
@@ -152,7 +152,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         updateState {
-            it.copy(
+            copy(
                 showBottomSheet = true
             )
         }
@@ -173,7 +173,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         mediaType: MediaType,
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
       return try {
             return getLoggedInUserUseCase.getLoggedInUser().first().run {
                  manageWatchedMediaHistoryUseCase.getMediaHistory(
@@ -190,10 +190,10 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true, showRefreshButton = true) }
+            updateState { copy(isNoInternetConnection = true, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
-            updateState { it.copy(isNoInternetConnection = false, showRefreshButton = true) }
+            updateState { copy(isNoInternetConnection = false, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }

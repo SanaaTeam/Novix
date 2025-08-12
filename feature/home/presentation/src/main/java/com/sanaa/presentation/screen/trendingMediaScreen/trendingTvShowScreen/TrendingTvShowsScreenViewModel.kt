@@ -46,11 +46,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState {
-            it.copy(
-                userIsLoggedIn = isLogged,
-            )
-        }
+        updateState { copy(userIsLoggedIn = isLogged) }
     }
 
     private fun fetchGenres() {
@@ -63,15 +59,13 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private suspend fun loadGenresOperation(): List<GenreUiState> {
         updateState {
-            it.copy(isLoading = true)
+            copy(isLoading = true)
         }
         return manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
-        updateState {
-            it.copy(genreList = genres, isLoading = false, isNoInternetConnection = false)
-        }
+        updateState { copy(genreList = genres, isLoading = false, isNoInternetConnection = false) }
     }
 
     private fun loadTvShows() {
@@ -91,7 +85,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
         updateState {
-            it.copy(
+            copy(
                 mediaList = flowOf(pagingData),
                 isLoading = false,
                 isNoInternetConnection = false
@@ -102,7 +96,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     override fun onGenreClick(id: Int?) {
         if (id == state.value.selectedGenreId) return
         updateState {
-            it.copy(selectedGenreId = id)
+            copy(selectedGenreId = id)
         }
         loadTvShows()
     }
@@ -114,7 +108,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
             updateState {
-                it.copy(
+                copy(
                     showBottomSheet = true
                 )
             }
@@ -145,16 +139,16 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true) }
+            updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
-            updateState { it.copy(isNoInternetConnection = false) }
+            updateState { copy(isNoInternetConnection = false) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }

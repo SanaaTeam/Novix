@@ -28,7 +28,7 @@ class NovixAppViewModel @Inject constructor(
         viewModelScope.launch {
             launch {
                 mangeUserPreference.getTheme().collect { theme ->
-                    updateState { it.copy(isDarkTheme = Theme.DARK == theme) }
+                    updateState { copy(isDarkTheme = Theme.DARK == theme) }
                 }
             }
             launch {
@@ -38,16 +38,14 @@ class NovixAppViewModel @Inject constructor(
                         ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
                         ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
                     }
-                    updateState {
-                        it.copy(safeContentThreshold = threshold)
-                    }
+                    updateState { copy(safeContentThreshold = threshold) }
                 }
             }
 
         }
     }
 
-    private fun updateState(block: (NovixAppUiState) -> NovixAppUiState) {
+    private fun updateState(block: NovixAppUiState.() -> NovixAppUiState) {
         _state.value = block(_state.value)
     }
 

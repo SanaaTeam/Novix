@@ -23,7 +23,7 @@ class OnboardingViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 updateState {
-                    it.copy(
+                    copy(
                         pageList = getOnBoardingPageContent(),
                         currentPageIndex = 0
                     )
@@ -39,7 +39,7 @@ class OnboardingViewModel @Inject constructor(
         if (currentIndex == lastIndex) {
             onSkipClick()
         } else {
-            updateState { it.copy(currentPageIndex = currentIndex + 1) }
+            updateState { copy(currentPageIndex = currentIndex + 1) }
         }
     }
 
@@ -47,16 +47,16 @@ class OnboardingViewModel @Inject constructor(
         val currentIndex = state.value.currentPageIndex
 
         if (currentIndex > 0) {
-            updateState { it.copy(currentPageIndex = currentIndex - 1) }
+            updateState { copy(currentPageIndex = currentIndex - 1) }
         }
     }
 
     override fun onSkipClick() {
-        updateState { it.copy(isSkipable = true, onboardingIsFinished = true) }
+        updateState { copy(isSkipable = true, onboardingIsFinished = true) }
     }
 
     override fun setCurrentPage(pageIndex: Int) {
-        updateState { it.copy(currentPageIndex = pageIndex) }
+        updateState { copy(currentPageIndex = pageIndex) }
     }
 
     private fun getOnBoardingPageContent(): List<OnBoardingPageContentItem> {

@@ -46,7 +46,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
     override fun onTabChanged(tabIndex: Int) {
         if (state.value.selectedTabIndex == tabIndex) return
-        updateState { it.copy(selectedTabIndex = tabIndex) }
+        updateState { copy(selectedTabIndex = tabIndex) }
     }
 
     override fun onRetryClick() {
@@ -56,7 +56,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     private fun loadTvGenres() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
                 getTvGenresUseCase.getSeriesGenres()
@@ -69,7 +69,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
     private fun onLoadTvGenresSuccess(tvGenres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 tvCategories = tvGenres.map {
                     it.toUiState()
@@ -80,7 +80,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     private fun loadMovieGenres() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
                 getMovieGenresUseCase.getMovieGenres()
@@ -92,7 +92,7 @@ class CategoriesScreenViewModel @Inject constructor(
 
     private fun onLoadMovieGenresSuccess(movieGenres: List<Genre>) {
         updateState {
-            it.copy(
+            copy(
                 isLoading = false,
                 movieCategories = movieGenres.map {
                     it.toUiState()
@@ -104,7 +104,7 @@ class CategoriesScreenViewModel @Inject constructor(
     private fun onErrorLoading(error: Throwable) {
         when (error) {
             is NoNetworkException -> {
-                updateState { it.copy(isNoInternet = true) }
+                updateState { copy(isNoInternet = true) }
             }
         }
     }

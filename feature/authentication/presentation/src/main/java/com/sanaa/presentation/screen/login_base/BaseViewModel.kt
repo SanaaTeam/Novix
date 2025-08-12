@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
-    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }
@@ -23,7 +23,7 @@ abstract class BaseViewModel<T, E>(
     private val _effect = MutableSharedFlow<E>()
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
-    protected fun updateState(updater: (T) -> T) {
+    protected fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 

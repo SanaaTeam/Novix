@@ -45,7 +45,7 @@ class ReviewViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(error = null, noInternetConnection = false, isLoading = true) }
+        updateState { copy(error = null, noInternetConnection = false, isLoading = true) }
         fetchReviews(mediaId)
     }
 
@@ -60,25 +60,25 @@ class ReviewViewModel @Inject constructor(
     }
 
     private fun onCollectReviews(reviews: PagingData<ReviewUiModel>) {
-        updateState { it.copy(reviews = flowOf(reviews), isLoading = false) }
+        updateState { copy(reviews = flowOf(reviews), isLoading = false) }
     }
 
     private fun onFetchReviewsFailed(throwable: Throwable) {
         if (throwable is NoNetworkException) {
             updateState {
-                it.copy(
+                copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             }
         } else {
-            updateState { it.copy(isLoading = false, error = throwable.message) }
+            updateState { copy(isLoading = false, error = throwable.message) }
         }
     }
 
     private fun loadReviews(id: Int, mediaType: MediaTypeUiModel): Flow<PagingData<ReviewUiModel>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createReviewsPagingDataSource(mediaType, id) },
             mapper = Review::toReviewUiModel
