@@ -274,7 +274,7 @@ private fun ActorScreenContent(
         }
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
-                isVisible = state.showLoginBottomSheet,
+                isVisible = true,
                 onDismiss = listener::onDismissBottomSheet,
                 onLoginButtonClick = {
                     listener.onLoginButtonClick()
@@ -290,7 +290,7 @@ private fun ActorScreenContent(
         )
         if (state.showAddListBottomSheet && state.selectedMediaToSave?.id != null) {
             AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
+                isVisible = true,
                 onDismiss = listener::onDismissAddListBottomSheet,
                 mediaId = state.selectedMediaToSave.id
             )

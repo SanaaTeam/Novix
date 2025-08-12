@@ -93,7 +93,7 @@ fun TopMoviesScreen(
     )
     if (uiState.showAddListBottomSheet && selectedMedia != null) {
         AddBookmarkListBottomSheet(
-            isVisible = uiState.showAddListBottomSheet,
+            isVisible = true,
             onDismiss = viewModel::onDismissAddListBottomSheet,
             mediaId = selectedMedia.id
         )

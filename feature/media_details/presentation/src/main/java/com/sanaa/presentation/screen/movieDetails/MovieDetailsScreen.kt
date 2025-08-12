@@ -97,7 +97,7 @@ fun MovieDetailsScreen(
         )
         if (state.showAddListBottomSheet && selectedMedia != null) {
             AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
+                isVisible = true,
                 onDismiss = viewModel::onDismissAddListBottomSheet,
                 mediaId = selectedMedia
             )
@@ -256,7 +256,7 @@ fun MovieDetailsContent(
                     isRateSelected = state.hasUserSelectedRate,
                     imdbRating = state.imdbRating,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = state.showRateBottomSheet,
+                    isVisible = true,
                     onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                     onRatingChanged = interactionListener::onRatingChanged
                 )
@@ -275,7 +275,7 @@ fun MovieDetailsContent(
                 }
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet,
+                    isVisible = true,
                     title = title,
                     text = text,
                     onLoginButtonClick = {
