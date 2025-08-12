@@ -70,7 +70,6 @@ fun TopMoviesScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     TopMoviesContent(
@@ -184,7 +183,7 @@ private fun TopMoviesContent(
                                                     color = Color(0x99FFFFFF)
                                                 ),
                                                 iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash)
+                                                icon = painterResource(designR.drawable.icon_eye_slash)
                                             )
                                         }
                                     },

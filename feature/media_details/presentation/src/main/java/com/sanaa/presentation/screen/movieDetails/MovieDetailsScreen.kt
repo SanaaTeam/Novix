@@ -305,7 +305,7 @@ fun MovieTopBar(
         rightContent = {
             TopBarClickableIcon(
                 icon = if (movie.isSaved)
-                    painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
+                    painterResource(designR.drawable.icon_saved)
                 else
                     painterResource(R.drawable.icon_save),
                 onClick = { interactionListener.onBookmarkClick(movie) }

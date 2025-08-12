@@ -143,7 +143,6 @@ private fun ActorScreenContent(
         targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = EaseInOut),
     )
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     LaunchedEffect(lazyState) {

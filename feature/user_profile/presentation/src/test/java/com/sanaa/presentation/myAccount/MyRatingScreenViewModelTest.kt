@@ -125,7 +125,7 @@ class MyRatingScreenViewModelTest {
             MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
         viewModel.onMediaClick(dummyMovie.id, MediaTypeUi.MOVIE)
         viewModel.effect.test {
-            Truth.assertThat(awaitItem()).isEqualTo(
+            assertThat(awaitItem()).isEqualTo(
                 MyRatingScreenEffect.NavigateToMediaDetails(
                     dummyMovie.id,
                     MediaTypeUi.MOVIE
