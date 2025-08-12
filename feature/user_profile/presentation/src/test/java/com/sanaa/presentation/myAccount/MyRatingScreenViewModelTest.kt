@@ -114,7 +114,7 @@ class MyRatingScreenViewModelTest {
     fun `onRetryLoadDetails sets isLoading to true`() = runTest {
         viewModel =
             MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
-        viewModel.updateState { it.copy(isNoInternetConnection = true) }
+        viewModel.updateState { copy(isNoInternetConnection = true) }
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
     }

@@ -57,7 +57,7 @@ import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridCon
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import com.sanaa.presentation.util.getCurrentLocale
+import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR

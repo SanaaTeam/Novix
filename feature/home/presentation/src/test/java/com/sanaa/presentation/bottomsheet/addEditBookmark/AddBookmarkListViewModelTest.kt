@@ -54,7 +54,7 @@ class AddBookmarkListViewModelTest {
     fun `resetState clears title, loading, and error states`() = runTest {
         initViewModel()
         viewModel.updateState {
-            it.copy(listTitle = "Some Title", isLoading = true, errorMessage = "Some Error")
+            copy(listTitle = "Some Title", isLoading = true, errorMessage = "Some Error")
         }
 
         viewModel.resetState()

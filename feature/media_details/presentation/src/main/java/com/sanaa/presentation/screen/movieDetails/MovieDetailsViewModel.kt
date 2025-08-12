@@ -15,6 +15,7 @@ import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import entity.User
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -58,10 +59,10 @@ class MovieDetailsViewModel @Inject constructor(
 
         viewModelScope.launch {
             savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState { current ->
-                    current.copy(
-                        movieDetails = current.movieDetails.copy(
-                            isSaved = savedIds.contains(current.movieDetails.id)
+                updateState {
+                    copy(
+                        movieDetails = movieDetails.copy(
+                            isSaved = savedIds.contains(movieDetails.id)
                         )
                     )
                 }
@@ -91,7 +92,7 @@ class MovieDetailsViewModel @Inject constructor(
             savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaId = movie.id
                 )
@@ -100,15 +101,15 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false) }
+        updateState { copy(showSaveToListBottomSheet = false) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
@@ -117,18 +118,18 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onRateMovieClick() {
         if (state.value.isUserLoggedIn) {
-            updateState { it.copy(showRateBottomSheet = true) }
+            updateState { copy(showRateBottomSheet = true) }
         } else {
             promptLogin(LoginPromptType.RATE)
         }
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(MovieDetailsUiEffect.NavigateToLogin)
     }
 
@@ -146,7 +147,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState {
-            it.copy(
+            copy(
                 isLoading = true,
                 errorMessage = null,
                 noInternetConnection = false
@@ -156,60 +157,64 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onRatingChanged(newRating: Int) {
-        updateState { it.copy(imdbRating = newRating) }
+        updateState { copy(imdbRating = newRating) }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showRateBottomSheet = false) }
+        updateState { copy(showRateBottomSheet = false) }
     }
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitMovieRating,
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        errorMessage = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onShowRateBottomSheetFailed
         )
         updateState {
-            it.copy(showRateBottomSheet = false)
+            copy(showRateBottomSheet = false)
+        }
+    }
+
+    private fun onShowRateBottomSheetFailed(throwable: Throwable) {
+        updateState {
+            copy(
+                errorMessage = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
             callee = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { it.copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false, errorMessage = null) }
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = exception.message,
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            },
+            onError = ::onFetchMovieDetailsFailed,
             dispatcher = defaultDispatcher
         )
+    }
+
+    private fun onFetchMovieDetailsFailed(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    errorMessage = null
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    isLoading = false,
+                    errorMessage = throwable.message,
+                    noInternetConnection = false
+                )
+            }
+        }
     }
 
 
@@ -236,11 +241,8 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             tryToCollect(
                 callee = { getCurrentUserRating(movieId) },
-                onCollect = { rating ->
-                    updateState { it.copy(imdbRating = rating) }
-                },
+                onCollect = { rating -> updateState { copy(imdbRating = rating) } },
             )
-
         }
     }
 
@@ -263,7 +265,7 @@ class MovieDetailsViewModel @Inject constructor(
 
         addMovieToHistory(movie)
         updateState {
-            it.copy(
+            copy(
                 movieDetails = movie.toUiModel(trailerUrl = trailerUrl)
                     .copy(isSaved = isMovieSaved),
                 cast = cast.map { it.toActorUiModel() },
@@ -308,36 +310,34 @@ class MovieDetailsViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(isUserLoggedIn = isLogged) }
+    }
 
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
-            onCollect = { user ->
-                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-                    mediaHistoryItem = movie.toHistory(),
-                    username = user.username
-                )
-            }
+            onCollect = onCollectUser(movie)
+        )
+    }
+
+    private fun onCollectUser(movie: Movie): suspend (User) -> Unit = { user ->
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
         )
     }
 
     private fun promptLogin(type: LoginPromptType) {
         updateState {
-            it.copy(
+            copy(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )
         }
     }
-
 }

@@ -29,7 +29,7 @@ class MyAccountScreenViewModel @Inject constructor(
     init {
         tryToExecute(
             callee = { fetchUserPreference() },
-            onSuccess = { updateState { it.copy(isLoading = false) } }
+            onSuccess = { updateState { copy(isLoading = false) } }
         )
         checkUserLoggedIn()
         fetchUserData()
@@ -41,11 +41,11 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onClickContentRestriction() {
-        updateState { it.copy(showContentRestrictionBottomSheet = true) }
+        updateState { copy(showContentRestrictionBottomSheet = true) }
     }
 
     override fun onClickLanguageSetting() {
-        updateState { it.copy(showChangeLanguageBottomSheet = true) }
+        updateState { copy(showChangeLanguageBottomSheet = true) }
     }
 
     override fun onClickMyTopRating() {
@@ -57,12 +57,12 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSelectLanguage(language: String) {
-        updateState { it.copy(selectedLanguage = language) }
+        updateState { copy(selectedLanguage = language) }
     }
 
     override fun onDismissBottomSheet() {
         updateState {
-            it.copy(
+            copy(
                 showContentRestrictionBottomSheet = false,
                 showChangeLanguageBottomSheet = false,
                 showChangeThemeBottomSheet = false
@@ -77,7 +77,7 @@ class MyAccountScreenViewModel @Inject constructor(
                 callee = { saveLanguage() },
                 onSuccess = ::onSaveLanguageSuccess
             )
-        else updateState { it.copy(showChangeLanguageBottomSheet = false) }
+        else updateState { copy(showChangeLanguageBottomSheet = false) }
     }
 
     private suspend fun saveLanguage(): Language {
@@ -87,11 +87,11 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
-        updateState { it.copy(selectedContentRestriction = contentRestriction) }
+        updateState { copy(selectedContentRestriction = contentRestriction) }
     }
 
     override fun onSelectTheme(theme: ThemeUiState?) {
-        updateState { it.copy(selectedTheme = theme) }
+        updateState { copy(selectedTheme = theme) }
     }
 
     override fun onSaveThemeClick() {
@@ -101,7 +101,7 @@ class MyAccountScreenViewModel @Inject constructor(
                 callee = { saveTheme() },
                 onSuccess = ::onSaveThemeSuccess
             )
-        else updateState { it.copy(showChangeThemeBottomSheet = false) }
+        else updateState { copy(showChangeThemeBottomSheet = false) }
     }
 
     private suspend fun saveTheme(): Theme {
@@ -117,10 +117,10 @@ class MyAccountScreenViewModel @Inject constructor(
             tryToExecute(
                 callee = { saveContentRestriction() },
                 onSuccess = {
-                    updateState { it.copy(showContentRestrictionBottomSheet = false) }
+                    updateState { copy(showContentRestrictionBottomSheet = false) }
                 }
             )
-        else updateState { it.copy(showContentRestrictionBottomSheet = false) }
+        else updateState { copy(showContentRestrictionBottomSheet = false) }
     }
 
     private suspend fun saveContentRestriction() {
@@ -131,7 +131,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     override fun onClickAppearance() {
-        updateState { it.copy(showChangeThemeBottomSheet = true) }
+        updateState { copy(showChangeThemeBottomSheet = true) }
     }
 
     override fun onLoginButtonClick() {
@@ -151,7 +151,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
 
     private suspend fun fetchUserPreference() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
 
         fetchLanguage()
         fetchContentRestriction()
@@ -160,13 +160,13 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private suspend fun fetchLanguage() {
         val language = mangeUserPreference.getLanguage().first()
-        updateState { it.copy(selectedLanguage = language.code) }
+        updateState { copy(selectedLanguage = language.code) }
     }
 
     private suspend fun fetchContentRestriction() {
         val contentRestriction = mangeUserPreference.getContentRestriction().first()
         updateState {
-            it.copy(
+            copy(
                 selectedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name)
             )
         }
@@ -175,13 +175,13 @@ class MyAccountScreenViewModel @Inject constructor(
     private suspend fun fetchTheme() {
         mangeUserPreference.getTheme().collect { theme ->
             updateState {
-                it.copy(selectedTheme = ThemeUiState.valueOf(theme.name))
+                copy(selectedTheme = ThemeUiState.valueOf(theme.name))
             }
         }
     }
 
     private fun onSaveThemeSuccess(newTheme: Theme) {
-        updateState { it.copy(showChangeThemeBottomSheet = false) }
+        updateState { copy(showChangeThemeBottomSheet = false) }
         emitEffect(
             MyAccountScreenEffect.UpdateAppTheme(
                 isDarkMode = newTheme == Theme.DARK
@@ -190,21 +190,19 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onSaveLanguageSuccess(newLanguage: Language) {
-        updateState { it.copy(showChangeLanguageBottomSheet = false) }
+        updateState { copy(showChangeLanguageBottomSheet = false) }
         emitEffect(MyAccountScreenEffect.UpdateAppLanguage(newLanguage.code))
     }
 
     private fun checkUserLoggedIn() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(isUserLoggedIn = isLogged) }
     }
 
     private fun fetchUserData() {
@@ -216,7 +214,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
     private fun onLoadUserDataSuccess(user: User) {
         updateState {
-            it.copy(
+            copy(
                 currentUser = UserUiState(
                     username = user.username,
                     imageUrl = user.profileImageUrl
@@ -229,7 +227,7 @@ class MyAccountScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { mangeUserPreference.getLanguage() },
             onCollect = { saveLanguage ->
-                updateState { it.copy(savedLanguage = saveLanguage.code) }
+                updateState { copy(savedLanguage = saveLanguage.code) }
             }
         )
     }
