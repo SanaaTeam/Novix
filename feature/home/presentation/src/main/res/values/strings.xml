@@ -18,6 +18,7 @@
     <string name="request_login">Please login to save to list</string>
     <string name="login">Login</string>
     <string name="add_to_list">Add to list</string>"
+    <string name="what_to_watch">What to watch</string>"
     <string name="movie_poster">Movie poster</string>
     <string name="watching_history">Watching history</string>
 
