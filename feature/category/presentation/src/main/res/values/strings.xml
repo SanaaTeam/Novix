@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="categories">Categories</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
+</resources>
