@@ -17,7 +17,7 @@ fun SavedItemDto.toEntity() = Movie(
     imdbRating = voteAverage,
     duration = null,
     releaseDate = LocalDate.parse(releaseDate ?: "2000-01-01"),
-    overview = overview ?: "",
+    overview = overview.orEmpty(),
     trailerUrl = null,
     rating = null
 )

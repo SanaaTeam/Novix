@@ -137,7 +137,7 @@ private fun TopSeriesContent(
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredSensitiveImage(
-                                            imageUrl = series.posterPath ?: "",
+                                            imageUrl = series.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             sensitiveContentThreshold = 0.2f,
                                             isBlurEnabled = LocalSafeContentThreshold.current != 0f,
