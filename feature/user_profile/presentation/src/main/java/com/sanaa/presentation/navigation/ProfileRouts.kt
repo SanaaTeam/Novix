@@ -1,4 +1,4 @@
-package com.sanaa.presentation.api.navigation
+package com.sanaa.presentation.navigation
 
 import kotlinx.serialization.Serializable
 

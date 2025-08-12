@@ -1,4 +1,4 @@
-package com.sanaa.presentation.api.navigation
+package com.sanaa.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -13,7 +13,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibility
 import com.sanaa.presentation.MyProfileViewModel
-import com.sanaa.presentation.provider.LocalContentRestriction
+import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
+import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.provider.LocalThemeMode
 import com.sanaa.presentation.screen.changePassword.ChangePasswordWebView
 import com.sanaa.presentation.screen.myAccount.MyAccountScreen
@@ -43,7 +44,7 @@ fun AccountNavHost(
         CompositionLocalProvider(
             LocalNavControllerProvider provides appNavController,
             LocalThemeMode provides state.value.isDarkTheme,
-            LocalContentRestriction provides state.value.safeContentThreshold
+            LocalSaveContentThreshold provides state.value.safeContentThreshold
         ) {
             NavHost(
                 navController = appNavController,
