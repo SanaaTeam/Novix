@@ -91,9 +91,6 @@ fun TvShowScreen(
 //                    TODO()
                 }
 
-                is TvShowDetailsScreenEffects.NavigateToReviewsScreen -> {
-//                    TODO()
-                }
 
                 is TvShowDetailsScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
@@ -235,9 +232,7 @@ fun TvShowScreenContent(
                             if (state.cast.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.cast,
-                                    onActorCardClicked = {id->
-
-                                    }
+                                    onActorCardClicked = interactionListener::onActorClicked
                                 )
                             }
 

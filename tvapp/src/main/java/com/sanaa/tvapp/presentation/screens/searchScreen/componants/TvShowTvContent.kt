@@ -12,7 +12,7 @@ import com.sanaa.tvapp.presentation.screens.searchScreen.TvShowUiModel
 @Composable
 fun TvShowTvContent(
     shows: LazyPagingItems<TvShowUiModel>,
-    onClick: (TvShowUiModel) -> Unit
+    onClick: (Int) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(20.dp),
@@ -23,7 +23,7 @@ fun TvShowTvContent(
                 FocusableMediaCard(
                     imageUrl = show.imageUrl,
                     titleText = show.title,
-                    onClick = { onClick(show) }
+                    onClick = { onClick(show.id) }
                 )
             }
         }
