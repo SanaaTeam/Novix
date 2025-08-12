@@ -14,7 +14,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto.Ca
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
-import com.sanaa.vod.util.TimeUtils
+import com.sanaa.vod.util.DateTimeUtils
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -195,7 +195,7 @@ class LocalCachedContentDataSourceImplTest {
             id = 1L,
             language = FAKE_LANGUAGE,
             category = Category.TOP_RATED_MEDIA.name,
-            timestamp = TimeUtils.getCurrentTimeStamp()
+            timestamp = DateTimeUtils.getCurrentTimeStamp()
         )
 
         val cachedContent = listOf(

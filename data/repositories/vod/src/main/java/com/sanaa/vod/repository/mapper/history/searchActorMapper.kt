@@ -2,6 +2,7 @@ package com.sanaa.vod.repository.mapper.history
 
 import com.sanaa.vod.dataSource.remote.dto.search.ActorSearchDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Actor
 
 fun ActorSearchDto.toEntity(): Actor {
@@ -14,8 +15,8 @@ fun ActorSearchDto.toEntity(): Actor {
         gender = mapGender(gender),
         department = knownForDepartment,
         character = null,
-        birthDate = null,
-        deathDate = null,
+        birthDate = getLocalDateOrDefault(null),
+        deathDate = getLocalDateOrDefault(null),
         placeOfBirth = null,
         biography = null,
     )
