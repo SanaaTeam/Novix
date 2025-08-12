@@ -291,12 +291,10 @@ private fun MediaSection(
         modifier = Modifier
             .width(153.dp)
             .height(231.dp),
-        onClick = {},
         colors = CardDefaults.colors(containerColor = Theme.colors.surfaceHigh),
         onClick = {
             onItemClick(item.id)
         },
-        colors = CardDefaults.colors(),
         border = CardDefaults.border(
             border = Border.None,
             focusedBorder = Border(

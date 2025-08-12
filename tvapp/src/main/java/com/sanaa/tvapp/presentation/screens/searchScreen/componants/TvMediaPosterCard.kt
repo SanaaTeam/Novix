@@ -88,23 +88,3 @@ fun TvMediaPosterCard(
     }
 }
 
-@PreviewLightDark
-@Composable
-private fun PreviewMediaPosterCard() {
-    NovixTheme(isSystemInDarkTheme()) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            TvMediaPosterCard(
-                title = "ghsjhvj",
-                posterImage = {
-                    Image(
-                        painter = painterResource(R.drawable.icon_placeholder_light),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            )
-        }
-
-    }
-}
