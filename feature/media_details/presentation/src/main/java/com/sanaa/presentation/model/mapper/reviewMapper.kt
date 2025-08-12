@@ -8,7 +8,7 @@ import entity.Review
 @SuppressLint("DefaultLocale")
 fun Review.toReviewUiModel() = ReviewUiModel(
     id = id,
-    authorName = authorName?.toString(),
+    authorName = authorName,
     username = userHandle,
     content = content,
     rating = rating?.let { String.format("%.1f", rating) },
