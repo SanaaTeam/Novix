@@ -54,9 +54,9 @@ fun SaveToListBottomSheet(
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
-    var successMessage =
+    val successMessage =
         stringResource(com.sanaa.feature.home.presentation.R.string.added_to_list_successfully)
-    var failMessage =
+    val failMessage =
         stringResource(com.sanaa.feature.home.presentation.R.string.added_to_list_failed)
 
 
