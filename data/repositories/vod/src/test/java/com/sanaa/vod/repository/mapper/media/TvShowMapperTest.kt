@@ -1,13 +1,14 @@
 package com.sanaa.vod.repository.mapper.media
 
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
+import com.sanaa.vod.util.DateTimeUtils.defaultDate
 import entity.Genre
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class TvShowMapperTest {
 
@@ -40,7 +41,7 @@ class TvShowMapperTest {
     }
 
     @Test
-    fun `toEntity throws exception on invalid date`() {
+    fun `toEntity should return default date when date is invalid`() {
         val dto = TvShowDto(
             id = 3,
             name = "Invalid Show",
@@ -52,8 +53,8 @@ class TvShowMapperTest {
             seasonsCount = 1
         )
 
-        assertFailsWith<IllegalArgumentException> {
-            dto.toEntity()
-        }
+        val result = dto.toEntity()
+
+        assertThat(result.releaseDate).isEqualTo(defaultDate)
     }
 }
