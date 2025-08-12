@@ -15,7 +15,6 @@ class AddBookmarkListViewModel @Inject constructor(
     private val listsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()) {
 
-
     init {
         viewModelScope.launch {
             listsStatusProvider.refreshLists()
@@ -42,29 +41,33 @@ class AddBookmarkListViewModel @Inject constructor(
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
-                resetState()
-                emitEffect(Unit)
-                listsStatusProvider.markItemSaved(mediaId)
-                listsStatusProvider.addList(
-                    SavedList(
-                        title = it.title,
-                        itemCount = it.itemCount,
-                        id = it.id
-                    )
-                )
-                viewModelScope.launch {
-                    listsStatusProvider.refreshLists()
-                }
-            },
-            onError = {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to create list. Please try again."
-                    )
-                }
-            }
+            onSuccess = onAddBookmarkListSuccess(mediaId),
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
+        resetState()
+        emitEffect(Unit)
+        listsStatusProvider.markItemSaved(mediaId)
+        listsStatusProvider.addList(
+            SavedList(
+                title = it.title,
+                itemCount = it.itemCount,
+                id = it.id
+            )
+        )
+        viewModelScope.launch {
+            listsStatusProvider.refreshLists()
+        }
+    }
+
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            it.copy(
+                isLoading = false,
+                errorMessage = "Failed to create list. Please try again."
+            )
+        }
     }
 }

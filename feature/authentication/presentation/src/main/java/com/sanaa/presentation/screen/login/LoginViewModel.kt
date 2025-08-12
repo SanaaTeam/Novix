@@ -37,23 +37,27 @@ class LoginViewModel @Inject constructor(
         updateState { it.copy(isLoading = true, canSubmit = false) }
 
         tryToExecute(
-            callee = {
-                val userName = state.value.username
-                val password = state.value.password
-                if (userName.isNotBlank() && password.isNotBlank()) {
-                    loginUseCase.login(userName, password)
-                } else
-                    throw Exception(identityStringProvider.enterUserNameAndPasswordError)
-            },
-            onSuccess = {
-                updateState { prev ->
-                    val updated = prev.copy(isLoading = false)
-                    updated.copy(canSubmit = isSubmitAllowed(updated))
-                }
-                emitEffect(LoginScreenEffects.ReturnLoggedInResultCode)
-            },
+            callee = login(),
+            onSuccess = onLoginSuccess(),
             onError = ::onDataLoadError
         )
+    }
+
+    private fun login(): suspend () -> Unit = {
+        val userName = state.value.username
+        val password = state.value.password
+        if (userName.isNotBlank() && password.isNotBlank()) {
+            loginUseCase.login(userName, password)
+        } else
+            throw Exception(identityStringProvider.enterUserNameAndPasswordError)
+    }
+
+    private fun onLoginSuccess(): (Unit) -> Unit = {
+        updateState { prev ->
+            val updated = prev.copy(isLoading = false)
+            updated.copy(canSubmit = isSubmitAllowed(updated))
+        }
+        emitEffect(LoginScreenEffects.ReturnLoggedInResultCode)
     }
 
     fun onDataLoadError(throwable: Throwable) {

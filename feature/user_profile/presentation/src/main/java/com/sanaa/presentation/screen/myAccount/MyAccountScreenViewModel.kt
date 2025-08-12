@@ -197,14 +197,12 @@ class MyAccountScreenViewModel @Inject constructor(
     private fun checkUserLoggedIn() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(isUserLoggedIn = isLogged) }
     }
 
     private fun fetchUserData() {

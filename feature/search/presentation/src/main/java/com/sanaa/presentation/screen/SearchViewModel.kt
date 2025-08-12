@@ -104,7 +104,6 @@ class SearchViewModel @Inject constructor(
     }
 
 
-
     override fun onSaveIconClick(media: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
             updateState { it.copy(showLoginBottomSheet = true) }
@@ -123,6 +122,7 @@ class SearchViewModel @Inject constructor(
             }
         }
     }
+
     override fun onDismissSaveToListBottomSheet() {
         updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
@@ -382,7 +382,7 @@ class SearchViewModel @Inject constructor(
 
     fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R
+        mapper: (T) -> R,
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
@@ -416,35 +416,33 @@ class SearchViewModel @Inject constructor(
     private fun observeContentRestriction() {
         tryToCollect(
             callee = mangeUserPreferenceUseCase::getContentRestriction,
-            onCollect = { contentRestriction ->
-                updateState {
-                    it.copy(
-                        safeContentThreshold =
-                            when (contentRestriction) {
-                                ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
-                                ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
-                                ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
-                            }
-                    )
-                }
-            },
+            onCollect = ::onCollectContentRestriction,
+        )
+    }
 
+    private fun onCollectContentRestriction(contentRestriction: ContentRestriction) {
+        updateState {
+            it.copy(
+                safeContentThreshold =
+                    when (contentRestriction) {
+                        ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+                        ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+                        ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+                    }
             )
+        }
     }
 
     private fun getUserState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(isUserLoggedIn = isLogged) }
+    }
 
     private companion object {
         private const val PAGE_SIZE = 20

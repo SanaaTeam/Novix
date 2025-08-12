@@ -25,7 +25,7 @@ class GenreMoviesViewModel @Inject constructor(
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
@@ -42,15 +42,14 @@ class GenreMoviesViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
     }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(userIsLoggedIn = isLogged) }
+    }
+
 
     override fun onRetryClicked() {
         updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
@@ -104,30 +103,9 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-
-            callee = {
-                loadMoviesByCategory(categoryId)
-            },
-            onCollect = { movies ->
-                updateState {
-                    it.copy(movies = flowOf(movies), title = categoryName, isLoading = false)
-                }
-            },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(error = exception.message, isLoading = false)
-                    }
-                }
-            }
+            callee = { loadMoviesByCategory(categoryId) },
+            onCollect = onCollectMovies(),
+            onError = ::onFetchMoviesFailed
         )
     }
 
@@ -136,13 +114,30 @@ class GenreMoviesViewModel @Inject constructor(
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
             mapper = Movie::toUiModel
-
         )
+    }
+
+    private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
+        updateState { it.copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
+    }
+
+    private fun onFetchMoviesFailed(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                it.copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } else {
+            updateState { it.copy(error = throwable.message, isLoading = false) }
+        }
     }
 
 
     private fun createMoviesPagingDataSource(
-        genreId: Int
+        genreId: Int,
     ): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)

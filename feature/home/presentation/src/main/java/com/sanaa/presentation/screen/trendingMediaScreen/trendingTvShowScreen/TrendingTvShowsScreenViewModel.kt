@@ -27,12 +27,11 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
     defaultDispatcher = dispatcher
 ), MediaListScreenInteractionListener {
-
     init {
         updateUserLoggingStatus()
         fetchGenres()
@@ -42,14 +41,16 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState {
+            it.copy(
+                userIsLoggedIn = isLogged,
+            )
+        }
     }
 
     private fun fetchGenres() {

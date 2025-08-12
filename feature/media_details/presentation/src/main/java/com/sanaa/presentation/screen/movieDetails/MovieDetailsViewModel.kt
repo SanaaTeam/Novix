@@ -15,6 +15,7 @@ import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
+import entity.User
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -166,17 +167,19 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitMovieRating,
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        errorMessage = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onShowRateBottomSheetFailed
         )
         updateState {
             it.copy(showRateBottomSheet = false)
+        }
+    }
+
+    private fun onShowRateBottomSheetFailed(throwable: Throwable) {
+        updateState {
+            it.copy(
+                errorMessage = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 
@@ -189,27 +192,29 @@ class MovieDetailsViewModel @Inject constructor(
             onSuccess = {
                 updateState { it.copy(isLoading = false, errorMessage = null) }
             },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(
-                            isLoading = false,
-                            errorMessage = exception.message,
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            },
+            onError = ::onFetchMovieDetailsFailed,
             dispatcher = defaultDispatcher
         )
+    }
+
+    private fun onFetchMovieDetailsFailed(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                it.copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    errorMessage = null
+                )
+            }
+        } else {
+            updateState {
+                it.copy(
+                    isLoading = false,
+                    errorMessage = throwable.message,
+                    noInternetConnection = false
+                )
+            }
+        }
     }
 
 
@@ -236,11 +241,8 @@ class MovieDetailsViewModel @Inject constructor(
         if (state.value.isUserLoggedIn) {
             tryToCollect(
                 callee = { getCurrentUserRating(movieId) },
-                onCollect = { rating ->
-                    updateState { it.copy(imdbRating = rating) }
-                },
+                onCollect = { rating -> updateState { it.copy(imdbRating = rating) } },
             )
-
         }
     }
 
@@ -308,26 +310,25 @@ class MovieDetailsViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(isUserLoggedIn = isLogged) }
+    }
 
     private fun addMovieToHistory(movie: Movie) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
-            onCollect = { user ->
-                manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-                    mediaHistoryItem = movie.toHistory(),
-                    username = user.username
-                )
-            }
+            onCollect = onCollectUser(movie)
+        )
+    }
+
+    private fun onCollectUser(movie: Movie): suspend (User) -> Unit = { user ->
+        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
+            mediaHistoryItem = movie.toHistory(),
+            username = user.username
         )
     }
 
@@ -339,5 +340,4 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
     }
-
 }

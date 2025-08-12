@@ -33,7 +33,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
     initialState = TopRatedMediaScreenUiState(),
     defaultDispatcher = dispatcher
@@ -50,25 +50,24 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
         onDismissBottomSheet()
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(userIsLoggedIn = isLogged) }
+    }
+
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedMovies(genreId = genreId)
-                .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                    pagingData.map { mediaItem ->
-                        mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
-                    }
-                }.cachedIn(viewModelScope)
+            callee = {
+                loadTopRatedMovies(genreId = genreId)
+                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+                        pagingData.map { mediaItem ->
+                            mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+                        }
+                    }.cachedIn(viewModelScope)
             },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
@@ -112,7 +111,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(movieGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                movieGenres = genres.map { it.toState() },
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
@@ -133,7 +136,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
         updateState {
-            it.copy(tvShowGenres = genres.map { it.toState() }, isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                tvShowGenres = genres.map { it.toState() },
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
@@ -222,7 +229,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     private fun loadTopRatedMovies(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<PagingData<MediaItem>> {
         updateState { it.copy(isLoading = true) }
         return createPagingFlow(
@@ -236,7 +243,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     private fun loadTopRatedTvSeries(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<PagingData<MediaItem>> {
         updateState { it.copy(isLoading = true) }
         return createPagingFlow(
@@ -260,7 +267,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createMoviePagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError
+        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTopRatedMovies(
@@ -272,7 +279,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createTvShowPagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError
+        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
     ): PagingSource<Int, TvSeries> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTopRatedTvSeries(

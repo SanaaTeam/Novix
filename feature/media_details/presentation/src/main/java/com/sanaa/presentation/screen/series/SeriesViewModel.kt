@@ -61,26 +61,8 @@ class SeriesViewModel @Inject constructor(
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
             callee = { fetchSeasonDetails(seasonNumber) },
-            onSuccess = {
-                updateState { it.copy(isLoadingEpisodes = false) }
-            }, onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoadingEpisodes = false
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(
-                            error = e.message,
-                            noInternetConnection = false,
-                            isLoadingEpisodes = false
-                        )
-                    }
-                }
-            }
+            onSuccess = { updateState { it.copy(isLoadingEpisodes = false) } },
+            onError = ::onErrorAccrue
         )
     }
 
@@ -133,17 +115,19 @@ class SeriesViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitTvSeriesRating,
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        error = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onSubmitRateBottomSheetFailed
         )
         updateState {
             it.copy(showRateBottomSheet = false)
+        }
+    }
+
+    private fun onSubmitRateBottomSheetFailed(throwable: Throwable) {
+        updateState {
+            it.copy(
+                error = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 
@@ -177,21 +161,7 @@ class SeriesViewModel @Inject constructor(
             onSuccess = {
                 updateState { it.copy(isLoading = false) }
             },
-            onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState { state ->
-                        state.copy(noInternetConnection = true, isLoading = false, error = null)
-                    }
-                } else {
-                    updateState { state ->
-                        state.copy(
-                            error = e.message,
-                            isLoading = false,
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            }
+            onError = ::onErrorAccrue
         )
     }
 
@@ -263,14 +233,12 @@ class SeriesViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(isUserLoggedIn = isLogged) }
     }
 
     private fun promptLogin(type: LoginPromptType) {
@@ -282,7 +250,6 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-
     private fun addTvSeriesToHistory(tvSeries: TvSeries) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
@@ -293,6 +260,24 @@ class SeriesViewModel @Inject constructor(
                 )
             }
         )
+    }
 
+    private fun onErrorAccrue(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                it.copy(
+                    noInternetConnection = true,
+                    isLoadingEpisodes = false
+                )
+            }
+        } else {
+            updateState {
+                it.copy(
+                    error = throwable.message,
+                    noInternetConnection = false,
+                    isLoadingEpisodes = false
+                )
+            }
+        }
     }
 }

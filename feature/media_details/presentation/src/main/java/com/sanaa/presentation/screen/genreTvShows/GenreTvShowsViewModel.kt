@@ -1,9 +1,11 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
@@ -20,7 +22,7 @@ class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
     initialState = GenreTvShowsScreenUiState(),
     defaultDispatcher = dispatcher
@@ -37,14 +39,12 @@ class GenreTvShowsViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(userIsLoggedIn = isLogged) }
     }
 
     override fun onSaveIconClick() {
@@ -86,27 +86,29 @@ class GenreTvShowsViewModel @Inject constructor(
     }
 
     private fun getTvShowsByGenreId(genreId: Int) {
-        tryToCollect(callee = { loadTvShowsByGenreId(genreId) }, onCollect = { tvShows ->
-            updateState {
-                it.copy(
-                    title = genreName, tvShows = flowOf(tvShows), isLoading = false
-                )
-            }
-        }, onError = { exception ->
-            if (exception is NoNetworkException) {
-                updateState {
-                    it.copy(
-                        noInternetConnection = true,
-                        isLoading = false,
-                        error = null
-                    )
-                }
-            } else {
-                updateState {
-                    it.copy(error = exception.message, isLoading = false)
-                }
-            }
-        })
+        tryToCollect(
+            callee = { loadTvShowsByGenreId(genreId) },
+            onCollect = ::onCollectTvShowsByGenreId,
+            onError = ::onGetShowsByGeneraIdFailed
+        )
+    }
+
+    private fun onCollectTvShowsByGenreId(tvShows: PagingData<SeriesUiModel>) {
+        updateState {
+            it.copy(
+                title = genreName,
+                tvShows = flowOf(tvShows),
+                isLoading = false
+            )
+        }
+    }
+
+    private fun onGetShowsByGeneraIdFailed(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState { it.copy(noInternetConnection = true, isLoading = false, error = null) }
+        } else {
+            updateState { it.copy(error = throwable.message, isLoading = false) }
+        }
     }
 
     private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
@@ -115,7 +117,7 @@ class GenreTvShowsViewModel @Inject constructor(
     )
 
     private fun createTvShowsPagingDataSource(
-        genreId: Int
+        genreId: Int,
     ): PagingSource<Int, TvSeries> {
         return BasePagingSource { page ->
             manageTvSeriesUseCase.getTvSeriesByGenre(

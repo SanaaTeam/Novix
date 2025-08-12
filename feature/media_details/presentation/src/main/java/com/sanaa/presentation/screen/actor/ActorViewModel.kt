@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.actor
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -23,7 +22,7 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider
+    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -50,15 +49,14 @@ class ActorViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
     }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { it.copy(userIsLoggedIn = isLogged) }
+    }
+
 
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
@@ -94,8 +92,7 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onSaveClicked(movie: MovieUiModel) {
-
-    if (!state.value.userIsLoggedIn) {
+        if (!state.value.userIsLoggedIn) {
             updateState { it.copy(showLoginBottomSheet = true) }
             return
         }
@@ -110,8 +107,6 @@ class ActorViewModel @Inject constructor(
                 )
             }
         }
-        Log.i("MMMANCY", "CLICKED: ")
-
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -135,12 +130,8 @@ class ActorViewModel @Inject constructor(
         updateState { it.copy(isLoading = true) }
         tryToExecute(
             callee = ::fetchActorDetails,
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState { it.copy(isLoading = false) }
-            }
+            onSuccess = { updateState { it.copy(isLoading = false) } },
+            onError = { e -> updateState { it.copy(isLoading = false) } }
         )
     }
 

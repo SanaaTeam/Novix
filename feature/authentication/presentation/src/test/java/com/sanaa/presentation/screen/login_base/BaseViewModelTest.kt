@@ -98,11 +98,9 @@ class BaseViewModelTest {
     }
 
 
-    // Test implementation of BaseViewModel
     private class TestBaseViewModel(
         dispatcher: kotlinx.coroutines.CoroutineDispatcher = Dispatchers.IO
     ) : BaseViewModel<String, String>("initial", dispatcher) {
-
         fun updateTestState(newState: String) {
             updateState { newState }
         }

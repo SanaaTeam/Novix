@@ -29,8 +29,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-
-    ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
+) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
     dispatcher
 ), WatchingHistoryInteractionListener {
@@ -46,15 +45,9 @@ class WatchingHistoryViewModel @Inject constructor(
         tryToCollect(
             callee = {
                 loadWatchedHistoryMovies(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        movieList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
             },
-            onError = { ::onLoadDataError }
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError,
         )
     }
 
@@ -62,16 +55,19 @@ class WatchingHistoryViewModel @Inject constructor(
         tryToCollect(
             callee = {
                 loadWatchedHistoryTvSeries(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        tvShowList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
             },
-            onError = { ::onLoadDataError }
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError
         )
+    }
+
+    private fun onCollectMovies(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            it.copy(
+                movieList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
     }
 
     private fun fetchMovieGenres() {
@@ -80,9 +76,7 @@ class WatchingHistoryViewModel @Inject constructor(
                 manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
-                updateState {
-                    it.copy(movieGenres = genres)
-                }
+                updateState { it.copy(movieGenres = genres) }
             },
             onError = { ::onLoadDataError }
         )
@@ -94,9 +88,7 @@ class WatchingHistoryViewModel @Inject constructor(
                 manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
-                updateState {
-                    it.copy(tvShowGenres = genres)
-                }
+                updateState { it.copy(tvShowGenres = genres) }
             },
             onError = { ::onLoadDataError }
         )
@@ -143,7 +135,7 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private suspend fun loadWatchedHistoryMovies(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
         val user = try {
@@ -160,7 +152,7 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private suspend fun loadWatchedHistoryTvSeries(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
         updateState { it.copy(isLoading = true) }
         val user = try {
@@ -185,7 +177,6 @@ class WatchingHistoryViewModel @Inject constructor(
             )
         }
     }
-
 
     override fun onDismissSaveToListBottomSheet() {
         updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }

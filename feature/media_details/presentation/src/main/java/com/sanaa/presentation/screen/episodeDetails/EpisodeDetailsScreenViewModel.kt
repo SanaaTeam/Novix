@@ -29,7 +29,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
@@ -108,17 +108,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitEpisodeRating,
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        error = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onErrorAccrue
         )
         updateState {
             it.copy(showRateBottomSheet = false)
+        }
+    }
+
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            it.copy(
+                error = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 

@@ -17,7 +17,7 @@ import javax.inject.Inject
 class CategoriesScreenViewModel @Inject constructor(
     private val getTvGenresUseCase: ManageTvSeriesUseCase,
     private val getMovieGenresUseCase: ManageMovieUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
     CategoriesScreenUiState(),
     dispatcher
@@ -30,20 +30,18 @@ class CategoriesScreenViewModel @Inject constructor(
 
 
     override fun onGenreClicked(category: CategoryUiState) {
-        if (state.value.selectedTabIndex == MOVIE_TAB_INDEX)
-            emitEffect(
+        emitEffect(
+            effect = if (state.value.selectedTabIndex == MOVIE_TAB_INDEX)
                 CategoriesScreenEffects.NavigateToMovieGenreDetails(
                     genreId = category.id,
                     genreName = category.name
                 )
-            )
-        else
-            emitEffect(
+            else
                 CategoriesScreenEffects.NavigateToTvGenreDetails(
                     genreId = category.id,
                     genreName = category.name
                 )
-            )
+        )
     }
 
     override fun onTabChanged(tabIndex: Int) {

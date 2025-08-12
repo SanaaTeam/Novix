@@ -21,7 +21,7 @@ import javax.inject.Inject
 class TrendingPeopleViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffect>(
     initialState = TrendingPeopleScreenUiState(),
     defaultDispatcher = dispatcher
@@ -78,8 +78,7 @@ class TrendingPeopleViewModel @Inject constructor(
     }
 
     private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
-        return BasePagingSourceForHome(onError = onError)
-        { page ->
+        return BasePagingSourceForHome(onError = onError) { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }
     }

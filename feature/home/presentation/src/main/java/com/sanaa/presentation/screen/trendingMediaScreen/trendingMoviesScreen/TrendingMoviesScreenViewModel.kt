@@ -33,7 +33,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
     initialState = TrendingMediaScreenUiState(),
     defaultDispatcher = dispatcher
@@ -67,9 +67,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadGenresOperation(): List<GenreUiState> {
-        updateState {
-            it.copy(isLoading = true)
-        }
+        updateState { it.copy(isLoading = true) }
         return manageMovieUseCase.getMovieGenres().map { it.toState() }
     }
 
@@ -100,7 +98,11 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
         updateState {
-            it.copy(mediaList = flowOf(pagingData), isLoading = false, isNoInternetConnection = false)
+            it.copy(
+                mediaList = flowOf(pagingData),
+                isLoading = false,
+                isNoInternetConnection = false
+            )
         }
     }
 
