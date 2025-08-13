@@ -7,8 +7,7 @@ import entity.Genre
 import entity.Review
 import entity.Season
 import entity.TvSeries
-import exceptions.NotFoundException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -57,10 +56,10 @@ class ManageTvSeriesUseCaseTest {
                 1,
                 dummyGenre.id
             )
-        } throws RetrievingDataFailureException(
+        } throws NovixAppException(
             "Error"
         )
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
 
             manageTvSeriesDetailsUseCase.getTvSeriesByGenre(1, dummyGenre.id)
         }
@@ -77,11 +76,11 @@ class ManageTvSeriesUseCaseTest {
     }
 
     @Test
-    fun `getTvSeriesDetails should throw NotFoundException when not found`() = runTest {
+    fun `getTvSeriesDetails should throw NovixAppException when not found`() = runTest {
         val seriesId = 1
-        coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } throws NotFoundException("Not found")
+        coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } throws NovixAppException("Not found")
 
-        assertThrows<NotFoundException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTvSeriesDetails(seriesId)
         }
     }
@@ -110,9 +109,9 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesCast should throw when repository fails`() = runTest {
         val seriesId = 2
-        coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } throws NotFoundException("Error")
+        coEvery { tvSeriesRepository.getTvSeriesCast(seriesId) } throws NovixAppException("Error")
 
-        assertThrows<NotFoundException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTvSeriesCast(seriesId)
         }
     }
@@ -145,8 +144,8 @@ class ManageTvSeriesUseCaseTest {
                 seriesId,
                 any()
             )
-        } throws NotFoundException("Not found")
-        assertThrows<NotFoundException> {
+        } throws NovixAppException("Not found")
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTvSeriesImages(seriesId)
         }
     }
@@ -181,9 +180,9 @@ class ManageTvSeriesUseCaseTest {
                 seriesId,
                 1
             )
-        } throws NotFoundException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<NotFoundException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTvSeriesReviews(seriesId, 1)
         }
     }
@@ -254,9 +253,9 @@ class ManageTvSeriesUseCaseTest {
     fun `getPopularSeries should throw when repository fails`() = runTest {
         coEvery {
             tvSeriesRepository.getPopularSeries(1)
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getPopularSeries(1)
         }
     }
@@ -278,9 +277,9 @@ class ManageTvSeriesUseCaseTest {
                 1,
                 null
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTopRatedTvSeries(1, null)
         }
     }
@@ -302,9 +301,9 @@ class ManageTvSeriesUseCaseTest {
                 1,
                 dummyGenre.id
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, dummyGenre.id)
         }
     }
@@ -322,9 +321,9 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getSeriesGenres should throw when repository fails`() = runTest {
-        coEvery { tvSeriesRepository.getSeriesGenres() } throws RetrievingDataFailureException("Error")
+        coEvery { tvSeriesRepository.getSeriesGenres() } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageTvSeriesDetailsUseCase.getSeriesGenres()
         }
     }

@@ -5,7 +5,7 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.TvSeries
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -38,8 +38,8 @@ class ManageActorUseCaseTest {
     @Test
     fun `getActorDetails should throw when repository fails`() = runTest {
         val actorId = 2
-        coEvery { actorRepository.getActorDetails(actorId) } throws RetrievingDataFailureException("Error")
-        assertThrows<RetrievingDataFailureException> {
+        coEvery { actorRepository.getActorDetails(actorId) } throws NovixAppException("Error")
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getActorDetails(actorId)
         }
     }
@@ -55,10 +55,10 @@ class ManageActorUseCaseTest {
     @Test
     fun `getActorTopMovies should throw when repository fails`() = runTest {
         val actorId = 4
-        coEvery { actorRepository.getActorTopMovies(actorId) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getActorTopMovies(actorId) } throws NovixAppException(
             "Error"
         )
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getActorTopMovies(actorId)
         }
     }
@@ -74,10 +74,10 @@ class ManageActorUseCaseTest {
     @Test
     fun `getActorTopTvSeries should throw when repository fails`() = runTest {
         val actorId = 6
-        coEvery { actorRepository.getActorTopTvShows(actorId) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getActorTopTvShows(actorId) } throws NovixAppException(
             "Error"
         )
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getActorTopTvSeries(actorId)
         }
     }
@@ -93,10 +93,10 @@ class ManageActorUseCaseTest {
     @Test
     fun `getGalleryImages should throw when repository fails`() = runTest {
         val actorId = 8
-        coEvery { actorRepository.getGalleryImageUrls(actorId) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getGalleryImageUrls(actorId) } throws NovixAppException(
             "Error"
         )
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getGalleryImages(actorId)
         }
     }
@@ -116,10 +116,10 @@ class ManageActorUseCaseTest {
             actorRepository.getProfileImageUrls(
                 actorId, 10
             )
-        } throws RetrievingDataFailureException(
+        } throws NovixAppException(
             "Error"
         )
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getProfileImages(actorId)
         }
     }
@@ -136,11 +136,11 @@ class ManageActorUseCaseTest {
 
     @Test
     fun `getTrendingActors should throw when repository fails`() = runTest {
-        coEvery { actorRepository.getTrendingActors(1) } throws RetrievingDataFailureException(
+        coEvery { actorRepository.getTrendingActors(1) } throws NovixAppException(
             "Error fetching trending actors"
         )
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageActorDetailsUseCase.getTrendingActors(1)
         }
     }
