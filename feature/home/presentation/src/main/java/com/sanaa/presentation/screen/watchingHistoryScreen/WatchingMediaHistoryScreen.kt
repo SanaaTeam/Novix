@@ -37,6 +37,8 @@ import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WatchingMediaHistoryScreen(
@@ -44,44 +46,7 @@ fun WatchingMediaHistoryScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    val navController = LocalAppNavController.current
-    val appContext = LocalContext.current.applicationContext
-
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is WatchingMediaHistoryScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> {
-                            detailsApi.launch(
-                                context = navController.context,
-                                id = effect.id,
-                                startRoute = StartRoute.MOVIE
-                            )
-                        }
-
-                        MediaTypeUi.TV_SHOW -> {
-                            detailsApi.launch(
-                                context = navController.context,
-                                id = effect.id,
-                                startRoute = StartRoute.SERIES
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    EffectHandler(viewModel.effect)
 
     WatchingMediaHistoryScreenContent(
         state = state.value,
@@ -173,6 +138,50 @@ private fun WatchingMediaHistoryScreenContent(
                 }
                 if (state.showRefreshButton) {
                     RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<WatchingMediaHistoryScreenEffect>,
+) {
+    val navController = LocalAppNavController.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is WatchingMediaHistoryScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
+                    when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                id = effect.id,
+                                startRoute = StartRoute.MOVIE
+                            )
+                        }
+
+                        MediaTypeUi.TV_SHOW -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                id = effect.id,
+                                startRoute = StartRoute.SERIES
+                            )
+                        }
+                    }
                 }
             }
         }

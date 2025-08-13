@@ -21,5 +21,6 @@ interface HomeScreenInteractionListener {
     fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
     fun onRetryClick()
+    fun onLoginButtonClick()
     fun onSnackBarDismiss()
 }

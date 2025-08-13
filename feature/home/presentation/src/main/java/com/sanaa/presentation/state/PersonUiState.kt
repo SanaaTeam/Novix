@@ -14,5 +14,4 @@ fun Actor.toState() = PersonUiState(
     name = name,
     character = character,
     imageUrl = imageUrl
-
 )

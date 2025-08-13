@@ -36,52 +36,18 @@ import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TrendingMoviesScreen(
     viewModel: TrendingMoviesScreenViewModel = hiltViewModel()
 ) {
-    val navController = LocalAppNavController.current
-    val appContext = LocalContext.current.applicationContext
-
-
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
-    val context = LocalContext.current
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        HomeApiEntryPoint::class.java
-    ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
 
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is TrendingMoviesScreenEffect.NavigateToMoviesDetails -> {
-                    detailsApi.launch(
-                        context = navController.context,
-                        id = effect.id,
-                        startRoute = StartRoute.MOVIE
-                    )
-                }
+    EffectHandler(viewModel.effect)
 
-                is TrendingMoviesScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                is TrendingMoviesScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
-                }
-            }
-        }
-    }
     TrendingMoviesScreenContent(
         state = state.value,
         interactionListener = viewModel,
@@ -161,4 +127,46 @@ private fun TrendingMoviesScreenContent(
     }
 }
 
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<TrendingMoviesScreenEffect>,
+) {
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+    val navController = LocalAppNavController.current
 
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult()
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TrendingMoviesScreenEffect.NavigateToMoviesDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.id,
+                        startRoute = StartRoute.MOVIE
+                    )
+                }
+
+                is TrendingMoviesScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                is TrendingMoviesScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
+            }
+        }
+    }
+}

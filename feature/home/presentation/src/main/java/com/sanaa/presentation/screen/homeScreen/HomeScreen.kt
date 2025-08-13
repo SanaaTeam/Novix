@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
@@ -58,82 +57,20 @@ import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
 import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val navController = LocalAppNavController.current
-    val appContext = LocalContext.current.applicationContext
-
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
-    val authApi = remember {
-        EntryPointAccessors.fromApplication(
-            appContext,
-            HomeApiEntryPoint::class.java
-        ).authenticationApi()
-    }
-
     val state = viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is HomeScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> {
-                            detailsApi.launch(
-                                context = navController.context,
-                                startRoute = StartRoute.MOVIE,
-                                id = effect.id
-                            )
-                        }
-
-                        MediaTypeUi.TV_SHOW -> {
-                            detailsApi.launch(
-                                context = navController.context,
-                                startRoute = StartRoute.SERIES,
-                                id = effect.id
-                            )
-                        }
-                    }
-                }
-
-                HomeScreenEffect.NavigateToMoviesScreen -> {
-                    navController.navigate(TrendingMoviesScreenRoute)
-                }
-
-                HomeScreenEffect.NavigateToPeopleScreen -> {
-                    navController.navigate(TrendingPeopleScreenRoute)
-                }
-
-                HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
-                    navController.navigate(TopRatedMediaScreenRoute)
-                }
-
-                HomeScreenEffect.NavigateToTvShowsScreen -> {
-                    navController.navigate(TrendingTvShowsScreenRoute)
-                }
-
-                HomeScreenEffect.NavigateToWatchedMediaScreen -> {
-                    navController.navigate(WatchingMediaHistoryScreenRoute)
-                }
-
-                HomeScreenEffect.NavigateToPlayListScreen -> {
-                    navController.navigate(PlayListScreenRoute)
-                }
-            }
-        }
-    }
+    EffectHandler(effect = viewModel.effect)
 
     HomeScreenContent(
         state = state.value,
         interactionListener = viewModel,
-        authApi = authApi
     )
 }
 
@@ -141,14 +78,10 @@ fun HomeScreen(
 private fun HomeScreenContent(
     state: HomeScreenUiState,
     interactionListener: HomeScreenInteractionListener,
-    authApi: AuthenticationApi,
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
 
-    val context = LocalContext.current
-    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
-        launchAuthActivityForResult()
     val showNoInternetScreen = (state.isNoInternetConnection
             && upcomingMovies.itemCount == 0
             && state.popularMedia.isEmpty()
@@ -319,9 +252,86 @@ private fun HomeScreenContent(
         RequestToLoginBottomSheet(
             isVisible = state.showLoginBottomSheet,
             onDismiss = interactionListener::onDismissLoginBottomSheet,
-            onLoginButtonClick = {
-                launcher.launch(authApi.getLaunchIntent(context))
-            }
+            onLoginButtonClick = interactionListener::onLoginButtonClick
         )
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<HomeScreenEffect>,
+) {
+
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+    val navController = LocalAppNavController.current
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+    val authApi = remember {
+        EntryPointAccessors.fromApplication(
+            appContext,
+            HomeApiEntryPoint::class.java
+        ).authenticationApi()
+    }
+
+    val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
+        launchAuthActivityForResult()
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is HomeScreenEffect.NavigateToMediaDetails -> {
+                    when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.MOVIE,
+                                id = effect.id
+                            )
+                        }
+
+                        MediaTypeUi.TV_SHOW -> {
+                            detailsApi.launch(
+                                context = navController.context,
+                                startRoute = StartRoute.SERIES,
+                                id = effect.id
+                            )
+                        }
+                    }
+                }
+
+                HomeScreenEffect.NavigateToMoviesScreen -> {
+                    navController.navigate(TrendingMoviesScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToPeopleScreen -> {
+                    navController.navigate(TrendingPeopleScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToTopRatingMediaScreen -> {
+                    navController.navigate(TopRatedMediaScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToTvShowsScreen -> {
+                    navController.navigate(TrendingTvShowsScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToWatchedMediaScreen -> {
+                    navController.navigate(WatchingMediaHistoryScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToPlayListScreen -> {
+                    navController.navigate(PlayListScreenRoute)
+                }
+
+                HomeScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
+            }
+        }
     }
 }

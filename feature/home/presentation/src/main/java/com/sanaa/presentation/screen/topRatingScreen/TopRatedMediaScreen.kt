@@ -43,6 +43,8 @@ import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
@@ -50,53 +52,9 @@ fun TopRatedMediaScreen(
     viewModel: TopRatedMediaScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
-    val appContext = LocalContext.current.applicationContext
 
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
+    EffectHandler(viewModel.effect)
 
-    val context = LocalContext.current
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        HomeApiEntryPoint::class.java
-    ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is TopRatedScreenEffect.NavigateToMediaDetails -> {
-                    if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
-                        detailsApi.launch(
-                            context = navController.context,
-                            id = effect.id,
-                            startRoute = StartRoute.MOVIE
-                        )
-                    } else if (effect.mediaTypeUi == MediaTypeUi.TV_SHOW) {
-                        detailsApi.launch(
-                            context = navController.context,
-                            id = effect.id,
-                            startRoute = StartRoute.SERIES
-                        )
-                    }
-                }
-
-                is TopRatedScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                TopRatedScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
-                }
-            }
-        }
-    }
     TopRatedMediaScreenContent(
         state = state.value,
         interactionListener = viewModel,
@@ -220,6 +178,58 @@ private fun TopRatedMediaScreenContent(
                 onDismiss = interactionListener::onDismissLoginBottomSheet,
                 onLoginButtonClick = interactionListener::onLoginButtonClick
             )
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<TopRatedScreenEffect>,
+) {
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+    val navController = LocalAppNavController.current
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult()
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TopRatedScreenEffect.NavigateToMediaDetails -> {
+                    if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.MOVIE
+                        )
+                    } else if (effect.mediaTypeUi == MediaTypeUi.TV_SHOW) {
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.SERIES
+                        )
+                    }
+                }
+
+                is TopRatedScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                TopRatedScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
+            }
         }
     }
 }

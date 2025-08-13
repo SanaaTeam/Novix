@@ -281,6 +281,10 @@ class HomeScreenViewModel @Inject constructor(
         updateState { copy(showAddListBottomSheet = false) }
     }
 
+    override fun onLoginButtonClick() {
+        emitEffect(HomeScreenEffect.NavigateToLogin)
+    }
+
     override fun onRetryClick() {
         fetchPopularMediaData()
         fetchTopRatedMediaData()

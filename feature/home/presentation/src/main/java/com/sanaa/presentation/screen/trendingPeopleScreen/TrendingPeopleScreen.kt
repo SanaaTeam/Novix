@@ -35,6 +35,7 @@ import com.sanaa.presentation.components.lists.PersonList
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.providers.LocalThemeProvider
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -43,32 +44,8 @@ fun TrendingPeopleScreen(
     viewModel: TrendingPeopleViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalAppNavController.current
-    val appContext = LocalContext.current.applicationContext
 
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest { effect ->
-            when (effect) {
-                is TrendingPeopleScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                is TrendingPeopleScreenEffect.NavigateToActorDetails -> {
-                    detailsApi.launch(
-                        context = navController.context,
-                        id = effect.actorId,
-                        startRoute = StartRoute.ACTOR
-                    )
-                }
-            }
-        }
-    }
+    EffectHandler(viewModel.effect)
 
     TrendingPeopleScreenContent(
         state = state.value,
@@ -129,6 +106,38 @@ private fun TrendingPeopleScreenContent(
                 )
                 if (people.loadState.hasError) {
                     RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<TrendingPeopleScreenEffect>,
+) {
+    val navController = LocalAppNavController.current
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TrendingPeopleScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                is TrendingPeopleScreenEffect.NavigateToActorDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.actorId,
+                        startRoute = StartRoute.ACTOR
+                    )
                 }
             }
         }

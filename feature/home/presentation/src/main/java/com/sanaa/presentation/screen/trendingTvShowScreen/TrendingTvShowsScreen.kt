@@ -32,38 +32,16 @@ import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TrendingTvShowsScreen(
     viewModel: TrendingTvShowsScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = AppNavigation.app
-    val appContext = LocalContext.current.applicationContext
 
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is TrendingTvShowsScreenEffect.NavigateToTvShowDetails -> {
-                    detailsApi.launch(
-                        context = navController.context,
-                        id = effect.id,
-                        startRoute = StartRoute.SERIES
-                    )
-                }
-
-                is TrendingTvShowsScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-            }
-        }
-    }
+    EffectHandler(viewModel.effect)
 
     TrendingTvShowsScreenContent(
         state = state.value,
@@ -121,3 +99,35 @@ private fun TrendingTvShowsScreenContent(
     }
 }
 
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<TrendingTvShowsScreenEffect>,
+) {
+    val navController = AppNavigation.app
+    val appContext = LocalContext.current.applicationContext
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TrendingTvShowsScreenEffect.NavigateToTvShowDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.id,
+                        startRoute = StartRoute.SERIES
+                    )
+                }
+
+                is TrendingTvShowsScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+            }
+        }
+    }
+
+}

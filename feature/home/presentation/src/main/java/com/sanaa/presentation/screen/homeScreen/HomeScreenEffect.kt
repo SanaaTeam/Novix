@@ -13,4 +13,5 @@ sealed interface HomeScreenEffect {
     object NavigateToPeopleScreen : HomeScreenEffect
     object NavigateToTopRatingMediaScreen : HomeScreenEffect
     object NavigateToWatchedMediaScreen : HomeScreenEffect
+    object NavigateToLogin : HomeScreenEffect
 }
