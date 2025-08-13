@@ -11,7 +11,7 @@ data class EpisodeDetailsScreenUiState(
     val guestOfHonor: List<ActorUiModel> = emptyList(),
     val imagesUrl: List<String> = emptyList(),
     val error: String? = null,
-    val seriesId: Int = 0,
+    val tvShowId: Int = 0,
     val trailerUrl: String? = null,
     val showLoginBottomSheet: Boolean = false,
     val showRateBottomSheet: Boolean = false,

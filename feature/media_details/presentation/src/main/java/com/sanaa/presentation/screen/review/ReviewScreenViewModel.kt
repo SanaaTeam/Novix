@@ -21,10 +21,10 @@ import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ReviewViewModel @Inject constructor(
+class ReviewScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val manageTvSeriesDetails: ManageTvShowUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
@@ -95,7 +95,7 @@ class ReviewViewModel @Inject constructor(
                     id, page
                 )
             } else {
-                manageTvSeriesDetails.getTvShowReviews(
+                manageTvShowDetails.getTvShowReviews(
                     id, page
                 )
             }

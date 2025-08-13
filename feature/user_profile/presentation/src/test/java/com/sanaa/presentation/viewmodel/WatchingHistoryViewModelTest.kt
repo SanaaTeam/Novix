@@ -222,13 +222,13 @@ class WatchingHistoryViewModelTest {
         runTest(testDispatcher) {
             val newGenreId = 77
             val tvShowHistory =
-                listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SERIES))
+                listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SHOW))
 
             coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
             coEvery {
                 manageWatchingHistoryUseCase.getMediaHistory(
                     genreId = newGenreId,
-                    mediaType = MediaType.TV_SERIES,
+                    mediaType = MediaType.TV_SHOW,
                     username = dummyUser.username
                 )
             } returns flowOf(tvShowHistory)

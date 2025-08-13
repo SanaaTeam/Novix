@@ -31,6 +31,6 @@ fun Movie.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.MOVIE,
-        lastWatchedAt = Clock.System.now()
+        lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
     )
 }

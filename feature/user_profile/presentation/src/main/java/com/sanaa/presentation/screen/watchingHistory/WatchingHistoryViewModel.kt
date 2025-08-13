@@ -159,7 +159,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
-            mediaType = MediaType.TV_SERIES,
+            mediaType = MediaType.TV_SHOW,
             username = user.first().username
         )
     }

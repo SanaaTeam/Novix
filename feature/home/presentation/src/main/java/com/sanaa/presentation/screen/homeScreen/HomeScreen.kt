@@ -67,7 +67,7 @@ fun HomeScreen(
                         MediaTypeUi.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
-                                startRoute = StartRoute.SERIES,
+                                startRoute = StartRoute.TV_SHOW,
                                 id = effect.id
                             )
                         }
