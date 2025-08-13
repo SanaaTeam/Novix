@@ -137,7 +137,7 @@ class ActorViewModel @Inject constructor(
                 if (e is exceptions.NoNetworkException) {
                     updateState { copy(isLoading = false, noInternetConnection = true) }
                 } else {
-                    updateState { (isLoading = false, error = e.message) }
+                    updateState { copy(isLoading = false, error = e.message) }
                 }
             }
         )
