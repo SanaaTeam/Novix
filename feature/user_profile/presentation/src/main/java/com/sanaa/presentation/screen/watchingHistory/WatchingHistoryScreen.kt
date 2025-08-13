@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -27,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.presentation.api.navigation.LocalNavControllerProvider
@@ -39,13 +42,15 @@ import com.sanaa.presentation.screen.watchingHistory.component.GridSection
 import com.sanaa.presentation.screen.watchingHistory.component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.screen.watchingHistory.component.SnackData
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WatchingHistoryScreen(
     modifier: Modifier = Modifier,
     viewModel: WatchingHistoryViewModel = hiltViewModel()
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
     var snack by remember { mutableStateOf<SnackData?>(null) }
@@ -56,133 +61,161 @@ fun WatchingHistoryScreen(
             .detailsApi()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is WatchingHistoryScreenEffect.NavigateToMediaDetails -> {
-                    val startRoute =
-                        if (effect.mediaTypeUi == MediaTypeUi.MOVIE) StartRoute.MOVIE else StartRoute.SERIES
-                    detailsApi.launch(
-                        context = navController.context,
-                        id = effect.id,
-                        startRoute = startRoute
-                    )
+    WatchingHistoryScreenEffectsHandler(
+        effects = viewModel.effect,
+        onNavigateBack = { navController.popBackStack() },
+        onNavigateToMediaDetails = { id, type ->
+            detailsApi.launch(
+                context = navController.context,
+                id = id,
+                startRoute = when (type) {
+                    MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                    MediaTypeUi.TV_SHOW -> StartRoute.SERIES
                 }
-
-                is WatchingHistoryScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-            }
-        }
-    }
+            )
+        },
+        onShowErrorSnackBar = { message -> snack = SnackData(message = message, isError = true) },
+        onShowSuccessSnackBar = { message -> snack = SnackData(message = message, isError = false) }
+    )
 
     WatchingHistoryScreenContent(
-        state = state.value,
+        state = state,
         interactionListener = viewModel,
         modifier = modifier,
-    )
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
-    state.value.selectedMediaToSave?.let { mediaItem ->
-        SaveToListBottomSheet(
-            isVisible = state.value.showSaveToListBottomSheet,
-            mediaId = mediaItem.id.toLong(),
-            onDismiss = viewModel::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = viewModel::onCreateNewListClick,
-            onSuccess = {
-                snack = SnackData(
-                    message = "Added to list successfully",
-                    isError = false
-                )
-            },
-            onFailure = {
-                snack = SnackData(
-                    message = "Added to list failed",
-                    isError = true
-                )
-            },
-        )
-    }
-
-    AddBookmarkListBottomSheet(
-        isVisible = state.value.showAddListBottomSheet,
-        onDismiss = viewModel::onDismissAddListBottomSheet,
-        mediaId = state.value.selectedMediaToSave?.id ?: 0
+        snack = snack,
+        onDismissSnack = { snack = null }
     )
 }
 
+@Composable
+private fun WatchingHistoryScreenEffectsHandler(
+    onNavigateBack: () -> Unit,
+    onNavigateToMediaDetails: (Int, MediaTypeUi) -> Unit,
+    onShowErrorSnackBar: (String) -> Unit,
+    onShowSuccessSnackBar: (String) -> Unit,
+    effects: SharedFlow<WatchingHistoryScreenEffect>
+) {
+    LaunchedEffect(Unit) {
+        effects.collectLatest { effect ->
+            when (effect) {
+                is WatchingHistoryScreenEffect.NavigateBack -> onNavigateBack()
+                is WatchingHistoryScreenEffect.NavigateToMediaDetails -> onNavigateToMediaDetails(effect.id, effect.mediaTypeUi)
+                is WatchingHistoryScreenEffect.ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
+                is WatchingHistoryScreenEffect.ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
+            }
+        }
+    }
+}
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
     interactionListener: WatchingHistoryInteractionListener,
     modifier: Modifier = Modifier,
+    snack: SnackData?,
+    onDismissSnack: () -> Unit,
 ) {
     val watchedMovies = state.movieList
     val watchedTvShows = state.tvShowList
 
-    Column(
-        modifier = modifier.padding(top = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-
-        TopBar(
-            leftContent = {
-                TopBarClickableIcon(
-                    icon = painterResource(id = R.drawable.icon_back),
-                    onClick = { interactionListener.onBackClick() }
-                )
-            },
-            screenTitle = stringResource(id = R.string.watching_history),
+    NovixScaffold(
+        modifier = modifier,
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = stringResource(id = R.string.watching_history),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+            )
+        },
+        snackBarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+            NovixAnimatedSnackBarHost(
+                data = snack,
+                onDismiss = onDismissSnack,
+            )}
+        }) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-        )
+                .fillMaxSize()
+                .padding(top = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            FilterTab(
+                onTabClick = interactionListener::onMediaTabSelection,
+                selectedTab = state.selectedMediaTypeUi,
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        FilterTab(
-            onTabClick = { mediaTypeUi ->
-                interactionListener.onMediaTabSelection(mediaTypeUi)
-            },
-            selectedTab = state.selectedMediaTypeUi,
-            modifier = Modifier.fillMaxWidth()
-        )
-        AnimatedContent(
-            targetState = state.selectedMediaTypeUi,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(150, delayMillis = 150))
-                    .togetherWith(fadeOut(animationSpec = tween(150)))
-            },
-            modifier = Modifier.padding(top = 8.dp)
-        ) { selectedMediaType ->
-            when (selectedMediaType) {
-                MediaTypeUi.MOVIE -> {
-                    GridSection(
-                        genres = state.movieGenres,
-                        mediaList = watchedMovies,
-                        selectedGenreId = state.movieSelectedGenreId,
-                        onGenreClick = interactionListener::onMovieGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+            AnimatedContent(
+                targetState = state.selectedMediaTypeUi,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .togetherWith(fadeOut(animationSpec = tween(150)))
+                },
+                modifier = Modifier.padding(top = 8.dp)
+            ) { selectedMediaType ->
+                when (selectedMediaType) {
+                    MediaTypeUi.MOVIE -> {
+                        GridSection(
+                            genres = state.movieGenres,
+                            mediaList = watchedMovies,
+                            selectedGenreId = state.movieSelectedGenreId,
+                            onGenreClick = interactionListener::onMovieGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
 
-                MediaTypeUi.TV_SHOW -> {
-                    GridSection(
-                        genres = state.tvShowGenres,
-                        mediaList = watchedTvShows,
-                        selectedGenreId = state.tvShowSelectedGenreId,
-                        onGenreClick = interactionListener::onTvShowGenreClick,
-                        onMediaClick = { media ->
-                            interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                        },
-                        onSaveIconClick = interactionListener::onSaveIconClick,
-                        modifier = Modifier.fillMaxSize()
-                    )
+                    MediaTypeUi.TV_SHOW -> {
+                        GridSection(
+                            genres = state.tvShowGenres,
+                            mediaList = watchedTvShows,
+                            selectedGenreId = state.tvShowSelectedGenreId,
+                            onGenreClick = interactionListener::onTvShowGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
                 }
             }
         }
     }
-}
 
+
+
+    state.selectedMediaToSave?.let { mediaItem ->
+        SaveToListBottomSheet(
+            isVisible = state.showSaveToListBottomSheet,
+            mediaId = mediaItem.id.toLong(),
+            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = interactionListener::onCreateNewListClick,
+            onSuccess = {
+                interactionListener.onShowSuccessSnackBar("Add to list succeeded")
+            },
+            onFailure = {
+                interactionListener.onShowErrorSnackBar("Add to list failed")
+            },
+        )
+    }
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0
+    )
+}
