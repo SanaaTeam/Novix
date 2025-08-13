@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
@@ -27,6 +28,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
@@ -43,9 +45,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryMovies(genreId)
-            },
+            callee = { loadWatchedHistoryMovies(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError,
         )
@@ -53,9 +53,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryTvSeries(genreId)
-            },
+            callee = { loadWatchedHistoryTvSeries(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError
         )
@@ -72,24 +70,16 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
-                manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
-            },
-            onSuccess = { genres ->
-                updateState { copy(movieGenres = genres) }
-            },
+            callee = { manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() } },
+            onSuccess = { genres -> updateState { copy(movieGenres = genres) } },
             onError = { ::onLoadDataError }
         )
     }
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
-                manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() }
-            },
-            onSuccess = { genres ->
-                updateState { copy(tvShowGenres = genres) }
-            },
+            callee = { manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() } },
+            onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
             onError = { ::onLoadDataError }
         )
     }
@@ -97,7 +87,6 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
         updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
-
 
     override fun onMovieGenreClick(genreId: Int?) {
         if (genreId != state.value.movieSelectedGenreId) {
@@ -120,6 +109,7 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onSaveIconClick(mediaItem: MediaItemUiModel) {
         if (mediaItem.isSaved) {
             savedListsStatusProvider.markItemUnsaved(mediaItem.id)
+            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
         } else {
             updateState {
                 copy(
@@ -161,7 +151,6 @@ class WatchingHistoryViewModel @Inject constructor(
             null
         }
         if (user == null) return flowOf(emptyList())
-
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.TV_SERIES,
@@ -176,6 +165,7 @@ class WatchingHistoryViewModel @Inject constructor(
                 isLoading = false
             )
         }
+        emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.somethingWentWrongError))
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -188,5 +178,13 @@ class WatchingHistoryViewModel @Inject constructor(
 
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onShowSuccessSnackBar(message: String) {
+        emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(message))
+    }
+
+    override fun onShowErrorSnackBar(message: String) {
+        emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(message))
     }
 }
