@@ -33,7 +33,7 @@ import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 fun LazyGridScope.upcomingSection(
     upcomingMovies: LazyPagingItems<MediaItemUiState>,
@@ -42,7 +42,7 @@ fun LazyGridScope.upcomingSection(
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
     onSaveIconClick: (item: MediaItemUiState) -> Unit,
-    onMovieClick: (id: Int, mediaTypeUi: MediaTypeUi) -> Unit,
+    onMovieClick: (id: Int, mediaTypeUiState: MediaTypeUiState) -> Unit,
 ) {
 
     if (isLoading) {
@@ -100,7 +100,7 @@ fun LazyGridScope.upcomingSection(
         val item = upcomingMovies[index] ?: return@items
         MediaPosterCard(
             onCardClick = {
-                onMovieClick(item.id, item.mediaTypeUi)
+                onMovieClick(item.id, item.mediaTypeUiState)
             },
             posterImage = {
                 RemoteBlurredSensitiveImage(
@@ -127,7 +127,7 @@ fun LazyGridScope.upcomingSection(
                     )
                 }
             }, topLeftContent = {
-                if (item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                if (item.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                     SaveIconChip(
                         onClick = { onSaveIconClick(item) },
                         isSaved = item.isSaved

@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.homeScreen
 import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
@@ -195,7 +195,7 @@ class HomeScreenViewModelTest {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onMoviesCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingMoviesScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -206,7 +206,7 @@ class HomeScreenViewModelTest {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onTvShowsCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingTvShowsScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -217,7 +217,7 @@ class HomeScreenViewModelTest {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onPeopleCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingPeopleScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -248,11 +248,11 @@ class HomeScreenViewModelTest {
     fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.effect.test {
-            viewModel.onMediaClick(101, MediaTypeUi.MOVIE)
+            viewModel.onMediaClick(101, MediaTypeUiState.MOVIE)
             assertThat(awaitItem()).isEqualTo(
                 HomeScreenEffect.NavigateToMediaDetails(
                     101,
-                    MediaTypeUi.MOVIE
+                    MediaTypeUiState.MOVIE
                 )
             )
             cancelAndConsumeRemainingEvents()

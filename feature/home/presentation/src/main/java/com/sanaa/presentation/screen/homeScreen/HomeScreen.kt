@@ -55,7 +55,7 @@ import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.WhatToWatchSection
 import com.sanaa.presentation.screen.homeScreen.section.upcomingSection
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -135,7 +135,7 @@ private fun HomeScreenContent(
                     else item(span = { GridItemSpan(maxLineSpan) }) {
                         PopularMediaSection(
                             mediaItems = state.popularMedia, onMediaClick = {
-                                interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                interactionListener.onMediaClick(it.id, it.mediaTypeUiState)
                             }, onSaveIconClicked = {
                                 interactionListener.onSaveIconClick(it)
                             }, modifier = Modifier.fillWidthOfParent(16.dp)
@@ -178,7 +178,7 @@ private fun HomeScreenContent(
                                     ),
                                 mediaItems = state.topRatingMedia,
                                 onMediaClick = {
-                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUiState)
                                 },
                                 onSaveIconClicked = {
                                     interactionListener.onSaveIconClick(it)
@@ -204,7 +204,7 @@ private fun HomeScreenContent(
                                 headerLabel = stringResource(R.string.continue_watching),
                                 mediaItems = state.continueWatchingMedia,
                                 onMediaClick = {
-                                    interactionListener.onMediaClick(it.id, it.mediaTypeUi)
+                                    interactionListener.onMediaClick(it.id, it.mediaTypeUiState)
                                 },
                                 onSaveIconClicked = {
                                     interactionListener.onSaveIconClick(it)
@@ -285,8 +285,8 @@ private fun EffectHandler(
         effect.collectLatest { effect ->
             when (effect) {
                 is HomeScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> {
+                    when (effect.mediaTypeUiState) {
+                        MediaTypeUiState.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 startRoute = StartRoute.MOVIE,
@@ -294,7 +294,7 @@ private fun EffectHandler(
                             )
                         }
 
-                        MediaTypeUi.TV_SHOW -> {
+                        MediaTypeUiState.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 startRoute = StartRoute.SERIES,
@@ -304,11 +304,11 @@ private fun EffectHandler(
                     }
                 }
 
-                HomeScreenEffect.NavigateToMoviesScreen -> {
+                HomeScreenEffect.NavigateToTrendingMoviesScreen -> {
                     navController.navigate(TrendingMoviesScreenRoute)
                 }
 
-                HomeScreenEffect.NavigateToPeopleScreen -> {
+                HomeScreenEffect.NavigateToTrendingPeopleScreen -> {
                     navController.navigate(TrendingPeopleScreenRoute)
                 }
 
@@ -316,7 +316,7 @@ private fun EffectHandler(
                     navController.navigate(TopRatedMediaScreenRoute)
                 }
 
-                HomeScreenEffect.NavigateToTvShowsScreen -> {
+                HomeScreenEffect.NavigateToTrendingTvShowsScreen -> {
                     navController.navigate(TrendingTvShowsScreenRoute)
                 }
 

@@ -3,10 +3,10 @@ package com.sanaa.presentation.screen.watchingHistoryScreen
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 data class WatchingMediaHistoryScreenUiState(
-    val selectedMediaTypeUi: MediaTypeUi = MediaTypeUi.MOVIE,
+    val selectedMediaTypeUiState: MediaTypeUiState = MediaTypeUiState.MOVIE,
     val movieList: List<MediaItemUiState> = emptyList(),
     val tvShowList: List<MediaItemUiState> = emptyList(),
     val movieGenres: List<GenreUiState> = emptyList(),

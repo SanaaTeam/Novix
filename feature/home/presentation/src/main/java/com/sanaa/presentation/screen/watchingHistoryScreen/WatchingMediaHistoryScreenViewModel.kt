@@ -4,7 +4,7 @@ import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
@@ -117,8 +117,8 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
+    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUiState) {
+        updateState { copy(selectedMediaTypeUiState = mediaTypeUiState) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -135,8 +135,8 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShows(id)
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
+        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
     override fun onSaveIconClick(media: MediaItemUiState) {

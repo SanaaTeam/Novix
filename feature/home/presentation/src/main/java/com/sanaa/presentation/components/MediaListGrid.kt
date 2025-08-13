@@ -22,7 +22,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 @Composable
 fun MediaListGrid(
@@ -68,7 +68,7 @@ fun MediaListGrid(
                     }
                 },
                 topLeftContent = {
-                    if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                    if (media.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                         SaveIconChip(
                             onClick = { onSaveIconClick(media) },
                             isSaved = media.isSaved

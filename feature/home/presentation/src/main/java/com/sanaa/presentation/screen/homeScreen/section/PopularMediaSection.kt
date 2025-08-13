@@ -59,7 +59,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -229,7 +229,7 @@ private fun PopularMediaSectionPager(
                     onCardClick = { onMediaClick(item) },
                     topLeftContent = {
                         if (page == state.currentPage) {
-                            if(item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                            if(item.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                                 SaveIconChip(
                                     onClick = { onSaveIconClicked(item) },
                                     isSaved = item.isSaved

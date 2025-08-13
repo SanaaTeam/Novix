@@ -10,7 +10,7 @@ import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
@@ -202,15 +202,15 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onMoviesCardClick() {
-        emitEffect(HomeScreenEffect.NavigateToMoviesScreen)
+        emitEffect(HomeScreenEffect.NavigateToTrendingMoviesScreen)
     }
 
     override fun onTvShowsCardClick() {
-        emitEffect(HomeScreenEffect.NavigateToTvShowsScreen)
+        emitEffect(HomeScreenEffect.NavigateToTrendingTvShowsScreen)
     }
 
     override fun onPeopleCardClick() {
-        emitEffect(HomeScreenEffect.NavigateToPeopleScreen)
+        emitEffect(HomeScreenEffect.NavigateToTrendingPeopleScreen)
     }
 
     override fun onShowAllTopRatingClick() {
@@ -228,8 +228,8 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
+        emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
     override fun onSaveIconClick(media: MediaItemUiState) {

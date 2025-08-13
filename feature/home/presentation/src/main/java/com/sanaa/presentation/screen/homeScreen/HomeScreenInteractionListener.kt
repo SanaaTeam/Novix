@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.homeScreen
 
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 interface HomeScreenInteractionListener {
     fun onMoviesCardClick()
@@ -12,7 +12,7 @@ interface HomeScreenInteractionListener {
     fun onShowAllContinueWatchingClick()
 
     fun onMovieGenreClick(id: Int?)
-    fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
+    fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState)
     fun onSaveIconClick(media: MediaItemUiState)
     fun onSaveToListSuccess()
     fun onSaveToListFailure()

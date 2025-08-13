@@ -5,10 +5,10 @@ data class MediaItemUiState(
     val title: String,
     val imageUrl: String?,
     val rating: String? = null,
-    val mediaTypeUi: MediaTypeUi,
+    val mediaTypeUiState: MediaTypeUiState,
     val isSaved: Boolean = false,
 )
 
-enum class MediaTypeUi {
+enum class MediaTypeUiState {
     MOVIE, TV_SHOW,
 }

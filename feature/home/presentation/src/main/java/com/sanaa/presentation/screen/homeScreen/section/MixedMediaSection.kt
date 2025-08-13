@@ -36,7 +36,7 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.MediaItemUiState
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 @Composable
 fun MixedMediaSection(
@@ -84,7 +84,7 @@ fun MixedMediaSection(
                                 enter = slideInHorizontally() + fadeIn(),
                                 exit = slideOutHorizontally() + fadeOut()
                             ) {
-                                if(item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                                if(item.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                                     SaveIconChip(
                                         onClick = { onSaveIconClicked(item) },
                                         isSaved = item.isSaved
@@ -153,28 +153,28 @@ val demoMediaList = listOf(
         title = "media 1",
         imageUrl = "",
         rating = " 9.9",
-        mediaTypeUi = MediaTypeUi.MOVIE
+        mediaTypeUiState = MediaTypeUiState.MOVIE
     ),
     MediaItemUiState(
         id = 2,
         title = "media 2",
         imageUrl = "",
         rating = " 9.9",
-        mediaTypeUi = MediaTypeUi.TV_SHOW
+        mediaTypeUiState = MediaTypeUiState.TV_SHOW
     ),
     MediaItemUiState(
         id = 3,
         title = "media 3",
         imageUrl = "",
         rating = " 9.9",
-        mediaTypeUi = MediaTypeUi.MOVIE
+        mediaTypeUiState = MediaTypeUiState.MOVIE
     ),
     MediaItemUiState(
         id = 4,
         title = "media 4",
         imageUrl = "",
         rating = " 9.9",
-        mediaTypeUi = MediaTypeUi.TV_SHOW
+        mediaTypeUiState = MediaTypeUiState.TV_SHOW
     ),
 )
 
