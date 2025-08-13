@@ -1,8 +1,6 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.navigation.NavHostController
-import com.sanaa.presentation.model.SeriesUiModel
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -39,11 +38,13 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -67,6 +68,7 @@ fun TopSeriesScreen(
     TopSeriesContent(
         state = uiState,
         navController = navController,
+        interactionListener = viewModel
     )
 
     RequestToLoginBottomSheet(
@@ -81,6 +83,7 @@ fun TopSeriesScreen(
 @Composable
 private fun TopSeriesContent(
     state: ActorScreenUiState,
+    interactionListener: ActorsScreenInteractionListener,
     navController: NavHostController,
 ) {
     NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
@@ -119,7 +122,7 @@ private fun TopSeriesContent(
 
                         noInternetConnection -> {
                             NetworkDisconnectionContact(
-                                onRetryClick = onRetryClicked,
+                                onRetryClick = interactionListener::onRetryClicked,
                                 useDarkTheme = LocalThemeProvider.current
                             )
                         }

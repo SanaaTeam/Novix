@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
-import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,12 +40,12 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -145,7 +144,7 @@ private fun TopMoviesContent(
 
                         noInternetConnection -> {
                             NetworkDisconnectionContact(
-                                onRetryClick = onRetryClicked,
+                                onRetryClick = interactionListener::onRetryClicked,
                                 useDarkTheme = LocalThemeProvider.current
                             )
                         }
