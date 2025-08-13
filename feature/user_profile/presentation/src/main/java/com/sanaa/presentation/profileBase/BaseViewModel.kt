@@ -2,6 +2,7 @@ package com.sanaa.presentation.profileBase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,7 @@ abstract class BaseViewModel<T, E>(
     protected fun <T> tryToExecute(
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
@@ -54,7 +55,7 @@ abstract class BaseViewModel<T, E>(
     protected fun <T> tryToCollect(
         block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
@@ -66,8 +67,13 @@ abstract class BaseViewModel<T, E>(
         }
     }
 
-    private fun createExceptionHandler(onError: (Throwable) -> Unit) =
-        CoroutineExceptionHandler { _, throwable ->
-            onError(throwable)
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is NovixAppException -> exception
+                    else -> NovixAppException()
+                }
+            )
         }
 }
