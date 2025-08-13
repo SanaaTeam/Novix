@@ -1,10 +1,7 @@
 package com.sanaa.presentation.screen.watchingHistory
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,14 +26,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
+import com.sanaa.designsystem.design_system.component.animation.FadeInOut150
+import com.sanaa.designsystem.design_system.component.animation.FadeSlideInVertically
+import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVertically
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
-import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.screen.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet.SaveToListBottomSheet
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.NavigateBack
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.NavigateToMediaDetails
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowErrorSnackBar
+import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowSuccessSnackBar
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection
 import com.sanaa.presentation.screen.watchingHistory.component.NovixAnimatedSnackBarHost
@@ -53,7 +57,7 @@ fun WatchingHistoryScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
+    var snackBarData by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -74,16 +78,19 @@ fun WatchingHistoryScreen(
                 }
             )
         },
-        onShowErrorSnackBar = { message -> snack = SnackData(message = message, isError = true) },
-        onShowSuccessSnackBar = { message -> snack = SnackData(message = message, isError = false) }
+        onShowErrorSnackBar = { message ->
+            snackBarData = SnackData(message = message, isError = true)
+        },
+        onShowSuccessSnackBar = { message ->
+            snackBarData = SnackData(message = message, isError = false)
+        }
     )
 
     WatchingHistoryScreenContent(
         state = state,
         interactionListener = viewModel,
         modifier = modifier,
-        snack = snack,
-        onDismissSnack = { snack = null }
+        snackBarData = snackBarData,
     )
 }
 
@@ -98,21 +105,21 @@ private fun WatchingHistoryScreenEffectsHandler(
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
-                is WatchingHistoryScreenEffect.NavigateBack -> onNavigateBack()
-                is WatchingHistoryScreenEffect.NavigateToMediaDetails -> onNavigateToMediaDetails(effect.id, effect.mediaTypeUi)
-                is WatchingHistoryScreenEffect.ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
-                is WatchingHistoryScreenEffect.ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
+                is NavigateBack -> onNavigateBack()
+                is NavigateToMediaDetails -> onNavigateToMediaDetails(effect.id, effect.mediaTypeUi)
+                is ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
+                is ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
             }
         }
     }
 }
+
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
     interactionListener: WatchingHistoryInteractionListener,
     modifier: Modifier = Modifier,
-    snack: SnackData?,
-    onDismissSnack: () -> Unit,
+    snackBarData: SnackData?,
 ) {
     val watchedMovies = state.movieList
     val watchedTvShows = state.tvShowList
@@ -138,10 +145,11 @@ private fun WatchingHistoryScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-            NovixAnimatedSnackBarHost(
-                data = snack,
-                onDismiss = onDismissSnack,
-            )}
+                NovixAnimatedSnackBarHost(
+                    data = snackBarData,
+                    onDismiss = interactionListener::onDismissSnack,
+                )
+            }
         }) {
         Column(
             modifier = Modifier
@@ -157,10 +165,7 @@ private fun WatchingHistoryScreenContent(
 
             AnimatedContent(
                 targetState = state.selectedMediaTypeUi,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(150, delayMillis = 150))
-                        .togetherWith(fadeOut(animationSpec = tween(150)))
-                },
+                transitionSpec = { FadeInOut150 },
                 modifier = Modifier.padding(top = 8.dp)
             ) { selectedMediaType ->
                 when (selectedMediaType) {
@@ -199,18 +204,20 @@ private fun WatchingHistoryScreenContent(
 
 
     state.selectedMediaToSave?.let { mediaItem ->
-        SaveToListBottomSheet(
-            isVisible = state.showSaveToListBottomSheet,
-            mediaId = mediaItem.id.toLong(),
-            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = interactionListener::onCreateNewListClick,
-            onSuccess = {
-                interactionListener.onShowSuccessSnackBar("Add to list succeeded")
-            },
-            onFailure = {
-                interactionListener.onShowErrorSnackBar("Add to list failed")
-            },
-        )
+        AnimatedVisibility(
+            visible = state.showSaveToListBottomSheet,
+            enter = FadeSlideInVertically,
+            exit = FadeSlideOutVertically
+        ) {
+            SaveToListBottomSheet(
+                isVisible = state.showSaveToListBottomSheet,
+                mediaId = mediaItem.id.toLong(),
+                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = interactionListener::onCreateNewListClick,
+                onSuccess = { interactionListener.onSaveToListResult(true) },
+                onFailure = { interactionListener.onSaveToListResult(false) }
+            )
+        }
     }
 
     AddBookmarkListBottomSheet(
