@@ -2,14 +2,15 @@ package entity
 
 import kotlinx.datetime.LocalDate
 
-data class TvSeries(
+data class Episode(
     val id: Int,
     val title: String,
-    val overview: String,
-    val releaseDate: LocalDate,
-    val genres: List<Genre>,
+    val number: Int,
+    val seasonNumber: Int,
     val imdbRating: Float,
-    val posterImageUrl: String,
-    val seasonsCount: Int,
+    val overview: String,
+    val durationMinutes: Int?,
+    val releaseDate: LocalDate,
+    val stillImagePath: String,
     val rating: Int
 )

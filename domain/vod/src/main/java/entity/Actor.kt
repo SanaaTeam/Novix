@@ -6,18 +6,9 @@ data class Actor(
     val id: Int,
     val imageUrl: String,
     val name: String,
-    val region: String?,
-    val lastShow: String?,
-    val gender: Gender,
-    val department: String?,
-    val character: String?,
+    val department: String,
+    val character: String,
     val birthDate: LocalDate,
     val deathDate: LocalDate,
-    val placeOfBirth: String?,
-    val biography: String?
-) {
-    enum class Gender {
-        MALE,
-        FEMALE,
-    }
-}
+    val biography: String
+)
