@@ -123,17 +123,18 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitEpisodeRating,
-            onError = { exception ->
-                updateState {
-                    copy(
-                        error = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onErrorAccrue
         )
         updateState {
             copy(showRateBottomSheet = false)
+        }
+    }
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            copy(
+                error = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 
