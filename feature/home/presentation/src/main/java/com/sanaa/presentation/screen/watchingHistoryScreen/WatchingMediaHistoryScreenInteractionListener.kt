@@ -1,22 +1,15 @@
-package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.watchingHistoryScreen
 
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 
-interface TopRatedScreenInteractionListener {
+interface WatchingMediaHistoryScreenInteractionListener {
     fun onMediaTabSelection(mediaTypeUi: MediaTypeUi)
     fun onMovieGenreClick(id: Int?)
     fun onTvShowGenreClick(id: Int?)
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
     fun onSaveIconClick(media: MediaItemUiState)
-    fun onSaveToListSuccess()
-    fun onSaveToListFailure()
     fun onBackClick()
-    fun onLoginButtonClick()
-    fun onDismissLoginBottomSheet()
-    fun onDismissSaveToListBottomSheet()
-    fun onCreateNewListClick()
-    fun onDismissAddListBottomSheet()
     fun onRetryClick()
     fun onSnackBarDismiss()
 }

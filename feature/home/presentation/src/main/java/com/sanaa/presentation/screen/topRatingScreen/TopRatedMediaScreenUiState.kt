@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.topRatingScreen
 
 import androidx.paging.PagingData
 import com.sanaa.presentation.components.SnackData

@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
@@ -111,11 +112,25 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
 
     override fun onSaveToListSuccess() {
-        emitEffect(TrendingMediaScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false
+                )
+            )
+        }
     }
 
     override fun onSaveToListFailure() {
-        emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.addToListFailed))
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListFailed,
+                    isError = true
+                )
+            )
+        }
     }
 
     override fun onBackClick() {
@@ -136,14 +151,30 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState { copy(showLoginBottomSheet = false) }
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    snackBarData =
+                        SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                )
+            }
         } else {
-            updateState { copy(isNoInternetConnection = false) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+            updateState {
+                copy(
+                    isNoInternetConnection = false,
+                    snackBarData =
+                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+                )
+            }
         }
     }
 

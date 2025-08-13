@@ -7,6 +7,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +19,8 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
@@ -29,7 +32,6 @@ fun TrendingMediaScreenContent(
     title: String,
     state: TrendingMediaScreenUiState,
     interactionListener: MediaListScreenInteractionListener,
-    modifier: Modifier = Modifier,
 ) {
 
     val trendingMedia = state.mediaList.collectAsLazyPagingItems()
@@ -49,7 +51,7 @@ fun TrendingMediaScreenContent(
                     .padding(vertical = 12.dp)
             )
         },
-        modifier = modifier,
+        modifier = Modifier.systemBarsPadding(),
     ) {
 
         AnimatedContent(
@@ -73,13 +75,27 @@ fun TrendingMediaScreenContent(
                     RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
 
-                RequestToLoginBottomSheet(
-                    isVisible = state.showLoginBottomSheet,
-                    onDismiss = interactionListener::onDismissLoginBottomSheet,
-                    onLoginButtonClick = {
-                        interactionListener.onLoginButtonClick()
+                if (state.userIsLoggedIn) {
+                    state.selectedMediaId?.let { mediaItem ->
+                        SaveToListBottomSheet(
+                            isVisible = state.showSaveToListBottomSheet,
+                            mediaId = mediaItem.toLong(),
+                            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                            onCreateNewListClick = interactionListener::onCreateNewListClick,
+                        )
                     }
-                )
+                    AddBookmarkListBottomSheet(
+                        isVisible = state.showAddListBottomSheet,
+                        onDismiss = interactionListener::onDismissAddListBottomSheet,
+                        mediaId = state.selectedMediaId ?: 0
+                    )
+                } else {
+                    RequestToLoginBottomSheet(
+                        isVisible = state.showLoginBottomSheet,
+                        onDismiss = interactionListener::onDismissLoginBottomSheet,
+                        onLoginButtonClick = interactionListener::onLoginButtonClick
+                    )
+                }
             }
         }
     }

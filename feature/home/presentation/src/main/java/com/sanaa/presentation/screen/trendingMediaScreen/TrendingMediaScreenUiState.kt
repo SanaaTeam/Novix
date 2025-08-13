@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.trendingMediaScreen
 
 import androidx.paging.PagingData
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import kotlinx.coroutines.flow.Flow
@@ -16,5 +17,6 @@ data class TrendingMediaScreenUiState (
     val selectedMediaId: Int? = null,
     val showLoginBottomSheet: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
-    val showAddListBottomSheet: Boolean = false
+    val showAddListBottomSheet: Boolean = false,
+    val snackBarData: SnackData? = null
 )

@@ -3,6 +3,8 @@ package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.screen.topRatingScreen.TopRatedMediaScreenViewModel
+import com.sanaa.presentation.screen.topRatingScreen.TopRatedScreenEffect
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState

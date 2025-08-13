@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.topRatingScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween

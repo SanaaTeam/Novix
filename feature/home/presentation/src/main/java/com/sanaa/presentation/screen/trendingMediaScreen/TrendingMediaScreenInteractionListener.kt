@@ -15,4 +15,5 @@ interface MediaListScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onDismissAddListBottomSheet()
     fun onCreateNewListClick()
+    fun onSnackBarDismiss()
 }

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
+package com.sanaa.presentation.screen.watchingHistoryScreen
 
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
