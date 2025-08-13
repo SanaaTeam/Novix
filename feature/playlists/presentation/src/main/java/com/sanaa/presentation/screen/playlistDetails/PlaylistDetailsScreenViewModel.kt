@@ -112,7 +112,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    internal fun onDataLoadError(e: NovixAppException) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isLoading = false, errorMessage = null) }
         } else {
