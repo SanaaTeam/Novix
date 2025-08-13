@@ -2,8 +2,9 @@ package com.sanaa.presentation.myAccount
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.myAccount.ContentRestrictionUiState
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenEffect
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenViewModel
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -90,7 +91,6 @@ class MyAccountScreenViewModelTest {
             viewModel.onClickContentRestriction()
             assertThat(viewModel.state.value.showContentRestrictionBottomSheet).isTrue()
         }
-
     @Test
     fun `should call mangeUserPreference setLanguage and emit UpdateAppLanguage when onSaveLanguageClick is called`() =
         runTest {
@@ -99,7 +99,7 @@ class MyAccountScreenViewModelTest {
             coEvery { mangeUserPreference.getLanguage() } returns flowOf(Language.ARABIC)
             coEvery { mangeUserPreference.setLanguage(any()) } returns Unit
 
-            viewModel.updateState { copy(selectedLanguage = selectedLanguage.code) }
+            viewModel.updateState { copy(savedLanguage = Language.ARABIC.code, selectedLanguage = selectedLanguage.code) }
 
             viewModel.effect.test {
                 viewModel.onSaveLanguageClick()
@@ -119,7 +119,12 @@ class MyAccountScreenViewModelTest {
             coEvery { mangeUserPreference.getTheme() } returns flowOf(Theme.LIGHT)
             coEvery { mangeUserPreference.setTheme(any()) } returns Unit
 
-            viewModel.updateState { copy(selectedTheme = selectedTheme.toUiState()) }
+            viewModel.updateState {
+                copy(
+                    savedTheme = ThemeUiState.LIGHT,
+                    selectedTheme = selectedTheme.toUiState()
+                )
+            }
 
             viewModel.effect.test {
                 viewModel.onSaveThemeClick()
@@ -135,13 +140,14 @@ class MyAccountScreenViewModelTest {
         runTest {
             val restriction = ContentRestriction.RESTRICTED
 
-            coEvery { mangeUserPreference.getContentRestriction() } returns flowOf(
-                ContentRestriction.UNRESTRICTED
-            )
+            coEvery { mangeUserPreference.getContentRestriction() } returns flowOf(ContentRestriction.UNRESTRICTED)
             coEvery { mangeUserPreference.setContentRestriction(any()) } returns Unit
 
             viewModel.updateState {
-                copy(selectedContentRestriction = ContentRestrictionUiState.valueOf(restriction.name))
+                copy(
+                    savedContentRestriction = ContentRestrictionUiState.UNRESTRICTED,
+                    selectedContentRestriction = ContentRestrictionUiState.valueOf(restriction.name)
+                )
             }
 
             viewModel.onSaveContentRestrictionClick()
@@ -149,5 +155,5 @@ class MyAccountScreenViewModelTest {
         }
 
     private fun Theme.toUiState() =
-        com.sanaa.presentation.screen.myAccount.ThemeUiState.valueOf(this.name)
+        ThemeUiState.valueOf(this.name)
 }

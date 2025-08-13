@@ -45,7 +45,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadWatchedHistoryMovies(genreId) },
+            block = { loadWatchedHistoryMovies(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError,
         )
@@ -53,7 +53,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadWatchedHistoryTvSeries(genreId) },
+            block = { loadWatchedHistoryTvSeries(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError
         )
@@ -70,15 +70,19 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = { manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() } },
-            onSuccess = { genres -> updateState { copy(movieGenres = genres) } },
+            block = {
+                manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
+            },
+            onSuccess = { genres ->
+                updateState { copy(movieGenres = genres) }
+            },
             onError = { ::onLoadDataError }
         )
     }
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = { manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() } },
+            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() } },
             onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
             onError = { ::onLoadDataError }
         )
@@ -87,6 +91,7 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
         updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
+
 
     override fun onMovieGenreClick(genreId: Int?) {
         if (genreId != state.value.movieSelectedGenreId) {
@@ -151,6 +156,7 @@ class WatchingHistoryViewModel @Inject constructor(
             null
         }
         if (user == null) return flowOf(emptyList())
+
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
             mediaType = MediaType.TV_SERIES,

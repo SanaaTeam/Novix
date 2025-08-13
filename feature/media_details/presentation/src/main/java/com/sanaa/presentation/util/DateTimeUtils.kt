@@ -14,18 +14,14 @@ object DateTimeUtils {
 
     fun formatLocalizedDate(
         date: LocalDate,
-        locale: Locale = Locale.getDefault()
+        locale: Locale = Locale.getDefault(),
     ): String {
         val formatter = DateTimeFormatter.ofPattern("d MMM yyyy", locale)
         return date.toJavaLocalDate().format(formatter)
     }
 
     fun getCurrentLocale(context: Context): Locale {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context.resources.configuration.locales[0]
-        } else {
-            context.resources.configuration.locale
-        }
+        return context.resources.configuration.locales[0]
     }
 
     fun formatTime(duration: Duration, locale: Locale = Locale.getDefault()): String {

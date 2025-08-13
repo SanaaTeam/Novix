@@ -137,7 +137,7 @@ private fun TopSeriesContent(
                                 MediaPosterCard(
                                     posterImage = {
                                         RemoteBlurredSensitiveImage(
-                                            imageUrl = series.posterPath ?: "",
+                                            imageUrl = series.posterPath.orEmpty(),
                                             modifier = Modifier.fillMaxSize(),
                                             sensitiveContentThreshold = 0.2f,
                                             isBlurEnabled = LocalSafeContentThreshold.current != 0f,
@@ -156,7 +156,7 @@ private fun TopSeriesContent(
                                                     color = Color(0x99FFFFFF)
                                                 ),
                                                 iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                                icon = painterResource(designR.drawable.icon_eye_slash),
                                             )
                                         }
                                     },

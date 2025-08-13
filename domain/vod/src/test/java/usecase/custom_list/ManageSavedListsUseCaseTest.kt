@@ -24,7 +24,7 @@ class ManageSavedListsUseCaseTest {
 
     @Test
     fun `getSavedLists should call repository and return list`() = runTest {
-        val expected = listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Favs"))
+        val expected = listOf(DUMMY_LIST, DUMMY_LIST.copy(id = 2, title = "Faves"))
         coEvery { savedListRepository.getSavedLists() } returns expected
 
         val result = manageSavedListsUseCase.getSavedLists()
@@ -61,7 +61,6 @@ class ManageSavedListsUseCaseTest {
     }
 
     private companion object {
-        const val ACCOUNT_ID = 123L
         val DUMMY_LIST = SavedList(id = 1, title = "Watch-Later", itemCount = 5)
     }
 }

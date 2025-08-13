@@ -327,7 +327,7 @@ class WatchingHistoryViewModelTest {
         val dummyUser = User(
             id = 42L,
             name = "Test User",
-            username = "testuser",
+            username = "test user",
             profileImageUrl = "https://example.com/profile.jpg"
         )
 
