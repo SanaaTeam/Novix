@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -291,7 +292,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(HomeScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -303,7 +304,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun createUpcomingMoviesPagingDataSource(
         genreId: Int?,
-        onError: (Throwable) -> Unit = ::onDataLoadError,
+        onError: (NovixAppException) -> Unit = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getUpcomingMovies(

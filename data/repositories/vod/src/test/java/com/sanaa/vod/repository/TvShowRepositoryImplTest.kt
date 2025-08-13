@@ -20,7 +20,7 @@ import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -50,9 +50,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowDetails throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowDetails(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesDetails(999) }
+        assertThrows<NovixAppException> { repository.getTvSeriesDetails(999) }
     }
 
     @Test
@@ -63,21 +63,21 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getReviewsByTvShowId throws RetrievingDataFailureException`() = runTest {
+    fun `getReviewsByTvShowId throws NovixAppException`() = runTest {
         coEvery { remote.getReviewsByTvShowId(any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999, 1) }
+        assertThrows<NovixAppException> { repository.getTvSeriesReviews(999, 1) }
     }
 
     @Test
-    fun `getTvShowImageUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowImageUrls throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesImageUrls(99, 1) }
+        assertThrows<NovixAppException> { repository.getTvSeriesImageUrls(99, 1) }
     }
 
     @Test
-    fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowsByGenre throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any(), 1) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1, 1) }
+        assertThrows<NovixAppException> { repository.getTvSeriesByGenre(1, 1) }
     }
 
     @Test
@@ -88,9 +88,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowCast throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowCast throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowCast(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesCast(999) }
+        assertThrows<NovixAppException> { repository.getTvSeriesCast(999) }
     }
 
     @Test
@@ -170,9 +170,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowSeasonDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowSeasonDetails throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesSeason(1, 99) }
+        assertThrows<NovixAppException> { repository.getTvSeriesSeason(1, 99) }
     }
 
     // --- Episode ---
@@ -184,9 +184,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeDetails throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeDetails(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getEpisodeDetails(1, 1, 999) }
+        assertThrows<NovixAppException> { repository.getEpisodeDetails(1, 1, 999) }
     }
 
     @Test
@@ -203,9 +203,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeImageUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeImageUrls throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getEpisodeImageUrls(
                 1,
                 1,
@@ -216,9 +216,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeGuestsOfHonor throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeGuestsOfHonor throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeGuestsOfHonor(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getEpisodeGuestsOfHonor(
                 1, 1, 99
             )
@@ -233,9 +233,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowVideosUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowVideosUrls throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowVideosUrls(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesTrailer(404) }
+        assertThrows<NovixAppException> { repository.getTvSeriesTrailer(404) }
     }
 
     @Test

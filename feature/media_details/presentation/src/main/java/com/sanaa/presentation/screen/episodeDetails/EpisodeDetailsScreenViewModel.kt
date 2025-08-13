@@ -7,6 +7,7 @@ import com.sanaa.presentation.model.mapper.toEpisodeUiModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -115,10 +116,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onErrorAccrue(throwable: Throwable) {
+    private fun onErrorAccrue(exception: NovixAppException) {
         updateState {
             copy(
-                error = throwable.message,
+                error = exception.message,
                 showRateBottomSheet = false
             )
         }

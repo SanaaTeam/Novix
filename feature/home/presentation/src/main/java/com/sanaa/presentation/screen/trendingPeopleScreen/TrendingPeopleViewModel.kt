@@ -9,6 +9,7 @@ import com.sanaa.presentation.state.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -55,7 +56,7 @@ class TrendingPeopleViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -77,7 +78,8 @@ class TrendingPeopleViewModel @Inject constructor(
         loadActors()
     }
 
-    private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
+    private fun createActorsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError)
+    : PagingSource<Int, Actor> {
         return BasePagingSourceForHome(onError = onError) { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }

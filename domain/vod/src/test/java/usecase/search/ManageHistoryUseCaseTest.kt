@@ -1,8 +1,7 @@
 package usecase.search
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.FailedToDeleteException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import extensions.now
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -56,15 +55,15 @@ class ManageHistoryUseCaseTest {
         }
 
     @Test
-    fun `getSearchHistory() should throw NotFoundException when when try to search in the history failed`() =
+    fun `getSearchHistory() should throw NovixAppException when when try to search in the history failed`() =
         runTest {
             // Given
             coEvery {
                 historyRepository.getSearchHistory(any())
-            } throws RetrievingDataFailureException("Search History")
+            } throws NovixAppException("Search History")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 manageHistoryUseCase.getSearchHistory()
             }
         }
@@ -86,16 +85,16 @@ class ManageHistoryUseCaseTest {
         }
 
     @Test
-    fun `removeSearchHistory() should throw FailedToDeleteException when try to clear recent viewed failed`() =
+    fun `removeSearchHistory() should throw NovixAppException when try to clear recent viewed failed`() =
         runTest {
             // Given
             val id = 1
             coEvery {
                 historyRepository.removeSearchHistoryById(id)
-            } throws FailedToDeleteException("Search History")
+            } throws NovixAppException("Search History")
 
             // When, Then
-            assertThrows<FailedToDeleteException> {
+            assertThrows<NovixAppException> {
                 manageHistoryUseCase.removeSearchHistory(id)
             }
         }
@@ -113,15 +112,15 @@ class ManageHistoryUseCaseTest {
         }
 
     @Test
-    fun `clearSearchHistory() should throw FailedToDeleteException when try to clear searched history failed`() =
+    fun `clearSearchHistory() should throw NovixAppException when try to clear searched history failed`() =
         runTest {
             // Given
             coEvery {
                 historyRepository.clearSearchHistory()
-            } throws FailedToDeleteException("Search History")
+            } throws NovixAppException("Search History")
 
             // When, Then
-            assertThrows<FailedToDeleteException> {
+            assertThrows<NovixAppException> {
                 manageHistoryUseCase.clearSearchHistory()
             }
         }

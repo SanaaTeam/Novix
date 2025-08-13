@@ -17,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -174,10 +175,10 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onShowRateBottomSheetFailed(throwable: Throwable) {
+    private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                errorMessage = throwable.message,
+                errorMessage = exception.message,
                 showRateBottomSheet = false
             )
         }
@@ -197,8 +198,8 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMovieDetailsFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onFetchMovieDetailsFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -210,7 +211,7 @@ class MovieDetailsViewModel @Inject constructor(
             updateState {
                 copy(
                     isLoading = false,
-                    errorMessage = throwable.message,
+                    errorMessage = exception.message,
                     noInternetConnection = false
                 )
             }

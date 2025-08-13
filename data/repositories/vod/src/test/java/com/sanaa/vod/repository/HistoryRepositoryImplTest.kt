@@ -9,10 +9,8 @@ import com.sanaa.vod.repository.mapper.history.toDto
 import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import entity.MediaHistoryItem
-import exceptions.FailedToAddException
-import exceptions.FailedToDeleteException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -47,7 +45,7 @@ class HistoryRepositoryImplTest {
     fun `getSearchHistory throws exception when failed to retrieve search history`() = runTest {
         coEvery { localDataSource.getQueries(2) } throws Exception()
 
-        assertThrows<RetrievingDataFailureException> { repository.getSearchHistory(2).first() }
+        assertThrows<NovixAppException> { repository.getSearchHistory(2).first() }
     }
 
     @Test
@@ -67,7 +65,7 @@ class HistoryRepositoryImplTest {
 
         val result = runCatching { repository.addSearchHistory(query) }
 
-        assertThrows<FailedToAddException> { result.getOrThrow() }
+        assertThrows<NovixAppException> { result.getOrThrow() }
     }
 
     @Test
@@ -85,7 +83,7 @@ class HistoryRepositoryImplTest {
 
         val result = runCatching { repository.clearSearchHistory() }
 
-        assertThrows<FailedToDeleteException> { result.getOrThrow() }
+        assertThrows<NovixAppException> { result.getOrThrow() }
     }
 
     @Test
@@ -106,7 +104,7 @@ class HistoryRepositoryImplTest {
 
             val result = runCatching { repository.removeSearchHistoryById(id) }
 
-            assertThrows<FailedToDeleteException> { result.getOrThrow() }
+            assertThrows<NovixAppException> { result.getOrThrow() }
         }
 
     @Test
@@ -123,7 +121,7 @@ class HistoryRepositoryImplTest {
     fun `getRecentViewed throws exception when failed to retrieve recent viewed`() = runTest {
         coEvery { localDataSource.getAllRecentViewed(2) } throws Exception()
 
-        assertThrows<RetrievingDataFailureException> { repository.getRecentViewed(2).first() }
+        assertThrows<NovixAppException> { repository.getRecentViewed(2).first() }
     }
 
     @Test
@@ -136,9 +134,9 @@ class HistoryRepositoryImplTest {
         coVerify {
             localDataSource.insertRecentViewed(match {
                 it.id == recentViewed.id &&
-                it.imageUrl == recentViewed.imageUrl &&
-                it.isSaved == recentViewed.isSaved &&
-                it.mediaType == recentViewed.mediaType
+                        it.imageUrl == recentViewed.imageUrl &&
+                        it.isSaved == recentViewed.isSaved &&
+                        it.mediaType == recentViewed.mediaType
             })
         }
     }
@@ -150,7 +148,7 @@ class HistoryRepositoryImplTest {
         val result = runCatching {
             repository.addRecentViewedMedia(givenRecentViewed.first().toEntity())
         }
-        assertThrows<FailedToAddException> { result.getOrThrow() }
+        assertThrows<NovixAppException> { result.getOrThrow() }
     }
 
     @Test
@@ -168,7 +166,7 @@ class HistoryRepositoryImplTest {
 
         val result = runCatching { repository.clearRecentViewed() }
 
-        assertThrows<FailedToDeleteException> { result.getOrThrow() }
+        assertThrows<NovixAppException> { result.getOrThrow() }
     }
 
     @Test
@@ -203,10 +201,10 @@ class HistoryRepositoryImplTest {
             coVerify {
                 localDataSource.insertWatchedMediaHistory(match {
                     it.id == watchedMedia.id &&
-                    it.posterImageUrl == watchedMedia.posterImageUrl &&
-                    it.mediaType == watchedMedia.mediaType &&
-                    it.username == watchedMedia.username &&
-                    it.genres == watchedMedia.genres
+                            it.posterImageUrl == watchedMedia.posterImageUrl &&
+                            it.mediaType == watchedMedia.mediaType &&
+                            it.username == watchedMedia.username &&
+                            it.genres == watchedMedia.genres
                 })
             }
         }
@@ -221,7 +219,7 @@ class HistoryRepositoryImplTest {
                 repository.addWatchedMediaHistory("", watchedMedia.toEntity())
             }
 
-            assertThrows<FailedToAddException> { result.getOrThrow() }
+            assertThrows<NovixAppException> { result.getOrThrow() }
         }
 
     @Test
@@ -243,7 +241,7 @@ class HistoryRepositoryImplTest {
     fun `getWatchedMediaHistory throws exception when failed to retrieve date`() = runTest {
         coEvery { localDataSource.getWatchedMediaHistory(any(), any(), any()) } throws Exception()
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getWatchedMediaHistory(
                 "",
                 null,

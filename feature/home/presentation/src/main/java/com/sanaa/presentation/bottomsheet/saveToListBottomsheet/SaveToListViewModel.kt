@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -75,7 +76,7 @@ class SaveToListViewModel @Inject constructor(
         emitEffect(SaveToListEffect.AddedSuccessfully)
     }
 
-    private fun onErrorAccrue(throwable: Throwable): () -> Unit = {
+    private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
         updateState {
             copy(
                 isLoading = false,

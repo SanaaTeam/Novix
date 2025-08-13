@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import entity.Movie
 import entity.TvSeries
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -61,17 +61,17 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchMovies() should throw RetrievingDataFailureException when try to search a movie failed`() =
+    fun `searchMovies() should throw NovixAppException when try to search a movie failed`() =
         runTest {
             // Given
             val query = "Sam"
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchMovies(query, page)
             }
         }
@@ -117,10 +117,10 @@ class SearchUseCaseTest {
             val page = 1
             coEvery {
                 searchRepository.searchTvShows(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchTvShows(query, page)
             }
         }
@@ -159,17 +159,17 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchActors() should throw RetrievingDataFailureException when try to search an actor failed`() =
+    fun `searchActors() should throw NovixAppException when try to search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
             val page = 1
             coEvery {
                 searchRepository.searchActors(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchActors(query, page)
             }
         }

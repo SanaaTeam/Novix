@@ -2,6 +2,7 @@ package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
 import com.sanaa.presentation.details_base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
@@ -85,7 +86,7 @@ class SaveToListsViewModel @Inject constructor(
         emitEffect(SaveToListEffects.AddedSuccessfully)
     }
 
-    private fun onErrorAccrue(throwable: Throwable) {
+    private fun onErrorAccrue(exception: NovixAppException) {
         updateState {
             copy(
                 isLoading = false,
