@@ -11,7 +11,6 @@ data class CategoriesScreenUiState(
 ) {
     companion object {
         const val MOVIE_TAB_INDEX = 0
-        const val TV_TAB_INDEX = 1
     }
 }
 

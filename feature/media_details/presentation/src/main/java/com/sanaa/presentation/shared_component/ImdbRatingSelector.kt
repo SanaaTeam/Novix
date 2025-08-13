@@ -37,8 +37,8 @@ import kotlin.math.roundToInt
 @Composable
 fun ImdbRatingSelector(
     currentRating: Int,
-    onRatingChanged: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
+    onRatingChanged: (Int) -> Unit = {},
     maxRating: Int = 10,
 ) {
     var rowSize by remember { mutableStateOf(IntSize.Zero) }

@@ -182,7 +182,7 @@ fun GenreTvShowsScreenContent(
                                                     color = Color(0x99FFFFFF)
                                                 ),
                                                 iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                                icon = painterResource(designR.drawable.icon_eye_slash),
                                             )
                                         }
                                     },

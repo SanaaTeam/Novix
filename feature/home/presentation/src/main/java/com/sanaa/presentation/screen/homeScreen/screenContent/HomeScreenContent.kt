@@ -16,17 +16,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.launchAuthActivityForResult
@@ -37,7 +31,6 @@ import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomS
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
@@ -59,8 +52,6 @@ fun HomeScreenContent(
 ) {
 
     val upcomingMovies = state.upcomingMovies.collectAsLazyPagingItems()
-    val errorMessage = stringResource(R.string.error_message)
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val context = LocalContext.current
     val launcher: ManagedActivityResultLauncher<Intent, ActivityResult> =
@@ -70,15 +61,6 @@ fun HomeScreenContent(
             && state.popularMedia.isEmpty()
             && state.topRatingMedia.isEmpty()
             && state.continueWatchingMedia.isEmpty())
-
-    LaunchedEffect(upcomingMovies.loadState) {
-        if (upcomingMovies.loadState.refresh is LoadState.Error && !state.isNoInternetConnection) {
-            snack = SnackData(
-                message = errorMessage, isError = true
-
-            )
-        }
-    }
 
     NovixScaffold(
         topBar = {

@@ -107,7 +107,6 @@ fun GenreMoviesScreenContent(
     state: GenreMoviesScreenUiState,
     interactionListener: GenreMoviesScreenInteractionListener,
 ) {
-    var snack by remember { mutableStateOf<SnackData?>(null) }
     val pagedMovies = state.movies.collectAsLazyPagingItems()
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
@@ -190,7 +189,7 @@ fun GenreMoviesScreenContent(
                                                     color = Color(0x99FFFFFF)
                                                 ),
                                                 iconSize = 24.dp,
-                                                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+                                                icon = painterResource(designR.drawable.icon_eye_slash),
                                             )
                                         }
                                     },
