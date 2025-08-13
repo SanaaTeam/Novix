@@ -20,12 +20,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingTvShowsScreenViewModel @Inject constructor(
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -62,7 +62,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
-        return manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
+        return manageTvShowUseCase.getTvShowGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
@@ -168,7 +168,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun createTvShowsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageTvSeriesUseCase.getTrendingTvSeries(
+            manageTvShowUseCase.getTrendingTvShows(
                 page = page,
                 genreId = state.value.selectedGenreId
             )

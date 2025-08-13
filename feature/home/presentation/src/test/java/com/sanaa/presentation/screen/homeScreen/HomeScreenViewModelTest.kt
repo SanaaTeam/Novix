@@ -30,7 +30,7 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import kotlin.test.Ignore
@@ -40,7 +40,7 @@ import kotlin.time.Duration.Companion.minutes
 class HomeScreenViewModelTest {
 
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
@@ -56,9 +56,9 @@ class HomeScreenViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         coEvery { manageMovieUseCase.getPopularMovies(any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getPopularSeries(any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getPopularTvShows(any()) } returns emptyList()
         coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getTopRatedTvShows(any(), any()) } returns emptyList()
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
@@ -73,7 +73,7 @@ class HomeScreenViewModelTest {
     private fun initializeViewModel() {
         viewModel = HomeScreenViewModel(
             manageMovieUseCase,
-            manageTvSeriesUseCase,
+            manageTvShowUseCase,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
@@ -90,7 +90,7 @@ class HomeScreenViewModelTest {
         val popularTvSeries = listOf(dummyTvShow.copy(id = 2))
 
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
-        coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
+        coEvery { manageTvShowUseCase.getPopularTvShows(1) } returns popularTvSeries
 
         // When
         initializeViewModel()
@@ -296,7 +296,7 @@ class HomeScreenViewModelTest {
         viewModel.onRetryClick()
         advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
-        coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
+        coVerify(exactly = 2) { manageTvShowUseCase.getPopularTvShows(any()) }
     }
 
     @Test

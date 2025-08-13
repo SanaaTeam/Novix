@@ -3,10 +3,10 @@ package usecase
 import entity.Actor
 import entity.Episode
 import javax.inject.Inject
-import repository.TvSeriesRepository
+import repository.TvShowRepository
 
 class ManageEpisodeDetailsUseCase @Inject constructor(
-    private val tvSeriesRepo: TvSeriesRepository
+    private val tvSeriesRepo: TvShowRepository
 ) {
     suspend fun getEpisodeDetails(id: Int, seasonNumber: Int, episodeNumber: Int): Episode =
         tvSeriesRepo.getEpisodeDetails(id, seasonNumber, episodeNumber)
@@ -33,7 +33,7 @@ class ManageEpisodeDetailsUseCase @Inject constructor(
         rating: Float
     ): Boolean {
         return tvSeriesRepo.addTvEpisodeRate(
-            seriesId = seriesId,
+            tvShowId = seriesId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             rating = rating

@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
@@ -33,7 +33,7 @@ class EpisodeDetailsScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val seriesId = 5
     private val seasonNumber = 2
@@ -121,8 +121,8 @@ class EpisodeDetailsScreenViewModelTest {
                 episodeNumber
             )
         } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(

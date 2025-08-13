@@ -29,14 +29,14 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
@@ -83,7 +83,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun loadPopularMediaOperation(): List<MediaItem> {
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
-        val popularTvSeries = manageTvSeriesUseCase.getPopularSeries(1).map { it.toState() }.take(5)
+        val popularTvSeries = manageTvShowUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
         return (popularMovies + popularTvSeries).sortedByDescending { media -> media.rating }
     }
@@ -110,7 +110,7 @@ class HomeScreenViewModel @Inject constructor(
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
         val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null)
             .map { it.toState() }.take(5)
-        val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null)
+        val topRatedTvSeries = manageTvShowUseCase.getTopRatedTvShows(1, null)
             .map { it.toState() }.take(5)
 
         return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
