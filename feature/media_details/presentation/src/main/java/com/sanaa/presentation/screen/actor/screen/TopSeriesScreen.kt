@@ -36,6 +36,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
+import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
@@ -98,6 +99,7 @@ private fun TopSeriesContent(
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
+
             Box(
                 modifier = Modifier
                     .weight(1f)
@@ -107,62 +109,71 @@ private fun TopSeriesContent(
                     state.isLoading,
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
-
                 ) { loading ->
                     if (loading) {
                         LoadingIndicator()
                     } else {
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            itemsIndexed(
-                                state.topTvSeries,
-                                key = { index, _ -> index }
-                            ) { _, series ->
-                                MediaPosterCard(
-                                    posterImage = {
-                                        RemoteBlurredSensitiveImage(
-                                            imageUrl = series.posterPath.orEmpty(),
-                                            modifier = Modifier.fillMaxSize(),
-                                            sensitiveContentThreshold = 0.2f,
-                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                            safeContentThreshold = LocalSafeContentThreshold.current,
-                                            contentDescription = series.title,
-                                            placeholderContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                            errorContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                        ) {
-                                            OnBlurContent(
-                                                hintText = stringResource(R.string.unsuitable_image),
-                                                textStyle = Theme.textStyle.body.small.copy(
-                                                    color = Color(0x99FFFFFF)
-                                                ),
-                                                iconSize = 24.dp,
-                                                icon = painterResource(designR.drawable.icon_eye_slash),
-                                            )
-                                        }
-                                    },
-                                    topLeftContent = {
-
-                                    },
-                                    onCardClick = {
-                                        navController.navigate(
-                                            SeriesDetailsScreenRoute(series.id).route()
-                                        )
-                                    }
-                                )
-                            }
-                        }
+                        SeriesList(state, navController)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SeriesList(
+    state: ActorScreenUiState,
+    navController: NavHostController,
+) {
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = 140.dp),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        itemsIndexed(
+            state.topTvSeries,
+            key = { index, _ -> index }
+        ) { _, series ->
+            MediaPosterCard(
+                posterImage = {
+                    PosterImage(series)
+                },
+                onCardClick = {
+                    navController.navigate(
+                        SeriesDetailsScreenRoute(series.id).route()
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun PosterImage(series: SeriesUiModel) {
+    RemoteBlurredSensitiveImage(
+        imageUrl = series.posterPath.orEmpty(),
+        modifier = Modifier.fillMaxSize(),
+        sensitiveContentThreshold = 0.2f,
+        isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+        safeContentThreshold = LocalSafeContentThreshold.current,
+        contentDescription = series.title,
+        placeholderContent = {
+            RemoteImagePlaceholder(Modifier.fillMaxSize())
+        },
+        errorContent = {
+            RemoteImagePlaceholder(Modifier.fillMaxSize())
+        },
+    ) {
+        OnBlurContent(
+            hintText = stringResource(R.string.unsuitable_image),
+            textStyle = Theme.textStyle.body.small.copy(
+                color = Color(0x99FFFFFF)
+            ),
+            iconSize = 24.dp,
+            icon = painterResource(designR.drawable.icon_eye_slash),
+        )
     }
 }
