@@ -10,27 +10,31 @@ import javax.inject.Inject
 @HiltViewModel
 class DeleteListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(),dispatcher),DeleteInteractionListener {
-
-   override fun onDeleteConfirmed(listId: Long) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<DeleteListUiState, DeleteListEffect>(DeleteListUiState(), dispatcher),
+    DeleteInteractionListener {
+    override fun onDeleteConfirmed(listId: Long) {
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             callee = { manageSavedListsUseCase.deleteSavedList(listId.toInt()) },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-                emitEffect(DeleteListEffect.DeleteSuccess)
-            },
-            onError = { e ->
-                emitEffect(DeleteListEffect.DeleteFailure)
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to delete list. Please try again."
-                    )
-                }
-            }
+            onSuccess = onDeleteConfirmedSuccess(),
+            onError = ::onDeleteConfirmedFailed,
         )
+    }
+
+    private fun onDeleteConfirmedSuccess(): (Unit) -> Unit = {
+        updateState { copy(isLoading = false) }
+        emitEffect(DeleteListEffect.DeleteSuccess)
+    }
+
+    private fun onDeleteConfirmedFailed(throwable: Throwable) {
+        emitEffect(DeleteListEffect.DeleteFailure)
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = "Failed to delete list. Please try again."
+            )
+        }
     }
 }

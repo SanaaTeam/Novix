@@ -29,8 +29,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-
-    ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
+) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
     dispatcher
 ), WatchingHistoryInteractionListener {
@@ -44,45 +43,40 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadWatchedHistoryMovies(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        movieList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
             },
-            onError = { ::onLoadDataError }
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError,
         )
     }
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadWatchedHistoryTvSeries(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        tvShowList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
             },
-            onError = { ::onLoadDataError }
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError
         )
+    }
+
+    private fun onCollectMovies(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                movieList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
     }
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
-                updateState {
-                    it.copy(movieGenres = genres)
-                }
+                updateState { copy(movieGenres = genres) }
             },
             onError = { ::onLoadDataError }
         )
@@ -90,33 +84,31 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
-                updateState {
-                    it.copy(tvShowGenres = genres)
-                }
+                updateState { copy(tvShowGenres = genres) }
             },
             onError = { ::onLoadDataError }
         )
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
+        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
 
 
     override fun onMovieGenreClick(genreId: Int?) {
         if (genreId != state.value.movieSelectedGenreId) {
-            updateState { it.copy(movieSelectedGenreId = genreId) }
+            updateState { copy(movieSelectedGenreId = genreId) }
             fetchMovies(genreId)
         }
     }
 
     override fun onTvShowGenreClick(genreId: Int?) {
         if (genreId != state.value.tvShowSelectedGenreId) {
-            updateState { it.copy(tvShowSelectedGenreId = genreId) }
+            updateState { copy(tvShowSelectedGenreId = genreId) }
             fetchTvShows(genreId)
         }
     }
@@ -130,7 +122,7 @@ class WatchingHistoryViewModel @Inject constructor(
             savedListsStatusProvider.markItemUnsaved(mediaItem.id)
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = mediaItem
                 )
@@ -143,9 +135,9 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private suspend fun loadWatchedHistoryMovies(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         val user = try {
             getLoggedInUserUseCase.getLoggedInUser()
         } catch (_: NoLoggedInUserException) {
@@ -160,9 +152,9 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private suspend fun loadWatchedHistoryTvSeries(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         val user = try {
             getLoggedInUserUseCase.getLoggedInUser()
         } catch (_: NoLoggedInUserException) {
@@ -179,23 +171,22 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun onLoadDataError(exception: Throwable) {
         updateState {
-            it.copy(
+            copy(
                 error = exception.message,
                 isLoading = false
             )
         }
     }
 
-
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 }

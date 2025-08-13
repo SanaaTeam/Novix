@@ -68,7 +68,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onSearchQueryChanged(query: String) {
-        updateState { it.copy(searchQuery = query) }
+        updateState { copy(searchQuery = query) }
     }
 
     override fun retrySearch() {
@@ -77,7 +77,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
-        updateState { it.copy(selectedTabIndex = index) }
+        updateState { copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
     }
@@ -99,15 +99,14 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(SearchScreenEffects.NavigateToLogin)
     }
 
 
-
     override fun onSaveIconClick(media: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
-            updateState { it.copy(showLoginBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -116,30 +115,31 @@ class SearchViewModel @Inject constructor(
         } else {
             savedListsStatusProvider.markItemSaved(media.id)
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = media
                 )
             }
         }
     }
+
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onSaveMoviesClicked() {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
             updateState {
-                it.copy(
+                copy(
                     showLoginBottomSheet = true
                 )
             }
@@ -155,7 +155,7 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onDeleteRecentSearchItem(id: Int) {
-        updateState { it.copy(isLoading = true, error = null) }
+        updateState { copy(isLoading = true, error = null) }
         tryToExecute(
             callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = { setSuccessState() },
@@ -164,13 +164,13 @@ class SearchViewModel @Inject constructor(
     }
 
     override fun onRecentSearchItemClicked(query: String) {
-        updateState { it.copy(searchQuery = query) }
+        updateState { copy(searchQuery = query) }
         loadMediaByTab(query)
     }
 
 
     override fun onBottomSheetDismiss() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onClearRecentViewClicked() {
@@ -250,7 +250,7 @@ class SearchViewModel @Inject constructor(
 
     private fun onCollectRecentViewedItems(viewed: List<RecentViewedMedia>) {
         val uiItems = viewed.map { it.toUiState() }
-        updateState { it.copy(recentViewedMedia = uiItems, noInternetConnection = false) }
+        updateState { copy(recentViewedMedia = uiItems, noInternetConnection = false) }
     }
 
     private suspend fun onGetRecentViewedItems(): Flow<List<RecentViewedMedia>> {
@@ -263,12 +263,12 @@ class SearchViewModel @Inject constructor(
 
     fun onCollectRecentSearchHistory(queries: List<SearchHistory>) {
         val uiQueries = queries.map { it.toUiState() }
-        updateState { it.copy(recentSearchQueries = uiQueries, noInternetConnection = false) }
+        updateState { copy(recentSearchQueries = uiQueries, noInternetConnection = false) }
     }
 
     private fun clearSearchResults() {
         updateState {
-            it.copy(
+            copy(
                 movies = flowOf(PagingData.empty()),
                 tvShows = flowOf(PagingData.empty()),
                 actors = flowOf(PagingData.empty()),
@@ -289,31 +289,31 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
-        updateState { it.copy(movies = flowOf(pagingData)) }
+        updateState { copy(movies = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
-        updateState { it.copy(tvShows = flowOf(pagingData)) }
+        updateState { copy(tvShows = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
-        updateState { it.copy(actors = flowOf(pagingData)) }
+        updateState { copy(actors = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onDataLoadError(e: Throwable) {
-        updateState { currentState ->
+        updateState {
             if (e is NoNetworkException) {
-                currentState.copy(
+                copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             } else {
                 val errorMessage = e.message ?: "An unexpected error occurred."
-                currentState.copy(
+                copy(
                     isLoading = false,
                     error = errorMessage,
                     noInternetConnection = false
@@ -382,7 +382,7 @@ class SearchViewModel @Inject constructor(
 
     fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R
+        mapper: (T) -> R,
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
@@ -397,17 +397,17 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun setLoadingState() {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
     }
 
     private fun setSuccessState() {
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+        updateState { copy(isLoading = false, noInternetConnection = false) }
     }
 
     private fun observeSelectedTheme() {
         tryToCollect(
             callee = mangeUserPreferenceUseCase::getTheme,
-            onCollect = { isDarkMode -> updateState { it.copy(isDarkMode = isDarkMode == Theme.DARK) } },
+            onCollect = { isDarkMode -> updateState { copy(isDarkMode = isDarkMode == Theme.DARK) } },
             onError = ::onDataLoadError
         )
 
@@ -416,35 +416,33 @@ class SearchViewModel @Inject constructor(
     private fun observeContentRestriction() {
         tryToCollect(
             callee = mangeUserPreferenceUseCase::getContentRestriction,
-            onCollect = { contentRestriction ->
-                updateState {
-                    it.copy(
-                        safeContentThreshold =
-                            when (contentRestriction) {
-                                ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
-                                ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
-                                ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
-                            }
-                    )
-                }
-            },
+            onCollect = ::onCollectContentRestriction,
+        )
+    }
 
+    private fun onCollectContentRestriction(contentRestriction: ContentRestriction) {
+        updateState {
+            copy(
+                safeContentThreshold =
+                    when (contentRestriction) {
+                        ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+                        ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+                        ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+                    }
             )
+        }
     }
 
     private fun getUserState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(isUserLoggedIn = isLogged) }
+    }
 
     private companion object {
         private const val PAGE_SIZE = 20

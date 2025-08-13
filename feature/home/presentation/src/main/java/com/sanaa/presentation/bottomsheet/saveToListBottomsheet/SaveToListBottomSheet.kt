@@ -42,6 +42,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
+import com.sanaa.feature.home.presentation.R as homeRes
 
 @Composable
 fun SaveToListBottomSheet(
@@ -54,10 +55,10 @@ fun SaveToListBottomSheet(
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
-    var successMessage =
-        stringResource(com.sanaa.feature.home.presentation.R.string.added_to_list_successfully)
-    var failMessage =
-        stringResource(com.sanaa.feature.home.presentation.R.string.added_to_list_failed)
+    val successMessage =
+        stringResource(homeRes.string.added_to_list_successfully)
+    val failMessage =
+        stringResource(homeRes.string.added_to_list_failed)
 
 
     LaunchedEffect(Unit) {

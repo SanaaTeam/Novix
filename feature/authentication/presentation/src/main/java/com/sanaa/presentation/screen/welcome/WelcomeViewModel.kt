@@ -20,12 +20,8 @@ class WelcomeViewModel @Inject constructor(
 
     override fun onContinueClicked()  {
         tryToExecute(
-            callee = {
-                createGuestSessionUseCase.createGuestSession()
-            },
-            onSuccess = {
-                emitEffect(WelcomeScreenEffects.ReturnGuestResultCode)
-            }
+            callee = { createGuestSessionUseCase.createGuestSession() },
+            onSuccess = { emitEffect(WelcomeScreenEffects.ReturnGuestResultCode) }
         )
     }
 

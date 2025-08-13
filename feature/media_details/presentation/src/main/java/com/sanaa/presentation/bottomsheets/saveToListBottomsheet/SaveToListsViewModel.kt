@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,29 +24,33 @@ class SaveToListsViewModel @Inject constructor(
     }
 
     private fun loadPlaylists() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
             callee = { manageSavedListsUseCase.getSavedLists() },
-            onSuccess = { domainLists ->
-                val uiLists = domainLists.map { savedList ->
-                    PlaylistUiItems(
-                        id = savedList.id.toLong(),
-                        title = savedList.title,
-                        itemCount = savedList.itemCount
-                    )
-                }
-                updateState { it.copy(isLoading = false, playlists = uiLists) }
-            },
-            onError = {
-                updateState { it.copy(isLoading = false, errorMessage = "Failed to load lists.") }
-            }
+            onSuccess = ::onLoadPlaylistsSuccess,
+            onError = this@SaveToListsViewModel.onErrorAccrue()
         )
+    }
+
+    private fun onLoadPlaylistsSuccess(domainLists: List<SavedList>) {
+        val uiLists = domainLists.map { savedList ->
+            PlaylistUiItems(
+                id = savedList.id.toLong(),
+                title = savedList.title,
+                itemCount = savedList.itemCount
+            )
+        }
+        updateState { copy(isLoading = false, playlists = uiLists) }
+    }
+
+    private fun onErrorAccrue(): (Throwable) -> Unit = {
+        updateState { copy(isLoading = false, errorMessage = "Failed to load lists.") }
     }
 
     override fun onPlaylistSelected(listId: Long) {
         updateState {
-            it.copy(
+            copy(
                 selectedListId = listId, isAddButtonEnabled = true
             )
         }
@@ -55,30 +60,39 @@ class SaveToListsViewModel @Inject constructor(
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            callee = {
-                manageSavedListItemsUseCase.addMovieToSavedList(
-                    listId = selectedListId.toInt(),
-                    movieId = mediaId.toInt()
-                )
-            },
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-                savedListsStatusProvider.markItemSaved(mediaId.toInt())
-                loadPlaylists()
-                emitEffect(SaveToListEffects.AddedSuccessfully)
-            },
-            onError = {
-                updateState {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to add item to list."
-                    )
-                }
-                emitEffect(SaveToListEffects.FailedToAdd)
-            }
+            callee = addMovieToSavedList(selectedListId, mediaId),
+            onSuccess = onAddMovieToSavedListSuccess(mediaId),
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun addMovieToSavedList(
+        selectedListId: Long,
+        mediaId: Long,
+    ): suspend () -> Boolean = {
+        manageSavedListItemsUseCase.addMovieToSavedList(
+            listId = selectedListId.toInt(),
+            movieId = mediaId.toInt()
+        )
+    }
+
+    private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
+        updateState { copy(isLoading = false) }
+        savedListsStatusProvider.markItemSaved(mediaId.toInt())
+        loadPlaylists()
+        emitEffect(SaveToListEffects.AddedSuccessfully)
+    }
+
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            copy(
+                isLoading = false,
+                errorMessage = "Failed to add item to list."
+            )
+        }
+        emitEffect(SaveToListEffects.FailedToAdd)
     }
 }

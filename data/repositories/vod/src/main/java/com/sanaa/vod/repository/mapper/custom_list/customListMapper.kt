@@ -3,8 +3,8 @@ package com.sanaa.vod.repository.mapper.custom_list
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
-import kotlinx.datetime.LocalDate
 import usecase.custom_list.custom_list_param.SavedList
 
 fun SavedListDto.toEntity() = SavedList(id, title, itemCount)
@@ -16,8 +16,8 @@ fun SavedItemDto.toEntity() = Movie(
     genres = emptyList(),
     imdbRating = voteAverage,
     duration = null,
-    releaseDate = LocalDate.parse(releaseDate ?: "2000-01-01"),
-    overview = overview ?: "",
+    releaseDate = getLocalDateOrDefault(releaseDate),
+    overview = overview.orEmpty(),
     trailerUrl = null,
     rating = null
 )

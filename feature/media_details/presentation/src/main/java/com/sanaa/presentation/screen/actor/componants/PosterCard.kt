@@ -33,7 +33,7 @@ fun PosterCard(
             .height(210.dp),
         posterImage = {
             RemoteBlurredSensitiveImage(
-                imageUrl = imageUrl ?: "",
+                imageUrl = imageUrl.orEmpty(),
                 modifier = Modifier.fillMaxWidth(),
                 sensitiveContentThreshold = 0.2f,
                 isBlurEnabled = LocalSafeContentThreshold.current != 0f,

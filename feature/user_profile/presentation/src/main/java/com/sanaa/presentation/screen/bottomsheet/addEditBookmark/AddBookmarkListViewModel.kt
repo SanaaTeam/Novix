@@ -25,7 +25,7 @@ class AddBookmarkListViewModel @Inject constructor(
 
     override fun onListTitleChanged(title: String) {
         updateState {
-            it.copy(
+            copy(
                 listTitle = title,
                 isAddButtonEnabled = title.isNotBlank()
             )
@@ -33,16 +33,16 @@ class AddBookmarkListViewModel @Inject constructor(
     }
 
     override fun resetState() {
-        updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
+        updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 
     override fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
                 emitEffect(Unit)
@@ -60,7 +60,7 @@ class AddBookmarkListViewModel @Inject constructor(
             },
             onError = {
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = "Failed to create list. Please try again."
                     )

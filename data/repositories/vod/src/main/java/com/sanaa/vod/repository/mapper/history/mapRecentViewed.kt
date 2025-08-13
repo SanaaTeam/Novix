@@ -1,11 +1,11 @@
 package com.sanaa.vod.repository.mapper.history
 
 import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
-import com.sanaa.vod.util.TimeUtils
+import com.sanaa.vod.util.DateTimeUtils
 import usecase.search.ManageRecentViewedUseCase.RecentViewedMedia
 import usecase.search.search_param.MediaType
 
-fun RecentViewedMedia.toDto(time: Long = TimeUtils.getCurrentTimeStamp()): RecentViewedLocalDto {
+fun RecentViewedMedia.toDto(time: Long = DateTimeUtils.getCurrentTimeStamp()): RecentViewedLocalDto {
     return RecentViewedLocalDto(
         id = id,
         imageUrl = posterImageUrl,

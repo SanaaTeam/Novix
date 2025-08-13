@@ -7,8 +7,8 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.ReviewUiModel
-import dagger.hilt.android.lifecycle.HiltViewModel
 import com.sanaa.presentation.model.mapper.toReviewUiModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Review
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +24,7 @@ class ReviewViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
     defaultDispatcher = dispatcher
@@ -45,7 +45,7 @@ class ReviewViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(error = null, noInternetConnection = false, isLoading = true) }
+        updateState { copy(error = null, noInternetConnection = false, isLoading = true) }
         fetchReviews(mediaId)
     }
 
@@ -54,31 +54,31 @@ class ReviewViewModel @Inject constructor(
             callee = {
                 loadReviews(id, mediaType)
             },
-            onCollect = { reviews ->
-                updateState {
-                    it.copy(
-                        reviews = flowOf(reviews), isLoading = false
-                    )
-                }
-            },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-                } else {
-                    updateState { it.copy(isLoading = false, error = exception.message) }
-                }
-            }
+            onCollect = ::onCollectReviews,
+            onError = ::onFetchReviewsFailed
         )
     }
 
+    private fun onCollectReviews(reviews: PagingData<ReviewUiModel>) {
+        updateState { copy(reviews = flowOf(reviews), isLoading = false) }
+    }
+
+    private fun onFetchReviewsFailed(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } else {
+            updateState { copy(isLoading = false, error = throwable.message) }
+        }
+    }
+
     private fun loadReviews(id: Int, mediaType: MediaTypeUiModel): Flow<PagingData<ReviewUiModel>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createReviewsPagingDataSource(mediaType, id) },
             mapper = Review::toReviewUiModel
@@ -86,7 +86,7 @@ class ReviewViewModel @Inject constructor(
     }
 
     private fun createReviewsPagingDataSource(
-        mediaType: MediaTypeUiModel, id: Int
+        mediaType: MediaTypeUiModel, id: Int,
     ): PagingSource<Int, Review> {
         return BasePagingSource { page ->
             if (mediaType == MediaTypeUiModel.MOVIE) {

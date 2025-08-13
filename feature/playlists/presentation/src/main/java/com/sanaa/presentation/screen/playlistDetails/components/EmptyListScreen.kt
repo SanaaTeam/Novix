@@ -26,9 +26,7 @@ fun EmptyListScreen(
     @DrawableRes imageRes: Int,
     messageText: String,
 ) {
-    NovixScaffold(
-
-    ) {
+    NovixScaffold {
         Column(
             modifier = Modifier
                 .fillMaxSize(),

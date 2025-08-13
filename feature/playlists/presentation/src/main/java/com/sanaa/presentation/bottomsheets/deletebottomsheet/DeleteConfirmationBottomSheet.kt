@@ -45,7 +45,7 @@ fun DeleteConfirmationBottomSheet(
     val viewModel: DeleteListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
-    var failMessage =
+    val failMessage =
         stringResource(com.sanaa.feature.playlists.presentation.R.string.deleted_list_failed)
 
     LaunchedEffect(Unit) {

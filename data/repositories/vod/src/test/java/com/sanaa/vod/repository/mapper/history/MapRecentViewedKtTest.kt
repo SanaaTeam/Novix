@@ -1,7 +1,7 @@
 package com.sanaa.vod.repository.mapper.history
 
 import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
-import com.sanaa.vod.util.TimeUtils
+import com.sanaa.vod.util.DateTimeUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import usecase.search.ManageRecentViewedUseCase
@@ -67,7 +67,7 @@ class MapRecentViewedKtTest {
     @Test
     fun `given RecentViewedMedia when toDto called without timestamp should use current timestamp`() {
         val result = createRecentViewedMedia().toDto()
-        val now = TimeUtils.getCurrentTimeStamp()
+        val now = DateTimeUtils.getCurrentTimeStamp()
         Assertions.assertTrue(now - result.timestamp < 1000)
     }
 
