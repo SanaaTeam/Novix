@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,8 +32,6 @@ import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.provider.LocalThemeMode
 import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateBack
 import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateToMediaDetails
-import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.ShowErrorSnackBar
-import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.ShowSuccessSnackBar
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
 import dagger.hilt.android.EntryPointAccessors
@@ -47,6 +43,20 @@ import com.sanaa.designsystem.R as designR
 fun MyRatingScreen(
     viewModel: MyRatingScreenViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    MyRatingScreenEffectsHandler(effects = viewModel.effect)
+
+    MyRatingScreenContent(
+        state = state,
+        interactionListener = viewModel,
+    )
+}
+
+@Composable
+private fun MyRatingScreenEffectsHandler(
+    effects: SharedFlow<MyRatingScreenEffect>
+) {
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
 
@@ -56,58 +66,27 @@ fun MyRatingScreen(
             .detailsApi()
     }
 
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    MyRatingScreenEffectsHandler(
-        effects = viewModel.effect,
-        onNavigateBack = { navController.popBackStack() },
-        onShowErrorSnackBar = { message -> snack = SnackData(message = message, isError = true) },
-        onShowSuccessSnackBar = { message -> snack = SnackData(message = message, isError = false) },
-        onNavigateToMediaDetails = { id, type ->
-            detailsApi.launch(
-                context = navController.context,
-                id = id,
-                startRoute = when (type) {
-                    MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                    MediaTypeUi.TV_SHOW -> StartRoute.SERIES
-                }
-            )
-        }
-    )
-
-    MyRatingScreenContent(
-        state = state,
-        interactionListener = viewModel,
-        snack = snack,
-        onDismissSnack = { snack = null }
-    )
-}
-
-@Composable
-private fun MyRatingScreenEffectsHandler(
-    onNavigateBack: () -> Unit,
-    onShowErrorSnackBar: (String) -> Unit,
-    onShowSuccessSnackBar: (String) -> Unit,
-    onNavigateToMediaDetails: (Int, MediaTypeUi) -> Unit,
-    effects:SharedFlow<MyRatingScreenEffect>
-) {
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
-                is NavigateBack -> onNavigateBack()
-                is ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
-                is ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
-                is NavigateToMediaDetails -> onNavigateToMediaDetails(effect.mediaId, effect.mediaTypeUi)
+                is NavigateBack -> navController.popBackStack()
+                is NavigateToMediaDetails -> detailsApi.launch(
+                    context = navController.context,
+                    id = effect.mediaId,
+                    startRoute = when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                        MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                    }
+                )
             }
         }
     }
-}@Composable
+}
+
+@Composable
 private fun MyRatingScreenContent(
-    onDismissSnack: () -> Unit,
     state: MyRatingScreenUiState,
     interactionListener: MyRatingScreenInteractionListener,
-    snack: SnackData?
 ) {
     NovixScaffold(
         modifier = Modifier.background(color = Theme.colors.surface),
@@ -132,8 +111,8 @@ private fun MyRatingScreenContent(
                 contentAlignment = Alignment.TopCenter
             ) {
                 AnimatedSnackBarHost(
-                    data = snack,
-                    onDismiss = onDismissSnack,
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onDismissSnack,
                 )
             }
         }
