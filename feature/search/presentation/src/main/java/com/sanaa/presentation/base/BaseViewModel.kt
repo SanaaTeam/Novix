@@ -18,6 +18,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
@@ -27,9 +30,12 @@ abstract class BaseViewModel<T, E>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<T> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<E>()
-    val effect: SharedFlow<E> = _effect.asSharedFlow()
+    private val _effectChannel = Channel<E>(Channel.BUFFERED)
+    val effect: Flow<E> = _effectChannel.receiveAsFlow()
 
+    private var lastEffect: E? = null
+    private var lastTime = 0L
+    private val effectDebounceMs = 500L
 
     internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
@@ -41,9 +47,9 @@ abstract class BaseViewModel<T, E>(
             onError(throwable)
         }
 
-    protected fun <T> tryToExecute(
-        block: suspend () -> T,
-        onSuccess: (T) -> Unit = {},
+    protected fun <R> tryToExecute(
+        block: suspend () -> R,
+        onSuccess: (R) -> Unit = {},
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
@@ -61,9 +67,9 @@ abstract class BaseViewModel<T, E>(
         }
     }
 
-    protected fun <T> tryToCollect(
-        block: suspend () -> Flow<T>,
-        onCollect: suspend (T) -> Unit,
+    protected fun <R> tryToCollect(
+        block: suspend () -> Flow<R>,
+        onCollect: suspend (R) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
@@ -71,9 +77,7 @@ abstract class BaseViewModel<T, E>(
         viewModelScope.launch(dispatcher + exceptionHandler) {
             try {
                 block()
-                    .catch { e ->
-                        onError(e)
-                    }
+                    .catch { e -> onError(e) }
                     .collectLatest { value ->
                         try {
                             onCollect(value)
@@ -90,9 +94,14 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun emitEffect(effect: E) {
+        val now = System.currentTimeMillis()
+        if (effect == lastEffect && now - lastTime < effectDebounceMs) return
+
+        lastEffect = effect
+        lastTime = now
+
         viewModelScope.launch {
-            _effect.emit(effect)
+            _effectChannel.send(effect)
         }
     }
-
 }
