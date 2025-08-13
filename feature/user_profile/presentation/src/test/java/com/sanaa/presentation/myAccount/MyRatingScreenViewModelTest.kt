@@ -1,7 +1,6 @@
 package com.sanaa.presentation.myAccount
 
 import app.cash.turbine.test
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
@@ -9,7 +8,7 @@ import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect
 import com.sanaa.presentation.screen.myRating.MyRatingScreenViewModel
 import com.sanaa.presentation.screen.myRating.MyRatingTab
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -45,7 +44,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `loadRatedMedia should sets isNoInternetConnection to true when there is a network error`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvShow)
 
         viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
 
@@ -139,13 +138,13 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onDeleteIconClick for tv show throws exception emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvShow)
         coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")
 
         viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
         advanceUntilIdle()
 
-        viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
+        viewModel.onDeleteIconClick(dummyTvShow.id, MediaTypeUi.TV_SHOW)
 
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar)
@@ -164,7 +163,7 @@ class MyRatingScreenViewModelTest {
             releaseDate = LocalDate.Companion.parse("2023-01-01"),
             rating = 8
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 2,
             title = "Dummy TV Show",
             overview = "An overview",

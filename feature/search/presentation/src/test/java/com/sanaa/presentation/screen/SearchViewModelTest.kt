@@ -11,7 +11,7 @@ import com.sanaa.presentation.screen.state.SearchScreenUiState
 import entity.Actor
 import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -655,7 +655,7 @@ class SearchViewModelTest {
             rating = 0
         )
 
-        val series = TvSeries(
+        val series = TvShow(
             1,
             "tvShowName",
             "https://image.com",

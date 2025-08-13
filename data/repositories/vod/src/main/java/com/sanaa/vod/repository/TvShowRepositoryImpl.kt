@@ -13,7 +13,7 @@ import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 import kotlinx.coroutines.flow.first
 import repository.TvSeriesRepository
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class TvShowRepositoryImpl @Inject constructor(
     private val preferences: PreferencesManager
 ) : TvSeriesRepository {
 
-    override suspend fun getTvSeriesDetails(id: Int): TvSeries = safeCall("Tv Series not found") {
+    override suspend fun getTvSeriesDetails(id: Int): TvShow = safeCall("Tv Series not found") {
         remoteDataSource.getTvShowDetails(id).toEntity()
     }
 
@@ -38,7 +38,7 @@ class TvShowRepositoryImpl @Inject constructor(
             remoteDataSource.getTvShowImageUrls(id).map { it.toEntity() }.take(count)
         }
 
-    override suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =
+    override suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvShow> =
         safeCall("Tv Series not found") {
             remoteDataSource.getTvShowsByGenre(page, genreId).map { it.toEntity() }
         }
@@ -77,7 +77,7 @@ class TvShowRepositoryImpl @Inject constructor(
             remoteDataSource.getTvShowVideosUrls(id).toEntity()
         }
 
-    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> =
+    override suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvShow> =
         safeCall("Failed to fetch TvSeries TopRated") {
            if (page == 1 && genreId == null) {
                 val cachedMovies =
@@ -99,12 +99,12 @@ class TvShowRepositoryImpl @Inject constructor(
         }
 
 
-    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> =
+    override suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvShow> =
         safeCall("Failed to fetch TvSeries Trending") {
             remoteDataSource.fetchTrendingTvShows(page, genreId).map { it.toEntity() }
         }
 
-    override suspend fun getPopularSeries(page: Int): List<TvSeries> =
+    override suspend fun getPopularSeries(page: Int): List<TvShow> =
         safeCall("Failed to fetch TvSeries Popular") {
             if (page == 1) {
                 val cachedMovies =
@@ -192,7 +192,7 @@ class TvShowRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
+    override suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvShow> {
         return safeCall("Failed to fetch user rated tv shows") {
             remoteDataSource.getTvShowRate(accountId, sessionId).map { it.toEntity() }
         }

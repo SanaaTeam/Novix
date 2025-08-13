@@ -9,12 +9,12 @@ import com.sanaa.presentation.util.DateTimeUtils.formatLocalizedDate
 import entity.Episode
 import entity.MediaHistoryItem
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
-fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
+fun TvShow.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
@@ -45,7 +45,7 @@ fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     seasonNumber = seasonNumber,
 )
 
-fun TvSeries.toHistory(): MediaHistoryItem {
+fun TvShow.toHistory(): MediaHistoryItem {
     return MediaHistoryItem(
         id = id,
         genres = genres,

@@ -11,7 +11,7 @@ import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -80,7 +80,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource() },
-            mapper = TvSeries::toState
+            mapper = TvShow::toState
         )
     }
 
@@ -166,7 +166,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private fun createTvShowsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
+    private fun createTvShowsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTrendingTvSeries(
                 page = page,

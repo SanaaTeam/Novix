@@ -2,7 +2,7 @@ package usecase
 
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import repository.ActorRepository
 import javax.inject.Inject
 
@@ -15,7 +15,7 @@ class ManageActorUseCase @Inject constructor(
     suspend fun getActorTopMovies(id: Int): List<Movie> =
         actorRepo.getActorTopMovies(id)
 
-    suspend fun getActorTopTvSeries(id: Int): List<TvSeries> =
+    suspend fun getActorTopTvSeries(id: Int): List<TvShow> =
         actorRepo.getActorTopTvShows(id)
 
     suspend fun getGalleryImages(id: Int): List<String> =

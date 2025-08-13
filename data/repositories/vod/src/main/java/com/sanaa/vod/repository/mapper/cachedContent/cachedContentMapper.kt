@@ -6,7 +6,7 @@ import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 
 fun Movie.toLocalDto(): MovieLocalDto =
     MovieLocalDto(
@@ -17,7 +17,7 @@ fun Movie.toLocalDto(): MovieLocalDto =
         releaseDate = releaseDate.toString(),
     )
 
-fun TvSeries.toLocalDto(): TvShowLocalDto =
+fun TvShow.toLocalDto(): TvShowLocalDto =
     TvShowLocalDto(
         id = id,
         title = title,
@@ -40,7 +40,7 @@ fun MovieLocalDto.toEntity() = Movie(
     rating = 0,
 )
 
-fun TvShowLocalDto.toEntity() = TvSeries(
+fun TvShowLocalDto.toEntity() = TvShow(
     id = id,
     title = title,
     posterImageUrl = posterImageUrl,

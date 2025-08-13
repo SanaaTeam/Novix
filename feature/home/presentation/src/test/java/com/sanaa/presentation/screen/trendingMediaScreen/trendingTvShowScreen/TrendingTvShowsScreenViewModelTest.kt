@@ -8,7 +8,7 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -141,7 +141,7 @@ class TrendingTvShowsScreenViewModelTest {
             )
         )
         val tvShows = listOf(
-            TvSeries(
+            TvShow(
                 id = 1,
                 title = "Breaking Bad",
                 posterImageUrl = "https://example.com/breaking_bad.jpg",
@@ -152,7 +152,7 @@ class TrendingTvShowsScreenViewModelTest {
                 seasonsCount = 2,
                 rating = 0
             ),
-            TvSeries(
+            TvShow(
                 id = 2,
                 title = "Game of Thrones",
                 posterImageUrl = "https://example.com/image.jpg",

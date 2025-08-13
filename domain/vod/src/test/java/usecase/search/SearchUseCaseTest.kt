@@ -3,7 +3,7 @@ package usecase.search
 import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -209,7 +209,7 @@ class SearchUseCaseTest {
         )
 
         val dummyTvShow = listOf(
-            TvSeries(
+            TvShow(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",

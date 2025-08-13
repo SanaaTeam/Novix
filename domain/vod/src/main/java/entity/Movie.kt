@@ -14,5 +14,4 @@ data class Movie(
     val overview: String,
     val trailerUrl: String,
     val rating: Int,
-    val isSaved: Boolean
 )

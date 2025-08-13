@@ -11,7 +11,7 @@ import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -181,7 +181,7 @@ class ActorViewModelTest {
         )
 
         private val dummySeries = listOf(
-            TvSeries(
+            TvShow(
                 id = 3,
                 title = "Series One",
                 overview = "Overview",

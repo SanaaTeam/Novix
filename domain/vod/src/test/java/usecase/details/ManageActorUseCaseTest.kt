@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -196,7 +196,7 @@ class ManageActorUseCaseTest {
             id = 4, name = "Crime"
         )
         private val dummySeries = listOf(
-            TvSeries(
+            TvShow(
                 id = 101,
                 title = "Future Worlds",
                 overview = "High-concept science-fiction drama.",
@@ -206,7 +206,7 @@ class ManageActorUseCaseTest {
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
                 seasonsCount = 1,
                 rating = 0
-            ), TvSeries(
+            ), TvShow(
                 id = 102,
                 title = "City Shadows",
                 overview = "Gritty crime thriller.",

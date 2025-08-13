@@ -8,7 +8,7 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -237,8 +237,8 @@ class TopRatedMediaScreenViewModelTest {
             )
         )
         val tvShows = listOf(
-            TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
-            TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
+            TvShow(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
+            TvShow(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
         val media = MediaItem(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
     }

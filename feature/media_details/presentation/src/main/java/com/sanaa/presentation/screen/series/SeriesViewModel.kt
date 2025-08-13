@@ -9,7 +9,7 @@ import com.sanaa.presentation.model.mapper.toSeasonUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -251,12 +251,12 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private fun addTvSeriesToHistory(tvSeries: TvSeries) {
+    private fun addTvSeriesToHistory(tvShow: TvShow) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
             onCollect = { user ->
                 manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-                    mediaHistoryItem = tvSeries.toHistory(),
+                    mediaHistoryItem = tvShow.toHistory(),
                     username = user.username
                 )
             }

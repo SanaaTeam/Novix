@@ -4,17 +4,17 @@ import entity.Actor
 import entity.Genre
 import entity.Review
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 import repository.TvSeriesRepository
 import javax.inject.Inject
 
 class ManageTvSeriesUseCase @Inject constructor(
     private val tvSeriesRepo: TvSeriesRepository
 ) {
-    suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries> =
+    suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvShow> =
         tvSeriesRepo.getTvSeriesByGenre(page, genreId)
 
-    suspend fun getTvSeriesDetails(seriesId: Int): TvSeries =
+    suspend fun getTvSeriesDetails(seriesId: Int): TvShow =
         tvSeriesRepo.getTvSeriesDetails(seriesId)
 
     suspend fun getTvSeriesCast(seriesId: Int): List<Actor> =
@@ -32,15 +32,15 @@ class ManageTvSeriesUseCase @Inject constructor(
     suspend fun getTvSeriesTrailer(seriesId: Int): String? =
         tvSeriesRepo.getTvSeriesTrailer(seriesId)
 
-    suspend fun getPopularSeries(page: Int): List<TvSeries> {
+    suspend fun getPopularSeries(page: Int): List<TvShow> {
         return tvSeriesRepo.getPopularSeries(page)
     }
 
-    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries> {
+    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvShow> {
         return tvSeriesRepo.getTopRatedTvSeries(page, genreId)
     }
 
-    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries> {
+    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvShow> {
         return tvSeriesRepo.getTrendingTvSeries(page, genreId)
     }
 
@@ -60,7 +60,7 @@ class ManageTvSeriesUseCase @Inject constructor(
         return tvSeriesRepo.addTvSeriesRate(seriesId = seriesId, rating = rating)
     }
 
-    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries> {
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvShow> {
         return tvSeriesRepo.getUserRatedTvSeries(accountId,sessionId)
     }
 

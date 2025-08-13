@@ -13,7 +13,7 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -251,7 +251,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
             pagingSourceFactory = {
                 createTvShowPagingDataSource(genreId = genreId)
             },
-            mapper = TvSeries::toState
+            mapper = TvShow::toState
         )
     }
 
@@ -281,7 +281,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     private fun createTvShowPagingDataSource(
         genreId: Int?,
         onError: ((NovixAppException) -> Unit)? = ::onDataLoadError,
-    ): PagingSource<Int, TvSeries> {
+    ): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTopRatedTvSeries(
                 page = page,

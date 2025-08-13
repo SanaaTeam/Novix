@@ -6,7 +6,7 @@ import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -33,10 +33,10 @@ class ManageTvSeriesUseCaseTest {
     fun `getTvSeriesByGenre should return list when available`() = runTest {
 
         coEvery { tvSeriesRepository.getTvSeriesByGenre(1, dummyGenre.id) } returns listOf(
-            dummyTvSeries
+            dummyTvShow
         )
         val result = manageTvSeriesDetailsUseCase.getTvSeriesByGenre(1, dummyGenre.id)
-        assertThat(result).isEqualTo(listOf(dummyTvSeries))
+        assertThat(result).isEqualTo(listOf(dummyTvShow))
     }
 
     @Test
@@ -68,11 +68,11 @@ class ManageTvSeriesUseCaseTest {
     @Test
     fun `getTvSeriesDetails should return details when available`() = runTest {
         val seriesId = 1
-        coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } returns dummyTvSeries
+        coEvery { tvSeriesRepository.getTvSeriesDetails(seriesId) } returns dummyTvShow
 
         val result = manageTvSeriesDetailsUseCase.getTvSeriesDetails(seriesId)
 
-        assertThat(result).isEqualTo(dummyTvSeries)
+        assertThat(result).isEqualTo(dummyTvShow)
     }
 
     @Test
@@ -241,7 +241,7 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getPopularSeries should return series when available`() = runTest {
-        val expected = listOf(dummyTvSeries)
+        val expected = listOf(dummyTvShow)
         coEvery { tvSeriesRepository.getPopularSeries(1) } returns expected
 
         val result = manageTvSeriesDetailsUseCase.getPopularSeries(1)
@@ -262,7 +262,7 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getTopRatedTvSeries should return series when available`() = runTest {
-        val expected = listOf(dummyTvSeries, dummyTvSeries.copy(id = 2))
+        val expected = listOf(dummyTvShow, dummyTvShow.copy(id = 2))
         coEvery { tvSeriesRepository.getTopRatedTvSeries(1, null) } returns expected
 
         val result = manageTvSeriesDetailsUseCase.getTopRatedTvSeries(1, null)
@@ -286,7 +286,7 @@ class ManageTvSeriesUseCaseTest {
 
     @Test
     fun `getTrendingTvSeries should return series when available`() = runTest {
-        val expected = listOf(dummyTvSeries)
+        val expected = listOf(dummyTvShow)
         coEvery { tvSeriesRepository.getTrendingTvSeries(1, dummyGenre.id) } returns expected
 
         val result = manageTvSeriesDetailsUseCase.getTrendingTvSeries(1, dummyGenre.id)
@@ -445,7 +445,7 @@ class ManageTvSeriesUseCaseTest {
     fun `getUserRatedTvSeries should return rated tv series when available`() = runTest {
         val accountId = 123L
         val sessionId = "session_abc"
-        val expected = listOf(mockk<TvSeries>(), mockk<TvSeries>())
+        val expected = listOf(mockk<TvShow>(), mockk<TvShow>())
         coEvery { tvSeriesRepository.getUserRatedTvSeries(accountId, sessionId) } returns expected
 
         val result = manageTvSeriesDetailsUseCase.getUserRatedTvSeries(accountId, sessionId)
@@ -523,7 +523,7 @@ class ManageTvSeriesUseCaseTest {
             number = 2,
             episodes = dummyEpisodes
         )
-        private val dummyTvSeries = TvSeries(
+        private val dummyTvShow = TvShow(
             id = 1,
             title = "The Walking Dead",
             overview = "",

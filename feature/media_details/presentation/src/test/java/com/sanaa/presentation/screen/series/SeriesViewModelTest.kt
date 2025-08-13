@@ -10,7 +10,7 @@ import entity.Actor.Gender
 import entity.Episode
 import entity.Genre
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineDispatcher
@@ -89,7 +89,7 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSeasonNumberClicked does nothing when same season`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
+        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvShow
         coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) } returns dummySeason
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
@@ -299,7 +299,7 @@ class SeriesViewModelTest {
 
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvSeries
+        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvShow
         coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
         coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) } returns dummySeason
         coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
@@ -333,7 +333,7 @@ class SeriesViewModelTest {
                 name = "Action"
             )
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 42,
             title = "My Series",
             overview = "Overview",

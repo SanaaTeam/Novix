@@ -7,7 +7,7 @@ import com.sanaa.vod.repository.mapper.media.toTvSeries
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import repository.ActorRepository
 import javax.inject.Inject
 
@@ -43,7 +43,7 @@ class ActorRepositoryImpl @Inject constructor(
         }
 
 
-    override suspend fun getActorTopTvShows(id: Int): List<TvSeries> =
+    override suspend fun getActorTopTvShows(id: Int): List<TvShow> =
         safeCall("Failed to retrieve top TV series for actor ID: $id") {
             remoteDataSource.getActorTvShows(id).map {
                 it.toTvSeries()

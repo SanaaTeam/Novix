@@ -5,7 +5,7 @@ import com.sanaa.vod.dataSource.remote.dto.search.TvShowSearchDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 
 fun MovieSearchDto.toEntity(): Movie {
     return Movie(
@@ -22,8 +22,8 @@ fun MovieSearchDto.toEntity(): Movie {
     )
 }
 
-fun TvShowSearchDto.toEntity(): TvSeries {
-    return TvSeries(
+fun TvShowSearchDto.toEntity(): TvShow {
+    return TvShow(
         id = id,
         title = name.orEmpty(),
         posterImageUrl = getFullImageUrl(posterImagePath),

@@ -7,7 +7,7 @@ import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Actor
 import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 
 fun ActorDto.toEntity(): Actor = Actor(
     id = id,
@@ -37,7 +37,7 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     rating = null
 )
 
-fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
+fun ActorCastCreditDto.toTvSeries(): TvShow = TvShow(
     id = id,
     title = tvShowTitle.orEmpty(),
     overview = overview.orEmpty(),

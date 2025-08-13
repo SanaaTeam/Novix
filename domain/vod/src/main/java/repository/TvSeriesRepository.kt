@@ -5,13 +5,13 @@ import entity.Episode
 import entity.Genre
 import entity.Review
 import entity.Season
-import entity.TvSeries
+import entity.TvShow
 
 interface TvSeriesRepository {
-    suspend fun getTvSeriesDetails(id: Int): TvSeries
+    suspend fun getTvSeriesDetails(id: Int): TvShow
     suspend fun getTvSeriesReviews(id: Int, page: Int): List<Review>
     suspend fun getTvSeriesImageUrls(id: Int, count: Int): List<String>
-    suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvSeries>
+    suspend fun getTvSeriesByGenre(page: Int, genreId: Int): List<TvShow>
     suspend fun getTvSeriesCast(id: Int): List<Actor>
     suspend fun getTvSeriesSeason(seriesId: Int, seasonNumber: Int): Season
     suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): Episode
@@ -24,9 +24,9 @@ interface TvSeriesRepository {
     ): List<Actor>
 
     suspend fun getTvSeriesTrailer(id: Int): String?
-    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvSeries>
-    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvSeries>
-    suspend fun getPopularSeries(page: Int): List<TvSeries>
+    suspend fun getTopRatedTvSeries(page: Int, genreId: Int?): List<TvShow>
+    suspend fun getTrendingTvSeries(page: Int, genreId: Int?): List<TvShow>
+    suspend fun getPopularSeries(page: Int): List<TvShow>
     suspend fun getSeriesGenres(): List<Genre>
     suspend fun getSeriesRate(accountId: Long, seriesId: Int): Int?
     suspend fun getEpisodesRate(accountId: Long, seasonNumber: Int, episodeNumber: Int): Int?
@@ -37,6 +37,6 @@ interface TvSeriesRepository {
         episodeNumber: Int,
         rating: Float
     ): Boolean
-    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvSeries>
+    suspend fun getUserRatedTvSeries(accountId: Long, sessionId: String): List<TvShow>
     suspend fun deleteTvSeriesRate(seriesId: Int): Boolean
 }

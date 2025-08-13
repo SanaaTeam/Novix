@@ -8,7 +8,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
@@ -114,12 +114,12 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
         pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
-        mapper = TvSeries::toSeriesUiModel
+        mapper = TvShow::toSeriesUiModel
     )
 
     private fun createTvShowsPagingDataSource(
         genreId: Int,
-    ): PagingSource<Int, TvSeries> {
+    ): PagingSource<Int, TvShow> {
         return BasePagingSource { page ->
             manageTvSeriesUseCase.getTvSeriesByGenre(
                 genreId = genreId, page = page

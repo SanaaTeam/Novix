@@ -7,7 +7,7 @@ import com.sanaa.presentation.state.MediaTypeUi
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
@@ -87,7 +87,7 @@ class HomeScreenViewModelTest {
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
         // Given
         val popularMovies = listOf(dummyMovie.copy(id = 1))
-        val popularTvSeries = listOf(dummyTvSeries.copy(id = 2))
+        val popularTvSeries = listOf(dummyTvShow.copy(id = 2))
 
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
         coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
@@ -331,7 +331,7 @@ class HomeScreenViewModelTest {
             trailerUrl = null,
             rating = 0
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 2,
             title = "Dummy Series",
             posterImageUrl = "",

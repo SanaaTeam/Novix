@@ -2,7 +2,7 @@ package entity
 
 import kotlinx.datetime.LocalDate
 
-data class TvSeries(
+data class TvShow(
     val id: Int,
     val title: String,
     val overview: String,
