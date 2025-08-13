@@ -118,7 +118,7 @@ class MyRatingScreenViewModelTest {
             advanceUntilIdle()
 
             assertThat(viewModel.state.value.ratedMovies).isEmpty()
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -139,7 +139,7 @@ class MyRatingScreenViewModelTest {
             viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar(stringProvider.deleteRatingFailed))
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingFailed)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -213,7 +213,7 @@ class MyRatingScreenViewModelTest {
             advanceUntilIdle()
 
             assertThat(viewModel.state.value.ratedTvShows).isEmpty()
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -234,7 +234,7 @@ class MyRatingScreenViewModelTest {
             viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar(stringProvider.deleteRatingFailed))
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingFailed)
             cancelAndIgnoreRemainingEvents()
         }
     }
