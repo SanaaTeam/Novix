@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -37,12 +38,12 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -52,29 +53,27 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
+    val navController = LocalNavControllerProvider.current
+    BackHandler(onBack = { navController.popBackStack() })
+
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
 
     val launcher = launchAuthActivityForResult()
-
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
 
-
     TopMoviesContent(
         state = uiState,
-        onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
         interactionListener = viewModel,
         navController = navController,
     )
+
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
@@ -82,6 +81,7 @@ fun TopMoviesScreen(
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
+
     SaveToListBottomSheet(
         isVisible = uiState.showSaveToListBottomSheet,
         mediaId = selectedMedia?.id?.toLong() ?: 0,
@@ -105,8 +105,6 @@ private fun TopMoviesContent(
     interactionListener: ActorsScreenInteractionListener,
     navController: NavController,
 ) {
-    val navController = LocalNavControllerProvider.current
-
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
     ) {
@@ -117,7 +115,7 @@ private fun TopMoviesContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
+                        onClick = { navController.popBackStack() }
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),

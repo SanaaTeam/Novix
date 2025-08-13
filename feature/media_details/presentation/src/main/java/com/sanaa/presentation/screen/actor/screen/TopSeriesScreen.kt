@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -48,25 +49,23 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopSeriesScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
+    val navController = LocalNavControllerProvider.current
+    BackHandler(onBack = { navController.popBackStack() })
+
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
-
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
     val launcher = launchAuthActivityForResult()
-
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     TopSeriesContent(
         state = uiState,
-        onBackClick = navigateBack,
-        modifier = Modifier.fillMaxSize(),
+        navController = navController,
     )
+
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
@@ -79,22 +78,19 @@ fun TopSeriesScreen(
 @Composable
 private fun TopSeriesContent(
     state: ActorScreenUiState,
-    modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
+    navController: NavHostController,
 ) {
-    val navController = LocalNavControllerProvider.current
-
-    NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-    ) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
-            modifier = modifier.navigationBarsPadding()
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
         ) {
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
+                        onClick = { navController.popBackStack() }
                     )
                 },
                 screenTitle = stringResource(R.string.top_series_picks),
@@ -107,7 +103,6 @@ private fun TopSeriesContent(
                     .weight(1f)
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-
                 AnimatedContent(
                     state.isLoading,
                     modifier = Modifier.align(Alignment.Center),
