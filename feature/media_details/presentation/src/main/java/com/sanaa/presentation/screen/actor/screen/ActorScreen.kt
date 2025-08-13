@@ -123,18 +123,13 @@ fun ActorScreen(
         }
     }
 
-    ActorScreenContent(
-        state = uiState,
-        listener = viewModel,
-        modifier = Modifier.fillMaxSize(),
-    )
+    ActorScreenContent(state = uiState, interactionListener = viewModel)
 }
 
 @Composable
 private fun ActorScreenContent(
     state: ActorScreenUiState,
-    listener: ActorsScreenInteractionListener,
-    modifier: Modifier = Modifier,
+    interactionListener: ActorsScreenInteractionListener,
 ) {
     val lazyState = rememberLazyListState()
     var shouldShowBackground by remember { mutableStateOf(false) }
@@ -155,9 +150,15 @@ private fun ActorScreenContent(
         }
     }
 
-    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
-        Box(modifier = modifier.navigationBarsPadding()) {
-            ActorScreenTopBar(animatedColor, listener)
+    NovixScaffold(
+        backgroundShapes = { BackgroundShapes() }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+        ) {
+            ActorScreenTopBar(animatedColor, interactionListener)
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
@@ -168,7 +169,7 @@ private fun ActorScreenContent(
                     noContentYet -> {
                         if (state.noInternetConnection) {
                             NetworkDisconnectionContact(
-                                onRetryClick = { listener.onRetryClicked() },
+                                onRetryClick = { interactionListener.onRetryClicked() },
                                 modifier = Modifier.fillMaxSize(),
                                 useDarkTheme = LocalThemeProvider.current
                             )
@@ -183,7 +184,7 @@ private fun ActorScreenContent(
                     }
 
                     else -> {
-                        ActorInfo(lazyState, state, listener)
+                        ActorInfo(lazyState, state, interactionListener)
                     }
                 }
             }
@@ -192,22 +193,22 @@ private fun ActorScreenContent(
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
                 isVisible = true,
-                onDismiss = listener::onDismissBottomSheet,
-                onLoginButtonClick = listener::onLoginButtonClick
+                onDismiss = interactionListener::onDismissBottomSheet,
+                onLoginButtonClick = interactionListener::onLoginButtonClick
             )
         }
 
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
             mediaId = state.selectedMediaToSave?.id?.toLong() ?: 0,
-            onDismiss = listener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = listener::onCreateNewListClick,
+            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+            onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
 
         if (state.showAddListBottomSheet && state.selectedMediaToSave?.id != null) {
             AddBookmarkListBottomSheet(
                 isVisible = true,
-                onDismiss = listener::onDismissAddListBottomSheet,
+                onDismiss = interactionListener::onDismissAddListBottomSheet,
                 mediaId = state.selectedMediaToSave.id
             )
         }

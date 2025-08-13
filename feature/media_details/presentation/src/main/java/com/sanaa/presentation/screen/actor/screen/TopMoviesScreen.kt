@@ -72,7 +72,8 @@ fun TopMoviesScreen(
         state = uiState,
         onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
-        onSaveIconClick = viewModel::onSaveClicked,
+        interactionListener = viewModel,
+        navController = navController,
     )
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
@@ -101,8 +102,8 @@ fun TopMoviesScreen(
 private fun TopMoviesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onSaveIconClick: (MovieUiModel) -> Unit,
+    interactionListener: ActorsScreenInteractionListener,
+    navController: NavController,
 ) {
     val navController = LocalNavControllerProvider.current
 
@@ -180,7 +181,7 @@ private fun TopMoviesContent(
                                     topLeftContent = {
                                         SaveIconChip(
                                             isSaved = movie.isSaved,
-                                            onClick = { onSaveIconClick(movie) }
+                                            onClick = { interactionListener.onSaveClicked(movie) }
                                         )
                                     },
                                     onCardClick = {
