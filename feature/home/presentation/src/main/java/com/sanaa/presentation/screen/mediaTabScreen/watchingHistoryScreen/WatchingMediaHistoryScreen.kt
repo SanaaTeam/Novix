@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,14 +34,12 @@ import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun WatchingMediaHistoryScreen(
-    modifier: Modifier = Modifier,
     viewModel: WatchingMediaHistoryScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -56,8 +52,6 @@ fun WatchingMediaHistoryScreen(
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .detailsApi()
     }
-
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -85,38 +79,21 @@ fun WatchingMediaHistoryScreen(
                         }
                     }
                 }
-
-                is WatchingMediaHistoryScreenEffect.ShowError -> {
-                    snack = SnackData(message = effect.message, isError = true)
-                }
             }
         }
     }
-    Box(modifier = modifier.systemBarsPadding()) {
 
-        WatchingMediaHistoryScreenContent(
-            title = stringResource(R.string.watching_history),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = Modifier,
-        )
-
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-    }
+    WatchingMediaHistoryScreenContent(
+        state = state.value,
+        interactionListener = viewModel,
+    )
 }
 
 @Composable
 private fun WatchingMediaHistoryScreenContent(
-    title: String,
     state: WatchingMediaHistoryScreenUiState,
     interactionListener: WatchingMediaHistoryScreenInteractionListener,
-    modifier: Modifier = Modifier,
 ) {
-    val tvShows = state.tvShowList
-    val movies = state.movieList
 
     NovixScaffold(
         topBar = {
@@ -127,13 +104,24 @@ private fun WatchingMediaHistoryScreenContent(
                         onClick = interactionListener::onBackClick
                     )
                 },
-                screenTitle = title,
+                screenTitle = stringResource(R.string.watching_history),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
         },
-        modifier = modifier,
+        snackbarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                NovixAnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onSnackBarDismiss
+                )
+            }
+        },
+        modifier = Modifier.systemBarsPadding(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -158,7 +146,7 @@ private fun WatchingMediaHistoryScreenContent(
                     MediaTypeUi.MOVIE -> {
                         MediaListSectionContent(
                             genres = state.movieGenres,
-                            mediaList = movies,
+                            mediaList = state.movieList,
                             selectedGenreId = state.movieSelectedGenreId,
                             onGenreClick = interactionListener::onMovieGenreClick,
                             onMediaClick = { media ->
@@ -172,7 +160,7 @@ private fun WatchingMediaHistoryScreenContent(
                     MediaTypeUi.TV_SHOW -> {
                         MediaListSectionContent(
                             genres = state.tvShowGenres,
-                            mediaList = tvShows,
+                            mediaList = state.tvShowList,
                             selectedGenreId = state.tvShowSelectedGenreId,
                             onGenreClick = interactionListener::onTvShowGenreClick,
                             onMediaClick = { media ->

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
@@ -153,6 +154,10 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShowGenres()
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private suspend fun loadMediaHistory(
         mediaType: MediaType,
         genreId: Int?
@@ -174,11 +179,24 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true, showRefreshButton = true) }
-            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    snackBarData =
+                        SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                )
+            }
         } else {
-            updateState { copy(isNoInternetConnection = false, showRefreshButton = true) }
-            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+            updateState {
+                copy(
+                    isNoInternetConnection = false,
+                    snackBarData =
+                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+                )
+            }
         }
     }
 }

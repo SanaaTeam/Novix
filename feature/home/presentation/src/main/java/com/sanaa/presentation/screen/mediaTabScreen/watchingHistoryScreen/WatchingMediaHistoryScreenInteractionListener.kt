@@ -11,4 +11,5 @@ interface WatchingMediaHistoryScreenInteractionListener {
     fun onSaveIconClick(media: MediaItemUiState)
     fun onBackClick()
     fun onRetryClick()
+    fun onSnackBarDismiss()
 }
