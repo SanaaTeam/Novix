@@ -18,7 +18,7 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 
@@ -27,7 +27,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
@@ -82,7 +82,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() } },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toGenreUiState() } },
             onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
             onError = { ::onLoadDataError }
         )

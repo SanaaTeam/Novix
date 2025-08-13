@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,7 +35,7 @@ class SeriesViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvSeriesDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
@@ -88,11 +88,11 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSeasonNumberClicked does nothing when same season`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } returns dummyTvShow
+        coEvery { manageTvSeriesDetails.getTvShowCast(seriesId) } returns dummyCast
+        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, 1) } returns dummySeason
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -159,7 +159,7 @@ class SeriesViewModelTest {
 
     @Test
     fun `loadSeries handles error correctly when use case fails`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } throws RuntimeException("Test failure")
+        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } throws RuntimeException("Test failure")
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -235,7 +235,7 @@ class SeriesViewModelTest {
     @Test
     fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
         val errorMsg = "Failed to rate"
-        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } throws RuntimeException(
+        coEvery { manageTvSeriesDetails.addTvShowRate(any(), any()) } throws RuntimeException(
             errorMsg
         )
         givenHappyViewModel()
@@ -252,7 +252,7 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
-        coEvery { manageTvSeriesDetails.addTvSeriesRate(any(), any()) } returns true
+        coEvery { manageTvSeriesDetails.addTvShowRate(any(), any()) } returns true
         givenHappyViewModel()
 
         viewModel.onRatingChanged(8)
@@ -298,11 +298,11 @@ class SeriesViewModelTest {
 
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
-        coEvery { manageTvSeriesDetails.getTvSeriesDetails(seriesId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvSeriesCast(seriesId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } returns dummyTvShow
+        coEvery { manageTvSeriesDetails.getTvShowCast(seriesId) } returns dummyCast
+        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, 1) } returns dummySeason
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(

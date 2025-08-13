@@ -15,13 +15,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
@@ -121,7 +121,7 @@ class GenreTvShowsViewModel @Inject constructor(
         genreId: Int,
     ): PagingSource<Int, TvShow> {
         return BasePagingSource { page ->
-            manageTvSeriesUseCase.getTvSeriesByGenre(
+            manageTvShowUseCase.getTvShowsByGenre(
                 genreId = genreId, page = page
             )
         }

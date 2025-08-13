@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
@@ -26,7 +26,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val stringProvider: VodStringProvider,
@@ -116,7 +116,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
-        return manageTvSeriesUseCase.getSeriesGenres()
+        return manageTvShowUseCase.getTvShowGenres()
     }
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {

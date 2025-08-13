@@ -1,7 +1,7 @@
 package usecase.details
 
 import com.google.common.truth.Truth.assertThat
-import repository.TvSeriesRepository
+import repository.TvShowRepository
 import entity.Actor
 import entity.Episode
 import io.mockk.coEvery
@@ -14,12 +14,12 @@ import usecase.ManageEpisodeDetailsUseCase
 
 class ManageEpisodeUseCaseTest {
 
-    private val tvSeriesRepository: TvSeriesRepository = mockk(relaxed = true)
+    private val tvShowRepository: TvShowRepository = mockk(relaxed = true)
     private lateinit var manageEpisodeDetailsUseCase: ManageEpisodeDetailsUseCase
 
     @BeforeEach
     fun setUp() {
-        manageEpisodeDetailsUseCase = ManageEpisodeDetailsUseCase(tvSeriesRepository)
+        manageEpisodeDetailsUseCase = ManageEpisodeDetailsUseCase(tvShowRepository)
     }
 
     @Test
@@ -29,7 +29,7 @@ class ManageEpisodeUseCaseTest {
         val episode = 1
         val expected = mockk<Episode>()
         coEvery {
-            tvSeriesRepository.getEpisodeDetails(
+            tvShowRepository.getEpisodeDetails(
                 seriesId,
                 season,
                 episode
@@ -47,7 +47,7 @@ class ManageEpisodeUseCaseTest {
         val season = 1
         val episode = 1
         coEvery {
-            tvSeriesRepository.getEpisodeDetails(
+            tvShowRepository.getEpisodeDetails(
                 seriesId,
                 season,
                 episode
@@ -66,7 +66,7 @@ class ManageEpisodeUseCaseTest {
         val episode = 1
         val expected = listOf(mockk<Actor>(), mockk<Actor>())
         coEvery {
-            tvSeriesRepository.getEpisodeGuestsOfHonor(
+            tvShowRepository.getEpisodeGuestsOfHonor(
                 seriesId,
                 season,
                 episode
@@ -84,7 +84,7 @@ class ManageEpisodeUseCaseTest {
         val season = 1
         val episode = 1
         coEvery {
-            tvSeriesRepository.getEpisodeGuestsOfHonor(
+            tvShowRepository.getEpisodeGuestsOfHonor(
                 seriesId,
                 season,
                 episode
@@ -104,7 +104,7 @@ class ManageEpisodeUseCaseTest {
         val count = 5
         val expected = listOf("img1.jpg", "img2.jpg")
         coEvery {
-            tvSeriesRepository.getEpisodeImageUrls(
+            tvShowRepository.getEpisodeImageUrls(
                 seriesId,
                 season,
                 episode,
@@ -124,7 +124,7 @@ class ManageEpisodeUseCaseTest {
         val episode = 1
         val count = 5
         coEvery {
-            tvSeriesRepository.getEpisodeImageUrls(
+            tvShowRepository.getEpisodeImageUrls(
                 seriesId,
                 season,
                 episode,
