@@ -40,7 +40,7 @@ class OnboardingViewModelTest {
             assertThat(initialState.pageList).isNotEmpty()
             assertThat(initialState.pageList.size).isEqualTo(3)
             assertThat(initialState.currentPageIndex).isEqualTo(0)
-            assertThat(initialState.isSkipable).isFalse()
+            assertThat(initialState.isSkipAble).isFalse()
         }
     }
 
@@ -55,14 +55,14 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `onNextPageClick on last page should call onSkipClick and set isSkipable to true`() = runTest {
+    fun `onNextPageClick on last page should call onSkipClick and set isSkipAble to true`() = runTest {
         viewModel.state.test {
             awaitItem()
             viewModel.setCurrentPage(2)
             awaitItem()
             viewModel.onNextPageClick()
             val updatedState = awaitItem()
-            assertThat(updatedState.isSkipable).isTrue()
+            assertThat(updatedState.isSkipAble).isTrue()
         }
     }
 
@@ -92,12 +92,12 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `onSkipClick should set isSkipable to true`() = runTest {
+    fun `onSkipClick should set isSkipAble to true`() = runTest {
         viewModel.state.test {
             awaitItem()
             viewModel.onSkipClick()
             val updatedState = awaitItem()
-            assertThat(updatedState.isSkipable).isTrue()
+            assertThat(updatedState.isSkipAble).isTrue()
         }
     }
 
@@ -110,6 +110,4 @@ class OnboardingViewModelTest {
             assertThat(updatedState.currentPageIndex).isEqualTo(2)
         }
     }
-
-    private fun TestScope.awaitItem() {}
 }

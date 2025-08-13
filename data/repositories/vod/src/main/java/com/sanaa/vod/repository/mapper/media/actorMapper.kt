@@ -3,11 +3,11 @@ package com.sanaa.vod.repository.mapper.media
 
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Actor
 import entity.Actor.Gender
 import entity.Movie
 import entity.TvSeries
-import kotlinx.datetime.LocalDate
 
 fun ActorDto.toEntity(): Actor = Actor(
     id = id,
@@ -18,10 +18,10 @@ fun ActorDto.toEntity(): Actor = Actor(
     lastShow = null,
     gender = apiGenderMapping(gender),
     character = null,
-    birthDate = birthDay?.takeIf(String::isNotBlank)?.let(LocalDate::parse),
-    deathDate = deathDay?.takeIf(String::isNotBlank)?.let(LocalDate::parse),
+    birthDate = getLocalDateOrDefault(birthDay),
+    deathDate = getLocalDateOrDefault(deathDay),
     placeOfBirth = placeOfBirth,
-    biography = biography ?: ""
+    biography = biography.orEmpty()
 )
 
 
@@ -32,8 +32,8 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = null,
-    releaseDate = toLocalDateOrNull(releaseDate ?: firstAirDate) ?: LocalDate(1900, 1, 1),
-    overview = overview ?: "",
+    releaseDate = getLocalDateOrDefault(releaseDate),
+    overview = overview.orEmpty(),
     rating = null
 )
 
@@ -41,7 +41,7 @@ fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
     id = id,
     title = tvShowTitle.orEmpty(),
     overview = overview.orEmpty(),
-    releaseDate = toLocalDateOrNull(firstAirDate ?: releaseDate) ?: LocalDate(1900, 1, 1),
+    releaseDate = getLocalDateOrDefault(firstAirDate),
     genres = emptyList(),
     imdbRating = voteAverage?.toFloat() ?: 0f,
     posterImageUrl = getFullImageUrl(posterPath),
@@ -57,8 +57,3 @@ fun apiGenderMapping(id: Int?): Gender {
         else -> Gender.MALE
     }
 }
-
-internal fun toLocalDateOrNull(value: String?): LocalDate? =
-    value
-        ?.takeIf { it.isNotBlank() }
-        ?.let { runCatching { LocalDate.parse(it) }.getOrNull() }

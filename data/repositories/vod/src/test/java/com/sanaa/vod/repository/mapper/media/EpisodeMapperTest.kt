@@ -2,6 +2,7 @@ package com.sanaa.vod.repository.mapper.media
 
 
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.util.DateTimeUtils.defaultDate
 import entity.Episode
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
@@ -49,6 +50,6 @@ class EpisodeMapperTest {
 
         val episode = dto.toEntity()
 
-        assertEquals(LocalDate(1970, 1, 1), episode.releaseDate)
+        assertEquals(defaultDate, episode.releaseDate)
     }
 }

@@ -4,7 +4,8 @@ import android.annotation.SuppressLint
 import com.sanaa.presentation.model.EpisodeUiModel
 import com.sanaa.presentation.model.SeasonUiModel
 import com.sanaa.presentation.model.SeriesUiModel
-import com.sanaa.presentation.util.formatLocalizedDate
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
+import com.sanaa.presentation.util.DateTimeUtils.formatLocalizedDate
 import entity.Episode
 import entity.MediaHistoryItem
 import entity.Season
@@ -17,12 +18,12 @@ fun TvSeries.toSeriesUiModel(trailerUrl: String? = null) = SeriesUiModel(
     id = id,
     title = title,
     posterPath = posterImageUrl,
-    overview = overview.toString(),
+    overview = overview,
     rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,
     trailerUrl = trailerUrl,
     genres = genres.map { it.toUiModel() },
-    releaseDate = releaseDate.toString(),
+    releaseDate = if (releaseDate != defaultDate) releaseDate.toString() else "",
 )
 
 fun Season.toSeasonUiModel() = SeasonUiModel(
@@ -37,7 +38,7 @@ fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     number = number,
     title = title,
     rating = String.format("%.1f", imdbRating),
-    airDate = releaseDate?.let { formatLocalizedDate(it) },
+    airDate = if (releaseDate != defaultDate) formatLocalizedDate(releaseDate) else null,
     stillPath = stillImagePath,
     duration = durationMinutes,
     overview = overview,

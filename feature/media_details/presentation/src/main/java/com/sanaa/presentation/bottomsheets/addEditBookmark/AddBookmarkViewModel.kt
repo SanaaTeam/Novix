@@ -12,13 +12,12 @@ import javax.inject.Inject
 class AddBookmarkViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<AddBookmarkUiState, AddBookmarkEffects>(AddBookmarkUiState(), dispatcher) {
 
     fun onListTitleChanged(title: String) {
         updateState {
-            it.copy(
+            copy(
                 listTitle = title,
                 isAddButtonEnabled = title.isNotBlank()
             )
@@ -26,13 +25,13 @@ class AddBookmarkViewModel @Inject constructor(
     }
 
     fun resetState() {
-        updateState { it.copy(listTitle = "", isLoading = false, errorMessage = null) }
+        updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 
     fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
@@ -41,15 +40,17 @@ class AddBookmarkViewModel @Inject constructor(
                 emitEffect(AddBookmarkEffects.AddSuccess)
                 savedListsStatusProvider.markItemSaved(mediaId)
             },
-            onError = {
-                updateState {
-                    emitEffect(AddBookmarkEffects.AddFailure)
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Failed to create list. Please try again."
-                    )
-                }
-            }
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(throwable: Throwable) {
+        updateState {
+            emitEffect(AddBookmarkEffects.AddFailure)
+            copy(
+                isLoading = false,
+                errorMessage = "Failed to create list. Please try again."
+            )
+        }
     }
 }

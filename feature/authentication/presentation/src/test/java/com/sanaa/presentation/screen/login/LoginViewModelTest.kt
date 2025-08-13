@@ -31,7 +31,7 @@ class LoginViewModelTest {
 
     @Test
     fun `onUsernameChanged updates username and clears error`() = runTest {
-        val newUsername = "testuser"
+        val newUsername = "test-user"
         viewModel.onUsernameChanged(newUsername)
         assertThat(viewModel.state.value.username).isEqualTo(newUsername)
         assertThat(viewModel.state.value.usernameError).isNull()
@@ -39,7 +39,7 @@ class LoginViewModelTest {
 
     @Test
     fun `onPasswordChanged updates password and clears error`() = runTest {
-        val newPassword = "testpassword"
+        val newPassword = "test-password"
         viewModel.onPasswordChanged(newPassword)
         assertThat(viewModel.state.value.password).isEqualTo(newPassword)
         assertThat(viewModel.state.value.passwordError).isNull()
@@ -123,8 +123,8 @@ class LoginViewModelTest {
 
     @Test
     fun `onLoginClicked with valid credentials calls loginUseCase and navigates to home`() = runTest {
-        val username = "testuser"
-        val password = "testpass"
+        val username = "test-user"
+        val password = "test-pass"
         viewModel.onUsernameChanged(username)
         viewModel.onPasswordChanged(password)
         viewModel.onLoginClicked()
@@ -195,8 +195,8 @@ class LoginViewModelTest {
 
     @Test
     fun `onLoginClicked allows retry after failure`() = runTest {
-        val username = "testuser"
-        val password = "wrongpass"
+        val username = "test-user"
+        val password = "wrong-pass"
         viewModel.onUsernameChanged(username)
         viewModel.onPasswordChanged(password)
 

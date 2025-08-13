@@ -58,7 +58,7 @@ import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
-import com.sanaa.presentation.util.getCurrentLocale
+import com.sanaa.presentation.util.DateTimeUtils.getCurrentLocale
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.designsystem.R as designR
@@ -98,7 +98,7 @@ fun MovieDetailsScreen(
         )
         if (state.showAddListBottomSheet && selectedMedia != null) {
             AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
+                isVisible = true,
                 onDismiss = viewModel::onDismissAddListBottomSheet,
                 mediaId = selectedMedia
             )
@@ -259,12 +259,12 @@ fun MovieDetailsContent(
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
             if (state.showRateBottomSheet) {
-                var localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
+                val localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
                 RateBottomSheet(
                     isRateSelected = localRating.value > 0,
                     imdbRating = localRating.value,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = state.showRateBottomSheet,
+                    isVisible = true,
                     onSubmitButtonClick = {
                         interactionListener.onRatingChanged(localRating.value)
                         interactionListener.onSubmitRateBottomSheet()
@@ -286,7 +286,7 @@ fun MovieDetailsContent(
                 }
                 RequestToLoginBottomSheet(
                     onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-                    isVisible = state.showLoginBottomSheet,
+                    isVisible = true,
                     title = title,
                     text = text,
                     onLoginButtonClick = {
@@ -316,7 +316,7 @@ fun MovieTopBar(
         rightContent = {
             TopBarClickableIcon(
                 icon = if (movie.isSaved)
-                    painterResource(com.sanaa.designsystem.R.drawable.icon_saved)
+                    painterResource(designR.drawable.icon_saved)
                 else
                     painterResource(R.drawable.icon_save),
                 onClick = { interactionListener.onBookmarkClick(movie) }

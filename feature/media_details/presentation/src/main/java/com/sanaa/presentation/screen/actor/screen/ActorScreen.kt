@@ -143,7 +143,6 @@ private fun ActorScreenContent(
         targetValue = if (shouldShowBackground) Theme.colors.surface else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = EaseInOut),
     )
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     LaunchedEffect(lazyState) {
@@ -275,7 +274,7 @@ private fun ActorScreenContent(
         }
         if (state.showLoginBottomSheet) {
             RequestToLoginBottomSheet(
-                isVisible = state.showLoginBottomSheet,
+                isVisible = true,
                 onDismiss = listener::onDismissBottomSheet,
                 onLoginButtonClick = {
                     listener.onLoginButtonClick()
@@ -291,7 +290,7 @@ private fun ActorScreenContent(
         )
         if (state.showAddListBottomSheet && state.selectedMediaToSave?.id != null) {
             AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
+                isVisible = true,
                 onDismiss = listener::onDismissAddListBottomSheet,
                 mediaId = state.selectedMediaToSave.id
             )

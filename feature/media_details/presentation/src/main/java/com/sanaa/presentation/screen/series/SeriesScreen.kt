@@ -293,12 +293,12 @@ fun SeriesScreenContent(
             )
         }
         if (state.showRateBottomSheet) {
-            var localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
+            val localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
             RateBottomSheet(
                 isRateSelected = localRating.value > 0,
                 imdbRating = localRating.value,
                 onDismiss = interactionListener::onDismissAnyBottomSheet,
-                isVisible = state.showRateBottomSheet,
+                isVisible = true,
                 onSubmitButtonClick = {
                     interactionListener.onRatingChanged(localRating.value)
                     interactionListener.onSubmitRateBottomSheet()
@@ -321,7 +321,7 @@ fun SeriesScreenContent(
             RequestToLoginBottomSheet(
                 onDismiss = interactionListener::onDismissAnyBottomSheet,
                 onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                isVisible = state.showLoginBottomSheet,
+                isVisible = true,
                 text = text,
                 title = title
             )

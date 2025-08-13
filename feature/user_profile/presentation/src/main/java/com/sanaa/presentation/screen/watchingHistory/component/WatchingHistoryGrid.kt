@@ -19,7 +19,7 @@ import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.model.MediaItemUiModel
-import com.sanaa.presentation.provider.LocalContentRestriction
+import com.sanaa.presentation.profileProvider.LocalSaveContentThreshold
 import com.sanaa.presentation.screen.myRating.component.RemoteImagePlaceholder
 
 @Composable
@@ -40,15 +40,15 @@ fun WatchingHistoryGrid(
             count = mediaList.size,
         ) { index ->
             val media = mediaList[index]
-            media?.let {
+            media.let {
                 MediaPosterCard(
                     posterImage = {
                         RemoteBlurredSensitiveImage(
                             imageUrl = it.imageUrl.orEmpty(),
                             modifier = Modifier.fillMaxWidth(),
                             sensitiveContentThreshold = 0.2f,
-                            safeContentThreshold = LocalContentRestriction.current,
-                            isBlurEnabled = LocalContentRestriction.current != 0f,
+                            safeContentThreshold = LocalSaveContentThreshold.current,
+                            isBlurEnabled = LocalSaveContentThreshold.current != 0f,
                             contentDescription = "poster",
                             placeholderContent = {
                                 RemoteImagePlaceholder(Modifier.fillMaxSize())

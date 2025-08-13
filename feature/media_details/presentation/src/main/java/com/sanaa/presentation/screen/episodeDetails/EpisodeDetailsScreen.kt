@@ -229,12 +229,12 @@ private fun EpisodeDetailsScreenContent(
                 onSetRateClicked = interactionListener::onRateClicked
             )
             if (state.showRateBottomSheet) {
-                var localRating = remember(state.imdbRating) { mutableStateOf(state.imdbRating) }
+                val localRating = remember(state.imdbRating) { mutableStateOf(state.imdbRating) }
                 RateBottomSheet(
                     isRateSelected = localRating.value > 0,
                     imdbRating = localRating.value,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = state.showRateBottomSheet,
+                    isVisible = true,
                     onSubmitButtonClick = {
                         interactionListener.onRatingChanged(localRating.value)
                         interactionListener.onSubmitRateBottomSheet()
@@ -255,7 +255,7 @@ private fun EpisodeDetailsScreenContent(
                     else -> stringResource(R.string.request_login)
                 }
                 RequestToLoginBottomSheet(
-                    isVisible = state.showLoginBottomSheet,
+                    isVisible = true,
                     onDismiss = interactionListener::onDismissBottomSheet,
                     onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                     text = text,
