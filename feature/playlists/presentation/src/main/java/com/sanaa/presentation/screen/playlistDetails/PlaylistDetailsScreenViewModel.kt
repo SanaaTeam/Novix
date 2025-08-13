@@ -31,10 +31,6 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         "listId is required in SavedStateHandle"
     }
 
-    private val title: String = checkNotNull(savedStateHandle["title"]) {
-        "title is required in SavedStateHandle"
-    }
-
     init {
         loadItemsInSaved(listId)
         updateState { copy(listId = listId) }

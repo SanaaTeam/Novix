@@ -52,7 +52,7 @@ class OnboardingViewModel @Inject constructor(
     }
 
     override fun onSkipClick() {
-        updateState { copy(isSkipable = true, onboardingIsFinished = true) }
+        updateState { copy(isSkipAble = true, onboardingIsFinished = true) }
     }
 
     override fun setCurrentPage(pageIndex: Int) {

@@ -59,7 +59,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchSimilarMoviesByMovieId() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchSimilarMoviesByMovieId(1,1) } returns MovieApiResponse<MovieDto>(
+        coEvery { apiService.fetchSimilarMoviesByMovieId(1,1) } returns MovieApiResponse(
             results = listOf(dummyMovie)
         )
         val dto = dataSource.fetchSimilarMoviesByMovieId(1,1)
@@ -69,7 +69,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchReviewsByMovieId() should return list of reviews dto`() = runTest {
-        coEvery { apiService.fetchReviewsByMovieId(1,1) } returns MovieApiResponse<ReviewDto>(
+        coEvery { apiService.fetchReviewsByMovieId(1,1) } returns MovieApiResponse(
             results = dummyReviews
         )
 
@@ -80,7 +80,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchMoviesByCategory() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchMoviesByCategory(1,1) } returns MovieApiResponse<MovieDto>(
+        coEvery { apiService.fetchMoviesByCategory(1,1) } returns MovieApiResponse(
             results = listOf(dummyMovie)
         )
         val dto = dataSource.fetchMoviesByCategory(1,1)
@@ -90,7 +90,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchMovieTrailerUrl() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchMovieTrailerUrl(1) } returns MovieApiResponse<VideoDto>(
+        coEvery { apiService.fetchMovieTrailerUrl(1) } returns MovieApiResponse(
             results = dummyMovieVideo
         )
         val dto = dataSource.fetchMovieTrailerUrl(1)
@@ -99,7 +99,7 @@ class MovieDetailsRemoteDataSourceImplTest {
 
     @Test
     fun `fetchMovieGenres() should return list of movies dto`() = runTest {
-        coEvery { apiService.fetchMovieGenres() } returns MovieApiResponse<GenreDto>(genres = dummyGenreDto)
+        coEvery { apiService.fetchMovieGenres() } returns MovieApiResponse(genres = dummyGenreDto)
 
         val dto = dataSource.fetchMovieGenres()
 
@@ -110,14 +110,14 @@ class MovieDetailsRemoteDataSourceImplTest {
     val dummyMovie = MovieDto(
         id = 1, title = "A", posterImagePath = "/p.jpg", duration = 100
     )
-    val dummyMovieImage = listOf<ImageDto>(
+    val dummyMovieImage = listOf(
         ImageDto(
             filePath = "/p.jpg"
         ), ImageDto(
             filePath = "/p.jpg"
         )
     )
-    val dummyActors = listOf<ActorDto>(
+    val dummyActors = listOf(
         ActorDto(
             id = 1,
             name = "A",
@@ -126,7 +126,7 @@ class MovieDetailsRemoteDataSourceImplTest {
             name = "B",
         )
     )
-    val dummyReviews = listOf<ReviewDto>(
+    val dummyReviews = listOf(
         ReviewDto(
             id = "1",
             author = "A",
@@ -137,7 +137,7 @@ class MovieDetailsRemoteDataSourceImplTest {
             content = "A",
         )
     )
-    val dummyMovieVideo = listOf<VideoDto>(
+    val dummyMovieVideo = listOf(
         VideoDto(
             key = "B", type = "trailer", site = "youtube"
         ),
@@ -146,6 +146,6 @@ class MovieDetailsRemoteDataSourceImplTest {
         ),
     )
 
-    val dummyGenreDto = listOf<GenreDto>(GenreDto(id = 1, name = "A"), GenreDto(id = 2, name = "B"))
+    val dummyGenreDto = listOf(GenreDto(id = 1, name = "A"), GenreDto(id = 2, name = "B"))
 
 }

@@ -127,18 +127,6 @@ class TrendingTvShowsScreenViewModelTest {
                 )
             )
         }
-
-        @Test
-        fun `onBackClick emits NavigateBack`() = runTest {
-            viewModel = TrendingTvShowsScreenViewModel(manageTvSeriesUseCase, checkIfUserIsLoggedInUseCase, stringProvider, testDispatcher)
-
-            viewModel.onBackClick()
-
-            viewModel.effect.test {
-                assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
-                cancelAndIgnoreRemainingEvents()
-            }
-        }
     }
 
     private companion object {

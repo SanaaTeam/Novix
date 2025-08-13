@@ -221,7 +221,7 @@ private fun Preview() {
                     )
                 ),
                 currentPageIndex = 1,
-                isSkipable = false
+                isSkipAble = false
             ),
             interactionListener = object : OnboardingInteractionsListener {
                 override fun onNextPageClick() {}

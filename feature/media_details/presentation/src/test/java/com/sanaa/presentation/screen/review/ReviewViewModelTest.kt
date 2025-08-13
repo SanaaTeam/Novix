@@ -49,27 +49,4 @@ class ReviewViewModelTest {
         listener.onBackClick()
         assertThat(backClicked).isTrue()
     }
-
-    companion object {
-        private val dummyReviews = listOf(
-            Review(
-                id = "1",
-                authorName = "CinephileHub",
-                userHandle = "MovieBuff1967",
-                content = "A poetic exploration of adolescence.",
-                rating = 9.8f,
-                createdDate = LocalDate.parse("2001-12-03"),
-                avatarUrl = ""
-            ),
-            Review(
-                id = "2",
-                authorName = "CritiqueMaster",
-                userHandle = "SharpEye",
-                content = "Visually stunning but narratively weak.",
-                rating = 6.5f,
-                createdDate = LocalDate.parse("2002-05-17"),
-                avatarUrl = ""
-            )
-        )
-    }
 }

@@ -48,16 +48,6 @@ class PlayListScreenViewModel @Inject constructor(
             }
         )
 
-
-    fun onListAdded() {
-        refreshLists()
-        emitEffect(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
-    }
-
-    fun onListAddFailed() {
-        emitEffect(PlayListScreenEffect.ShowErrorToAddListSnackBar)
-    }
-
     fun onListDeletedSuccessfully() {
         refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
