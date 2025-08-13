@@ -36,10 +36,11 @@ abstract class BaseViewModel<T, E>(
     protected fun <T> tryToExecute(
         callee: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
+
         viewModelScope.launch(dispatcher + handler) {
             val result = callee()
             onSuccess(result)
@@ -53,11 +54,11 @@ abstract class BaseViewModel<T, E>(
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
+
         viewModelScope.launch(dispatcher + handler) {
-            callee()
-                .collectLatest { result ->
-                    onCollect(result)
-                }
+            callee().collectLatest { result ->
+                onCollect(result)
+            }
         }
     }
 

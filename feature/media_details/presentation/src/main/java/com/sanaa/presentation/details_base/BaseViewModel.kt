@@ -44,14 +44,8 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            onError(
-                when (exception) {
-                    is NovixAppException -> exception
-                    else -> NovixAppException()
-                }
-            )
-        }
+        val handler = createExceptionHandler(onError)
+
         viewModelScope.launch(dispatcher + handler) {
             val result = callee()
             onSuccess(result)
@@ -70,14 +64,8 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        val handler = CoroutineExceptionHandler { _, exception ->
-            onError(
-                when (exception) {
-                    is NovixAppException -> exception
-                    else -> NovixAppException()
-                }
-            )
-        }
+        val handler = createExceptionHandler(onError)
+
         viewModelScope.launch(dispatcher + handler) {
             callee().collectLatest { result ->
                 onCollect(result)
@@ -101,6 +89,15 @@ abstract class BaseViewModel<T, E>(
             .cachedIn(viewModelScope)
     }
 
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is NovixAppException -> exception
+                    else -> NovixAppException()
+                }
+            )
+        }
 
     companion object {
         private const val PAGE_SIZE = 20
