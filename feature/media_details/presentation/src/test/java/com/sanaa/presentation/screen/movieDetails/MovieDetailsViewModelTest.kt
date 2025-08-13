@@ -70,7 +70,7 @@ class MovieDetailsViewModelTest {
     fun `onWatchTrailerClick does nothing when trailer missing`() = runTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -245,7 +245,7 @@ class MovieDetailsViewModelTest {
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
         savedListsStatusProvider = mockk(relaxed = true) {
