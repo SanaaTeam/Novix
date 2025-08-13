@@ -18,7 +18,7 @@ class TvShowMapperTest {
             id = 1,
             name = "Breaking Bad",
             overview = "High school chemistry teacher turned meth kingpin.",
-            posterPath = "/breakingbad.jpg",
+            posterPath = "/test.jpg",
             voteAverage = 9.5f,
             firstAirDate = "2008-01-20",
             genres = listOf(GenreDto(18, "Drama"), GenreDto(80, "Crime")),
@@ -30,7 +30,7 @@ class TvShowMapperTest {
         assertEquals(1, result.id)
         assertEquals("Breaking Bad", result.title)
         assertEquals("High school chemistry teacher turned meth kingpin.", result.overview)
-        assertEquals("https://image.tmdb.org/t/p/w500/breakingbad.jpg", result.posterImageUrl)
+        assertEquals("https://image.tmdb.org/t/p/w500/test.jpg", result.posterImageUrl)
         assertEquals(9.5f, result.imdbRating)
         assertEquals(LocalDate(2008, 1, 20), result.releaseDate)
         assertEquals(

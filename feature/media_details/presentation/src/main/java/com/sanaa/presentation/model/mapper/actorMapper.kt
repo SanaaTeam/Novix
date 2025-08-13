@@ -11,13 +11,13 @@ fun Actor.toActorUiModel() = ActorUiModel(
     region = region,
     lastShow = lastShow,
     gender = if (gender == Actor.Gender.MALE) "male" else "female",
-    department = department?.toString(),
+    department = department,
     character = character,
     lifeSpan = when {
         birthDate != defaultDate && deathDate != defaultDate -> "$birthDate - $deathDate"
         birthDate != defaultDate -> birthDate.toString()
         else -> null
     },
-    placeOfBirth = placeOfBirth?.toString(),
+    placeOfBirth = placeOfBirth,
     biography = biography?.takeIf(String::isNotBlank),
 )

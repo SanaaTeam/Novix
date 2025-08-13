@@ -12,7 +12,7 @@ import usecase.MangeUserPreferenceUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class MyProfileViewModel @Inject constructor(
+class ProfileViewModel @Inject constructor(
     private val mangeUserPreference: MangeUserPreferenceUseCase
 ) : ViewModel() {
 
@@ -25,29 +25,37 @@ class MyProfileViewModel @Inject constructor(
 
     private fun fetchUserPreference() {
         viewModelScope.launch {
-            launch {
-                mangeUserPreference.getTheme().collect { theme ->
-                    updateState { it.copy(isDarkTheme = theme == Theme.DARK) }
-                }
-            }
-            launch {
-                mangeUserPreference.getContentRestriction().collect {
-                    val threshold = when (it) {
-                        ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
-                        ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
-                        ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
-                    }
-                    updateState { it.copy(safeContentThreshold = threshold) }
-                }
+            fetchTheme()
+            fetchContentRestriction()
+        }
+        updateState { copy(isReady = true) }
+    }
+
+    private fun fetchTheme() {
+        viewModelScope.launch {
+            mangeUserPreference.getTheme().collect { theme ->
+                updateState { copy(isDarkTheme = theme == Theme.DARK) }
             }
         }
-        updateState { it.copy(isReady = true) }
     }
 
-    private fun updateState(block: (MyProfileUiState) -> MyProfileUiState) {
+    private fun fetchContentRestriction() {
+        viewModelScope.launch {
+            mangeUserPreference.getContentRestriction().collect {
+                val threshold = when (it) {
+                    ContentRestriction.RESTRICTED -> STRICT_CONTENT_THRESHOLD
+                    ContentRestriction.MODERATE_RESTRICTION -> MODERATE_CONTENT_THRESHOLD
+                    ContentRestriction.UNRESTRICTED -> UNRESTRICTED_CONTENT_THRESHOLD
+                }
+                updateState { copy(safeContentThreshold = threshold) }
+            }
+        }
+    }
+
+
+    private fun updateState(block: MyProfileUiState.() -> MyProfileUiState) {
         _state.value = block(_state.value)
     }
-
 
     private companion object {
         const val STRICT_CONTENT_THRESHOLD = 0.9f

@@ -96,7 +96,7 @@ class MyRatingScreenViewModelTest {
     }
 
     @Test
-    fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
+    fun `onDeleteIconClick for movie failure emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns false
@@ -114,7 +114,7 @@ class MyRatingScreenViewModelTest {
     fun `onRetryLoadDetails sets isLoading to true`() = runTest {
         viewModel =
             MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
-        viewModel.updateState { it.copy(isNoInternetConnection = true) }
+        viewModel.updateState { copy(isNoInternetConnection = true) }
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
     }
@@ -125,7 +125,7 @@ class MyRatingScreenViewModelTest {
             MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
         viewModel.onMediaClick(dummyMovie.id, MediaTypeUi.MOVIE)
         viewModel.effect.test {
-            Truth.assertThat(awaitItem()).isEqualTo(
+            assertThat(awaitItem()).isEqualTo(
                 MyRatingScreenEffect.NavigateToMediaDetails(
                     dummyMovie.id,
                     MediaTypeUi.MOVIE
@@ -137,7 +137,7 @@ class MyRatingScreenViewModelTest {
 
 
     @Test
-    fun `onDeleteIconClick for tv show throws exception emits error snackbar`() = runTest {
+    fun `onDeleteIconClick for tv show throws exception emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
         coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
         coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")

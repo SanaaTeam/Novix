@@ -146,6 +146,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 protobuf-javalite = { module = "com.google.protobuf:protobuf-javalite", version.ref = "protobufJavalite" }
 truth = { module = "com.google.truth:truth", version.ref = "truth" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4jApi" }
+slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jApi" }
 
 # JUnit
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -245,6 +246,7 @@ test = [
     "kotlinx-coroutines-test",
     "truth",
     "slf4j-api",
+    "slf4j-simple",
     "kotlin-test",
 ]
 test-runtime = [

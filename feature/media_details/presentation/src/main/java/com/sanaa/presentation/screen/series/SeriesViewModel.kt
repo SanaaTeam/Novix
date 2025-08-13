@@ -61,26 +61,8 @@ class SeriesViewModel @Inject constructor(
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
             callee = { fetchSeasonDetails(seasonNumber) },
-            onSuccess = {
-                updateState { it.copy(isLoadingEpisodes = false) }
-            }, onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoadingEpisodes = false
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(
-                            error = e.message,
-                            noInternetConnection = false,
-                            isLoadingEpisodes = false
-                        )
-                    }
-                }
-            }
+            onSuccess = { updateState { copy(isLoadingEpisodes = false) } },
+            onError = ::onErrorAccrue
         )
     }
 
@@ -98,19 +80,19 @@ class SeriesViewModel @Inject constructor(
 
     override fun onRateClicked() {
         if (state.value.isUserLoggedIn) {
-            updateState { it.copy(showRateBottomSheet = true) }
+            updateState { copy(showRateBottomSheet = true) }
         } else {
             promptLogin(LoginPromptType.RATE)
         }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showRateBottomSheet = false) }
+        updateState { copy(showRateBottomSheet = false) }
     }
 
     override fun onDismissAnyBottomSheet() {
         updateState {
-            it.copy(
+            copy(
                 showRateBottomSheet = false,
                 showLoginBottomSheet = false
             )
@@ -118,32 +100,34 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(SeriesScreenEffects.NavigateToLogin)
     }
 
     override fun onRatingChanged(newRating: Int) {
-        updateState { it.copy(imdbRating = newRating) }
+        updateState { copy(imdbRating = newRating) }
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitTvSeriesRating,
-            onError = { exception ->
-                updateState {
-                    it.copy(
-                        error = exception.message,
-                        showRateBottomSheet = false
-                    )
-                }
-            }
+            onError = ::onSubmitRateBottomSheetFailed
         )
         updateState {
-            it.copy(showRateBottomSheet = false)
+            copy(showRateBottomSheet = false)
+        }
+    }
+
+    private fun onSubmitRateBottomSheetFailed(throwable: Throwable) {
+        updateState {
+            copy(
+                error = throwable.message,
+                showRateBottomSheet = false
+            )
         }
     }
 
@@ -160,7 +144,7 @@ class SeriesViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState {
-            it.copy(
+            copy(
                 isLoading = true,
                 error = null,
                 noInternetConnection = false
@@ -175,23 +159,9 @@ class SeriesViewModel @Inject constructor(
                 fetchSeriesDetails()
             },
             onSuccess = {
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
             },
-            onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState { state ->
-                        state.copy(noInternetConnection = true, isLoading = false, error = null)
-                    }
-                } else {
-                    updateState { state ->
-                        state.copy(
-                            error = e.message,
-                            isLoading = false,
-                            noInternetConnection = false
-                        )
-                    }
-                }
-            }
+            onError = ::onErrorAccrue
         )
     }
 
@@ -203,7 +173,7 @@ class SeriesViewModel @Inject constructor(
                     tryToExecute(
                         callee = { manageTvSeriesDetails.getSeriesRate(user.id, seriesId) },
                         onSuccess = { rating ->
-                            updateState { it.copy(imdbRating = rating) }
+                            updateState { copy(imdbRating = rating) }
                         },
                     )
                 },
@@ -212,7 +182,7 @@ class SeriesViewModel @Inject constructor(
     }
 
     private suspend fun fetchSeriesDetails() = coroutineScope {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
 
         val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(seriesId) }
         val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(seriesId) }
@@ -229,7 +199,7 @@ class SeriesViewModel @Inject constructor(
         addTvSeriesToHistory(series)
 
         updateState {
-            it.copy(
+            copy(
                 series = series.toSeriesUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
@@ -240,11 +210,11 @@ class SeriesViewModel @Inject constructor(
 
 
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
-        updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
+        updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
-        updateState { it.copy(season = season.toSeasonUiModel()) }
+        updateState { copy(season = season.toSeasonUiModel()) }
     }
 
 
@@ -263,25 +233,22 @@ class SeriesViewModel @Inject constructor(
     private fun updateUserLoginState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
+    }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(isUserLoggedIn = isLogged) }
     }
 
     private fun promptLogin(type: LoginPromptType) {
         updateState {
-            it.copy(
+            copy(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )
         }
     }
-
 
     private fun addTvSeriesToHistory(tvSeries: TvSeries) {
         tryToCollect(
@@ -293,6 +260,24 @@ class SeriesViewModel @Inject constructor(
                 )
             }
         )
+    }
 
+    private fun onErrorAccrue(throwable: Throwable) {
+        if (throwable is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoadingEpisodes = false
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    error = throwable.message,
+                    noInternetConnection = false,
+                    isLoadingEpisodes = false
+                )
+            }
+        }
     }
 }

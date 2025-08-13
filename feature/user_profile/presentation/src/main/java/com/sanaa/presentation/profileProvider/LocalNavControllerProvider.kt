@@ -1,4 +1,4 @@
-package com.sanaa.presentation.api.navigation
+package com.sanaa.presentation.provider
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.navigation.NavHostController

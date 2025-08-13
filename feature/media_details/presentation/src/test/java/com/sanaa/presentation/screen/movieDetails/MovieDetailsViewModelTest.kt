@@ -211,7 +211,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         advanceUntilIdle()
 
-        viewModel.updateState { it.copy(showRateBottomSheet = true) }
+        viewModel.updateState { copy(showRateBottomSheet = true) }
         viewModel.onDismissRateBottomSheet()
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }

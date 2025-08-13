@@ -146,7 +146,6 @@ class RemoteSavedListDataSourceImplTest {
 
     private companion object {
         const val SESSION_ID = "session-123"
-        const val ACCOUNT_ID = 42L
         const val LIST_ID = 7
         const val MOVIE_ID = 99
     }

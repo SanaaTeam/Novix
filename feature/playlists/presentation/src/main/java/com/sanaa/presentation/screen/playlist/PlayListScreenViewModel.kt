@@ -29,39 +29,29 @@ class PlayListScreenViewModel @Inject constructor(
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
-                updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+                updateState { copy(isUserLoggedIn = isUserLoggedIn) }
                 if (isUserLoggedIn) {
                     tryToCollect(
                         dispatcher = Dispatchers.IO,
                         callee = { listsStatusProvider.savedLists },
                         onCollect = { savedLists ->
                             updateState {
-                                it.copy(isLoading = false, lists = savedLists.map {
+                                copy(isLoading = false, lists = savedLists.map {
                                     it.toUiModel()
                                 })
                             }
                         },
                         onError = { e ->
                             if (e is NoNetworkException) {
-                                updateState { it.copy(isLoading = false, noInternetConnection = true) }
+                                updateState { copy(isLoading = false, noInternetConnection = true) }
                             } else {
-                                updateState { it.copy(isLoading = false, errorMessage = e.message) }
+                                updateState { copy(isLoading = false, errorMessage = e.message) }
                             }
                         }
                     )
                 }
             }
         )
-
-
-    fun onListAdded() {
-        refreshLists()
-        emitEffect(PlayListScreenEffect.ShowSuccessToAddListSnackBar)
-    }
-
-    fun onListAddFailed() {
-        emitEffect(PlayListScreenEffect.ShowErrorToAddListSnackBar)
-    }
 
     fun onListDeletedSuccessfully() {
         refreshLists()
@@ -70,7 +60,7 @@ class PlayListScreenViewModel @Inject constructor(
 
 
     override fun onFabBottomSheetClicked() {
-        updateState { it.copy(showAddBottomSheet = true) }
+        updateState { copy(showAddBottomSheet = true) }
     }
 
     override fun onButtonLoginClicked() {
@@ -79,7 +69,7 @@ class PlayListScreenViewModel @Inject constructor(
 
 
     override fun onDismissAddBottomSheet() {
-        updateState { it.copy(showAddBottomSheet = false) }
+        updateState { copy(showAddBottomSheet = false) }
     }
 
     override fun onRetryLoadSavedLists() {

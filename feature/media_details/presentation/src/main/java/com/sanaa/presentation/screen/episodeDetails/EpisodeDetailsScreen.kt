@@ -232,7 +232,7 @@ private fun EpisodeDetailsScreenContent(
                     isRateSelected = state.hasUserSelectedRate,
                     imdbRating = state.imdbRating,
                     onDismiss = interactionListener::onDismissRateBottomSheet,
-                    isVisible = state.showRateBottomSheet,
+                    isVisible = true,
                     onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
                     onRatingChanged = interactionListener::onRatingChanged
                 )
@@ -250,7 +250,7 @@ private fun EpisodeDetailsScreenContent(
                     else -> stringResource(R.string.request_login)
                 }
                 RequestToLoginBottomSheet(
-                    isVisible = state.showLoginBottomSheet,
+                    isVisible = true,
                     onDismiss = interactionListener::onDismissBottomSheet,
                     onLoginButtonClick = { interactionListener.onLoginButtonClick() },
                     text = text,

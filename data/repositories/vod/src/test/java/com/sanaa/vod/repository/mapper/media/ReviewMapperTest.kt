@@ -61,7 +61,7 @@ class ReviewMapperTest {
             content = "Could be better.",
             authorDetails = AuthorDetailsDto(
                 name = "Zainab",
-                username = "zainabx",
+                username = "zainab",
                 avatarPath = null,
                 rating = 6.0f
             ),

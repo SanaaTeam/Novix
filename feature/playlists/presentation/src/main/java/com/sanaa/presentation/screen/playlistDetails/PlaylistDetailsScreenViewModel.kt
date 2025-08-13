@@ -31,26 +31,22 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         "listId is required in SavedStateHandle"
     }
 
-    private val title: String = checkNotNull(savedStateHandle["title"]) {
-        "title is required in SavedStateHandle"
-    }
-
     init {
         loadItemsInSaved(listId)
-        updateState { it.copy(listId = listId) }
+        updateState { copy(listId = listId) }
     }
 
     private fun loadItemsInSaved(listId: Int) {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToCollect(
             callee = {
                 loadSavedMovies(listId)
             },
             onCollect = { movies ->
                 updateState {
-                    it.copy(movieList = flowOf(movies))
+                    copy(movieList = flowOf(movies))
                 }
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
 
             },
             onError = ::onDataLoadError
@@ -75,7 +71,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
             onSuccess = { movies ->
                 loadItemsInSaved(listId)
                 updateState {
-                    it.copy(isLoading = false)
+                    copy(isLoading = false)
                 }
                 emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
 
@@ -90,11 +86,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onDeleteListClicked() {
-        updateState { it.copy(showBottomSheet = true) }
+        updateState { copy(showBottomSheet = true) }
     }
 
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onListDeletedSuccessfully() {
@@ -117,9 +113,9 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     internal fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isLoading = false, errorMessage = null) }
+            updateState { copy(isLoading = false, errorMessage = null) }
         } else {
-            updateState { it.copy(isLoading = false, errorMessage = e.message) }
+            updateState { copy(isLoading = false, errorMessage = e.message) }
             emitEffect(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
 
         }

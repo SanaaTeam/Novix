@@ -21,7 +21,7 @@ fun ActorDto.toEntity(): Actor = Actor(
     birthDate = getLocalDateOrDefault(birthDay),
     deathDate = getLocalDateOrDefault(deathDay),
     placeOfBirth = placeOfBirth,
-    biography = biography ?: ""
+    biography = biography.orEmpty()
 )
 
 
@@ -33,7 +33,7 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     imdbRating = voteAverage?.toFloat() ?: 0f,
     duration = null,
     releaseDate = getLocalDateOrDefault(releaseDate),
-    overview = overview ?: "",
+    overview = overview.orEmpty(),
     rating = null
 )
 

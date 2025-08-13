@@ -15,9 +15,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +45,6 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -72,7 +68,6 @@ fun TopMoviesScreen(
 
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
 
     TopMoviesContent(
@@ -97,7 +92,7 @@ fun TopMoviesScreen(
     )
     if (uiState.showAddListBottomSheet && selectedMedia != null) {
         AddBookmarkListBottomSheet(
-            isVisible = uiState.showAddListBottomSheet,
+            isVisible = true,
             onDismiss = viewModel::onDismissAddListBottomSheet,
             mediaId = selectedMedia.id
         )
