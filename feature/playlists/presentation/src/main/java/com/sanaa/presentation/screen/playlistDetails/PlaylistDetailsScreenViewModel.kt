@@ -73,15 +73,12 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                     listId = listId,
                     movieId = mediaItem.id
                 )
+                savedListsStatusProvider.refreshLists()
             },
-            onSuccess = { movies ->
+            onSuccess = {
                 savedListsStatusProvider.markItemUnsaved(mediaItem.id)
                 loadItemsInSaved(listId)
-                updateState {
-                    copy(isLoading = false)
-                }
                 emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
-                emitEffect(PlaylistDetailsScreenEffect.RefreshList)
             },
             onError = ::onDataLoadError
 

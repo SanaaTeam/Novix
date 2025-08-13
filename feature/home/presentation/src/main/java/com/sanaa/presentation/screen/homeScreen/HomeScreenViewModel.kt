@@ -256,13 +256,16 @@ class HomeScreenViewModel @Inject constructor(
                     val defaultList = userLists.firstOrNull()
                     if (defaultList != null) {
                         manageSavedListItemsUseCase.removeMovieFromSavedList(defaultList.id, media.id)
+                        savedListsStatusProvider.refreshLists()
                     }
                 },
                 onSuccess = {
                     savedListsStatusProvider.markItemUnsaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowSuccess(message = "Removed from list."))
                 },
                 onError = {
                     savedListsStatusProvider.markItemSaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowError(message = "Failed to remove from list."))
                 }
             )
         } else {
