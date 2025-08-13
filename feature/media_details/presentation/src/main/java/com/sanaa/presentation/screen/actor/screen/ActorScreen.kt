@@ -6,6 +6,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -243,6 +244,7 @@ private fun ActorInfo(
     LazyColumn(
         state = lazyState,
         modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(bottom = 24.dp)
     ) {
         item {
@@ -270,7 +272,7 @@ private fun ActorInfo(
                     overview = bio,
                     onReadMore = { /* expand */ },
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                        .padding(horizontal = 16.dp)
                         .fillMaxWidth()
                 )
             }
@@ -280,7 +282,6 @@ private fun ActorInfo(
             MediaSection(
                 title = stringResource(R.string.gallery),
                 items = state.galleryImageUrls.take(10),
-                modifier = Modifier.padding(top = 16.dp),
                 onActionClick = listener::onViewAllGalleryClicked
             ) { image ->
                 GalleryCard(image)
