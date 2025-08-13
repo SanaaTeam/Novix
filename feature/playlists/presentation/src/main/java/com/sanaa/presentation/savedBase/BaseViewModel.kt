@@ -91,7 +91,7 @@ abstract class BaseViewModel<T, E>(
             onError(
                 when (exception) {
                     is NovixAppException -> exception
-                    else -> NovixAppException()
+                    else -> NovixAppException(exception.message)
                 }
             )
         }
