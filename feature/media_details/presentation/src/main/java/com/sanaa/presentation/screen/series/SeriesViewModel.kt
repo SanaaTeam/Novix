@@ -11,6 +11,7 @@ import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -122,10 +123,10 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private fun onSubmitRateBottomSheetFailed(throwable: Throwable) {
+    private fun onSubmitRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                error = throwable.message,
+                error = exception.message,
                 showRateBottomSheet = false
             )
         }
@@ -262,8 +263,8 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
-    private fun onErrorAccrue(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onErrorAccrue(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -273,7 +274,7 @@ class SeriesViewModel @Inject constructor(
         } else {
             updateState {
                 copy(
-                    error = throwable.message,
+                    error = exception.message,
                     noInternetConnection = false,
                     isLoadingEpisodes = false
                 )

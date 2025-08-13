@@ -10,6 +10,7 @@ import com.sanaa.presentation.model.mapper.toUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -121,8 +122,8 @@ class GenreMoviesViewModel @Inject constructor(
         updateState { copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
     }
 
-    private fun onFetchMoviesFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onFetchMoviesFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -131,7 +132,7 @@ class GenreMoviesViewModel @Inject constructor(
                 )
             }
         } else {
-            updateState { copy(error = throwable.message, isLoading = false) }
+            updateState { copy(error = exception.message, isLoading = false) }
         }
     }
 

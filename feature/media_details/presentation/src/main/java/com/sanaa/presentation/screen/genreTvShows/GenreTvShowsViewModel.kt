@@ -10,6 +10,7 @@ import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
@@ -103,11 +104,11 @@ class GenreTvShowsViewModel @Inject constructor(
         }
     }
 
-    private fun onGetShowsByGeneraIdFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onGetShowsByGeneraIdFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
         } else {
-            updateState { copy(error = throwable.message, isLoading = false) }
+            updateState { copy(error = exception.message, isLoading = false) }
         }
     }
 
