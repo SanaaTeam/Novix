@@ -7,13 +7,14 @@ import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Genre
 import entity.Movie
 import entity.TvShow
+import kotlin.time.Duration.Companion.minutes
 
 fun Movie.toLocalDto(): MovieLocalDto =
     MovieLocalDto(
         id = id,
         title = title,
         posterImageUrl = posterImageUrl,
-        imdbRating = imdbRating ?: 0f,
+        imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
     )
 
@@ -21,7 +22,7 @@ fun TvShow.toLocalDto(): TvShowLocalDto =
     TvShowLocalDto(
         id = id,
         title = title,
-        posterImageUrl = posterImageUrl.orEmpty(),
+        posterImageUrl = posterImageUrl,
         imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
 
@@ -33,11 +34,11 @@ fun MovieLocalDto.toEntity() = Movie(
     posterImageUrl = posterImageUrl,
     imdbRating = imdbRating,
     genres = emptyList(),
-    duration = null,
+    duration = (-1).minutes,
     releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     trailerUrl = "",
-    rating = 0,
+    rating = -1,
 )
 
 fun TvShowLocalDto.toEntity() = TvShow(
@@ -49,7 +50,7 @@ fun TvShowLocalDto.toEntity() = TvShow(
     releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     seasonsCount = 0,
-    rating = 0,
+    rating = -1,
 )
 
 fun GenreLocalDto.toEntity() = Genre(

@@ -8,10 +8,10 @@ fun ReviewDto.toEntity(): Review {
     return Review(
         id = id,
         content = content,
-        authorName = authorDetails.name,
-        userHandle = authorDetails.username,
-        avatarUrl = buildAvatarUrl(authorDetails.avatarPath),
-        rating = authorDetails.rating,
+        authorName = authorDetails.name.orEmpty(),
+        userHandle = authorDetails.username.orEmpty(),
+        avatarUrl = buildAvatarUrl(authorDetails.avatarPath).orEmpty(),
+        rating = authorDetails.rating ?: -1f,
         createdDate = getLocalDateOrDefault(createdAt.substring(0, 10))
     )
 }

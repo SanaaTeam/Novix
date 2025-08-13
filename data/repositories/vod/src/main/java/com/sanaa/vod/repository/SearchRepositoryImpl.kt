@@ -20,10 +20,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchMovies(query: String, page: Int): List<Movie> = safeCall(query) {
-        remoteDataSource.searchMovies(query, page).results.map { dto ->
-            val movie = dto.toEntity()
-            movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
-        }
+        remoteDataSource.searchMovies(query, page).results.map { dto -> dto.toEntity() }
     }
 
     override suspend fun searchTvShows(query: String, page: Int): List<TvShow> = safeCall(query) {
