@@ -145,16 +145,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                 updateState { copy(isLoading = false) }
             },
             onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState {
-                        copy(
-                            noInternetConnection = true,
-                            error = null,
-                            isLoading = false
-                        )
+                when (e) {
+                    is NoNetworkException -> {
+                        updateState {
+                            copy(
+                                noInternetConnection = true,
+                                error = null,
+                                isLoading = false
+                            )
+                        }
                     }
-                } else {
-                    updateState { copy(error = error, isLoading = false) }
+                    else -> {
+                        updateState { copy(error = e.message, isLoading = false) }
+                    }
                 }
             }
         )
