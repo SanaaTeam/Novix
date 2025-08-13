@@ -12,9 +12,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -41,10 +39,9 @@ import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.NavigateToMediaDetails
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowErrorSnackBar
 import com.sanaa.presentation.screen.watchingHistory.WatchingHistoryScreenEffect.ShowSuccessSnackBar
+import com.sanaa.presentation.screen.watchingHistory.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.watchingHistory.component.FilterTab
 import com.sanaa.presentation.screen.watchingHistory.component.GridSection
-import com.sanaa.presentation.screen.watchingHistory.component.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.screen.watchingHistory.component.SnackData
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -55,9 +52,25 @@ fun WatchingHistoryScreen(
     viewModel: WatchingHistoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+
+    WatchingHistoryScreenEffectsHandler(
+        effects = viewModel.effect,
+        interactionListener = viewModel
+    )
+
+    WatchingHistoryScreenContent(
+        state = state,
+        interactionListener = viewModel,
+        modifier = modifier,
+    )
+}
+@Composable
+private fun WatchingHistoryScreenEffectsHandler(
+    interactionListener: WatchingHistoryInteractionListener,
+    effects: SharedFlow<WatchingHistoryScreenEffect>
+) {
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
-    var snackBarData by remember { mutableStateOf<SnackData?>(null) }
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -65,61 +78,29 @@ fun WatchingHistoryScreen(
             .detailsApi()
     }
 
-    WatchingHistoryScreenEffectsHandler(
-        effects = viewModel.effect,
-        onNavigateBack = { navController.popBackStack() },
-        onNavigateToMediaDetails = { id, type ->
-            detailsApi.launch(
-                context = navController.context,
-                id = id,
-                startRoute = when (type) {
-                    MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                    MediaTypeUi.TV_SHOW -> StartRoute.SERIES
-                }
-            )
-        },
-        onShowErrorSnackBar = { message ->
-            snackBarData = SnackData(message = message, isError = true)
-        },
-        onShowSuccessSnackBar = { message ->
-            snackBarData = SnackData(message = message, isError = false)
-        }
-    )
-
-    WatchingHistoryScreenContent(
-        state = state,
-        interactionListener = viewModel,
-        modifier = modifier,
-        snackBarData = snackBarData,
-    )
-}
-
-@Composable
-private fun WatchingHistoryScreenEffectsHandler(
-    onNavigateBack: () -> Unit,
-    onNavigateToMediaDetails: (Int, MediaTypeUi) -> Unit,
-    onShowErrorSnackBar: (String) -> Unit,
-    onShowSuccessSnackBar: (String) -> Unit,
-    effects: SharedFlow<WatchingHistoryScreenEffect>
-) {
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
-                is NavigateBack -> onNavigateBack()
-                is NavigateToMediaDetails -> onNavigateToMediaDetails(effect.id, effect.mediaTypeUi)
-                is ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
-                is ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
+                is NavigateBack -> navController.popBackStack()
+                is NavigateToMediaDetails -> detailsApi.launch(
+                    context = navController.context,
+                    id = effect.id,
+                    startRoute = when (effect.mediaTypeUi) {
+                        MediaTypeUi.MOVIE -> StartRoute.MOVIE
+                        MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                    }
+                )
+                is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
+                is ShowSuccessSnackBar -> interactionListener.onShowSuccessSnackBar(effect.message)
             }
         }
     }
 }
-
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
     interactionListener: WatchingHistoryInteractionListener,
     modifier: Modifier = Modifier,
-    snackBarData: SnackData?,
 ) {
     val watchedMovies = state.movieList
     val watchedTvShows = state.tvShowList
@@ -145,9 +126,9 @@ private fun WatchingHistoryScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                NovixAnimatedSnackBarHost(
-                    data = snackBarData,
-                    onDismiss = interactionListener::onDismissSnack,
+                AnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onDismissSnack
                 )
             }
         }) {
