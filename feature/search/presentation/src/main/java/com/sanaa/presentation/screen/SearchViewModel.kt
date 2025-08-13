@@ -352,10 +352,13 @@ class SearchViewModel @Inject constructor(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
-        return moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-            pagingData.map { movie ->
-                movie.copy(isSaved = savedIds.contains(movie.id))
+
+        return if (state.value.isUserLoggedIn) {
+            moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+                pagingData.map { movie -> movie.copy(isSaved = savedIds.contains(movie.id)) }
             }
+        } else {
+            moviesPagingFlow
         }.cachedIn(viewModelScope)
     }
 
