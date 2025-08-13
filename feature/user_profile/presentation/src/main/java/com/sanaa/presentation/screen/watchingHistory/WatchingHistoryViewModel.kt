@@ -181,9 +181,22 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onCreateNewListClick() {
         updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
+    override fun onSaveToListResult(success: Boolean) {
+        if (success) {
+            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
+        } else {
+            emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.addToListFailed))
+        }
+    }
 
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onDismissSnack() {
+        updateState {
+            copy(error = null)
+        }
     }
 
     override fun onShowSuccessSnackBar(message: String) {
