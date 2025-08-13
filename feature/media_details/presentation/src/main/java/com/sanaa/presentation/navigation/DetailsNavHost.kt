@@ -42,13 +42,13 @@ fun DetailsNavHost(
     mediaId: Int? = null,
     genreId: Int? = null,
     genreName: String? = null,
-    isTvGenre: Boolean = false
+    isTvGenre: Boolean = false,
 ) {
     val initialRoute = when {
         startRoute != null && mediaId != null -> when (startRoute) {
             StartRoute.SERIES -> SeriesDetailsScreenRoute(mediaId).route()
             StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId).route()
-            StartRoute.ACTOR -> ActorDetailsScreenRoute(mediaId).route()
+            StartRoute.ACTOR -> ActorScreenRoute(mediaId).route()
         }
 
         else -> {
@@ -120,8 +120,8 @@ fun DetailsNavHost(
 
             // ──── Actors ───────────────────────────────────────────────────────────
             composable(
-                route = ActorDetailsScreenRoute.PATTERN,
-                arguments = listOf(navArgument(ActorDetailsScreenRoute.ARG_ACTOR_ID) {
+                route = ActorScreenRoute.PATTERN,
+                arguments = listOf(navArgument(ActorScreenRoute.ARG_ACTOR_ID) {
                     type = NavType.IntType
                 })
             ) {
@@ -136,10 +136,7 @@ fun DetailsNavHost(
                 })
             ) {
                 val actorViewModel: ActorViewModel = hiltViewModel()
-                TopMoviesScreen(
-                    viewModel = actorViewModel,
-                    navigateBack = { navController.popBackStack() }
-                )
+                TopMoviesScreen(viewModel = actorViewModel,)
             }
 
             composable(
@@ -149,10 +146,7 @@ fun DetailsNavHost(
                 })
             ) {
                 val actorViewModel: ActorViewModel = hiltViewModel()
-                TopSeriesScreen(
-                    viewModel = actorViewModel,
-                    navigateBack = { navController.popBackStack() }
-                )
+                TopSeriesScreen(viewModel = actorViewModel)
             }
 
             composable(
