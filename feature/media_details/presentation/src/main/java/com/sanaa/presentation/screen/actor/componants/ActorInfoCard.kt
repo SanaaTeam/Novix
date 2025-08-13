@@ -16,7 +16,7 @@ import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.InfoSection
 
 @Composable
-fun     ActorInfoCard(
+fun ActorInfoCard(
     actor: ActorUiModel,
     modifier: Modifier = Modifier,
 ) {

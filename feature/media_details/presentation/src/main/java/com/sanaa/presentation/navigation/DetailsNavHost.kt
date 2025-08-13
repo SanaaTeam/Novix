@@ -48,7 +48,7 @@ fun DetailsNavHost(
         startRoute != null && mediaId != null -> when (startRoute) {
             StartRoute.SERIES -> SeriesDetailsScreenRoute(mediaId).route()
             StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId).route()
-            StartRoute.ACTOR -> ActorDetailsScreenRoute(mediaId).route()
+            StartRoute.ACTOR -> ActorScreenRoute(mediaId).route()
         }
 
         else -> {
@@ -120,8 +120,8 @@ fun DetailsNavHost(
 
             // ──── Actors ───────────────────────────────────────────────────────────
             composable(
-                route = ActorDetailsScreenRoute.PATTERN,
-                arguments = listOf(navArgument(ActorDetailsScreenRoute.ARG_ACTOR_ID) {
+                route = ActorScreenRoute.PATTERN,
+                arguments = listOf(navArgument(ActorScreenRoute.ARG_ACTOR_ID) {
                     type = NavType.IntType
                 })
             ) {

@@ -111,7 +111,6 @@ private fun GalleryImages(state: ActorScreenUiState) {
     ) {
         items(
             items = state.galleryImageUrls,
-            key = { state.galleryImageUrls }
         ) { image ->
             GalleryCard(image, modifier = Modifier.aspectRatio(1f))
         }
