@@ -56,24 +56,11 @@ private fun ActorGalleryContent(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
 ) {
-    NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-    ) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
             modifier = modifier.navigationBarsPadding()
         ) {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
-                    )
-                },
-                screenTitle = stringResource(R.string.gallery),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .systemBarsPadding()
-            )
+            ActorGalleryTopBar(onBackClick)
 
             Box(
                 modifier = Modifier
@@ -87,29 +74,46 @@ private fun ActorGalleryContent(
                     contentAlignment = Alignment.Center
 
                 ) { loading ->
-                    when {
-                        loading -> {
-                            LoadingIndicator()
-                        }
-
-                        else -> {
-                            LazyVerticalGrid(
-                                modifier = Modifier.fillMaxSize(),
-                                columns = GridCells.Adaptive(minSize = 104.dp),
-                                contentPadding = PaddingValues(16.dp),
-                                verticalArrangement = Arrangement.spacedBy(12.dp),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                items(
-                                    state.galleryImageUrls,
-                                ) { image ->
-                                    GalleryCard(image, modifier = Modifier.aspectRatio(1f))
-                                }
-                            }
-                        }
-                    }
+                    if (loading)
+                        LoadingIndicator()
+                    else
+                        GalleryImages(state)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ActorGalleryTopBar(onBackClick: () -> Unit) {
+    TopBar(
+        leftContent = {
+            TopBarClickableIcon(
+                icon = painterResource(id = designR.drawable.icon_back),
+                onClick = onBackClick
+            )
+        },
+        screenTitle = stringResource(R.string.gallery),
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding()
+    )
+}
+
+@Composable
+private fun GalleryImages(state: ActorScreenUiState) {
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = 104.dp),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            items = state.galleryImageUrls,
+            key = { state.galleryImageUrls }
+        ) { image ->
+            GalleryCard(image, modifier = Modifier.aspectRatio(1f))
         }
     }
 }
