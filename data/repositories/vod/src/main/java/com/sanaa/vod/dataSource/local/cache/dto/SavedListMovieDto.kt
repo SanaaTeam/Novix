@@ -8,12 +8,13 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "saved_list_movies",
     indices = [
-        Index(value = ["movie_id"], unique = true),
-        Index(value = ["list_id"])
+        Index(value = ["list_id", "movie_id"], unique = true)
     ]
 )
 data class SavedListMovieDto(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+
     @ColumnInfo(name = "movie_id")
     val movieId: Long,
 
