@@ -1,6 +1,8 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.navigation.NavHostController
+import com.sanaa.presentation.model.SeriesUiModel
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,26 +52,23 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopSeriesScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
+    val navController = LocalNavControllerProvider.current
+    BackHandler(onBack = { navController.popBackStack() })
+
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
-
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
     val launcher = launchAuthActivityForResult()
-
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     TopSeriesContent(
-        onBackClick = navigateBack,
-        onRetryClicked = viewModel::onRetryClicked,
         state = uiState,
-        modifier = Modifier.fillMaxSize(),
+        navController = navController,
     )
+
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
@@ -81,25 +80,20 @@ fun TopSeriesScreen(
 
 @Composable
 private fun TopSeriesContent(
-    onBackClick: () -> Unit,
-    onRetryClicked:() -> Unit,
     state: ActorScreenUiState,
-    modifier: Modifier = Modifier,
-
+    navController: NavHostController,
 ) {
-    val navController = LocalNavControllerProvider.current
-
-    NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-    ) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
-            modifier = modifier.navigationBarsPadding()
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
         ) {
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
+                        onClick = { navController.popBackStack() }
                     )
                 },
                 screenTitle = stringResource(R.string.top_series_picks),
@@ -107,12 +101,12 @@ private fun TopSeriesContent(
                     .fillMaxWidth()
                     .systemBarsPadding()
             )
+
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
-
                 AnimatedContent(
                     targetState = Pair(state.isLoading, state.noInternetConnection),
                     modifier = Modifier.align(Alignment.Center),
@@ -131,63 +125,67 @@ private fun TopSeriesContent(
                         }
 
                         else ->
-                            LazyVerticalGrid(
-                                modifier = Modifier.fillMaxSize(),
-                                columns = GridCells.Adaptive(minSize = 140.dp),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp, end = 16.dp, bottom = 16.dp
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(
-                                    12.dp
-                                ),
-                                horizontalArrangement = Arrangement.spacedBy(
-                                    12.dp
-                                )
-                            ) {
-                                itemsIndexed(
-                                    state.topTvSeries,
-                                    key = { index, _ -> index }
-                                ) { _, series ->
-                                    MediaPosterCard(
-                                        posterImage = {
-                                            RemoteBlurredSensitiveImage(
-                                                imageUrl = series.posterPath ?: "",
-                                                modifier = Modifier.fillMaxSize(),
-                                                sensitiveContentThreshold = 0.2f,
-                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                                safeContentThreshold = LocalSafeContentThreshold.current,
-                                                contentDescription = series.title,
-                                                placeholderContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                                errorContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                            ) {
-                                                OnBlurContent(
-                                                    hintText = stringResource(R.string.unsuitable_image),
-                                                    textStyle = Theme.textStyle.body.small.copy(
-                                                        color = Color(0x99FFFFFF)
-                                                    ),
-                                                    iconSize = 24.dp,
-                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                                                )
-                                            }
-                                        },
-                                        topLeftContent = {
-
-                                        },
-                                        onCardClick = {
-                                            navController.navigate(
-                                                SeriesDetailsScreenRoute(series.id).route()
-                                            )
-                                        }
-                                    )
-                                }
-                            }
+                        SeriesList(state, navController)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun SeriesList(
+    state: ActorScreenUiState,
+    navController: NavHostController,
+) {
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = 140.dp),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        itemsIndexed(
+            state.topTvSeries,
+            key = { index, _ -> index }
+        ) { _, series ->
+            MediaPosterCard(
+                posterImage = {
+                    PosterImage(series)
+                },
+                onCardClick = {
+                    navController.navigate(
+                        SeriesDetailsScreenRoute(series.id).route()
+                    )
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun PosterImage(series: SeriesUiModel) {
+    RemoteBlurredSensitiveImage(
+        imageUrl = series.posterPath.orEmpty(),
+        modifier = Modifier.fillMaxSize(),
+        sensitiveContentThreshold = 0.2f,
+        isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+        safeContentThreshold = LocalSafeContentThreshold.current,
+        contentDescription = series.title,
+        placeholderContent = {
+            RemoteImagePlaceholder(Modifier.fillMaxSize())
+        },
+        errorContent = {
+            RemoteImagePlaceholder(Modifier.fillMaxSize())
+        },
+    ) {
+        OnBlurContent(
+            hintText = stringResource(R.string.unsuitable_image),
+            textStyle = Theme.textStyle.body.small.copy(
+                color = Color(0x99FFFFFF)
+            ),
+            iconSize = 24.dp,
+            icon = painterResource(designR.drawable.icon_eye_slash),
+        )
     }
 }

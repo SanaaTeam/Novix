@@ -42,7 +42,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
@@ -85,7 +85,7 @@ fun EpisodeDetailsScreen(
 
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
                     navController.navigate(
-                        ActorDetailsScreenRoute(it.actorId).route()
+                        ActorScreenRoute(it.actorId).route()
                     )
                 }
 

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.actor.screen
 
 import androidx.activity.compose.BackHandler
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -54,29 +56,27 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
+    val navController = LocalNavControllerProvider.current
+    BackHandler(onBack = { navController.popBackStack() })
+
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
 
     val launcher = launchAuthActivityForResult()
-
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
 
-
     TopMoviesContent(
         state = uiState,
-        onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
-        onSaveIconClick = viewModel::onSaveClicked,
-        onRetryClicked = viewModel::onRetryClicked
+        interactionListener = viewModel,
+        navController = navController,
     )
+
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
@@ -84,6 +84,7 @@ fun TopMoviesScreen(
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
+
     SaveToListBottomSheet(
         isVisible = uiState.showSaveToListBottomSheet,
         mediaId = selectedMedia?.id?.toLong() ?: 0,
@@ -102,14 +103,11 @@ fun TopMoviesScreen(
 
 @Composable
 private fun TopMoviesContent(
-    onBackClick: () -> Unit,
-    onSaveIconClick: (MovieUiModel) -> Unit,
-    onRetryClicked: () -> Unit,
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
+    interactionListener: ActorsScreenInteractionListener,
+    navController: NavController,
 ) {
-    val navController = LocalNavControllerProvider.current
-
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
     ) {
@@ -120,7 +118,7 @@ private fun TopMoviesContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
+                        onClick = { navController.popBackStack() }
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),
@@ -151,62 +149,55 @@ private fun TopMoviesContent(
                                 useDarkTheme = LocalThemeProvider.current
                             )
                         }
-
                         else ->
-                            LazyVerticalGrid(
-                                modifier = Modifier.fillMaxSize(),
-                                columns = GridCells.Adaptive(minSize = 140.dp),
-                                contentPadding = PaddingValues(
-                                    start = 16.dp, end = 16.dp, bottom = 16.dp
-                                ),
-                                verticalArrangement = Arrangement.spacedBy(
-                                    12.dp
-                                ),
-                                horizontalArrangement = Arrangement.spacedBy(
-                                    12.dp
-                                )
-                            ) {
-                                itemsIndexed(
-                                    state.topMovies,
-                                    key = { index, _ -> index }
-                                ) { _, movie ->
-                                    MediaPosterCard(
-                                        posterImage = {
-                                            RemoteBlurredSensitiveImage(
-                                                imageUrl = movie.posterUrl.orEmpty(),
-                                                modifier = Modifier.fillMaxSize(),
-                                                sensitiveContentThreshold = 0.2f,
-                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                                safeContentThreshold = LocalSafeContentThreshold.current,
-                                                contentDescription = movie.title,
-                                                placeholderContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                                errorContent = {
-                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                                },
-                                            ) {
-                                                OnBlurContent(
-                                                    hintText = stringResource(R.string.unsuitable_image),
-                                                    textStyle = Theme.textStyle.body.small.copy(
-                                                        color = Color(0x99FFFFFF)
-                                                    ),
-                                                    iconSize = 24.dp,
-                                                    icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash)
-                                                )
-                                            }
-                                        },
-                                        topLeftContent = {
-                                            SaveIconChip(
-                                                isSaved = movie.isSaved,
-                                                onClick = { onSaveIconClick(movie) }
+                        LazyVerticalGrid(
+                            modifier = Modifier.fillMaxSize(),
+                            columns = GridCells.Adaptive(minSize = 140.dp),
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            itemsIndexed(
+                                state.topMovies,
+                                key = { index, _ -> index }
+                            ) { _, movie ->
+                                MediaPosterCard(
+                                    posterImage = {
+                                        RemoteBlurredSensitiveImage(
+                                            imageUrl = movie.posterUrl.orEmpty(),
+                                            modifier = Modifier.fillMaxSize(),
+                                            sensitiveContentThreshold = 0.2f,
+                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                            safeContentThreshold = LocalSafeContentThreshold.current,
+                                            contentDescription = movie.title,
+                                            placeholderContent = {
+                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                            },
+                                            errorContent = {
+                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                            },
+                                        ) {
+                                            OnBlurContent(
+                                                hintText = stringResource(R.string.unsuitable_image),
+                                                textStyle = Theme.textStyle.body.small.copy(
+                                                    color = Color(0x99FFFFFF)
+                                                ),
+                                                iconSize = 24.dp,
+                                                icon = painterResource(designR.drawable.icon_eye_slash)
                                             )
-                                        },
-                                        onCardClick = {
-                                            navController.navigate(MovieDetailsScreenRoute(movie.id).route())
-                                        })
-                                }
+                                        }
+                                    },
+                                    topLeftContent = {
+                                        SaveIconChip(
+                                            isSaved = movie.isSaved,
+                                            onClick = { interactionListener.onSaveClicked(movie) }
+                                        )
+                                    },
+                                    onCardClick = {
+                                        navController.navigate(MovieDetailsScreenRoute(movie.id).route())
+                                    })
                             }
+                        }
                     }
                 }
             }
