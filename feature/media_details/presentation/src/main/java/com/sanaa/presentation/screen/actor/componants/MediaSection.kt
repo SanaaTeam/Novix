@@ -26,7 +26,6 @@ fun <T> MediaSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 24.dp)
     ) {
 
         SectionHeader(
