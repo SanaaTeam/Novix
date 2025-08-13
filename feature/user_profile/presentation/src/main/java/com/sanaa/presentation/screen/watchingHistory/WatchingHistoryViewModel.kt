@@ -195,15 +195,15 @@ class WatchingHistoryViewModel @Inject constructor(
 
     override fun onDismissSnack() {
         updateState {
-            copy(error = null)
+            copy(snackBarData = null)
         }
     }
 
     override fun onShowSuccessSnackBar(message: String) {
-        emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(message))
+        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
     }
 
     override fun onShowErrorSnackBar(message: String) {
-        emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(message))
+        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }
