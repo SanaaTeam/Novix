@@ -3,6 +3,7 @@ package com.sanaa.presentation.base
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,16 +37,13 @@ abstract class BaseViewModel<T, E>(
     protected fun <T> tryToExecute(
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
+        onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
-            try {
-                val result = block()
-                onSuccess(result)
-            } catch (exception: Exception) {
-                onError(exception)
-            }
+        val handler = createExceptionHandler(onError)
+        viewModelScope.launch(dispatcher + handler) {
+            val result = block()
+            onSuccess(result)
         }
     }
 
@@ -55,22 +53,24 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
-            try {
-                block().catch { onError(it) }
-                    .collectLatest { result ->
-                        onCollect(result)
-                    }
-            } catch (exception: Exception) {
-                Timber.w(exception, "Use-case failed")
-                onError(exception)
-            }
+        val handler = createExceptionHandler(onError)
+        viewModelScope.launch(dispatcher + handler) {
+            block()
+                .collectLatest { result ->
+                    onCollect(result)
+                }
         }
     }
+
 
     protected fun emitEffect(effect: E) {
         viewModelScope.launch {
             _effect.emit(effect)
         }
     }
+
+    private fun createExceptionHandler(onError: (Throwable) -> Unit) =
+        CoroutineExceptionHandler { _, throwable ->
+            onError(throwable)
+        }
 }
