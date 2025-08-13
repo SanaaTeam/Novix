@@ -29,9 +29,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.userprofile.presentation.R
-import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.ProfileApiEntryPoint
+import com.sanaa.presentation.provider.LocalNavControllerProvider
 import com.sanaa.presentation.provider.LocalThemeMode
+import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateBack
+import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.NavigateToMediaDetails
+import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.ShowErrorSnackBar
+import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect.ShowSuccessSnackBar
 import com.sanaa.presentation.screen.myRating.component.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.myRating.component.RatedMediaListSectionContent
 import dagger.hilt.android.EntryPointAccessors
@@ -91,10 +95,10 @@ private fun MyRatingScreenEffectsHandler(
     LaunchedEffect(Unit) {
         effects.collectLatest { effect ->
             when (effect) {
-                is MyRatingScreenEffect.NavigateBack -> onNavigateBack()
-                is MyRatingScreenEffect.ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
-                is MyRatingScreenEffect.ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
-                is MyRatingScreenEffect.NavigateToMediaDetails -> onNavigateToMediaDetails(effect.mediaId, effect.mediaTypeUi)
+                is NavigateBack -> onNavigateBack()
+                is ShowErrorSnackBar -> onShowErrorSnackBar(effect.message)
+                is ShowSuccessSnackBar -> onShowSuccessSnackBar(effect.message)
+                is NavigateToMediaDetails -> onNavigateToMediaDetails(effect.mediaId, effect.mediaTypeUi)
             }
         }
     }
