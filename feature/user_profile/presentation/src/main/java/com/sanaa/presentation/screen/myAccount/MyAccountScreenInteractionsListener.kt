@@ -1,5 +1,8 @@
 package com.sanaa.presentation.screen.myAccount
 
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.ThemeUiState
+
 interface MyAccountScreenInteractionsListener {
     fun onClickChangePassword()
     fun onClickContentRestriction()

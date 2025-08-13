@@ -3,10 +3,10 @@ package com.sanaa.vod.repository.mapper.cachedContent
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Genre
 import entity.Movie
 import entity.TvSeries
-import kotlinx.datetime.LocalDate
 
 fun Movie.toLocalDto(): MovieLocalDto =
     MovieLocalDto(
@@ -25,7 +25,7 @@ fun TvSeries.toLocalDto(): TvShowLocalDto =
         imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
 
-    )
+        )
 
 fun MovieLocalDto.toEntity() = Movie(
     id = id,
@@ -34,7 +34,7 @@ fun MovieLocalDto.toEntity() = Movie(
     imdbRating = imdbRating,
     genres = emptyList(),
     duration = null,
-    releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1, 1, 1),
+    releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     trailerUrl = "",
     rating = 0,
@@ -46,7 +46,7 @@ fun TvShowLocalDto.toEntity() = TvSeries(
     posterImageUrl = posterImageUrl,
     imdbRating = imdbRating,
     genres = emptyList(),
-    releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1, 1, 1),
+    releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     seasonsCount = 0,
     rating = 0,

@@ -186,8 +186,8 @@ class SearchUseCaseTest {
                 gender = Actor.Gender.MALE,
                 department = null,
                 character = null,
-                birthDate = null,
-                deathDate = null,
+                birthDate = LocalDate(1, 1, 1),
+                deathDate = LocalDate(1, 1, 1),
                 placeOfBirth = null,
                 biography = null,
             )

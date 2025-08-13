@@ -561,8 +561,8 @@ class SearchViewModelTest {
                 gender = Gender.MALE,
                 department = null,
                 character = null,
-                birthDate = null,
-                deathDate = null,
+                birthDate = LocalDate(1, 1, 1),
+                deathDate = LocalDate(1, 1, 1),
                 placeOfBirth = null,
                 biography = null
             )
@@ -655,19 +655,6 @@ class SearchViewModelTest {
             rating = 0
         )
 
-        val movie2 = Movie(
-            1,
-            "query2",
-            "https://image.com",
-            genres = emptyList(),
-            imdbRating = 0f,
-            duration = 100.minutes,
-            releaseDate = LocalDate(1970, 1, 1),
-            overview = "",
-            trailerUrl = "",
-            rating = 0
-        )
-
         val series = TvSeries(
             1,
             "tvShowName",
@@ -689,16 +676,10 @@ class SearchViewModelTest {
             gender = Gender.MALE,
             department = null,
             character = null,
-            birthDate = null,
-            deathDate = null,
+            birthDate = LocalDate(1, 1, 1),
+            deathDate = LocalDate(1, 1, 1),
             placeOfBirth = null,
             biography = null
-        )
-
-        val timestamp = Instant.fromEpochMilliseconds(1234567890L)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-        val resentSearchHistories = listOf(
-            SearchHistory(1, "Movie", timestamp = timestamp)
         )
     }
 }

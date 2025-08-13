@@ -1,12 +1,15 @@
 package com.sanaa.vod.repository.mapper.history
 
 import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.util.TimeUtils
+import com.sanaa.vod.util.DateTimeUtils
 import entity.Genre
 import entity.MediaHistoryItem
 import usecase.search.search_param.MediaType
 
-fun MediaHistoryItem.toDto(username: String, time: Long = TimeUtils.getCurrentTimeStamp()): WatchedMediaHistoryLocalDto {
+fun MediaHistoryItem.toDto(
+    username: String,
+    time: Long = DateTimeUtils.getCurrentTimeStamp()
+): WatchedMediaHistoryLocalDto {
     val genresString =
         this.genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
     return WatchedMediaHistoryLocalDto(

@@ -6,6 +6,7 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Actor.Gender
 import entity.Movie
@@ -148,7 +149,7 @@ class ActorViewModelTest {
             department = "Acting",
             character = "Detective",
             birthDate = LocalDate.parse("1990-01-01"),
-            deathDate = null,
+            deathDate = defaultDate,
             placeOfBirth = "London",
             biography = "A very long biography…"
         )

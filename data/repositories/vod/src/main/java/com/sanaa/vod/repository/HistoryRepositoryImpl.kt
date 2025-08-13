@@ -91,8 +91,8 @@ class HistoryRepositoryImpl @Inject constructor(
     ): Flow<List<MediaHistoryItem>> = safeCall(
         errorMessage = "Failed to retrieve watched media history for user $username"
     ) {
-        val watchedHistoryDtos = local.getWatchedMediaHistory(username, mediaType, genreId)
-        watchedHistoryDtos.map {
+        val watchedHistoryDots = local.getWatchedMediaHistory(username, mediaType, genreId)
+        watchedHistoryDots.map {
             it.map { watchedHistory -> watchedHistory.toEntity() }
         }
     }
