@@ -76,7 +76,7 @@ class SaveToListViewModel @Inject constructor(
         emitEffect(SaveToListEffect.AddedSuccessfully)
     }
 
-    private fun onErrorAccrue(throwable: Throwable): () -> Unit = {
+    private fun onErrorAccrue(throwable: Throwable) {
         updateState {
             copy(
                 isLoading = false,

@@ -29,6 +29,8 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
 import usecase.ManageTvSeriesUseCase
+import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
@@ -40,6 +42,8 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -246,18 +250,30 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
+            tryToExecute(
+                callee = {
+                    val userLists = manageSavedListsUseCase.getSavedLists()
+                    val defaultList = userLists.firstOrNull()
+                    if (defaultList != null) {
+                        manageSavedListItemsUseCase.removeMovieFromSavedList(defaultList.id, media.id)
+                    }
+                },
+                onSuccess = {
+                    savedListsStatusProvider.markItemUnsaved(media.id)
+                },
+                onError = {
+                    savedListsStatusProvider.markItemSaved(media.id)
+                }
+            )
         } else {
             updateState {
                 copy(
                     showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong(),
                     selectedMediaToSave = media
                 )
             }
         }
     }
-
     override fun onDismissBottomSheet() {
         updateState { copy(showBottomSheet = false) }
     }
