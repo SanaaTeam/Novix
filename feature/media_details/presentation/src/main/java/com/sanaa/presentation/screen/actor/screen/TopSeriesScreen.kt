@@ -44,6 +44,7 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -67,6 +68,7 @@ fun TopSeriesScreen(
     TopSeriesContent(
         state = uiState,
         navController = navController,
+        interactionListener = viewModel
     )
 
     RequestToLoginBottomSheet(
@@ -81,6 +83,7 @@ fun TopSeriesScreen(
 @Composable
 private fun TopSeriesContent(
     state: ActorScreenUiState,
+    interactionListener: ActorsScreenInteractionListener,
     navController: NavHostController,
 ) {
     NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
@@ -119,7 +122,7 @@ private fun TopSeriesContent(
 
                         noInternetConnection -> {
                             NetworkDisconnectionContact(
-                                onRetryClick = onRetryClicked,
+                                onRetryClick = interactionListener::onRetryClicked,
                                 useDarkTheme = LocalThemeProvider.current
                             )
                         }

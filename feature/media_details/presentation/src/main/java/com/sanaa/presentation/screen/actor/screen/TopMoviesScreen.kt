@@ -144,7 +144,7 @@ private fun TopMoviesContent(
 
                         noInternetConnection -> {
                             NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClicked() },
+                                onRetryClick = interactionListener::onRetryClicked,
                                 useDarkTheme = LocalThemeProvider.current
                             )
                         }
@@ -204,4 +204,5 @@ private fun TopMoviesContent(
             }
         }
     }
+}
 }
