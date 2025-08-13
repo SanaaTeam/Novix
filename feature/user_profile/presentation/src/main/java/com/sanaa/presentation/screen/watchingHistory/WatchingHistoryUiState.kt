@@ -17,4 +17,10 @@ data class WatchingHistoryUiState(
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaToSave: MediaItemUiModel? = null,
+    val snackBarData: SnackData? = null,
+)
+
+data class SnackData(
+    val message: String,
+    val isError: Boolean
 )

@@ -15,9 +15,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
@@ -40,13 +38,12 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
-import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
-import com.sanaa.presentation.screen.movieDetails.SnackData
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -56,28 +53,27 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
-    navigateBack: () -> Unit,
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
-    BackHandler(onBack = navigateBack)
+    val navController = LocalNavControllerProvider.current
+    BackHandler(onBack = { navController.popBackStack() })
+
     val context = LocalContext.current
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
 
     val launcher = launchAuthActivityForResult()
-
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val selectedMedia = uiState.selectedMediaToSave
 
-
     TopMoviesContent(
         state = uiState,
-        onBackClick = navigateBack,
         modifier = Modifier.fillMaxSize(),
-        onSaveIconClick = viewModel::onSaveClicked,
+        interactionListener = viewModel,
+        navController = navController,
     )
+
     RequestToLoginBottomSheet(
         isVisible = uiState.showLoginBottomSheet,
         onDismiss = viewModel::onDismissBottomSheet,
@@ -85,6 +81,7 @@ fun TopMoviesScreen(
             launcher.launch(authApi.getLaunchIntent(context))
         }
     )
+
     SaveToListBottomSheet(
         isVisible = uiState.showSaveToListBottomSheet,
         mediaId = selectedMedia?.id?.toLong() ?: 0,
@@ -105,11 +102,9 @@ fun TopMoviesScreen(
 private fun TopMoviesContent(
     state: ActorScreenUiState,
     modifier: Modifier = Modifier,
-    onBackClick: () -> Unit,
-    onSaveIconClick: (MovieUiModel) -> Unit
+    interactionListener: ActorsScreenInteractionListener,
+    navController: NavController,
 ) {
-    val navController = LocalNavControllerProvider.current
-
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
     ) {
@@ -120,7 +115,7 @@ private fun TopMoviesContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
+                        onClick = { navController.popBackStack() }
                     )
                 },
                 screenTitle = stringResource(R.string.top_movie_picks),
@@ -147,15 +142,9 @@ private fun TopMoviesContent(
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),
                             columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            )
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             itemsIndexed(
                                 state.topMovies,
@@ -190,7 +179,7 @@ private fun TopMoviesContent(
                                     topLeftContent = {
                                         SaveIconChip(
                                             isSaved = movie.isSaved,
-                                            onClick = { onSaveIconClick(movie) }
+                                            onClick = { interactionListener.onSaveClicked(movie) }
                                         )
                                     },
                                     onCardClick = {
