@@ -73,7 +73,7 @@ class ManageMovieUseCaseTest {
         val expected = listOf("img1.jpg", "img2.jpg")
         coEvery { movieRepository.getImageUrls(movieId, 10) } returns expected
 
-        val result = manageMovieDetailsUseCase.getMovieImages(movieId)
+        val result = manageMovieDetailsUseCase.getMovieImagesUrl(movieId)
 
         assertThat(result).isEqualTo(expected)
     }
@@ -88,7 +88,7 @@ class ManageMovieUseCaseTest {
         } throws NovixAppException("Error")
 
         assertThrows<NovixAppException> {
-            manageMovieDetailsUseCase.getMovieImages(movieId)
+            manageMovieDetailsUseCase.getMovieImagesUrl(movieId)
         }
     }
 

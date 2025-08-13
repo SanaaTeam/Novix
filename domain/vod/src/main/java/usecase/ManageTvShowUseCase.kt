@@ -20,8 +20,8 @@ class ManageTvShowUseCase @Inject constructor(
     suspend fun getTvShowCast(id: Int): List<Actor> =
         repository.getTvShowCast(id)
 
-    suspend fun getTvShowImageUrls(id: Int): List<String> =
-        repository.getTvShowImageUrls(id, IMAGE_COUNT)
+    suspend fun getTvShowImageUrls(id: Int, count: Int = IMAGE_COUNT): List<String> =
+        repository.getTvShowImageUrls(id, count)
 
     suspend fun getTvShowReviews(tvShowId: Int, page: Int): List<Review> =
         repository.getTvShowReviews(tvShowId, page)
