@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
 import androidx.paging.PagingData
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
@@ -22,4 +23,5 @@ data class TopRatedMediaScreenUiState(
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaToSave: MediaItemUiState? = null,
+    val snackBarData: SnackData? = null
 )

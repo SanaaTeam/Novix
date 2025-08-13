@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
@@ -168,11 +169,17 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onSaveToListSuccess() {
-        emitEffect(TopRatedScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+        updateState {
+            copy(
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+            )
+        }
     }
 
     override fun onSaveToListFailure() {
-        emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.addToListFailed))
+        updateState {
+            copy(snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true))
+        }
     }
 
 
@@ -197,7 +204,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         emitEffect(TopRatedScreenEffect.NavigateToLogin)
     }
 
-    override fun onDismissBottomSheet() {
+    override fun onDismissLoginBottomSheet() {
         updateState { copy(showLoginBottomSheet = false) }
     }
 
@@ -207,6 +214,10 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         fetchTvShowGenres()
         fetchMovies()
         fetchTvShows()
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     private fun loadTopRatedMovies(
@@ -235,11 +246,24 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true) }
-            emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    snackBarData =
+                        SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                )
+            }
         } else {
-            updateState { copy(isNoInternetConnection = false) }
-            emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+            updateState {
+                copy(
+                    isNoInternetConnection = false,
+                    snackBarData =
+                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+                )
+            }
         }
     }
 
