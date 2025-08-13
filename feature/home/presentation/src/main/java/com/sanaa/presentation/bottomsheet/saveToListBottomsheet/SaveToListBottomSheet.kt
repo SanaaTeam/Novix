@@ -60,13 +60,6 @@ fun SaveToListBottomSheet(
     val failMessage =
         stringResource(homeRes.string.added_to_list_failed)
 
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-        }
-    }
-
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
 
@@ -98,7 +91,6 @@ fun SaveToListBottomSheet(
         interactionListener = viewModel,
         mediaId = mediaId,
         onCreateNewListClick = onCreateNewListClick,
-        modifier = modifier
     )
 }
 
@@ -110,14 +102,13 @@ private fun SaveToListBottomSheetContent(
     interactionListener: SaveToListInteractionListener,
     mediaId: Long,
     onCreateNewListClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -59,12 +59,6 @@ fun SaveToListBottomSheet(
     val failMessage =
         stringResource(com.sanaa.feature.mediadetails.presentation.R.string.added_to_list_failed)
 
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-        }
-    }
     NovixAnimatedSnackBarHost(
         data = snack, onDismiss = { snack = null })
     LaunchedEffect(Unit) {
@@ -84,7 +78,6 @@ fun SaveToListBottomSheet(
                         isError = true
                     )
                 }
-
             }
         }
     }
@@ -96,7 +89,6 @@ fun SaveToListBottomSheet(
         interactionListener = viewModel,
         mediaId = mediaId,
         onCreateNewListClick = onCreateNewListClick,
-        modifier = modifier
     )
 }
 
@@ -108,14 +100,13 @@ private fun SaveToListBottomSheetContent(
     interactionListener: SaveToListsInteractionListener,
     mediaId: Long,
     onCreateNewListClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,7 +152,7 @@ private fun SaveToListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = {interactionListener.onAddClicked(mediaId)},
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled && !state.isLoading,
                 isLoading = state.isLoading,
                 modifier = Modifier

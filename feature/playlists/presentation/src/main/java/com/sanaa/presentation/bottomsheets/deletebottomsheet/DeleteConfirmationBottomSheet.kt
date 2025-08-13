@@ -89,14 +89,13 @@ private fun DeleteConfirmationBottomSheetContent(
     onDismiss: () -> Unit,
     interactionListener: DeleteInteractionListener,
     listId: Long,
-    modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp, start = 16.dp, end = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

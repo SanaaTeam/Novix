@@ -16,6 +16,19 @@ class AddBookmarkViewModel @Inject constructor(
 ) : BaseViewModel<AddBookmarkUiState, AddBookmarkEffects>(AddBookmarkUiState(), dispatcher),
     AddBookmarksInteractionListener {
 
+    init {
+        refreshLists()
+    }
+
+    private fun refreshLists() {
+        tryToExecute(
+            callee = { savedListsStatusProvider.refreshLists() },
+            onError = {
+                it.printStackTrace()
+            }
+        )
+    }
+
     override fun onListTitleChanged(title: String) {
         updateState {
             copy(
@@ -25,7 +38,7 @@ class AddBookmarkViewModel @Inject constructor(
         }
     }
 
-   override fun resetState() {
+    override fun resetState() {
         updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 

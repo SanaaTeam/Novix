@@ -23,9 +23,16 @@ class AddBookmarkListViewModel @Inject constructor(
 
 
     init {
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
+        refreshLists()
+    }
+
+    private fun refreshLists() {
+        tryToExecute(
+            callee = { listsStatusProvider.refreshLists() },
+            onError = {
+                it.printStackTrace()
+            }
+        )
     }
 
     override fun onListTitleChanged(title: String) {
@@ -37,7 +44,7 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-   override fun resetState() {
+    override fun resetState() {
         updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
     }
 

@@ -16,11 +16,17 @@ class AddBookmarkListViewModel @Inject constructor(
 ) : BaseViewModel<AddBookmarkListUiState, Unit>(AddBookmarkListUiState()),
     AddBookmarksInteractionListeners {
 
-
     init {
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
+      refreshLists()
+    }
+
+    private fun refreshLists() {
+        tryToExecute(
+            block = { listsStatusProvider.refreshLists() },
+            onError = {
+                it.printStackTrace()
+            }
+        )
     }
 
     override fun onListTitleChanged(title: String) {

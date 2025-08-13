@@ -67,14 +67,13 @@ private fun AddBookmarkListBottomSheetContent(
     state: AddBookmarkListUiState,
     interactionListener: AddBookmarksInteractionListeners,
     mediaId: Int,
-    modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
