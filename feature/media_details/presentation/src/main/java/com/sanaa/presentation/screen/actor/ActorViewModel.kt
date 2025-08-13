@@ -7,6 +7,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
 import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -27,8 +28,9 @@ class ActorViewModel @Inject constructor(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
-
-    private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
+    private val actorId: Int = checkNotNull(
+        savedStateHandle[ActorScreenRoute.ARG_ACTOR_ID]
+    )
 
     init {
         updateUserLoggingStatus()

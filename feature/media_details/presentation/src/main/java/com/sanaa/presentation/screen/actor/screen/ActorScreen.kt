@@ -154,20 +154,10 @@ private fun ActorScreenContent(
             shouldShowBackground = totalScrollPosition > 200
         }
     }
+
     NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Box(modifier = modifier.navigationBarsPadding()) {
-            TopBar(
-                modifier = Modifier
-                    .background(animatedColor)
-                    .systemBarsPadding()
-                    .zIndex(10f),
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = listener::onBackClicked
-                    )
-                },
-            )
+            ActorScreenTopBar(animatedColor, listener)
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
@@ -222,6 +212,25 @@ private fun ActorScreenContent(
             )
         }
     }
+}
+
+@Composable
+private fun ActorScreenTopBar(
+    animatedColor: Color,
+    listener: ActorsScreenInteractionListener,
+) {
+    TopBar(
+        modifier = Modifier
+            .background(animatedColor)
+            .systemBarsPadding()
+            .zIndex(10f),
+        leftContent = {
+            TopBarClickableIcon(
+                icon = painterResource(id = designR.drawable.icon_back),
+                onClick = listener::onBackClicked
+            )
+        },
+    )
 }
 
 @Composable

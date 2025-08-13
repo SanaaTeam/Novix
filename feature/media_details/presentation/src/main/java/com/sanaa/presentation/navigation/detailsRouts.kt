@@ -65,7 +65,7 @@ enum class MediaTypeParam {
 }
 
 @Serializable
-data class ActorDetailsScreenRoute(val actorId: Int) : Destination {
+data class ActorScreenRoute(val actorId: Int) : Destination {
     override fun route() = "actor/$actorId"
 
     companion object {
