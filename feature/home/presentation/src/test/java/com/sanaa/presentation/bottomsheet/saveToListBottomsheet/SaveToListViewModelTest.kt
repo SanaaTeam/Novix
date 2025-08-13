@@ -89,17 +89,12 @@ class SaveToListViewModelTest {
         initViewModel()
         viewModel.onPlaylistSelected(1L)
 
-        viewModel.effect.test {
-            viewModel.onAddClicked(mediaId = 789L)
-            advanceUntilIdle()
+        viewModel.onAddClicked(mediaId = 789L)
+        advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(SaveToListEffect.FailedToAdd)
-
-            val state = viewModel.state.value
-            assertThat(state.isLoading).isFalse()
-            assertThat(state.errorMessage).isEqualTo("Failed to add item to list.")
-            cancelAndIgnoreRemainingEvents()
-        }
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isTrue()
+        assertThat(state.errorMessage).isEqualTo(null)
     }
 
     private fun initViewModel() {

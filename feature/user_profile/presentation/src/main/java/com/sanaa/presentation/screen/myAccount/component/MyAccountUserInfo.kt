@@ -41,8 +41,7 @@ import com.sanaa.presentation.screen.myAccount.UserUiState
 @Composable
 fun MyAccountUserInfo(user: UserUiState, onLogoutClick: () -> Unit = {}) {
     var showLogoutButton by remember { mutableStateOf(false) }
-    Box(
-    ) {
+    Box {
         Row(
             modifier = Modifier
                 .fillMaxWidth()

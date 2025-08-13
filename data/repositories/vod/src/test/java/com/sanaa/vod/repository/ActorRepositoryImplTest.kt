@@ -140,8 +140,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopTvShows returns list of TV series`() = runTest {
-        val tvDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorTvShows(1) } returns tvDtos
+        val tvDto = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorTvShows(1) } returns tvDto
 
         val result = repository.getActorTopTvShows(1)
 
@@ -150,8 +150,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopMovies returns list of movies`() = runTest {
-        val movieDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorMovies(1) } returns movieDtos
+        val movieDto = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorMovies(1) } returns movieDto
 
         val result = repository.getActorTopMovies(1)
 
@@ -173,8 +173,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getProfileImageUrls returns mapped image URLs`() = runTest {
-        val imageDtos = listOf(mockk<ImageDto>(relaxed = true), mockk(relaxed = true))
-        coEvery { remoteDataSource.getActorImages(1) } returns imageDtos
+        val imageDto = listOf(mockk<ImageDto>(relaxed = true), mockk(relaxed = true))
+        coEvery { remoteDataSource.getActorImages(1) } returns imageDto
 
         val result = repository.getProfileImageUrls(1, 2)
 

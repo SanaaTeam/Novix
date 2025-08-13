@@ -42,9 +42,9 @@ fun AddBookmarkListBottomSheet(
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
-    var successMessage =
+    val successMessage =
         stringResource(com.sanaa.feature.playlists.presentation.R.string.created_list_successfully)
-    var failMessage =
+    val failMessage =
         stringResource(com.sanaa.feature.playlists.presentation.R.string.failed_to_create_list)
 
 

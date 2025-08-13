@@ -2,6 +2,7 @@ package com.sanaa.vod.repository.mapper.media
 
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Actor
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
@@ -31,7 +32,7 @@ class ActorMapperTest {
         assertEquals("Acting", result.department)
         assertEquals(Actor.Gender.FEMALE, result.gender)
         assertEquals(LocalDate(1980, 5, 10), result.birthDate)
-        assertEquals(null, result.deathDate)
+        assertEquals(getLocalDateOrDefault(null), result.deathDate)
         assertEquals("USA", result.placeOfBirth)
         assertEquals("Some bio", result.biography)
     }
@@ -63,7 +64,7 @@ class ActorMapperTest {
     fun `toTvSeries maps ActorCastCreditDto to TvSeries correctly`() {
         val dto = ActorCastCreditDto(
             id = 200,
-            posterPath = "/tvposter.jpg",
+            posterPath = "/poster.jpg",
             movieTitle = null,
             tvShowTitle = "Example Series",
             voteAverage = 8.3,
@@ -75,7 +76,7 @@ class ActorMapperTest {
         val result = dto.toTvSeries()
 
         assertEquals(200, result.id)
-        assertEquals("https://image.tmdb.org/t/p/w500/tvposter.jpg", result.posterImageUrl)
+        assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", result.posterImageUrl)
         assertEquals("Example Series", result.title)
         assertEquals(8.3f, result.imdbRating)
         assertEquals(LocalDate(2022, 3, 15), result.releaseDate)
@@ -97,10 +98,4 @@ class ActorMapperTest {
         assertEquals("", getFullImageUrl(""))
     }
 
-    @Test
-    fun `toLocalDateOrNull returns correct LocalDate or null`() {
-        assertEquals(LocalDate(2020, 1, 1), toLocalDateOrNull("2020-01-01"))
-        assertEquals(null, toLocalDateOrNull(""))
-        assertEquals(null, toLocalDateOrNull("invalid-date"))
-    }
 }

@@ -30,7 +30,7 @@ data class Episode(
     val imdbRating: Float?,
     val overview: String = "",
     val durationMinutes: Int?,
-    val releaseDate: LocalDate?,
+    val releaseDate: LocalDate,
     val stillImagePath: String?,
     val rating: Int?
 )
