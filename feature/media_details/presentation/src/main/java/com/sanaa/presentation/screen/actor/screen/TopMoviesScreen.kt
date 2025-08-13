@@ -205,4 +205,4 @@ private fun TopMoviesContent(
         }
     }
 }
-}
+
