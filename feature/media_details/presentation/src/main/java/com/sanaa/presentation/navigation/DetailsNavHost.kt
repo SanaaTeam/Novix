@@ -10,11 +10,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.LocalThemeProvider
@@ -61,7 +59,6 @@ fun DetailsNavHost(
     }
     val navController = rememberNavController()
 
-    /**/
     val navColor = Theme.colors.surface
     val isDarkTheme = LocalThemeProvider.current
     val view = LocalView.current
@@ -90,21 +87,7 @@ fun DetailsNavHost(
                 SeriesScreen(viewModel = seriesViewModel)
             }
 
-            // ──── Episodes ─────────────────────────────────────────────────────────
-            composable(
-                route = EpisodeDetailsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(EpisodeDetailsScreenRoute.ARG_SERIES_ID) {
-                        type = NavType.IntType
-                    },
-                    navArgument(EpisodeDetailsScreenRoute.ARG_SEASON_NUMBER) {
-                        type = NavType.IntType
-                    },
-                    navArgument(EpisodeDetailsScreenRoute.ARG_EPISODE_NUMBER) {
-                        type = NavType.IntType
-                    }
-                )
-            ) {
+            composable(route = EpisodeDetailsScreenRoute::class) {
                 val episodeViewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
                 EpisodeDetailsScreen(viewModel = episodeViewModel)
             }
@@ -132,26 +115,12 @@ fun DetailsNavHost(
                 )
             }
 
-            // ──── Reviews ──────────────────────────────────────────────────────────
-            composable(
-                route = ReviewsScreenRoute.PATTERN,
-                arguments = listOf(
-                    navArgument(ReviewsScreenRoute.ARG_SERIES_ID) { type = NavType.IntType },
-                    navArgument(ReviewsScreenRoute.ARG_MEDIA_TYPE) { type = NavType.StringType }
-                )
-            ) {
-                val reviewViewModel: ReviewViewModel = hiltViewModel()
+            composable(route = ReviewsScreenRoute::class) {
                 val reviewViewModel: ReviewsScreenViewModel = hiltViewModel()
                 ReviewsScreen(viewModel = reviewViewModel)
             }
 
-            // ──── Movies ───────────────────────────────────────────────────────────
-            composable(
-                route = MovieDetailsScreenRoute.PATTERN,
-                arguments = listOf(navArgument(MovieDetailsScreenRoute.ARG_MOVIE_ID) {
-                    type = NavType.IntType
-                })
-            ) {
+            composable(route = MovieDetailsScreenRoute::class) {
                 val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
                 MovieDetailsScreen(viewModel = movieDetailsViewModel)
             }

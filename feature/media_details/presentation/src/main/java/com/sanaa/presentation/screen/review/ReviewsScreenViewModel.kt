@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.review
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -8,6 +9,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.ReviewUiModel
 import com.sanaa.presentation.model.mapper.toReviewUiModel
+import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Review
 import exceptions.NoNetworkException
@@ -29,15 +31,10 @@ class ReviewsScreenViewModel @Inject constructor(
     initialState = ReviewScreenUiState(),
     defaultDispatcher = dispatcher
 ), ReviewScreenInteractionListener {
-
-    private val mediaId: Int = checkNotNull(savedStateHandle["mediaId"])
-    private val mediaType: MediaTypeUiModel = savedStateHandle
-        .get<String>("mediaType")
-        ?.let { MediaTypeUiModel.valueOf(it.uppercase()) }
-        ?: error("mediaType argument missing")
+    val route: ReviewsScreenRoute = savedStateHandle.toRoute()
 
     init {
-        fetchReviews(mediaId)
+        fetchReviews(route.mediaId)
     }
 
     override fun onBackClick() {
@@ -46,13 +43,13 @@ class ReviewsScreenViewModel @Inject constructor(
 
     override fun onRetryClicked() {
         updateState { copy(error = null, noInternetConnection = false, isLoading = true) }
-        fetchReviews(mediaId)
+        fetchReviews(route.mediaId)
     }
 
     private fun fetchReviews(id: Int) {
         tryToCollect(
             callee = {
-                loadReviews(id, mediaType)
+                loadReviews(id, route.mediaType)
             },
             onCollect = ::onCollectReviews,
             onError = ::onFetchReviewsFailed

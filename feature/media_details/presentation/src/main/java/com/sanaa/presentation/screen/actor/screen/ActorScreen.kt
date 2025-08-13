@@ -50,7 +50,7 @@ import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
+import com.sanaa.presentation.navigation.SeriesScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.navigation.TopSeriesScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateBack
@@ -98,23 +98,23 @@ fun ActorScreen(
                 }
 
                 is NavigateToTopMovies -> navController.navigate(
-                    TopMoviesScreenRoute(effect.actorId).route()
+                    TopMoviesScreenRoute(effect.actorId)
                 )
 
                 is NavigateToTopSeries -> navController.navigate(
-                    TopSeriesScreenRoute(effect.actorId).route()
+                    TopSeriesScreenRoute(effect.actorId)
                 )
 
                 is NavigateToGallery -> {
-                    navController.navigate(ActorGalleryScreenRoute(effect.actorId).route())
+                    navController.navigate(ActorGalleryScreenRoute(effect.actorId))
                 }
 
                 is NavigateToMovieDetails -> {
-                    navController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                    navController.navigate(MovieDetailsScreenRoute(effect.movieId))
                 }
 
                 is NavigateToSeriesDetails -> {
-                    navController.navigate(SeriesDetailsScreenRoute(effect.seriesId).route())
+                    navController.navigate(SeriesScreenRoute(effect.seriesId))
                 }
 
                 NavigateToLogin -> {

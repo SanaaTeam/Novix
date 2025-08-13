@@ -1,128 +1,38 @@
 package com.sanaa.presentation.navigation
 
-import kotlinx.serialization.SerialName
+import com.sanaa.presentation.model.MediaTypeUiModel
 import kotlinx.serialization.Serializable
 
-interface Destination {
-    fun route(): String
-}
+interface Destination
 
 @Serializable
-data class SeriesDetailsScreenRoute(val seriesId: Int) : Destination {
-    override fun route(): String = "series/$seriesId"
-
-    companion object {
-        const val PATTERN = "series/{seriesId}"
-        const val ARG_SERIES_ID = "seriesId"
-    }
-}
+data class SeriesScreenRoute(val seriesId: Int) : Destination
 
 @Serializable
 data class EpisodeDetailsScreenRoute(
-    val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int
-) : Destination {
-    override fun route(): String = "series/$seriesId/season/$seasonNumber/episode/$episodeNumber"
-
-    companion object {
-        const val PATTERN = "series/{seriesId}/season/{seasonNumber}/episode/{episodeNumber}"
-        const val ARG_SERIES_ID = "seriesId"
-        const val ARG_SEASON_NUMBER = "seasonNumber"
-        const val ARG_EPISODE_NUMBER = "episodeNumber"
-    }
-}
+    val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int,
+) : Destination
 
 @Serializable
-data class MovieDetailsScreenRoute(val movieId: Int) : Destination {
-    override fun route(): String = "movie/$movieId"
-
-    companion object {
-        const val PATTERN = "movie/{movieId}"
-        const val ARG_MOVIE_ID = "movieId"
-    }
-}
+data class MovieDetailsScreenRoute(val movieId: Int) : Destination
 
 @Serializable
-data class ReviewsScreenRoute(
-    val mediaId: Int,
-    val mediaType: MediaTypeParam
-) : Destination {
-    override fun route(): String = "reviews/$mediaId/${mediaType.name}"
-
-    companion object {
-        const val PATTERN = "reviews/{mediaId}/{mediaType}"
-        const val ARG_SERIES_ID = "mediaId"
-        const val ARG_MEDIA_TYPE = "mediaType"
-    }
-}
+data class ReviewsScreenRoute(val mediaId: Int, val mediaType: MediaTypeUiModel) : Destination
 
 @Serializable
-enum class MediaTypeParam {
-    @SerialName("movie")
-    MOVIE,
-
-    @SerialName("series")
-    SERIES
-}
+data class ActorScreenRoute(val actorId: Int) : Destination
 
 @Serializable
-data class ActorScreenRoute(val actorId: Int) : Destination {
-    override fun route() = "actor/$actorId"
-
-    companion object {
-        const val PATTERN = "actor/{actorId}"
-        const val ARG_ACTOR_ID = "actorId"
-    }
-}
+data class TopMoviesScreenRoute(val actorId: Int) : Destination
 
 @Serializable
-data class TopMoviesScreenRoute(val actorId: Int) : Destination {
-    override fun route() = "actor/$actorId/top_movies"
-
-    companion object {
-        const val PATTERN = "actor/{actorId}/top_movies"
-        const val ARG_ACTOR_ID = "actorId"
-    }
-}
+data class TopSeriesScreenRoute(val actorId: Int) : Destination
 
 @Serializable
-data class TopSeriesScreenRoute(val actorId: Int) : Destination {
-    override fun route() = "actor/$actorId/top_series"
-
-    companion object {
-        const val PATTERN = "actor/{actorId}/top_series"
-        const val ARG_ACTOR_ID = "actorId"
-    }
-}
+data class ActorGalleryScreenRoute(val actorId: Int) : Destination
 
 @Serializable
-data class ActorGalleryScreenRoute(val actorId: Int) : Destination {
-    override fun route() = "actor/$actorId/gallery"
-
-    companion object {
-        const val PATTERN = "actor/{actorId}/gallery"
-        const val ARG_ACTOR_ID = "actorId"
-    }
-}
+data class GenreMoviesScreenRoute(val categoryId: Int, val categoryName: String) : Destination
 
 @Serializable
-data class MovieCategoriesScreenRoute(val categoryId: Int, val categoryName: String) : Destination {
-    override fun route() = "movie/$categoryId/$categoryName"
-
-    companion object {
-        const val PATTERN = "movie/{categoryId}/{categoryName}"
-        const val ARG_CATEGORY_ID = "categoryId"
-        const val ARG_CATEGORY_NAME = "categoryName"
-    }
-}
-
-
-@Serializable
-data class GenreTvShowsScreenRoute(val genreId: Int, val genreName: String) : Destination {
-    override fun route() = "tv/$genreId/$genreName"
-
-    companion object {
-        const val PATTERN = "tv/{genreId}/{genreName}"
-        const val ARG_GENRE_ID = "genreId"
-        const val ARG_GENRE_NAME = "genreName"
-    }
-}
+data class GenreTvShowsScreenRoute(val genreId: Int, val genreName: String) : Destination

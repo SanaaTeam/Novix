@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -31,13 +32,11 @@ class GenreMoviesViewModel @Inject constructor(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
-
-    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
-    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+    private val route: GenreMoviesScreenRoute = savedStateHandle.toRoute()
 
     init {
         updateUserLoggingStatus()
-        fetchMovies(categoryId)
+        fetchMovies(route.categoryId)
     }
 
     fun updateUserLoggingStatus() {
@@ -54,7 +53,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(categoryId)
+        fetchMovies(route.categoryId)
     }
 
 
@@ -119,7 +118,7 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
+        updateState { copy(movies = flowOf(movies), title = route.categoryName, isLoading = false) }
     }
 
     private fun onFetchMoviesFailed(throwable: Throwable) {

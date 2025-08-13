@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
@@ -28,9 +29,7 @@ class ActorScreenViewModel @Inject constructor(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
-    private val actorId: Int = checkNotNull(
-        savedStateHandle[ActorScreenRoute.ARG_ACTOR_ID]
-    )
+    private val route: ActorScreenRoute = savedStateHandle.toRoute()
 
     init {
         updateUserLoggingStatus()
@@ -65,15 +64,15 @@ class ActorScreenViewModel @Inject constructor(
     }
 
     override fun onTopMoviesClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopMovies(actorId))
+        emitEffect(ActorScreenEffects.NavigateToTopMovies(route.actorId))
     }
 
     override fun onTopSeriesClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopSeries(actorId))
+        emitEffect(ActorScreenEffects.NavigateToTopSeries(route.actorId))
     }
 
     override fun onViewAllGalleryClicked() {
-        emitEffect(ActorScreenEffects.NavigateToGallery(actorId))
+        emitEffect(ActorScreenEffects.NavigateToGallery(route.actorId))
     }
 
     override fun onSeriesClicked(id: Int) {
@@ -138,11 +137,11 @@ class ActorScreenViewModel @Inject constructor(
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
-        val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
-        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topSeriesDeferred = async { manageActorDetails.getActorTopTvSeries(actorId) }
-        val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
-        val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
+        val actorDeferred = async { manageActorDetails.getActorDetails(route.actorId) }
+        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(route.actorId) }
+        val topSeriesDeferred = async { manageActorDetails.getActorTopTvSeries(route.actorId) }
+        val profilesDeferred = async { manageActorDetails.getProfileImages(route.actorId) }
+        val galleryDeferred = async { manageActorDetails.getGalleryImages(route.actorId) }
 
         val actor = actorDeferred.await()
         val topMovies = topMoviesDeferred.await()

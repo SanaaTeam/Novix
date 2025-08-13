@@ -88,6 +88,7 @@ fun TopMoviesScreen(
         onDismiss = viewModel::onDismissSaveToListBottomSheet,
         onCreateNewListClick = viewModel::onCreateNewListClick,
     )
+
     if (uiState.showAddListBottomSheet && selectedMedia != null) {
         AddBookmarkListBottomSheet(
             isVisible = true,
@@ -183,7 +184,7 @@ private fun TopMoviesContent(
                                         )
                                     },
                                     onCardClick = {
-                                        navController.navigate(MovieDetailsScreenRoute(movie.id).route())
+                                        navController.navigate(MovieDetailsScreenRoute(movie.id))
                                     })
                             }
                         }

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -32,7 +33,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     init {
         updateUserLoggingStatus()
-        getTvShowsByGenreId(genreId)
+        getTvShowsByGenreId(route.genreId)
     }
 
     fun updateUserLoggingStatus() {
@@ -64,7 +65,7 @@ class GenreTvShowsViewModel @Inject constructor(
                 error = null
             )
         }
-        getTvShowsByGenreId(genreId)
+        getTvShowsByGenreId(route.genreId)
     }
 
     override fun onBottomSheetDismiss() {
@@ -95,7 +96,7 @@ class GenreTvShowsViewModel @Inject constructor(
     private fun onCollectTvShowsByGenreId(tvShows: PagingData<SeriesUiModel>) {
         updateState {
             copy(
-                title = genreName,
+                title = route.genreName,
                 tvShows = flowOf(tvShows),
                 isLoading = false
             )

@@ -45,6 +45,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
@@ -141,21 +142,21 @@ private fun HandleMovieDetailsEffects(
 
                 is MovieDetailsUiEffect.NavigateToReviewsScreen -> {
                     currentNavController.navigate(
-                        ReviewsScreenRoute(effect.movieId, MediaTypeParam.MOVIE).route()
+                        ReviewsScreenRoute(effect.movieId, MediaTypeUiModel.MOVIE)
                     )
                 }
 
                 is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
-                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId))
                 }
 
                 is MovieDetailsUiEffect.NavigateToActorScreen -> {
-                    currentNavController.navigate(ActorScreenRoute(effect.actorId).route())
+                    currentNavController.navigate(ActorScreenRoute(effect.actorId))
                 }
 
                 is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
                     currentNavController.navigate(
-                        MovieCategoriesScreenRoute(effect.categoryId, effect.categoryName).route()
+                        GenreMoviesScreenRoute(effect.categoryId, effect.categoryName)
                     )
                 }
 

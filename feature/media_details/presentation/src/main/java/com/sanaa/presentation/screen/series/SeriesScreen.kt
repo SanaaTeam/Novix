@@ -45,12 +45,12 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
@@ -68,7 +68,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun SeriesScreen(
-    viewModel: SeriesViewModel = hiltViewModel()
+    viewModel: SeriesScreenViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -90,7 +90,7 @@ fun SeriesScreen(
             when (it) {
                 is SeriesScreenEffects.NavigateToActorScreen -> {
                     navController.navigate(
-                        ActorScreenRoute(it.actorId).route()
+                        ActorScreenRoute(it.actorId)
                     )
                 }
 
@@ -98,13 +98,13 @@ fun SeriesScreen(
                     navController.navigate(
                         EpisodeDetailsScreenRoute(
                             it.seriesId, it.seasonNumber, it.episodeNumber
-                        ).route()
+                        )
                     )
                 }
 
                 is SeriesScreenEffects.NavigateToReviewsScreen -> {
                     navController.navigate(
-                        ReviewsScreenRoute(it.seriesId, MediaTypeParam.SERIES).route()
+                        ReviewsScreenRoute(it.seriesId, MediaTypeUiModel.SERIES)
                     )
                 }
 
@@ -121,7 +121,7 @@ fun SeriesScreen(
 
                 is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
+                        GenreTvShowsScreenRoute(it.category.id, it.category.name)
                     )
                 }
 
@@ -134,7 +134,6 @@ fun SeriesScreen(
                 }
 
                 SeriesScreenEffects.NavigateToLogin -> {
-                    // Launch authentication activity
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }

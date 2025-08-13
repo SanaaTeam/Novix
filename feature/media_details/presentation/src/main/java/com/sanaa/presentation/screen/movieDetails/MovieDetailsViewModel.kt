@@ -2,6 +2,7 @@ package com.sanaa.presentation.screen.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
@@ -13,6 +14,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
@@ -47,13 +49,10 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
-
-    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
-        "movieId is required in SavedStateHandle"
-    }
+    val route: MovieDetailsScreenRoute = savedStateHandle.toRoute()
 
     init {
-        fetchMovieDetails(movieId)
+        fetchMovieDetails(route.movieId)
         fetchUserRating()
         updateUserLoginState()
 
@@ -153,7 +152,7 @@ class MovieDetailsViewModel @Inject constructor(
                 noInternetConnection = false
             )
         }
-        fetchMovieDetails(movieId)
+        fetchMovieDetails(route.movieId)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -240,7 +239,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
             tryToCollect(
-                callee = { getCurrentUserRating(movieId) },
+                callee = { getCurrentUserRating(route.movieId) },
                 onCollect = { rating -> updateState { copy(imdbRating = rating) } },
             )
         }
@@ -297,7 +296,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
-            movieId = movieId,
+            movieId = route.movieId,
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {

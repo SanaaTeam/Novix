@@ -1,9 +1,11 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
+import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
@@ -34,19 +36,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
-
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-        "seriesId is required in SavedStateHandle"
-    }
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
-        "seasonNumber is required in SavedStateHandle"
-    }
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
-        "episodeNumber is required in SavedStateHandle"
-    }
+    private val route: EpisodeDetailsScreenRoute = savedStateHandle.toRoute()
 
     init {
-        loadEpisode(seriesId, seasonNumber, episodeNumber)
+        loadEpisode(route.seriesId, route.seasonNumber, route.episodeNumber)
         updateUserLoginState()
     }
 
@@ -197,8 +190,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     try {
                         val rating = manageTvSeriesDetails.getEpisodesRate(
                             user.id,
-                            seasonNumber,
-                            episodeNumber
+                            route.seasonNumber,
+                            route.episodeNumber
                         )
                         emit(rating)
                     } catch (e: Exception) {
@@ -210,9 +203,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
-            seriesId = seriesId,
-            episodeNumber = episodeNumber,
-            seasonNumber = seasonNumber,
+            seriesId = route.seriesId,
+            episodeNumber = route.episodeNumber,
+            seasonNumber = route.seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {

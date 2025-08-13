@@ -1,12 +1,14 @@
 package com.sanaa.presentation.screen.series
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toSeasonUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.navigation.SeriesScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
@@ -34,10 +36,7 @@ class SeriesScreenViewModel @Inject constructor(
     initialState = SeriesScreenUiState(),
     defaultDispatcher = dispatcher
 ), SeriesScreenInteractionListener {
-
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-        "seriesId is required in SavedStateHandle"
-    }
+    val route: SeriesScreenRoute = savedStateHandle.toRoute()
 
     init {
         loadSeries()
@@ -171,7 +170,7 @@ class SeriesScreenViewModel @Inject constructor(
                 callee = { getUser.getLoggedInUser() },
                 onCollect = { user ->
                     tryToExecute(
-                        callee = { manageTvSeriesDetails.getSeriesRate(user.id, seriesId) },
+                        callee = { manageTvSeriesDetails.getSeriesRate(user.id, route.seriesId) },
                         onSuccess = { rating ->
                             updateState { copy(imdbRating = rating) }
                         },
@@ -184,11 +183,11 @@ class SeriesScreenViewModel @Inject constructor(
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(seriesId) }
-        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(seriesId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, 1) }
-        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
-        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(route.seriesId) }
+        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(route.seriesId) }
+        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(route.seriesId, 1) }
+        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(route.seriesId) }
+        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(route.seriesId) }
 
 
         val series = seriesDeferred.await()
@@ -212,7 +211,7 @@ class SeriesScreenViewModel @Inject constructor(
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
-        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
+        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(route.seriesId, seasonNumber)
 
         updateState { copy(season = season.toSeasonUiModel()) }
     }
@@ -220,7 +219,7 @@ class SeriesScreenViewModel @Inject constructor(
 
     private suspend fun submitTvSeriesRating() {
         val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
-            seriesId = seriesId,
+            seriesId = route.seriesId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
