@@ -30,7 +30,7 @@ class BasePagingSourceForHome<T : Any>(
             onError?.invoke(
                 when(e){
                     is NovixAppException -> e
-                    else -> NovixAppException()
+                    else -> NovixAppException(e.message)
                 }
             )
             LoadResult.Error(e)

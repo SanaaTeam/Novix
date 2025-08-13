@@ -60,7 +60,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-fun OnBoardingScreenContent(
+private fun OnBoardingScreenContent(
     state: OnboardingUiState,
     interactionListener: OnboardingInteractionsListener,
     modifier: Modifier = Modifier
@@ -189,15 +189,17 @@ fun OnBoardingScreenContent(
     }
 }
 
-
 @Preview(
     showBackground = true,
     heightDp = 800,
     widthDp = 360
 )
+
 @Preview(
     name = "Arabic Preview",
-    locale = "ar"
+    locale = "ar",
+    heightDp = 800,
+    widthDp = 360
 )
 @Composable
 private fun Preview() {

@@ -1,6 +1,5 @@
 package com.sanaa.presentation.details_base
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
