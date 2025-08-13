@@ -74,8 +74,8 @@ fun TrendingMediaScreenContent(
                 }
 
                 RequestToLoginBottomSheet(
-                    isVisible = state.showBottomSheet,
-                    onDismiss = interactionListener::onDismissBottomSheet,
+                    isVisible = state.showLoginBottomSheet,
+                    onDismiss = interactionListener::onDismissLoginBottomSheet,
                     onLoginButtonClick = {
                         interactionListener.onLoginButtonClick()
                     }

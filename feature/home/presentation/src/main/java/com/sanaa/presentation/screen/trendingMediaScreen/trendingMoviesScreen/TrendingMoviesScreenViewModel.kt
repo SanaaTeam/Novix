@@ -47,28 +47,20 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
-                updateState {
-                    copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
+                updateState { copy(userIsLoggedIn = isLogged) }
             },
         )
     }
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
-    }
-
-    private suspend fun loadGenresOperation(): List<GenreUiState> {
-        updateState { copy(isLoading = true) }
-        return manageMovieUseCase.getMovieGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
@@ -79,7 +71,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun loadMovies() {
         tryToCollect(
-            callee = ::loadMoviesOperation,
+            block = ::loadMoviesOperation,
             onCollect = ::onLoadMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -108,9 +100,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onGenreClick(id: Int?) {
         if (id == state.value.selectedGenreId) return
-        updateState {
-            copy(selectedGenreId = id)
-        }
+        updateState { copy(selectedGenreId = id) }
         loadMovies()
     }
 
@@ -120,7 +110,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -158,8 +148,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateToLogin)
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showBottomSheet = false) }
+    override fun onDismissLoginBottomSheet() {
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -184,7 +174,8 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError)
+    : PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }

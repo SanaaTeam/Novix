@@ -96,7 +96,7 @@ class TrendingTvShowsScreenViewModelTest {
 
         viewModel.onSaveIconClick(media)
 
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test

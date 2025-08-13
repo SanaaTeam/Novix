@@ -33,7 +33,7 @@ class TrendingPeopleViewModel @Inject constructor(
 
     private fun loadActors() {
         tryToCollect(
-            callee = ::loadActorsOperation,
+            block = ::loadActorsOperation,
             onCollect = ::onLoadActorsSuccess,
             onError = ::onDataLoadError
         )
@@ -77,7 +77,8 @@ class TrendingPeopleViewModel @Inject constructor(
         loadActors()
     }
 
-    private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
+    private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError)
+    : PagingSource<Int, Actor> {
         return BasePagingSourceForHome(onError = onError) { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }

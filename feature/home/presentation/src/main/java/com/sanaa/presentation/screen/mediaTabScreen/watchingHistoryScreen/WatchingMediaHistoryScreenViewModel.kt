@@ -1,11 +1,11 @@
 package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
@@ -44,7 +44,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
             onCollect = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -62,7 +62,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -80,23 +80,17 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun fetchMovieGenresOperation(): List<Genre> {
-        updateState {
-            copy(isLoading = true)
-        }
-        return manageMovieUseCase.getMovieGenres()
-    }
-
-    private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
+    private fun onFetchMovieGenresSuccess(genres: List<GenreUiState>) {
         updateState {
             copy(
-                movieGenres = genres.map { it.toState() },
+                movieGenres = genres,
                 isLoading = false,
                 showRefreshButton = false
             )
@@ -105,23 +99,17 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toState() } },
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun fetchTvShowGenresOperation(): List<Genre> {
-        updateState {
-            copy(isLoading = true)
-        }
-        return manageTvSeriesUseCase.getSeriesGenres()
-    }
-
-    private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
+    private fun onFetchTvShowGenresSuccess(genres: List<GenreUiState>) {
         updateState {
             copy(
-                tvShowGenres = genres.map { it.toState() },
+                tvShowGenres = genres,
                 isLoading = false,
                 showRefreshButton = false
             )
@@ -151,11 +139,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState {
-            copy(
-                showBottomSheet = true
-            )
-        }
+        updateState { copy(showBottomSheet = true) }
     }
 
     override fun onBackClick() {
@@ -174,16 +158,16 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { copy(isLoading = true) }
-      return try {
+        return try {
             return getLoggedInUserUseCase.getLoggedInUser().first().run {
-                 manageWatchedMediaHistoryUseCase.getMediaHistory(
+                manageWatchedMediaHistoryUseCase.getMediaHistory(
                     genreId = genreId,
                     mediaType = mediaType,
                     username = username
                 )
             }
 
-        } catch (_: NoLoggedInUserException){
+        } catch (_: NoLoggedInUserException) {
             flowOf(emptyList())
         }
     }

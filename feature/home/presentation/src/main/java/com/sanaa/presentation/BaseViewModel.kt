@@ -9,6 +9,7 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,15 +38,27 @@ abstract class BaseViewModel<T, E>(
         _state.update(updater)
     }
 
+    protected fun emitEffect(effect: E) {
+        viewModelScope.launch {
+            _effect.emit(effect)
+        }
+    }
+
     protected fun <T> tryToExecute(
-        callee: suspend () -> T,
+        onStart: () -> Unit = {},
+        block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
+        onStart()
+
+        val handler = CoroutineExceptionHandler { _, exception ->
+            onError(exception)
+        }
+        viewModelScope.launch(dispatcher + handler) {
             try {
-                val result = callee()
+                val result = block()
                 onSuccess(result)
             } catch (exception: Exception) {
                 onError(exception)
@@ -53,21 +66,21 @@ abstract class BaseViewModel<T, E>(
         }
     }
 
-    protected fun emitEffect(effect: E) {
-        viewModelScope.launch {
-            _effect.emit(effect)
-        }
-    }
-
     protected fun <T> tryToCollect(
-        callee: suspend () -> Flow<T>,
+        onStart: () -> Unit = {},
+        block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
+        onStart()
+
+        val handler = CoroutineExceptionHandler { _, exception ->
+            onError(exception)
+        }
+        viewModelScope.launch(dispatcher + handler) {
             try {
-                callee().catch { onError(it) }
+                block().catch { onError(it) }
                     .collectLatest { result ->
                         onCollect(result)
                     }

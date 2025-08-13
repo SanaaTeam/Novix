@@ -40,7 +40,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -51,17 +51,11 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toState() } },
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
-    }
-
-    private suspend fun loadGenresOperation(): List<GenreUiState> {
-        updateState {
-            copy(isLoading = true)
-        }
-        return manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
@@ -70,7 +64,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun loadTvShows() {
         tryToCollect(
-            callee = ::loadTvShowsOperation,
+            block = ::loadTvShowsOperation,
             onCollect = ::onLoadTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -109,7 +103,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         if (!state.value.userIsLoggedIn) {
             updateState {
                 copy(
-                    showBottomSheet = true
+                    showLoginBottomSheet = true
                 )
             }
         }
@@ -138,8 +132,8 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateToLogin)
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showBottomSheet = false) }
+    override fun onDismissLoginBottomSheet() {
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
 

@@ -12,9 +12,9 @@ data class TrendingMediaScreenUiState (
     val selectedGenreId: Int? = null,
     val isLoading: Boolean = false,
     val isNoInternetConnection: Boolean = false,
-    val showBottomSheet: Boolean = false,
     val userIsLoggedIn: Boolean = false,
-    val showSaveToListBottomSheet: Boolean = false,
     val selectedMediaId: Int? = null,
+    val showLoginBottomSheet: Boolean = false,
+    val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false
 )

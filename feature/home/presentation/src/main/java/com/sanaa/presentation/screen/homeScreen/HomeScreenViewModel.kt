@@ -61,7 +61,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
             onError = ::onDataLoadError
         )
@@ -72,9 +72,9 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchPopularMediaData() {
-        updateState { copy(isLoadingPopular = true) }
         tryToExecute(
-            callee = ::loadPopularMediaOperation,
+            onStart = { updateState { copy(isLoadingPopular = true) } },
+            block = ::loadPopularMediaOperation,
             onSuccess = ::onFetchPopularMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -98,9 +98,10 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchTopRatedMediaData() {
-        updateState { copy(isLoadingTopRated = true) }
+
         tryToExecute(
-            callee = ::loadTopRatedMediaOperation,
+            onStart = { updateState { copy(isLoadingTopRated = true) } },
+            block = ::loadTopRatedMediaOperation,
             onSuccess = ::onFetchTopRatedMediaSuccess,
             onError = ::onDataLoadError,
         )
@@ -127,7 +128,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
-            callee = ::loadWatchedMediaHistory,
+            block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -145,15 +146,11 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            onStart = { updateState { copy(isLoadingGenre = true) } },
+            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError,
         )
-    }
-
-    private suspend fun fetchMovieGenresOperation(): List<GenreUiState> {
-        updateState { copy(isLoadingGenre = true) }
-        return manageMovieUseCase.getMovieGenres().map { it.toState() }
     }
 
     private fun onFetchMovieGenresSuccess(genres: List<GenreUiState>) {
@@ -164,13 +161,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadUpcomingMovies(genreId)
-                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                        pagingData.map { it.withSaved(savedIds) }
-                    }
-                    .cachedIn(viewModelScope)
-            },
+            block = { loadUpcomingMovies(genreId) },
             onCollect = ::onFetchUpcomingMoviesSuccess,
             onError = ::onDataLoadError,
         )
@@ -183,7 +174,10 @@ class HomeScreenViewModel @Inject constructor(
         return createPagingFlow(
             pagingSourceFactory = { createUpcomingMoviesPagingDataSource(genreId = genreId) },
             mapper = Movie::toState
-        )
+        ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { it.withSaved(savedIds) }
+        }
+            .cachedIn(viewModelScope)
     }
 
     private fun onFetchUpcomingMoviesSuccess(pagingData: PagingData<MediaItem>) {
