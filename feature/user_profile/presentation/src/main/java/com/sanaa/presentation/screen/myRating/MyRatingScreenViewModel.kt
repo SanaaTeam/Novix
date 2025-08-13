@@ -30,7 +30,7 @@ class MyRatingScreenViewModel @Inject constructor(
     }
 
     private fun loadRatedMedia() {
-        updateState { it.copy(isLoading = true) }
+        updateState {copy(isLoading = true) }
         loadRatedMovies()
         loadRatedTvShows()
     }
@@ -41,9 +41,9 @@ class MyRatingScreenViewModel @Inject constructor(
             block = { manageMovieUseCase.getUserRatedMovies() },
             onSuccess = { movies ->
                 val uiModels = movies.map { it.toRatedMediaUiModel() }
-                updateState { it.copy(ratedMovies = uiModels) }
+                updateState { copy(ratedMovies = uiModels) }
                 if (state.value.ratedTvShows.isNotEmpty()) {
-                    updateState { it.copy(isLoading = false) }
+                    updateState { copy(isLoading = false) }
                 }
             },
             onError = ::onDataLoadError
@@ -60,9 +60,9 @@ class MyRatingScreenViewModel @Inject constructor(
             },
             onSuccess = { tvShows ->
                 val uiModels = tvShows.map { it.toRatedMediaUiModel() }
-                updateState { it.copy(ratedTvShows = uiModels) }
+                updateState { copy(ratedTvShows = uiModels) }
                 if (state.value.ratedMovies.isNotEmpty()) {
-                    updateState { it.copy(isLoading = false) }
+                    updateState {copy(isLoading = false) }
                 }
             },
             onError = ::onDataLoadError
@@ -71,12 +71,12 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { it.copy(
+            updateState { copy(
                 isNoInternetConnection = true,
                 isLoading = false,
                 error = null) }
         } else {
-            updateState { it.copy(
+            updateState { copy(
                 isLoading = false,
                 error = e.message
             ) }
@@ -88,7 +88,7 @@ class MyRatingScreenViewModel @Inject constructor(
     }
 
     override fun onTabSelected(tab: MyRatingTab) {
-        updateState { it.copy(selectedTab = tab) }
+        updateState { copy(selectedTab = tab) }
     }
 
     override fun onDeleteIconClick(mediaId: Int, mediaType: MediaTypeUi) {
@@ -102,7 +102,7 @@ class MyRatingScreenViewModel @Inject constructor(
         tryToExecute(
             block = { manageMovieUseCase.deleteMovieRate(mediaId) },
             onSuccess = { success ->
-                    updateState { it.copy(ratedMovies = it.ratedMovies.filter { movie -> movie.id != mediaId }) }
+                    updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
                     emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
 
             },
@@ -116,7 +116,7 @@ class MyRatingScreenViewModel @Inject constructor(
         tryToExecute(
             block = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
             onSuccess = { success ->
-                    updateState { it.copy(ratedTvShows = it.ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+                    updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
                     emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar(stringProvider.deleteRatingSuccess))
             },
             onError = {
@@ -127,7 +127,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState {
-            it.copy(
+            copy(
                 isLoading = true,
                 error = null,
                 isNoInternetConnection = false
