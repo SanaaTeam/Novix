@@ -1,10 +1,8 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.trendingPeopleScreen
+package com.sanaa.presentation.screen.trendingPeopleScreen
 
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreenEffect
-import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleViewModel
 import com.sanaa.presentation.state.toState
 import entity.Actor
 import io.mockk.coEvery

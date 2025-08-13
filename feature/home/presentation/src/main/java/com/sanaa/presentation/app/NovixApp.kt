@@ -27,9 +27,9 @@ import com.sanaa.presentation.api.navigation.WatchingMediaHistoryScreenRoute
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.topRatingScreen.TopRatedMediaScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
+import com.sanaa.presentation.screen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreen
+import com.sanaa.presentation.screen.trendingTvShowScreen.TrendingTvShowsScreen
 import com.sanaa.presentation.screen.watchingHistoryScreen.WatchingMediaHistoryScreen
 
 @Composable

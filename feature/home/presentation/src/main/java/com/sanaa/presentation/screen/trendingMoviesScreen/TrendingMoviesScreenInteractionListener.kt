@@ -1,8 +1,8 @@
-package com.sanaa.presentation.screen.trendingMediaScreen
+package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import com.sanaa.presentation.state.MediaItemUiState
 
-interface MediaListScreenInteractionListener {
+interface TrendingMoviesScreenInteractionListener {
     fun onGenreClick(id: Int?)
     fun onMediaClick(id: Int)
     fun onSaveIconClick(media: MediaItemUiState)

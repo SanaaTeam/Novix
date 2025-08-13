@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
+package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,9 +8,6 @@ import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
@@ -35,10 +32,10 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
-    initialState = TrendingMediaScreenUiState(),
+) : BaseViewModel<TrendingMoviesScreenUiState, TrendingMoviesScreenEffect>(
+    initialState = TrendingMoviesScreenUiState(),
     defaultDispatcher = dispatcher
-), MediaListScreenInteractionListener {
+), TrendingMoviesScreenInteractionListener {
 
     init {
         updateUserLoggingStatus()
@@ -106,7 +103,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onMediaClick(id: Int) {
-        emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
+        emitEffect(TrendingMoviesScreenEffect.NavigateToMoviesDetails(id))
     }
 
     override fun onSaveIconClick(media: MediaItemUiState) {
@@ -150,7 +147,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onBackClick() {
-        emitEffect(TrendingMediaScreenEffect.NavigateBack)
+        emitEffect(TrendingMoviesScreenEffect.NavigateBack)
     }
 
     override fun onRetryClick() {
@@ -160,7 +157,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(TrendingMediaScreenEffect.NavigateToLogin)
+        emitEffect(TrendingMoviesScreenEffect.NavigateToLogin)
     }
 
     override fun onDismissLoginBottomSheet() {
