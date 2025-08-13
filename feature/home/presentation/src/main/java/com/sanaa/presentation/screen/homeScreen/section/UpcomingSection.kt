@@ -32,16 +32,16 @@ import com.sanaa.presentation.components.shimmerEffect.upComingTitlePlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 
 fun LazyGridScope.upcomingSection(
-    upcomingMovies: LazyPagingItems<MediaItem>,
+    upcomingMovies: LazyPagingItems<MediaItemUiState>,
     isLoading: Boolean,
     movieGenres: List<GenreUiState>,
     movieSelectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
-    onSaveIconClick: (item: MediaItem) -> Unit,
+    onSaveIconClick: (item: MediaItemUiState) -> Unit,
     onMovieClick: (id: Int, mediaTypeUi: MediaTypeUi) -> Unit,
 ) {
 

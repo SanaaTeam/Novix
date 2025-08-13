@@ -1,6 +1,6 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 
 interface TopRatedScreenInteractionListener {
@@ -8,7 +8,7 @@ interface TopRatedScreenInteractionListener {
     fun onMovieGenreClick(id: Int?)
     fun onTvShowGenreClick(id: Int?)
     fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi)
-    fun onSaveIconClick(media: MediaItem)
+    fun onSaveIconClick(media: MediaItemUiState)
     fun onSaveToListSuccess()
     fun onSaveToListFailure()
     fun onBackClick()

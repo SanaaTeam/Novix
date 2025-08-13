@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -138,7 +138,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         updateState { copy(showBottomSheet = true) }
     }
 

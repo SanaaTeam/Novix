@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
@@ -240,6 +240,6 @@ class TopRatedMediaScreenViewModelTest {
             TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
             TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
-        val media = MediaItem(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
+        val media = MediaItemUiState(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
     }
 }

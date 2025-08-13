@@ -24,16 +24,16 @@ import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun PaginatedMediaListGrid(
-    mediaList: LazyPagingItems<MediaItem>,
+    mediaList: LazyPagingItems<MediaItemUiState>,
     modifier: Modifier = Modifier,
     isScrollEnabled: Boolean = true,
-    onMediaClick: (MediaItem) -> Unit = {},
-    onSaveIconClick: (MediaItem) -> Unit = {},
+    onMediaClick: (MediaItemUiState) -> Unit = {},
+    onSaveIconClick: (MediaItemUiState) -> Unit = {},
 ) {
     LazyVerticalGrid(
         modifier = modifier,

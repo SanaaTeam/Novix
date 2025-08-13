@@ -4,7 +4,7 @@ import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
@@ -164,7 +164,7 @@ class TrendingTvShowsScreenViewModelTest {
                 rating = 0
             )
         )
-        val media = MediaItem(
+        val media = MediaItemUiState(
             id = 1,
             title = "Test TV Show",
             imageUrl = "https://example.com/image.jpg",

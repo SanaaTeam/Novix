@@ -7,8 +7,9 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -56,7 +57,7 @@ class HomeScreenViewModel @Inject constructor(
         fetchUpcomingMovies()
     }
 
-    private fun MediaItem.withSaved(savedIds: Set<Int>) =
+    private fun MediaItemUiState.withSaved(savedIds: Set<Int>) =
         copy(isSaved = savedIds.contains(id))
 
     fun updateUserLoggingStatus() {
@@ -68,7 +69,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
-        updateState { copy(userIsLoggedIn = isLogged, showBottomSheet = false) }
+        updateState { copy(userIsLoggedIn = isLogged, showLoginBottomSheet = false) }
     }
 
     private fun fetchPopularMediaData() {
@@ -80,14 +81,14 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun loadPopularMediaOperation(): List<MediaItem> {
+    private suspend fun loadPopularMediaOperation(): List<MediaItemUiState> {
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
         val popularTvSeries = manageTvSeriesUseCase.getPopularSeries(1).map { it.toState() }.take(5)
 
         return (popularMovies + popularTvSeries).sortedByDescending { media -> media.rating }
     }
 
-    private fun onFetchPopularMediaSuccess(mediaList: List<MediaItem>) {
+    private fun onFetchPopularMediaSuccess(mediaList: List<MediaItemUiState>) {
         updateState {
             copy(
                 isLoadingPopular = false,
@@ -98,7 +99,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchTopRatedMediaData() {
-
         tryToExecute(
             onStart = { updateState { copy(isLoadingTopRated = true) } },
             block = ::loadTopRatedMediaOperation,
@@ -107,7 +107,7 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
+    private suspend fun loadTopRatedMediaOperation(): List<MediaItemUiState> {
         val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null)
             .map { it.toState() }.take(5)
         val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null)
@@ -116,7 +116,7 @@ class HomeScreenViewModel @Inject constructor(
         return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
     }
 
-    private fun onFetchTopRatedMediaSuccess(mediaList: List<MediaItem>) {
+    private fun onFetchTopRatedMediaSuccess(mediaList: List<MediaItemUiState>) {
         updateState {
             copy(
                 isLoadingTopRated = false,
@@ -128,6 +128,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
+            onStart = { updateState { copy(isLoadingHistory = false) } },
             block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
@@ -170,17 +171,16 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun loadUpcomingMovies(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createUpcomingMoviesPagingDataSource(genreId = genreId) },
             mapper = Movie::toState
         ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
             pagingData.map { it.withSaved(savedIds) }
-        }
-            .cachedIn(viewModelScope)
+        }.cachedIn(viewModelScope)
     }
 
-    private fun onFetchUpcomingMoviesSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onFetchUpcomingMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState { copy(upcomingMovies = flowOf(pagingData), isNoInternetConnection = false) }
     }
 
@@ -196,8 +196,7 @@ class HomeScreenViewModel @Inject constructor(
                     genreId = null,
                     mediaType = null
                 )
-            }
-            .catch { e ->
+            }.catch { e ->
                 emit(emptyList())
             }
     }
@@ -233,9 +232,9 @@ class HomeScreenViewModel @Inject constructor(
         emitEffect(HomeScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (state.value.userIsLoggedIn.not()) {
-            updateState { copy(showBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -252,8 +251,8 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showBottomSheet = false) }
+    override fun onDismissLoginBottomSheet() {
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -261,11 +260,17 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onSaveToListSuccess() {
-        emitEffect(HomeScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+        updateState {
+            copy(
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+            )
+        }
     }
 
     override fun onSaveToListFailure() {
-        emitEffect(HomeScreenEffect.ShowError(message = stringProvider.addToListFailed))
+        updateState {
+            copy(snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true))
+        }
     }
 
     override fun onCreateNewListClick() {
@@ -284,14 +289,30 @@ class HomeScreenViewModel @Inject constructor(
         fetchUpcomingMovies()
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true) }
-            emitEffect(HomeScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    snackBarData =
+                        SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                )
+            }
         } else {
-            updateState { copy(isNoInternetConnection = false) }
-            emitEffect(HomeScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+            updateState {
+                copy(
+                    isNoInternetConnection = false,
+                    snackBarData =
+                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+                )
+            }
         }
     }
 

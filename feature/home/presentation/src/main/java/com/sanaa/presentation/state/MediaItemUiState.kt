@@ -1,6 +1,6 @@
 package com.sanaa.presentation.state
 
-data class MediaItem(
+data class MediaItemUiState(
     val id: Int,
     val title: String,
     val imageUrl: String?,

@@ -8,7 +8,7 @@ import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +68,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(movieList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -83,7 +83,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(tvShowList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -149,7 +149,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         emitEffect(TopRatedScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
@@ -211,7 +211,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedMovies(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
 
         return createPagingFlow(
             pagingSourceFactory = { createMoviePagingDataSource(genreId = genreId) },
@@ -225,7 +225,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedTvSeries(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
 
         return createPagingFlow(
             pagingSourceFactory = { createTvShowPagingDataSource(genreId = genreId) },

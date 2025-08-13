@@ -27,6 +27,7 @@ fun NovixScaffold(
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     backgroundShapes: @Composable () -> Unit = { BackgroundShapes() },
+    snackbarHost: @Composable (() -> Unit) = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -36,7 +37,8 @@ fun NovixScaffold(
         floatingActionButton = floatingActionButton,
         contentColor = contentColor,
         containerColor = backgroundColor,
-        contentWindowInsets = WindowInsets(0.dp)
+        contentWindowInsets = WindowInsets(0.dp),
+        snackbarHost = snackbarHost,
     ) { innerPadding ->
         Box(
             modifier = Modifier

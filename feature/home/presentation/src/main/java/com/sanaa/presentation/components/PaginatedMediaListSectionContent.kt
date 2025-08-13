@@ -13,17 +13,17 @@ import androidx.paging.compose.LazyPagingItems
 import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 
 @Composable
 fun PaginatedMediaListSectionContent(
     genres: List<GenreUiState>,
-    mediaList: LazyPagingItems<MediaItem>,
+    mediaList: LazyPagingItems<MediaItemUiState>,
     selectedGenreId: Int?,
     onGenreClick: (Int?) -> Unit,
-    onMediaClick: (MediaItem) -> Unit,
+    onMediaClick: (MediaItemUiState) -> Unit,
     modifier: Modifier = Modifier,
-    onSaveIconClick: (MediaItem) -> Unit = {},
+    onSaveIconClick: (MediaItemUiState) -> Unit = {},
     isScrollEnabled: Boolean = true,
 ) {
     Column(

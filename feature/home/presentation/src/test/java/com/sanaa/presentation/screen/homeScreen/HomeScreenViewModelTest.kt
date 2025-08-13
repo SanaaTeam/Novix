@@ -272,7 +272,7 @@ class HomeScreenViewModelTest {
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test
@@ -280,14 +280,14 @@ class HomeScreenViewModelTest {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
 
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()    }
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()    }
 
     @Test
     fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        viewModel.onDismissBottomSheet()
-        assertThat(viewModel.state.value.showBottomSheet).isFalse()
+        viewModel.onDismissLoginBottomSheet()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test

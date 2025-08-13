@@ -35,16 +35,16 @@ import com.sanaa.feature.home.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUi
 
 @Composable
 fun MixedMediaSection(
     modifier: Modifier = Modifier,
     headerLabel: String,
-    mediaItems: List<MediaItem>,
-    onMediaClick: (MediaItem) -> Unit,
-    onSaveIconClicked: (MediaItem) -> Unit,
+    mediaItems: List<MediaItemUiState>,
+    onMediaClick: (MediaItemUiState) -> Unit,
+    onSaveIconClicked: (MediaItemUiState) -> Unit,
     onViewAllClick: () -> Unit = {}
 ) {
 
@@ -148,28 +148,28 @@ fun MixedMediaSectionPreview(modifier: Modifier = Modifier) {
 
 
 val demoMediaList = listOf(
-    MediaItem(
+    MediaItemUiState(
         id = 1,
         title = "media 1",
         imageUrl = "",
         rating = " 9.9",
         mediaTypeUi = MediaTypeUi.MOVIE
     ),
-    MediaItem(
+    MediaItemUiState(
         id = 2,
         title = "media 2",
         imageUrl = "",
         rating = " 9.9",
         mediaTypeUi = MediaTypeUi.TV_SHOW
     ),
-    MediaItem(
+    MediaItemUiState(
         id = 3,
         title = "media 3",
         imageUrl = "",
         rating = " 9.9",
         mediaTypeUi = MediaTypeUi.MOVIE
     ),
-    MediaItem(
+    MediaItemUiState(
         id = 4,
         title = "media 4",
         imageUrl = "",
