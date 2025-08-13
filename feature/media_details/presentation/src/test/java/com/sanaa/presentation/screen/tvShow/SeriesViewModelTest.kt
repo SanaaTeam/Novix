@@ -41,7 +41,7 @@ class SeriesViewModelTest {
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private lateinit var viewModel: TvShowScreenViewModel
 
-    private val seriesId = 42
+    private val tvShowId = 42
 
     @BeforeEach
     fun setUp() {
@@ -66,10 +66,10 @@ class SeriesViewModelTest {
     @Test
     fun `onViewReviewsClicked emits NavigateToReviewsScreen`() = runTest {
         givenHappyViewModel()
-        viewModel.onViewReviewsClicked(seriesId)
+        viewModel.onViewReviewsClicked(tvShowId)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(TvShowScreenEffects.NavigateToReviewsScreen(seriesId))
+                .isEqualTo(TvShowScreenEffects.NavigateToReviewsScreen(tvShowId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -88,15 +88,15 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSeasonNumberClicked does nothing when same season`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvShowCast(seriesId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
+        coEvery { manageTvSeriesDetails.getTvShowCast(tvShowId) } returns dummyCast
+        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId
+                "tvShowId" to tvShowId
             )
         )
 
@@ -117,10 +117,10 @@ class SeriesViewModelTest {
     @Test
     fun `onEpisodeClicked emits NavigateToEpisodeDetailsScreen`() = runTest {
         givenHappyViewModel()
-        viewModel.onEpisodeClicked(seriesId, 1, 5)
+        viewModel.onEpisodeClicked(tvShowId, 1, 5)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(TvShowScreenEffects.NavigateToEpisodeDetailsScreen(seriesId, 1, 5))
+                .isEqualTo(TvShowScreenEffects.NavigateToEpisodeDetailsScreen(tvShowId, 1, 5))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -159,11 +159,11 @@ class SeriesViewModelTest {
 
     @Test
     fun `loadSeries handles error correctly when use case fails`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } throws RuntimeException("Test failure")
+        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } throws RuntimeException("Test failure")
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId
+                "tvShowId" to tvShowId
             )
         )
 
@@ -298,15 +298,15 @@ class SeriesViewModelTest {
 
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(seriesId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvShowCast(seriesId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
+        coEvery { manageTvSeriesDetails.getTvShowCast(tvShowId) } returns dummyCast
+        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId
+                "tvShowId" to tvShowId
             )
         )
 

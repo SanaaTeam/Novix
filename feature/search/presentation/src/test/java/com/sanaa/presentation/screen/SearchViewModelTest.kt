@@ -506,7 +506,7 @@ class SearchViewModelTest {
     @Test
     fun `onSearchResultMediaClicked should emit NavigateToTvShowDetails when media is TV`() =
         runTest {
-            val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SERIES, false)
+            val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SHOW, false)
 
             searchViewModel.onSearchResultMediaClicked(viewed)
 
@@ -534,7 +534,7 @@ class SearchViewModelTest {
     @Test
     fun `onRecentViewedMediaClicked should emit NavigateToTvShowDetails when media is TV_SERIES`() =
         runTest {
-            val viewed = RecentViewedUiModel(200, "url", MediaTypeUi.TV_SERIES, false)
+            val viewed = RecentViewedUiModel(200, "url", MediaTypeUi.TV_SHOW, false)
 
             searchViewModel.onRecentViewedMediaClicked(viewed)
 

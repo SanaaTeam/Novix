@@ -83,9 +83,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun loadPopularMediaOperation(): List<MediaItem> {
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
-        val popularTvSeries = manageTvShowUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
+        val popularTvShows = manageTvShowUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
-        return (popularMovies + popularTvSeries).sortedByDescending { media -> media.rating }
+        return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
     }
 
     private fun onFetchPopularMediaSuccess(mediaList: List<MediaItem>) {
@@ -110,10 +110,10 @@ class HomeScreenViewModel @Inject constructor(
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
         val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null)
             .map { it.toState() }.take(5)
-        val topRatedTvSeries = manageTvShowUseCase.getTopRatedTvShows(1, null)
+        val topRatedTvShows = manageTvShowUseCase.getTopRatedTvShows(1, null)
             .map { it.toState() }.take(5)
 
-        return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
+        return (topRatedMovies + topRatedTvShows).sortedByDescending { it.rating }
     }
 
     private fun onFetchTopRatedMediaSuccess(mediaList: List<MediaItem>) {

@@ -34,7 +34,7 @@ class EpisodeDetailsScreenViewModelTest {
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvSeriesDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
-    private val seriesId = 5
+    private val tvShowId = 5
     private val seasonNumber = 2
     private val episodeNumber = 3
 
@@ -84,7 +84,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onSavedClick and onRateClicked toggle login bottom sheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
         viewModel.onRateClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
@@ -93,7 +93,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -108,24 +108,24 @@ class EpisodeDetailsScreenViewModelTest {
     private fun givenHappyViewModel() {
         coEvery {
             manageEpisodeDetails.getEpisodeDetails(
-                seriesId,
+                tvShowId,
                 seasonNumber,
                 episodeNumber
             )
         } returns dummyEpisode
         coEvery {
             manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                seriesId,
+                tvShowId,
                 seasonNumber,
                 episodeNumber
             )
         } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "tvShowId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
@@ -144,7 +144,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onLoginButtonClick()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
         viewModel.effect.test {
@@ -209,7 +209,7 @@ class EpisodeDetailsScreenViewModelTest {
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "tvShowId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )

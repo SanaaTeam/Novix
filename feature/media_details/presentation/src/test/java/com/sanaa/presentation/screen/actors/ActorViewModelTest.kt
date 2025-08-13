@@ -93,10 +93,10 @@ class ActorViewModelTest {
     @Test
     fun `onSeriesClicked emits NavigateToSeriesDetails`() = runTest {
         givenHappyViewModel()
-        val seriesId = 123
-        viewModel.onTvShowClicked(seriesId)
+        val tvShowId = 123
+        viewModel.onTvShowClicked(tvShowId)
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTvShowDetails(seriesId))
+            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTvShowDetails(tvShowId))
             cancelAndIgnoreRemainingEvents()
         }
     }

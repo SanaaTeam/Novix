@@ -67,5 +67,5 @@ data class RecentViewedUiModel(
 
 enum class MediaTypeUi {
     MOVIE,
-    TV_SERIES,
+    TV_SHOW,
 }

@@ -83,7 +83,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedTvSeries(genreId = genreId) },
+            callee = { loadTopRatedTvShows(genreId = genreId) },
             onSuccess = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -243,14 +243,12 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadTopRatedTvSeries(
+    private fun loadTopRatedTvShows(
         genreId: Int?,
     ): Flow<PagingData<MediaItem>> {
         updateState { copy(isLoading = true) }
         return createPagingFlow(
-            pagingSourceFactory = {
-                createTvShowPagingDataSource(genreId = genreId)
-            },
+            pagingSourceFactory = { createTvShowPagingDataSource(genreId = genreId) },
             mapper = TvShow::toState
         )
     }

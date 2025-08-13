@@ -53,7 +53,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            block = { loadWatchedHistoryTvSeries(genreId) },
+            block = { loadWatchedHistoryTvShows(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError
         )
@@ -146,7 +146,7 @@ class WatchingHistoryViewModel @Inject constructor(
         )
     }
 
-    private suspend fun loadWatchedHistoryTvSeries(
+    private suspend fun loadWatchedHistoryTvShows(
         genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
         updateState { copy(isLoading = true) }
