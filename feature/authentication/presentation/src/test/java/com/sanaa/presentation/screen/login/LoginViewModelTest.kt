@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.login
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import exceptions.InvalidUserOrPasswordException
-import exceptions.NoNetworkException
+import exceptions.NoInternetException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -139,10 +139,10 @@ class LoginViewModelTest {
 
 
     @Test
-    fun `onDataLoadError handles NoInternetConnectionException`() = runTest {
+    fun `onDataLoadError handles NoInternetException`() = runTest {
         val errorMessage = "No internet connection"
         coEvery { identityStringProvider.noInternetConnectionError } returns errorMessage
-        val exception = NoNetworkException()
+        val exception = NoInternetException()
         viewModel.onDataLoadError(exception)
 
         viewModel.effect.test {
