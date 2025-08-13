@@ -6,6 +6,7 @@ import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
 import entity.TvShow
+import kotlin.time.Duration.Companion.minutes
 
 fun MovieSearchDto.toEntity(): Movie {
     return Movie(
@@ -13,12 +14,12 @@ fun MovieSearchDto.toEntity(): Movie {
         title = title.orEmpty(),
         posterImageUrl = getFullImageUrl(posterImagePath),
         genres = emptyList(),
-        imdbRating = voteAverage,
-        duration = null,
+        imdbRating = voteAverage ?: -1f,
+        duration = (-1).minutes,
         releaseDate = getLocalDateOrDefault(releaseDate),
         overview = "",
-        trailerUrl = null,
-        rating = null
+        trailerUrl = "",
+        rating = -1
     )
 }
 
@@ -28,10 +29,10 @@ fun TvShowSearchDto.toEntity(): TvShow {
         title = name.orEmpty(),
         posterImageUrl = getFullImageUrl(posterImagePath),
         genres = emptyList(),
-        imdbRating = voteAverage ?: 0f,
+        imdbRating = voteAverage ?: -1f,
         overview = "",
         releaseDate = getLocalDateOrDefault(releaseDate),
         seasonsCount = 0,
-        rating = null
+        rating = -1
     )
 }

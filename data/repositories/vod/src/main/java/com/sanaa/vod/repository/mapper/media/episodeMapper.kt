@@ -12,7 +12,7 @@ fun EpisodeDto.toEntity(): Episode {
         seasonNumber = seasonNumber,
         number = episodeNumber,
         imdbRating = voteAverage ?: -1f,
-        durationMinutes = runtime ?: 0,
+        durationMinutes = runtime ?: -1,
         releaseDate = getLocalDateOrDefault(airDate),
         stillImagePath = getFullImageUrl(stillPath),
         rating = rating?.toInt() ?: -1,

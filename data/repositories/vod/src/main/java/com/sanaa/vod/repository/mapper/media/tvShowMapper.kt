@@ -8,12 +8,12 @@ fun TvShowDto.toEntity(): TvShow {
     return TvShow(
         id = id,
         title = name,
-        overview = overview.toString(),
+        overview = overview.orEmpty(),
         posterImageUrl = getFullImageUrl(posterPath),
         imdbRating = voteAverage,
         releaseDate = getLocalDateOrDefault(firstAirDate),
         genres = genres.map { it.toEntity() },
         seasonsCount = seasonsCount,
-        rating = rating?.toInt()
+        rating = rating?.toInt() ?: -1
     )
 }
