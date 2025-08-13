@@ -8,7 +8,7 @@ import com.sanaa.vod.fake.FakeData.actorSearchResponse
 import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -53,13 +53,13 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchActors() should throw RetrievingDataFailureException for a generic exception`() =
+    fun `searchActors() should throw NovixAppException for a generic exception`() =
         runTest {
             val page = 1
             val query = "Jane"
             coEvery { remoteDataSource.searchActors(any(), any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchRepository.searchActors(query, page)
             }
         }
@@ -91,13 +91,13 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchMovies() should throw RetrievingDataFailureException for a generic exception`() =
+    fun `searchMovies() should throw NovixAppException for a generic exception`() =
         runTest {
             val page = 1
             val query = "Tom"
             coEvery { remoteDataSource.searchMovies(any(), any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchRepository.searchMovies(query, page)
             }
         }
@@ -127,13 +127,13 @@ class SearchRepositoryImplTest {
         }
 
     @Test
-    fun `searchTvShows should throw RetrievingDataFailureException for a generic exception`() =
+    fun `searchTvShows should throw NovixAppException for a generic exception`() =
         runTest {
             val page = 1
             val query = "Jane"
             coEvery { remoteDataSource.searchTvShows(any(), any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchRepository.searchTvShows(query, page)
             }
         }

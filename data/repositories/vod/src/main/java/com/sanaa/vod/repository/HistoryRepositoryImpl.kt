@@ -5,8 +5,6 @@ import com.sanaa.vod.repository.mapper.history.toDto
 import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.MediaHistoryItem
-import exceptions.FailedToAddException
-import exceptions.FailedToDeleteException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import repository.HistoryRepository
@@ -30,7 +28,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun addSearchHistory(query: String) = safeCall(
         errorMessage = "Failed to add search history",
-        exceptionProvider = ::FailedToAddException
     ) {
         local.insertQuery(query)
     }
@@ -38,7 +35,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun clearSearchHistory() = safeCall(
         errorMessage = "Failed to clear search history",
-        exceptionProvider = ::FailedToDeleteException
     ) {
         local.deleteAllQueries()
     }
@@ -46,7 +42,6 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun removeSearchHistoryById(id: Int) = safeCall(
         errorMessage = "Failed to remove search history",
-        exceptionProvider = ::FailedToDeleteException
     ) {
         local.deleteQueryById(id)
     }
@@ -62,14 +57,12 @@ class HistoryRepositoryImpl @Inject constructor(
 
     override suspend fun addRecentViewedMedia(item: RecentViewedMedia) = safeCall(
         errorMessage = "Failed to add recent viewed",
-        exceptionProvider = ::FailedToAddException
     ) {
         local.insertRecentViewed(item.toDto())
     }
 
     override suspend fun clearRecentViewed() = safeCall(
         errorMessage = "Failed to clear recent viewed",
-        exceptionProvider = ::FailedToDeleteException
     ) {
         local.deleteAllRecentViewed()
     }
@@ -79,7 +72,6 @@ class HistoryRepositoryImpl @Inject constructor(
         media: MediaHistoryItem
     ) = safeCall(
         errorMessage = "Failed to add watched media history for user $username",
-        exceptionProvider = ::FailedToAddException
     ) {
         local.insertWatchedMediaHistory(media.toDto(username))
     }
