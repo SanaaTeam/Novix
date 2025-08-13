@@ -63,7 +63,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
+            callee = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )

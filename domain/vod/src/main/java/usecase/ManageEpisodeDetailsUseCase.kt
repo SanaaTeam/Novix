@@ -2,8 +2,8 @@ package usecase
 
 import entity.Actor
 import entity.Episode
-import javax.inject.Inject
 import repository.TvShowRepository
+import javax.inject.Inject
 
 class ManageEpisodeDetailsUseCase @Inject constructor(
     private val tvSeriesRepo: TvShowRepository
@@ -27,13 +27,13 @@ class ManageEpisodeDetailsUseCase @Inject constructor(
         tvSeriesRepo.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
 
     suspend fun addTvEpisodeRate(
-        seriesId: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
     ): Boolean {
         return tvSeriesRepo.addTvEpisodeRate(
-            tvShowId = seriesId,
+            tvShowId = tvShowId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             rating = rating

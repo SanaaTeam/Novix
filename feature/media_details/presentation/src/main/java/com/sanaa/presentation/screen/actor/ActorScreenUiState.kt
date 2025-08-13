@@ -7,7 +7,7 @@ import com.sanaa.presentation.model.TvShowUiState
 data class ActorScreenUiState(
     val actor: ActorUiModel = ActorUiModel(),
     val topMovies: List<MovieUiModel> = emptyList(),
-    val topTvSeries: List<TvShowUiState> = emptyList(),
+    val topTvShows: List<TvShowUiState> = emptyList(),
     val profileImageUrls: List<String> = emptyList(),
     val galleryImageUrls: List<String> = emptyList(),
     val isLoading: Boolean = false,

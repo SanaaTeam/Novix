@@ -5,9 +5,9 @@ import com.sanaa.presentation.model.MovieUiModel
 interface ActorsScreenInteractionListener {
     fun onBackClicked()
     fun onTopMoviesClicked()
-    fun onTopSeriesClicked()
+    fun onTopShowsClicked()
     fun onViewAllGalleryClicked()
-    fun onSeriesClicked(id: Int)
+    fun onTvShowClicked(id: Int)
     fun onMovieClicked(id: Int)
     fun onDismissBottomSheet()
     fun onSaveClicked(movie: MovieUiModel)

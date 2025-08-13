@@ -1,13 +1,13 @@
-package com.sanaa.presentation.screen.series
+package com.sanaa.presentation.screen.tvShow
 
 import com.sanaa.presentation.model.ActorUiModel
 import com.sanaa.presentation.model.SeasonUiState
 import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 
-data class SeriesScreenUiState(
+data class TvShowScreenUiState(
     val isLoading: Boolean = false,
-    val series: TvShowUiState = TvShowUiState(),
+    val tvShow: TvShowUiState = TvShowUiState(),
     val season: SeasonUiState = SeasonUiState(),
     val cast: List<ActorUiModel> = emptyList(),
     val images: List<String> = emptyList(),

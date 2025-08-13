@@ -73,9 +73,9 @@ class ActorViewModelTest {
     @Test
     fun `onTopSeriesClicked emits NavigateToTopSeries`() = runTest {
         givenHappyViewModel()
-        viewModel.onTopSeriesClicked()
+        viewModel.onTopShowsClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTopSeries(actorId))
+            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTopTvShows(actorId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -94,9 +94,9 @@ class ActorViewModelTest {
     fun `onSeriesClicked emits NavigateToSeriesDetails`() = runTest {
         givenHappyViewModel()
         val seriesId = 123
-        viewModel.onSeriesClicked(seriesId)
+        viewModel.onTvShowClicked(seriesId)
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToSeriesDetails(seriesId))
+            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTvShowDetails(seriesId))
             cancelAndIgnoreRemainingEvents()
         }
     }

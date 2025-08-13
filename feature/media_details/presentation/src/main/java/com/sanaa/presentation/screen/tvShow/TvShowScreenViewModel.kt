@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series
+package com.sanaa.presentation.screen.tvShow
 
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -22,39 +22,39 @@ import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class SeriesViewModel @Inject constructor(
+class TvShowScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getUser: GetLoggedInUserUseCase,
-    private val manageTvSeriesDetails: ManageTvShowUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SeriesScreenUiState, SeriesScreenEffects>(
-    initialState = SeriesScreenUiState(),
+) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
+    initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
-), SeriesScreenInteractionListener {
+), TvShowScreenInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-        "seriesId is required in SavedStateHandle"
+    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
+        "tvShowId is required in SavedStateHandle"
     }
 
     init {
-        loadSeries()
+        loadTvShow()
         fetchUserRating()
         updateUserLoginState()
     }
 
     override fun onBackClicked() {
-        emitEffect(SeriesScreenEffects.NavigateBack)
+        emitEffect(TvShowScreenEffects.NavigateBack)
     }
 
-    override fun onViewReviewsClicked(seriesId: Int) {
-        emitEffect(SeriesScreenEffects.NavigateToReviewsScreen(seriesId))
+    override fun onViewReviewsClicked(tvShowId: Int) {
+        emitEffect(TvShowScreenEffects.NavigateToReviewsScreen(tvShowId))
     }
 
     override fun onActorClicked(actorId: Int) {
-        emitEffect(SeriesScreenEffects.NavigateToActorScreen(actorId))
+        emitEffect(TvShowScreenEffects.NavigateToActorScreen(actorId))
     }
 
     override fun onSeasonNumberClicked(seasonNumber: Int) {
@@ -66,16 +66,16 @@ class SeriesViewModel @Inject constructor(
         )
     }
 
-    override fun onEpisodeClicked(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+    override fun onEpisodeClicked(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
         emitEffect(
-            SeriesScreenEffects.NavigateToEpisodeDetailsScreen(
-                seriesId, seasonNumber, episodeNumber
+            TvShowScreenEffects.NavigateToEpisodeDetailsScreen(
+                tvShowId, seasonNumber, episodeNumber
             )
         )
     }
 
     override fun onPlayTrailerClicked() {
-        emitEffect(SeriesScreenEffects.PlayTrailer(trailerUrl = state.value.series.trailerUrl))
+        emitEffect(TvShowScreenEffects.PlayTrailer(trailerUrl = state.value.tvShow.trailerUrl))
     }
 
     override fun onRateClicked() {
@@ -101,7 +101,7 @@ class SeriesViewModel @Inject constructor(
 
     override fun onLoginButtonClick() {
         updateState { copy(showLoginBottomSheet = false) }
-        emitEffect(SeriesScreenEffects.NavigateToLogin)
+        emitEffect(TvShowScreenEffects.NavigateToLogin)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -114,7 +114,7 @@ class SeriesViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitTvSeriesRating,
+            callee = ::submitTvShowRating,
             onError = ::onSubmitRateBottomSheetFailed
         )
         updateState {
@@ -131,7 +131,7 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveSeriesClicked() {
+    override fun onSaveTvShowClicked() {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
             promptLogin(LoginPromptType.BOOKMARK)
@@ -139,7 +139,7 @@ class SeriesViewModel @Inject constructor(
     }
 
     override fun onGenreClicked(genre: GenreUiModel) {
-        emitEffect(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
+        emitEffect(TvShowScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }
 
     override fun onRetryLoadDetails() {
@@ -150,13 +150,13 @@ class SeriesViewModel @Inject constructor(
                 noInternetConnection = false
             )
         }
-        loadSeries()
+        loadTvShow()
     }
 
-    private fun loadSeries() {
+    private fun loadTvShow() {
         tryToExecute(
             callee = {
-                fetchSeriesDetails()
+                fetchShowDetails()
             },
             onSuccess = {
                 updateState { copy(isLoading = false) }
@@ -171,7 +171,7 @@ class SeriesViewModel @Inject constructor(
                 callee = { getUser.getLoggedInUser() },
                 onCollect = { user ->
                     tryToExecute(
-                        callee = { manageTvSeriesDetails.getTvShowRating(user.id, seriesId) },
+                        callee = { manageTvShowDetails.getTvShowRating(user.id, tvShowId) },
                         onSuccess = { rating ->
                             updateState { copy(imdbRating = rating) }
                         },
@@ -181,26 +181,26 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private suspend fun fetchSeriesDetails() = coroutineScope {
+    private suspend fun fetchShowDetails() = coroutineScope {
         updateState { copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvSeriesDetails.getTvShowDetails(seriesId) }
-        val castDeferred = async { manageTvSeriesDetails.getTvShowCast(seriesId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, 1) }
-        val imagesDeferred = async { manageTvSeriesDetails.getTvShowImageUrls(seriesId) }
-        val trailerDeferred = async { manageTvSeriesDetails.getTvShowTrailer(seriesId) }
+        val tvShowDeferred = async { manageTvShowDetails.getTvShowDetails(tvShowId) }
+        val castDeferred = async { manageTvShowDetails.getTvShowCast(tvShowId) }
+        val seasonDeferred = async { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) }
+        val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
+        val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
 
 
-        val series = seriesDeferred.await()
+        val tvShow = tvShowDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
-        addTvSeriesToHistory(series)
+        addTvShowToHistory(tvShow)
 
         updateState {
             copy(
-                series = series.toState(trailer),
+                tvShow = tvShow.toState(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toState(),
                 images = images,
@@ -212,21 +212,21 @@ class SeriesViewModel @Inject constructor(
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
-        val season = manageTvSeriesDetails.getTvShowSeasonDetails(seriesId, seasonNumber)
+        val season = manageTvShowDetails.getTvShowSeasonDetails(tvShowId, seasonNumber)
 
         updateState { copy(season = season.toState()) }
     }
 
 
-    private suspend fun submitTvSeriesRating() {
-        val isSendRateSuccess = manageTvSeriesDetails.addTvShowRate(
-            tvShowId = seriesId,
+    private suspend fun submitTvShowRating() {
+        val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
+            tvShowId = tvShowId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(SeriesScreenEffects.ShowSuccessSnackBar)
+            emitEffect(TvShowScreenEffects.ShowSuccessSnackBar)
         } else {
-            emitEffect(SeriesScreenEffects.ShowErrorSnackBar)
+            emitEffect(TvShowScreenEffects.ShowErrorSnackBar)
         }
     }
 
@@ -250,7 +250,7 @@ class SeriesViewModel @Inject constructor(
         }
     }
 
-    private fun addTvSeriesToHistory(tvShow: TvShow) {
+    private fun addTvShowToHistory(tvShow: TvShow) {
         tryToCollect(
             callee = { getLoggedInUserUseCase.getLoggedInUser() },
             onCollect = { user ->

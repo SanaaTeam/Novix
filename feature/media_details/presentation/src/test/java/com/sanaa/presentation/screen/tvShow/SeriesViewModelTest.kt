@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series
+package com.sanaa.presentation.screen.tvShow
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
@@ -39,7 +39,7 @@ class SeriesViewModelTest {
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
-    private lateinit var viewModel: SeriesViewModel
+    private lateinit var viewModel: TvShowScreenViewModel
 
     private val seriesId = 42
 
@@ -58,7 +58,7 @@ class SeriesViewModelTest {
         givenHappyViewModel()
         viewModel.onBackClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -69,7 +69,7 @@ class SeriesViewModelTest {
         viewModel.onViewReviewsClicked(seriesId)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(SeriesScreenEffects.NavigateToReviewsScreen(seriesId))
+                .isEqualTo(TvShowScreenEffects.NavigateToReviewsScreen(seriesId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -81,7 +81,7 @@ class SeriesViewModelTest {
         viewModel.onActorClicked(actorId)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(SeriesScreenEffects.NavigateToActorScreen(actorId))
+                .isEqualTo(TvShowScreenEffects.NavigateToActorScreen(actorId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -100,7 +100,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = TvShowScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,
@@ -120,7 +120,7 @@ class SeriesViewModelTest {
         viewModel.onEpisodeClicked(seriesId, 1, 5)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(SeriesScreenEffects.NavigateToEpisodeDetailsScreen(seriesId, 1, 5))
+                .isEqualTo(TvShowScreenEffects.NavigateToEpisodeDetailsScreen(seriesId, 1, 5))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -137,7 +137,7 @@ class SeriesViewModelTest {
     @Test
     fun `onSaveSeriesClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveSeriesClicked()
+        viewModel.onSaveTvShowClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
@@ -151,7 +151,7 @@ class SeriesViewModelTest {
         viewModel.onGenreClicked(genre)
         viewModel.effect.test {
             assertThat(awaitItem())
-                .isEqualTo(SeriesScreenEffects.NavigateToMovieCategoriesScreen(genre))
+                .isEqualTo(TvShowScreenEffects.NavigateToMovieCategoriesScreen(genre))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -167,7 +167,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = TvShowScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,
@@ -188,7 +188,7 @@ class SeriesViewModelTest {
         advanceUntilIdle()
         viewModel.onPlayTrailerClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.PlayTrailer(dummyTrailer))
+            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.PlayTrailer(dummyTrailer))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -213,7 +213,7 @@ class SeriesViewModelTest {
     @Test
     fun `onDismissLoginBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveSeriesClicked()
+        viewModel.onSaveTvShowClicked()
         viewModel.onDismissLoginBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -221,13 +221,13 @@ class SeriesViewModelTest {
     @Test
     fun `onLoginButtonClick hides sheet and emits NavigateToLogin`() = runTest {
         givenHappyViewModel()
-        viewModel.onSaveSeriesClicked()
+        viewModel.onSaveTvShowClicked()
         viewModel.onLoginButtonClick()
 
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(SeriesScreenEffects.NavigateToLogin)
+            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -310,7 +310,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = TvShowScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,

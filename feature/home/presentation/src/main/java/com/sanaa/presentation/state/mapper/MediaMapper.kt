@@ -38,7 +38,7 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
 
 fun MediaType.toState(): MediaTypeUi = when (this) {
     MediaType.MOVIE -> MediaTypeUi.MOVIE
-    MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
+    MediaType.TV_SHOW -> MediaTypeUi.TV_SHOW
 }
 
 fun SavedList.toState(): PlaylistUiItem {
