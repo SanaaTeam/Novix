@@ -49,8 +49,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MediaTypeParam
-import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
+import com.sanaa.presentation.navigation.GenreMoviesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent

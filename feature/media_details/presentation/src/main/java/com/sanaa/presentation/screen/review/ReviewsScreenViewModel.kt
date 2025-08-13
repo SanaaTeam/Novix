@@ -20,7 +20,7 @@ import usecase.ManageTvSeriesUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ReviewViewModel @Inject constructor(
+class ReviewsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val manageTvSeriesDetails: ManageTvSeriesUseCase,

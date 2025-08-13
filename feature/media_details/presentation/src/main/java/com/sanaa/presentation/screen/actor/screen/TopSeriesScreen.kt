@@ -39,9 +39,9 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
+import com.sanaa.presentation.navigation.SeriesScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -50,7 +50,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopSeriesScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -143,7 +143,7 @@ private fun SeriesList(
                 },
                 onCardClick = {
                     navController.navigate(
-                        SeriesDetailsScreenRoute(series.id).route()
+                        SeriesScreenRoute(series.id)
                     )
                 }
             )

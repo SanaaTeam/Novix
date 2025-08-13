@@ -7,6 +7,7 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoNetworkException
@@ -27,9 +28,7 @@ class GenreTvShowsViewModel @Inject constructor(
     initialState = GenreTvShowsScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreTvShowsScreenInteractionListener {
-
-    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
-    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+    val route: GenreTvShowsScreenRoute = savedStateHandle.toRoute()
 
     init {
         updateUserLoggingStatus()

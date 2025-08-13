@@ -61,7 +61,7 @@ import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToSeriesDe
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopMovies
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopSeries
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.screen.actor.componants.ActorInfoCard
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
@@ -76,7 +76,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current

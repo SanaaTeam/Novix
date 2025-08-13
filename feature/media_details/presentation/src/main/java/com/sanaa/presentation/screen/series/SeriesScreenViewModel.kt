@@ -22,7 +22,7 @@ import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class SeriesViewModel @Inject constructor(
+class SeriesScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getUser: GetLoggedInUserUseCase,

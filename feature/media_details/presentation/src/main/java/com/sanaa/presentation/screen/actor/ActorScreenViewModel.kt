@@ -19,7 +19,7 @@ import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ActorViewModel @Inject constructor(
+class ActorScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,

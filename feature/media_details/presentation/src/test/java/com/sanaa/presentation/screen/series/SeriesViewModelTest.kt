@@ -40,7 +40,7 @@ class SeriesViewModelTest {
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
-    private lateinit var viewModel: SeriesViewModel
+    private lateinit var viewModel: SeriesScreenViewModel
 
     private val seriesId = 42
 
@@ -101,7 +101,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = SeriesScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,
@@ -168,7 +168,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = SeriesScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,
@@ -311,7 +311,7 @@ class SeriesViewModelTest {
             )
         )
 
-        viewModel = SeriesViewModel(
+        viewModel = SeriesScreenViewModel(
             savedStateHandle,
             checkUserLogin,
             getUser,
