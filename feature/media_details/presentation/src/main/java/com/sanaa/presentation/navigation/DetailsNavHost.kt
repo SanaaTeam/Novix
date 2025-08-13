@@ -42,7 +42,7 @@ fun DetailsNavHost(
     mediaId: Int? = null,
     genreId: Int? = null,
     genreName: String? = null,
-    isTvGenre: Boolean = false
+    isTvGenre: Boolean = false,
 ) {
     val initialRoute = when {
         startRoute != null && mediaId != null -> when (startRoute) {
@@ -138,7 +138,6 @@ fun DetailsNavHost(
                 val actorViewModel: ActorViewModel = hiltViewModel()
                 TopMoviesScreen(
                     viewModel = actorViewModel,
-                    navigateBack = { navController.popBackStack() }
                 )
             }
 
@@ -151,7 +150,6 @@ fun DetailsNavHost(
                 val actorViewModel: ActorViewModel = hiltViewModel()
                 TopSeriesScreen(
                     viewModel = actorViewModel,
-                    navigateBack = { navController.popBackStack() }
                 )
             }
 

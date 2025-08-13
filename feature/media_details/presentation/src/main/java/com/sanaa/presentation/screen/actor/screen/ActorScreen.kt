@@ -81,9 +81,9 @@ fun ActorScreen(
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
 
-    val authApi = EntryPointAccessors.fromApplication(
-        context, DetailsApiEntryPoint::class.java
-    ).authenticationApi()
+    val authApi = EntryPointAccessors
+        .fromApplication(context, DetailsApiEntryPoint::class.java)
+        .authenticationApi()
 
     val launcher = launchAuthActivityForResult()
 
