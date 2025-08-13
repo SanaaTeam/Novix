@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.PersonUiState
 import com.sanaa.presentation.state.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,16 +56,6 @@ class TrendingPeopleViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true) }
-            emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
-        } else {
-            updateState { copy(isNoInternetConnection = false) }
-            emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
-        }
-    }
-
     override fun onBackClick() {
         emitEffect(TrendingPeopleScreenEffect.NavigateBack)
     }
@@ -77,8 +68,35 @@ class TrendingPeopleViewModel @Inject constructor(
         loadActors()
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    private fun onDataLoadError(e: Throwable) {
+        if (e is NoNetworkException) {
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    snackBarData =
+                        SnackData(
+                            message = stringProvider.noInternetConnectionError,
+                            isError = true
+                        )
+                )
+            }
+        } else {
+            updateState {
+                copy(
+                    isNoInternetConnection = false,
+                    snackBarData =
+                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+                )
+            }
+        }
+    }
+
     private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError)
-    : PagingSource<Int, Actor> {
+            : PagingSource<Int, Actor> {
         return BasePagingSourceForHome(onError = onError) { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }
