@@ -26,7 +26,6 @@ import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
-import com.sanaa.presentation.providersSaved.LocalThemeProvider
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
@@ -143,7 +142,6 @@ fun PlaylistScreenContent(
                 ) {
                     NetworkDisconnectionContact(
                         onRetryClick = { },
-                        useDarkTheme = LocalThemeProvider.current
                     )
                 }
             }
