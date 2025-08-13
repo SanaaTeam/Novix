@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.episodeDetails
 import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toEpisodeUiModel
+import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
@@ -180,7 +180,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
             updateState {
                 copy(
-                    episode = episode.toEpisodeUiModel(),
+                    episode = episode.toState(),
                     guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
                     seriesId = seriesId,
                     imagesUrl = images,

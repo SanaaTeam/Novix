@@ -6,7 +6,6 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Episode
 import entity.Genre
 import entity.Season
@@ -349,9 +348,6 @@ class SeriesViewModelTest {
                 id = 1,
                 imageUrl = "/actor1.jpg",
                 name = "Actor One",
-                region = "US",
-                lastShow = "Show A",
-                gender = Gender.MALE,
                 department = "Acting",
                 character = "Role A",
                 birthDate = LocalDate.parse("1980-01-01"),
@@ -367,9 +363,9 @@ class SeriesViewModelTest {
             seasonNumber = 1,
             imdbRating = 8.0f,
             overview = "",
-            durationMinutes = null,
+            durationMinutes = 0,
             releaseDate = defaultDate,
-            stillImagePath = null,
+            stillImagePath = "",
             rating = 0
         )
         val dummySeason = Season(

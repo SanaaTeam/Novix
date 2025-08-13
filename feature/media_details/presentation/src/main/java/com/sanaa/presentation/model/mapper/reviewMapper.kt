@@ -11,7 +11,7 @@ fun Review.toReviewUiModel() = ReviewUiModel(
     authorName = authorName,
     username = userHandle,
     content = content,
-    rating = rating?.let { String.format("%.1f", rating) },
+    rating = rating.takeIf { it > 0 }?.let { String.format("%.1f", rating) },
     createdDate = if (createdDate != defaultDate) createdDate.toString() else "",
     avatarUrl = avatarUrl
 )

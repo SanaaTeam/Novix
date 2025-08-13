@@ -10,5 +10,6 @@ data class Actor(
     val character: String,
     val birthDate: LocalDate,
     val deathDate: LocalDate,
+    val placeOfBirth: String,
     val biography: String
 )
