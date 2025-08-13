@@ -1,12 +1,11 @@
 package exceptions
 
 
-open class NovixAppException(message: String? = null) : Exception(message)
-class NoNetworkException : NovixAppException("No internet connection ")
+open class IdentityException(message: String?= null) : Exception(message ?: "Unknown Error")
 
-open class AuthenticationException(message: String?) : NovixAppException(message ?: "Unknown Error")
-class NoLoggedInUserException : AuthenticationException("No logged in user found.")
+class NoLoggedInUserException : IdentityException("No logged in user found.")
+class NoInternetException : IdentityException("No internet connection")
 
-open class LoginErrorException(message: String?) : AuthenticationException(message)
+open class LoginErrorException(message: String?) : IdentityException(message)
 class InvalidUserOrPasswordException : LoginErrorException("Invalid username or password")
 

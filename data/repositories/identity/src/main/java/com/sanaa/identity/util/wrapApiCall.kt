@@ -1,9 +1,9 @@
 package com.sanaa.identity.util
 
+import exceptions.IdentityException
 import exceptions.InvalidUserOrPasswordException
 import exceptions.LoginErrorException
-import exceptions.NoNetworkException
-import exceptions.NovixAppException
+import exceptions.NoInternetException
 import retrofit2.HttpException
 import java.net.UnknownHostException
 
@@ -11,7 +11,7 @@ inline fun <T> wrapApiCall(block: () -> T): T {
     return try {
         block()
     } catch (_: UnknownHostException) {
-        throw NoNetworkException()
+        throw NoInternetException()
     } catch (e: HttpException) {
         val errorBody = e.response()?.errorBody()?.string()
         if (errorBody?.contains("status_code\":30") == true) {
@@ -20,6 +20,6 @@ inline fun <T> wrapApiCall(block: () -> T): T {
             throw LoginErrorException("HTTP ${e.code()}: ${errorBody ?: "Unknown server error"}")
         }
     } catch (_: Exception) {
-        throw NovixAppException(message = "Unknown error")
+        throw IdentityException(message = "Unknown error")
     }
 }
