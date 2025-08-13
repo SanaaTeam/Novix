@@ -6,14 +6,12 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.isSystemInDarkTheme
 import com.sanaa.api.OnboardingApi
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.presentation.screen.OnboardingScreen
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class OnBoardingApiImpl @Inject constructor() : OnboardingApi{

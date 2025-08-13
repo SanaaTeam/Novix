@@ -41,6 +41,7 @@ import com.sanaa.presentation.component.CircleShapeBlur
 import com.sanaa.presentation.component.DialogContainer
 import com.sanaa.presentation.component.OnBoardingPageContentItem
 
+
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
