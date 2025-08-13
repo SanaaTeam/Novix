@@ -32,7 +32,7 @@ class EpisodeDetailsScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvShowUseCase = mockk(relaxed = true)
+    private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val tvShowId = 5
     private val seasonNumber = 2
@@ -120,8 +120,8 @@ class EpisodeDetailsScreenViewModelTest {
                 episodeNumber
             )
         } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -136,7 +136,7 @@ class EpisodeDetailsScreenViewModelTest {
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             dispatcher = testDispatcher
         )
     }
@@ -220,7 +220,7 @@ class EpisodeDetailsScreenViewModelTest {
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             dispatcher = testDispatcher
         )
 

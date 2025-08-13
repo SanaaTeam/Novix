@@ -31,11 +31,11 @@ import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SeriesViewModelTest {
+class TvShowScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
-    private val manageTvSeriesDetails: ManageTvShowUseCase = mockk(relaxed = true)
+    private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
@@ -88,11 +88,11 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSeasonNumberClicked does nothing when same season`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvShowCast(tvShowId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
+        coEvery { manageTvShowDetails.getTvShowCast(tvShowId) } returns dummyCast
+        coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -104,7 +104,7 @@ class SeriesViewModelTest {
             savedStateHandle,
             checkUserLogin,
             getUser,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
         )
@@ -135,7 +135,7 @@ class SeriesViewModelTest {
     }
 
     @Test
-    fun `onSaveSeriesClicked sets showLoginBottomSheet to true`() = runTest {
+    fun `onSaveShowClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
         viewModel.onSaveTvShowClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
@@ -158,8 +158,8 @@ class SeriesViewModelTest {
 
 
     @Test
-    fun `loadSeries handles error correctly when use case fails`() = runTest {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } throws RuntimeException("Test failure")
+    fun `loadTvShow handles error correctly when use case fails`() = runTest {
+        coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } throws RuntimeException("Test failure")
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -171,7 +171,7 @@ class SeriesViewModelTest {
             savedStateHandle,
             checkUserLogin,
             getUser,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             dispatcher = testDispatcher
@@ -235,7 +235,7 @@ class SeriesViewModelTest {
     @Test
     fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
         val errorMsg = "Failed to rate"
-        coEvery { manageTvSeriesDetails.addTvShowRate(any(), any()) } throws RuntimeException(
+        coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } throws RuntimeException(
             errorMsg
         )
         givenHappyViewModel()
@@ -252,7 +252,7 @@ class SeriesViewModelTest {
 
     @Test
     fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
-        coEvery { manageTvSeriesDetails.addTvShowRate(any(), any()) } returns true
+        coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } returns true
         givenHappyViewModel()
 
         viewModel.onRatingChanged(8)
@@ -277,7 +277,7 @@ class SeriesViewModelTest {
     }
 
     @Test
-    fun `onRetryLoadDetails updates loading state and calls loadSeries`() = runTest {
+    fun `onRetryLoadDetails updates loading state and calls loadTvShow`() = runTest {
         givenHappyViewModel()
         val errorMsg = "Some error"
 
@@ -298,11 +298,11 @@ class SeriesViewModelTest {
 
 
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
-        coEvery { manageTvSeriesDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
-        coEvery { manageTvSeriesDetails.getTvShowCast(tvShowId) } returns dummyCast
-        coEvery { manageTvSeriesDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
-        coEvery { manageTvSeriesDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
+        coEvery { manageTvShowDetails.getTvShowCast(tvShowId) } returns dummyCast
+        coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -314,7 +314,7 @@ class SeriesViewModelTest {
             savedStateHandle,
             checkUserLogin,
             getUser,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             dispatcher
@@ -334,12 +334,12 @@ class SeriesViewModelTest {
         )
         val dummyTvShow = TvShow(
             id = 42,
-            title = "My Series",
+            title = "My Show",
             overview = "Overview",
             releaseDate = LocalDate.parse("2021-07-01"),
             genres = genreList,
             imdbRating = 9.0f,
-            posterImageUrl = "/series.jpg",
+            posterImageUrl = "/tv.jpg",
             seasonsCount = 2,
             rating = 0
         )

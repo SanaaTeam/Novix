@@ -32,12 +32,12 @@ class GenreMoviesViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
 
-    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
-    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
+    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
 
     init {
         updateUserLoggingStatus()
-        fetchMovies(categoryId)
+        fetchMovies(genreId)
     }
 
     fun updateUserLoggingStatus() {
@@ -54,7 +54,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(categoryId)
+        fetchMovies(genreId)
     }
 
 
@@ -119,7 +119,7 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
+        updateState { copy(movies = flowOf(movies), title = genreName, isLoading = false) }
     }
 
     private fun onFetchMoviesFailed(exception: NovixAppException) {
