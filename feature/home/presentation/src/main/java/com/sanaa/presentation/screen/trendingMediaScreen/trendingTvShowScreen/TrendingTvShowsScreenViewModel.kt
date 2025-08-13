@@ -13,6 +13,7 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvSeries
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -143,7 +144,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -165,7 +166,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
+    private fun createTvShowsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTrendingTvSeries(
                 page = page,

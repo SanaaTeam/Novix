@@ -15,6 +15,7 @@ import entity.Genre
 import entity.Movie
 import entity.TvSeries
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -254,7 +255,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -267,7 +268,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createMoviePagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
+        onError: ((NovixAppException) -> Unit)? = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTopRatedMovies(
@@ -279,7 +280,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createTvShowPagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
+        onError: ((NovixAppException) -> Unit)? = ::onDataLoadError,
     ): PagingSource<Int, TvSeries> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageTvSeriesUseCase.getTopRatedTvSeries(

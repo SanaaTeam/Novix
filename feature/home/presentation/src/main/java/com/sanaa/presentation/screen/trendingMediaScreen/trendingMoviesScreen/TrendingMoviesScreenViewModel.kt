@@ -16,6 +16,7 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -174,7 +175,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         updateState { copy(showAddListBottomSheet = false) }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -184,7 +185,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createMoviesPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+    private fun createMoviesPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }

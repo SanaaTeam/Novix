@@ -1,7 +1,7 @@
 package exceptions
 
 
-open class NovixAppException(message: String) : Exception(message)
+open class NovixAppException(message: String? = null) : Exception(message)
 class NoNetworkException : NovixAppException("No internet connection ")
 
 open class AuthenticationException(message: String?) : NovixAppException(message ?: "Unknown Error")

@@ -9,6 +9,7 @@ import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -188,7 +189,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
