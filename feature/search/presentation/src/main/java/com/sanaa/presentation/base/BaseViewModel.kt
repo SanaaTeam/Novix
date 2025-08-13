@@ -95,7 +95,11 @@ abstract class BaseViewModel<T, E>(
 
     protected fun emitEffect(effect: E) {
         val now = System.currentTimeMillis()
-        if (effect == lastEffect && now - lastTime < effectDebounceMs) return
+
+        val effectType = effect!!::class
+        val lastEffectType = lastEffect?.let { it::class }
+
+        if (effectType == lastEffectType && now - lastTime < effectDebounceMs) return
 
         lastEffect = effect
         lastTime = now
