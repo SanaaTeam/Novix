@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -57,7 +59,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                 tryToCollect(
                     callee = { getCurrentUserRating() },
                     onCollect = { rating ->
-                        updateState { it.copy(imdbRating = rating) }
+                        updateState { copy(imdbRating = rating) }
                     }
                 )
             }
