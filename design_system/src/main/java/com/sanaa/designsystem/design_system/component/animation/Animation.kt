@@ -23,3 +23,14 @@ val FadeSlideOutVertically = fadeOut(
 ) + slideOutVertically(
     targetOffsetY = { it }
 )
+val FadeSlideInVerticallyFromTop = fadeIn(
+    animationSpec = tween(300)
+) + slideInVertically(
+    initialOffsetY = { -it }
+)
+
+val FadeSlideOutVerticallyToTop = fadeOut(
+    animationSpec = tween(200)
+) + slideOutVertically(
+    targetOffsetY = { -it }
+)
