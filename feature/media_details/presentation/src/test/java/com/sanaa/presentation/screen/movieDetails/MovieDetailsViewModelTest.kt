@@ -7,7 +7,6 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
@@ -280,12 +279,12 @@ class MovieDetailsViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
             overview = "Overview1",
-            rating = 0
+            rating = 0,
+            trailerUrl = ""
         )
         private val dummyCast = listOf(
             Actor(
-                id = 1, imageUrl = "/a.jpg", name = "Actor A", region = "US",
-                lastShow = "ShowX", gender = Gender.FEMALE,
+                id = 1, imageUrl = "/a.jpg", name = "Actor A",
                 department = "Acting", character = "Lead",
                 birthDate = LocalDate.parse("1980-01-01"),
                 deathDate = defaultDate, placeOfBirth = "LA", biography = "Bio"

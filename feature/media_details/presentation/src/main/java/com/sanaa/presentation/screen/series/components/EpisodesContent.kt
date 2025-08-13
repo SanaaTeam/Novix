@@ -12,11 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.model.EpisodeUiModel
+import com.sanaa.presentation.model.EpisodeUiState
 
 @Composable
 fun EpisodesContent(
-    episodes: List<EpisodeUiModel>,
+    episodes: List<EpisodeUiState>,
     modifier: Modifier = Modifier,
     seriesId: Int,
     onEpisodeClick: (Int, Int, Int) -> Unit

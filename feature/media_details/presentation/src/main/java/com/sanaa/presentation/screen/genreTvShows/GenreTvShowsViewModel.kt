@@ -5,8 +5,8 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.SeriesUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.model.TvShowUiState
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -94,7 +94,7 @@ class GenreTvShowsViewModel @Inject constructor(
         )
     }
 
-    private fun onCollectTvShowsByGenreId(tvShows: PagingData<SeriesUiModel>) {
+    private fun onCollectTvShowsByGenreId(tvShows: PagingData<TvShowUiState>) {
         updateState {
             copy(
                 title = genreName,
@@ -114,7 +114,7 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
         pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
-        mapper = TvShow::toSeriesUiModel
+        mapper = TvShow::toState
     )
 
     private fun createTvShowsPagingDataSource(

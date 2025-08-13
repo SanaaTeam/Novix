@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -153,8 +152,8 @@ class ActorViewModel @Inject constructor(
         updateState {
             copy(
                 actor = actor.toActorUiModel(),
-                topMovies = topMovies.map { m -> m.toUiModel() },
-                topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
+                topMovies = topMovies.map { m -> m.toState() },
+                topTvSeries = topSeries.map { s -> s.toState() },
                 profileImageUrls = profiles,
                 galleryImageUrls = gallery
             )

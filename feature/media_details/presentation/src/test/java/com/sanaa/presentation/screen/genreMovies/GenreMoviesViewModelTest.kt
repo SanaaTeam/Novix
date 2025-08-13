@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import entity.Genre
 import entity.Movie
-import exceptions.NoNetworkException
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -125,7 +124,6 @@ class GenreMoviesViewModelTest {
                 rating = 0,
                 duration = 110L.minutes,
                 trailerUrl = "",
-                isSaved = true
             ),
             Movie(
                 id = 2,
@@ -136,7 +134,8 @@ class GenreMoviesViewModelTest {
                 duration = 110L.minutes,
                 releaseDate = LocalDate(2019, 1, 1),
                 overview = "",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             )
         )
     }

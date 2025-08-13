@@ -17,7 +17,6 @@ fun Movie.toState(): MediaItem = MediaItem(
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
     mediaTypeUi = MediaTypeUi.MOVIE,
-    isSaved = isSaved
 )
 
 @SuppressLint("DefaultLocale")

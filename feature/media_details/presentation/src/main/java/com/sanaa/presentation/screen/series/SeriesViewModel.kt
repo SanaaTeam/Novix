@@ -5,8 +5,7 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
-import com.sanaa.presentation.model.mapper.toSeasonUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
@@ -201,9 +200,9 @@ class SeriesViewModel @Inject constructor(
 
         updateState {
             copy(
-                series = series.toSeriesUiModel(trailer),
+                series = series.toState(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
-                season = season.toSeasonUiModel(),
+                season = season.toState(),
                 images = images,
             )
         }
@@ -215,7 +214,7 @@ class SeriesViewModel @Inject constructor(
 
         val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(seriesId, seasonNumber)
 
-        updateState { copy(season = season.toSeasonUiModel()) }
+        updateState { copy(season = season.toState()) }
     }
 
 

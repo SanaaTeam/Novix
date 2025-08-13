@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.series.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,14 +22,14 @@ import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.model.EpisodeUiModel
+import com.sanaa.presentation.model.EpisodeUiState
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.designsystem.R as RDesignSystem
 
 @Composable
 fun EpisodeCard(
-    episode: EpisodeUiModel, modifier: Modifier = Modifier
+    episode: EpisodeUiState, modifier: Modifier = Modifier
 ) {
 
     val placeholderResId = if (LocalThemeProvider.current) {

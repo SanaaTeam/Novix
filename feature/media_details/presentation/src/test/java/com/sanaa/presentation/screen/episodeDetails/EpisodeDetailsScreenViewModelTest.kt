@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Episode
 import exceptions.NoNetworkException
 import io.mockk.coEvery
@@ -249,9 +248,6 @@ class EpisodeDetailsScreenViewModelTest {
                 id = 11,
                 imageUrl = "/icon_placeholder_light.xml",
                 name = "Guest One",
-                region = "US",
-                lastShow = "Show",
-                gender = Gender.FEMALE,
                 department = "Acting",
                 character = "Role",
                 birthDate = LocalDate.parse("1990-01-01"),

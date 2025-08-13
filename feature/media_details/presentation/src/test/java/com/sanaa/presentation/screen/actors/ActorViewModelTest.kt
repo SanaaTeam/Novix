@@ -9,7 +9,6 @@ import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Movie
 import entity.TvShow
 import io.mockk.coEvery
@@ -144,9 +143,6 @@ class ActorViewModelTest {
             id = 77,
             imageUrl = "/icon_placeholder_light.xml",
             name = "Jane Doe",
-            region = "UK",
-            lastShow = "Fabulous Show",
-            gender = Gender.FEMALE,
             department = "Acting",
             character = "Detective",
             birthDate = LocalDate.parse("1990-01-01"),
@@ -165,7 +161,8 @@ class ActorViewModelTest {
                 duration = 120.minutes,
                 releaseDate = LocalDate.parse("2020-01-01"),
                 overview = "Overview",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             ),
             Movie(
                 id = 2,
@@ -176,7 +173,8 @@ class ActorViewModelTest {
                 duration = 118.minutes,
                 releaseDate = LocalDate.parse("2022-09-20"),
                 overview = "Overview",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             )
         )
 

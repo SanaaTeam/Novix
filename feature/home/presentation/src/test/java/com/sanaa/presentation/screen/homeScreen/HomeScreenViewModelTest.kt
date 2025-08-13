@@ -328,7 +328,7 @@ class HomeScreenViewModelTest {
             duration = 120.minutes,
             releaseDate = LocalDate(2020, 2, 1),
             overview = "",
-            trailerUrl = null,
+            trailerUrl = "",
             rating = 0
         )
         val dummyTvShow = TvShow(
@@ -348,7 +348,8 @@ class HomeScreenViewModelTest {
             id = 1,
             posterImageUrl = "",
             mediaType = MediaType.MOVIE,
-            genres = emptyList()
+            genres = emptyList(),
+            lastWatchedAt = 0L
         )
     }
 }

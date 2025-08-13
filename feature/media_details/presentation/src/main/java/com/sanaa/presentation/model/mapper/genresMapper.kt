@@ -4,7 +4,7 @@ import com.sanaa.presentation.model.GenreUiModel
 import entity.Genre
 
 
-fun Genre.toUiModel(): GenreUiModel {
+fun Genre.toState(): GenreUiModel {
     return GenreUiModel(
         id = id,
         name = name
