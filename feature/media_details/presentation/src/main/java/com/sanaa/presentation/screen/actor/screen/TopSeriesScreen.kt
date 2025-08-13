@@ -43,7 +43,6 @@ import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
-import com.sanaa.presentation.shared_component.cards.SaveIconChip
 import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
@@ -94,7 +93,8 @@ private fun TopSeriesContent(
             TopBar(
                 leftContent = {
                     TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back), onClick = onBackClick
+                        icon = painterResource(id = designR.drawable.icon_back),
+                        onClick = onBackClick
                     )
                 },
                 screenTitle = stringResource(R.string.top_series_picks),
@@ -120,15 +120,9 @@ private fun TopSeriesContent(
                         LazyVerticalGrid(
                             modifier = Modifier.fillMaxSize(),
                             columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            )
+                            contentPadding = PaddingValues(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             itemsIndexed(
                                 state.topTvSeries,
