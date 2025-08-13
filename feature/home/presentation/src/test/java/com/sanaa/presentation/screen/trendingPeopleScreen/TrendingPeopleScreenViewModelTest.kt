@@ -25,7 +25,7 @@ import kotlin.test.assertEquals
 class TrendingPeopleScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var viewModel: TrendingPeopleViewModel
+    private lateinit var viewModel: TrendingPeopleScreenViewModel
     private lateinit var manageActorUseCase: ManageActorUseCase
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
@@ -39,7 +39,7 @@ class TrendingPeopleScreenViewModelTest {
     fun `init should fetch actors and update state on creation`() = runTest {
         coEvery { manageActorUseCase.getTrendingActors(any()) } returns actors
 
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleScreenViewModel(manageActorUseCase, stringProvider,  testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val pagingData = viewModel.state.value.people
         val items = pagingData.asSnapshot()
@@ -49,7 +49,7 @@ class TrendingPeopleScreenViewModelTest {
 
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleScreenViewModel(manageActorUseCase, stringProvider,  testDispatcher)
 
         viewModel.onBackClick()
 
@@ -60,7 +60,7 @@ class TrendingPeopleScreenViewModelTest {
     @Test
     fun `onActorClick should emit NavigateToActorDetails effect with correct id`() = runTest {
         val actorId = 42
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleScreenViewModel(manageActorUseCase, stringProvider,  testDispatcher)
 
         viewModel.effect.test {
             viewModel.onActorClick(actorId)

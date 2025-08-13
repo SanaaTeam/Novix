@@ -19,7 +19,7 @@ import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class TrendingPeopleViewModel @Inject constructor(
+class TrendingPeopleScreenViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -73,24 +73,31 @@ class TrendingPeopleViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState {
-                copy(
-                    isNoInternetConnection = true,
-                    snackBarData =
-                        SnackData(
-                            message = stringProvider.noInternetConnectionError,
-                            isError = true
-                        )
-                )
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.noInternetConnectionError,
+                                isError = true
+                            )
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isNoInternetConnection = false,
-                    snackBarData =
-                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
-                )
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.somethingWentWrongError,
+                                isError = true
+                            )
+                    )
+                }
             }
         }
     }

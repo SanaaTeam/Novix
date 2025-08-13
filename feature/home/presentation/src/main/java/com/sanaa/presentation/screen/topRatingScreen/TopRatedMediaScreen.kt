@@ -184,7 +184,7 @@ private fun TopRatedMediaScreenContent(
 
 @Composable
 private fun EffectHandler(
-    effect: SharedFlow<TopRatedScreenEffect>,
+    effect: SharedFlow<TopRatedMediaScreenEffect>,
 ) {
     val context = LocalContext.current
     val appContext = context.applicationContext
@@ -206,7 +206,7 @@ private fun EffectHandler(
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
             when (effect) {
-                is TopRatedScreenEffect.NavigateToMediaDetails -> {
+                is TopRatedMediaScreenEffect.NavigateToMediaDetails -> {
                     if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
                         detailsApi.launch(
                             context = navController.context,
@@ -222,11 +222,11 @@ private fun EffectHandler(
                     }
                 }
 
-                is TopRatedScreenEffect.NavigateBack -> {
+                is TopRatedMediaScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
-                TopRatedScreenEffect.NavigateToLogin -> {
+                TopRatedMediaScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }

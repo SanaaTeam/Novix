@@ -181,24 +181,31 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState {
-                copy(
-                    isNoInternetConnection = true,
-                    snackBarData =
-                        SnackData(
-                            message = stringProvider.noInternetConnectionError,
-                            isError = true
-                        )
-                )
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.noInternetConnectionError,
+                                isError = true
+                            )
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isNoInternetConnection = false,
-                    snackBarData =
-                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
-                )
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.somethingWentWrongError,
+                                isError = true
+                            )
+                    )
+                }
             }
         }
     }

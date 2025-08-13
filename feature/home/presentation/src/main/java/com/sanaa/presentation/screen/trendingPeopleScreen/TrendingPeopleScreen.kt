@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TrendingPeopleScreen(
-    viewModel: TrendingPeopleViewModel = hiltViewModel()
+    viewModel: TrendingPeopleScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 

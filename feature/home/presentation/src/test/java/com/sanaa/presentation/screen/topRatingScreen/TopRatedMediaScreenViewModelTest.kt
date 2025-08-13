@@ -214,7 +214,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel.onBackClick()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TopRatedScreenEffect.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(TopRatedMediaScreenEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
     }

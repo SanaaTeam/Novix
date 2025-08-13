@@ -35,7 +35,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedScreenEffect>(
+) : BaseViewModel<TopRatedMediaScreenUiState, TopRatedMediaScreenEffect>(
     initialState = TopRatedMediaScreenUiState(),
     defaultDispatcher = dispatcher
 ), TopRatedScreenInteractionListener {
@@ -147,7 +147,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(TopRatedScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+        emitEffect(TopRatedMediaScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
     }
 
     override fun onSaveIconClick(media: MediaItemUiState) {
@@ -197,11 +197,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
 
     override fun onBackClick() {
-        emitEffect(TopRatedScreenEffect.NavigateBack)
+        emitEffect(TopRatedMediaScreenEffect.NavigateBack)
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(TopRatedScreenEffect.NavigateToLogin)
+        emitEffect(TopRatedMediaScreenEffect.NavigateToLogin)
     }
 
     override fun onDismissLoginBottomSheet() {
@@ -245,24 +245,31 @@ class TopRatedMediaScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: Throwable) {
-        if (e is NoNetworkException) {
-            updateState {
-                copy(
-                    isNoInternetConnection = true,
-                    snackBarData =
-                        SnackData(
-                            message = stringProvider.noInternetConnectionError,
-                            isError = true
-                        )
-                )
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.noInternetConnectionError,
+                                isError = true
+                            )
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isNoInternetConnection = false,
-                    snackBarData =
-                        SnackData(message = stringProvider.somethingWentWrongError, isError = true)
-                )
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.somethingWentWrongError,
+                                isError = true
+                            )
+                    )
+                }
             }
         }
     }
