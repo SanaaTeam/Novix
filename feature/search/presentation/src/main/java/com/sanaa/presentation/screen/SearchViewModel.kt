@@ -93,7 +93,7 @@ class SearchViewModel @Inject constructor(
             emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
         }
         tryToExecute(
-            callee = { addRecentViewedMedia(viewed) },
+            block = { addRecentViewedMedia(viewed) },
             onError = ::onDataLoadError
         )
     }
@@ -157,7 +157,7 @@ class SearchViewModel @Inject constructor(
     override fun onDeleteRecentSearchItem(id: Int) {
         updateState { copy(isLoading = true, error = null) }
         tryToExecute(
-            callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
+            block = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = { setSuccessState() },
             onError = ::onDataLoadError
         )
@@ -175,7 +175,7 @@ class SearchViewModel @Inject constructor(
 
     override fun onClearRecentViewClicked() {
         tryToExecute(
-            callee = manageRecentViewedUseCase::clearRecentViewed,
+            block = manageRecentViewedUseCase::clearRecentViewed,
             onError = ::onDataLoadError
         )
     }
@@ -189,7 +189,7 @@ class SearchViewModel @Inject constructor(
 
     fun observeSearchQueryChanges() {
         tryToCollect(
-            callee = ::observeSearchQueryFlow,
+            block = ::observeSearchQueryFlow,
             onCollect = ::onSearchQueryChangedCollected,
             onError = ::onDataLoadError,
         )
@@ -198,7 +198,7 @@ class SearchViewModel @Inject constructor(
     fun observeRecentViewedItems() {
         setLoadingState()
         tryToCollect(
-            callee = ::onGetRecentViewedItems,
+            block = ::onGetRecentViewedItems,
             onCollect = ::onCollectRecentViewedItems,
             onError = ::onDataLoadError
         )
@@ -206,7 +206,7 @@ class SearchViewModel @Inject constructor(
 
     fun observeRecentSearchHistory() {
         tryToCollect(
-            callee = ::getRecentSearchHistory,
+            block = ::getRecentSearchHistory,
             onCollect = ::onCollectRecentSearchHistory,
             onError = ::onDataLoadError
         )
@@ -215,7 +215,7 @@ class SearchViewModel @Inject constructor(
     private fun loadTvShows(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadTvShowsOperation(query) },
+            block = { loadTvShowsOperation(query) },
             onCollect = ::onTvShowsLoaded,
             onError = ::onDataLoadError
         )
@@ -224,7 +224,7 @@ class SearchViewModel @Inject constructor(
     private fun loadMovies(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadMoviesOperation(query) },
+            block = { loadMoviesOperation(query) },
             onCollect = ::onMoviesLoaded,
             onError = ::onDataLoadError
         )
@@ -233,7 +233,7 @@ class SearchViewModel @Inject constructor(
     private fun loadActors(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadActorsOperation(query) },
+            block = { loadActorsOperation(query) },
             onCollect = ::onActorsLoaded,
             onError = ::onDataLoadError
         )
@@ -406,7 +406,7 @@ class SearchViewModel @Inject constructor(
 
     private fun observeSelectedTheme() {
         tryToCollect(
-            callee = mangeUserPreferenceUseCase::getTheme,
+            block = mangeUserPreferenceUseCase::getTheme,
             onCollect = { isDarkMode -> updateState { copy(isDarkMode = isDarkMode == Theme.DARK) } },
             onError = ::onDataLoadError
         )
@@ -415,7 +415,7 @@ class SearchViewModel @Inject constructor(
 
     private fun observeContentRestriction() {
         tryToCollect(
-            callee = mangeUserPreferenceUseCase::getContentRestriction,
+            block = mangeUserPreferenceUseCase::getContentRestriction,
             onCollect = ::onCollectContentRestriction,
         )
     }
@@ -435,7 +435,7 @@ class SearchViewModel @Inject constructor(
 
     private fun getUserState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
