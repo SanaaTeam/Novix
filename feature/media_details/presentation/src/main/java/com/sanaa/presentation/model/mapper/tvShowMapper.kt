@@ -50,6 +50,6 @@ fun TvShow.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.TV_SHOW,
-        lastWatchedAt = Clock.System.now()
+        lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
     )
 }

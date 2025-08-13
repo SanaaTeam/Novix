@@ -18,7 +18,7 @@ fun Movie.toState(
         overview = overview,
         rating = String.format("%.1f", imdbRating),
         releaseDate = if (releaseDate != defaultDate) releaseDate.toString() else "",
-        duration = duration.takeIf{ it.inWholeMinutes > 0 },
+        duration = duration.takeIf { it.inWholeMinutes > 0 },
         genres = genres.map { it.toState() },
         trailerUrl = trailerUrl,
         posterUrl = posterImageUrl
@@ -31,6 +31,6 @@ fun Movie.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.MOVIE,
-        lastWatchedAt = Clock.System.now()
+        lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
     )
 }
