@@ -294,7 +294,8 @@ class HistoryRepositoryImplTest {
             id = 1,
             posterImageUrl = "imageUrl1",
             mediaType = MediaType.MOVIE,
-            genres = emptyList()
+            genres = emptyList(),
+            lastWatchedAt = 1L
         )
     }
 }
