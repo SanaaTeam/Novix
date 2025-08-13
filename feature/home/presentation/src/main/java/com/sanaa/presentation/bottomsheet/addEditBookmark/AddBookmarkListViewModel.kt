@@ -19,8 +19,11 @@ class AddBookmarkListViewModel @Inject constructor(
 ) : BaseViewModel<AddBookmarkListUiState, AddBookmarkEffect>(AddBookmarkListUiState(), dispatcher),
     AddBookmarkInteractionListener {
 
-
     init {
+        refreshLists()
+    }
+
+    private fun refreshLists() {
         tryToExecute(
             callee = { listsStatusProvider.refreshLists() },
             onError = {
