@@ -1,18 +1,18 @@
-package com.sanaa.presentation.screen.series
+package com.sanaa.presentation.screen.tvShow
 
 import com.sanaa.presentation.model.GenreUiModel
 
-interface SeriesScreenInteractionListener {
+interface TvShowScreenInteractionListener {
     fun onBackClicked()
-    fun onViewReviewsClicked(seriesId: Int)
+    fun onViewReviewsClicked(tvShowId: Int)
     fun onActorClicked(actorId: Int)
     fun onSeasonNumberClicked(seasonNumber: Int)
-    fun onEpisodeClicked(seriesId: Int, seasonNumber: Int, episodeNumber: Int)
+    fun onEpisodeClicked(tvShowId: Int, seasonNumber: Int, episodeNumber: Int)
     fun onPlayTrailerClicked()
     fun onRateClicked()
     fun onDismissRateBottomSheet()
     fun onDismissAnyBottomSheet()
-    fun onSaveSeriesClicked()
+    fun onSaveTvShowClicked()
     fun onGenreClicked(genre: GenreUiModel)
     fun onRetryLoadDetails()
     fun onLoginButtonClick()

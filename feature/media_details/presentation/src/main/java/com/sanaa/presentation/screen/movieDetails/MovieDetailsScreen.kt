@@ -48,9 +48,9 @@ import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBotto
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
+import com.sanaa.presentation.navigation.GenreMovieScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MediaTypeParam
-import com.sanaa.presentation.navigation.MovieCategoriesScreenRoute
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
@@ -156,7 +156,7 @@ private fun HandleMovieDetailsEffects(
 
                 is MovieDetailsUiEffect.NavigateToMovieCategoriesScreen -> {
                     currentNavController.navigate(
-                        MovieCategoriesScreenRoute(effect.categoryId, effect.categoryName).route()
+                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName).route()
                     )
                 }
 

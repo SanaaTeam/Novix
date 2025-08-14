@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -64,21 +64,21 @@ class ManageActorUseCaseTest {
     }
 
     @Test
-    fun `getActorTopTvSeries should call repository and return list`() = runTest {
+    fun `getActorTopTvShows should call repository and return list`() = runTest {
         val actorId = 5
-        coEvery { actorRepository.getActorTopTvShows(actorId) } returns dummySeries
-        val result = manageActorDetailsUseCase.getActorTopTvSeries(actorId)
-        assertThat(result).isEqualTo(dummySeries)
+        coEvery { actorRepository.getActorTopTvShows(actorId) } returns dummyTvShows
+        val result = manageActorDetailsUseCase.getActorTopTvShows(actorId)
+        assertThat(result).isEqualTo(dummyTvShows)
     }
 
     @Test
-    fun `getActorTopTvSeries should throw when repository fails`() = runTest {
+    fun `getActorTopTvShows should throw when repository fails`() = runTest {
         val actorId = 6
         coEvery { actorRepository.getActorTopTvShows(actorId) } throws NovixAppException(
             "Error"
         )
         assertThrows<NovixAppException> {
-            manageActorDetailsUseCase.getActorTopTvSeries(actorId)
+            manageActorDetailsUseCase.getActorTopTvShows(actorId)
         }
     }
 
@@ -150,9 +150,6 @@ class ManageActorUseCaseTest {
             id = 1,
             imageUrl = "https://image.tmdb.org/t/p/w500/xyz.jpg",
             name = "John Doe",
-            region = "US",
-            lastShow = "Some Movie (2024)",
-            gender = Actor.Gender.MALE,
             character = "Acting",
             birthDate = LocalDate(1980, 1, 1),
             deathDate = LocalDate(1, 1, 1),
@@ -176,7 +173,8 @@ class ManageActorUseCaseTest {
                 duration = 137.minutes,
                 releaseDate = LocalDate(2023, 5, 12),
                 overview = "A big summer action film.",
-                rating = 0
+                trailerUrl = "",
+                rating = 1,
             ), Movie(
                 id = 2,
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/poster2.jpg",
@@ -186,7 +184,8 @@ class ManageActorUseCaseTest {
                 duration = 126.minutes,
                 releaseDate = LocalDate(2022, 11, 3),
                 overview = "An award-winning character study.",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             )
         )
         private val sciFi = Genre(
@@ -195,8 +194,8 @@ class ManageActorUseCaseTest {
         private val crime = Genre(
             id = 4, name = "Crime"
         )
-        private val dummySeries = listOf(
-            TvSeries(
+        private val dummyTvShows = listOf(
+            TvShow(
                 id = 101,
                 title = "Future Worlds",
                 overview = "High-concept science-fiction drama.",
@@ -206,7 +205,7 @@ class ManageActorUseCaseTest {
                 posterImageUrl = "https://image.tmdb.org/t/p/w500/series1.jpg",
                 seasonsCount = 1,
                 rating = 0
-            ), TvSeries(
+            ), TvShow(
                 id = 102,
                 title = "City Shadows",
                 overview = "Gritty crime thriller.",

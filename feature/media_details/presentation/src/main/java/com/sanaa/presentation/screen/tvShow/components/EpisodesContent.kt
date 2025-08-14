@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series.components
+package com.sanaa.presentation.screen.tvShow.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -12,13 +12,13 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
-import com.sanaa.presentation.model.EpisodeUiModel
+import com.sanaa.presentation.model.EpisodeUiState
 
 @Composable
 fun EpisodesContent(
-    episodes: List<EpisodeUiModel>,
+    episodes: List<EpisodeUiState>,
     modifier: Modifier = Modifier,
-    seriesId: Int,
+    tvShowId: Int,
     onEpisodeClick: (Int, Int, Int) -> Unit
 ) {
     Column(
@@ -38,7 +38,7 @@ fun EpisodesContent(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = {
-                            onEpisodeClick(seriesId, it.seasonNumber, it.number)
+                            onEpisodeClick(tvShowId, it.seasonNumber, it.number)
                         })
             )
         }

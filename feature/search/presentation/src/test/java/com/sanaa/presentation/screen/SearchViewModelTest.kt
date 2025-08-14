@@ -9,9 +9,8 @@ import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import entity.Actor
-import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -507,7 +506,7 @@ class SearchViewModelTest {
     @Test
     fun `onSearchResultMediaClicked should emit NavigateToTvShowDetails when media is TV`() =
         runTest {
-            val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SERIES, false)
+            val viewed = RecentViewedUiModel(22, "url", MediaTypeUi.TV_SHOW, false)
 
             searchViewModel.onSearchResultMediaClicked(viewed)
 
@@ -535,7 +534,7 @@ class SearchViewModelTest {
     @Test
     fun `onRecentViewedMediaClicked should emit NavigateToTvShowDetails when media is TV_SERIES`() =
         runTest {
-            val viewed = RecentViewedUiModel(200, "url", MediaTypeUi.TV_SERIES, false)
+            val viewed = RecentViewedUiModel(200, "url", MediaTypeUi.TV_SHOW, false)
 
             searchViewModel.onRecentViewedMediaClicked(viewed)
 
@@ -556,15 +555,12 @@ class SearchViewModelTest {
                 1,
                 "actorName",
                 "https://image.com",
-                region = null,
-                lastShow = null,
-                gender = Gender.MALE,
-                department = null,
-                character = null,
+                department = "",
+                character = "",
                 birthDate = LocalDate(1, 1, 1),
                 deathDate = LocalDate(1, 1, 1),
-                placeOfBirth = null,
-                biography = null
+                placeOfBirth = "",
+                biography = ""
             )
         )
         coEvery { searchUseCase.searchActors(query, 1) } returns expectedActors
@@ -655,7 +651,7 @@ class SearchViewModelTest {
             rating = 0
         )
 
-        val series = TvSeries(
+        val series = TvShow(
             1,
             "tvShowName",
             "https://image.com",
@@ -671,15 +667,12 @@ class SearchViewModelTest {
             1,
             "actorName",
             "https://image.com",
-            region = null,
-            lastShow = null,
-            gender = Gender.MALE,
-            department = null,
-            character = null,
+            department = "",
+            character = "",
             birthDate = LocalDate(1, 1, 1),
             deathDate = LocalDate(1, 1, 1),
-            placeOfBirth = null,
-            biography = null
+            placeOfBirth = "",
+            biography = ""
         )
     }
 }

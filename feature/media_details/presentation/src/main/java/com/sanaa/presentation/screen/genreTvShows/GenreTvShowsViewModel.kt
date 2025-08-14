@@ -5,23 +5,23 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
-import com.sanaa.presentation.model.SeriesUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
+import com.sanaa.presentation.model.TvShowUiState
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOf
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class GenreTvShowsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreTvShowsScreenUiState, GenreTvShowsEffects>(
@@ -94,7 +94,7 @@ class GenreTvShowsViewModel @Inject constructor(
         )
     }
 
-    private fun onCollectTvShowsByGenreId(tvShows: PagingData<SeriesUiModel>) {
+    private fun onCollectTvShowsByGenreId(tvShows: PagingData<TvShowUiState>) {
         updateState {
             copy(
                 title = genreName,
@@ -114,14 +114,14 @@ class GenreTvShowsViewModel @Inject constructor(
 
     private fun loadTvShowsByGenreId(genreId: Int) = createPagingFlow(
         pagingSourceFactory = { createTvShowsPagingDataSource(genreId) },
-        mapper = TvSeries::toSeriesUiModel
+        mapper = TvShow::toState
     )
 
     private fun createTvShowsPagingDataSource(
         genreId: Int,
-    ): PagingSource<Int, TvSeries> {
+    ): PagingSource<Int, TvShow> {
         return BasePagingSource { page ->
-            manageTvSeriesUseCase.getTvSeriesByGenre(
+            manageTvShowUseCase.getTvShowsByGenre(
                 genreId = genreId, page = page
             )
         }

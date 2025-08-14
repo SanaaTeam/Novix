@@ -43,7 +43,7 @@
 -dontwarn com.sanaa.presentation.screen.genreMovies.MovieCategoriesViewModel
 -dontwarn com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 -dontwarn com.sanaa.presentation.screen.review.ReviewViewModel
--dontwarn com.sanaa.presentation.screen.series.SeriesViewModel
+-dontwarn com.sanaa.presentation.screen.tvShow.SeriesViewModel
 -dontwarn com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 -dontwarn com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
 -dontwarn com.sanaa.search.dataSource.remote.SearchRemoteDataSource
