@@ -171,13 +171,12 @@ class MovieDetailsViewModel @Inject constructor(
         tryToExecute(
             callee = ::submitMovieRating,
             onError = { exception ->
-                onShowErrorSnackBar(exception.message ?: stringProvider.somethingWentWrongError)
+                updateState {
+                    copy(snackBarData = SnackData(message = exception.message ?: stringProvider.somethingWentWrongError, isError = true))
+                }
                 onShowRateBottomSheetFailed(exception)
             }
         )
-        updateState {
-            copy(showRateBottomSheet = false)
-        }
     }
 
     private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
@@ -220,8 +219,7 @@ class MovieDetailsViewModel @Inject constructor(
                     noInternetConnection = false
                 )
             }
-            onShowErrorSnackBar(exception.message ?: stringProvider.somethingWentWrongError)
-        }
+            updateState { copy(snackBarData = SnackData(message = exception.message ?: stringProvider.somethingWentWrongError, isError = true)) }        }
     }
 
 
@@ -308,9 +306,10 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            onShowSuccessSnackBar(stringProvider.submitRatingSuccess)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.submitRatingSuccess, isError = false)) }
+            updateState { copy(showRateBottomSheet = false) }
         } else {
-            onShowErrorSnackBar(stringProvider.submitRatingFailed)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.submitRatingFailed, isError = true)) }
         }
     }
 
@@ -352,13 +351,5 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             copy(snackBarData = null)
         }
-    }
-
-    override fun onShowSuccessSnackBar(message: String) {
-        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
-    }
-
-    override fun onShowErrorSnackBar(message: String) {
-        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }

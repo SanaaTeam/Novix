@@ -23,6 +23,4 @@ interface MovieDetailsScreenInteractionListener {
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
     fun onDismissSnack()
-    fun onShowSuccessSnackBar(message: String)
-    fun onShowErrorSnackBar(message: String)
 }

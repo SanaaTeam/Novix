@@ -54,8 +54,6 @@ import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateT
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToLogin
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToMovieCategoriesScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToReviewsScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.ShowErrorSnackBar
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.ShowSuccessSnackBar
 import com.sanaa.presentation.screen.movieDetails.components.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsGridContent
 import com.sanaa.presentation.screen.movieDetails.components.MovieDetailsTopBar
@@ -136,10 +134,6 @@ private fun MovieDetailsEffectsHandler(
                         GenreMovieScreenRoute(effect.categoryId, effect.categoryName).route()
                     )
                 }
-
-                is ShowSuccessSnackBar -> interactionListener.onShowSuccessSnackBar(effect.message)
-
-                is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
 
                 NavigateToLogin -> { launcher.launch(authApi.getLaunchIntent(context)) }
             }
