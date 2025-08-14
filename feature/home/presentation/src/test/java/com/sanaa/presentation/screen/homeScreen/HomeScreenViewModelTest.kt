@@ -87,10 +87,10 @@ class HomeScreenViewModelTest {
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
         // Given
         val popularMovies = listOf(dummyMovie.copy(id = 1))
-        val popularTvSeries = listOf(dummyTvShow.copy(id = 2))
+        val popularTvShows = listOf(dummyTvShow.copy(id = 2))
 
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
-        coEvery { manageTvShowUseCase.getPopularTvShows(1) } returns popularTvSeries
+        coEvery { manageTvShowUseCase.getPopularTvShows(1) } returns popularTvShows
 
         // When
         initializeViewModel()
