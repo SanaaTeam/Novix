@@ -8,20 +8,21 @@ import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
 import entity.SavedMovie
 import usecase.custom_list.custom_list_param.SavedList
+import kotlin.time.Duration.Companion.minutes
 
 fun SavedListDto.toEntity() = SavedList(id, title, itemCount)
 
 fun SavedItemDto.toEntity() = Movie(
     id = id,
     posterImageUrl = getFullImageUrl(posterPath),
-    title = title ?: originalTitle ?: "Untitled",
+    title = title ?: originalTitle.orEmpty(),
     genres = emptyList(),
-    imdbRating = voteAverage,
-    duration = null,
+    imdbRating = voteAverage ?: -1f,
+    duration = (-1).minutes,
     releaseDate = getLocalDateOrDefault(releaseDate),
     overview = overview.orEmpty(),
-    trailerUrl = null,
-    rating = null
+    trailerUrl = "",
+    rating = -1
 )
 
 fun SavedListMovieDto.toDomain(): SavedMovie = SavedMovie(
