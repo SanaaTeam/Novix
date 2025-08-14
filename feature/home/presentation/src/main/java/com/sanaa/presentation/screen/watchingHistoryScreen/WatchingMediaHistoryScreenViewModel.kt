@@ -1,11 +1,12 @@
-package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
+package com.sanaa.presentation.screen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
@@ -45,7 +46,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
             onCollect = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -63,7 +64,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -81,23 +82,17 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun fetchMovieGenresOperation(): List<Genre> {
-        updateState {
-            copy(isLoading = true)
-        }
-        return manageMovieUseCase.getMovieGenres()
-    }
-
-    private fun onFetchMovieGenresSuccess(genres: List<Genre>) {
+    private fun onFetchMovieGenresSuccess(genres: List<GenreUiState>) {
         updateState {
             copy(
-                movieGenres = genres.map { it.toState() },
+                movieGenres = genres,
                 isLoading = false,
                 showRefreshButton = false
             )
@@ -106,31 +101,25 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toState() } },
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private suspend fun fetchTvShowGenresOperation(): List<Genre> {
-        updateState {
-            copy(isLoading = true)
-        }
-        return manageTvShowUseCase.getTvShowGenres()
-    }
-
-    private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
+    private fun onFetchTvShowGenresSuccess(genres: List<GenreUiState>) {
         updateState {
             copy(
-                tvShowGenres = genres.map { it.toState() },
+                tvShowGenres = genres,
                 isLoading = false,
                 showRefreshButton = false
             )
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
+    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUi) {
+        updateState { copy(selectedMediaTypeUiState = mediaTypeUiState) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -147,16 +136,12 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShows(id)
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUi) {
+        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
-        updateState {
-            copy(
-                showBottomSheet = true
-            )
-        }
+        updateState { copy(showBottomSheet = true) }
     }
 
     override fun onBackClick() {
@@ -170,32 +155,56 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShowGenres()
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private suspend fun loadMediaHistory(
         mediaType: MediaType,
         genreId: Int?
     ): Flow<List<MediaHistoryItem>> {
         updateState { copy(isLoading = true) }
-      return try {
+        return try {
             return getLoggedInUserUseCase.getLoggedInUser().first().run {
-                 manageWatchedMediaHistoryUseCase.getMediaHistory(
+                manageWatchedMediaHistoryUseCase.getMediaHistory(
                     genreId = genreId,
                     mediaType = mediaType,
                     username = username
                 )
             }
 
-        } catch (_: NoLoggedInUserException){
+        } catch (_: NoLoggedInUserException) {
             flowOf(emptyList())
         }
     }
 
     private fun onDataLoadError(e: NovixAppException) {
-        if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true, showRefreshButton = true) }
-            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
-        } else {
-            updateState { copy(isNoInternetConnection = false, showRefreshButton = true) }
-            emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.noInternetConnectionError,
+                                isError = true
+                            )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.somethingWentWrongError,
+                                isError = true
+                            )
+                    )
+                }
+            }
         }
     }
 }

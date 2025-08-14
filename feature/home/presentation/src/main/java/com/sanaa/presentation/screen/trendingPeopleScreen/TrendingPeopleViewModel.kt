@@ -34,7 +34,7 @@ class TrendingPeopleViewModel @Inject constructor(
 
     private fun loadActors() {
         tryToCollect(
-            callee = ::loadActorsOperation,
+            block = ::loadActorsOperation,
             onCollect = ::onLoadActorsSuccess,
             onError = ::onDataLoadError
         )

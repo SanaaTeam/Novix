@@ -62,7 +62,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
             onError = ::onDataLoadError
         )
@@ -75,7 +75,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchPopularMediaData() {
         updateState { copy(isLoadingPopular = true) }
         tryToExecute(
-            callee = ::loadPopularMediaOperation,
+            block = ::loadPopularMediaOperation,
             onSuccess = ::onFetchPopularMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -101,7 +101,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchTopRatedMediaData() {
         updateState { copy(isLoadingTopRated = true) }
         tryToExecute(
-            callee = ::loadTopRatedMediaOperation,
+            block = ::loadTopRatedMediaOperation,
             onSuccess = ::onFetchTopRatedMediaSuccess,
             onError = ::onDataLoadError,
         )
@@ -128,7 +128,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
-            callee = ::loadWatchedMediaHistory,
+            block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -146,7 +146,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError,
         )
@@ -165,7 +165,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadUpcomingMovies(genreId)
                     .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { it.withSaved(savedIds) }

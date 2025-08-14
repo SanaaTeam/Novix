@@ -50,7 +50,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
         onDismissBottomSheet()
@@ -62,7 +62,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = {
+            block = {
                 loadTopRatedMovies(genreId = genreId)
                     .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { mediaItem ->
@@ -83,7 +83,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedTvShows(genreId = genreId) },
+            block = { loadTopRatedTvShows(genreId = genreId) },
             onSuccess = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -97,7 +97,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -122,7 +122,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            block = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )

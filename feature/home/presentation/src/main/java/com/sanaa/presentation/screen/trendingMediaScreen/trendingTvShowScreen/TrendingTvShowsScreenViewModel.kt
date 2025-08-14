@@ -41,7 +41,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -52,7 +52,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            block = ::loadGenresOperation,
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -71,7 +71,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun loadTvShows() {
         tryToCollect(
-            callee = ::loadTvShowsOperation,
+            block = ::loadTvShowsOperation,
             onCollect = ::onLoadTvShowsSuccess,
             onError = ::onDataLoadError
         )
