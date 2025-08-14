@@ -1,5 +1,10 @@
 package com.sanaa.presentation.screen.actor
 
+import manageActorUseCase.GetActorDetailsUseCase
+import manageActorUseCase.GetActorTopMoviesUseCase
+import manageActorUseCase.GetActorTopTvShowsUseCase
+import manageActorUseCase.GetGalleryImagesUseCase
+import manageActorUseCase.GetProfileImagesUseCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -14,13 +19,17 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageActorUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageActorDetails: ManageActorUseCase,
+    private val getActorDetailsUseCase: GetActorDetailsUseCase,
+    private val getActorTopMoviesUseCase: GetActorTopMoviesUseCase,
+    private val getActorTopTvShowsUseCase: GetActorTopTvShowsUseCase,
+    private val getGalleryImagesUseCase: GetGalleryImagesUseCase,
+    private val getProfileImagesUseCase: GetProfileImagesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
@@ -47,6 +56,30 @@ class ActorViewModel @Inject constructor(
         }
     }
 
+    private suspend fun fetchActorDetails() = coroutineScope {
+        val actorDeferred = async { getActorDetailsUseCase(actorId) }
+        val topMoviesDeferred = async { getActorTopMoviesUseCase(actorId) }
+        val topTvShowsDeferred = async { getActorTopTvShowsUseCase(actorId) }
+        val profilesDeferred = async { getProfileImagesUseCase(actorId, count = 10) }
+        val galleryDeferred = async { getGalleryImagesUseCase(actorId) }
+
+        val actor = actorDeferred.await()
+        val topMovies = topMoviesDeferred.await()
+        val topTvShows = topTvShowsDeferred.await()
+        val profiles = profilesDeferred.await()
+        val gallery = galleryDeferred.await()
+
+        updateState {
+            copy(
+                actor = actor.toActorUiModel(),
+                topMovies = topMovies.map { m -> m.toState() },
+                topTvShows = topTvShows.map { s -> s.toState() },
+                profileImageUrls = profiles,
+                galleryImageUrls = gallery
+            )
+        }
+    }
+
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
@@ -57,7 +90,6 @@ class ActorViewModel @Inject constructor(
     private fun onCollectLoggedFlag(isLogged: Boolean) {
         updateState { copy(userIsLoggedIn = isLogged) }
     }
-
 
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
@@ -134,29 +166,5 @@ class ActorViewModel @Inject constructor(
             onSuccess = { updateState { copy(isLoading = false) } },
             onError = { e -> updateState { copy(isLoading = false) } }
         )
-    }
-
-    private suspend fun fetchActorDetails() = coroutineScope {
-        val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
-        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(actorId) }
-        val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
-        val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
-
-        val actor = actorDeferred.await()
-        val topMovies = topMoviesDeferred.await()
-        val topTvShows = topTvShowsDeferred.await()
-        val profiles = profilesDeferred.await()
-        val gallery = galleryDeferred.await()
-
-        updateState {
-            copy(
-                actor = actor.toActorUiModel(),
-                topMovies = topMovies.map { m -> m.toState() },
-                topTvShows = topTvShows.map { s -> s.toState() },
-                profileImageUrls = profiles,
-                galleryImageUrls = gallery
-            )
-        }
     }
 }

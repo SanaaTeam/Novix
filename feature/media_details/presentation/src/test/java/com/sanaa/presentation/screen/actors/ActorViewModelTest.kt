@@ -1,5 +1,10 @@
 package com.sanaa.presentation.screen.actors
 
+import manageActorUseCase.GetActorDetailsUseCase
+import manageActorUseCase.GetActorTopMoviesUseCase
+import manageActorUseCase.GetActorTopTvShowsUseCase
+import manageActorUseCase.GetGalleryImagesUseCase
+import manageActorUseCase.GetProfileImagesUseCase
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
@@ -26,15 +31,19 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
-import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageActorUseCase
+import usecase.*
 import kotlin.time.Duration.Companion.minutes
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ActorViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private val manageActorDetailsUseCase: ManageActorUseCase = mockk(relaxed = true)
+    private val getActorDetailsUseCase: GetActorDetailsUseCase = mockk(relaxed = true)
+    private val getActorTopMoviesUseCase: GetActorTopMoviesUseCase = mockk(relaxed = true)
+    private val getActorTopTvShowsUseCase: GetActorTopTvShowsUseCase = mockk(relaxed = true)
+    private val getGalleryImagesUseCase: GetGalleryImagesUseCase = mockk(relaxed = true)
+    private val getProfileImagesUseCase: GetProfileImagesUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorViewModel
     private val actorId = 77
@@ -120,11 +129,11 @@ class ActorViewModelTest {
     }
 
     private fun givenHappyViewModel() {
-        coEvery { manageActorDetailsUseCase.getActorDetails(actorId) } returns dummyActor
-        coEvery { manageActorDetailsUseCase.getActorTopMovies(actorId) } returns dummyMovies
-        coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummyTvShow
-        coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
-        coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
+        coEvery { getActorDetailsUseCase(actorId) } returns dummyActor
+        coEvery { getActorTopMoviesUseCase(actorId) } returns dummyMovies
+        coEvery { getActorTopTvShowsUseCase(actorId) } returns dummyTvShow
+        coEvery { getGalleryImagesUseCase(actorId) } returns dummyGallery
+        coEvery { getProfileImagesUseCase(actorId, any()) } returns dummyProfiles
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
@@ -132,7 +141,11 @@ class ActorViewModelTest {
 
         viewModel = ActorViewModel(
             savedStateHandle,
-            manageActorDetailsUseCase,
+            getActorDetailsUseCase,
+            getActorTopMoviesUseCase,
+            getActorTopTvShowsUseCase,
+            getGalleryImagesUseCase,
+            getProfileImagesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider
         )

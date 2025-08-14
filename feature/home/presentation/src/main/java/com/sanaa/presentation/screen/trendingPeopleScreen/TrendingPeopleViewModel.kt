@@ -14,13 +14,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import manageActorUseCase.GetTrendingActorsUseCase
 import service.VodStringProvider
-import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingPeopleViewModel @Inject constructor(
-    private val getActorsUseCase: ManageActorUseCase,
+    private val getTrendingActorsUseCase: GetTrendingActorsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffect>(
@@ -81,7 +81,7 @@ class TrendingPeopleViewModel @Inject constructor(
     private fun createActorsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError)
     : PagingSource<Int, Actor> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            getActorsUseCase.getTrendingActors(page = page)
+            getTrendingActorsUseCase(page = page)
         }
     }
 }

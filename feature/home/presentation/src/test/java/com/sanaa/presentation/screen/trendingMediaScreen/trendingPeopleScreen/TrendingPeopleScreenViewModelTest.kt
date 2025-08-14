@@ -16,9 +16,9 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
+import manageActorUseCase.GetTrendingActorsUseCase
 import org.junit.jupiter.api.BeforeEach
 import service.VodStringProvider
-import usecase.ManageActorUseCase
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -28,20 +28,20 @@ class TrendingPeopleScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: TrendingPeopleViewModel
-    private lateinit var manageActorUseCase: ManageActorUseCase
+    private lateinit var getTrendingActorsUseCase: GetTrendingActorsUseCase
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manageActorUseCase = mockk(relaxed = true)
+        getTrendingActorsUseCase = mockk(relaxed = true)
     }
 
     @Test
     fun `init should fetch actors and update state on creation`() = runTest {
-        coEvery { manageActorUseCase.getTrendingActors(any()) } returns actors
+        coEvery { getTrendingActorsUseCase(any()) } returns actors
 
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleViewModel(getTrendingActorsUseCase, stringProvider,  testDispatcher)
         testDispatcher.scheduler.advanceUntilIdle()
         val pagingData = viewModel.state.value.people
         val items = pagingData.asSnapshot()
@@ -51,7 +51,7 @@ class TrendingPeopleScreenViewModelTest {
 
     @Test
     fun `onBackClick should emit NavigateBack effect`() = runTest {
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleViewModel(getTrendingActorsUseCase, stringProvider,  testDispatcher)
 
         viewModel.onBackClick()
 
@@ -62,7 +62,7 @@ class TrendingPeopleScreenViewModelTest {
     @Test
     fun `onActorClick should emit NavigateToActorDetails effect with correct id`() = runTest {
         val actorId = 42
-        viewModel = TrendingPeopleViewModel(manageActorUseCase, stringProvider,  testDispatcher)
+        viewModel = TrendingPeopleViewModel(getTrendingActorsUseCase, stringProvider,  testDispatcher)
 
         viewModel.effect.test {
             viewModel.onActorClick(actorId)
