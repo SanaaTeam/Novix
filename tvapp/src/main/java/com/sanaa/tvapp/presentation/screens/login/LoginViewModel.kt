@@ -3,7 +3,7 @@ package com.sanaa.tvapp.presentation.screens.login
 import com.sanaa.tvapp.base.TvBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.InvalidUserOrPasswordException
-import exceptions.NoInternetConnectionException
+import exceptions.NoInternetException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.IdentityStringProvider
@@ -66,7 +66,7 @@ class LoginViewModel @Inject constructor(
         }
         val message = when (throwable) {
             is InvalidUserOrPasswordException -> identityStringProvider.invalidUserNameAndPasswordError
-            is NoInternetConnectionException -> identityStringProvider.noInternetConnectionError
+            is NoInternetException -> identityStringProvider.noInternetConnectionError
             else -> identityStringProvider.somethingWentWrongError
         }
         emitEffect(LoginScreenEffects.ShowError(message = message))

@@ -5,7 +5,7 @@ import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.state.MediaTypeUi
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
@@ -18,7 +18,7 @@ fun Movie.toState(): MediaItem = MediaItem(
 )
 
 @SuppressLint("DefaultLocale")
-fun TvSeries.toState(): MediaItem = MediaItem(
+fun TvShow.toState(): MediaItem = MediaItem(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
@@ -36,5 +36,5 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
 
 fun MediaType.toState(): MediaTypeUi = when (this) {
     MediaType.MOVIE -> MediaTypeUi.MOVIE
-    MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
+    MediaType.TV_SHOW -> MediaTypeUi.TV_SHOW
 }

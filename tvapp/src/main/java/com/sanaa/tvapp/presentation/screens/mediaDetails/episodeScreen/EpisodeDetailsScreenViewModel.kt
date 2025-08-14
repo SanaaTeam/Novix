@@ -14,7 +14,7 @@ import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +23,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private val getUser: GetLoggedInUserUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TvBaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
@@ -142,8 +142,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     episodeNumber
                 )
             }
-            val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
-            val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+            val imagesDeferred = async { manageTvShowUseCase.getTvShowImageUrls(seriesId) }
+            val trailerDeferred = async { manageTvShowUseCase.getTvShowTrailer(seriesId) }
 //            val ratingDeferred = async {
 //                getCurrentUserRating()
 //            }

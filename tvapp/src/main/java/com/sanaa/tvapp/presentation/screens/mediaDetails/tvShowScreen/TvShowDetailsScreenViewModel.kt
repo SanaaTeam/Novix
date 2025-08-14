@@ -14,7 +14,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
@@ -24,7 +24,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getUser: GetLoggedInUserUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -130,7 +130,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitTvSeriesRating,
+            callee = ::submitTvShowRating,
             onError = { exception ->
                 updateState {
                     it.copy(
@@ -194,11 +194,11 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeriesDetails() = coroutineScope {
         updateState { it.copy(isLoading = true) }
 
-        val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(tvShowId) }
-        val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(tvShowId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, 1) }
-        val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(tvShowId) }
-        val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(tvShowId) }
+        val seriesDeferred = async { manageTvShowDetails.getTvShowDetails(tvShowId) }
+        val castDeferred = async { manageTvShowDetails.getTvShowCast(tvShowId) }
+        val seasonDeferred = async { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) }
+        val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
+        val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
 //        val ratingDeferred = async { getCurrentUserRating(seriesId) }
 
         val series = seriesDeferred.await()
@@ -207,7 +207,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
         val images = imagesDeferred.await()
         val trailer = trailerDeferred.await()
 //        val currentSeriesRating = ratingDeferred.await()
-//        addTvSeriesToHistory(series)
+//        addTvShowToHistory(series)
 
         updateState {
             it.copy(
@@ -223,7 +223,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
-        val season = manageTvSeriesDetails.getTvSeriesSeasonDetails(tvShowId, seasonNumber)
+        val season = manageTvShowDetails.getTvShowSeasonDetails(tvShowId, seasonNumber)
 
         updateState { it.copy(season = season.toSeasonUiModel()) }
     }
@@ -231,7 +231,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //    private suspend fun getCurrentUserRating(seriesId: Int): Int {
 //        val userId = getUser.getLoggedInUser().id
 //        return try {
-//            manageTvSeriesDetails.getSeriesRate(userId, seriesId)
+//            manageTvShowDetails.getSeriesRate(userId, seriesId)
 //
 //        } catch (_: Exception) {
 //            0
@@ -239,9 +239,9 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //
 //    }
 
-    private suspend fun submitTvSeriesRating() {
-        val isSendRateSuccess = manageTvSeriesDetails.addTvSeriesRate(
-            seriesId = tvShowId,
+    private suspend fun submitTvShowRating() {
+        val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
+            tvShowId = tvShowId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
@@ -269,7 +269,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //        tryToExecute(callee = ::updateUserLoginState)
 //    }
 //
-//    private suspend fun addTvSeriesToHistory(tvSeries: TvSeries) {
+//    private suspend fun addTvShowToHistory(TvShow: TvShow) {
 //        val user = try {
 //            getLoggedInUserUseCase.getLoggedInUser()
 //        } catch (_: NoLoggedInUserException) {
@@ -277,7 +277,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //        }
 //        if (user == null) return
 //        manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(
-//            mediaHistoryItem = tvSeries.toHistory(),
+//            mediaHistoryItem = TvShow.toHistory(),
 //            username = user.username
 //        )
 //    }

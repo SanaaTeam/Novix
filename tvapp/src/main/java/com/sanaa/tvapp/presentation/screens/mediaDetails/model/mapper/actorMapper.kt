@@ -7,9 +7,6 @@ fun Actor.toActorUiModel() = ActorUiModel(
     id = id,
     imageUrl = imageUrl,
     name = name,
-    region = region,
-    lastShow = lastShow,
-    gender = if (gender == Actor.Gender.MALE) "male" else "female",
     department = department?.toString(),
     character = character,
     lifeSpan = when {
