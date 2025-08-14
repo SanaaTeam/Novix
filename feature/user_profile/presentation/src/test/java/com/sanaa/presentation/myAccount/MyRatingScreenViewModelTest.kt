@@ -25,6 +25,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingScreenViewModelTest {
@@ -87,10 +88,13 @@ class MyRatingScreenViewModelTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
         coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns true
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
+
+        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         advanceUntilIdle()
+
         viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
+        advanceUntilIdle()
+
         assertThat(viewModel.state.value.ratedMovies).isEmpty()
     }
 
@@ -159,9 +163,11 @@ class MyRatingScreenViewModelTest {
             title = "Dummy Movie",
             genres = emptyList(),
             imdbRating = 7.5f,
-            duration = null,
+            duration = 1.minutes,
             releaseDate = LocalDate.Companion.parse("2023-01-01"),
-            rating = 8
+            rating = 8,
+            overview = "",
+            trailerUrl = ""
         )
         val dummyTvShow = TvShow(
             id = 2,

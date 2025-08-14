@@ -337,6 +337,7 @@ class WatchingHistoryViewModelTest {
             posterImageUrl = "test_url",
             mediaType = MediaType.MOVIE,
             genres = listOf(dummyGenre),
+            lastWatchedAt = 1L,
         )
     }
 }
