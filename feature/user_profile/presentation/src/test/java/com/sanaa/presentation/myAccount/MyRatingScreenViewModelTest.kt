@@ -46,13 +46,13 @@ class MyRatingScreenViewModelTest {
         coEvery { stringProvider.deleteRatingSuccess } returns "Rating deleted successfully."
 
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvSeries)
     }
 
     @Test
     fun `loadRatedMedia should set isNoInternetConnection to true when a network error occurs`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns emptyList()
 
         viewModel = MyRatingScreenViewModel(
             manageMovieUseCase,
@@ -163,7 +163,7 @@ class MyRatingScreenViewModelTest {
         assertThat(viewModel.state.value.isLoading).isFalse()
 
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvSeries)
 
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
