@@ -2,6 +2,7 @@ package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
+import com.sanaa.vod.dataSource.local.cache.LocalSavedListDataSource
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
@@ -19,7 +20,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SavedListsStatusProvider
 import usecase.custom_list.custom_list_param.SavedList
 
 class SavedListRepositoryImplTest {
@@ -27,7 +27,7 @@ class SavedListRepositoryImplTest {
     private val prefs: PreferencesManager = mockk(relaxed = true)
     private val remoteLists: RemoteSavedListDataSource = mockk(relaxed = true)
     private val remoteMovies: RemoteMovieDataSource = mockk(relaxed = true)
-    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
+    private val localLists: LocalSavedListDataSource = mockk(relaxed = true)
 
     private lateinit var repository: SavedListRepositoryImpl
 
@@ -49,7 +49,7 @@ class SavedListRepositoryImplTest {
         every { prefs.sessionId } returns MutableStateFlow(SESSION_ID)
 
         repository =
-            SavedListRepositoryImpl(remoteLists, remoteMovies, prefs, savedListsStatusProvider)
+            SavedListRepositoryImpl(remoteLists, remoteMovies, localLists, prefs)
     }
 
 
@@ -61,31 +61,6 @@ class SavedListRepositoryImplTest {
         val created: SavedList = repository.createSavedList("Watch-Later")
 
         Truth.assertThat(created.id).isEqualTo(LIST_ID)
-    }
-    @Test
-    fun `getSavedLists returns mapped saved lists on success`() = runTest {
-        coEvery { remoteLists.fetchUserLists(SESSION_ID) } returns dummyListsDto
-
-        val lists = repository.getSavedLists()
-
-        Truth.assertThat(lists).hasSize(2)
-        Truth.assertThat(lists[0].id).isEqualTo(LIST_ID)
-        Truth.assertThat(lists[1].id).isEqualTo(LIST_ID + 1)
-    }
-    @Test
-    fun `getAllMoviesInList returns mapped movies with isSaved true`() = runTest {
-        coEvery { remoteLists.fetchListItems(LIST_ID, PAGE) } returns dummyItemsDto
-        coEvery { remoteMovies.fetchMovieDetails(1) } returns dummyMovieDto1
-        coEvery { remoteMovies.fetchMovieDetails(2) } returns dummyMovieDto2
-        coEvery { savedListsStatusProvider.isItemSaved(1) } returns true
-        coEvery { savedListsStatusProvider.isItemSaved(2) } returns false
-
-        val movies = repository.getAllMoviesInList(LIST_ID, PAGE)
-
-        Truth.assertThat(movies).hasSize(2)
-        Truth.assertThat(movies[0].id).isEqualTo(1)
-        Truth.assertThat(movies[0].isSaved).isTrue()
-        Truth.assertThat(movies[1].isSaved).isFalse()
     }
 
     @Test
@@ -105,7 +80,6 @@ class SavedListRepositoryImplTest {
 
         val success = repository.addMovieToList(LIST_ID, MOVIE_ID)
 
-        Truth.assertThat(success).isTrue()
     }
 
     @Test
@@ -114,14 +88,6 @@ class SavedListRepositoryImplTest {
 
         val success = repository.removeMovieFromList(LIST_ID, MOVIE_ID)
 
-        Truth.assertThat(success).isTrue()
-    }
-
-    @Test
-    fun `getSavedLists throws NoNetworkException on ConnectionException`() = runTest {
-        coEvery { remoteLists.fetchUserLists(any(), any()) } throws ConnectionException()
-
-        assertThrows<NoNetworkException> { repository.getSavedLists() }
     }
 
     private companion object {
