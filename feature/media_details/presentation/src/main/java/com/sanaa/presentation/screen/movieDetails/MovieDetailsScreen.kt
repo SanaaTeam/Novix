@@ -71,21 +71,17 @@ fun MovieDetailsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    MovieDetailsEffectsHandler(
-        effects = viewModel.effect,
-        interactionListener = viewModel,
-    )
+    MovieDetailsEffectsHandler(effects = viewModel.effect)
 
     MovieDetailsScreenContent(
         state = state,
-        interactionListener = viewModel,
+        interactionListener = viewModel
     )
 }
 
 @Composable
 private fun MovieDetailsEffectsHandler(
     effects: SharedFlow<MovieDetailsUiEffect>,
-    interactionListener: MovieDetailsScreenInteractionListener,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -179,7 +175,7 @@ private fun MovieDetailsScreenContent(
             ) {
                 AnimatedSnackBarHost(
                     data = state.snackBarData,
-                    onDismiss = interactionListener::onDismissSnack
+                    onDismiss = interactionListener::onSnackDismissRequested
                 )
             }
         },
