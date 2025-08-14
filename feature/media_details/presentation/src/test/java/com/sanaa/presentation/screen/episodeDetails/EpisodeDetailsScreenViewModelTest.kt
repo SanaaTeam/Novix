@@ -51,25 +51,25 @@ class EpisodeDetailsScreenViewModelTest {
     private fun givenHappyViewModel() {
         coEvery {
             manageEpisodeDetails.getEpisodeDetails(
-                seriesId,
+                tvShowId,
                 seasonNumber,
                 episodeNumber
             )
         } returns dummyEpisode
         coEvery {
             manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                seriesId,
+                tvShowId,
                 seasonNumber,
                 episodeNumber
             )
         } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
         coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "seriesId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
@@ -80,7 +80,7 @@ class EpisodeDetailsScreenViewModelTest {
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             dispatcher = testDispatcher
         )
 
@@ -187,13 +187,13 @@ class EpisodeDetailsScreenViewModelTest {
         } throws NoNetworkException()
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "seriesId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
         )
         viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle, getUser, checkUserLogin, manageEpisodeDetails, manageTvSeriesDetails, dispatcher = testDispatcher
+            savedStateHandle, getUser, checkUserLogin, manageEpisodeDetails, manageTvShowDetails, dispatcher = testDispatcher
         )
         testDispatcher.scheduler.advanceUntilIdle()
         assertThat(viewModel.state.value.noInternetConnection).isTrue()
@@ -202,8 +202,8 @@ class EpisodeDetailsScreenViewModelTest {
             manageEpisodeDetails.getEpisodeDetails(any(), any(), any())
         } returns dummyEpisode
         coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(any(), any(), any()) } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(any()) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(any()) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowImageUrls(any()) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(any()) } returns dummyTrailer
         coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         viewModel.onRetryLoadDetails()
