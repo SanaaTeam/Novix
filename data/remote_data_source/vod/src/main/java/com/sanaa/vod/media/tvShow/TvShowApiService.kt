@@ -37,26 +37,26 @@ interface TvShowApiService {
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/credits")
     suspend fun fetchEpisodeGuestsOfHonor(
-        @Path("tv_id") seriesId: Int,
+        @Path("tv_id") tvShowId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): TvShowGuestOfStarsResponse
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}")
     suspend fun fetchEpisodeDetails(
-        @Path("tv_id") seriesId: Int,
+        @Path("tv_id") tvShowId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): EpisodeDto
 
     @GET("tv/{tv_id}/season/{season_number}")
     suspend fun fetchSeasonDetails(
-        @Path("tv_id") seriesId: Int, @Path("season_number") seasonNumber: Int
+        @Path("tv_id") tvShowId: Int, @Path("season_number") seasonNumber: Int
     ): SeasonDto
 
     @GET("tv/{tv_id}/season/{season_number}/episode/{episode_number}/images")
     suspend fun fetchEpisodeImages(
-        @Path("tv_id") seriesId: Int,
+        @Path("tv_id") tvShowId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int
     ): TvShowImagesResponse
@@ -102,15 +102,15 @@ interface TvShowApiService {
     ): MovieApiResponse<TvShowDto>
 
     @POST("tv/{series_id}/rating")
-    suspend fun rateTvSeries(
-        @Path("series_id") seriesId: Int,
+    suspend fun rateTvShow(
+        @Path("series_id") tvShowId: Int,
         @Query("session_id") sessionId: String,
         @Body rating: TvShowRateRequest
     ): RatingResponse
 
     @POST("tv/{series_id}/season/{season_number}/episode/{episode_number}/rating")
     suspend fun rateTvEpisode(
-        @Path("series_id") seriesId: Int,
+        @Path("series_id") tvShowId: Int,
         @Path("season_number") seasonNumber: Int,
         @Path("episode_number") episodeNumber: Int,
         @Query("session_id") sessionId: String,

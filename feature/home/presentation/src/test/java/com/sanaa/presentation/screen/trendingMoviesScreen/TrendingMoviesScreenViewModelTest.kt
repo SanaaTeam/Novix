@@ -208,7 +208,7 @@ class TrendingMoviesScreenViewModelTest {
                 genres = emptyList(),
                 imdbRating = 9f,
                 duration = 100.minutes,
-                trailerUrl = null,
+                trailerUrl = "",
                 rating = 0
             ),
             Movie(
@@ -220,7 +220,7 @@ class TrendingMoviesScreenViewModelTest {
                 genres = emptyList(),
                 imdbRating = 8f,
                 duration = 100.minutes,
-                trailerUrl = null,
+                trailerUrl = "",
                 rating = 0
             )
         )

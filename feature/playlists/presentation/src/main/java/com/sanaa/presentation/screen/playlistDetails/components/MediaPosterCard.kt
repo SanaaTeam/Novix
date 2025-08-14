@@ -72,7 +72,7 @@ fun MediaPosterCard(
 
 @PreviewLightDark
 @Composable
-private fun PreviewMovieSeriesPosterCard() {
+private fun PreviewMediaPosterCard() {
     NovixTheme(isSystemInDarkTheme()) {
         LazyVerticalGrid(
             columns = GridCells.Adaptive(

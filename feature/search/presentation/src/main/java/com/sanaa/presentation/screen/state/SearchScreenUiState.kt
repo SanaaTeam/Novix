@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen.state
 
-import android.media.browse.MediaBrowser.MediaItem
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -68,5 +67,5 @@ data class RecentViewedUiModel(
 
 enum class MediaTypeUi {
     MOVIE,
-    TV_SERIES,
+    TV_SHOW,
 }

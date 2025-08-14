@@ -59,7 +59,7 @@ fun MediaRatingChip(
 
 @Preview
 @Composable
-private fun PreviewMovieSeriesRatingChip() {
+private fun PreviewMediaRatingChip() {
     NovixTheme(isSystemInDarkTheme()) {
         Column(
             modifier = Modifier

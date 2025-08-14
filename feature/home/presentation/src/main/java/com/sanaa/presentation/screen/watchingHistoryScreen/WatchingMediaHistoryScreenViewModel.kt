@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
@@ -26,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val stringProvider: VodStringProvider,
@@ -63,7 +64,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            block = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -101,7 +102,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private fun fetchTvShowGenres() {
         tryToExecute(
             onStart = { updateState { copy(isLoading = true) } },
-            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toState() } },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toState() } },
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -177,7 +178,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         when (e) {
             is NoNetworkException -> {
                 updateState {

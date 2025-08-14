@@ -8,6 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +19,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -48,21 +48,14 @@ abstract class BaseViewModel<T, E>(
         onStart: () -> Unit = {},
         block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        onStart()
+        val handler = createExceptionHandler(onError)
 
-        val handler = CoroutineExceptionHandler { _, exception ->
-            onError(exception)
-        }
         viewModelScope.launch(dispatcher + handler) {
-            try {
-                val result = block()
-                onSuccess(result)
-            } catch (exception: Exception) {
-                onError(exception)
-            }
+            val result = block()
+            onSuccess(result)
         }
     }
 
@@ -70,22 +63,14 @@ abstract class BaseViewModel<T, E>(
         onStart: () -> Unit = {},
         block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        onStart()
+        val handler = createExceptionHandler(onError)
 
-        val handler = CoroutineExceptionHandler { _, exception ->
-            onError(exception)
-        }
         viewModelScope.launch(dispatcher + handler) {
-            try {
-                block().catch { onError(it) }
-                    .collectLatest { result ->
-                        onCollect(result)
-                    }
-            } catch (exception: Exception) {
-                onError(exception)
+            block().collectLatest { result ->
+                onCollect(result)
             }
         }
     }
@@ -105,6 +90,15 @@ abstract class BaseViewModel<T, E>(
             .cachedIn(viewModelScope)
     }
 
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is NovixAppException -> exception
+                    else -> NovixAppException(exception.message)
+                }
+            )
+        }
 
     companion object {
         private const val PAGE_SIZE = 20
