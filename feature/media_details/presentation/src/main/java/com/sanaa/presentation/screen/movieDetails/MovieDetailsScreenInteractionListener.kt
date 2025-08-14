@@ -3,11 +3,10 @@ package com.sanaa.presentation.screen.movieDetails
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 
-interface MovieDetailsScreenInteractionListener {
-    fun onBackClick()
+interface MovieDetailsScreenInteractionListener :
+    MovieDetailsTopBarListener,
+    MoreLikeThisListener {
     fun onWatchTrailerClick()
-    fun onReadMoreClick()
-    fun onBookmarkClick(movie: MovieUiModel)
     fun onSimilarMovieClick(movieId: Int)
     fun onRateMovieClick()
     fun onDismissLoginBottomSheet()
@@ -22,4 +21,13 @@ interface MovieDetailsScreenInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
+    fun onSnackDismissRequested()
+}
+interface MovieDetailsTopBarListener {
+    fun onBackClick()
+    fun onBookmarkClick(movie: MovieUiModel)
+}
+interface MoreLikeThisListener{
+    fun onBookmarkClick(movie: MovieUiModel)
+    fun onMovieClick(movieId: Int)
 }
