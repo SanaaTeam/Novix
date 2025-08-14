@@ -57,8 +57,8 @@ class GenreMoviesViewModelTest {
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "categoryId" to genreList[0].id,
-                "categoryName" to genreList[0].name
+                "genreId" to genreList[0].id,
+                "genreName" to genreList[0].name
             )
         )
 
