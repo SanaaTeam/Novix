@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -76,6 +77,9 @@ private fun SearchScreenContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
+    state.movies.let {
+        Log.d("test99", "SearchScreenContent: state:${state.movies}")
+    }
     NovixScaffold (
         topBar = {
             TopBar(
