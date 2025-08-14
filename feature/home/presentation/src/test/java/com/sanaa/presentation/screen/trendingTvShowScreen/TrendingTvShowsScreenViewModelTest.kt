@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.trendingTvShowScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState

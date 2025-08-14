@@ -2,11 +2,11 @@ package com.sanaa.presentation.screen.trendingTvShowScreen
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
@@ -54,14 +54,14 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
+    private fun loadTvShowsOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource() },
             mapper = TvShow::toState
         )
     }
 
-    private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState {
             copy(
                 mediaList = flowOf(pagingData),

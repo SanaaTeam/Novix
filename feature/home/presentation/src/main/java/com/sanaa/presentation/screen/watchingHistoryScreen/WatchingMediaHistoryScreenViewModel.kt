@@ -1,9 +1,10 @@
 package com.sanaa.presentation.screen.watchingHistoryScreen
 
-import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUiState
-import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem

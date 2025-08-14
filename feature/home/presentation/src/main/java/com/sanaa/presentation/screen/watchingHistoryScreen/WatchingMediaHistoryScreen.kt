@@ -35,8 +35,6 @@ import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
-import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
@@ -168,7 +166,7 @@ private fun EffectHandler(
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
                     when (effect.mediaTypeUiState) {
-                        MediaTypeUi.MOVIE -> {
+                        MediaTypeUiState.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
@@ -176,7 +174,7 @@ private fun EffectHandler(
                             )
                         }
 
-                        MediaTypeUi.TV_SHOW -> {
+                        MediaTypeUiState.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,

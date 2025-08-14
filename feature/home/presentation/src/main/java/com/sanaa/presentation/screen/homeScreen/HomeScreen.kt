@@ -29,6 +29,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.app.navigation.PlayListScreenRoute
 import com.sanaa.presentation.app.navigation.TopRatedMediaScreenRoute
@@ -36,18 +41,15 @@ import com.sanaa.presentation.app.navigation.TrendingMoviesScreenRoute
 import com.sanaa.presentation.app.navigation.TrendingPeopleScreenRoute
 import com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.app.navigation.WatchingMediaHistoryScreenRoute
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.api.HomeApiEntryPoint
-import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
-import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.cards.HomeTopBar
 import com.sanaa.presentation.components.shimmerEffect.MediaSliderSectionPlaceholder
 import com.sanaa.presentation.components.shimmerEffect.PopularMediaSectionPlaceholder
 import com.sanaa.presentation.modifiers.fillWidthOfParent
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.homeScreen.section.MixedMediaSection
 import com.sanaa.presentation.screen.homeScreen.section.PopularMediaSection
@@ -62,8 +64,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val navController = LocalMainNavController.current
-    val appContext = LocalContext.current.applicationContext
+
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     EffectHandler(effect = viewModel.effect)
