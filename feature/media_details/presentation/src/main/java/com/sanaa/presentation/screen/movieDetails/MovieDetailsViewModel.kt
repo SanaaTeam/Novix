@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -43,6 +44,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -168,7 +170,10 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitMovieRating,
-            onError = ::onShowRateBottomSheetFailed
+            onError = { exception ->
+                onShowErrorSnackBar(exception.message ?: stringProvider.somethingWentWrongError)
+                onShowRateBottomSheetFailed(exception)
+            }
         )
         updateState {
             copy(showRateBottomSheet = false)
@@ -215,6 +220,7 @@ class MovieDetailsViewModel @Inject constructor(
                     noInternetConnection = false
                 )
             }
+            onShowErrorSnackBar(exception.message ?: stringProvider.somethingWentWrongError)
         }
     }
 
@@ -302,9 +308,9 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+            onShowSuccessSnackBar(stringProvider.submitRatingSuccess)
         } else {
-            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+            onShowErrorSnackBar(stringProvider.submitRatingFailed)
         }
     }
 
@@ -340,5 +346,19 @@ class MovieDetailsViewModel @Inject constructor(
                 loginPromptType = type
             )
         }
+    }
+
+    override fun onDismissSnack() {
+        updateState {
+            copy(snackBarData = null)
+        }
+    }
+
+    override fun onShowSuccessSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
+    }
+
+    override fun onShowErrorSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }
