@@ -328,10 +328,10 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.submitRatingSuccess, isError = false)) }
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingSuccess, isError = false)) }
             updateState { copy(showRateBottomSheet = false) }
         } else {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.submitRatingFailed, isError = true)) }
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingFailed, isError = true)) }
         }
     }
 
