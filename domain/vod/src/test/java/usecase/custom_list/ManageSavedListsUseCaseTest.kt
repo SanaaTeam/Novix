@@ -1,7 +1,7 @@
 package usecase.custom_list
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -35,9 +35,9 @@ class ManageSavedListsUseCaseTest {
     @Test
     fun `getSavedLists should throw when repository fails`() = runTest {
         coEvery { savedListRepository.getSavedLists() } throws
-                RetrievingDataFailureException("Error")
+                NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageSavedListsUseCase.getSavedLists()
         }
     }

@@ -56,24 +56,11 @@ private fun ActorGalleryContent(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
 ) {
-    NovixScaffold(
-        backgroundShapes = { BackgroundShapes() },
-    ) {
+    NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
         Column(
             modifier = modifier.navigationBarsPadding()
         ) {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = designR.drawable.icon_back),
-                        onClick = onBackClick
-                    )
-                },
-                screenTitle = stringResource(R.string.gallery),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .systemBarsPadding()
-            )
+            ActorGalleryTopBar(onBackClick)
 
             Box(
                 modifier = Modifier
@@ -81,38 +68,51 @@ private fun ActorGalleryContent(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-
                 AnimatedContent(
                     state.isLoading,
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
 
                 ) { loading ->
-                    if (loading) {
+                    if (loading)
                         LoadingIndicator()
-                    } else {
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = GridCells.Adaptive(minSize = 104.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(
-                                12.dp
-                            ),
-                            horizontalArrangement = Arrangement.spacedBy(
-                                8.dp
-                            )
-                        ) {
-                            items(
-                                state.galleryImageUrls,
-                            ) { image ->
-                                GalleryCard(image, modifier = Modifier.aspectRatio(1f))
-                            }
-                        }
-                    }
+                    else
+                        GalleryImages(state)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun ActorGalleryTopBar(onBackClick: () -> Unit) {
+    TopBar(
+        leftContent = {
+            TopBarClickableIcon(
+                icon = painterResource(id = designR.drawable.icon_back),
+                onClick = onBackClick
+            )
+        },
+        screenTitle = stringResource(R.string.gallery),
+        modifier = Modifier
+            .fillMaxWidth()
+            .systemBarsPadding()
+    )
+}
+
+@Composable
+private fun GalleryImages(state: ActorScreenUiState) {
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxSize(),
+        columns = GridCells.Adaptive(minSize = 104.dp),
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(
+            items = state.galleryImageUrls,
+        ) { image ->
+            GalleryCard(image, modifier = Modifier.aspectRatio(1f))
         }
     }
 }

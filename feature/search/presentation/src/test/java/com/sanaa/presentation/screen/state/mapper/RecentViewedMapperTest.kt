@@ -1,12 +1,12 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
-import com.google.common.truth.Truth.assertThat
 import usecase.search.ManageRecentViewedUseCase
 import usecase.search.search_param.MediaType
 
@@ -25,14 +25,14 @@ class RecentViewedMapperTest {
     fun `List toUiState should map list of RecentViewedMedia to list of RecentViewedUiModel`() {
         val list = listOf(
             createRecentViewedMedia(1, "poster1", MediaTypeUi.MOVIE, true),
-            createRecentViewedMedia(2, "poster2", MediaTypeUi.TV_SERIES, false)
+            createRecentViewedMedia(2, "poster2", MediaTypeUi.TV_SHOW, false)
         )
 
         val result = list.toUiState()
 
         val expected = listOf(
             createExpectedUiModel(1, "poster1", MediaTypeUi.MOVIE, true),
-            createExpectedUiModel(2, "poster2", MediaTypeUi.TV_SERIES, false)
+            createExpectedUiModel(2, "poster2", MediaTypeUi.TV_SHOW, false)
         )
         assertThat(result).isEqualTo(expected)
     }
@@ -42,13 +42,13 @@ class RecentViewedMapperTest {
         val flow = flowOf(
             listOf(
                 createRecentViewedMedia(10, "posterX", MediaTypeUi.MOVIE, false),
-                createRecentViewedMedia(20, "posterY", MediaTypeUi.TV_SERIES, true)
+                createRecentViewedMedia(20, "posterY", MediaTypeUi.TV_SHOW, true)
             )
         )
 
         val expected = listOf(
             createExpectedUiModel(10, "posterX", MediaTypeUi.MOVIE, false),
-            createExpectedUiModel(20, "posterY", MediaTypeUi.TV_SERIES, true)
+            createExpectedUiModel(20, "posterY", MediaTypeUi.TV_SHOW, true)
         )
 
         flow.toUiState().test {

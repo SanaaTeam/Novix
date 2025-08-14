@@ -13,11 +13,12 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -175,10 +176,10 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun onShowRateBottomSheetFailed(throwable: Throwable) {
+    private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                errorMessage = throwable.message,
+                errorMessage = exception.message,
                 showRateBottomSheet = false
             )
         }
@@ -198,8 +199,8 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMovieDetailsFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onFetchMovieDetailsFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -211,7 +212,7 @@ class MovieDetailsViewModel @Inject constructor(
             updateState {
                 copy(
                     isLoading = false,
-                    errorMessage = throwable.message,
+                    errorMessage = exception.message,
                     noInternetConnection = false
                 )
             }
@@ -222,7 +223,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
         val pagingFlow = createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
-            mapper = { movie -> movie.toUiModel() }
+            mapper = { movie -> movie.toState() }
         )
 
         return pagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
@@ -251,7 +252,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
-        val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
+        val imagesDeferred = async { manageMovieDetails.getMovieImagesUrl(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
@@ -267,7 +268,7 @@ class MovieDetailsViewModel @Inject constructor(
         addMovieToHistory(movie)
         updateState {
             copy(
-                movieDetails = movie.toUiModel(trailerUrl = trailerUrl)
+                movieDetails = movie.toState(trailerUrl = trailerUrl)
                     .copy(isSaved = isMovieSaved),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,

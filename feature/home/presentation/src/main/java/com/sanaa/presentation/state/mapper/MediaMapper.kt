@@ -6,7 +6,7 @@ import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import usecase.custom_list.custom_list_param.SavedList
 import usecase.search.search_param.MediaType
 
@@ -17,11 +17,10 @@ fun Movie.toState(): MediaItem = MediaItem(
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
     mediaTypeUi = MediaTypeUi.MOVIE,
-    isSaved = isSaved
 )
 
 @SuppressLint("DefaultLocale")
-fun TvSeries.toState(): MediaItem = MediaItem(
+fun TvShow.toState(): MediaItem = MediaItem(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
@@ -39,7 +38,7 @@ fun MediaHistoryItem.toState(): MediaItem = MediaItem(
 
 fun MediaType.toState(): MediaTypeUi = when (this) {
     MediaType.MOVIE -> MediaTypeUi.MOVIE
-    MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
+    MediaType.TV_SHOW -> MediaTypeUi.TV_SHOW
 }
 
 fun SavedList.toState(): PlaylistUiItem {
