@@ -8,6 +8,7 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import service.VodStringProvider
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import javax.inject.Inject
@@ -17,6 +18,7 @@ class MyRatingScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val preferencesManager: PreferencesManager,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MyRatingScreenUiState, MyRatingScreenEffect>(
     initialState = MyRatingScreenUiState(),
@@ -69,9 +71,20 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun onDataLoadError(e: Throwable) {
         if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true, isLoading = false, error = null) }
+            updateState {
+                copy(
+                    isNoInternetConnection = true,
+                    isLoading = false,
+                    error = null
+                )
+            }
         } else {
-            updateState { copy(isLoading = false, error = e.message) }
+            updateState {
+                copy(
+                    isLoading = false,
+                    error = e.message
+                )
+            }
         }
     }
 
@@ -94,15 +107,11 @@ class MyRatingScreenViewModel @Inject constructor(
         tryToExecute(
             block = { manageMovieUseCase.deleteMovieRate(mediaId) },
             onSuccess = { success ->
-                if (success) {
-                    updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
-                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                } else {
-                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                }
+                updateState { copy(ratedMovies = ratedMovies.filter { movie -> movie.id != mediaId }) }
+                onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
             },
             onError = {
-                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                onShowErrorSnackBar(stringProvider.deleteRatingFailed)
             }
         )
     }
@@ -111,15 +120,11 @@ class MyRatingScreenViewModel @Inject constructor(
         tryToExecute(
             block = { manageTvShowUseCase.deleteTvShowRate(mediaId) },
             onSuccess = { success ->
-                if (success) {
-                    updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
-                    emitEffect(MyRatingScreenEffect.ShowSuccessSnackBar)
-                } else {
-                    emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
-                }
+                updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
+                onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)
             },
             onError = {
-                emitEffect(MyRatingScreenEffect.ShowErrorSnackBar)
+                onShowErrorSnackBar(stringProvider.deleteRatingFailed)
             }
         )
     }
@@ -137,5 +142,17 @@ class MyRatingScreenViewModel @Inject constructor(
 
     override fun onMediaClick(id: Int, mediaType: MediaTypeUi) {
         emitEffect(MyRatingScreenEffect.NavigateToMediaDetails(id, mediaType))
+    }
+
+    override fun onDismissSnack() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    override fun onShowSuccessSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
+    }
+
+    override fun onShowErrorSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }
