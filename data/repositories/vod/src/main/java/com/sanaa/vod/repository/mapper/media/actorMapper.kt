@@ -5,22 +5,19 @@ import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Actor
-import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
+import kotlin.time.Duration.Companion.minutes
 
 fun ActorDto.toEntity(): Actor = Actor(
     id = id,
     imageUrl = getFullImageUrl(profileImagePath),
-    name = name ?: "Unknown name",
-    region = null,
-    department = knownForDepartment,
-    lastShow = null,
-    gender = apiGenderMapping(gender),
-    character = null,
+    name = name.orEmpty(),
+    department = knownForDepartment.orEmpty(),
+    character = "",
     birthDate = getLocalDateOrDefault(birthDay),
     deathDate = getLocalDateOrDefault(deathDay),
-    placeOfBirth = placeOfBirth,
+    placeOfBirth = placeOfBirth.orEmpty(),
     biography = biography.orEmpty()
 )
 
@@ -30,30 +27,22 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     posterImageUrl = getFullImageUrl(posterPath),
     title = movieTitle.orEmpty(),
     genres = emptyList(),
-    imdbRating = voteAverage?.toFloat() ?: 0f,
-    duration = null,
+    imdbRating = voteAverage?.toFloat() ?: -1f,
+    duration = (-1).minutes,
     releaseDate = getLocalDateOrDefault(releaseDate),
     overview = overview.orEmpty(),
-    rating = null
+    rating = -1,
+    trailerUrl = ""
 )
 
-fun ActorCastCreditDto.toTvSeries(): TvSeries = TvSeries(
+fun ActorCastCreditDto.toTvShow(): TvShow = TvShow(
     id = id,
     title = tvShowTitle.orEmpty(),
     overview = overview.orEmpty(),
     releaseDate = getLocalDateOrDefault(firstAirDate),
     genres = emptyList(),
-    imdbRating = voteAverage?.toFloat() ?: 0f,
+    imdbRating = voteAverage?.toFloat() ?: -1f,
     posterImageUrl = getFullImageUrl(posterPath),
     seasonsCount = 0,
-    rating = null
+    rating = -1
 )
-
-
-fun apiGenderMapping(id: Int?): Gender {
-    return when (id) {
-        0 -> Gender.MALE
-        1 -> Gender.FEMALE
-        else -> Gender.MALE
-    }
-}

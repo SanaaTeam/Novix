@@ -10,13 +10,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import service.VodStringProvider
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyRatingScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val preferencesManager: PreferencesManager,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -56,7 +56,7 @@ class MyRatingScreenViewModel @Inject constructor(
                 val accountId = preferencesManager.accountId.first()
                 val sessionId = preferencesManager.sessionId.first()
 
-                manageTvSeriesUseCase.getUserRatedTvSeries(accountId, sessionId)
+                manageTvShowUseCase.getRatedTvShows(accountId, sessionId)
             },
             onSuccess = { tvShows ->
                 val uiModels = tvShows.map { it.toRatedMediaUiModel() }
@@ -118,7 +118,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun deleteRatedTvShow(mediaId: Int) {
         tryToExecute(
-            block = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+            block = { manageTvShowUseCase.deleteTvShowRate(mediaId) },
             onSuccess = { success ->
                 updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }
                 onShowSuccessSnackBar(stringProvider.deleteRatingSuccess)

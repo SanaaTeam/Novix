@@ -80,7 +80,7 @@ fun WatchingMediaHistoryScreen(
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
-                                startRoute = StartRoute.SERIES
+                                startRoute = StartRoute.TV_SHOW
                             )
                         }
                     }

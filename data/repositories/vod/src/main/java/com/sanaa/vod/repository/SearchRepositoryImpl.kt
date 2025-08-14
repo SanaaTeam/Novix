@@ -5,7 +5,7 @@ import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import repository.SavedListsStatusProvider
 import repository.SearchRepository
 import javax.inject.Inject
@@ -20,13 +20,10 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override suspend fun searchMovies(query: String, page: Int): List<Movie> = safeCall(query) {
-        remoteDataSource.searchMovies(query, page).results.map { dto ->
-            val movie = dto.toEntity()
-            movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
-        }
+        remoteDataSource.searchMovies(query, page).results.map { dto -> dto.toEntity() }
     }
 
-    override suspend fun searchTvShows(query: String, page: Int): List<TvSeries> = safeCall(query) {
+    override suspend fun searchTvShows(query: String, page: Int): List<TvShow> = safeCall(query) {
         remoteDataSource.searchTvShows(query, page).results.map { it.toEntity() }
     }
 }

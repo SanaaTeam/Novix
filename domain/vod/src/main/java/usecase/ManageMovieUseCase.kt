@@ -16,8 +16,8 @@ class ManageMovieUseCase @Inject constructor(
     suspend fun getMovieCast(id: Int): List<Actor> =
         movieRepo.getMovieCast(id)
 
-    suspend fun getMovieImages(id: Int): List<String> =
-        movieRepo.getImageUrls(id, IMAGE_COUNT)
+    suspend fun getMovieImagesUrl(id: Int, count: Int = IMAGE_COUNT): List<String> =
+        movieRepo.getImageUrls(id, count)
 
     suspend fun getMoviesByCategory(genreId: Int, page: Int): List<Movie> =
         movieRepo.getMoviesByCategory(genreId, page)

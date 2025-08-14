@@ -20,7 +20,7 @@ import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -31,14 +31,14 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertNotNull
 import org.junit.jupiter.api.assertNull
 import org.junit.jupiter.api.assertThrows
-import repository.TvSeriesRepository
+import repository.TvShowRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 
 class TvShowRepositoryImplTest {
 
-    private lateinit var repository: TvSeriesRepository
+    private lateinit var repository: TvShowRepository
     private val preferences: PreferencesManager = mockk()
     private val remote: RemoteTvShowDataSource = mockk(relaxed = true)
     private val local: LocalCachedContentDataSource = mockk(relaxed = true)
@@ -50,85 +50,85 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTvShowDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowDetails throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowDetails(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesDetails(999) }
+        assertThrows<NovixAppException> { repository.getTvShowDetails(999) }
     }
 
     @Test
     fun `getReviewsByTvShowId returns list`() = runTest {
         coEvery { remote.getReviewsByTvShowId(1, 1) } returns listOf(dummyReviewDto)
-        val result = repository.getTvSeriesReviews(1, 1)
+        val result = repository.getTvShowReviews(1, 1)
         assertEquals("A", result.first().authorName)
     }
 
     @Test
-    fun `getReviewsByTvShowId throws RetrievingDataFailureException`() = runTest {
+    fun `getReviewsByTvShowId throws NovixAppException`() = runTest {
         coEvery { remote.getReviewsByTvShowId(any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesReviews(999, 1) }
+        assertThrows<NovixAppException> { repository.getTvShowReviews(999, 1) }
     }
 
     @Test
-    fun `getTvShowImageUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowImageUrls throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesImageUrls(99, 1) }
+        assertThrows<NovixAppException> { repository.getTvShowImageUrls(99, 1) }
     }
 
     @Test
-    fun `getTvShowsByGenre throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowsByGenre throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any(), 1) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesByGenre(1, 1) }
+        assertThrows<NovixAppException> { repository.getTvShowsByGenre(1, 1) }
     }
 
     @Test
     fun `getTvShowCast returns actors`() = runTest {
         coEvery { remote.getTvShowCast(any()) } returns listOf(dummyActorDto)
-        val result = repository.getTvSeriesCast(1)
+        val result = repository.getTvShowCast(1)
         assertEquals("Actor", result.first().name)
     }
 
     @Test
-    fun `getTvShowCast throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowCast throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowCast(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesCast(999) }
+        assertThrows<NovixAppException> { repository.getTvShowCast(999) }
     }
 
     @Test
     fun `getTvShowDetails throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowDetails(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesDetails(1) }
+        assertThrows<NoNetworkException> { repository.getTvShowDetails(1) }
     }
 
     @Test
     fun `getReviewsByTvShowId throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getReviewsByTvShowId(any(), 1) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesReviews(1, 1) }
+        assertThrows<NoNetworkException> { repository.getTvShowReviews(1, 1) }
     }
 
 
     @Test
     fun `getTvShowImageUrls throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowImageUrls(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesImageUrls(1, 3) }
+        assertThrows<NoNetworkException> { repository.getTvShowImageUrls(1, 3) }
     }
 
 
     @Test
     fun `getTvShowsByGenre throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowsByGenre(any(), 1) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesByGenre(1, 1) }
+        assertThrows<NoNetworkException> { repository.getTvShowsByGenre(1, 1) }
     }
 
     @Test
     fun `getTvShowCast throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowCast(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesCast(1) }
+        assertThrows<NoNetworkException> { repository.getTvShowCast(1) }
     }
 
     @Test
     fun `getTvShowSeasonDetails throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesSeason(1, 1) }
+        assertThrows<NoNetworkException> { repository.getTvShowSeason(1, 1) }
     }
 
     @Test
@@ -158,21 +158,21 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTvShowVideosUrls throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remote.getTvShowVideosUrls(any()) } throws ConnectionException()
-        assertThrows<NoNetworkException> { repository.getTvSeriesTrailer(1) }
+        assertThrows<NoNetworkException> { repository.getTvShowTrailer(1) }
     }
 
 
     @Test
     fun `getTvShowSeasonDetails returns season entity`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } returns dummySeasonDto
-        val result = repository.getTvSeriesSeason(1, 1)
+        val result = repository.getTvShowSeason(1, 1)
         assertEquals("Season 1", result.title)
     }
 
     @Test
-    fun `getTvShowSeasonDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowSeasonDetails throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowSeasonDetails(any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesSeason(1, 99) }
+        assertThrows<NovixAppException> { repository.getTvShowSeason(1, 99) }
     }
 
     // --- Episode ---
@@ -184,9 +184,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeDetails throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeDetails throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeDetails(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getEpisodeDetails(1, 1, 999) }
+        assertThrows<NovixAppException> { repository.getEpisodeDetails(1, 1, 999) }
     }
 
     @Test
@@ -203,9 +203,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeImageUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeImageUrls throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeImageUrls(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getEpisodeImageUrls(
                 1,
                 1,
@@ -216,9 +216,9 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getEpisodeGuestsOfHonor throws RetrievingDataFailureException`() = runTest {
+    fun `getEpisodeGuestsOfHonor throws NovixAppException`() = runTest {
         coEvery { remote.getEpisodeGuestsOfHonor(any(), any(), any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getEpisodeGuestsOfHonor(
                 1, 1, 99
             )
@@ -228,14 +228,14 @@ class TvShowRepositoryImplTest {
     @Test
     fun `getTvShowVideosUrls returns null if no videos`() = runTest {
         coEvery { remote.getTvShowVideosUrls(any()) } returns emptyList()
-        val result = repository.getTvSeriesTrailer(1)
+        val result = repository.getTvShowTrailer(1)
         assertNull(result)
     }
 
     @Test
-    fun `getTvShowVideosUrls throws RetrievingDataFailureException`() = runTest {
+    fun `getTvShowVideosUrls throws NovixAppException`() = runTest {
         coEvery { remote.getTvShowVideosUrls(any()) } throws Exception()
-        assertThrows<RetrievingDataFailureException> { repository.getTvSeriesTrailer(404) }
+        assertThrows<NovixAppException> { repository.getTvShowTrailer(404) }
     }
 
     @Test
@@ -245,152 +245,152 @@ class TvShowRepositoryImplTest {
                 id = "1", key = "xyz", site = "YouTube", type = "Trailer"
             )
         )
-        val result = repository.getTvSeriesTrailer(1)
+        val result = repository.getTvShowTrailer(1)
         assertNotNull(result)
 
     }
 
     @Test
-    fun `getPopularSeries should return cached data if available when page is 1`() = runTest {
+    fun `getPopularTvShows should return cached data if available when page is 1`() = runTest {
         val cached = listOf(sampleTvShowLocalDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns cached
 
-        val result = repository.getPopularSeries(1)
+        val result = repository.getPopularTvShows(1)
 
         assertThat(result).isEqualTo(cached.map { it.toEntity() })
     }
 
     @Test
-    fun `getPopularSeries should fetches remote when page is 1 and cache is empty`() = runTest {
+    fun `getPopularTvShows should fetches remote when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
 
-        val result = repository.getPopularSeries(1)
+        val result = repository.getPopularTvShows(1)
 
         assertThat(result).isEqualTo(tvShows.map { it.toEntity() })
     }
 
     @Test
-    fun `getPopularSeries should cache the new data when page is 1 and cache is empty`() = runTest {
+    fun `getPopularTvShows should cache the new data when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
 
-        repository.getPopularSeries(1)
+        repository.getPopularTvShows(1)
 
         coVerify(exactly = tvShows.size) { local.cacheTvShow(any(), any()) }
     }
 
     @Test
-    fun `getPopularSeries should fetch from remote if page is not 1`() = runTest {
+    fun `getPopularTvShows should fetch from remote if page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchPopularTvShows(2) } returns tvShows
 
-        val result = repository.getPopularSeries(2)
+        val result = repository.getPopularTvShows(2)
 
         assertThat(result).isEqualTo(tvShows.map { it.toEntity() })
     }
 
     @Test
-    fun `getPopularSeries should not cache the new data when page is not 1`() = runTest {
+    fun `getPopularTvShows should not cache the new data when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchPopularTvShows(2) } returns tvShows
 
-        repository.getPopularSeries(2)
+        repository.getPopularTvShows(2)
 
         coVerify(exactly = 0) { local.cacheTvShow(any(), any()) }
     }
 
 
     @Test
-    fun `getTopRatedTvSeries should return cached data if available when page is 1 and genreId is null`() =
+    fun `getTopRatedTvShows should return cached data if available when page is 1 and genreId is null`() =
         runTest {
             val cached = listOf(sampleTvShowLocalDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns cached
 
-            val result = repository.getTopRatedTvSeries(1, null)
+            val result = repository.getTopRatedTvShows(1, null)
 
             assertThat(result).isEqualTo(cached.map { it.toEntity() })
         }
 
     @Test
-    fun `getTopRatedTvSeries should fetches remote when page is 1 and genreId is null and cache is empty`() =
+    fun `getTopRatedTvShows should fetches remote when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
             coEvery { remote.fetchTopRatedTvShows(1, null) } returns tvShows
 
-            val result = repository.getTopRatedTvSeries(1, null)
+            val result = repository.getTopRatedTvShows(1, null)
 
             assertThat(result).isEqualTo(tvShows.map { it.toEntity() })
         }
 
     @Test
-    fun `getTopRatedTvSeries should cache the new data when page is 1 and genreId is null and cache is empty`() =
+    fun `getTopRatedTvShows should cache the new data when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
             coEvery { remote.fetchTopRatedTvShows(1, null) } returns tvShows
 
-            repository.getTopRatedTvSeries(1, null)
+            repository.getTopRatedTvShows(1, null)
 
             coVerify(exactly = tvShows.size) { local.cacheTvShow(any(), any()) }
         }
 
     @Test
-    fun `getTopRatedTvSeries should not cache the new data when page is not 1`() = runTest {
+    fun `getTopRatedTvShows should not cache the new data when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(2, null) } returns tvShows
 
-        repository.getTopRatedTvSeries(2, null)
+        repository.getTopRatedTvShows(2, null)
 
         coVerify(exactly = 0) { local.cacheTvShow(any(), any()) }
     }
 
     @Test
-    fun `getTopRatedTvSeries should not cache the new data when genreId is not null`() = runTest {
+    fun `getTopRatedTvShows should not cache the new data when genreId is not null`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(1, 1) } returns tvShows
 
-        repository.getTopRatedTvSeries(1, 1)
+        repository.getTopRatedTvShows(1, 1)
 
         coVerify(exactly = 0) { local.cacheTvShow(any(), any()) }
     }
 
     @Test
-    fun `getTopRatedTvSeries should fetch from remote when page is not 1`() = runTest {
+    fun `getTopRatedTvShows should fetch from remote when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchTopRatedTvShows(2, null) } returns tvShows
 
-        val result = repository.getTopRatedTvSeries(2, null)
+        val result = repository.getTopRatedTvShows(2, null)
 
         assertThat(result).isEqualTo(tvShows.map { it.toEntity() })
     }
 
     @Test
-    fun `getTopRatedTvSeries should fetch from remote when genreId is not null`() = runTest {
+    fun `getTopRatedTvShows should fetch from remote when genreId is not null`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchTopRatedTvShows(1, 1) } returns tvShows
 
-        val result = repository.getTopRatedTvSeries(1, 1)
+        val result = repository.getTopRatedTvShows(1, 1)
 
         assertThat(result).isEqualTo(tvShows.map { it.toEntity() })
     }
 
     @Test
-    fun `getTrendingTvSeries returns empty list`() = runTest {
+    fun `getTrendingTvShows returns empty list`() = runTest {
         // Act
-        val result = repository.getTrendingTvSeries(1, null)
+        val result = repository.getTrendingTvShows(1, null)
 
         // Assert
         assertEquals(0, result.size)
     }
 
     @Test
-    fun `getSeriesRate should return rate when available`() = runTest {
+    fun `getTvShowRate should return rate when available`() = runTest {
         val id = 1
         val accountId = 1L
         val sessionId = flowOf("session123")
@@ -399,20 +399,20 @@ class TvShowRepositoryImplTest {
         coEvery { preferences.sessionId } returns sessionId
         coEvery { remote.getTvShowRate(accountId, sessionId.first()) } returns rates
 
-        val result = repository.getSeriesRate(accountId, id)
+        val result = repository.getTvShowRate(accountId, id)
 
         assertThat(result).isEqualTo(rate.toInt())
     }
 
     @Test
-    fun `getSeriesRate should returns rate null when no rate is available`() = runTest {
+    fun `getTvShowRate should returns rate null when no rate is available`() = runTest {
         val id = 1
         val accountId = 1L
         val sessionId = flowOf("session123")
         coEvery { preferences.sessionId } returns sessionId
         coEvery { remote.getTvShowRate(accountId, sessionId.first()) } returns emptyList()
 
-        val result = repository.getSeriesRate(accountId, id)
+        val result = repository.getTvShowRate(accountId, id)
 
         assertThat(result).isEqualTo(null)
     }
@@ -457,7 +457,7 @@ class TvShowRepositoryImplTest {
     fun `getTvShowGenres should return cached data when available`() = runTest {
         coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns genres
 
-        val result = repository.getSeriesGenres()
+        val result = repository.getTvShowGenres()
 
         assertThat(result).isEqualTo(genres.map { it.toEntity() })
     }
@@ -467,7 +467,7 @@ class TvShowRepositoryImplTest {
         coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns emptyList()
         coEvery { remote.getTvShowGenres() } returns dummyGenresDto
 
-        val result = repository.getSeriesGenres()
+        val result = repository.getTvShowGenres()
 
         assertThat(result).isEqualTo(dummyGenresDto.map { it.toEntity() })
     }
@@ -477,7 +477,7 @@ class TvShowRepositoryImplTest {
         coEvery { local.getCachedGenres(Category.TV_SHOW_GENRES) } returns emptyList()
         coEvery { remote.getTvShowGenres() } returns dummyGenresDto
 
-        repository.getSeriesGenres()
+        repository.getTvShowGenres()
 
         coVerify(exactly = 1) { local.cacheGenres(any(), any()) }
     }

@@ -11,20 +11,21 @@ import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingTvShowsScreenViewModel @Inject constructor(
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -61,7 +62,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
-        return manageTvSeriesUseCase.getSeriesGenres().map { it.toState() }
+        return manageTvShowUseCase.getTvShowGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
@@ -79,7 +80,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource() },
-            mapper = TvSeries::toState
+            mapper = TvShow::toState
         )
     }
 
@@ -143,7 +144,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     }
 
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -165,9 +166,9 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
+    private fun createTvShowsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageTvSeriesUseCase.getTrendingTvSeries(
+            manageTvShowUseCase.getTrendingTvShows(
                 page = page,
                 genreId = state.value.selectedGenreId
             )

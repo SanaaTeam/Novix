@@ -87,7 +87,7 @@ private fun WatchingHistoryScreenEffectsHandler(
                     id = effect.id,
                     startRoute = when (effect.mediaTypeUi) {
                         MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                        MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
                 is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)

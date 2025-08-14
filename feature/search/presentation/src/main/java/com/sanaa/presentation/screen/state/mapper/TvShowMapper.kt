@@ -1,9 +1,9 @@
 package com.sanaa.presentation.screen.state.mapper
 
 import com.sanaa.presentation.screen.state.TvShowUiModel
-import entity.TvSeries
+import entity.TvShow
 
-fun TvSeries.toUiState(): TvShowUiModel {
+fun TvShow.toUiState(): TvShowUiModel {
     return TvShowUiModel(
         id = this.id,
         title = this.title,

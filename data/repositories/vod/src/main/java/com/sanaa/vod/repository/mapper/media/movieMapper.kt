@@ -11,13 +11,13 @@ fun MovieDto.toEntity(): Movie {
         posterImageUrl = getFullImageUrl(posterImagePath),
         title = title.orEmpty(),
         genres = genres?.map { it.toEntity() } ?: emptyList(),
-        imdbRating = voteAverage ?: 0.0f,
-        duration = duration?.minutes,
+        imdbRating = voteAverage ?: -1f,
+        duration = duration?.minutes ?: (-1).minutes,
         releaseDate = getLocalDateOrDefault(releaseDate),
         overview = overview.toString(),
-        rating = rating?.toInt()
+        rating = rating?.toInt() ?: -1,
+        trailerUrl = "",
     )
 }
-
 
 
