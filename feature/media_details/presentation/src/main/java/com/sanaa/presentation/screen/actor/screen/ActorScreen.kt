@@ -50,16 +50,16 @@ import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
-import com.sanaa.presentation.navigation.TopSeriesScreenRoute
+import com.sanaa.presentation.navigation.TopTvShowsScreenRoute
+import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateBack
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToGallery
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToLogin
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToMovieDetails
-import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToSeriesDetails
 import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopMovies
-import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopSeries
+import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTopTvShows
+import com.sanaa.presentation.screen.actor.ActorScreenEffects.NavigateToTvShowDetails
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
@@ -101,8 +101,8 @@ fun ActorScreen(
                     TopMoviesScreenRoute(effect.actorId).route()
                 )
 
-                is NavigateToTopSeries -> navController.navigate(
-                    TopSeriesScreenRoute(effect.actorId).route()
+                is NavigateToTopTvShows -> navController.navigate(
+                    TopTvShowsScreenRoute(effect.actorId).route()
                 )
 
                 is NavigateToGallery -> {
@@ -113,8 +113,8 @@ fun ActorScreen(
                     navController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
                 }
 
-                is NavigateToSeriesDetails -> {
-                    navController.navigate(SeriesDetailsScreenRoute(effect.seriesId).route())
+                is NavigateToTvShowDetails -> {
+                    navController.navigate(TvShowDetailsScreenRoute(effect.tvShowId).route())
                 }
 
                 NavigateToLogin -> {
@@ -304,14 +304,14 @@ private fun ActorInfo(
 
         item {
             MediaSection(
-                title = stringResource(R.string.top_series_picks),
-                items = state.topTvSeries.take(10),
-                onActionClick = listener::onTopSeriesClicked
-            ) { series ->
+                title = stringResource(R.string.top_tv_shows_picks),
+                items = state.topTvShows.take(10),
+                onActionClick = listener::onTopShowsClicked
+            ) { tvShow ->
                 PosterCard(
-                    series.posterPath,
+                    tvShow.posterPath,
                     onCardClick = {
-                        listener.onSeriesClicked(series.id)
+                        listener.onTvShowClicked(tvShow.id)
                     },
                 )
             }

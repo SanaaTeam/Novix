@@ -10,12 +10,12 @@ import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class CategoriesScreenViewModel @Inject constructor(
-    private val getTvGenresUseCase: ManageTvSeriesUseCase,
+    private val getTvGenresUseCase: ManageTvShowUseCase,
     private val getMovieGenresUseCase: ManageMovieUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
@@ -59,7 +59,7 @@ class CategoriesScreenViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
-                getTvGenresUseCase.getSeriesGenres()
+                getTvGenresUseCase.getTvShowGenres()
             },
             onSuccess = ::onLoadTvGenresSuccess,
             onError = ::onErrorLoading

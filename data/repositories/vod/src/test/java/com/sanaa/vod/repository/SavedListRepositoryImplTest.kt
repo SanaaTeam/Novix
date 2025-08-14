@@ -1,6 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalSavedListDataSource
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
@@ -59,8 +60,7 @@ class SavedListRepositoryImplTest {
                 SavedListDto(id = LIST_ID, title = "Watch-Later")
 
         val created: SavedList = repository.createSavedList("Watch-Later")
-
-        Truth.assertThat(created.id).isEqualTo(LIST_ID)
+        assertThat(created.id).isEqualTo(LIST_ID)
     }
 
     @Test
@@ -73,13 +73,13 @@ class SavedListRepositoryImplTest {
     }
 
 
-
     @Test
     fun `addMovieToList returns true when successful`() = runTest {
         coEvery { remoteLists.addItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
 
         val success = repository.addMovieToList(LIST_ID, MOVIE_ID)
 
+        assertThat(success).isTrue()
     }
 
     @Test
@@ -88,6 +88,14 @@ class SavedListRepositoryImplTest {
 
         val success = repository.removeMovieFromList(LIST_ID, MOVIE_ID)
 
+        assertThat(success).isTrue()
+    }
+
+    @Test
+    fun `getSavedLists throws NoNetworkException on ConnectionException`() = runTest {
+        coEvery { remoteLists.fetchUserLists(any(), any()) } throws ConnectionException()
+
+        assertThrows<NoNetworkException> { repository.getSavedLists() }
     }
 
     private companion object {

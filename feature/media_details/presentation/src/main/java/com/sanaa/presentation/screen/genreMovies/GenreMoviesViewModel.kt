@@ -6,10 +6,11 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -29,12 +30,12 @@ class GenreMoviesViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
 
-    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
-    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
+    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
 
     init {
         updateUserLoggingStatus()
-        fetchMovies(categoryId)
+        fetchMovies(genreId)
     }
 
     fun updateUserLoggingStatus() {
@@ -51,7 +52,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(categoryId)
+        fetchMovies(genreId)
     }
 
 
@@ -111,16 +112,16 @@ class GenreMoviesViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
-            mapper = Movie::toUiModel
+            mapper = Movie::toState
         )
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { copy(movies = flowOf(movies), title = categoryName, isLoading = false) }
+        updateState { copy(movies = flowOf(movies), title = genreName, isLoading = false) }
     }
 
-    private fun onFetchMoviesFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onFetchMoviesFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -129,7 +130,7 @@ class GenreMoviesViewModel @Inject constructor(
                 )
             }
         } else {
-            updateState { copy(error = throwable.message, isLoading = false) }
+            updateState { copy(error = exception.message, isLoading = false) }
         }
     }
 

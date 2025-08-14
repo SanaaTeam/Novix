@@ -36,10 +36,10 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
-import com.sanaa.presentation.model.SeriesUiModel
+import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.SeriesDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
 import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
@@ -49,7 +49,7 @@ import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
 @Composable
-fun TopSeriesScreen(
+fun TopShowsScreen(
     viewModel: ActorViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
@@ -62,7 +62,7 @@ fun TopSeriesScreen(
     val launcher = launchAuthActivityForResult()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    TopSeriesContent(
+    TopShowsContent(
         state = uiState,
         navController = navController,
     )
@@ -77,7 +77,7 @@ fun TopSeriesScreen(
 }
 
 @Composable
-private fun TopSeriesContent(
+private fun TopShowsContent(
     state: ActorScreenUiState,
     navController: NavHostController,
 ) {
@@ -94,7 +94,7 @@ private fun TopSeriesContent(
                         onClick = { navController.popBackStack() }
                     )
                 },
-                screenTitle = stringResource(R.string.top_series_picks),
+                screenTitle = stringResource(R.string.top_tv_shows_picks),
                 modifier = Modifier
                     .fillMaxWidth()
                     .systemBarsPadding()
@@ -113,7 +113,7 @@ private fun TopSeriesContent(
                     if (loading) {
                         LoadingIndicator()
                     } else {
-                        SeriesList(state, navController)
+                        TvShowList(state, navController)
                     }
                 }
             }
@@ -122,7 +122,7 @@ private fun TopSeriesContent(
 }
 
 @Composable
-private fun SeriesList(
+private fun TvShowList(
     state: ActorScreenUiState,
     navController: NavHostController,
 ) {
@@ -134,16 +134,16 @@ private fun SeriesList(
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         itemsIndexed(
-            state.topTvSeries,
+            state.topTvShows,
             key = { index, _ -> index }
-        ) { _, series ->
+        ) { _, tvShow ->
             MediaPosterCard(
                 posterImage = {
-                    PosterImage(series)
+                    PosterImage(tvShow)
                 },
                 onCardClick = {
                     navController.navigate(
-                        SeriesDetailsScreenRoute(series.id).route()
+                        TvShowDetailsScreenRoute(tvShow.id).route()
                     )
                 }
             )
@@ -152,14 +152,14 @@ private fun SeriesList(
 }
 
 @Composable
-private fun PosterImage(series: SeriesUiModel) {
+private fun PosterImage(tvShow: TvShowUiState) {
     RemoteBlurredSensitiveImage(
-        imageUrl = series.posterPath.orEmpty(),
+        imageUrl = tvShow.posterPath.orEmpty(),
         modifier = Modifier.fillMaxSize(),
         sensitiveContentThreshold = 0.2f,
         isBlurEnabled = LocalSafeContentThreshold.current != 0f,
         safeContentThreshold = LocalSafeContentThreshold.current,
-        contentDescription = series.title,
+        contentDescription = tvShow.title,
         placeholderContent = {
             RemoteImagePlaceholder(Modifier.fillMaxSize())
         },
