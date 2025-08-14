@@ -4,14 +4,12 @@ import com.sanaa.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarksListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<AddBookmarksListUiState, Unit>(AddBookmarksListUiState(),dispatcher) {
 
@@ -38,7 +36,6 @@ class AddBookmarksListViewModel @Inject constructor(
             onSuccess = {
                 resetState()
                 emitEffect(Unit)
-                savedListsStatusProvider.markItemSaved(mediaId)
             },
             onError = {
                 updateState {

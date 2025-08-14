@@ -4,7 +4,6 @@ import com.sanaa.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -14,7 +13,6 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
 
@@ -26,7 +24,7 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.getSavedLists() },
+            callee = { manageSavedListsUseCase.getSavedListsOnce() },
             onSuccess = ::onLoadPlaylistsSuccess,
             onError = ::onErrorAccrue
         )
@@ -76,7 +74,6 @@ class SaveToListViewModel @Inject constructor(
 
     private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
         updateState { copy(isLoading = false) }
-        savedListsStatusProvider.markItemSaved(mediaId.toInt())
         loadPlaylists()
         emitEffect(SaveToListEffect.AddedSuccessfully)
     }
