@@ -2,6 +2,7 @@ package com.sanaa.presentation.bottomsheets.deletebottomsheet
 
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import usecase.custom_list.ManageSavedListsUseCase
@@ -28,7 +29,7 @@ class DeleteListViewModel @Inject constructor(
         emitEffect(DeleteListEffect.DeleteSuccess)
     }
 
-    private fun onDeleteConfirmedFailed(throwable: Throwable) {
+    private fun onDeleteConfirmedFailed(exception: NovixAppException) {
         emitEffect(DeleteListEffect.DeleteFailure)
         updateState {
             copy(

@@ -15,6 +15,7 @@ import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -118,7 +119,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    internal fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isLoading = false, errorMessage = null) }
         } else {

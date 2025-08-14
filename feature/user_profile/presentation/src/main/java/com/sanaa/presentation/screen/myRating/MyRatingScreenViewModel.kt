@@ -9,13 +9,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MyRatingScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val preferencesManager: PreferencesManager,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MyRatingScreenUiState, MyRatingScreenEffect>(
@@ -54,7 +54,7 @@ class MyRatingScreenViewModel @Inject constructor(
                 val accountId = preferencesManager.accountId.first()
                 val sessionId = preferencesManager.sessionId.first()
 
-                manageTvSeriesUseCase.getUserRatedTvSeries(accountId, sessionId)
+                manageTvShowUseCase.getRatedTvShows(accountId, sessionId)
             },
             onSuccess = { tvShows ->
                 val uiModels = tvShows.map { it.toRatedMediaUiModel() }
@@ -109,7 +109,7 @@ class MyRatingScreenViewModel @Inject constructor(
 
     private fun deleteRatedTvShow(mediaId: Int) {
         tryToExecute(
-            block = { manageTvSeriesUseCase.deleteTvSeriesRate(mediaId) },
+            block = { manageTvShowUseCase.deleteTvShowRate(mediaId) },
             onSuccess = { success ->
                 if (success) {
                     updateState { copy(ratedTvShows = ratedTvShows.filter { tvShow -> tvShow.id != mediaId }) }

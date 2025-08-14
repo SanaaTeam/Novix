@@ -3,6 +3,7 @@ package com.sanaa.presentation.bottomsheets.addEditBookmark
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -76,7 +77,7 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-    private fun onErrorAccrue(throwable: Throwable) {
+    private fun onErrorAccrue(exception: NovixAppException) {
         updateState {
             copy(
                 isLoading = false,

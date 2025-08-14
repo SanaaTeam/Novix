@@ -10,6 +10,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListRepository
+import kotlin.time.Duration.Companion.minutes
 
 class ManageSavedListItemsUseCaseTest {
 
@@ -62,9 +63,11 @@ class ManageSavedListItemsUseCaseTest {
                 title = "Movie 1",
                 genres = emptyList(),
                 imdbRating = 8.5f,
-                duration = null,
+                duration = 1.minutes,
                 releaseDate = LocalDate(2023, 5, 20),
-                rating = null
+                rating = 1,
+                overview = "",
+                trailerUrl = ""
             )
         )
     }

@@ -1,7 +1,6 @@
 package com.sanaa.presentation.myAccount
 
 import app.cash.turbine.test
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.presentation.screen.myRating.MediaTypeUi
@@ -9,7 +8,7 @@ import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect
 import com.sanaa.presentation.screen.myRating.MyRatingScreenViewModel
 import com.sanaa.presentation.screen.myRating.MyRatingTab
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -25,12 +24,13 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingScreenViewModelTest {
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val preferencesManager: PreferencesManager = mockk(relaxed = true)
     private lateinit var viewModel: MyRatingScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -45,9 +45,9 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `loadRatedMedia should sets isNoInternetConnection to true when there is a network error`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvShow)
 
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
 
         viewModel.state.test {
             val state = awaitItem()
@@ -67,7 +67,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onBackClick should emit NavigateBack effect when user clicks back button`() = runTest {
         viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         viewModel.onBackClick()
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.NavigateBack)
@@ -78,7 +78,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onTabSelected updates the selectedTab in state`() = runTest {
         viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         viewModel.onTabSelected(MyRatingTab.TV_SHOWS)
         assertThat(viewModel.state.value.selectedTab).isEqualTo(MyRatingTab.TV_SHOWS)
     }
@@ -86,22 +86,25 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onDeleteIconClick for movie success removes item from state`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns true
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+
+        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         advanceUntilIdle()
+
         viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
+        advanceUntilIdle()
+
         assertThat(viewModel.state.value.ratedMovies).isEmpty()
     }
 
     @Test
     fun `onDeleteIconClick for movie failure emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns emptyList()
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns false
         viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         advanceUntilIdle()
         viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
         viewModel.effect.test {
@@ -113,7 +116,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onRetryLoadDetails sets isLoading to true`() = runTest {
         viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         viewModel.updateState { copy(isNoInternetConnection = true) }
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
@@ -122,7 +125,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         viewModel.onMediaClick(dummyMovie.id, MediaTypeUi.MOVIE)
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(
@@ -139,13 +142,13 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onDeleteIconClick for tv show throws exception emits error snack-bar`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
-        coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")
+        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvShow)
+        coEvery { manageTvShowUseCase.deleteTvShowRate(any()) } throws RuntimeException("Delete failed")
 
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvSeriesUseCase, preferencesManager)
+        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
         advanceUntilIdle()
 
-        viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
+        viewModel.onDeleteIconClick(dummyTvShow.id, MediaTypeUi.TV_SHOW)
 
         viewModel.effect.test {
             assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar)
@@ -160,11 +163,13 @@ class MyRatingScreenViewModelTest {
             title = "Dummy Movie",
             genres = emptyList(),
             imdbRating = 7.5f,
-            duration = null,
+            duration = 1.minutes,
             releaseDate = LocalDate.Companion.parse("2023-01-01"),
-            rating = 8
+            rating = 8,
+            overview = "",
+            trailerUrl = ""
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 2,
             title = "Dummy TV Show",
             overview = "An overview",

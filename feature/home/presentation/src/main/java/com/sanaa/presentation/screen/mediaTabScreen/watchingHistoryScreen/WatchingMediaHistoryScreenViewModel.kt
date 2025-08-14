@@ -9,6 +9,7 @@ import entity.Genre
 import entity.MediaHistoryItem
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
@@ -28,7 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val stringProvider: VodStringProvider,
@@ -81,7 +82,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SERIES, genreId = genreId) },
+            callee = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -134,7 +135,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
-        return manageTvSeriesUseCase.getSeriesGenres()
+        return manageTvShowUseCase.getTvShowGenres()
     }
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
@@ -237,7 +238,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true, showRefreshButton = true) }
             emitEffect(WatchingMediaHistoryScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))

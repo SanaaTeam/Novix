@@ -8,7 +8,7 @@ import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import entity.User
 import exceptions.NoLoggedInUserException
 import exceptions.NoNetworkException
@@ -36,6 +36,7 @@ import usecase.ManageTvSeriesUseCase
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import kotlin.test.Ignore
@@ -45,7 +46,7 @@ import kotlin.time.Duration.Companion.minutes
 class HomeScreenViewModelTest {
 
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
@@ -63,9 +64,9 @@ class HomeScreenViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         coEvery { manageMovieUseCase.getPopularMovies(any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getPopularSeries(any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getPopularTvShows(any()) } returns emptyList()
         coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getTopRatedTvShows(any(), any()) } returns emptyList()
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
@@ -79,7 +80,7 @@ class HomeScreenViewModelTest {
     private fun initializeViewModel() {
         viewModel = HomeScreenViewModel(
             manageMovieUseCase,
-            manageTvSeriesUseCase,
+            manageTvShowUseCase,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
@@ -95,9 +96,10 @@ class HomeScreenViewModelTest {
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
         // Given
         val popularMovies = listOf(dummyMovie.copy(id = 1))
-        val popularTvSeries = listOf(dummyTvSeries.copy(id = 2))
+        val popularTvShows = listOf(dummyTvShow.copy(id = 2))
+
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
-        coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
+        coEvery { manageTvShowUseCase.getPopularTvShows(1) } returns popularTvShows
 
         // When
         initializeViewModel()
@@ -304,7 +306,7 @@ class HomeScreenViewModelTest {
         viewModel.onRetryClick()
         advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
-        coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
+        coVerify(exactly = 2) { manageTvShowUseCase.getPopularTvShows(any()) }
     }
 
     @Test
@@ -391,10 +393,10 @@ class HomeScreenViewModelTest {
             duration = 120.minutes,
             releaseDate = LocalDate(2020, 2, 1),
             overview = "",
-            trailerUrl = null,
+            trailerUrl = "",
             rating = 0
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 2,
             title = "Dummy Series",
             posterImageUrl = "",
@@ -411,7 +413,8 @@ class HomeScreenViewModelTest {
             id = 1,
             posterImageUrl = "",
             mediaType = MediaType.MOVIE,
-            genres = emptyList()
+            genres = emptyList(),
+            lastWatchedAt = 0L
         )
         val dummySavedList = SavedList(id = 1, title = "Favorites", itemCount = 10)
     }

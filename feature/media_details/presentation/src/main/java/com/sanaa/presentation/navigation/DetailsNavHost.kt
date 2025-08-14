@@ -22,7 +22,7 @@ import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
-import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
+import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
@@ -31,10 +31,10 @@ import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
-import com.sanaa.presentation.screen.review.ReviewViewModel
+import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
-import com.sanaa.presentation.screen.series.SeriesScreen
-import com.sanaa.presentation.screen.series.SeriesViewModel
+import com.sanaa.presentation.screen.tvShow.TvShowScreen
+import com.sanaa.presentation.screen.tvShow.TvShowScreenViewModel
 
 @Composable
 fun DetailsNavHost(
@@ -46,7 +46,7 @@ fun DetailsNavHost(
 ) {
     val initialRoute = when {
         startRoute != null && mediaId != null -> when (startRoute) {
-            StartRoute.SERIES -> SeriesDetailsScreenRoute(mediaId).route()
+            StartRoute.TV_SHOW -> TvShowDetailsScreenRoute(mediaId).route()
             StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId).route()
             StartRoute.ACTOR -> ActorScreenRoute(mediaId).route()
         }
@@ -55,7 +55,7 @@ fun DetailsNavHost(
             if (isTvGenre) {
                 GenreTvShowsScreenRoute(genreId!!, genreName!!).route()
             } else {
-                MovieCategoriesScreenRoute(genreId!!, genreName!!).route()
+                GenreMovieScreenRoute(genreId!!, genreName!!).route()
             }
         }
     }
@@ -86,24 +86,24 @@ fun DetailsNavHost(
             modifier = Modifier.background(Theme.colors.surface)
         ) {
 
-            // ──── Series ───────────────────────────────────────────────────────────
+            // ──── TvShows ───────────────────────────────────────────────────────────
             composable(
-                route = SeriesDetailsScreenRoute.PATTERN,
+                route = TvShowDetailsScreenRoute.PATTERN,
                 arguments = listOf(
-                    navArgument(SeriesDetailsScreenRoute.ARG_SERIES_ID) {
+                    navArgument(TvShowDetailsScreenRoute.ARG_TV_SHOW_ID) {
                         type = NavType.IntType
                     }
                 )
             ) {
-                val seriesViewModel: SeriesViewModel = hiltViewModel()
-                SeriesScreen(viewModel = seriesViewModel)
+                val tvShowScreenViewModel: TvShowScreenViewModel = hiltViewModel()
+                TvShowScreen(viewModel = tvShowScreenViewModel)
             }
 
             // ──── Episodes ─────────────────────────────────────────────────────────
             composable(
                 route = EpisodeDetailsScreenRoute.PATTERN,
                 arguments = listOf(
-                    navArgument(EpisodeDetailsScreenRoute.ARG_SERIES_ID) {
+                    navArgument(EpisodeDetailsScreenRoute.ARG_TH_SHOW_ID) {
                         type = NavType.IntType
                     },
                     navArgument(EpisodeDetailsScreenRoute.ARG_SEASON_NUMBER) {
@@ -140,13 +140,13 @@ fun DetailsNavHost(
             }
 
             composable(
-                route = TopSeriesScreenRoute.PATTERN,
-                arguments = listOf(navArgument(TopSeriesScreenRoute.ARG_ACTOR_ID) {
+                route = TopTvShowsScreenRoute.PATTERN,
+                arguments = listOf(navArgument(TopTvShowsScreenRoute.ARG_ACTOR_ID) {
                     type = NavType.IntType
                 })
             ) {
                 val actorViewModel: ActorViewModel = hiltViewModel()
-                TopSeriesScreen(viewModel = actorViewModel)
+                TopShowsScreen(viewModel = actorViewModel)
             }
 
             composable(
@@ -166,12 +166,12 @@ fun DetailsNavHost(
             composable(
                 route = ReviewsScreenRoute.PATTERN,
                 arguments = listOf(
-                    navArgument(ReviewsScreenRoute.ARG_SERIES_ID) { type = NavType.IntType },
+                    navArgument(ReviewsScreenRoute.ARG_MEDIA_ID) { type = NavType.IntType },
                     navArgument(ReviewsScreenRoute.ARG_MEDIA_TYPE) { type = NavType.StringType }
                 )
             ) {
-                val reviewViewModel: ReviewViewModel = hiltViewModel()
-                ReviewsScreen(viewModel = reviewViewModel)
+                val reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel()
+                ReviewsScreen(viewModel = reviewScreenViewModel)
             }
 
             // ──── Movies ───────────────────────────────────────────────────────────
@@ -185,14 +185,14 @@ fun DetailsNavHost(
                 MovieDetailsScreen(viewModel = movieDetailsViewModel)
             }
 
-            // ──── Categories ───────────────────────────────────────────────────────
+            // ──── Genre ───────────────────────────────────────────────────────
             composable(
-                route = MovieCategoriesScreenRoute.PATTERN,
+                route = GenreMovieScreenRoute.PATTERN,
                 arguments = listOf(
-                    navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_ID) {
+                    navArgument(GenreMovieScreenRoute.ARG_GENRE_ID) {
                         type = NavType.IntType
                     },
-                    navArgument(MovieCategoriesScreenRoute.ARG_CATEGORY_NAME) {
+                    navArgument(GenreMovieScreenRoute.ARG_GENRE_NAME) {
                         type = NavType.StringType
                     }
                 )
