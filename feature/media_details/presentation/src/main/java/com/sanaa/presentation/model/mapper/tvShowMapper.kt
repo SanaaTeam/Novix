@@ -39,8 +39,8 @@ fun Episode.toState() = EpisodeUiState(
     rating = String.format("%.1f", imdbRating),
     airDate = if (releaseDate != defaultDate) formatLocalizedDate(releaseDate) else null,
     stillPath = stillImagePath,
-    duration = durationMinutes,
-    overview = overview,
+    duration = durationMinutes.takeIf { it > 0 },
+    overview = overview.takeIf(String::isNotBlank),
     seasonNumber = seasonNumber,
 )
 

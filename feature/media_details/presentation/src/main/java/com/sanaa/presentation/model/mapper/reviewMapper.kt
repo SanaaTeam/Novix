@@ -8,10 +8,10 @@ import entity.Review
 @SuppressLint("DefaultLocale")
 fun Review.toReviewUiModel() = ReviewUiModel(
     id = id,
-    authorName = authorName,
-    username = userHandle,
+    authorName = authorName.takeIf(String::isNotBlank),
+    username = userHandle.takeIf(String::isNotBlank),
     content = content,
     rating = rating.takeIf { it > 0 }?.let { String.format("%.1f", rating) },
     createdDate = if (createdDate != defaultDate) createdDate.toString() else "",
-    avatarUrl = avatarUrl
+    avatarUrl = avatarUrl.takeIf(String::isNotBlank)
 )

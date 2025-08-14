@@ -18,13 +18,13 @@ class ReviewViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieDetails: ManageMovieUseCase
-    private lateinit var manageTvSeriesDetails: ManageTvShowUseCase
+    private lateinit var manageTvShowDetails: ManageTvShowUseCase
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieDetails = mockk(relaxed = true)
-        manageTvSeriesDetails = mockk(relaxed = true)
+        manageTvShowDetails = mockk(relaxed = true)
     }
 
     @AfterEach

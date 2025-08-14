@@ -71,7 +71,7 @@ class ActorViewModelTest {
     }
 
     @Test
-    fun `onTopSeriesClicked emits NavigateToTopSeries`() = runTest {
+    fun `onTopTvShowClicked emits NavigateToTopTvShow`() = runTest {
         givenHappyViewModel()
         viewModel.onTopShowsClicked()
         viewModel.effect.test {
@@ -91,7 +91,7 @@ class ActorViewModelTest {
     }
 
     @Test
-    fun `onSeriesClicked emits NavigateToSeriesDetails`() = runTest {
+    fun `onTvShowClicked emits NavigateToTvShowDetails`() = runTest {
         givenHappyViewModel()
         val tvShowId = 123
         viewModel.onTvShowClicked(tvShowId)
@@ -122,7 +122,7 @@ class ActorViewModelTest {
     private fun givenHappyViewModel() {
         coEvery { manageActorDetailsUseCase.getActorDetails(actorId) } returns dummyActor
         coEvery { manageActorDetailsUseCase.getActorTopMovies(actorId) } returns dummyMovies
-        coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummySeries
+        coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummyTvShow
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -178,10 +178,10 @@ class ActorViewModelTest {
             )
         )
 
-        private val dummySeries = listOf(
+        private val dummyTvShow = listOf(
             TvShow(
                 id = 3,
-                title = "Series One",
+                title = "tv One",
                 overview = "Overview",
                 releaseDate = LocalDate.parse("2019-05-12"),
                 genres = emptyList(),
