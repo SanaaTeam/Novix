@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.topRatingScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -6,16 +6,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,114 +36,34 @@ import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaTabs
+import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
 fun TopRatedMediaScreen(
-    modifier: Modifier = Modifier,
     viewModel: TopRatedMediaScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val navController = LocalMainNavController.current
-    val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(appContext, HomeApiEntryPoint::class.java)
-            .detailsApi()
-    }
+    EffectHandler(viewModel.effect)
 
-    val context = LocalContext.current
-
-    val authApi = EntryPointAccessors.fromApplication(
-        context,
-        HomeApiEntryPoint::class.java
-    ).authenticationApi()
-
-    val launcher = launchAuthActivityForResult()
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is TopRatedScreenEffect.NavigateToMediaDetails -> {
-                    if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
-                        detailsApi.launch(
-                            context = navController.context,
-                            id = effect.id,
-                            startRoute = StartRoute.MOVIE
-                        )
-                    } else if (effect.mediaTypeUi == MediaTypeUi.TV_SHOW) {
-                        detailsApi.launch(
-                            context = navController.context,
-                            id = effect.id,
-                            startRoute = StartRoute.TV_SHOW
-                        )
-                    }
-                }
-
-                is TopRatedScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                TopRatedScreenEffect.NavigateToLogin -> {
-                    launcher.launch(authApi.getLaunchIntent(context))
-                }
-
-                is TopRatedScreenEffect.ShowError -> {
-                    snack = SnackData(message = effect.message, isError = true)
-                }
-
-                is TopRatedScreenEffect.ShowSuccess -> {
-                    snack = SnackData(message = effect.message, isError = false)
-                }
-            }
-        }
-    }
     TopRatedMediaScreenContent(
-        title = stringResource(R.string.top_rated),
         state = state.value,
         interactionListener = viewModel,
-        modifier = modifier,
     )
-
-    if (state.value.userIsLoggedIn) {
-        state.value.selectedMediaToSave?.let { mediaItem ->
-            SaveToListBottomSheet(
-                isVisible = state.value.showSaveToListBottomSheet,
-                mediaId = mediaItem.id.toLong(),
-                onDismiss = viewModel::onDismissSaveToListBottomSheet,
-                onCreateNewListClick = viewModel::onCreateNewListClick,
-            )
-        }
-        AddBookmarkListBottomSheet(
-            isVisible = state.value.showAddListBottomSheet,
-            onDismiss = viewModel::onDismissAddListBottomSheet,
-            mediaId = state.value.selectedMediaToSave?.id ?: 0
-        )
-    } else {
-        RequestToLoginBottomSheet(
-            isVisible = state.value.showLoginBottomSheet,
-            onDismiss = viewModel::onDismissBottomSheet,
-            onLoginButtonClick = {
-                viewModel.onLoginButtonClick()
-            }
-        )
-    }
-
 }
 
 
 @Composable
 private fun TopRatedMediaScreenContent(
-    title: String,
     state: TopRatedMediaScreenUiState,
     interactionListener: TopRatedScreenInteractionListener,
     modifier: Modifier = Modifier,
@@ -159,11 +79,22 @@ private fun TopRatedMediaScreenContent(
                         onClick = interactionListener::onBackClick
                     )
                 },
-                screenTitle = title,
+                screenTitle = stringResource(R.string.top_rated),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
             )
+        },
+        snackBarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                NovixAnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onSnackBarDismiss
+                )
+            }
         },
         modifier = modifier.systemBarsPadding(),
     ) {
@@ -173,12 +104,12 @@ private fun TopRatedMediaScreenContent(
 
             MediaTabs(
                 onTabClick = interactionListener::onMediaTabSelection,
-                selectedTab = state.selectedMediaTypeUi,
+                selectedTab = state.selectedMediaTypeUiState,
                 modifier = Modifier.fillMaxWidth()
             )
 
             AnimatedContent(
-                targetState = state.selectedMediaTypeUi to state.isNoInternetConnection,
+                targetState = state.selectedMediaTypeUiState to state.isNoInternetConnection,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(150, delayMillis = 150))
                         .togetherWith(fadeOut(animationSpec = tween(150)))
@@ -224,6 +155,79 @@ private fun TopRatedMediaScreenContent(
                             }
                         }
                     }
+                }
+            }
+        }
+        if (state.userIsLoggedIn) {
+            state.selectedMediaToSave?.let { mediaItem ->
+                SaveToListBottomSheet(
+                    isVisible = state.showSaveToListBottomSheet,
+                    mediaId = mediaItem.id.toLong(),
+                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                    onCreateNewListClick = interactionListener::onCreateNewListClick,
+                )
+            }
+            AddBookmarkListBottomSheet(
+                isVisible = state.showAddListBottomSheet,
+                onDismiss = interactionListener::onDismissAddListBottomSheet,
+                mediaId = state.selectedMediaToSave?.id ?: 0
+            )
+        } else {
+            RequestToLoginBottomSheet(
+                isVisible = state.showLoginBottomSheet,
+                onDismiss = interactionListener::onDismissLoginBottomSheet,
+                onLoginButtonClick = interactionListener::onLoginButtonClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<TopRatedMediaScreenEffect>,
+) {
+    val context = LocalContext.current
+    val appContext = context.applicationContext
+    val navController = LocalMainNavController.current
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .detailsApi()
+    }
+
+    val authApi = EntryPointAccessors.fromApplication(
+        context,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+
+    val launcher = launchAuthActivityForResult()
+
+    LaunchedEffect(Unit) {
+        effect.collectLatest { effect ->
+            when (effect) {
+                is TopRatedMediaScreenEffect.NavigateToMediaDetails -> {
+                    if (effect.mediaTypeUiState == MediaTypeUi.MOVIE) {
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.MOVIE
+                        )
+                    } else if (effect.mediaTypeUiState == MediaTypeUi.TV_SHOW) {
+                        detailsApi.launch(
+                            context = navController.context,
+                            id = effect.id,
+                            startRoute = StartRoute.TV_SHOW
+                        )
+                    }
+                }
+
+                is TopRatedMediaScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                TopRatedMediaScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
                 }
             }
         }
