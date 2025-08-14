@@ -1,10 +1,10 @@
 package com.sanaa.presentation.screen.actors
 
-import manageActorUseCase.GetActorDetailsUseCase
-import manageActorUseCase.GetActorTopMoviesUseCase
-import manageActorUseCase.GetActorTopTvShowsUseCase
-import manageActorUseCase.GetGalleryImagesUseCase
-import manageActorUseCase.GetProfileImagesUseCase
+import usecase.manageActorUseCase.GetActorDetailsUseCase
+import usecase.manageActorUseCase.GetActorTopMoviesUseCase
+import usecase.manageActorUseCase.GetActorTopTvShowsUseCase
+import usecase.manageActorUseCase.GetGalleryImagesUseCase
+import usecase.manageActorUseCase.GetProfileImagesUseCase
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat

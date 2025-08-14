@@ -1,6 +1,6 @@
 package usecase.details.manageActorUseCaseTest
 
-import manageActorUseCase.GetProfileImagesUseCase
+import usecase.manageActorUseCase.GetProfileImagesUseCase
 import com.google.common.truth.Truth.assertThat
 import exceptions.NovixAppException
 import io.mockk.coEvery

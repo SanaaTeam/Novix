@@ -1,6 +1,6 @@
 package usecase.details.manageActorUseCaseTest
 
-import manageActorUseCase.GetActorTopTvShowsUseCase
+import usecase.manageActorUseCase.GetActorTopTvShowsUseCase
 import com.google.common.truth.Truth.assertThat
 import entity.Genre
 import entity.TvShow

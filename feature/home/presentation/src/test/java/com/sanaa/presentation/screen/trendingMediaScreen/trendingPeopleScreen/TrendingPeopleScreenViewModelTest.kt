@@ -16,7 +16,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
-import manageActorUseCase.GetTrendingActorsUseCase
+import usecase.manageActorUseCase.GetTrendingActorsUseCase
 import org.junit.jupiter.api.BeforeEach
 import service.VodStringProvider
 import kotlin.test.Test

@@ -1,6 +1,6 @@
 package usecase.details.manageActorUseCaseTest
 
-import manageActorUseCase.GetTrendingActorsUseCase
+import usecase.manageActorUseCase.GetTrendingActorsUseCase
 import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import exceptions.NovixAppException

@@ -1,4 +1,4 @@
-package manageActorUseCase
+package usecase.manageActorUseCase
 
 import entity.Actor
 import repository.ActorRepository

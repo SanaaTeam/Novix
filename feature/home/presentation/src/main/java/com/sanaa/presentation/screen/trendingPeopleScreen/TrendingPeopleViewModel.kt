@@ -14,7 +14,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import manageActorUseCase.GetTrendingActorsUseCase
+import usecase.manageActorUseCase.GetTrendingActorsUseCase
 import service.VodStringProvider
 import javax.inject.Inject
 
