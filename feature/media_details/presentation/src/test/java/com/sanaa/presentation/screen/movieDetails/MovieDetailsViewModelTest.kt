@@ -26,6 +26,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -43,6 +44,7 @@ class MovieDetailsViewModelTest {
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -83,10 +85,10 @@ class MovieDetailsViewModelTest {
             manageMovieDetails,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
-
             getUser,
-            savedListsStatusProvider
-        )
+            savedListsStatusProvider,
+            stringProvider
+            )
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -260,6 +262,7 @@ class MovieDetailsViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getUser,
             savedListsStatusProvider,
+            stringProvider,
             dispatcher = testDispatcher,
 
             )
