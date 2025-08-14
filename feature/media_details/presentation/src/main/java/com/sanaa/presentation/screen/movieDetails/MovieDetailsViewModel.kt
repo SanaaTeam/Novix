@@ -51,6 +51,7 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
 
+
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
         "movieId is required in SavedStateHandle"
     }
@@ -59,20 +60,37 @@ class MovieDetailsViewModel @Inject constructor(
         fetchMovieDetails(movieId)
         fetchUserRating()
         updateUserLoginState()
-
+        observeSavedStatus()
+    }
+    private fun observeSavedStatus() {
         viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
+            var previousSavedIds = savedListsStatusProvider.savedIds.value
+            savedListsStatusProvider.savedIds.collect { newSavedIds ->
                 updateState {
                     copy(
                         movieDetails = movieDetails.copy(
-                            isSaved = savedIds.contains(movieDetails.id)
+                            isSaved = newSavedIds.contains(movieId)
                         )
                     )
                 }
+                showSnackBarForSaveStatus(previousSavedIds, newSavedIds)
+                previousSavedIds = newSavedIds
             }
         }
     }
 
+    private fun showSnackBarForSaveStatus(previousSavedIds: Set<Int>, newSavedIds: Set<Int>) {
+        if (newSavedIds.contains(movieId) && !previousSavedIds.contains(movieId)) {
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.addToListSuccess,
+                        isError = false
+                    )
+                )
+            }
+        }
+    }
     override fun onBackClick() {
         emitEffect(MovieDetailsUiEffect.NavigateBack)
     }
@@ -83,8 +101,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onReadMoreClick() {}
-
     override fun onBookmarkClick(movie: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
             promptLogin(LoginPromptType.BOOKMARK)
@@ -93,6 +109,7 @@ class MovieDetailsViewModel @Inject constructor(
 
         if (movie.isSaved) {
             savedListsStatusProvider.markItemUnsaved(movie.id)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)) }
         } else {
             updateState {
                 copy(
@@ -101,6 +118,10 @@ class MovieDetailsViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun onMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -170,24 +191,25 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitMovieRating,
-            onError = { exception ->
-                updateState {
-                    copy(snackBarData = SnackData(message = exception.message ?: stringProvider.somethingWentWrongError, isError = true))
-                }
-                onShowRateBottomSheetFailed(exception)
-            }
+            onError = ::onShowRateBottomSheetFailed,
         )
+        updateState {
+            copy(showRateBottomSheet = false)
+        }
     }
 
     private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
                 errorMessage = exception.message,
-                showRateBottomSheet = false
+                showRateBottomSheet = false,
+                snackBarData = SnackData(
+                    message = exception.message ?: stringProvider.somethingWentWrongError,
+                    isError = true
+                )
             )
         }
     }
-
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -347,7 +369,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onDismissSnack() {
+    override fun onSnackDismissRequested() {
         updateState {
             copy(snackBarData = null)
         }
