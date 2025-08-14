@@ -19,10 +19,10 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.withTimeout
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -30,8 +30,9 @@ import kotlin.time.Duration.Companion.minutes
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingScreenViewModelTest {
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
+    private val manageTvSeriesUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val preferencesManager: PreferencesManager = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: MyRatingScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
 
@@ -40,36 +41,48 @@ class MyRatingScreenViewModelTest {
         Dispatchers.setMain(testDispatcher)
         coEvery { preferencesManager.accountId } returns flowOf(123L)
         coEvery { preferencesManager.sessionId } returns flowOf("test_session")
+
+        coEvery { stringProvider.deleteRatingFailed } returns "Failed to delete rating."
+        coEvery { stringProvider.deleteRatingSuccess } returns "Rating deleted successfully."
+
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvSeries)
     }
 
     @Test
-    fun `loadRatedMedia should sets isNoInternetConnection to true when there is a network error`() = runTest {
+    fun `loadRatedMedia should set isNoInternetConnection to true when a network error occurs`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvShow)
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns emptyList()
 
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
+        advanceUntilIdle()
 
         viewModel.state.test {
             val state = awaitItem()
-            if (state.isNoInternetConnection) {
-                cancelAndIgnoreRemainingEvents()
-            } else {
-                withTimeout(3000) {
-                    awaitItem().also {
-                        assertThat(it.isNoInternetConnection).isTrue()
-                    }
-                }
-            }
+            assertThat(state.isNoInternetConnection).isTrue()
+            assertThat(state.isLoading).isFalse()
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
 
     @Test
-    fun `onBackClick should emit NavigateBack effect when user clicks back button`() = runTest {
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
-        viewModel.onBackClick()
+    fun `onBackClick should emit NavigateBack effect`() = runTest {
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
         viewModel.effect.test {
+            viewModel.onBackClick()
             assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
@@ -77,57 +90,102 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onTabSelected updates the selectedTab in state`() = runTest {
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
         viewModel.onTabSelected(MyRatingTab.TV_SHOWS)
         assertThat(viewModel.state.value.selectedTab).isEqualTo(MyRatingTab.TV_SHOWS)
     }
 
     @Test
-    fun `onDeleteIconClick for movie success removes item from state`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns emptyList()
+    fun `onDeleteIconClick for movie success removes item from state and shows success snackbar`() = runTest {
         coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns true
-
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
         advanceUntilIdle()
 
-        viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
-        advanceUntilIdle()
-
-        assertThat(viewModel.state.value.ratedMovies).isEmpty()
-    }
-
-    @Test
-    fun `onDeleteIconClick for movie failure emits error snack-bar`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns emptyList()
-        coEvery { manageMovieUseCase.deleteMovieRate(any()) } returns false
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
-        advanceUntilIdle()
-        viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
+        assertThat(viewModel.state.value.ratedMovies).isNotEmpty()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar)
+            viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
+            advanceUntilIdle()
+
+            assertThat(viewModel.state.value.ratedMovies).isEmpty()
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
-    fun `onRetryLoadDetails sets isLoading to true`() = runTest {
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
-        viewModel.updateState { copy(isNoInternetConnection = true) }
+    fun `onDeleteIconClick for movie failure emits error snackbar`() = runTest {
+        coEvery { manageMovieUseCase.deleteMovieRate(any()) } throws RuntimeException("Deletion failed")
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
+        advanceUntilIdle()
+
+        viewModel.effect.test {
+            viewModel.onDeleteIconClick(dummyMovie.id, MediaTypeUi.MOVIE)
+            advanceUntilIdle()
+
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingFailed)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onRetryLoadDetails sets isLoading to true and reloads data`() = runTest {
+        coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
+        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } throws NoNetworkException()
+
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.isNoInternetConnection).isTrue()
+        assertThat(viewModel.state.value.isLoading).isFalse()
+
+        coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
+        coEvery { manageTvSeriesUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvSeries)
+
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.isLoading).isFalse()
+        assertThat(viewModel.state.value.ratedMovies).isNotEmpty()
+        assertThat(viewModel.state.value.ratedTvShows).isNotEmpty()
     }
 
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
-        viewModel =
-            MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
-        viewModel.onMediaClick(dummyMovie.id, MediaTypeUi.MOVIE)
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
+
         viewModel.effect.test {
+            viewModel.onMediaClick(dummyMovie.id, MediaTypeUi.MOVIE)
             assertThat(awaitItem()).isEqualTo(
                 MyRatingScreenEffect.NavigateToMediaDetails(
                     dummyMovie.id,
@@ -138,20 +196,46 @@ class MyRatingScreenViewModelTest {
         }
     }
 
-
     @Test
-    fun `onDeleteIconClick for tv show throws exception emits error snack-bar`() = runTest {
-        coEvery { manageMovieUseCase.getUserRatedMovies() } returns emptyList()
-        coEvery { manageTvShowUseCase.getRatedTvShows(any(), any()) } returns listOf(dummyTvShow)
-        coEvery { manageTvShowUseCase.deleteTvShowRate(any()) } throws RuntimeException("Delete failed")
-
-        viewModel = MyRatingScreenViewModel(manageMovieUseCase, manageTvShowUseCase, preferencesManager)
+    fun `onDeleteIconClick for tv show success removes item from state and shows success snackbar`() = runTest {
+        coEvery { manageTvSeriesUseCase.deleteTvShowRate(any()) } returns true
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
         advanceUntilIdle()
 
-        viewModel.onDeleteIconClick(dummyTvShow.id, MediaTypeUi.TV_SHOW)
+        assertThat(viewModel.state.value.ratedTvShows).isNotEmpty()
+        viewModel.effect.test {
+            viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
+            advanceUntilIdle()
+
+            assertThat(viewModel.state.value.ratedTvShows).isEmpty()
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingSuccess)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onDeleteIconClick for tv show failure emits error snackbar`() = runTest {
+        coEvery { manageTvSeriesUseCase.deleteTvShowRate(any()) } throws RuntimeException("Delete failed")
+        viewModel = MyRatingScreenViewModel(
+            manageMovieUseCase,
+            manageTvSeriesUseCase,
+            preferencesManager,
+            stringProvider,
+            testDispatcher
+        )
+        advanceUntilIdle()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(MyRatingScreenEffect.ShowErrorSnackBar)
+            viewModel.onDeleteIconClick(dummyTvSeries.id, MediaTypeUi.TV_SHOW)
+            advanceUntilIdle()
+
+            assertThat(viewModel.state.value.snackBarData?.message).isEqualTo(stringProvider.deleteRatingFailed)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -163,17 +247,18 @@ class MyRatingScreenViewModelTest {
             title = "Dummy Movie",
             genres = emptyList(),
             imdbRating = 7.5f,
-            duration = 1.minutes,
-            releaseDate = LocalDate.Companion.parse("2023-01-01"),
-            rating = 8,
-            overview = "",
-            trailerUrl = ""
+            releaseDate = LocalDate.parse("2023-01-01"),
+            rating = 0,
+            duration = 120.minutes,
+            overview = "This is a placeholder description for the dummy movie.",
+            trailerUrl = "https://example.com/trailer.mp4"
         )
-        val dummyTvShow = TvShow(
+
+        val dummyTvSeries = TvShow(
             id = 2,
             title = "Dummy TV Show",
             overview = "An overview",
-            releaseDate = LocalDate.Companion.parse("2022-05-15"),
+            releaseDate = LocalDate.parse("2022-05-15"),
             genres = emptyList(),
             imdbRating = 8.2f,
             posterImageUrl = "/tv_poster.jpg",
