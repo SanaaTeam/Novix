@@ -41,7 +41,7 @@ import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 
 
@@ -74,13 +74,13 @@ fun TopRatedMediaScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is TopRatedScreenEffect.NavigateToMediaDetails -> {
-                    if (effect.mediaTypeUi == MediaTypeUi.MOVIE) {
+                    if (effect.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                         detailsApi.launch(
                             context = navController.context,
                             id = effect.id,
                             startRoute = StartRoute.MOVIE
                         )
-                    } else if (effect.mediaTypeUi == MediaTypeUi.TV_SHOW) {
+                    } else if (effect.mediaTypeUiState == MediaTypeUiState.TV_SHOW) {
                         detailsApi.launch(
                             context = navController.context,
                             id = effect.id,
@@ -173,19 +173,19 @@ private fun TopRatedMediaScreenContent(
 
             MediaTabs(
                 onTabClick = interactionListener::onMediaTabSelection,
-                selectedTab = state.selectedMediaTypeUi,
+                selectedTab = state.selectedMediaTypeUiState,
                 modifier = Modifier.fillMaxWidth()
             )
 
             AnimatedContent(
-                targetState = state.selectedMediaTypeUi to state.isNoInternetConnection,
+                targetState = state.selectedMediaTypeUiState to state.isNoInternetConnection,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(150, delayMillis = 150))
                         .togetherWith(fadeOut(animationSpec = tween(150)))
                 },
             ) { (selectedMediaType, isNoInternetConnection) ->
                 when (selectedMediaType) {
-                    MediaTypeUi.MOVIE -> {
+                    MediaTypeUiState.MOVIE -> {
                         if (isNoInternetConnection && (topRatedMovies.itemCount == 0)) {
                             NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                         } else {
@@ -195,7 +195,7 @@ private fun TopRatedMediaScreenContent(
                                 selectedGenreId = state.movieSelectedGenreId,
                                 onGenreClick = interactionListener::onMovieGenreClick,
                                 onMediaClick = { media ->
-                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )
@@ -205,7 +205,7 @@ private fun TopRatedMediaScreenContent(
                         }
                     }
 
-                    MediaTypeUi.TV_SHOW -> {
+                    MediaTypeUiState.TV_SHOW -> {
                         if (isNoInternetConnection && (topRatedTvShows.itemCount == 0)) {
                             NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                         } else {
@@ -215,7 +215,7 @@ private fun TopRatedMediaScreenContent(
                                 selectedGenreId = state.tvShowSelectedGenreId,
                                 onGenreClick = interactionListener::onTvShowGenreClick,
                                 onMediaClick = { media ->
-                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                    interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )

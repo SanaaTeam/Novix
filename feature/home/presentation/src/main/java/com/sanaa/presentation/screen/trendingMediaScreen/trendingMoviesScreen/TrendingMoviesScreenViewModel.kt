@@ -11,7 +11,7 @@ import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteract
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -48,7 +48,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState {
                     copy(
@@ -61,7 +61,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            block = ::loadGenresOperation,
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -80,13 +80,13 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun loadMovies() {
         tryToCollect(
-            callee = ::loadMoviesOperation,
+            block = ::loadMoviesOperation,
             onCollect = ::onLoadMoviesSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
+    private fun loadMoviesOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource() },
             mapper = Movie::toState
@@ -97,7 +97,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         }.cachedIn(viewModelScope)
     }
 
-    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState {
             copy(
                 mediaList = flowOf(pagingData),
@@ -119,7 +119,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showBottomSheet = true) }
             return

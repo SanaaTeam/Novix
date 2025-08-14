@@ -38,7 +38,7 @@ import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -67,8 +67,8 @@ fun WatchingMediaHistoryScreen(
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
-                        MediaTypeUi.MOVIE -> {
+                    when (effect.mediaTypeUiState) {
+                        MediaTypeUiState.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
@@ -76,7 +76,7 @@ fun WatchingMediaHistoryScreen(
                             )
                         }
 
-                        MediaTypeUi.TV_SHOW -> {
+                        MediaTypeUiState.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
@@ -141,12 +141,12 @@ private fun WatchingMediaHistoryScreenContent(
 
             MediaTabs(
                 onTabClick = interactionListener::onMediaTabSelection,
-                selectedTab = state.selectedMediaTypeUi,
+                selectedTab = state.selectedMediaTypeUiState,
                 modifier = Modifier.fillMaxWidth()
             )
 
             AnimatedContent(
-                targetState = state.selectedMediaTypeUi,
+                targetState = state.selectedMediaTypeUiState,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(150, delayMillis = 150))
                         .togetherWith(fadeOut(animationSpec = tween(150)))
@@ -155,28 +155,28 @@ private fun WatchingMediaHistoryScreenContent(
             ) { selectedMediaType ->
                 when (selectedMediaType) {
 
-                    MediaTypeUi.MOVIE -> {
+                    MediaTypeUiState.MOVIE -> {
                         MediaListSectionContent(
                             genres = state.movieGenres,
                             mediaList = movies,
                             selectedGenreId = state.movieSelectedGenreId,
                             onGenreClick = interactionListener::onMovieGenreClick,
                             onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                             },
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()
                         )
                     }
 
-                    MediaTypeUi.TV_SHOW -> {
+                    MediaTypeUiState.TV_SHOW -> {
                         MediaListSectionContent(
                             genres = state.tvShowGenres,
                             mediaList = tvShows,
                             selectedGenreId = state.tvShowSelectedGenreId,
                             onGenreClick = interactionListener::onTvShowGenreClick,
                             onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                             },
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()

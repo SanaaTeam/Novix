@@ -1,8 +1,8 @@
 package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
 
 import com.sanaa.presentation.BaseViewModel
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
@@ -45,7 +45,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
             onCollect = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -63,7 +63,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -81,7 +81,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -106,7 +106,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            block = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -129,8 +129,8 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
+    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUiState) {
+        updateState { copy(selectedMediaTypeUiState = mediaTypeUiState) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -147,11 +147,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShows(id)
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
+        emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         updateState {
             copy(
                 showBottomSheet = true

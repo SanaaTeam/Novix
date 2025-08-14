@@ -7,8 +7,8 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
@@ -50,7 +50,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
         onDismissBottomSheet()
@@ -62,7 +62,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = {
+            block = {
                 loadTopRatedMovies(genreId = genreId)
                     .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { mediaItem ->
@@ -75,7 +75,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(movieList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -83,13 +83,13 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedTvShows(genreId = genreId) },
+            block = { loadTopRatedTvShows(genreId = genreId) },
             onSuccess = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(tvShowList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -97,7 +97,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -122,7 +122,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            block = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -145,8 +145,8 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
+    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUiState) {
+        updateState { copy(selectedMediaTypeUiState = mediaTypeUiState) }
     }
 
     override fun onMovieGenreClick(id: Int?) {
@@ -163,11 +163,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUi: MediaTypeUi) {
-        emitEffect(TopRatedScreenEffect.NavigateToMediaDetails(id, mediaTypeUi))
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
+        emitEffect(TopRatedScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
@@ -231,7 +231,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedMovies(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
         updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = {
@@ -245,7 +245,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedTvShows(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
         updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createTvShowPagingDataSource(genreId = genreId) },

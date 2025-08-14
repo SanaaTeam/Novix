@@ -8,7 +8,7 @@ import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteract
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
@@ -41,7 +41,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -52,7 +52,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            block = ::loadGenresOperation,
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -71,20 +71,20 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
 
     private fun loadTvShows() {
         tryToCollect(
-            callee = ::loadTvShowsOperation,
+            block = ::loadTvShowsOperation,
             onCollect = ::onLoadTvShowsSuccess,
             onError = ::onDataLoadError
         )
     }
 
-    private fun loadTvShowsOperation(): Flow<PagingData<MediaItem>> {
+    private fun loadTvShowsOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource() },
             mapper = TvShow::toState
         )
     }
 
-    private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onLoadTvShowsSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState {
             copy(
                 mediaList = flowOf(pagingData),
@@ -106,7 +106,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState {
                 copy(

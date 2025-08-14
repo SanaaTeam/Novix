@@ -38,36 +38,40 @@ abstract class BaseViewModel<T, E>(
         _state.update(updater)
     }
 
-    protected fun <T> tryToExecute(
-        callee: suspend () -> T,
-        onSuccess: (T) -> Unit = {},
-        onError: (exception: NovixAppException) -> Unit = {},
-        dispatcher: CoroutineDispatcher = defaultDispatcher,
-    ) {
-        val handler = createExceptionHandler(onError)
-
-        viewModelScope.launch(dispatcher + handler) {
-            val result = callee()
-            onSuccess(result)
-        }
-    }
-
     protected fun emitEffect(effect: E) {
         viewModelScope.launch {
             _effect.emit(effect)
         }
     }
 
+    protected fun <T> tryToExecute(
+        onStart: () -> Unit = {},
+        block: suspend () -> T,
+        onSuccess: (T) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
+        dispatcher: CoroutineDispatcher = defaultDispatcher,
+    ) {
+        onStart()
+        val handler = createExceptionHandler(onError)
+
+        viewModelScope.launch(dispatcher + handler) {
+            val result = block()
+            onSuccess(result)
+        }
+    }
+
     protected fun <T> tryToCollect(
-        callee: suspend () -> Flow<T>,
+        onStart: () -> Unit = {},
+        block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         val handler = createExceptionHandler(onError)
 
         viewModelScope.launch(dispatcher + handler) {
-            callee().collectLatest { result ->
+            block().collectLatest { result ->
                 onCollect(result)
             }
 

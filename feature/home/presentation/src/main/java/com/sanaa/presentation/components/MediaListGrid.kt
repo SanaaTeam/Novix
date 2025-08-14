@@ -21,16 +21,16 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
 
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 
 @Composable
 fun MediaListGrid(
-    mediaList: List<MediaItem>,
+    mediaList: List<MediaItemUiState>,
     modifier: Modifier = Modifier,
     isScrollEnabled: Boolean = true,
-    onMediaClick: (MediaItem) -> Unit = {},
-    onSaveIconClick: (MediaItem) -> Unit = {},
+    onMediaClick: (MediaItemUiState) -> Unit = {},
+    onSaveIconClick: (MediaItemUiState) -> Unit = {},
 ) {
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
@@ -68,7 +68,7 @@ fun MediaListGrid(
                     }
                 },
                 topLeftContent = {
-                    if (media.mediaTypeUi == MediaTypeUi.MOVIE) {
+                    if (media.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                         SaveIconChip(
                             onClick = { onSaveIconClick(media) },
                             isSaved = media.isSaved
