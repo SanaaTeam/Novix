@@ -28,13 +28,13 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.api.HomeApiEntryPoint
+import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -133,7 +133,7 @@ private fun EffectHandler(
 ) {
     val context = LocalContext.current
     val appContext = context.applicationContext
-    val navController = LocalAppNavController.current
+    val navController = LocalMainNavController.current
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
