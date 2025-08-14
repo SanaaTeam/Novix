@@ -17,11 +17,11 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
 import dagger.hilt.android.EntryPointAccessors
@@ -31,7 +31,7 @@ fun TrendingMoviesScreen(
     modifier: Modifier = Modifier,
     viewModel: TrendingMoviesScreenViewModel = hiltViewModel()
 ) {
-    val navController = LocalAppNavController.current
+    val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
     var snack by remember { mutableStateOf<SnackData?>(null) }
 
