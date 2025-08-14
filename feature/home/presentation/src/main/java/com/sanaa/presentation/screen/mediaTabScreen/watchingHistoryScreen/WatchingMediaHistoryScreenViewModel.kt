@@ -45,7 +45,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId) },
             onCollect = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -63,7 +63,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
+            block = { loadMediaHistory(mediaType = MediaType.TV_SHOW, genreId = genreId) },
             onCollect = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -81,7 +81,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -106,7 +106,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            block = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
