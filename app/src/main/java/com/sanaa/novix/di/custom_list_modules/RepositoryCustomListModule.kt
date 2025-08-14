@@ -1,5 +1,7 @@
 package com.sanaa.novix.di.custom_list_modules
 
+import com.sanaa.vod.cache.LocalSavedMovieDataSourceImpl
+import com.sanaa.vod.dataSource.local.cache.LocalSavedMovieDataSource
 import com.sanaa.vod.repository.SavedListRepositoryImpl
 import com.sanaa.vod.repository.SavedListsStatusProviderImpl
 import dagger.Binds
@@ -17,13 +19,19 @@ abstract class RepositoryCustomListModule {
     @Binds
     @Singleton
     abstract fun bindSavedListRepository(
-        savedListRepositoryImpl: SavedListRepositoryImpl
+        savedListRepositoryImpl: SavedListRepositoryImpl,
     ): SavedListRepository
 
     @Binds
     @Singleton
     abstract fun bindSavedListsStatusProvider(
-        savedMovieStatusProviderImpl: SavedListsStatusProviderImpl
+        savedMovieStatusProviderImpl: SavedListsStatusProviderImpl,
     ): SavedListsStatusProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindLocalSavedMovieDataSource(
+        impl: LocalSavedMovieDataSourceImpl,
+    ): LocalSavedMovieDataSource
 
 }
