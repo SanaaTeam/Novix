@@ -74,7 +74,6 @@ abstract class BaseViewModel<T, E>(
             block().collectLatest { result ->
                 onCollect(result)
             }
-
         }
     }
 

@@ -9,6 +9,8 @@ data class MyRatingScreenUiState(
     val selectedTab: MyRatingTab = MyRatingTab.ALL,
     val error: String? = null,
     val isNoInternetConnection: Boolean = false,
+    val snackBarData: SnackData? = null
+
 )
 data class SnackData(
     val message: String,

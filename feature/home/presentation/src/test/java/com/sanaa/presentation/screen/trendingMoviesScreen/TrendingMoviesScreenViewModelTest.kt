@@ -1,0 +1,233 @@
+package com.sanaa.presentation.screen.trendingMoviesScreen
+
+import app.cash.turbine.test
+import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.screen.TrendingMediaScreenEffect
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
+import com.sanaa.presentation.state.mapper.toState
+import entity.Genre
+import entity.Movie
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import repository.SavedListsStatusProvider
+import service.VodStringProvider
+import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.ManageMovieUseCase
+import kotlin.time.Duration.Companion.minutes
+
+
+class TrendingMoviesScreenViewModelTest {
+    private lateinit var viewModel: TrendingMoviesScreenViewModel
+    private val testDispatcher = StandardTestDispatcher()
+    private lateinit var manageMovieUseCase: ManageMovieUseCase
+    private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
+    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @BeforeEach
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        manageMovieUseCase = mockk(relaxed = true)
+        savedListsStatusProvider = mockk(relaxed = true) {
+            every { savedIds } returns MutableStateFlow(emptySet())
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @AfterEach
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
+    @Test
+    fun `init should fetch genres and update state on creation`() = runTest {
+        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
+
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.genreList).isEqualTo(genres.map { it.toState() })
+    }
+
+    @Test
+    fun `init should fetch movies and update state on creation`() = runTest {
+        coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns movies
+
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertThat(viewModel.state.value.mediaList).isNotNull()
+    }
+
+    @Test
+    fun `onGenreClick should fetch media and update state with media list for the passed genre when available`() =
+        runTest {
+            val genreId = 2
+            coEvery {
+                manageMovieUseCase.getTrendingMovies(any(), genreId)
+            } returns movies
+            viewModel = TrendingMoviesScreenViewModel(
+                manageMovieUseCase,
+                checkIfUserIsLoggedInUseCase,
+                savedListsStatusProvider,
+                stringProvider,
+                testDispatcher
+            )
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            viewModel.onGenreClick(genreId)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            assertThat(viewModel.state.value.selectedGenreId).isEqualTo(genreId)
+
+            assertThat(viewModel.state.value.mediaList).isNotNull()
+        }
+
+    @Test
+    fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.onSaveIconClick(media)
+
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
+    }
+
+    @Test
+    fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
+        coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns listOf(mockk())
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+        testDispatcher.scheduler.advanceUntilIdle()
+        val selectedGenre = viewModel.state.value.selectedGenreId
+
+        viewModel.onGenreClick(selectedGenre)
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        coVerify(exactly = 0) { manageMovieUseCase.getTrendingMovies(any(), any()) }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
+        val mediaId = 1
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+
+        viewModel.effect.test {
+            viewModel.onMediaClick(mediaId)
+            advanceUntilIdle()
+            assertThat(awaitItem()).isEqualTo(
+                TrendingMoviesScreenEffect.NavigateToMoviesDetails(mediaId)
+            )
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `onBackClick emits NavigateBack`() = runTest {
+        viewModel = TrendingMoviesScreenViewModel(
+            manageMovieUseCase,
+            checkIfUserIsLoggedInUseCase,
+            savedListsStatusProvider,
+            stringProvider,
+            testDispatcher
+        )
+
+        viewModel.onBackClick()
+
+        viewModel.effect.test {
+            assertThat(awaitItem()).isEqualTo(TrendingMoviesScreenEffect.NavigateBack)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    private companion object {
+        val genres = listOf(
+            Genre(
+                id = 1,
+                name = "Drama"
+            ),
+            Genre(
+                id = 2,
+                name = "Action"
+            )
+        )
+        val movies = listOf(
+            Movie(
+                id = 1,
+                title = "Breaking Bad",
+                posterImageUrl = "https://example.com/breaking_bad.jpg",
+                overview = "",
+                releaseDate = LocalDate(2008, 1, 20),
+                genres = emptyList(),
+                imdbRating = 9f,
+                duration = 100.minutes,
+                trailerUrl = "",
+                rating = 0
+            ),
+            Movie(
+                id = 2,
+                title = "Game of Thrones",
+                posterImageUrl = "https://example.com/image.jpg",
+                overview = "",
+                releaseDate = LocalDate(2008, 1, 20),
+                genres = emptyList(),
+                imdbRating = 8f,
+                duration = 100.minutes,
+                trailerUrl = "",
+                rating = 0
+            )
+        )
+        val media = MediaItemUiState(
+            id = 1,
+            title = "Test Movie",
+            imageUrl = "https://example.com/image.jpg",
+            mediaTypeUiState = MediaTypeUiState.MOVIE
+        )
+    }
+}
