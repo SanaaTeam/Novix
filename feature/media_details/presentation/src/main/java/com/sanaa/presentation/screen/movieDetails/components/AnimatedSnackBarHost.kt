@@ -13,12 +13,14 @@ import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVert
 import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import kotlinx.coroutines.delay
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AnimatedSnackBarHost(
     data: SnackData?,
     onDismiss: () -> Unit,
-    durationMillis: Long = 2500
+    duration: Duration = 2.5.seconds
 ) {
     AnimatedVisibility(
         visible = data != null,
@@ -31,7 +33,7 @@ fun AnimatedSnackBarHost(
     ) {
         if (data != null) {
             LaunchedEffect(data) {
-                delay(durationMillis)
+                delay(duration)
                 onDismiss()
             }
             SnackBar(
