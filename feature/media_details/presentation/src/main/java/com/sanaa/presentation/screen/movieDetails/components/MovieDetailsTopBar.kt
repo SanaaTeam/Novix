@@ -9,13 +9,12 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreenInteractionListener
+import com.sanaa.presentation.screen.movieDetails.MovieDetailsTopBarListener
 import com.sanaa.designsystem.R as designR
-
 
 @Composable
 fun MovieDetailsTopBar(
-    interactionListener: MovieDetailsScreenInteractionListener,
+    interactionListener: MovieDetailsTopBarListener,
     movie: MovieUiModel,
     modifier: Modifier = Modifier,
 ) {
