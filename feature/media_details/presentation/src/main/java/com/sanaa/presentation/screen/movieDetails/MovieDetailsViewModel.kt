@@ -247,7 +247,7 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             copy(
                 movieDetails = movie.toState(trailerUrl = trailerUrl)
-                    .copy(isSaved = isMovieSaved),
+                    .copy(isSaved = false),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,

@@ -47,7 +47,7 @@ class SaveToListViewModel @Inject constructor(
 
         tryToExecute(
             callee = addMovieToSavedList(selectedListId, mediaId),
-            onSuccess = onAddMovieToSavedListSuccess(mediaId),
+            onSuccess = { onAddMovieToSavedListSuccess(mediaId) },
             onError = ::onErrorAccrue
         )
     }
@@ -55,7 +55,7 @@ class SaveToListViewModel @Inject constructor(
     private fun addMovieToSavedList(
         selectedListId: Long,
         mediaId: Long,
-    ): suspend () -> Boolean = {
+    ): suspend () -> Unit = {
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()
