@@ -1,4 +1,4 @@
-package com.sanaa.presentation.navigation
+package com.sanaa.presentation.api
 
 import com.sanaa.api.AuthenticationApi
 import com.sanaa.api.CategoryFeatureApi
