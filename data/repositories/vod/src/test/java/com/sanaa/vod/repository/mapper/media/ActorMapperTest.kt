@@ -59,7 +59,7 @@ class ActorMapperTest {
     }
 
     @Test
-    fun `toTvSeries maps ActorCastCreditDto to TvSeries correctly`() {
+    fun `toTvShow maps ActorCastCreditDto to TvShow correctly`() {
         val dto = ActorCastCreditDto(
             id = 200,
             posterPath = "/poster.jpg",
@@ -71,7 +71,7 @@ class ActorMapperTest {
             overview = "A great series"
         )
 
-        val result = dto.toTvSeries()
+        val result = dto.toTvShow()
 
         assertEquals(200, result.id)
         assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", result.posterImageUrl)

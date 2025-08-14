@@ -3,7 +3,7 @@ package com.sanaa.vod.repository
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.vod.fake.FakeData.MovieSearchResponse
-import com.sanaa.vod.fake.FakeData.TvSeriesSearchResponse
+import com.sanaa.vod.fake.FakeData.tvShowSearchResponse
 import com.sanaa.vod.fake.FakeData.actorSearchResponse
 import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
@@ -107,11 +107,11 @@ class SearchRepositoryImplTest {
         runTest {
             val page = 1
             val query = "Jane"
-            coEvery { remoteDataSource.searchTvShows(query, page) } returns TvSeriesSearchResponse
+            coEvery { remoteDataSource.searchTvShows(query, page) } returns tvShowSearchResponse
 
             val result = searchRepository.searchTvShows(query, page)
 
-            assertThat(result).isEqualTo(TvSeriesSearchResponse.results.map { it.toEntity() })
+            assertThat(result).isEqualTo(tvShowSearchResponse.results.map { it.toEntity() })
         }
 
     @Test

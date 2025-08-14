@@ -251,7 +251,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularSeries should return cached data if available when page is 1`() = runTest {
+    fun `getPopularTvShows should return cached data if available when page is 1`() = runTest {
         val cached = listOf(sampleTvShowLocalDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns cached
 
@@ -261,7 +261,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularSeries should fetches remote when page is 1 and cache is empty`() = runTest {
+    fun `getPopularTvShows should fetches remote when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
@@ -272,7 +272,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularSeries should cache the new data when page is 1 and cache is empty`() = runTest {
+    fun `getPopularTvShows should cache the new data when page is 1 and cache is empty`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.POPULAR_MEDIA) } returns emptyList()
         coEvery { remote.fetchPopularTvShows(1) } returns tvShows
@@ -283,7 +283,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularSeries should fetch from remote if page is not 1`() = runTest {
+    fun `getPopularTvShows should fetch from remote if page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchPopularTvShows(2) } returns tvShows
 
@@ -293,7 +293,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getPopularSeries should not cache the new data when page is not 1`() = runTest {
+    fun `getPopularTvShows should not cache the new data when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchPopularTvShows(2) } returns tvShows
 
@@ -304,7 +304,7 @@ class TvShowRepositoryImplTest {
 
 
     @Test
-    fun `getTopRatedTvSeries should return cached data if available when page is 1 and genreId is null`() =
+    fun `getTopRatedTvShows should return cached data if available when page is 1 and genreId is null`() =
         runTest {
             val cached = listOf(sampleTvShowLocalDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns cached
@@ -315,7 +315,7 @@ class TvShowRepositoryImplTest {
         }
 
     @Test
-    fun `getTopRatedTvSeries should fetches remote when page is 1 and genreId is null and cache is empty`() =
+    fun `getTopRatedTvShows should fetches remote when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
@@ -327,7 +327,7 @@ class TvShowRepositoryImplTest {
         }
 
     @Test
-    fun `getTopRatedTvSeries should cache the new data when page is 1 and genreId is null and cache is empty`() =
+    fun `getTopRatedTvShows should cache the new data when page is 1 and genreId is null and cache is empty`() =
         runTest {
             val tvShows = listOf(sampleTvShowDto)
             coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
@@ -339,7 +339,7 @@ class TvShowRepositoryImplTest {
         }
 
     @Test
-    fun `getTopRatedTvSeries should not cache the new data when page is not 1`() = runTest {
+    fun `getTopRatedTvShows should not cache the new data when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(2, null) } returns tvShows
@@ -350,7 +350,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTopRatedTvSeries should not cache the new data when genreId is not null`() = runTest {
+    fun `getTopRatedTvShows should not cache the new data when genreId is not null`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { local.getCachedTvShows(Category.TOP_RATED_MEDIA) } returns emptyList()
         coEvery { remote.fetchTopRatedTvShows(1, 1) } returns tvShows
@@ -361,7 +361,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTopRatedTvSeries should fetch from remote when page is not 1`() = runTest {
+    fun `getTopRatedTvShows should fetch from remote when page is not 1`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchTopRatedTvShows(2, null) } returns tvShows
 
@@ -371,7 +371,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTopRatedTvSeries should fetch from remote when genreId is not null`() = runTest {
+    fun `getTopRatedTvShows should fetch from remote when genreId is not null`() = runTest {
         val tvShows = listOf(sampleTvShowDto)
         coEvery { remote.fetchTopRatedTvShows(1, 1) } returns tvShows
 
@@ -381,7 +381,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getTrendingTvSeries returns empty list`() = runTest {
+    fun `getTrendingTvShows returns empty list`() = runTest {
         // Act
         val result = repository.getTrendingTvShows(1, null)
 
@@ -390,7 +390,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getSeriesRate should return rate when available`() = runTest {
+    fun `getTvShowRate should return rate when available`() = runTest {
         val id = 1
         val accountId = 1L
         val sessionId = flowOf("session123")
@@ -405,7 +405,7 @@ class TvShowRepositoryImplTest {
     }
 
     @Test
-    fun `getSeriesRate should returns rate null when no rate is available`() = runTest {
+    fun `getTvShowRate should returns rate null when no rate is available`() = runTest {
         val id = 1
         val accountId = 1L
         val sessionId = flowOf("session123")

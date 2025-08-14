@@ -15,7 +15,7 @@ class ManageActorUseCase @Inject constructor(
     suspend fun getActorTopMovies(id: Int): List<Movie> =
         actorRepo.getActorTopMovies(id)
 
-    suspend fun getActorTopTvSeries(id: Int): List<TvShow> =
+    suspend fun getActorTopTvShows(id: Int): List<TvShow> =
         actorRepo.getActorTopTvShows(id)
 
     suspend fun getGalleryImages(id: Int): List<String> =

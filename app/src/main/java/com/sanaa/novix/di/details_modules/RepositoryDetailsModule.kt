@@ -30,7 +30,7 @@ abstract class RepositoryDetailsModule {
 
     @Binds
     @Singleton
-    abstract fun bindTvSeriesRepository(
+    abstract fun bindTvShowRepository(
         tvShowRepositoryImpl: TvShowRepositoryImpl
     ): TvShowRepository
 }

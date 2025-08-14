@@ -35,7 +35,7 @@ fun ActorCastCreditDto.toMovie(): Movie = Movie(
     trailerUrl = ""
 )
 
-fun ActorCastCreditDto.toTvSeries(): TvShow = TvShow(
+fun ActorCastCreditDto.toTvShow(): TvShow = TvShow(
     id = id,
     title = tvShowTitle.orEmpty(),
     overview = overview.orEmpty(),

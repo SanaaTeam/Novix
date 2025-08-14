@@ -3,7 +3,7 @@ package com.sanaa.vod.repository
 import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.repository.mapper.media.toMovie
-import com.sanaa.vod.repository.mapper.media.toTvSeries
+import com.sanaa.vod.repository.mapper.media.toTvShow
 import com.sanaa.vod.util.safeCall
 import entity.Actor
 import entity.Movie
@@ -44,9 +44,9 @@ class ActorRepositoryImpl @Inject constructor(
 
 
     override suspend fun getActorTopTvShows(id: Int): List<TvShow> =
-        safeCall("Failed to retrieve top TV series for actor ID: $id") {
+        safeCall("Failed to retrieve top TV show for actor ID: $id") {
             remoteDataSource.getActorTvShows(id).map {
-                it.toTvSeries()
+                it.toTvShow()
             }.take(20)
         }
 

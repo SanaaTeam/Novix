@@ -77,10 +77,10 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchTvShows() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
+    fun `searchTvShows() should call addSearchHistory() from SearchHistoryRepository when search a tv show`() =
         runTest {
             // Given
-            val query = "TvSeries"
+            val query = "Tv show"
             val page = 1
 
             // When
@@ -93,10 +93,10 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchTvShows() should return tv series search result`() =
+    fun `searchTvShows() should return tv show search result`() =
         runTest {
             // Given
-            val query = "Tv Series"
+            val query = "Tv show"
             val page = 1
             coEvery {
                 searchRepository.searchTvShows(query, page)
@@ -110,7 +110,7 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv series failed`() =
+    fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv show failed`() =
         runTest {
             // Given
             val query = "Sam"
@@ -181,15 +181,12 @@ class SearchUseCaseTest {
                 id = 1,
                 name = "title",
                 imageUrl = "",
-                region = null,
-                lastShow = null,
-                gender = Actor.Gender.MALE,
-                department = null,
-                character = null,
+                department = "",
+                character = "",
                 birthDate = LocalDate(1, 1, 1),
                 deathDate = LocalDate(1, 1, 1),
-                placeOfBirth = null,
-                biography = null,
+                placeOfBirth = "",
+                biography = "",
             )
         )
 
@@ -203,7 +200,7 @@ class SearchUseCaseTest {
                 duration = 10.minutes,
                 releaseDate = LocalDate(1990, 10, 10),
                 overview = "null",
-                trailerUrl = null,
+                trailerUrl = "",
                 rating = 0
             )
         )
