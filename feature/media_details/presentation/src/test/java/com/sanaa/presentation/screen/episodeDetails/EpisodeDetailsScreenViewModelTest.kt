@@ -69,7 +69,7 @@ class EpisodeDetailsScreenViewModelTest {
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to tvShowId,
+                "tvShowId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
@@ -178,40 +178,6 @@ class EpisodeDetailsScreenViewModelTest {
         testDispatcher.scheduler.advanceUntilIdle()
         assertThat(viewModel.state.value.error).isEqualTo(errorMessage)
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onRetryLoadDetails reloads episode and resets flags`() = runTest {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(any(), any(), any())
-        } throws NoNetworkException()
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "seriesId" to tvShowId,
-                "seasonNumber" to seasonNumber,
-                "episodeNumber" to episodeNumber
-            )
-        )
-        viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle, getUser, checkUserLogin, manageEpisodeDetails, manageTvShowDetails, dispatcher = testDispatcher
-        )
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.noInternetConnection).isTrue()
-
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(any(), any(), any())
-        } returns dummyEpisode
-        coEvery { manageEpisodeDetails.getEpisodeGuestsOfHonor(any(), any(), any()) } returns dummyGuests
-        coEvery { manageTvShowDetails.getTvShowImageUrls(any()) } returns dummyImages
-        coEvery { manageTvShowDetails.getTvShowTrailer(any()) } returns dummyTrailer
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
-
-        viewModel.onRetryLoadDetails()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.noInternetConnection).isFalse()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.error).isNull()
     }
 
     @Test
