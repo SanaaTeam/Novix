@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.series
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
@@ -36,7 +35,9 @@ class SeriesScreenViewModel @Inject constructor(
     initialState = SeriesScreenUiState(),
     defaultDispatcher = dispatcher
 ), SeriesScreenInteractionListener {
-    val route: SeriesScreenRoute = savedStateHandle.toRoute()
+    val route = SeriesScreenRoute(
+        seriesId = checkNotNull(savedStateHandle["seriesId"]),
+    )
 
     init {
         loadSeries()
@@ -185,7 +186,8 @@ class SeriesScreenViewModel @Inject constructor(
 
         val seriesDeferred = async { manageTvSeriesDetails.getTvSeriesDetails(route.seriesId) }
         val castDeferred = async { manageTvSeriesDetails.getTvSeriesCast(route.seriesId) }
-        val seasonDeferred = async { manageTvSeriesDetails.getTvSeriesSeasonDetails(route.seriesId, 1) }
+        val seasonDeferred =
+            async { manageTvSeriesDetails.getTvSeriesSeasonDetails(route.seriesId, 1) }
         val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(route.seriesId) }
         val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(route.seriesId) }
 

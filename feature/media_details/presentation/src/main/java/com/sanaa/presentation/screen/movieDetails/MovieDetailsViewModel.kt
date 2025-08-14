@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.movieDetails
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
@@ -49,7 +48,9 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
-    val route: MovieDetailsScreenRoute = savedStateHandle.toRoute()
+    val route = MovieDetailsScreenRoute(
+        movieId = checkNotNull(savedStateHandle["movieId"]),
+    )
 
     init {
         fetchMovieDetails(route.movieId)

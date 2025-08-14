@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.genreTvShows
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -29,7 +28,10 @@ class GenreTvShowsViewModel @Inject constructor(
     initialState = GenreTvShowsScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreTvShowsScreenInteractionListener {
-    val route: GenreTvShowsScreenRoute = savedStateHandle.toRoute()
+    val route = GenreTvShowsScreenRoute(
+        genreId = checkNotNull(savedStateHandle["genreId"]),
+        genreName = checkNotNull(savedStateHandle["genreName"]),
+    )
 
     init {
         updateUserLoggingStatus()

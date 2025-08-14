@@ -2,7 +2,6 @@ package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
@@ -29,7 +28,10 @@ class ActorScreenViewModel @Inject constructor(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
-    private val route: ActorScreenRoute = savedStateHandle.toRoute()
+    private val route = ActorScreenRoute(
+        actorId = checkNotNull(savedStateHandle["actorId"]),
+    )
+
 
     init {
         updateUserLoggingStatus()

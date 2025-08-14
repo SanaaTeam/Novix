@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.actors
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MovieUiModel
@@ -129,7 +130,8 @@ class ActorViewModelTest {
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
-        val savedStateHandle = SavedStateHandle(mapOf(ActorScreenRoute.ARG_ACTOR_ID to actorId))
+
+        val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
 
         viewModel = ActorScreenViewModel(
             savedStateHandle,

@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.review
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -31,7 +30,10 @@ class ReviewsScreenViewModel @Inject constructor(
     initialState = ReviewScreenUiState(),
     defaultDispatcher = dispatcher
 ), ReviewScreenInteractionListener {
-    val route: ReviewsScreenRoute = savedStateHandle.toRoute()
+    val route = ReviewsScreenRoute(
+        mediaId = checkNotNull(savedStateHandle["mediaId"]),
+        mediaType = checkNotNull(savedStateHandle["mediaType"]),
+    )
 
     init {
         fetchReviews(route.mediaId)

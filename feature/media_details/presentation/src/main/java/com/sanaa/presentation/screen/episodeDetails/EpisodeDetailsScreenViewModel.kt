@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toEpisodeUiModel
@@ -36,7 +35,12 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
-    private val route: EpisodeDetailsScreenRoute = savedStateHandle.toRoute()
+    private val route = EpisodeDetailsScreenRoute(
+        seriesId = checkNotNull(savedStateHandle["seriesId"]),
+        seasonNumber = checkNotNull(savedStateHandle["seasonNumber"]),
+        episodeNumber = checkNotNull(savedStateHandle["episodeNumber"]),
+    )
+
 
     init {
         loadEpisode(route.seriesId, route.seasonNumber, route.episodeNumber)

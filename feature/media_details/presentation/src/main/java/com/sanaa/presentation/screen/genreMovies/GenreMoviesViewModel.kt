@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.genreMovies
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.toRoute
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
@@ -32,7 +31,10 @@ class GenreMoviesViewModel @Inject constructor(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
-    private val route: GenreMoviesScreenRoute = savedStateHandle.toRoute()
+    private val route = GenreMoviesScreenRoute(
+        categoryId = checkNotNull(savedStateHandle["categoryId"]),
+        categoryName = checkNotNull(savedStateHandle["categoryName"]),
+    )
 
     init {
         updateUserLoggingStatus()
