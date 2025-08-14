@@ -10,18 +10,11 @@ fun ActorSearchDto.toEntity(): Actor {
         id = id,
         name = name.orEmpty(),
         imageUrl = getFullImageUrl(profileImagePath),
-        region = null,
-        lastShow = null,
-        gender = mapGender(gender),
-        department = knownForDepartment,
-        character = null,
+        department = knownForDepartment.orEmpty(),
+        character = "",
         birthDate = getLocalDateOrDefault(null),
         deathDate = getLocalDateOrDefault(null),
-        placeOfBirth = null,
-        biography = null,
+        placeOfBirth = "",
+        biography = "",
     )
-}
-
-fun mapGender(gender: Int?): Actor.Gender {
-    return if (gender == 1) Actor.Gender.FEMALE else Actor.Gender.MALE
 }

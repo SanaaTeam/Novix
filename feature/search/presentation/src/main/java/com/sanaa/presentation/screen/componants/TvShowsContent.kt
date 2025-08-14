@@ -25,7 +25,6 @@ import com.sanaa.feature.search.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.provider.LocalSaveContentThreshold
 import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
-import com.sanaa.presentation.screen.componants.cards.SaveIconChip
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 import com.sanaa.presentation.screen.state.TvShowUiModel
@@ -78,7 +77,7 @@ fun TvShowsContent(
                             RecentViewedUiModel(
                                 id = tvShow.id,
                                 imageUrl = tvShow.imageUrl,
-                                mediaType = MediaTypeUi.TV_SERIES
+                                mediaType = MediaTypeUi.TV_SHOW
                             ),
                             TvShowUiModel(
                                 id = tvShow.id,

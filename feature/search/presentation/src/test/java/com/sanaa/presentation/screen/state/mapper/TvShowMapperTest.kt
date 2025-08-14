@@ -2,7 +2,7 @@ package com.sanaa.presentation.screen.state.mapper
 
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.state.TvShowUiModel
-import entity.TvSeries
+import entity.TvShow
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -24,8 +24,8 @@ class TvShowMapperTest {
             id: Int,
             title: String,
             posterUrl: String
-        ): TvSeries {
-            return TvSeries(
+        ): TvShow {
+            return TvShow(
                 id = id,
                 title = title,
                 posterImageUrl = posterUrl,

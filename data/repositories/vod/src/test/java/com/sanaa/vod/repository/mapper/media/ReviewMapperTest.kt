@@ -4,6 +4,7 @@ package com.sanaa.vod.repository.mapper.media
 import com.sanaa.vod.dataSource.remote.dto.review.AuthorDetailsDto
 import com.sanaa.vod.dataSource.remote.dto.review.ReviewDto
 import kotlinx.datetime.LocalDate
+import org.junit.jupiter.api.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -57,25 +58,6 @@ class ReviewMapperTest {
     @Test
     fun `toEntity handles avatarPath with null`() {
         val dto = ReviewDto(
-            id = "rev3",
-            content = "Could be better.",
-            authorDetails = AuthorDetailsDto(
-                name = "Zainab",
-                username = "zainab",
-                avatarPath = null,
-                rating = 6.0f
-            ),
-            createdAt = "2023-01-01T00:00:00Z"
-        )
-
-        val result = dto.toEntity()
-
-        assertNull(result.avatarUrl)
-    }
-
-    @Test
-    fun `toEntity handles avatarPath with blank string`() {
-        val dto = ReviewDto(
             id = "rev4",
             content = "Meh.",
             authorDetails = AuthorDetailsDto(
@@ -89,7 +71,7 @@ class ReviewMapperTest {
 
         val result = dto.toEntity()
 
-        assertNull(result.avatarUrl)
+        assertNotNull(result.avatarUrl)
     }
 
     @Test

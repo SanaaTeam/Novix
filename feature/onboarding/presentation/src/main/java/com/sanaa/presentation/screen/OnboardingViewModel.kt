@@ -1,36 +1,33 @@
 package com.sanaa.presentation.screen
 
+import androidx.lifecycle.ViewModel
 import com.sanaa.feature.onboarding.presentation.R
 import com.sanaa.presentation.component.OnBoardingPageContentItem
-import com.sanaa.presentation.onbordingBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<OnboardingUiState>(OnboardingUiState(), dispatcher),
-    OnboardingInteractionsListener {
+class OnboardingViewModel : ViewModel(), OnboardingInteractionsListener {
+
+    private val _state = MutableStateFlow(OnboardingUiState())
+    val state: StateFlow<OnboardingUiState> = _state.asStateFlow()
 
     init {
         loadOnBoardingPages()
     }
 
     private fun loadOnBoardingPages() {
-        tryToExecute(
-            callee = {
-                updateState {
-                    copy(
-                        pageList = getOnBoardingPageContent(),
-                        currentPageIndex = 0
-                    )
-                }
+
+            updateState {
+                copy(
+                    pageList = getOnBoardingPageContent(),
+                    currentPageIndex = 0
+                )
             }
-        )
-    }
+        }
 
     override fun onNextPageClick() {
         val currentIndex = state.value.currentPageIndex
@@ -77,5 +74,9 @@ class OnboardingViewModel @Inject constructor(
                 imageRes = R.drawable.onboarding_3
             )
         )
+    }
+
+    private fun updateState(update: OnboardingUiState.() -> OnboardingUiState) {
+        _state.value = update(_state.value)
     }
 }

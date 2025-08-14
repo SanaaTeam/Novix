@@ -9,5 +9,5 @@ interface MediaDetailsApi {
 }
 
 enum class StartRoute {
-    SERIES, MOVIE, ACTOR
+    TV_SHOW, MOVIE, ACTOR
 }

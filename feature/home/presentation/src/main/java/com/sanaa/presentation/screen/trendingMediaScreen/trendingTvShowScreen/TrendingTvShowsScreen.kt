@@ -17,10 +17,10 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.api.navigation.AppNavigation
+import com.sanaa.presentation.app.navigation.AppNavigation
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.screen.trendingMediaScreen.screenContent.TrendingMediaScreenContent
 import dagger.hilt.android.EntryPointAccessors
@@ -57,7 +57,7 @@ fun TrendingTvShowsScreen(
                     detailsApi.launch(
                         context = navController.context,
                         id = effect.id,
-                        startRoute = StartRoute.SERIES
+                        startRoute = StartRoute.TV_SHOW
                     )
                 }
 

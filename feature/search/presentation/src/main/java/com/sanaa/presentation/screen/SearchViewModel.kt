@@ -20,7 +20,7 @@ import com.sanaa.presentation.screen.state.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -343,7 +343,7 @@ class SearchViewModel @Inject constructor(
     private fun loadTvShowsOperation(query: String): Flow<PagingData<TvShowUiModel>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource(query) },
-            mapper = TvSeries::toUiState
+            mapper = TvShow::toUiState
         )
     }
 
@@ -365,7 +365,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvSeries> {
+    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvShow> {
         return BasePagingSource { page ->
             searchUseCase.searchTvShows(query = query, page = page)
         }

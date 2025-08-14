@@ -5,8 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -68,16 +67,16 @@ class ActorViewModel @Inject constructor(
         emitEffect(ActorScreenEffects.NavigateToTopMovies(actorId))
     }
 
-    override fun onTopSeriesClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopSeries(actorId))
+    override fun onTopShowsClicked() {
+        emitEffect(ActorScreenEffects.NavigateToTopTvShows(actorId))
     }
 
     override fun onViewAllGalleryClicked() {
         emitEffect(ActorScreenEffects.NavigateToGallery(actorId))
     }
 
-    override fun onSeriesClicked(id: Int) {
-        emitEffect(ActorScreenEffects.NavigateToSeriesDetails(id))
+    override fun onTvShowClicked(id: Int) {
+        emitEffect(ActorScreenEffects.NavigateToTvShowDetails(id))
     }
 
     override fun onMovieClicked(id: Int) {
@@ -140,21 +139,21 @@ class ActorViewModel @Inject constructor(
     private suspend fun fetchActorDetails() = coroutineScope {
         val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topSeriesDeferred = async { manageActorDetails.getActorTopTvSeries(actorId) }
+        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(actorId) }
         val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
         val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
 
         val actor = actorDeferred.await()
         val topMovies = topMoviesDeferred.await()
-        val topSeries = topSeriesDeferred.await()
+        val topTvShows = topTvShowsDeferred.await()
         val profiles = profilesDeferred.await()
         val gallery = galleryDeferred.await()
 
         updateState {
             copy(
                 actor = actor.toActorUiModel(),
-                topMovies = topMovies.map { m -> m.toUiModel() },
-                topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
+                topMovies = topMovies.map { m -> m.toState() },
+                topTvShows = topTvShows.map { s -> s.toState() },
                 profileImageUrls = profiles,
                 galleryImageUrls = gallery
             )

@@ -11,7 +11,7 @@ fun MediaHistoryItem.toMediaItemUiModel(): MediaItemUiModel {
         imageUrl = this.posterImageUrl,
         mediaTypeUi = when (this.mediaType) {
             MediaType.MOVIE -> MediaTypeUi.MOVIE
-            MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
+            MediaType.TV_SHOW -> MediaTypeUi.TV_SHOW
         },
     )
 }
