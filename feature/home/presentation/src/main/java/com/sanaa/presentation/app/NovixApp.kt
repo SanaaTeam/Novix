@@ -28,9 +28,9 @@ import com.sanaa.presentation.providers.LocalSafeContentThreshold
 import com.sanaa.presentation.providers.LocalThemeProvider
 import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
 import com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen.WatchingMediaHistoryScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
+import com.sanaa.presentation.screen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreen
+import com.sanaa.presentation.screen.trendingTvShowScreen.TrendingTvShowsScreen
 
 @Composable
 fun NovixApp(
