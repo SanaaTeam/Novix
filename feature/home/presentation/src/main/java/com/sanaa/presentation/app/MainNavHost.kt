@@ -1,3 +1,5 @@
+package com.sanaa.presentation.app
+
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider

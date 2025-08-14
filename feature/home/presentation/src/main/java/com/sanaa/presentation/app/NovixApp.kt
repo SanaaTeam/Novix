@@ -1,6 +1,5 @@
 package com.sanaa.presentation.app
 
-import MainNavHost
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
