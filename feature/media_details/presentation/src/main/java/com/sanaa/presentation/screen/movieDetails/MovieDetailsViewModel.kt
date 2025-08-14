@@ -225,25 +225,35 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onFetchMovieDetailsFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    errorMessage = null
-                )
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isLoading = false,
-                    errorMessage = exception.message,
-                    noInternetConnection = false
-                )
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = exception.message,
+                        noInternetConnection = false
+                    )
+                }
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = exception.message ?: stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
-            updateState { copy(snackBarData = SnackData(message = exception.message ?: stringProvider.somethingWentWrongError, isError = true)) }        }
+        }
     }
-
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
         val pagingFlow = createPagingFlow(
