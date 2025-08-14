@@ -99,13 +99,6 @@ class MovieDetailsViewModelTest {
     }
 
     @Test
-    fun `onReadMoreClick does nothing`() = runTest {
-        givenHappy()
-        advanceUntilIdle()
-        viewModel.onReadMoreClick()
-    }
-
-    @Test
     fun `onBookmarkClick and onRateMovieClick toggle login bottom sheet`() = runTest {
         givenHappy()
         advanceUntilIdle()
