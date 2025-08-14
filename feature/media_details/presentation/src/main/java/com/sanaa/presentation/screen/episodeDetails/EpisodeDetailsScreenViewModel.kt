@@ -184,8 +184,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     episodeNumber
                 )
             }
-            val imagesDeferred = async { manageTvSeriesDetails.getTvSeriesImages(seriesId) }
-            val trailerDeferred = async { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) }
+            val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
+            val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
             val episode = episodeDeferred.await()
             val guests = guestsDeferred.await()
             val images = imagesDeferred.await()

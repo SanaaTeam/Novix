@@ -39,7 +39,6 @@ import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.model.SeriesUiModel
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
