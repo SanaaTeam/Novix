@@ -48,7 +48,7 @@ import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
@@ -146,7 +146,7 @@ private fun EpisodeDetailsScreenContent(
                 }, rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_save), onClick = {
-                            interactionListener.onSavedClick(state.seriesId)
+                            interactionListener.onSavedClick(state.tvShowId)
                         })
                 }, modifier = Modifier.
                     background(animatedColor)
@@ -186,7 +186,7 @@ private fun EpisodeDetailsScreenContent(
                                 .padding(bottom = 104.dp)
                                 .align(Alignment.TopCenter)
                         ) {
-                            SeriesHeaderSection(
+                            TvShowHeaderSection(
                                 title = stringResource(
                                     R.string.episode_number, state.episode.number
                                 ) + " - ${state.episode.title}",

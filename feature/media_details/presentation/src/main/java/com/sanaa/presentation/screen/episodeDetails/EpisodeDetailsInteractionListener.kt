@@ -5,7 +5,7 @@ interface EpisodeDetailsInteractionListener {
     fun onPlayTrailerClick()
     fun onGenreTypeClick(genreId: Int)
     fun onCastClick(actorId: Int)
-    fun onSavedClick(seriesId: Int)
+    fun onSavedClick(tvShowId: Int)
     fun onDismissBottomSheet()
     fun onRateClicked()
     fun onLoginButtonClick()

@@ -5,8 +5,7 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import entity.Review
-import exceptions.NotFoundException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -38,11 +37,11 @@ class ManageMovieUseCaseTest {
     }
 
     @Test
-    fun `getMovieDetails should throw NotFoundException when not found`() = runTest {
+    fun `getMovieDetails should throw NovixAppException when not found`() = runTest {
         val movieId = 404
-        coEvery { movieRepository.getMovieDetails(movieId) } throws NotFoundException("Not found")
+        coEvery { movieRepository.getMovieDetails(movieId) } throws NovixAppException("Not found")
 
-        assertThrows<NotFoundException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getMovieDetails(movieId)
         }
     }
@@ -59,11 +58,11 @@ class ManageMovieUseCaseTest {
     }
 
     @Test
-    fun `getMovieCast should throw NotFoundException when repository fails`() = runTest {
+    fun `getMovieCast should throw NovixAppException when repository fails`() = runTest {
         val movieId = 404
-        coEvery { movieRepository.getMovieCast(movieId) } throws NotFoundException("Cast not found")
+        coEvery { movieRepository.getMovieCast(movieId) } throws NovixAppException("Cast not found")
 
-        assertThrows<NotFoundException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getMovieCast(movieId)
         }
     }
@@ -74,22 +73,22 @@ class ManageMovieUseCaseTest {
         val expected = listOf("img1.jpg", "img2.jpg")
         coEvery { movieRepository.getImageUrls(movieId, 10) } returns expected
 
-        val result = manageMovieDetailsUseCase.getMovieImages(movieId)
+        val result = manageMovieDetailsUseCase.getMovieImagesUrl(movieId)
 
         assertThat(result).isEqualTo(expected)
     }
 
     @Test
-    fun `getMovieImages should throw RetrievingDataFailureException when fails`() = runTest {
+    fun `getMovieImages should throw NovixAppException when fails`() = runTest {
         val movieId = 100
         coEvery {
             movieRepository.getImageUrls(
                 movieId, 10
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
-            manageMovieDetailsUseCase.getMovieImages(movieId)
+        assertThrows<NovixAppException> {
+            manageMovieDetailsUseCase.getMovieImagesUrl(movieId)
         }
     }
 
@@ -126,11 +125,11 @@ class ManageMovieUseCaseTest {
                 category.id,
                 1
             )
-        } throws RetrievingDataFailureException(
+        } throws NovixAppException(
             "Error"
         )
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getMoviesByCategory(category.id, 1)
         }
     }
@@ -159,9 +158,9 @@ class ManageMovieUseCaseTest {
     @Test
     fun `getMovieTrailer should throw when repository fails`() = runTest {
         val movieId = 6
-        coEvery { movieRepository.getMovieTrailer(movieId) } throws RetrievingDataFailureException("Error")
+        coEvery { movieRepository.getMovieTrailer(movieId) } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getMovieTrailer(movieId)
         }
     }
@@ -195,11 +194,11 @@ class ManageMovieUseCaseTest {
                 movieId,
                 1
             )
-        } throws RetrievingDataFailureException(
+        } throws NovixAppException(
             "Error"
         )
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getReviewsByMovieId(movieId, 1)
         }
     }
@@ -233,11 +232,11 @@ class ManageMovieUseCaseTest {
                 movieId,
                 1
             )
-        } throws RetrievingDataFailureException(
+        } throws NovixAppException(
             "Error"
         )
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getSimilarMoviesByMovieId(movieId, 1)
         }
     }
@@ -254,9 +253,9 @@ class ManageMovieUseCaseTest {
 
     @Test
     fun `getPopularMovies should throw when repository fails`() = runTest {
-        coEvery { movieRepository.getPopularMovies(1) } throws RetrievingDataFailureException("Error")
+        coEvery { movieRepository.getPopularMovies(1) } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getPopularMovies(1)
         }
     }
@@ -277,9 +276,9 @@ class ManageMovieUseCaseTest {
             movieRepository.getTopRatedMovies(
                 1, dummyGenre.id
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getTopRatedMovies(1, dummyGenre.id)
         }
     }
@@ -300,9 +299,9 @@ class ManageMovieUseCaseTest {
             movieRepository.getTrendingMovies(
                 1, dummyGenre.id
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getTrendingMovies(1, dummyGenre.id)
         }
     }
@@ -324,9 +323,9 @@ class ManageMovieUseCaseTest {
             movieRepository.getUpcomingMovies(
                 1, dummyGenre.id
             )
-        } throws RetrievingDataFailureException("Error")
+        } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getUpcomingMovies(1, dummyGenre.id)
         }
     }
@@ -343,9 +342,9 @@ class ManageMovieUseCaseTest {
 
     @Test
     fun `getMovieGenres should throw when repository fails`() = runTest {
-        coEvery { movieRepository.getMovieGenres() } throws RetrievingDataFailureException("Error")
+        coEvery { movieRepository.getMovieGenres() } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getMovieGenres()
         }
     }
@@ -371,9 +370,9 @@ class ManageMovieUseCaseTest {
 
     @Test
     fun `getUserRatedMovies should throw exception when repository fails`() = runTest {
-        coEvery { movieRepository.getUserRatedMovies() } throws RetrievingDataFailureException("Error")
+        coEvery { movieRepository.getUserRatedMovies() } throws NovixAppException("Error")
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             manageMovieDetailsUseCase.getUserRatedMovies()
         }
     }

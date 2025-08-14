@@ -82,7 +82,7 @@ fun SearchScreen(
                 is SearchScreenEffects.NavigateToTvShowDetails ->
                     navigator.navigateToMediaDetails(
                         context,
-                        StartRoute.SERIES,
+                        StartRoute.TV_SHOW,
                         effect.id
                     )
 

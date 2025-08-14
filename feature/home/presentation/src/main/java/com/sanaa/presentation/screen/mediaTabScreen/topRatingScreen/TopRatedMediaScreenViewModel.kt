@@ -13,8 +13,9 @@ import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -23,13 +24,13 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
@@ -49,7 +50,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
         onDismissBottomSheet()
@@ -61,7 +62,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = {
+            block = {
                 loadTopRatedMovies(genreId = genreId)
                     .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { mediaItem ->
@@ -82,7 +83,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToExecute(
-            callee = { loadTopRatedTvSeries(genreId = genreId) },
+            block = { loadTopRatedTvShows(genreId = genreId) },
             onSuccess = ::onFetchTvShowsSuccess,
             onError = ::onDataLoadError
         )
@@ -96,7 +97,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -121,7 +122,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = ::fetchTvShowGenresOperation,
+            block = ::fetchTvShowGenresOperation,
             onSuccess = ::onFetchTvShowGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -131,7 +132,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         updateState {
             copy(isLoading = true)
         }
-        return manageTvSeriesUseCase.getSeriesGenres()
+        return manageTvShowUseCase.getTvShowGenres()
     }
 
     private fun onFetchTvShowGenresSuccess(genres: List<Genre>) {
@@ -242,19 +243,17 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadTopRatedTvSeries(
+    private fun loadTopRatedTvShows(
         genreId: Int?,
     ): Flow<PagingData<MediaItem>> {
         updateState { copy(isLoading = true) }
         return createPagingFlow(
-            pagingSourceFactory = {
-                createTvShowPagingDataSource(genreId = genreId)
-            },
-            mapper = TvSeries::toState
+            pagingSourceFactory = { createTvShowPagingDataSource(genreId = genreId) },
+            mapper = TvShow::toState
         )
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(TopRatedScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -267,7 +266,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createMoviePagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
+        onError: ((NovixAppException) -> Unit)? = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTopRatedMovies(
@@ -279,10 +278,10 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun createTvShowPagingDataSource(
         genreId: Int?,
-        onError: ((Throwable) -> Unit)? = ::onDataLoadError,
-    ): PagingSource<Int, TvSeries> {
+        onError: ((NovixAppException) -> Unit)? = ::onDataLoadError,
+    ): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageTvSeriesUseCase.getTopRatedTvSeries(
+            manageTvShowUseCase.getTopRatedTvShows(
                 page = page,
                 genreId = genreId
             )

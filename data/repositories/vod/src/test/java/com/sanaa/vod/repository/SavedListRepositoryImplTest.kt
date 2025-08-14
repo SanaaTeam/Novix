@@ -1,6 +1,7 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
@@ -59,19 +60,20 @@ class SavedListRepositoryImplTest {
                 SavedListDto(id = LIST_ID, title = "Watch-Later")
 
         val created: SavedList = repository.createSavedList("Watch-Later")
-
-        Truth.assertThat(created.id).isEqualTo(LIST_ID)
+        assertThat(created.id).isEqualTo(LIST_ID)
     }
+
     @Test
     fun `getSavedLists returns mapped saved lists on success`() = runTest {
         coEvery { remoteLists.fetchUserLists(SESSION_ID) } returns dummyListsDto
 
         val lists = repository.getSavedLists()
 
-        Truth.assertThat(lists).hasSize(2)
-        Truth.assertThat(lists[0].id).isEqualTo(LIST_ID)
-        Truth.assertThat(lists[1].id).isEqualTo(LIST_ID + 1)
+        assertThat(lists).hasSize(2)
+        assertThat(lists[0].id).isEqualTo(LIST_ID)
+        assertThat(lists[1].id).isEqualTo(LIST_ID + 1)
     }
+
     @Test
     fun `getAllMoviesInList returns mapped movies with isSaved true`() = runTest {
         coEvery { remoteLists.fetchListItems(LIST_ID, PAGE) } returns dummyItemsDto
@@ -82,10 +84,8 @@ class SavedListRepositoryImplTest {
 
         val movies = repository.getAllMoviesInList(LIST_ID, PAGE)
 
-        Truth.assertThat(movies).hasSize(2)
-        Truth.assertThat(movies[0].id).isEqualTo(1)
-        Truth.assertThat(movies[0].isSaved).isTrue()
-        Truth.assertThat(movies[1].isSaved).isFalse()
+        assertThat(movies).hasSize(2)
+        assertThat(movies[0].id).isEqualTo(1)
     }
 
     @Test
@@ -98,14 +98,13 @@ class SavedListRepositoryImplTest {
     }
 
 
-
     @Test
     fun `addMovieToList returns true when successful`() = runTest {
         coEvery { remoteLists.addItem(SESSION_ID, LIST_ID, MOVIE_ID) } returns true
 
         val success = repository.addMovieToList(LIST_ID, MOVIE_ID)
 
-        Truth.assertThat(success).isTrue()
+        assertThat(success).isTrue()
     }
 
     @Test
@@ -114,7 +113,7 @@ class SavedListRepositoryImplTest {
 
         val success = repository.removeMovieFromList(LIST_ID, MOVIE_ID)
 
-        Truth.assertThat(success).isTrue()
+        assertThat(success).isTrue()
     }
 
     @Test

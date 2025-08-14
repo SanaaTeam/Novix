@@ -26,7 +26,7 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 
@@ -36,7 +36,7 @@ class WatchingHistoryViewModelTest {
     private val manageWatchingHistoryUseCase: ManageWatchedMediaHistoryUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: WatchingHistoryViewModel
@@ -64,7 +64,7 @@ class WatchingHistoryViewModelTest {
             manageWatchedMediaHistoryUseCase = manageWatchingHistoryUseCase,
             getLoggedInUserUseCase = getLoggedInUserUseCase,
             manageMovieUseCase = manageMovieUseCase,
-            manageTvSeriesUseCase = manageTvSeriesUseCase,
+            manageTvShowUseCase = manageTvShowUseCase,
             savedListsStatusProvider = savedListsStatusProvider,
             stringProvider = stringProvider,
             dispatcher = testDispatcher
@@ -222,13 +222,13 @@ class WatchingHistoryViewModelTest {
         runTest(testDispatcher) {
             val newGenreId = 77
             val tvShowHistory =
-                listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SERIES))
+                listOf(dummyHistoryItem.copy(id = 2, mediaType = MediaType.TV_SHOW))
 
             coEvery { getLoggedInUserUseCase.getLoggedInUser() } returns flowOf(dummyUser)
             coEvery {
                 manageWatchingHistoryUseCase.getMediaHistory(
                     genreId = newGenreId,
-                    mediaType = MediaType.TV_SERIES,
+                    mediaType = MediaType.TV_SHOW,
                     username = dummyUser.username
                 )
             } returns flowOf(tvShowHistory)
@@ -337,6 +337,7 @@ class WatchingHistoryViewModelTest {
             posterImageUrl = "test_url",
             mediaType = MediaType.MOVIE,
             genres = listOf(dummyGenre),
+            lastWatchedAt = 1L,
         )
     }
 }

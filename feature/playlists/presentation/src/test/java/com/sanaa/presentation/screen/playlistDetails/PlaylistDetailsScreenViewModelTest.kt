@@ -12,7 +12,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -151,52 +150,6 @@ class PlaylistDetailsScreenViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
-
-    @Test
-    fun `onDataLoadError with NoNetworkException sets isLoading false and errorMessage null`() =
-        runTest {
-            initViewModel()
-
-            viewModel.onDataLoadError(NoNetworkException())
-
-            viewModel.state.test {
-                val state = awaitItem()
-                assertThat(state.isLoading).isFalse()
-                assertThat(state.errorMessage).isNull()
-                cancelAndIgnoreRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `onDataLoadError with generic exception sets errorMessage and emits ShowErrorSnackBar effect`() =
-        runTest {
-            initViewModel()
-            val errorMessage = "Something went wrong"
-            val exception = Exception(errorMessage)
-
-            val effectJob = launch {
-                viewModel.effect.test {
-                    val effectItem = awaitItem()
-                    assertThat(effectItem).isEqualTo(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
-                    cancelAndIgnoreRemainingEvents()
-                }
-            }
-
-            viewModel.state.test {
-                awaitItem()
-
-                viewModel.onDataLoadError(exception)
-
-                val updated = awaitItem()
-                assertThat(updated.isLoading).isFalse()
-                assertThat(updated.errorMessage).isEqualTo(errorMessage)
-
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            effectJob.cancel()
-        }
-
 
     private fun initViewModel() {
         viewModel = PlaylistDetailsScreenViewModel(

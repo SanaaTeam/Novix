@@ -1,6 +1,6 @@
 package com.sanaa.presentation.model
 
 enum class MediaTypeUiModel {
-    SERIES,
+    TV_SHOW,
     MOVIE,
 }

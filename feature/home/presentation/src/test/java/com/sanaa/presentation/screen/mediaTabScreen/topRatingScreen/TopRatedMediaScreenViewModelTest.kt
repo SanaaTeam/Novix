@@ -8,7 +8,7 @@ import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -27,7 +27,7 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -36,7 +36,7 @@ class TopRatedMediaScreenViewModelTest {
     private lateinit var viewModel: TopRatedMediaScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var manageMovieUseCase: ManageMovieUseCase
-    private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
+    private lateinit var manageTvShowUseCase: ManageTvShowUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
@@ -46,7 +46,7 @@ class TopRatedMediaScreenViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
-        manageTvSeriesUseCase = mockk(relaxed = true)
+        manageTvShowUseCase = mockk(relaxed = true)
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
@@ -64,7 +64,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -77,12 +77,12 @@ class TopRatedMediaScreenViewModelTest {
 
     @Test
     fun `init should fetch tv show genres and update state`() = runTest {
-        coEvery { manageTvSeriesUseCase.getSeriesGenres() } returns tvGenres
+        coEvery { manageTvShowUseCase.getTvShowGenres() } returns tvGenres
 
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -100,7 +100,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -115,12 +115,12 @@ class TopRatedMediaScreenViewModelTest {
 
     @Test
     fun `fetchTvShows should update media list with tv shows`() = runTest {
-        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns tvShows
+        coEvery { manageTvShowUseCase.getTopRatedTvShows(any(), any()) } returns tvShows
 
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -141,7 +141,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -160,12 +160,12 @@ class TopRatedMediaScreenViewModelTest {
     @Test
     fun `onTvShowGenreClick should fetch tv shows for selected genre`() = runTest {
         val genreId = 3
-        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), genreId) } returns tvShows
+        coEvery { manageTvShowUseCase.getTopRatedTvShows(any(), genreId) } returns tvShows
 
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -186,7 +186,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -204,7 +204,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel =
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
-                manageTvSeriesUseCase,
+                manageTvShowUseCase,
                 savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
@@ -237,8 +237,8 @@ class TopRatedMediaScreenViewModelTest {
             )
         )
         val tvShows = listOf(
-            TvSeries(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
-            TvSeries(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
+            TvShow(1, "Show 1", "", LocalDate(2021, 1, 1), emptyList(), 9f, "", 3, 0),
+            TvShow(2, "Show 2", "", LocalDate(2022, 1, 1), emptyList(), 8f, "", 2, 0)
         )
         val media = MediaItem(1, "Media", "", mediaTypeUi = MediaTypeUi.MOVIE)
     }

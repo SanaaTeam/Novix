@@ -46,7 +46,7 @@ object FakeData {
         totalResults = MoviesRemoteDtoList.size
     )
 
-    val TvSeriesRemoteDtoList = listOf(
+    val tvShowSearchDtos = listOf(
         TvShowSearchDto(
             id = 1, "TvSeries", "2025", null, null, null,
         ),
@@ -55,10 +55,10 @@ object FakeData {
         ),
     )
 
-    val TvSeriesSearchResponse = SearchResponse(
+    val tvShowSearchResponse = SearchResponse(
         page = 1,
-        results = TvSeriesRemoteDtoList,
+        results = tvShowSearchDtos,
         totalPages = 1,
-        totalResults = TvSeriesRemoteDtoList.size
+        totalResults = tvShowSearchDtos.size
     )
 }

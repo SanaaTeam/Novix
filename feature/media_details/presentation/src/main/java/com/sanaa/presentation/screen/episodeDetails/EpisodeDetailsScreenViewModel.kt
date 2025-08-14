@@ -4,10 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toEpisodeUiModel
+import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,15 +31,15 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private val getUser: GetLoggedInUserUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-        "seriesId is required in SavedStateHandle"
+    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
+        "tvShowId is required in SavedStateHandle"
     }
     private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
         "seasonNumber is required in SavedStateHandle"
@@ -48,7 +49,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     init {
-        loadEpisode(seriesId, seasonNumber, episodeNumber)
+        loadEpisode(this@EpisodeDetailsScreenViewModel.tvShowId, seasonNumber, episodeNumber)
         updateUserLoginState()
     }
 
@@ -82,7 +83,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(actorId))
     }
 
-    override fun onSavedClick(seriesId: Int) {
+    override fun onSavedClick(tvShowId: Int) {
         val isLoggIn = state.value.isUserLoggedIn
         if (!isLoggIn) {
             promptLogin(LoginPromptType.BOOKMARK)
@@ -109,7 +110,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        loadEpisode(seriesId, seasonNumber, episodeNumber)
+        loadEpisode(tvShowId, seasonNumber, episodeNumber)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -129,18 +130,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             copy(showRateBottomSheet = false)
         }
     }
-    private fun onErrorAccrue(throwable: Throwable) {
+
+    private fun onErrorAccrue(exception: NovixAppException) {
         updateState {
             copy(
-                error = throwable.message,
+                error = exception.message,
                 showRateBottomSheet = false
             )
         }
     }
 
-    private fun loadEpisode(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+    private fun loadEpisode(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
         tryToExecute(
-            callee = { fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) },
+            callee = { fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber) },
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -164,20 +166,20 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun fetchEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int) =
+    private suspend fun fetchEpisodeDetails(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) =
         coroutineScope {
             updateState { copy(isLoading = true) }
 
             val episodeDeferred = async {
                 manageEpisodeDetails.getEpisodeDetails(
-                    seriesId,
+                    tvShowId,
                     seasonNumber,
                     episodeNumber
                 )
             }
             val guestsDeferred = async {
                 manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                    seriesId,
+                    tvShowId,
                     seasonNumber,
                     episodeNumber
                 )
@@ -191,9 +193,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
             updateState {
                 copy(
-                    episode = episode.toEpisodeUiModel(),
+                    episode = episode.toState(),
                     guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
-                    seriesId = seriesId,
+                    tvShowId = tvShowId,
                     imagesUrl = images,
                     trailerUrl = trailerUrl,
                 )
@@ -208,7 +210,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             .flatMapLatest { user ->
                 flow {
                     try {
-                        val rating = manageTvSeriesDetails.getEpisodesRate(
+                        val rating = manageTvShowDetails.getEpisodesRate(
                             user.id,
                             seasonNumber,
                             episodeNumber
@@ -223,7 +225,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
-            seriesId = seriesId,
+            tvShowId = this@EpisodeDetailsScreenViewModel.tvShowId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()

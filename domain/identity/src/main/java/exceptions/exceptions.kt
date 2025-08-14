@@ -1,15 +1,11 @@
 package exceptions
 
-open class AuthenticationException(message: String?) : Exception(message ?: "Unknown Error")
-open class LoginErrorException(message: String?) : AuthenticationException(message)
 
-class NoInternetConnectionException :
-    Exception("No internet connection ")
+open class IdentityException(message: String?= null) : Exception(message ?: "Unknown Error")
 
-class InvalidUserOrPasswordException :
-    LoginErrorException("Invalid username and/or password: You did not provide a valid login.")
+class NoLoggedInUserException : IdentityException("No logged in user found.")
+class NoInternetException : IdentityException("No internet connection")
 
-class NoLoggedInUserException : AuthenticationException(
-    "No logged in user found."
-)
+open class LoginErrorException(message: String?) : IdentityException(message)
+class InvalidUserOrPasswordException : LoginErrorException("Invalid username or password")
 

@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Episode
 import exceptions.NoNetworkException
 import io.mockk.coEvery
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
@@ -33,9 +32,9 @@ class EpisodeDetailsScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
-    private val seriesId = 5
+    private val tvShowId = 5
     private val seasonNumber = 2
     private val episodeNumber = 3
 
@@ -123,7 +122,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onSavedClick and onRateClicked toggle login bottom sheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
         viewModel.onRateClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
@@ -132,7 +131,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -147,7 +146,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onLoginButtonClick()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
         viewModel.effect.test {
@@ -228,7 +227,7 @@ class EpisodeDetailsScreenViewModelTest {
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "tvShowId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
@@ -239,7 +238,7 @@ class EpisodeDetailsScreenViewModelTest {
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             dispatcher = testDispatcher
         )
 
@@ -267,9 +266,6 @@ class EpisodeDetailsScreenViewModelTest {
                 id = 11,
                 imageUrl = "/icon_placeholder_light.xml",
                 name = "Guest One",
-                region = "US",
-                lastShow = "Show",
-                gender = Gender.FEMALE,
                 department = "Acting",
                 character = "Role",
                 birthDate = LocalDate.parse("1990-01-01"),
