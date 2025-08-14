@@ -3,6 +3,7 @@ package com.sanaa.presentation.app
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,22 +24,30 @@ import com.sanaa.designsystem.design_system.component.api.LocalBottomBarVisibili
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBar
 import com.sanaa.designsystem.design_system.component.nav_bar.NavBarItem
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
-import com.sanaa.presentation.api.navigation.CategoryScreenRoute
-import com.sanaa.presentation.api.navigation.HomeScreenRoute
-import com.sanaa.presentation.api.navigation.LocalMainNavController
-import com.sanaa.presentation.api.navigation.MainScreenRoutes
-import com.sanaa.presentation.api.navigation.PlayListScreenRoute
-import com.sanaa.presentation.api.navigation.SearchScreenRoute
-import com.sanaa.presentation.api.navigation.UserProfileScreenRoute
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.api.HomeApiEntryPoint
+import com.sanaa.presentation.app.navigation.AppRoute
+import com.sanaa.presentation.app.navigation.CategoryScreenRoute
+import com.sanaa.presentation.app.navigation.HomeScreenRoute
+import com.sanaa.presentation.app.navigation.LocalMainNavController
+import com.sanaa.presentation.app.navigation.PlayListScreenRoute
+import com.sanaa.presentation.app.navigation.SearchScreenRoute
+import com.sanaa.presentation.app.navigation.TopRatedMediaScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingMoviesScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingPeopleScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.app.navigation.UserProfileScreenRoute
+import com.sanaa.presentation.app.navigation.WatchingMediaHistoryScreenRoute
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
+import com.sanaa.presentation.screen.topRatingScreen.TopRatedMediaScreen
+import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
+import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
+import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreen
+import com.sanaa.presentation.screen.watchingHistoryScreen.WatchingMediaHistoryScreen
 import dagger.hilt.android.EntryPointAccessors
 
-@Composable
-fun MainScreen() {
 
-    val navController = rememberNavController()
-    val bottomBarVisible = remember { mutableStateOf(true) }
+@Composable
+fun MainNavHost() {
     val appContext = LocalContext.current.applicationContext
 
     val searchFeatureApi: SearchFeatureApi = remember {
@@ -46,7 +55,6 @@ fun MainScreen() {
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .searchApi()
     }
-
     val userProfileApi: UserProfileFeatureApi = remember {
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
@@ -57,27 +65,40 @@ fun MainScreen() {
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
             .playListApi()
     }
-
     val categoryFeatureApi: CategoryFeatureApi = remember {
-        EntryPointAccessors.fromApplication(
-            appContext, HomeApiEntryPoint::class.java
-        ).categoryApi()
+        EntryPointAccessors
+            .fromApplication(appContext, HomeApiEntryPoint::class.java)
+            .categoryApi()
+    }
+    val navController = rememberNavController()
+
+    val bottomBarVisible = remember { mutableStateOf(true) }
+
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    LaunchedEffect(navBackStackEntry) {
+        val currentRoute = navBackStackEntry?.destination?.route
+        bottomBarVisible.value = currentRoute in setOf(
+            HomeScreenRoute::class.qualifiedName,
+            SearchScreenRoute::class.qualifiedName,
+            PlayListScreenRoute::class.qualifiedName,
+            CategoryScreenRoute::class.qualifiedName,
+            UserProfileScreenRoute::class.qualifiedName
+        )
     }
 
-
-
-    CompositionLocalProvider(
-        LocalMainNavController provides navController,
-        LocalBottomBarVisibility provides bottomBarVisible
+    NovixScaffold(
+        bottomBar = {
+            if (bottomBarVisible.value) {
+                AppBottomNavBar(navController = navController)
+            }
+        },
+        modifier = Modifier.navigationBarsPadding()
     ) {
-        NovixScaffold(
-            bottomBar = {
-                if (bottomBarVisible.value) {
-                    AppBottomNavBar(navController = navController)
-                }
-            },
-            modifier = Modifier.navigationBarsPadding()
-        ) { innerPadding ->
+        CompositionLocalProvider(
+            LocalMainNavController provides navController,
+            LocalBottomBarVisibility provides bottomBarVisible,
+        ) {
             NavHost(
                 navController = navController,
                 startDestination = HomeScreenRoute,
@@ -91,19 +112,33 @@ fun MainScreen() {
                 }
                 composable<PlayListScreenRoute> {
                     playlistsFeatureApi.PlaylistsScreenApi()
-
                 }
                 composable<CategoryScreenRoute> {
                     categoryFeatureApi.CategoryScreenApi()
-
                 }
                 composable<UserProfileScreenRoute> {
                     userProfileApi.UserProfileScreenApi()
+                }
+                composable<TrendingMoviesScreenRoute> {
+                    TrendingMoviesScreen()
+                }
+                composable<TrendingTvShowsScreenRoute> {
+                    TrendingTvShowsScreen()
+                }
+                composable<TrendingPeopleScreenRoute> {
+                    TrendingPeopleScreen()
+                }
+                composable<TopRatedMediaScreenRoute> {
+                    TopRatedMediaScreen()
+                }
+                composable<WatchingMediaHistoryScreenRoute> {
+                    WatchingMediaHistoryScreen()
                 }
             }
         }
     }
 }
+
 
 @Composable
 private fun AppBottomNavBar(navController: NavController) {
@@ -136,8 +171,9 @@ private fun AppBottomNavBar(navController: NavController) {
     }
 }
 
+
 private sealed class BottomNavItem(
-    val route: MainScreenRoutes, val icon: Int, val selectedIcon: Int
+    val route: AppRoute, val icon: Int, val selectedIcon: Int
 ) {
     object Home :
         BottomNavItem(HomeScreenRoute, R.drawable.icon_home, R.drawable.icon_home_selected)

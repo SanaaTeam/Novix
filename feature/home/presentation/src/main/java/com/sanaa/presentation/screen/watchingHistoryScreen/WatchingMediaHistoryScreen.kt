@@ -29,12 +29,12 @@ import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.api.HomeApiEntryPoint
+import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
@@ -148,7 +148,7 @@ private fun WatchingMediaHistoryScreenContent(
 private fun EffectHandler(
     effect: SharedFlow<WatchingMediaHistoryScreenEffect>,
 ) {
-    val navController = LocalAppNavController.current
+    val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
