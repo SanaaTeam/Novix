@@ -16,11 +16,14 @@ interface SavedListMovieDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMovie(movie: SavedListMovieDto)
 
+    @Query("DELETE FROM saved_list_movies WHERE list_id = :listId AND movie_id = :movieId")
+    suspend fun deleteMovieFromList(listId: Long, movieId: Long)
+
     @Query("DELETE FROM saved_list_movies WHERE list_id = :listId")
     suspend fun deleteAllByListId(listId: Long)
 
     @Query("DELETE FROM saved_list_movies WHERE movie_id = :movieId")
-    suspend fun deleteByMovieId(movieId: Long)
+    suspend fun deleteAllByMovieId(movieId: Long)
 
     @Query("SELECT * FROM saved_list_movies WHERE movie_id = :movieId LIMIT 1")
     suspend fun getSavedMovieById(movieId: Long): SavedListMovieDto?
@@ -31,7 +34,6 @@ interface SavedListMovieDao {
     @Query("DELETE FROM saved_list_movies")
     suspend fun deleteAllSavedMovies()
 
-    // ------------- Flow ----------------
 
     @Query("SELECT * FROM saved_list_movies ORDER BY list_id ASC, movie_id ASC")
     fun observeSavedMovies(): Flow<List<SavedListMovieDto>>
