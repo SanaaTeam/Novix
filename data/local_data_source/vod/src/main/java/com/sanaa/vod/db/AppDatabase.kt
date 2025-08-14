@@ -6,12 +6,15 @@ import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
 import com.sanaa.vod.cache.dao.GenreDao
 import com.sanaa.vod.cache.dao.MovieDao
-import com.sanaa.vod.cache.dao.SavedListMovieDao
+import com.sanaa.vod.cache.dao.SavedListDao
+import com.sanaa.vod.cache.dao.SavedListItemDao
 import com.sanaa.vod.cache.dao.TvShowDao
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.SavedListItemLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.SavedListMovieDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
@@ -32,6 +35,8 @@ import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
         TvShowLocalDto::class,
         GenreLocalDto::class,
         SavedListMovieDto::class,
+        SavedListItemLocalDto::class,
+        SavedListLocalDto::class
     ],
     version = 1,
     exportSchema = false
@@ -45,5 +50,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun tvShowDao(): TvShowDao
     abstract fun genreDao(): GenreDao
-    abstract fun savedListMovieDao(): SavedListMovieDao
+    abstract fun savedListDao(): SavedListDao
+    abstract fun savedListItemDao(): SavedListItemDao
 }
