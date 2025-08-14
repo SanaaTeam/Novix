@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
@@ -14,17 +13,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(
     AddBookmarkListUiState(),
     dispatcher
 ) {
-    init {
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
-    }
 
     fun onListTitleChanged(title: String) {
         updateState {
@@ -54,17 +47,6 @@ class AddBookmarkListViewModel @Inject constructor(
     private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
         resetState()
         emitEffect(AddBookmarksEffect.AddSuccess)
-        listsStatusProvider.markItemSaved(mediaId)
-        listsStatusProvider.addList(
-            SavedList(
-                title = it.title,
-                itemCount = it.itemCount,
-                id = it.id
-            )
-        )
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
     }
 
     private fun onErrorAccrue(throwable: Throwable) {

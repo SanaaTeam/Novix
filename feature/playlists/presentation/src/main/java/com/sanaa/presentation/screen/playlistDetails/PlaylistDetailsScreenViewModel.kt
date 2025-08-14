@@ -107,7 +107,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
-            manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page)
+            manageSavedListItemsUseCase.getMoviesInList(listId, page)
         }
     }
 
