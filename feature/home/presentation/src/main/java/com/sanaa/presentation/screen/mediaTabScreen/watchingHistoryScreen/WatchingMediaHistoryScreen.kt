@@ -27,15 +27,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.navigation.LocalAppNavController
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
@@ -51,6 +55,11 @@ fun WatchingMediaHistoryScreen(
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
 
+    val authApi = EntryPointAccessors.fromApplication(
+        appContext,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+    val launcher = launchAuthActivityForResult()
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
             .fromApplication(appContext, HomeApiEntryPoint::class.java)
@@ -64,6 +73,10 @@ fun WatchingMediaHistoryScreen(
             when (effect) {
                 is WatchingMediaHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+
+                is WatchingMediaHistoryScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(appContext))
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
@@ -92,6 +105,31 @@ fun WatchingMediaHistoryScreen(
             }
         }
     }
+    val selectedMedia = state.value.selectedMediaToSave
+    if (state.value.userIsLoggedIn) {
+        if (state.value.showSaveToListBottomSheet && selectedMedia != null) {
+            SaveToListBottomSheet(
+                isVisible = true,
+                mediaId = selectedMedia.id.toLong(),
+                onDismiss = viewModel::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = viewModel::onCreateNewListClick
+            )
+        }
+        if (state.value.showAddListBottomSheet && selectedMedia != null) {
+            AddBookmarkListBottomSheet(
+                isVisible = true,
+                onDismiss = viewModel::onDismissAddListBottomSheet,
+                mediaId = selectedMedia.id
+            )
+        }
+    } else {
+        RequestToLoginBottomSheet(
+            isVisible = state.value.showLoginBottomSheet,
+            onDismiss = viewModel::onDismissLoginBottomSheet,
+            onLoginButtonClick = viewModel::onLoginButtonClick
+        )
+    }
+
     Box(modifier = modifier.systemBarsPadding()) {
 
         WatchingMediaHistoryScreenContent(

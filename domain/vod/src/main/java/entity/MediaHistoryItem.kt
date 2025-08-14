@@ -8,5 +8,6 @@ data class MediaHistoryItem(
     val posterImageUrl: String,
     val mediaType: MediaType,
     val genres: List<Genre>,
-    val lastWatchedAt: Instant? = null
-)
+    val lastWatchedAt: Instant? = null,
+    val isSaved: Boolean = false,
+    )

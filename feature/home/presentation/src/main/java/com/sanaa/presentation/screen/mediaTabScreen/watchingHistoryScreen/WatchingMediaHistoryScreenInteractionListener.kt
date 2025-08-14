@@ -11,4 +11,9 @@ interface WatchingMediaHistoryScreenInteractionListener {
     fun onSaveIconClick(media: MediaItem)
     fun onBackClick()
     fun onRetryClick()
+    fun onDismissSaveToListBottomSheet()
+    fun onCreateNewListClick()
+    fun onDismissAddListBottomSheet()
+    fun onLoginButtonClick()
+    fun onDismissLoginBottomSheet()
 }
