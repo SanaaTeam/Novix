@@ -1,10 +1,9 @@
-package com.sanaa.presentation.screen.trendingPeopleScreen
+package com.sanaa.presentation.screen.trendingTvShowScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,35 +29,33 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
-import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
+import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
-import com.sanaa.presentation.components.lists.PersonList
-import com.sanaa.presentation.providers.LocalThemeProvider
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 
-
 @Composable
-fun TrendingPeopleScreen(
-    viewModel: TrendingPeopleScreenViewModel = hiltViewModel()
+fun TrendingTvShowsScreen(
+    viewModel: TrendingTvShowsScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
     EffectHandler(viewModel.effect)
 
-    TrendingPeopleScreenContent(
+    TrendingTvShowsScreenContent(
         state = state.value,
-        interactionListener = viewModel
+        interactionListener = viewModel,
     )
 }
 
 @Composable
-private fun TrendingPeopleScreenContent(
-    state: TrendingPeopleScreenUiState,
-    interactionListener: TrendingPeopleScreenInteractionListener,
+private fun TrendingTvShowsScreenContent(
+    state: TrendingTvShowsScreenUiState,
+    interactionListener: TrendingTvShowsScreenInteractionListener,
 ) {
-    val people = state.people.collectAsLazyPagingItems()
+
+    val trendingMedia = state.mediaList.collectAsLazyPagingItems()
 
     NovixScaffold(
         topBar = {
@@ -69,45 +66,35 @@ private fun TrendingPeopleScreenContent(
                         onClick = interactionListener::onBackClick
                     )
                 },
-                screenTitle = stringResource(id = R.string.trending_people),
+                screenTitle = stringResource(R.string.trending_tvshows),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 12.dp)
+                    .padding(vertical = 12.dp)
             )
         },
-        snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
-        },
-        modifier = Modifier.systemBarsPadding()
+        modifier = Modifier.systemBarsPadding(),
     ) {
+
         AnimatedContent(
-            targetState = state.isNoInternetConnection && (people.itemCount == 0),
+            targetState = state.isNoInternetConnection && trendingMedia.itemCount == 0,
             transitionSpec = { fadeIn() togetherWith fadeOut() },
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
         ) { showNoInternetScreen ->
             when (showNoInternetScreen) {
                 true -> {
-                    NetworkDisconnectionContact(
-                        onRetryClick = interactionListener::onRetryClick,
-                        useDarkTheme = LocalThemeProvider.current,
-                    )
+                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                 }
 
                 else -> {
-                    PersonList(
-                        persons = people,
-                        onItemClick = interactionListener::onActorClick
+                    PaginatedMediaListSectionContent(
+                        genres = state.genreList,
+                        mediaList = trendingMedia,
+                        selectedGenreId = state.selectedGenreId,
+                        onGenreClick = interactionListener::onGenreClick,
+                        onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
                     )
-                    if (people.loadState.hasError) {
+                    if (trendingMedia.loadState.hasError) {
                         RefreshButton(onRetryClick = interactionListener::onRetryClick)
                     }
                 }
@@ -118,7 +105,7 @@ private fun TrendingPeopleScreenContent(
 
 @Composable
 private fun EffectHandler(
-    effect: SharedFlow<TrendingPeopleScreenEffect>,
+    effect: SharedFlow<TrendingTvShowsScreenEffect>,
 ) {
     val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
@@ -132,16 +119,16 @@ private fun EffectHandler(
     LaunchedEffect(Unit) {
         effect.collectLatest { effect ->
             when (effect) {
-                is TrendingPeopleScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                is TrendingPeopleScreenEffect.NavigateToActorDetails -> {
+                is TrendingTvShowsScreenEffect.NavigateToTvShowDetails -> {
                     detailsApi.launch(
                         context = navController.context,
-                        id = effect.actorId,
-                        startRoute = StartRoute.ACTOR
+                        id = effect.id,
+                        startRoute = StartRoute.TV_SHOW
                     )
+                }
+
+                is TrendingTvShowsScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
                 }
             }
         }

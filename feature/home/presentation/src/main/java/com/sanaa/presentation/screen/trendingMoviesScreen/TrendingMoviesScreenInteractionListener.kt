@@ -1,8 +1,8 @@
-package com.sanaa.presentation.screen.trendingMediaScreen
+package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import com.sanaa.presentation.state.MediaItem
 
-interface MediaListScreenInteractionListener {
+interface TrendingMoviesScreenInteractionListener {
     fun onGenreClick(id: Int?)
     fun onMediaClick(id: Int)
     fun onSaveIconClick(media: MediaItem)
@@ -11,8 +11,9 @@ interface MediaListScreenInteractionListener {
     fun onBackClick()
     fun onRetryClick()
     fun onLoginButtonClick()
-    fun onDismissBottomSheet()
+    fun onDismissLoginBottomSheet()
     fun onDismissSaveToListBottomSheet()
-    fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
+    fun onCreateNewListClick()
+    fun onSnackBarDismiss()
 }
