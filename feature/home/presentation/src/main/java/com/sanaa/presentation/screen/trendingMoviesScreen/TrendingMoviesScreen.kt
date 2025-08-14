@@ -86,41 +86,45 @@ private fun TrendingMoviesScreenContent(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
         ) { showNoInternetScreen ->
-            if (showNoInternetScreen) {
-                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-            } else {
-                PaginatedMediaListSectionContent(
-                    genres = state.genreList,
-                    mediaList = trendingMedia,
-                    selectedGenreId = state.selectedGenreId,
-                    onGenreClick = interactionListener::onGenreClick,
-                    onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
-                    onSaveIconClick = interactionListener::onSaveIconClick,
-                )
-                if (trendingMedia.loadState.hasError) {
-                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+            when (showNoInternetScreen) {
+                true -> {
+                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                 }
 
-                if (state.userIsLoggedIn) {
-                    state.selectedMediaId?.let { mediaItem ->
-                        SaveToListBottomSheet(
-                            isVisible = state.showSaveToListBottomSheet,
-                            mediaId = mediaItem.toLong(),
-                            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                            onCreateNewListClick = interactionListener::onCreateNewListClick,
+                else -> {
+                    PaginatedMediaListSectionContent(
+                        genres = state.genreList,
+                        mediaList = trendingMedia,
+                        selectedGenreId = state.selectedGenreId,
+                        onGenreClick = interactionListener::onGenreClick,
+                        onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
+                        onSaveIconClick = interactionListener::onSaveIconClick,
+                    )
+                    if (trendingMedia.loadState.hasError) {
+                        RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                    }
+
+                    if (state.userIsLoggedIn) {
+                        state.selectedMediaId?.let { mediaItem ->
+                            SaveToListBottomSheet(
+                                isVisible = state.showSaveToListBottomSheet,
+                                mediaId = mediaItem.toLong(),
+                                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                                onCreateNewListClick = interactionListener::onCreateNewListClick,
+                            )
+                        }
+                        AddBookmarkListBottomSheet(
+                            isVisible = state.showAddListBottomSheet,
+                            onDismiss = interactionListener::onDismissAddListBottomSheet,
+                            mediaId = state.selectedMediaId ?: 0
+                        )
+                    } else {
+                        RequestToLoginBottomSheet(
+                            isVisible = state.showLoginBottomSheet,
+                            onDismiss = interactionListener::onDismissLoginBottomSheet,
+                            onLoginButtonClick = interactionListener::onLoginButtonClick
                         )
                     }
-                    AddBookmarkListBottomSheet(
-                        isVisible = state.showAddListBottomSheet,
-                        onDismiss = interactionListener::onDismissAddListBottomSheet,
-                        mediaId = state.selectedMediaId ?: 0
-                    )
-                } else {
-                    RequestToLoginBottomSheet(
-                        isVisible = state.showLoginBottomSheet,
-                        onDismiss = interactionListener::onDismissLoginBottomSheet,
-                        onLoginButtonClick = interactionListener::onLoginButtonClick
-                    )
                 }
             }
         }

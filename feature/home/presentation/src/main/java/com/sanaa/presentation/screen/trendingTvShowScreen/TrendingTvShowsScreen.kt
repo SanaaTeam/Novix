@@ -81,18 +81,22 @@ private fun TrendingTvShowsScreenContent(
             contentAlignment = Alignment.Center,
             modifier = Modifier.fillMaxSize(),
         ) { showNoInternetScreen ->
-            if (showNoInternetScreen) {
-                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
-            } else {
-                PaginatedMediaListSectionContent(
-                    genres = state.genreList,
-                    mediaList = trendingMedia,
-                    selectedGenreId = state.selectedGenreId,
-                    onGenreClick = interactionListener::onGenreClick,
-                    onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
-                )
-                if (trendingMedia.loadState.hasError) {
-                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+            when (showNoInternetScreen) {
+                true -> {
+                    NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+                }
+
+                else -> {
+                    PaginatedMediaListSectionContent(
+                        genres = state.genreList,
+                        mediaList = trendingMedia,
+                        selectedGenreId = state.selectedGenreId,
+                        onGenreClick = interactionListener::onGenreClick,
+                        onMediaClick = { media -> interactionListener.onMediaClick(media.id) },
+                    )
+                    if (trendingMedia.loadState.hasError) {
+                        RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                    }
                 }
             }
         }
