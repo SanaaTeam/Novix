@@ -51,6 +51,7 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         val handler = createExceptionHandler(onError)
 
         viewModelScope.launch(dispatcher + handler) {
@@ -66,6 +67,7 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
+        onStart()
         val handler = createExceptionHandler(onError)
 
         viewModelScope.launch(dispatcher + handler) {
