@@ -8,7 +8,7 @@ import com.sanaa.presentation.screen.myRating.MyRatingScreenEffect
 import com.sanaa.presentation.screen.myRating.MyRatingScreenViewModel
 import com.sanaa.presentation.screen.myRating.MyRatingTab
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -24,12 +24,13 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import service.VodStringProvider
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class MyRatingScreenViewModelTest {
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvSeriesUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val preferencesManager: PreferencesManager = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: MyRatingScreenViewModel
@@ -45,13 +46,13 @@ class MyRatingScreenViewModelTest {
         coEvery { stringProvider.deleteRatingSuccess } returns "Rating deleted successfully."
 
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns listOf(dummyTvSeries)
     }
 
     @Test
     fun `loadRatedMedia should set isNoInternetConnection to true when a network error occurs`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns emptyList()
 
         viewModel = MyRatingScreenViewModel(
             manageMovieUseCase,
@@ -147,7 +148,7 @@ class MyRatingScreenViewModelTest {
     @Test
     fun `onRetryLoadDetails sets isLoading to true and reloads data`() = runTest {
         coEvery { manageMovieUseCase.getUserRatedMovies() } throws NoNetworkException()
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } throws NoNetworkException()
+        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } throws NoNetworkException()
 
         viewModel = MyRatingScreenViewModel(
             manageMovieUseCase,
@@ -162,7 +163,7 @@ class MyRatingScreenViewModelTest {
         assertThat(viewModel.state.value.isLoading).isFalse()
 
         coEvery { manageMovieUseCase.getUserRatedMovies() } returns listOf(dummyMovie)
-        coEvery { manageTvSeriesUseCase.getUserRatedTvSeries(any(), any()) } returns listOf(dummyTvSeries)
+        coEvery { manageTvSeriesUseCase.getTvShowRating(any(), any()) } returns listOf(dummyTvSeries)
 
         viewModel.onRetryLoadDetails()
         assertThat(viewModel.state.value.isLoading).isTrue()
@@ -197,7 +198,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onDeleteIconClick for tv show success removes item from state and shows success snackbar`() = runTest {
-        coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } returns true
+        coEvery { manageTvSeriesUseCase.deleteTvShowRate(any()) } returns true
         viewModel = MyRatingScreenViewModel(
             manageMovieUseCase,
             manageTvSeriesUseCase,
@@ -220,7 +221,7 @@ class MyRatingScreenViewModelTest {
 
     @Test
     fun `onDeleteIconClick for tv show failure emits error snackbar`() = runTest {
-        coEvery { manageTvSeriesUseCase.deleteTvSeriesRate(any()) } throws RuntimeException("Delete failed")
+        coEvery { manageTvSeriesUseCase.deleteTvShowRate(any()) } throws RuntimeException("Delete failed")
         viewModel = MyRatingScreenViewModel(
             manageMovieUseCase,
             manageTvSeriesUseCase,
@@ -246,11 +247,14 @@ class MyRatingScreenViewModelTest {
             title = "Dummy Movie",
             genres = emptyList(),
             imdbRating = 7.5f,
-            duration = null,
             releaseDate = LocalDate.parse("2023-01-01"),
-            rating = 8
+            rating = 0,
+            duration = 120.minutes,
+            overview = "This is a placeholder description for the dummy movie.",
+            trailerUrl = "https://example.com/trailer.mp4"
         )
-        val dummyTvSeries = TvSeries(
+
+        val dummyTvSeries = TvShow(
             id = 2,
             title = "Dummy TV Show",
             overview = "An overview",

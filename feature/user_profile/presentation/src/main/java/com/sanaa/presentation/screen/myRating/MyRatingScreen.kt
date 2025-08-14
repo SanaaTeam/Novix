@@ -75,7 +75,7 @@ private fun MyRatingScreenEffectsHandler(
                     id = effect.mediaId,
                     startRoute = when (effect.mediaTypeUi) {
                         MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                        MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
             }
