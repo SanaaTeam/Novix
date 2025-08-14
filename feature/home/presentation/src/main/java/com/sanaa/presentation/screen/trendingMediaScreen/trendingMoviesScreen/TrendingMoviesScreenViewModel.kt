@@ -48,7 +48,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState {
                     copy(
@@ -61,7 +61,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun fetchGenres() {
         tryToExecute(
-            callee = ::loadGenresOperation,
+            block = ::loadGenresOperation,
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -80,7 +80,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     private fun loadMovies() {
         tryToCollect(
-            callee = ::loadMoviesOperation,
+            block = ::loadMoviesOperation,
             onCollect = ::onLoadMoviesSuccess,
             onError = ::onDataLoadError
         )

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.watchingHistoryScreen
+package com.sanaa.presentation.screen.watchingHistoryScreen
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -36,18 +34,120 @@ import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
-import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.navigation.HomeApiEntryPoint
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun WatchingMediaHistoryScreen(
-    modifier: Modifier = Modifier,
     viewModel: WatchingMediaHistoryScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
+    EffectHandler(viewModel.effect)
+
+    WatchingMediaHistoryScreenContent(
+        state = state.value,
+        interactionListener = viewModel,
+    )
+}
+
+@Composable
+private fun WatchingMediaHistoryScreenContent(
+    state: WatchingMediaHistoryScreenUiState,
+    interactionListener: WatchingMediaHistoryScreenInteractionListener,
+) {
+
+    NovixScaffold(
+        topBar = {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(id = R.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+                    )
+                },
+                screenTitle = stringResource(R.string.watching_history),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
+        },
+        snackBarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                NovixAnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onSnackBarDismiss
+                )
+            }
+        },
+        modifier = Modifier.systemBarsPadding(),
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+
+            MediaTabs(
+                onTabClick = interactionListener::onMediaTabSelection,
+                selectedTab = state.selectedMediaTypeUiState,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            AnimatedContent(
+                targetState = state.selectedMediaTypeUiState,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(150, delayMillis = 150))
+                        .togetherWith(fadeOut(animationSpec = tween(150)))
+                },
+                modifier = Modifier.fillMaxSize()
+            ) { selectedMediaType ->
+                when (selectedMediaType) {
+
+                    MediaTypeUi.MOVIE -> {
+                        MediaListSectionContent(
+                            genres = state.movieGenres,
+                            mediaList = state.movieList,
+                            selectedGenreId = state.movieSelectedGenreId,
+                            onGenreClick = interactionListener::onMovieGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+
+                    MediaTypeUi.TV_SHOW -> {
+                        MediaListSectionContent(
+                            genres = state.tvShowGenres,
+                            mediaList = state.tvShowList,
+                            selectedGenreId = state.tvShowSelectedGenreId,
+                            onGenreClick = interactionListener::onTvShowGenreClick,
+                            onMediaClick = { media ->
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                            },
+                            onSaveIconClick = interactionListener::onSaveIconClick,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    }
+                }
+                if (state.showRefreshButton) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: SharedFlow<WatchingMediaHistoryScreenEffect>,
+) {
     val navController = LocalAppNavController.current
     val appContext = LocalContext.current.applicationContext
 
@@ -57,17 +157,15 @@ fun WatchingMediaHistoryScreen(
             .detailsApi()
     }
 
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        effect.collectLatest { effect ->
             when (effect) {
                 is WatchingMediaHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
-                    when (effect.mediaTypeUi) {
+                    when (effect.mediaTypeUiState) {
                         MediaTypeUi.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
@@ -84,107 +182,6 @@ fun WatchingMediaHistoryScreen(
                             )
                         }
                     }
-                }
-
-                is WatchingMediaHistoryScreenEffect.ShowError -> {
-                    snack = SnackData(message = effect.message, isError = true)
-                }
-            }
-        }
-    }
-    Box(modifier = modifier.systemBarsPadding()) {
-
-        WatchingMediaHistoryScreenContent(
-            title = stringResource(R.string.watching_history),
-            state = state.value,
-            interactionListener = viewModel,
-            modifier = Modifier,
-        )
-
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-    }
-}
-
-@Composable
-private fun WatchingMediaHistoryScreenContent(
-    title: String,
-    state: WatchingMediaHistoryScreenUiState,
-    interactionListener: WatchingMediaHistoryScreenInteractionListener,
-    modifier: Modifier = Modifier,
-) {
-    val tvShows = state.tvShowList
-    val movies = state.movieList
-
-    NovixScaffold(
-        topBar = {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(id = R.drawable.icon_back),
-                        onClick = interactionListener::onBackClick
-                    )
-                },
-                screenTitle = title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
-            )
-        },
-        modifier = modifier,
-    ) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-
-            MediaTabs(
-                onTabClick = interactionListener::onMediaTabSelection,
-                selectedTab = state.selectedMediaTypeUi,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            AnimatedContent(
-                targetState = state.selectedMediaTypeUi,
-                transitionSpec = {
-                    fadeIn(animationSpec = tween(150, delayMillis = 150))
-                        .togetherWith(fadeOut(animationSpec = tween(150)))
-                },
-                modifier = Modifier.fillMaxSize()
-            ) { selectedMediaType ->
-                when (selectedMediaType) {
-
-                    MediaTypeUi.MOVIE -> {
-                        MediaListSectionContent(
-                            genres = state.movieGenres,
-                            mediaList = movies,
-                            selectedGenreId = state.movieSelectedGenreId,
-                            onGenreClick = interactionListener::onMovieGenreClick,
-                            onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                            },
-                            onSaveIconClick = interactionListener::onSaveIconClick,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-
-                    MediaTypeUi.TV_SHOW -> {
-                        MediaListSectionContent(
-                            genres = state.tvShowGenres,
-                            mediaList = tvShows,
-                            selectedGenreId = state.tvShowSelectedGenreId,
-                            onGenreClick = interactionListener::onTvShowGenreClick,
-                            onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
-                            },
-                            onSaveIconClick = interactionListener::onSaveIconClick,
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-                if (state.showRefreshButton) {
-                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
                 }
             }
         }
