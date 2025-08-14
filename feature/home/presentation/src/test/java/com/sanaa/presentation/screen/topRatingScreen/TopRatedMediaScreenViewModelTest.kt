@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
+package com.sanaa.presentation.screen.topRatingScreen
 
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
@@ -214,7 +214,7 @@ class TopRatedMediaScreenViewModelTest {
         viewModel.onBackClick()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TopRatedScreenEffect.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(TopRatedMediaScreenEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
     }
