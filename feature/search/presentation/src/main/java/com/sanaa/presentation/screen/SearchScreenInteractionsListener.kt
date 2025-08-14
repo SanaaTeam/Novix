@@ -22,5 +22,7 @@ interface SearchScreenInteractionsListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
-
+    fun onSnackBarDismiss()
+    fun onSaveToListSuccess()
+    fun onSaveToListFailure()
 }

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.state
 
 import androidx.paging.PagingData
+import com.sanaa.presentation.screen.componants.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -22,7 +23,8 @@ data class SearchScreenUiState(
     val safeContentThreshold: Float = 0f,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MovieUiModel? = null
+    val selectedMediaToSave: MovieUiModel? = null,
+    val snackBarData: SnackData? = null
 ) {
 
     companion object {

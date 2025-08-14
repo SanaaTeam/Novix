@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -9,6 +10,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.base.BasePagingSource
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
 import repository.SavedListsStatusProvider
 import repository.Theme
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
@@ -52,6 +55,7 @@ class SearchViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -133,6 +137,34 @@ class SearchViewModel @Inject constructor(
 
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState {
+            copy(snackBarData = null)
+        }
+    }
+
+    override fun onSaveToListSuccess() {
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false
+                )
+            )
+        }
+    }
+
+    override fun onSaveToListFailure() {
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListFailed,
+                    isError = true
+                )
+            )
+        }
     }
 
     override fun onSaveMoviesClicked() {
