@@ -122,7 +122,7 @@ class ActorViewModelTest {
     private fun givenHappyViewModel() {
         coEvery { manageActorDetailsUseCase.getActorDetails(actorId) } returns dummyActor
         coEvery { manageActorDetailsUseCase.getActorTopMovies(actorId) } returns dummyMovies
-        coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummyTvShow
+        coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummyTvShow
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
         savedListsStatusProvider = mockk(relaxed = true) {
