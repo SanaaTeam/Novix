@@ -54,8 +54,7 @@ ignore:
   - "com/sanaa/presentation/screen/genreTvShows/GenreTvShowsScreen*"
   - "com/sanaa/presentation/screen/review/components/**"
   - "com/sanaa/presentation/screen/review/**"
-  - "com/sanaa/presentation/screen/series/components/**"
-  - "com/sanaa/presentation/screen/series/SeriesScreen*"
+  - "com/sanaa/presentation/screen/tvShow/**"
   - "com/sanaa/feature/media_details/api/*"
   - "com/sanaa/presentation/cards/**"
   - "feature/media_details/api**",

@@ -11,12 +11,12 @@ fun MediaHistoryItem.toDto(
     time: Long = DateTimeUtils.getCurrentTimeStamp()
 ): WatchedMediaHistoryLocalDto {
     val genresString =
-        this.genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
+        genres.map { it.id }.joinToString(separator = ",", prefix = ",", postfix = ",")
     return WatchedMediaHistoryLocalDto(
-        id = this.id,
+        id = id,
         username = username,
-        posterImageUrl = this.posterImageUrl,
-        mediaType = this.mediaType.name,
+        posterImageUrl = posterImageUrl,
+        mediaType = mediaType.name,
         genres = genresString,
         timestamp = time
     )
@@ -32,10 +32,10 @@ fun WatchedMediaHistoryLocalDto.toEntity(): MediaHistoryItem {
         .map { genreId -> Genre(id = genreId, name = "") }
 
     return MediaHistoryItem(
-        id = this.id,
-        posterImageUrl = this.posterImageUrl,
-        mediaType = MediaType.valueOf(this.mediaType),
+        id = id,
+        posterImageUrl = posterImageUrl,
+        mediaType = MediaType.valueOf(mediaType),
         genres = genreList,
-        lastWatchedAt = kotlinx.datetime.Instant.fromEpochMilliseconds(this.timestamp)
+        lastWatchedAt = timestamp
     )
 }

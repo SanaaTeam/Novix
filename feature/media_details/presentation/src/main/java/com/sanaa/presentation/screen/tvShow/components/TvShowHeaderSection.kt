@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series.components
+package com.sanaa.presentation.screen.tvShow.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -27,7 +27,7 @@ import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 
 @Composable
-fun SeriesHeaderSection(
+fun TvShowHeaderSection(
     title: String,
     rating: String?,
     season: String,

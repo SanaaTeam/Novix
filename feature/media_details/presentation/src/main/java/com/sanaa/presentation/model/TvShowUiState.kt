@@ -1,6 +1,6 @@
 package com.sanaa.presentation.model
 
-data class SeriesUiModel(
+data class TvShowUiState(
     val id: Int = 0,
     val title: String = "",
     val posterPath: String? = null,
@@ -12,13 +12,13 @@ data class SeriesUiModel(
     val releaseDate: String = "",
 )
 
-data class SeasonUiModel(
+data class SeasonUiState(
     val seasonNumber: Int = 0,
     val episodeCount: Int = 0,
-    val episodes: List<EpisodeUiModel> = emptyList(),
+    val episodes: List<EpisodeUiState> = emptyList(),
 )
 
-data class EpisodeUiModel(
+data class EpisodeUiState(
     val number: Int = 0,
     val title: String = "",
     val rating: String? = null,

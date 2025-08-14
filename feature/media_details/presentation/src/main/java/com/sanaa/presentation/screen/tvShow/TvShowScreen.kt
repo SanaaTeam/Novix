@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.series
+package com.sanaa.presentation.screen.tvShow
 
 import android.app.Activity
 import android.content.Intent
@@ -45,7 +45,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
@@ -54,10 +54,10 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.series.components.CastComponent
-import com.sanaa.presentation.screen.series.components.EpisodesContent
-import com.sanaa.presentation.screen.series.components.SeasonTab
-import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.screen.tvShow.components.CastComponent
+import com.sanaa.presentation.screen.tvShow.components.EpisodesContent
+import com.sanaa.presentation.screen.tvShow.components.SeasonTab
+import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
@@ -67,8 +67,8 @@ import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
 @Composable
-fun SeriesScreen(
-    viewModel: SeriesViewModel = hiltViewModel()
+fun TvShowScreen(
+    viewModel: TvShowScreenViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -88,52 +88,52 @@ fun SeriesScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                is SeriesScreenEffects.NavigateToActorScreen -> {
+                is TvShowScreenEffects.NavigateToActorScreen -> {
                     navController.navigate(
-                        ActorDetailsScreenRoute(it.actorId).route()
+                        ActorScreenRoute(it.actorId).route()
                     )
                 }
 
-                is SeriesScreenEffects.NavigateToEpisodeDetailsScreen -> {
+                is TvShowScreenEffects.NavigateToEpisodeDetailsScreen -> {
                     navController.navigate(
                         EpisodeDetailsScreenRoute(
-                            it.seriesId, it.seasonNumber, it.episodeNumber
+                            it.tvShowId, it.seasonNumber, it.episodeNumber
                         ).route()
                     )
                 }
 
-                is SeriesScreenEffects.NavigateToReviewsScreen -> {
+                is TvShowScreenEffects.NavigateToReviewsScreen -> {
                     navController.navigate(
-                        ReviewsScreenRoute(it.seriesId, MediaTypeParam.SERIES).route()
+                        ReviewsScreenRoute(it.tvShowId, MediaTypeParam.TV_SHOW).route()
                     )
                 }
 
-                is SeriesScreenEffects.NavigateBack -> {
+                is TvShowScreenEffects.NavigateBack -> {
                     if (!navController.popBackStack()) {
                         (navController.context as Activity).finish()
                     }
                 }
 
-                is SeriesScreenEffects.PlayTrailer -> {
+                is TvShowScreenEffects.PlayTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.trailerUrl?.toUri())
                     context.startActivity(intent)
                 }
 
-                is SeriesScreenEffects.NavigateToMovieCategoriesScreen -> {
+                is TvShowScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
                         GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
                     )
                 }
 
-                is SeriesScreenEffects.ShowSuccessSnackBar -> {
+                is TvShowScreenEffects.ShowSuccessSnackBar -> {
                     snack = SnackData(message = submitRatingSuccessMsg, isError = false)
                 }
 
-                is SeriesScreenEffects.ShowErrorSnackBar -> {
+                is TvShowScreenEffects.ShowErrorSnackBar -> {
                     snack = SnackData(submitRatingFailedMsg, isError = true)
                 }
 
-                SeriesScreenEffects.NavigateToLogin -> {
+                TvShowScreenEffects.NavigateToLogin -> {
                     // Launch authentication activity
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
@@ -142,7 +142,7 @@ fun SeriesScreen(
     }
 
     Box {
-        SeriesScreenContent(
+        TvShowScreenContent(
             interactionListener = viewModel, state = state.value
         )
 
@@ -154,8 +154,8 @@ fun SeriesScreen(
 }
 
 @Composable
-fun SeriesScreenContent(
-    interactionListener: SeriesScreenInteractionListener, state: SeriesScreenUiState
+fun TvShowScreenContent(
+    interactionListener: TvShowScreenInteractionListener, state: TvShowScreenUiState
 ) {
 
     val scrollState = rememberScrollState()
@@ -182,7 +182,7 @@ fun SeriesScreenContent(
                 }, rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_save),
-                        onClick = interactionListener::onSaveSeriesClicked
+                        onClick = interactionListener::onSaveTvShowClicked
                     )
                 }, modifier = Modifier
                     .background(animatedColor)
@@ -218,18 +218,18 @@ fun SeriesScreenContent(
                         Column(
                             modifier = Modifier.padding(bottom = 104.dp)
                         ) {
-                            SeriesHeaderSection(
-                                title = state.series.title,
-                                rating = state.series.rating,
+                            TvShowHeaderSection(
+                                title = state.tvShow.title,
+                                rating = state.tvShow.rating,
                                 season = stringResource(
-                                    R.string.seasons_count, state.series.seasonsCount
+                                    R.string.seasons_count, state.tvShow.seasonsCount
                                 ),
-                                airDate = state.series.releaseDate,
+                                airDate = state.tvShow.releaseDate,
                                 imagesUrl = state.images,
-                                genres = state.series.genres,
+                                genres = state.tvShow.genres,
                                 onReviewClicked = {
                                     interactionListener.onViewReviewsClicked(
-                                        state.series.id
+                                        state.tvShow.id
                                     )
                                 },
                                 onGenreClicked = { genre ->
@@ -238,11 +238,11 @@ fun SeriesScreenContent(
                                     )
                                 })
 
-                            if (state.series.overview.isNotEmpty()) {
+                            if (state.tvShow.overview.isNotEmpty()) {
                                 OverviewSection(
                                     onReadMore = {},
                                     titleResId = R.string.overview,
-                                    overview = state.series.overview,
+                                    overview = state.tvShow.overview,
                                     modifier = Modifier.padding(
                                         start = 16.dp, end = 16.dp, top = 16.dp
                                     )
@@ -256,7 +256,7 @@ fun SeriesScreenContent(
                                 )
                             SeasonTab(
                                 onClick = interactionListener::onSeasonNumberClicked,
-                                seasonCounts = state.series.seasonsCount,
+                                seasonCounts = state.tvShow.seasonsCount,
                                 currentSeason = state.selectedSeason,
                                 modifier = Modifier.padding(horizontal = 16.dp)
                             )
@@ -275,7 +275,7 @@ fun SeriesScreenContent(
                                 } else {
                                     EpisodesContent(
                                         episodes = state.season.episodes,
-                                        seriesId = state.series.id,
+                                        tvShowId = state.tvShow.id,
                                         onEpisodeClick = interactionListener::onEpisodeClicked
                                     )
                                 }
@@ -286,7 +286,7 @@ fun SeriesScreenContent(
             }
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                trailerUrl = state.series.trailerUrl,
+                trailerUrl = state.tvShow.trailerUrl,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                 onSetRateClicked = interactionListener::onRateClicked
             )

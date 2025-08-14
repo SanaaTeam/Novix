@@ -11,19 +11,20 @@ import com.sanaa.presentation.model.mapper.toReviewUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Review
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ReviewViewModel @Inject constructor(
+class ReviewScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<ReviewScreenUiState, ReviewScreenEffects>(
     initialState = ReviewScreenUiState(),
@@ -63,8 +64,8 @@ class ReviewViewModel @Inject constructor(
         updateState { copy(reviews = flowOf(reviews), isLoading = false) }
     }
 
-    private fun onFetchReviewsFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
+    private fun onFetchReviewsFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
             updateState {
                 copy(
                     noInternetConnection = true,
@@ -73,7 +74,7 @@ class ReviewViewModel @Inject constructor(
                 )
             }
         } else {
-            updateState { copy(isLoading = false, error = throwable.message) }
+            updateState { copy(isLoading = false, error = exception.message) }
         }
     }
 
@@ -94,7 +95,7 @@ class ReviewViewModel @Inject constructor(
                     id, page
                 )
             } else {
-                manageTvSeriesDetails.getTvSeriesReviews(
+                manageTvShowDetails.getTvShowReviews(
                     id, page
                 )
             }

@@ -2,9 +2,10 @@ package com.sanaa.presentation.base
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import exceptions.NovixAppException
 
 class BasePagingSourceForHome<T : Any>(
-    private val onError: ((Throwable) -> Unit)? = null,
+    private val onError: ((NovixAppException) -> Unit)? = null,
     private val fetchItems: suspend (page: Int) -> List<T>,
 ) : PagingSource<Int, T>() {
 
@@ -26,7 +27,12 @@ class BasePagingSourceForHome<T : Any>(
                 nextKey = if (items.isEmpty()) null else page.plus(1)
             )
         } catch (e: Exception) {
-            onError?.invoke(e)
+            onError?.invoke(
+                when(e){
+                    is NovixAppException -> e
+                    else -> NovixAppException(e.message)
+                }
+            )
             LoadResult.Error(e)
         }
     }

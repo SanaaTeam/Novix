@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 
-
 @Composable
 fun DialogContainer(
     pageContent: OnBoardingPageContentItem,

@@ -19,7 +19,7 @@ import com.sanaa.vod.repository.mapper.cachedContent.toEntity
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -94,10 +94,10 @@ class MovieRepositoryImplTest {
     }
 
     @Test
-    fun `getImages throws RetrievingDataFailureException on unknown error`() = runTest {
+    fun `getImages throws NovixAppException on unknown error`() = runTest {
         coEvery { remote.fetchImagesUrl(any()) } throws RuntimeException("some error")
 
-        assertThrows<RetrievingDataFailureException> { repository.getImageUrls(1, 2) }
+        assertThrows<NovixAppException> { repository.getImageUrls(1, 2) }
     }
 
     @Test

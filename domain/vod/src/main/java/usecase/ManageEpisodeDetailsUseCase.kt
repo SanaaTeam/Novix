@@ -2,21 +2,21 @@ package usecase
 
 import entity.Actor
 import entity.Episode
+import repository.TvShowRepository
 import javax.inject.Inject
-import repository.TvSeriesRepository
 
 class ManageEpisodeDetailsUseCase @Inject constructor(
-    private val tvSeriesRepo: TvSeriesRepository
+    private val tvShowRepository: TvShowRepository
 ) {
     suspend fun getEpisodeDetails(id: Int, seasonNumber: Int, episodeNumber: Int): Episode =
-        tvSeriesRepo.getEpisodeDetails(id, seasonNumber, episodeNumber)
+        tvShowRepository.getEpisodeDetails(id, seasonNumber, episodeNumber)
 
     suspend fun getEpisodeGuestsOfHonor(
         id: Int,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<Actor> =
-        tvSeriesRepo.getEpisodeGuestsOfHonor(id, seasonNumber, episodeNumber)
+        tvShowRepository.getEpisodeGuestsOfHonor(id, seasonNumber, episodeNumber)
 
     suspend fun getEpisodeImages(
         id: Int,
@@ -24,16 +24,16 @@ class ManageEpisodeDetailsUseCase @Inject constructor(
         episodeNumber: Int,
         count: Int
     ): List<String> =
-        tvSeriesRepo.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
+        tvShowRepository.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
 
     suspend fun addTvEpisodeRate(
-        seriesId: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
     ): Boolean {
-        return tvSeriesRepo.addTvEpisodeRate(
-            seriesId = seriesId,
+        return tvShowRepository.addTvEpisodeRate(
+            tvShowId = tvShowId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             rating = rating

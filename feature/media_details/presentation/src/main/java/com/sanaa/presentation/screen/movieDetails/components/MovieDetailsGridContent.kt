@@ -30,7 +30,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.modifier.fillWidthOfParent
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreenInteractionListener
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiState
-import com.sanaa.presentation.screen.series.components.CastComponent
+import com.sanaa.presentation.screen.tvShow.components.CastComponent
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider

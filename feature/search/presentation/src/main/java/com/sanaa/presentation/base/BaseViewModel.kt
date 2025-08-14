@@ -108,4 +108,15 @@ abstract class BaseViewModel<T, E>(
             _effectChannel.send(effect)
         }
     }
+
+
+//    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+//        CoroutineExceptionHandler { _, exception ->
+//            onError(
+//                when (exception) {
+//                    is NovixAppException -> exception
+//                    else -> NovixAppException(exception.message)
+//                }
+//            )
+//        }
 }
