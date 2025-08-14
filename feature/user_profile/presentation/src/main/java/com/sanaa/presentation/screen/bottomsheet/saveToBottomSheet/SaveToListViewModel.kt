@@ -4,14 +4,12 @@ import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()) {
 
     init {
@@ -19,22 +17,7 @@ class SaveToListViewModel @Inject constructor(
     }
 
     private fun observePlaylists() {
-        tryToCollect(
-            block = { listsStatusProvider.savedLists },
-            onCollect = { playlist ->
-                updateState {
-                    copy(
-                        playlists = playlist.map {
-                            PlaylistUiItem(
-                                title = it.title,
-                                itemCount = it.itemCount,
-                                id = it.id.toLong()
-                            )
-                        }
-                    )
-                }
-            },
-        )
+
     }
 
     fun onPlaylistSelected(listId: Long) {
@@ -61,10 +44,7 @@ class SaveToListViewModel @Inject constructor(
             },
             onSuccess = {
                 updateState { copy(isLoading = false) }
-                listsStatusProvider.markItemSaved(mediaId.toInt())
-                viewModelScope.launch {
-                    listsStatusProvider.refreshLists()
-                }
+
                 emitEffect(SaveToListEffect.AddedSuccessfully)
             },
             onError = {
