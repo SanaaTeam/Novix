@@ -55,20 +55,16 @@ fun SaveToListBottomSheet(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-        }
-    }
-
-    LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 SaveToListEffect.AddedSuccessfully -> {
                     onSuccess()
                     onDismiss()
                 }
-
-                SaveToListEffect.FailedToAdd -> onFailure()
+                SaveToListEffect.FailedToAdd -> {
+                    onFailure()
+                    onDismiss()
+                }
             }
         }
     }
