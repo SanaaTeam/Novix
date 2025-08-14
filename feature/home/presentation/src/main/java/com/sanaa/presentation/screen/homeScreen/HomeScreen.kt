@@ -91,7 +91,7 @@ private fun HomeScreenContent(
     NovixScaffold(
         topBar = { HomeTopBar(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) },
         backgroundShapes = {},
-        snackbarHost = {
+        snackBarHost = {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter

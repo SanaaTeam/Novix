@@ -9,19 +9,19 @@ import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import entity.TvSeries
+import entity.TvShow
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import service.VodStringProvider
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingTvShowsScreenViewModel @Inject constructor(
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingTvShowsScreenUiState, TrendingTvShowsScreenEffect>(
@@ -36,7 +36,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     private fun fetchGenres() {
         tryToExecute(
             onStart = { updateState { copy(isLoading = true) } },
-            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toState() } },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toState() } },
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -57,7 +57,7 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
     private fun loadTvShowsOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createTvShowsPagingSource() },
-            mapper = TvSeries::toState
+            mapper = TvShow::toState
         )
     }
 
@@ -126,9 +126,9 @@ class TrendingTvShowsScreenViewModel @Inject constructor(
         }
     }
 
-    private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvSeries> {
+    private fun createTvShowsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, TvShow> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageTvSeriesUseCase.getTrendingTvSeries(
+            manageTvShowUseCase.getTrendingTvShows(
                 page = page,
                 genreId = state.value.selectedGenreId
             )

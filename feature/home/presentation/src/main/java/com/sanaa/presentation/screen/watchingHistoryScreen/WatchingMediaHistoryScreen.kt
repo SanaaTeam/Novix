@@ -75,7 +75,7 @@ private fun WatchingMediaHistoryScreenContent(
                     .padding(top = 12.dp)
             )
         },
-        snackbarHost = {
+        snackBarHost = {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
