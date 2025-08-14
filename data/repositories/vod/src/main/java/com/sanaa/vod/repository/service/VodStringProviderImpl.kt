@@ -20,4 +20,9 @@ class VodStringProviderImpl @Inject constructor(
 
     override val addToListSuccess: String
         get() = context.getString(R.string.add_to_list_success)
+    override val submitRatingSuccess: String
+        get() = context.getString(R.string.submit_rating_successfully)
+
+    override val submitRatingFailed: String
+        get() = context.getString(R.string.submit_rating_failed)
 }

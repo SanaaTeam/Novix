@@ -5,4 +5,6 @@ interface VodStringProvider {
     val somethingWentWrongError: String
     val addToListFailed: String
     val addToListSuccess: String
+    val submitRatingSuccess: String
+    val submitRatingFailed: String
 }
