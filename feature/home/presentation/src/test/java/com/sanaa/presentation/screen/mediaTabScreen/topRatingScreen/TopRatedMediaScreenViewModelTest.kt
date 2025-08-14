@@ -23,7 +23,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -39,17 +38,12 @@ class TopRatedMediaScreenViewModelTest {
     private lateinit var manageTvSeriesUseCase: ManageTvSeriesUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
-
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         manageMovieUseCase = mockk(relaxed = true)
         manageTvSeriesUseCase = mockk(relaxed = true)
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     @AfterEach
@@ -65,7 +59,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -83,7 +76,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -101,7 +93,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -121,7 +112,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -142,7 +132,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -166,7 +155,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -187,7 +175,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher
@@ -205,7 +192,6 @@ class TopRatedMediaScreenViewModelTest {
             TopRatedMediaScreenViewModel(
                 manageMovieUseCase,
                 manageTvSeriesUseCase,
-                savedListsStatusProvider,
                 checkIfUserIsLoggedInUseCase,
                 stringProvider,
                 testDispatcher

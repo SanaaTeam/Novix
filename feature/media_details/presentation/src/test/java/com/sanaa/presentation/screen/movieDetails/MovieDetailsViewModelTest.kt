@@ -26,7 +26,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -43,7 +42,6 @@ class MovieDetailsViewModelTest {
         mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @BeforeEach
     fun setUp() {
@@ -74,9 +72,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
+
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -85,8 +81,7 @@ class MovieDetailsViewModelTest {
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
 
-            getUser,
-            savedListsStatusProvider
+            getUser
         )
         advanceUntilIdle()
 

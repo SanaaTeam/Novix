@@ -26,7 +26,6 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import kotlin.time.Duration.Companion.minutes
@@ -39,7 +38,6 @@ class ActorViewModelTest {
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorViewModel
     private val actorId = 77
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @BeforeEach
     fun setUp() {
@@ -126,16 +124,12 @@ class ActorViewModelTest {
         coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummySeries
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
         val savedStateHandle = SavedStateHandle(mapOf(ActorScreenRoute.ARG_ACTOR_ID to actorId))
 
         viewModel = ActorViewModel(
             savedStateHandle,
             manageActorDetailsUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider
         )
     }
 

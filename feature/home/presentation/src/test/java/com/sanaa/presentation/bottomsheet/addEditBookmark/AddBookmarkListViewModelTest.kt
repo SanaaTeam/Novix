@@ -14,7 +14,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
@@ -22,7 +21,6 @@ import usecase.custom_list.custom_list_param.SavedList
 class AddBookmarkListViewModelTest {
 
     private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
-    private val listsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: AddBookmarkListViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -30,14 +28,6 @@ class AddBookmarkListViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-    }
-
-    @Test
-    fun `init calls refreshLists on the provider`() = runTest {
-        initViewModel()
-        advanceUntilIdle()
-
-        coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
     }
 
     @Test
@@ -83,9 +73,6 @@ class AddBookmarkListViewModelTest {
             assertThat(awaitItem()).isEqualTo(AddBookmarkEffect.AddSuccess)
 
             coVerify(exactly = 1) { manageSavedListsUseCase.createSavedList(listTitle) }
-            verify(exactly = 1) { listsStatusProvider.markItemSaved(mediaId) }
-            verify(exactly = 1) { listsStatusProvider.addList(fakeSavedList) }
-            coVerify(exactly = 2) { listsStatusProvider.refreshLists() }
 
             val state = viewModel.state.value
             assertThat(state.listTitle).isEmpty()
@@ -121,7 +108,6 @@ class AddBookmarkListViewModelTest {
     private fun initViewModel() {
         viewModel = AddBookmarkListViewModel(
             manageSavedListsUseCase = manageSavedListsUseCase,
-            listsStatusProvider = listsStatusProvider,
             dispatcher = testDispatcher
         )
     }

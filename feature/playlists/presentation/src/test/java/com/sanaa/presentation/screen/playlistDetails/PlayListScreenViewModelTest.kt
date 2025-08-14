@@ -16,14 +16,12 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
 class PlayListScreenViewModelTest {
 
     private lateinit var viewModel: PlayListScreenViewModel
-    private val listStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
@@ -73,8 +71,7 @@ class PlayListScreenViewModelTest {
 
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
-            checkUserLogin = checkIfUserIsLoggedInUseCase,
-            listsStatusProvider = listStatusProvider,
+            checkUserLogin = checkIfUserIsLoggedInUseCase
         )
     }
 }

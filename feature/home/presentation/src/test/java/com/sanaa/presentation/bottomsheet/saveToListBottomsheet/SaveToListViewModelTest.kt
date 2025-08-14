@@ -16,7 +16,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 
@@ -24,7 +23,6 @@ import usecase.custom_list.custom_list_param.SavedList
 class SaveToListViewModelTest {
 
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true)
-    private val listsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
 
     private lateinit var viewModel: SaveToListViewModel
     private val testDispatcher = StandardTestDispatcher()
@@ -34,7 +32,6 @@ class SaveToListViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        every { listsStatusProvider.savedLists } returns fakePlaylistsFlow
     }
 
     @Test
@@ -75,8 +72,6 @@ class SaveToListViewModelTest {
             assertThat(awaitItem()).isEqualTo(SaveToListEffect.AddedSuccessfully)
 
             coVerify(exactly = 1) { manageSavedListItemsUseCase.addMovieToSavedList(1, 789) }
-            verify(exactly = 1) { listsStatusProvider.markItemSaved(789) }
-            coVerify(exactly = 1) { listsStatusProvider.refreshLists() }
 
             assertThat(viewModel.state.value.isLoading).isFalse()
             cancelAndIgnoreRemainingEvents()
@@ -100,7 +95,6 @@ class SaveToListViewModelTest {
     private fun initViewModel() {
         viewModel = SaveToListViewModel(
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
-            listsStatusProvider = listsStatusProvider,
             dispatcher = testDispatcher
         )
     }
