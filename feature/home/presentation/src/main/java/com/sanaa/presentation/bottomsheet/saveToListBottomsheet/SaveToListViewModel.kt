@@ -7,7 +7,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
@@ -15,7 +14,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
 
@@ -24,10 +22,7 @@ class SaveToListViewModel @Inject constructor(
     }
 
     private fun observePlaylists() {
-        tryToCollect(
-            callee = { listsStatusProvider.savedLists },
-            onCollect = ::onCollectPlaylists,
-        )
+
     }
 
     private fun onCollectPlaylists(playlist: List<SavedList>) {
@@ -68,10 +63,7 @@ class SaveToListViewModel @Inject constructor(
 
     private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
         updateState { copy(isLoading = false) }
-        listsStatusProvider.markItemSaved(mediaId.toInt())
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
+
         emitEffect(SaveToListEffect.AddedSuccessfully)
     }
 

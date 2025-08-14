@@ -19,7 +19,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -30,7 +29,6 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -63,11 +61,6 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         tryToExecute(
             callee = {
                 loadTopRatedMovies(genreId = genreId)
-                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                        pagingData.map { mediaItem ->
-                            mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
-                        }
-                    }.cachedIn(viewModelScope)
             },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
@@ -173,7 +166,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
+            //
         } else {
             updateState {
                 copy(

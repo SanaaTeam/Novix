@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -39,7 +38,6 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -166,10 +164,6 @@ class HomeScreenViewModel @Inject constructor(
         tryToCollect(
             callee = {
                 loadUpcomingMovies(genreId)
-                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                        pagingData.map { it.withSaved(savedIds) }
-                    }
-                    .cachedIn(viewModelScope)
             },
             onCollect = ::onFetchUpcomingMoviesSuccess,
             onError = ::onDataLoadError,
@@ -246,7 +240,7 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
+            //
         } else {
             updateState {
                 copy(
