@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
 import javax.inject.Inject
@@ -24,7 +23,6 @@ class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
@@ -81,7 +79,7 @@ class GenreMoviesViewModel @Inject constructor(
     override fun onSaveIconClick(media: MovieUiModel) {
         if (state.value.userIsLoggedIn) {
             if (media.isSaved) {
-                savedListsStatusProvider.markItemUnsaved(media.id)
+                //
             } else {
                 updateState {
                     copy(
