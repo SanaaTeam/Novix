@@ -42,13 +42,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.navigation.ActorDetailsScreenRoute
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.screen.episodeDetails.components.GuestsOfHonorComponent
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.series.components.SeriesHeaderSection
+import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.shared_component.OverviewSection
@@ -85,7 +85,7 @@ fun EpisodeDetailsScreen(
 
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
                     navController.navigate(
-                        ActorDetailsScreenRoute(it.actorId).route()
+                        ActorScreenRoute(it.actorId).route()
                     )
                 }
 
@@ -146,7 +146,7 @@ private fun EpisodeDetailsScreenContent(
                 }, rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(R.drawable.icon_save), onClick = {
-                            interactionListener.onSavedClick(state.seriesId)
+                            interactionListener.onSavedClick(state.tvShowId)
                         })
                 }, modifier = Modifier.
                     background(animatedColor)
@@ -186,7 +186,7 @@ private fun EpisodeDetailsScreenContent(
                                 .padding(bottom = 104.dp)
                                 .align(Alignment.TopCenter)
                         ) {
-                            SeriesHeaderSection(
+                            TvShowHeaderSection(
                                 title = stringResource(
                                     R.string.episode_number, state.episode.number
                                 ) + " - ${state.episode.title}",

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -29,7 +29,7 @@ class GenreTvShowsViewModelTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: GenreTvShowsViewModel
 
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk()
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk()
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
 
@@ -47,7 +47,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onSaveIconClick should set showBottomSheet to true`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getTvShowsByGenre(any(), any()) } returns emptyList()
         coEvery { checkIfUserIsLoggedInUseCase.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
@@ -59,7 +59,7 @@ class GenreTvShowsViewModelTest {
 
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
-            manageTvSeriesUseCase,
+            manageTvShowUseCase,
             checkIfUserIsLoggedInUseCase,
             testDispatcher
         )
@@ -74,7 +74,7 @@ class GenreTvShowsViewModelTest {
     @Test
     fun `onTvShowClick should emit NavigateToTvShowDetails effect`() = runTest {
         val category = genreList[0]
-        coEvery { manageTvSeriesUseCase.getTvSeriesByGenre(any(), 1) } returns emptyList()
+        coEvery { manageTvShowUseCase.getTvShowsByGenre(any(), 1) } returns emptyList()
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -85,7 +85,7 @@ class GenreTvShowsViewModelTest {
 
         viewModel = GenreTvShowsViewModel(
             savedStateHandle,
-            manageTvSeriesUseCase,
+            manageTvShowUseCase,
             checkIfUserIsLoggedInUseCase
         )
 

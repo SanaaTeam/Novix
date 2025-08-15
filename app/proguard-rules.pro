@@ -43,7 +43,7 @@
 -dontwarn com.sanaa.presentation.screen.genreMovies.MovieCategoriesViewModel
 -dontwarn com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 -dontwarn com.sanaa.presentation.screen.review.ReviewViewModel
--dontwarn com.sanaa.presentation.screen.series.SeriesViewModel
+-dontwarn com.sanaa.presentation.screen.tvShow.SeriesViewModel
 -dontwarn com.sanaa.search.dataSource.local.LocalCacheSearchDataSource
 -dontwarn com.sanaa.search.dataSource.local.LocalSearchHistoryDataSource
 -dontwarn com.sanaa.search.dataSource.remote.SearchRemoteDataSource
@@ -156,8 +156,8 @@
 -keep @kotlinx.serialization.Serializable class * { *; }
 -keepattributes *Annotation*
 -keep class com.sanaa.presentation.api.navigation.MainScreenRoute { *; }
--keep class com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute { *; }
--keep class com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute { *; }
--keep class com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute { *; }
--keep class com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute { *; }
+-keep class com.sanaa.presentation.app.navigation.TrendingMoviesScreenRoute { *; }
+-keep class com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute { *; }
+-keep class com.sanaa.presentation.app.navigation.TrendingPeopleScreenRoute { *; }
+-keep class com.sanaa.presentation.app.navigation.TopRatedMediaScreenRoute { *; }
 -keep class com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute { *; }

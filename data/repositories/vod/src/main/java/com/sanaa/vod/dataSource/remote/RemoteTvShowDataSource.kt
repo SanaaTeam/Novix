@@ -13,20 +13,20 @@ import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
 interface RemoteTvShowDataSource {
     suspend fun getTvShowDetails(id: Int): TvShowDto
     suspend fun getTvShowVideosUrls(id: Int): List<VideoDto>
-    suspend fun getTvShowSeasonDetails(seriesId: Int, seasonNumber: Int): SeasonDto
+    suspend fun getTvShowSeasonDetails(tvShowId: Int, seasonNumber: Int): SeasonDto
     suspend fun getTvShowImageUrls(id: Int): List<ImageDto>
     suspend fun getTvShowsByGenre(page: Int, genreId: Int): List<TvShowDto>
     suspend fun getReviewsByTvShowId(id: Int, page: Int): List<ReviewDto>
     suspend fun getTvShowCast(id: Int): List<ActorDto>
-    suspend fun getEpisodeDetails(seriesId: Int, seasonNumber: Int, episodeNumber: Int): EpisodeDto
+    suspend fun getEpisodeDetails(tvShowId: Int, seasonNumber: Int, episodeNumber: Int): EpisodeDto
     suspend fun getEpisodeImageUrls(
-        seriesId: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<ImageDto>
 
     suspend fun getEpisodeGuestsOfHonor(
-        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+        tvShowId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<ActorDto>
 
     suspend fun getTvShowGenres(): List<GenreDto>
@@ -36,13 +36,13 @@ interface RemoteTvShowDataSource {
     suspend fun fetchPopularTvShows(page: Int): List<TvShowDto>
     suspend fun fetchTopRatedTvShows(page: Int, genreId: Int?): List<TvShowDto>
     suspend fun fetchTrendingTvShows(page: Int, genreId: Int?): List<TvShowDto>
-    suspend fun sendTvSeriesRate(seriesId: Int, sessionId: String, rating: Float): RatingResponse
+    suspend fun sendTvShowRate(tvShowId: Int, sessionId: String, rating: Float): RatingResponse
     suspend fun sendTvEpisodeRate(
-        seriesId: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
         sessionId: String,
         rating: Float
     ): RatingResponse
-    suspend fun deleteTvSeriesRate(seriesId: Int,sessionId: String): RatingResponse
+    suspend fun deleteTvShowRate(tvShowId: Int, sessionId: String): RatingResponse
 }

@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,18 +29,22 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -61,7 +66,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
             onError = ::onDataLoadError
         )
@@ -74,7 +79,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchPopularMediaData() {
         updateState { copy(isLoadingPopular = true) }
         tryToExecute(
-            callee = ::loadPopularMediaOperation,
+            block = ::loadPopularMediaOperation,
             onSuccess = ::onFetchPopularMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -82,9 +87,9 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun loadPopularMediaOperation(): List<MediaItem> {
         val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
-        val popularTvSeries = manageTvSeriesUseCase.getPopularSeries(1).map { it.toState() }.take(5)
+        val popularTvShows = manageTvShowUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
-        return (popularMovies + popularTvSeries).sortedByDescending { media -> media.rating }
+        return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
     }
 
     private fun onFetchPopularMediaSuccess(mediaList: List<MediaItem>) {
@@ -100,7 +105,7 @@ class HomeScreenViewModel @Inject constructor(
     private fun fetchTopRatedMediaData() {
         updateState { copy(isLoadingTopRated = true) }
         tryToExecute(
-            callee = ::loadTopRatedMediaOperation,
+            block = ::loadTopRatedMediaOperation,
             onSuccess = ::onFetchTopRatedMediaSuccess,
             onError = ::onDataLoadError,
         )
@@ -109,10 +114,10 @@ class HomeScreenViewModel @Inject constructor(
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
         val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null)
             .map { it.toState() }.take(5)
-        val topRatedTvSeries = manageTvSeriesUseCase.getTopRatedTvSeries(1, null)
+        val topRatedTvShows = manageTvShowUseCase.getTopRatedTvShows(1, null)
             .map { it.toState() }.take(5)
 
-        return (topRatedMovies + topRatedTvSeries).sortedByDescending { it.rating }
+        return (topRatedMovies + topRatedTvShows).sortedByDescending { it.rating }
     }
 
     private fun onFetchTopRatedMediaSuccess(mediaList: List<MediaItem>) {
@@ -127,7 +132,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchWatchedMediaData() {
         tryToCollect(
-            callee = ::loadWatchedMediaHistory,
+            block = ::loadWatchedMediaHistory,
             onCollect = ::onFetchWatchedMediaSuccess,
             onError = ::onDataLoadError
         )
@@ -145,7 +150,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = ::fetchMovieGenresOperation,
+            block = ::fetchMovieGenresOperation,
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError,
         )
@@ -164,7 +169,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
+            block = {
                 loadUpcomingMovies(genreId)
                     .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { it.withSaved(savedIds) }
@@ -246,18 +251,33 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
+            tryToExecute(
+                block = {
+                    val userLists = manageSavedListsUseCase.getSavedLists()
+                    val defaultList = userLists.firstOrNull()
+                    if (defaultList != null) {
+                        manageSavedListItemsUseCase.removeMovieFromSavedList(defaultList.id, media.id)
+                        savedListsStatusProvider.refreshLists()
+                    }
+                },
+                onSuccess = {
+                    savedListsStatusProvider.markItemUnsaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowSuccess(message = "Removed from list."))
+                },
+                onError = {
+                    savedListsStatusProvider.markItemSaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowError(message = "Failed to remove from list."))
+                }
+            )
         } else {
             updateState {
                 copy(
                     showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong(),
                     selectedMediaToSave = media
                 )
             }
         }
     }
-
     override fun onDismissBottomSheet() {
         updateState { copy(showBottomSheet = false) }
     }
@@ -291,7 +311,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
             emitEffect(HomeScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
@@ -303,7 +323,7 @@ class HomeScreenViewModel @Inject constructor(
 
     fun createUpcomingMoviesPagingDataSource(
         genreId: Int?,
-        onError: (Throwable) -> Unit = ::onDataLoadError,
+        onError: (NovixAppException) -> Unit = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getUpcomingMovies(

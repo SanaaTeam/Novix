@@ -1,8 +1,11 @@
 package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
@@ -12,10 +15,13 @@ import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiS
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOf
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import javax.inject.Inject
 
@@ -23,6 +29,7 @@ import javax.inject.Inject
 class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState(),dispatcher),
@@ -67,14 +74,12 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                     listId = listId,
                     movieId = mediaItem.id
                 )
+                savedListsStatusProvider.refreshLists()
             },
-            onSuccess = { movies ->
+            onSuccess = {
+                savedListsStatusProvider.markItemUnsaved(mediaItem.id)
                 loadItemsInSaved(listId)
-                updateState {
-                    copy(isLoading = false)
-                }
                 emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
-
             },
             onError = ::onDataLoadError
 
@@ -98,11 +103,14 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
-
-        return createPagingFlow(
+        return  createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
             mapper = Movie::toUiModel
-        )
+        ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+            pagingData.map { mediaItem ->
+                mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
+            }
+        }.cachedIn(viewModelScope)
     }
 
     private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
@@ -111,7 +119,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    internal fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isLoading = false, errorMessage = null) }
         } else {

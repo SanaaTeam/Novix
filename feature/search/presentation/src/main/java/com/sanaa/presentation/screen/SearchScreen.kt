@@ -82,7 +82,7 @@ fun SearchScreen(
                 is SearchScreenEffects.NavigateToTvShowDetails ->
                     navigator.navigateToMediaDetails(
                         context,
-                        StartRoute.SERIES,
+                        StartRoute.TV_SHOW,
                         effect.id
                     )
 
@@ -111,18 +111,6 @@ fun SearchScreen(
                 mediaId = mediaItem.id.toLong(),
                 onDismiss = searchViewModel::onDismissSaveToListBottomSheet,
                 onCreateNewListClick = searchViewModel::onCreateNewListClick,
-                onSuccess = {
-                    snack = SnackData(
-                        message = "Added to list successfully",
-                        isError = false
-                    )
-                },
-                onFailure = {
-                    snack = SnackData(
-                        message = "Added to list failed",
-                        isError = true
-                    )
-                },
             )
         }
 
