@@ -14,12 +14,10 @@ import entity.TvShow
 import exceptions.NoNetworkException
 import io.mockk.Runs
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -31,7 +29,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
@@ -51,14 +48,10 @@ class SearchViewModelTest {
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
     fun setUp() {
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
         Dispatchers.setMain(testDispatcher)
         searchViewModel = SearchViewModel(
             searchUseCase = searchUseCase,
@@ -67,7 +60,6 @@ class SearchViewModelTest {
             dispatcher = testDispatcher,
             checkUserLogin = checkUserLogin,
             mangeUserPreferenceUseCase = mangeUserPreferenceUseCase,
-            savedListsStatusProvider = savedListsStatusProvider
 
 
         )
