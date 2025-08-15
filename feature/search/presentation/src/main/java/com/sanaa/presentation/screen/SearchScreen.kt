@@ -111,18 +111,6 @@ fun SearchScreen(
                 mediaId = mediaItem.id.toLong(),
                 onDismiss = searchViewModel::onDismissSaveToListBottomSheet,
                 onCreateNewListClick = searchViewModel::onCreateNewListClick,
-                onSuccess = {
-                    snack = SnackData(
-                        message = "Added to list successfully",
-                        isError = false
-                    )
-                },
-                onFailure = {
-                    snack = SnackData(
-                        message = "Added to list failed",
-                        isError = true
-                    )
-                },
             )
         }
 

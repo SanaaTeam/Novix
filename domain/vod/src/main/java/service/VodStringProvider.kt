@@ -10,4 +10,5 @@ VodStringProvider {
     val deleteRatingFailed: String
     val createListSuccess: String
     val createListFailed: String
+    val deleteListFailed: String
 }

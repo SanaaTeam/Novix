@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -54,7 +53,7 @@ fun AddBookmarkListBottomSheet(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                AddBookmarksEffect.Dismiss -> {
+                AddBookMarksEffect.Dismiss -> {
                     handleDismiss()
                 }
             }
@@ -75,7 +74,7 @@ private fun AddBookmarkListBottomSheetContent(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     state: AddBookmarkListUiState,
-    interactionListener: AddBookmarksInteractionsListener,
+    interactionListener: AddBookMarksInteractionsListener,
     mediaId: Int,
 ) {
     BaseBottomSheet(
@@ -149,7 +148,7 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 listTitle = "",
                 isAddButtonEnabled = false
             ),
-            interactionListener = object : AddBookmarksInteractionsListener {
+            interactionListener = object : AddBookMarksInteractionsListener {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}
@@ -176,7 +175,7 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             isVisible = true,
             onDismiss = {},
             state = state,
-            interactionListener = object : AddBookmarksInteractionsListener {
+            interactionListener = object : AddBookMarksInteractionsListener {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}

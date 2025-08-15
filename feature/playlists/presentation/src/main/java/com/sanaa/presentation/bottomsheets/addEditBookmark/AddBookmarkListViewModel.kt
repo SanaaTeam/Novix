@@ -20,10 +20,10 @@ class AddBookmarkListViewModel @Inject constructor(
     private val listsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(
+) : BaseViewModel<AddBookmarkListUiState, AddBookMarksEffect>(
     AddBookmarkListUiState(),
     dispatcher
-), AddBookmarksInteractionsListener {
+), AddBookMarksInteractionsListener {
 
 
     init {
@@ -70,7 +70,7 @@ class AddBookmarkListViewModel @Inject constructor(
 
     private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
         resetState()
-        emitEffect(AddBookmarksEffect.Dismiss)
+        emitEffect(AddBookMarksEffect.Dismiss)
         updateState {
             copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
         }

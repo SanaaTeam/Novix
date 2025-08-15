@@ -13,9 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -31,7 +28,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
@@ -44,34 +40,22 @@ fun DeleteConfirmationBottomSheet(
 ) {
     val viewModel: DeleteListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val failMessage =
-        stringResource(com.sanaa.feature.playlists.presentation.R.string.deleted_list_failed)
-
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-            onDeleteSuccess()
-        }
-    }
-
-    NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                DeleteListEffect.DeleteSuccess -> {}
-
-                DeleteListEffect.DeleteFailure -> {
-                    snack = SnackData(
-                        message = failMessage,
-                        isError = true
-                    )
+                is DeleteListEffect.Dismiss -> {
+                    onDismiss()
+                    onDeleteSuccess()
                 }
             }
         }
     }
+
+    NovixAnimatedSnackBarHost(
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     DeleteConfirmationBottomSheetContent(
         isVisible = isVisible,
@@ -155,9 +139,8 @@ private fun DeleteConfirmationBottomSheetPreview() {
             isLoading = false,
             onDismiss = {},
             interactionListener = object : DeleteInteractionListener {
-                override fun onDeleteConfirmed(listId: Long) {
-                }
-
+                override fun onDeleteConfirmed(listId: Long) {}
+                override fun onSnackBarDismiss() {}
             }, listId = 0
         )
     }
@@ -173,9 +156,8 @@ private fun DeleteConfirmationBottomSheetLoadingPreview() {
             isLoading = true,
             onDismiss = {},
             interactionListener = object : DeleteInteractionListener {
-                override fun onDeleteConfirmed(listId: Long) {
-                }
-
+                override fun onDeleteConfirmed(listId: Long) {}
+                override fun onSnackBarDismiss() {}
             }, listId = 0
         )
     }

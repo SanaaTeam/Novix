@@ -56,7 +56,7 @@ class AddBookmarkListViewModelTest {
                 viewModel.onAddClicked(mediaId)
                 advanceUntilIdle()
 
-                assertThat(awaitItem()).isEqualTo(AddBookmarksEffect.AddSuccess)
+                assertThat(awaitItem()).isEqualTo(AddBookMarksEffect.AddSuccess)
 
                 coVerify(exactly = 1) { manageSavedListsUseCase.createSavedList(listTitle) }
                 verify(exactly = 1) { listsStatusProvider.markItemSaved(mediaId) }
@@ -84,7 +84,7 @@ class AddBookmarkListViewModelTest {
             viewModel.onAddClicked(456)
             advanceUntilIdle()
 
-            assertThat(awaitItem()).isEqualTo(AddBookmarksEffect.AddFailure)
+            assertThat(awaitItem()).isEqualTo(AddBookMarksEffect.AddFailure)
 
             val state = viewModel.state.value
             assertThat(state.isLoading).isFalse()

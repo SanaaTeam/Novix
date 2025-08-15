@@ -25,4 +25,6 @@ class VodStringProviderImpl @Inject constructor(
         get() = context.getString(R.string.created_list_successfully)
     override val createListFailed: String
         get() = context.getString(R.string.failed_to_create_list)
+    override val deleteListFailed: String
+        get() = context.getString(R.string.failed_to_delete_list)
 }
