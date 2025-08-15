@@ -14,6 +14,7 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.screen.movieDetails.MoreLikeThisListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
 import com.sanaa.presentation.shared_component.cards.SaveIconChip
@@ -21,14 +22,13 @@ import com.sanaa.presentation.shared_component.cards.SaveIconChip
 @Composable
 fun MoreLikeThisCard(
     movie: MovieUiModel,
-    onBookmarkClick: (MovieUiModel) -> Unit,
-    onMovieClick: () -> Unit,
+    interactionListener: MoreLikeThisListener,
     modifier: Modifier = Modifier
 ) {
 
     MediaPosterCard(
         modifier = modifier,
-        onCardClick = onMovieClick,
+        onCardClick = { interactionListener.onMovieClick(movie.id) },
         posterImage = {
             RemoteBlurredSensitiveImage(
                 imageUrl = movie.posterUrl.orEmpty(),
@@ -57,7 +57,7 @@ fun MoreLikeThisCard(
         topLeftContent = {
             SaveIconChip(
                 isSaved = movie.isSaved,
-                onClick = { onBookmarkClick(movie) }
+                onClick = { interactionListener.onBookmarkClick(movie) }
             )
         }
     )

@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
+package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -7,9 +7,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
-import com.sanaa.presentation.screen.trendingMediaScreen.MediaListScreenInteractionListener
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenUiState
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.mapper.toState
@@ -35,10 +33,10 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<TrendingMediaScreenUiState, TrendingMediaScreenEffect>(
-    initialState = TrendingMediaScreenUiState(),
+) : BaseViewModel<TrendingMoviesScreenUiState, TrendingMoviesScreenEffect>(
+    initialState = TrendingMoviesScreenUiState(),
     defaultDispatcher = dispatcher
-), MediaListScreenInteractionListener {
+), TrendingMoviesScreenInteractionListener {
 
     init {
         updateUserLoggingStatus()
@@ -50,26 +48,18 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         tryToCollect(
             block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
-                updateState {
-                    copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
+                updateState { copy(userIsLoggedIn = isLogged) }
             },
         )
     }
 
     private fun fetchGenres() {
         tryToExecute(
-            block = ::loadGenresOperation,
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
-    }
-
-    private suspend fun loadGenresOperation(): List<GenreUiState> {
-        updateState { copy(isLoading = true) }
-        return manageMovieUseCase.getMovieGenres().map { it.toState() }
     }
 
     private fun onLoadGenresSuccess(genres: List<GenreUiState>) {
@@ -109,19 +99,17 @@ class TrendingMoviesScreenViewModel @Inject constructor(
 
     override fun onGenreClick(id: Int?) {
         if (id == state.value.selectedGenreId) return
-        updateState {
-            copy(selectedGenreId = id)
-        }
+        updateState { copy(selectedGenreId = id) }
         loadMovies()
     }
 
     override fun onMediaClick(id: Int) {
-        emitEffect(TrendingMediaScreenEffect.NavigateToMediaDetails(id))
+        emitEffect(TrendingMoviesScreenEffect.NavigateToMoviesDetails(id))
     }
 
     override fun onSaveIconClick(media: MediaItem) {
         if (!state.value.userIsLoggedIn) {
-            updateState { copy(showBottomSheet = true) }
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -138,15 +126,29 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onSaveToListSuccess() {
-        emitEffect(TrendingMediaScreenEffect.ShowSuccess(message = stringProvider.addToListSuccess))
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false
+                )
+            )
+        }
     }
 
     override fun onSaveToListFailure() {
-        emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.addToListFailed))
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListFailed,
+                    isError = true
+                )
+            )
+        }
     }
 
     override fun onBackClick() {
-        emitEffect(TrendingMediaScreenEffect.NavigateBack)
+        emitEffect(TrendingMoviesScreenEffect.NavigateBack)
     }
 
     override fun onRetryClick() {
@@ -156,11 +158,11 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        emitEffect(TrendingMediaScreenEffect.NavigateToLogin)
+        emitEffect(TrendingMoviesScreenEffect.NavigateToLogin)
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showBottomSheet = false) }
+    override fun onDismissLoginBottomSheet() {
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -175,17 +177,42 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         updateState { copy(showAddListBottomSheet = false) }
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private fun onDataLoadError(e: NovixAppException) {
-        if (e is NoNetworkException) {
-            updateState { copy(isNoInternetConnection = true) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
-        } else {
-            updateState { copy(isNoInternetConnection = false) }
-            emitEffect(TrendingMediaScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
+        when (e) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = true,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.noInternetConnectionError,
+                                isError = true
+                            )
+                    )
+                }
+            }
+
+            else -> {
+                updateState {
+                    copy(
+                        isNoInternetConnection = false,
+                        snackBarData =
+                            SnackData(
+                                message = stringProvider.somethingWentWrongError,
+                                isError = true
+                            )
+                    )
+                }
+            }
         }
     }
 
-    private fun createMoviesPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError): PagingSource<Int, Movie> {
+    private fun createMoviesPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError)
+    : PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
             manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
         }

@@ -1,6 +1,7 @@
 package service
 
-interface VodStringProvider {
+interface
+VodStringProvider {
     val noInternetConnectionError: String
     val somethingWentWrongError: String
     val addToListFailed: String
