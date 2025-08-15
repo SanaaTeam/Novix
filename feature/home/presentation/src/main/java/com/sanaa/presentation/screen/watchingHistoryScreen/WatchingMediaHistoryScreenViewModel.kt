@@ -71,7 +71,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMoviesSuccess(mediaList: List<MediaItem>) {
+    private fun onFetchMoviesSuccess(mediaList: List<MediaItemUiState>) {
         updateState { copy(movieList = mediaList, isLoading = false, showRefreshButton = false) }
     }
 
