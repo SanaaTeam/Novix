@@ -1,7 +1,6 @@
 package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
@@ -11,8 +10,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import javax.inject.Inject
@@ -22,7 +19,6 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -34,17 +30,6 @@ class ActorViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         loadDetails()
-        viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState {
-                    copy(
-                        topMovies = topMovies.map { movie ->
-                            movie.copy(isSaved = savedIds.contains(movie.id))
-                        }
-                    )
-                }
-            }
-        }
     }
 
     fun updateUserLoggingStatus() {
@@ -98,15 +83,11 @@ class ActorViewModel @Inject constructor(
             return
         }
 
-        if (movie.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(movie.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = movie
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = movie
+            )
         }
     }
 

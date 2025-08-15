@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
-import androidx.paging.map
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
@@ -24,11 +23,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -42,7 +38,6 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -57,18 +52,6 @@ class MovieDetailsViewModel @Inject constructor(
         fetchMovieDetails(movieId)
         fetchUserRating()
         updateUserLoginState()
-
-        viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState {
-                    copy(
-                        movieDetails = movieDetails.copy(
-                            isSaved = savedIds.contains(movieDetails.id)
-                        )
-                    )
-                }
-            }
-        }
     }
 
     override fun onBackClick() {
@@ -89,15 +72,12 @@ class MovieDetailsViewModel @Inject constructor(
             return
         }
 
-        if (movie.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(movie.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaId = movie.id
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaId = movie.id
+            )
+
         }
     }
 
@@ -220,16 +200,10 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
-        val pagingFlow = createPagingFlow(
+        return createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
             mapper = { movie -> movie.toState() }
-        )
-
-        return pagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-            pagingData.map { movieUiModel ->
-                movieUiModel.copy(isSaved = savedIds.contains(movieUiModel.id))
-            }
-        }.cachedIn(viewModelScope)
+        ).cachedIn(viewModelScope)
     }
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
@@ -261,14 +235,11 @@ class MovieDetailsViewModel @Inject constructor(
         val trailerUrl = trailerDeferred.await()
         val similar = similarDeferred.await()
 
-        val currentSavedIds = savedListsStatusProvider.savedIds.value
-        val isMovieSaved = currentSavedIds.contains(movie.id)
 
         addMovieToHistory(movie)
         updateState {
             copy(
-                movieDetails = movie.toState(trailerUrl = trailerUrl)
-                    .copy(isSaved = isMovieSaved),
+                movieDetails = movie.toState(trailerUrl = trailerUrl),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
                 similarMovies = similar,

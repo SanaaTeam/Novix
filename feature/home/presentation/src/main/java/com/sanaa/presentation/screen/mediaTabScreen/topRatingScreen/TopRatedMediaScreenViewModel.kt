@@ -1,10 +1,7 @@
 package com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.MediaItem
@@ -19,8 +16,6 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageMovieUseCase
@@ -31,7 +26,6 @@ import javax.inject.Inject
 class TopRatedMediaScreenViewModel @Inject constructor(
     private val manageMovieUseCase: ManageMovieUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -62,14 +56,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToExecute(
-            block = {
-                loadTopRatedMovies(genreId = genreId)
-                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                        pagingData.map { mediaItem ->
-                            mediaItem.copy(isSaved = savedIds.contains(mediaItem.id))
-                        }
-                    }.cachedIn(viewModelScope)
-            },
+            block = { loadTopRatedMovies(genreId = genreId) },
             onSuccess = ::onFetchMoviesSuccess,
             onError = ::onDataLoadError
         )
@@ -173,15 +160,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
             return
         }
 
-        if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = media
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = media
+            )
         }
     }
 
