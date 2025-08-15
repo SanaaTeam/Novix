@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
-import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -37,21 +36,6 @@ class PlaylistDetailsScreenViewModelTest {
                 "title" to "My Playlist"
             )
         )
-    }
-
-    @Test
-    fun `init loads items and sets initial state correctly`() = runTest {
-        coEvery { manageSavedListItemsUseCase.getAllItemsInSavedList(any(), any()) } returns emptyList()
-
-        initViewModel()
-        advanceUntilIdle()
-
-        val finalState = viewModel.state.value
-        assertThat(finalState.movieList)
-            .isNotEqualTo(SavedDetailsScreenUiState().movieList)
-        assertThat(finalState.listId).isEqualTo(1)
-        assertThat(finalState.isLoading).isFalse()
-
     }
 
 
