@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.tvapp.base.BasePagingSourceForHome
+import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.HomeScreenInteractionListener
 import com.sanaa.tvapp.state.MediaItem
@@ -88,6 +88,7 @@ class HomeScreenViewModel @Inject constructor(
             },
         )
     }
+
     private fun fetchPopularMediaData() {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -191,7 +192,6 @@ class HomeScreenViewModel @Inject constructor(
     }
 
 
-
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
             block = {
@@ -272,6 +272,7 @@ class HomeScreenViewModel @Inject constructor(
             emitEffect(HomeScreenEffect.NavigateToPlayListScreen)
         }
     }
+
     override fun onDismissBottomSheet() {
         updateState { copy(showBottomSheet = false) }
     }
@@ -296,7 +297,7 @@ class HomeScreenViewModel @Inject constructor(
 
 
     private fun loadUpcomingMovies(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<PagingData<MediaItem>> {
         return createPagingFlow(
             pagingSourceFactory = {
@@ -309,9 +310,9 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun createUpcomingMoviesPagingDataSource(
-        genreId: Int?
+        genreId: Int?,
     ): PagingSource<Int, Movie> {
-        return BasePagingSourceForHome { page ->
+        return BasePagingSource { page ->
             manageMovieUseCase.getUpcomingMovies(
                 page = page,
                 genreId = genreId

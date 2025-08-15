@@ -4,8 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 
 
-class BasePagingSourceForHome<T : Any>(
-    private val fetchItems: suspend (page: Int) -> List<T>
+class BasePagingSource<T : Any>(
+    private val fetchItems: suspend (page: Int) -> List<T>,
 ) : PagingSource<Int, T>() {
 
     override fun getRefreshKey(state: PagingState<Int, T>): Int? {
@@ -17,7 +17,6 @@ class BasePagingSourceForHome<T : Any>(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
         val page = params.key ?: STARTING_PAGE_INDEX
-
         return try {
             val items = fetchItems(page)
             LoadResult.Page(

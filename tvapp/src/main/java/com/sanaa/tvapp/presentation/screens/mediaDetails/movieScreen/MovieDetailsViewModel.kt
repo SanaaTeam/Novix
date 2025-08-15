@@ -3,7 +3,7 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.sanaa.tvapp.base.TvBasePagingSource
+import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.base.TvBaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
@@ -25,7 +25,7 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : TvBaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
@@ -105,14 +105,13 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
-        return TvBasePagingSource { page ->
+        return BasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
         }
     }
 
 
-
-    override fun onWatchTrailerClick(urlString:String) {
+    override fun onWatchTrailerClick(urlString: String) {
         emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }
 
