@@ -1,6 +1,6 @@
 package usecase.details.manageActorUseCaseTest
 
-import usecase.manageActorUseCase.GetProfileImagesUseCase
+import usecase.manageActorUseCase.GetActorProfileImagesUseCase
 import com.google.common.truth.Truth.assertThat
 import exceptions.NovixAppException
 import io.mockk.coEvery
@@ -15,18 +15,18 @@ import repository.ActorRepository
 class GetProfileImagesUseCaseTest {
 
     private val actorRepository: ActorRepository = mockk(relaxed = true)
-    private lateinit var getProfileImagesUseCase: GetProfileImagesUseCase
+    private lateinit var getActorProfileImagesUseCase: GetActorProfileImagesUseCase
 
     @BeforeEach
     fun setUp() {
-        getProfileImagesUseCase = GetProfileImagesUseCase(actorRepository)
+        getActorProfileImagesUseCase = GetActorProfileImagesUseCase(actorRepository)
     }
 
     @Test
     fun `getProfileImages should call repository and return list`() = runTest {
         val actorId = 9
         coEvery { actorRepository.getProfileImageUrls(actorId, 10) } returns dummyProfiles
-        val result = getProfileImagesUseCase(actorId, 10)
+        val result = getActorProfileImagesUseCase(actorId, 10)
         assertThat(result).isEqualTo(dummyProfiles)
     }
 
@@ -35,7 +35,7 @@ class GetProfileImagesUseCaseTest {
         val actorId = 10
         coEvery { actorRepository.getProfileImageUrls(actorId, 10) } throws NovixAppException("Error")
         assertThrows<NovixAppException> {
-            getProfileImagesUseCase(actorId, 10)
+            getActorProfileImagesUseCase(actorId, 10)
         }
     }
 

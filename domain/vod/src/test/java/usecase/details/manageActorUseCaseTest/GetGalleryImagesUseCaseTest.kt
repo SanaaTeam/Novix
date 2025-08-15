@@ -1,6 +1,6 @@
 package usecase.details.manageActorUseCaseTest
 
-import usecase.manageActorUseCase.GetGalleryImagesUseCase
+import usecase.manageActorUseCase.GetActorGalleryImagesUseCase
 import com.google.common.truth.Truth.assertThat
 import exceptions.NovixAppException
 import io.mockk.coEvery
@@ -12,21 +12,21 @@ import org.junit.jupiter.api.assertThrows
 import repository.ActorRepository
 
 
-class GetGalleryImagesUseCaseTest {
+class GetActorGalleryImagesUseCaseTest {
 
     private val actorRepository: ActorRepository = mockk(relaxed = true)
-    private lateinit var getGalleryImagesUseCase: GetGalleryImagesUseCase
+    private lateinit var getActorGalleryImagesUseCase: GetActorGalleryImagesUseCase
 
     @BeforeEach
     fun setUp() {
-        getGalleryImagesUseCase = GetGalleryImagesUseCase(actorRepository)
+        getActorGalleryImagesUseCase = GetActorGalleryImagesUseCase(actorRepository)
     }
 
     @Test
     fun `getGalleryImages should call repository and return list`() = runTest {
         val actorId = 7
         coEvery { actorRepository.getGalleryImageUrls(actorId) } returns dummyGallery
-        val result = getGalleryImagesUseCase(actorId)
+        val result = getActorGalleryImagesUseCase(actorId)
         assertThat(result).isEqualTo(dummyGallery)
     }
 
@@ -35,7 +35,7 @@ class GetGalleryImagesUseCaseTest {
         val actorId = 8
         coEvery { actorRepository.getGalleryImageUrls(actorId) } throws NovixAppException("Error")
         assertThrows<NovixAppException> {
-            getGalleryImagesUseCase(actorId)
+            getActorGalleryImagesUseCase(actorId)
         }
     }
 

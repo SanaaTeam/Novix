@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.actor
 import usecase.manageActorUseCase.GetActorDetailsUseCase
 import usecase.manageActorUseCase.GetActorTopMoviesUseCase
 import usecase.manageActorUseCase.GetActorTopTvShowsUseCase
-import usecase.manageActorUseCase.GetGalleryImagesUseCase
-import usecase.manageActorUseCase.GetProfileImagesUseCase
+import usecase.manageActorUseCase.GetActorGalleryImagesUseCase
+import usecase.manageActorUseCase.GetActorProfileImagesUseCase
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
@@ -28,8 +28,8 @@ class ActorViewModel @Inject constructor(
     private val getActorDetailsUseCase: GetActorDetailsUseCase,
     private val getActorTopMoviesUseCase: GetActorTopMoviesUseCase,
     private val getActorTopTvShowsUseCase: GetActorTopTvShowsUseCase,
-    private val getGalleryImagesUseCase: GetGalleryImagesUseCase,
-    private val getProfileImagesUseCase: GetProfileImagesUseCase,
+    private val getActorGalleryImagesUseCase: GetActorGalleryImagesUseCase,
+    private val getActorProfileImagesUseCase: GetActorProfileImagesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
@@ -60,8 +60,8 @@ class ActorViewModel @Inject constructor(
         val actorDeferred = async { getActorDetailsUseCase(actorId) }
         val topMoviesDeferred = async { getActorTopMoviesUseCase(actorId) }
         val topTvShowsDeferred = async { getActorTopTvShowsUseCase(actorId) }
-        val profilesDeferred = async { getProfileImagesUseCase(actorId, count = 10) }
-        val galleryDeferred = async { getGalleryImagesUseCase(actorId) }
+        val profilesDeferred = async { getActorProfileImagesUseCase(actorId, count = 10) }
+        val galleryDeferred = async { getActorGalleryImagesUseCase(actorId) }
 
         val actor = actorDeferred.await()
         val topMovies = topMoviesDeferred.await()

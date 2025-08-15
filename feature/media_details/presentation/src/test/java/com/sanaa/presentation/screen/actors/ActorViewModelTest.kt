@@ -3,8 +3,8 @@ package com.sanaa.presentation.screen.actors
 import usecase.manageActorUseCase.GetActorDetailsUseCase
 import usecase.manageActorUseCase.GetActorTopMoviesUseCase
 import usecase.manageActorUseCase.GetActorTopTvShowsUseCase
-import usecase.manageActorUseCase.GetGalleryImagesUseCase
-import usecase.manageActorUseCase.GetProfileImagesUseCase
+import usecase.manageActorUseCase.GetActorGalleryImagesUseCase
+import usecase.manageActorUseCase.GetActorProfileImagesUseCase
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
@@ -42,8 +42,8 @@ class ActorViewModelTest {
     private val getActorDetailsUseCase: GetActorDetailsUseCase = mockk(relaxed = true)
     private val getActorTopMoviesUseCase: GetActorTopMoviesUseCase = mockk(relaxed = true)
     private val getActorTopTvShowsUseCase: GetActorTopTvShowsUseCase = mockk(relaxed = true)
-    private val getGalleryImagesUseCase: GetGalleryImagesUseCase = mockk(relaxed = true)
-    private val getProfileImagesUseCase: GetProfileImagesUseCase = mockk(relaxed = true)
+    private val getActorGalleryImagesUseCase: GetActorGalleryImagesUseCase = mockk(relaxed = true)
+    private val getActorProfileImagesUseCase: GetActorProfileImagesUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private lateinit var viewModel: ActorViewModel
     private val actorId = 77
@@ -132,8 +132,8 @@ class ActorViewModelTest {
         coEvery { getActorDetailsUseCase(actorId) } returns dummyActor
         coEvery { getActorTopMoviesUseCase(actorId) } returns dummyMovies
         coEvery { getActorTopTvShowsUseCase(actorId) } returns dummyTvShow
-        coEvery { getGalleryImagesUseCase(actorId) } returns dummyGallery
-        coEvery { getProfileImagesUseCase(actorId, any()) } returns dummyProfiles
+        coEvery { getActorGalleryImagesUseCase(actorId) } returns dummyGallery
+        coEvery { getActorProfileImagesUseCase(actorId, any()) } returns dummyProfiles
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
@@ -144,8 +144,8 @@ class ActorViewModelTest {
             getActorDetailsUseCase,
             getActorTopMoviesUseCase,
             getActorTopTvShowsUseCase,
-            getGalleryImagesUseCase,
-            getProfileImagesUseCase,
+            getActorGalleryImagesUseCase = getActorGalleryImagesUseCase,
+            getActorProfileImagesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider
         )
