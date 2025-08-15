@@ -50,7 +50,8 @@ class SavedListsStatusProviderImpl @Inject constructor(
                 SavedList(
                     id = it.id,
                     title = it.title,
-                    itemCount = it.itemCount
+                    itemCount = it.itemCount,
+                    itemsIds = emptyList()
                 )
             }
         }

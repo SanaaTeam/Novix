@@ -36,7 +36,8 @@ class SavedListRepositoryImpl @Inject constructor(
                         SavedList(
                             id = it.id,
                             title = it.listName,
-                            itemCount = it.movieIds.split(",").filter { id -> id.isNotBlank() }.size
+                            itemCount = it.movieIds.split(",").filter { id -> id.isNotBlank() }.size,
+                            itemsIds = it.movieIds.split(",").filter { id -> id.isNotBlank() }.map { id -> id.toInt() }
                         )
                     }
                 }

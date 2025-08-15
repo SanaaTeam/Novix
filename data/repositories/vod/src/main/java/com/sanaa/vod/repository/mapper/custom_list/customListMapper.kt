@@ -9,7 +9,7 @@ import entity.Movie
 import usecase.custom_list.custom_list_param.SavedList
 import kotlin.time.Duration.Companion.minutes
 
-fun SavedListDto.toEntity() = SavedList(id, title, itemCount)
+fun SavedListDto.toEntity() = SavedList(id, title, itemCount,)
 
 fun SavedItemDto.toEntity() = Movie(
     id = id,

@@ -60,7 +60,8 @@ class AddBookmarkListViewModel @Inject constructor(
             SavedList(
                 title = it.title,
                 itemCount = it.itemCount,
-                id = it.id
+                id = it.id,
+                itemsIds = emptyList()
             )
         )
         viewModelScope.launch {
