@@ -124,7 +124,8 @@ private fun SearchScreenContent(
                 SaveToListBottomSheet(
                     isVisible = state.showSaveToListBottomSheet,
                     mediaId = mediaItem.id.toLong(),
-                    interactionsListener = interactionsListener,
+                    onDismiss = {},
+                    onCreateNewListClick = {},
                 )
             }
             AddBookmarkListBottomSheet(
