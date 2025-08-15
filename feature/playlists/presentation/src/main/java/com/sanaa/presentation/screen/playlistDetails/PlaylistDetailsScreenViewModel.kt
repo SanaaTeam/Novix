@@ -39,19 +39,18 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     private fun loadItemsInSaved(listId: Int) {
         updateState { copy(isLoading = true) }
-        tryToCollect(
-            callee = {
-                loadSavedMovies(listId)
-            },
-            onCollect = { movies ->
-                updateState {
-                    copy(movieList = flowOf(movies))
-                }
-                updateState { copy(isLoading = false) }
-
-            },
-            onError = ::onDataLoadError
-        )
+//        tryToCollect(
+//            callee = {
+//            },
+//            onCollect = { movies ->
+//                updateState {
+//                    copy(movieList = flowOf(movies))
+//                }
+//                updateState { copy(isLoading = false) }
+//
+//            },
+//            onError = ::onDataLoadError
+//        )
     }
 
     override fun onMediaClick(
@@ -98,19 +97,20 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
     }
 
-    private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
-
-        return createPagingFlow(
-            pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
-            mapper = Movie::toUiModel
-        )
-    }
-
-    private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
-        return BasePagingSource { page ->
-            manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page)
-        }
-    }
+//    private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
+//
+//        return createPagingFlow(
+//            pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
+//            mapper = Movie::toUiModel
+//        )
+//    }
+//
+//    private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
+//        return BasePagingSource { page ->
+//            manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page).collect {
+//            }
+//        }
+//    }
 
     private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {

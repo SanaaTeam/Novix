@@ -45,9 +45,9 @@ class AddBookmarkListViewModel @Inject constructor(
 
         updateState { copy(isLoading = true, errorMessage = null) }
         val currentTitle = state.value.listTitle.trim()
-        tryToExecute(
+        tryToCollect(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = onAddBookmarkListSuccess(mediaId),
+            onCollect = onAddBookmarkListSuccess(mediaId),
             onError = ::onErrorAccrue
         )
     }

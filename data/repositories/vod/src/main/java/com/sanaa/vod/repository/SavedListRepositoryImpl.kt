@@ -30,26 +30,25 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun getSavedLists(): Flow<List<SavedList>> =
         safeCall("Failed to fetch saved lists") {
-            flow {
-                emit(
-                    localSavedMovieDataSource.getAllLists().first().map {
+            localSavedMovieDataSource.getAllLists()
+                .map { lists ->
+                    lists.map {
                         SavedList(
                             id = it.id,
                             title = it.listName,
-                            itemCount = it.movieIds.split(",").size
+                            itemCount = it.movieIds.split(",").filter { id -> id.isNotBlank() }.size
                         )
                     }
-                )
-                val remoteLists = remoteSavedListDataSource.fetchUserLists(obtainSessionId())
-                remoteLists.forEach {
-                    localSavedMovieDataSource.insertList(
-                        it.toLocalDto(
-                            movieIds = remoteSavedListDataSource.fetchListItems(it.id)
-                                .joinToString(",") { item -> item.id.toString() }
-                        ))
                 }
-
-            }
+                .also {
+                    val remoteLists = remoteSavedListDataSource.fetchUserLists(obtainSessionId())
+                    remoteLists.forEach { remoteList ->
+                        val movieIds = remoteSavedListDataSource
+                            .fetchListItems(remoteList.id)
+                            .joinToString(",") { item -> item.id.toString() }
+                        localSavedMovieDataSource.insertList(remoteList.toLocalDto(movieIds))
+                    }
+                }
         }
 
     override suspend fun createSavedList(title: String): Flow<SavedList> =

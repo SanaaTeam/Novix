@@ -26,9 +26,9 @@ class SaveToListsViewModel @Inject constructor(
     private fun loadPlaylists() {
         updateState { copy(isLoading = true, errorMessage = null) }
 
-        tryToExecute(
+        tryToCollect(
             callee = { manageSavedListsUseCase.getSavedLists() },
-            onSuccess = ::onLoadPlaylistsSuccess,
+            onCollect = ::onLoadPlaylistsSuccess,
             onError = this@SaveToListsViewModel.onErrorAccrue()
         )
     }
@@ -73,10 +73,7 @@ class SaveToListsViewModel @Inject constructor(
         selectedListId: Long,
         mediaId: Long,
     ): suspend () -> Boolean = {
-        manageSavedListItemsUseCase.addMovieToSavedList(
-            listId = selectedListId.toInt(),
-            movieId = mediaId.toInt()
-        )
+     false
     }
 
     private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {

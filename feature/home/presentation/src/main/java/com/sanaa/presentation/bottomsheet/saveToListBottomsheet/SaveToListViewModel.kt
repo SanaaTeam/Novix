@@ -7,15 +7,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val mangeSavedListsUseCase: ManageSavedListsUseCase,
     private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
@@ -26,7 +29,7 @@ class SaveToListViewModel @Inject constructor(
 
     private fun observePlaylists() {
         tryToCollect(
-            block = { listsStatusProvider.savedLists },
+            block = { mangeSavedListsUseCase.getSavedLists() },
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -52,7 +55,6 @@ class SaveToListViewModel @Inject constructor(
 
         tryToExecute(
             block = addMovieToSavedList(selectedListId, mediaId),
-            onSuccess = onAddMovieToSavedListSuccess(mediaId),
             onError = ::onErrorAccrue
         )
     }
@@ -60,7 +62,7 @@ class SaveToListViewModel @Inject constructor(
     private fun addMovieToSavedList(
         selectedListId: Long,
         mediaId: Long,
-    ): suspend () -> Boolean = {
+    ): suspend () -> Flow<Boolean> = {
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()

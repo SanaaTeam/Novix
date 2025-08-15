@@ -42,21 +42,6 @@ class AddBookmarkListViewModel @Inject constructor(
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             block = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = {
-                resetState()
-                emitEffect(Unit)
-                listsStatusProvider.markItemSaved(mediaId)
-                listsStatusProvider.addList(
-                    SavedList(
-                        title = it.title,
-                        itemCount = it.itemCount,
-                        id = it.id
-                    )
-                )
-                viewModelScope.launch {
-                    listsStatusProvider.refreshLists()
-                }
-            },
             onError = {
                 updateState {
                     copy(

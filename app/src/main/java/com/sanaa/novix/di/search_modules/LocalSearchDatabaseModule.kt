@@ -6,7 +6,7 @@ import com.sanaa.vod.cache.dao.CachedContentDao
 import com.sanaa.vod.cache.dao.CachedContentMetadataDao
 import com.sanaa.vod.cache.dao.GenreDao
 import com.sanaa.vod.cache.dao.MovieDao
-import com.sanaa.vod.cache.dao.SavedListMovieDao
+import com.sanaa.vod.cache.dao.SavedListDao
 import com.sanaa.vod.cache.dao.TvShowDao
 import com.sanaa.vod.db.AppDatabase
 import com.sanaa.vod.history.dao.QueryDao
@@ -62,6 +62,6 @@ object LocalSearchDatabaseModule {
         database.genreDao()
 
     @Provides
-    fun provideSavedListMovieDao(database: AppDatabase): SavedListMovieDao =
+    fun provideSavedListMovieDao(database: AppDatabase): SavedListDao =
         database.savedListMovieDao()
 }

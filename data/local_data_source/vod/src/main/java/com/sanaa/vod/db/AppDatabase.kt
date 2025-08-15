@@ -12,12 +12,12 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.SavedMovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.watchedMedia.WatchedMediaHistoryLocalDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
 import com.sanaa.vod.history.dao.QueryDao
 import com.sanaa.vod.history.dao.RecentViewedDao
 import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
@@ -32,7 +32,7 @@ import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
         MovieLocalDto::class,
         TvShowLocalDto::class,
         GenreLocalDto::class,
-        SavedListDto::class,
+        SavedListLocalDto::class,
         SavedMovieLocalDto::class
     ],
     version = 1,
