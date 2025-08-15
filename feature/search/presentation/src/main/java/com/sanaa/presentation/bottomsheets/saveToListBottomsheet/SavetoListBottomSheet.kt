@@ -39,7 +39,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.SaveListListener
 import com.sanaa.presentation.screen.componants.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
@@ -48,7 +47,8 @@ fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
     modifier: Modifier = Modifier,
-    interactionsListener: SaveListListener,
+    onDismiss: () -> Unit,
+    onCreateNewListClick: () -> Unit,
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
@@ -61,14 +61,7 @@ fun SaveToListBottomSheet(
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                SaveToListEffect.AddedSuccessfully -> {
-                    interactionsListener.onSaveToListSuccess()
-                    interactionsListener.onDismissSaveToListBottomSheet()
-                }
-                SaveToListEffect.FailedToAdd -> {
-                    interactionsListener.onSaveToListFailure()
-                    interactionsListener.onDismissSaveToListBottomSheet()
-                }
+                SaveToListEffect.Dismiss -> onDismiss()
             }
         }
     }
@@ -76,14 +69,10 @@ fun SaveToListBottomSheet(
     SaveToListBottomSheetContent(
         isVisible = isVisible,
         state = state,
-        onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
-        onPlaylistSelected = viewModel::onPlaylistSelected,
-        onAddClick = {
-            viewModel.onAddClicked(
-                mediaId = mediaId,
-            )
-        },
-        onCreateNewListClick = interactionsListener::onCreateNewListClick,
+        onDismiss = onDismiss,
+        interactionListener = viewModel,
+        mediaId = mediaId,
+        onCreateNewListClick = onCreateNewListClick,
         modifier = modifier
     )
 }
