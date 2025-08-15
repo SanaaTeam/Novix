@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.trendingPeopleScreen
+package com.sanaa.presentation.screen.trendingPeopleScreen
 
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
@@ -26,7 +26,6 @@ class TrendingPeopleScreenViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: TrendingPeopleScreenViewModel
-    private lateinit var manageActorUseCase: ManageActorUseCase
     private lateinit var getTrendingActorsUseCase: GetTrendingActorsUseCase
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
