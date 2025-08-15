@@ -7,10 +7,10 @@ class GetEpisodeImagesUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(
-        id: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
         count: Int
     ): List<String> =
-        tvShowRepository.getEpisodeImageUrls(id, seasonNumber, episodeNumber, count)
+        tvShowRepository.getEpisodeImageUrls(tvShowId, seasonNumber, episodeNumber, count)
 }

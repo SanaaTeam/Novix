@@ -8,9 +8,9 @@ class GetEpisodeGuestsOfHonorUseCase @Inject constructor(
     private val tvShowRepository: TvShowRepository
 ) {
     suspend operator fun invoke(
-        id: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int
     ): List<Actor> =
-        tvShowRepository.getEpisodeGuestsOfHonor(id, seasonNumber, episodeNumber)
+        tvShowRepository.getEpisodeGuestsOfHonor(tvShowId, seasonNumber, episodeNumber)
 }
