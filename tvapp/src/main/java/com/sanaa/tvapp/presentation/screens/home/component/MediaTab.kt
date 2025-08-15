@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -40,12 +42,14 @@ fun MediaTab(
     sidePaddings: Dp,
     navController: NavHostController,
 ) {
+    val focusManager = LocalFocusManager.current
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
 
     var selectedTab by remember {
         mutableIntStateOf(0)
     }
+
     val tabs = listOf(
         MediaTabItem(
             title = stringResource(dosingSystemResource.string.movies),
@@ -65,11 +69,15 @@ fun MediaTab(
                 if (selectedTab != 0) {
                     selectedTab -= 1
                     tabs[selectedTab].onFocus()
+                }else{
+                    focusManager.moveFocus(FocusDirection.Left)
                 }
             }, onRight = {
                 if (selectedTab != tabs.lastIndex) {
                     selectedTab += 1
                     tabs[selectedTab].onFocus()
+                }else{
+                    focusManager.moveFocus(FocusDirection.Down)
                 }
             }),
     ) {

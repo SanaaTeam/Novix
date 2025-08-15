@@ -1,12 +1,10 @@
 package com.sanaa.tvapp.presentation.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,17 +40,14 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.MediaTab
 import com.sanaa.tvapp.presentation.screens.home.component.PopularMoviesCarousel
-import com.sanaa.tvapp.presentation.screens.home.component.Title
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeMoviesTapRoute
 import com.sanaa.tvapp.presentation.screens.home.tabRoutes.HomeTvShowsTapRoute
-import com.sanaa.tvapp.presentation.screens.home.component.TitleShimmer
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.TvShowDetails
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.designsystem.R as dosingSystemResource
 import com.sanaa.tvapp.R as tvResource
@@ -135,13 +128,13 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 
         NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
             composable(route = HomeMoviesTapRoute::class) {
-                HomeMovies(state, upcomingMovies){id->
+                HomeMovies(state, upcomingMovies) { id ->
                     mainTvNavController.navigate(ScreensRoute.MovieDetails(id))
                 }
             }
 
             composable(route = HomeTvShowsTapRoute::class) {
-                HomeTvShows(state, upcomingMovies){id->
+                HomeTvShows(state, upcomingMovies) { id ->
                     mainTvNavController.navigate(ScreensRoute.TvShowDetails(id))
                 }
             }
@@ -154,7 +147,7 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
 fun HomeMovies(
     state: HomeScreenUiState,
     upcomingMovies: LazyPagingItems<MediaItem>,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int) -> Unit,
 ) {
     Column {
         MediaSection(title = stringResource(tvResource.string.top_rated)) {
@@ -164,7 +157,7 @@ fun HomeMovies(
             ) {
                 ImageList(
                     it,
-                    onItemClick = {id->
+                    onItemClick = { id ->
                         onItemClick(id)
                     }
                 )
@@ -179,7 +172,7 @@ fun HomeMovies(
                 ) {
                     ImageList(
                         it,
-                        onItemClick = {id->
+                        onItemClick = { id ->
                             onItemClick(id)
                         }
                     )
@@ -194,7 +187,7 @@ fun HomeMovies(
                 upcomingMovies[index]?.let {
                     ImageList(
                         it,
-                        onItemClick = {id->
+                        onItemClick = { id ->
                             onItemClick(id)
                         }
                     )
@@ -208,20 +201,22 @@ fun HomeMovies(
 fun HomeTvShows(
     state: HomeScreenUiState,
     upcomingMovies: LazyPagingItems<MediaItem>,
-    onItemClick: (Int) -> Unit
+    onItemClick: (Int) -> Unit,
 ) {
     Column {
-        MediaSection(title = stringResource(tvResource.string.top_rated)) {
-            items(
-                items = state.topRatingTvShows,
-                key = { it.id }
-            ) {
-                ImageList(
-                    it,
-                    onItemClick = {id->
-                        onItemClick(id)
-                    }
-                )
+        if (state.topRatingTvShows.isNotEmpty()) {
+            MediaSection(title = stringResource(tvResource.string.top_rated)) {
+                items(
+                    items = state.topRatingTvShows,
+                    key = { it.id }
+                ) {
+                    ImageList(
+                        it,
+                        onItemClick = { id ->
+                            onItemClick(id)
+                        }
+                    )
+                }
             }
         }
 
@@ -233,7 +228,7 @@ fun HomeTvShows(
                 ) {
                     ImageList(
                         it,
-                        onItemClick = {id->
+                        onItemClick = { id ->
                             onItemClick(id)
                         }
                     )
@@ -241,17 +236,19 @@ fun HomeTvShows(
             }
         }
 
-        MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
-            items(
-                count = upcomingMovies.itemCount,
-            ) { index ->
-                upcomingMovies[index]?.let {
-                    ImageList(
-                        it,
-                        onItemClick={id->
-                            onItemClick(id)
-                        }
-                    )
+        if (upcomingMovies.itemCount == 0) {
+            MediaSection(title = stringResource(tvResource.string.up_upcoming)) {
+                items(
+                    count = upcomingMovies.itemCount,
+                ) { index ->
+                    upcomingMovies[index]?.let {
+                        ImageList(
+                            it,
+                            onItemClick = { id ->
+                                onItemClick(id)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -259,33 +256,10 @@ fun HomeTvShows(
 }
 
 @Composable
-private fun MediaSection(
-    title: String,
-    content: LazyListScope.() -> Unit,
-) {
-    val sidePaddings = 36.dp
-
-    Title(
-        modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
-        title = title
-    )
-
-    LazyRow(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = sidePaddings, end = sidePaddings, bottom = 12.dp
-        ),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        content = content
-    )
-}
-
-
-@Composable
 @OptIn(ExperimentalTvMaterial3Api::class)
- fun ImageList(
+fun ImageList(
     item: MediaItem,
-    onItemClick:(Int)-> Unit
+    onItemClick: (Int) -> Unit,
 ) {
     Card(
         modifier = Modifier

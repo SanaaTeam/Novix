@@ -56,11 +56,11 @@ class HomeScreenViewModel @Inject constructor(
 
         viewModelScope.launch {
             savedMovieStatusProvider.savedIds.collect { savedIds ->
-                updateState { current ->
-                    current.copy(
-                        popularMedia = current.popularMedia.map { it.withSaved(savedIds) },
-                        topRatingMovies = current.topRatingMovies.map { it.withSaved(savedIds) },
-                        continueWatchingMovies = current.continueWatchingMovies.map {
+                updateState {
+                    copy(
+                        popularMedia = popularMedia.map { it.withSaved(savedIds) },
+                        topRatingMovies = topRatingMovies.map { it.withSaved(savedIds) },
+                        continueWatchingMovies = continueWatchingMovies.map {
                             it.withSaved(
                                 savedIds
                             )
@@ -76,10 +76,10 @@ class HomeScreenViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = { isLogged ->
                 updateState {
-                    it.copy(
+                    copy(
                         userIsLoggedIn = isLogged,
                         showBottomSheet = false
 
@@ -89,9 +89,9 @@ class HomeScreenViewModel @Inject constructor(
         )
     }
     private fun fetchPopularMediaData() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = {
+            block = {
                 val popularMovies = manageMovieUseCase
                     .getPopularMovies(1).map { it.toState() }
                 val popularTvSeries = manageTvSeriesUseCase
@@ -100,7 +100,7 @@ class HomeScreenViewModel @Inject constructor(
             },
             onSuccess = { popularMediaList ->
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = null,
                         popularMedia = popularMediaList.take(10)
@@ -112,9 +112,9 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchTopRatedMovieData() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = {
+            block = {
                 val topRatedMovies = manageMovieUseCase
                     .getTopRatedMovies(1, null).map { it.toState() }
                 val topRatedTvSeries = manageTvSeriesUseCase
@@ -123,7 +123,7 @@ class HomeScreenViewModel @Inject constructor(
             },
             onSuccess = { topRatedMediaList ->
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = null,
                         topRatingMovies = topRatedMediaList.take(10)
@@ -135,14 +135,14 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchTopRatedTvShowData() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = {
+            block = {
                 manageTvSeriesUseCase.getTopRatedTvShows(1, null).map { it.toState() }
             },
             onSuccess = { topRatedMediaList ->
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = null,
                         topRatingTvShows = topRatedMediaList.take(10)
@@ -154,12 +154,12 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private fun fetchWatchedMediaData() {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToCollect(
-            callee = { loadWatchedMediaHistory() },
+            block = { loadWatchedMediaHistory() },
             onCollect = { watchedMediaList ->
                 updateState {
-                    it.copy(
+                    copy(
                         isLoading = false,
                         errorMessage = null,
                         continueWatchingMovies = watchedMediaList.map { it.toState() }
@@ -175,15 +175,15 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 updateState {
-                    it.copy(isLoading = true)
+                    copy(isLoading = true)
                 }
                 manageMovieUseCase.getMovieGenres().map { it.toState() }
             },
             onSuccess = { genres ->
                 updateState {
-                    it.copy(movieGenres = genres, isLoading = false)
+                    copy(movieGenres = genres, isLoading = false)
                 }
             },
             onError = ::onErrorLoadingData,
@@ -194,7 +194,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToExecute(
-            callee = {
+            block = {
                 loadUpcomingMovies(genreId)                      // Flow<PagingData<MediaItem>>
                     .combine(savedMovieStatusProvider.savedIds) { pagingData, savedIds ->
                         pagingData.map { it.withSaved(savedIds) } // PagingData معدَّلة
@@ -202,7 +202,7 @@ class HomeScreenViewModel @Inject constructor(
                     .cachedIn(viewModelScope)                    // اختيارى: يَحفظ الـPaging فى الكاش
             },
             onSuccess = { flowWithSaved ->
-                updateState { it.copy(upcomingMovies = flowWithSaved) }
+                updateState { copy(upcomingMovies = flowWithSaved) }
             },
             onError = ::onErrorLoadingData
         )
@@ -247,7 +247,7 @@ class HomeScreenViewModel @Inject constructor(
 
     override fun onMovieGenreClick(id: Int?) {
         if (id != state.value.movieSelectedGenreId) {
-            updateState { it.copy(movieSelectedGenreId = id) }
+            updateState { copy(movieSelectedGenreId = id) }
             fetchUpcomingMovies(id)
         }
     }
@@ -262,7 +262,7 @@ class HomeScreenViewModel @Inject constructor(
                 savedMovieStatusProvider.markItemUnsaved(media.id)
             } else {
                 updateState {
-                    it.copy(
+                    copy(
                         showSaveToListBottomSheet = true,
                         selectedMediaId = media.id.toLong()
                     )
@@ -273,11 +273,11 @@ class HomeScreenViewModel @Inject constructor(
         }
     }
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false) }
+        updateState { copy(showSaveToListBottomSheet = false) }
     }
 
     override fun onCreateNewListClick() {
@@ -285,7 +285,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     override fun onRetryClick() {
-        updateState { it.copy(isNoInternet = false) }
+        updateState { copy(isNoInternet = false) }
         fetchPopularMediaData()
         fetchTopRatedMovieData()
         fetchTopRatedTvShowData()
@@ -322,8 +322,8 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun onErrorLoadingData(e: Throwable) {
         when (e) {
-            is NoNetworkException -> updateState { it.copy(isNoInternet = true, isLoading = false) }
-            else -> updateState { it.copy(errorMessage = e.message, isLoading = false) }
+            is NoNetworkException -> updateState { copy(isNoInternet = true, isLoading = false) }
+            else -> updateState { copy(errorMessage = e.message, isLoading = false) }
         }
     }
 }

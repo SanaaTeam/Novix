@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Button
 import androidx.tv.material3.ButtonDefaults
@@ -59,7 +60,6 @@ import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
 import kotlin.time.Duration.Companion.seconds
-
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 val CarouselSaver = Saver<CarouselState, Int>(
@@ -147,9 +147,11 @@ fun MediaInfo(
             modifier = Modifier
                 .fillMaxWidth(0.5f)
                 .padding(top = 12.dp),
-            text = mediaItem.title,
+            text = mediaItem.overview,
             color = Theme.colors.body,
-            style = Theme.textStyle.label.medium
+            style = Theme.textStyle.label.medium,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
         )
 
         AnimatedVisibility(isFocused) { Button() }
