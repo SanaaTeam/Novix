@@ -1,13 +1,14 @@
 package com.sanaa.vod.repository.mapper.media
 
 
+import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.dto.GenreDto
 import com.sanaa.vod.dataSource.remote.dto.tvShow.TvShowDto
+import com.sanaa.vod.util.DateTimeUtils.defaultDate
 import entity.Genre
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 
 class TvShowMapperTest {
 
@@ -17,7 +18,7 @@ class TvShowMapperTest {
             id = 1,
             name = "Breaking Bad",
             overview = "High school chemistry teacher turned meth kingpin.",
-            posterPath = "/breakingbad.jpg",
+            posterPath = "/test.jpg",
             voteAverage = 9.5f,
             firstAirDate = "2008-01-20",
             genres = listOf(GenreDto(18, "Drama"), GenreDto(80, "Crime")),
@@ -29,7 +30,7 @@ class TvShowMapperTest {
         assertEquals(1, result.id)
         assertEquals("Breaking Bad", result.title)
         assertEquals("High school chemistry teacher turned meth kingpin.", result.overview)
-        assertEquals("https://image.tmdb.org/t/p/w500/breakingbad.jpg", result.posterImageUrl)
+        assertEquals("https://image.tmdb.org/t/p/w500/test.jpg", result.posterImageUrl)
         assertEquals(9.5f, result.imdbRating)
         assertEquals(LocalDate(2008, 1, 20), result.releaseDate)
         assertEquals(
@@ -40,7 +41,7 @@ class TvShowMapperTest {
     }
 
     @Test
-    fun `toEntity throws exception on invalid date`() {
+    fun `toEntity should return default date when date is invalid`() {
         val dto = TvShowDto(
             id = 3,
             name = "Invalid Show",
@@ -52,8 +53,8 @@ class TvShowMapperTest {
             seasonsCount = 1
         )
 
-        assertFailsWith<IllegalArgumentException> {
-            dto.toEntity()
-        }
+        val result = dto.toEntity()
+
+        assertThat(result.releaseDate).isEqualTo(defaultDate)
     }
 }

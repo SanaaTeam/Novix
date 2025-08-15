@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 
@@ -26,11 +27,11 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-
-    ) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
+) : BaseViewModel<WatchingHistoryUiState, WatchingHistoryScreenEffect>(
     WatchingHistoryUiState(),
     dispatcher
 ), WatchingHistoryInteractionListener {
@@ -44,45 +45,36 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchMovies(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryMovies(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        movieList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
-            },
-            onError = { ::onLoadDataError }
+            block = { loadWatchedHistoryMovies(genreId) },
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError,
         )
     }
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            callee = {
-                loadWatchedHistoryTvSeries(genreId)
-            }, onCollect = { mediaList ->
-                updateState {
-                    it.copy(
-                        tvShowList = mediaList.map { it.toMediaItemUiModel() },
-                        isLoading = false
-                    )
-                }
-            },
-            onError = { ::onLoadDataError }
+            block = { loadWatchedHistoryTvShows(genreId) },
+            onCollect = ::onCollectMovies,
+            onError = ::onLoadDataError
         )
+    }
+
+    private fun onCollectMovies(mediaList: List<MediaHistoryItem>) {
+        updateState {
+            copy(
+                movieList = mediaList.map { it.toMediaItemUiModel() },
+                isLoading = false
+            )
+        }
     }
 
     private fun fetchMovieGenres() {
         tryToExecute(
-            callee = {
+            block = {
                 manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
-                updateState {
-                    it.copy(movieGenres = genres)
-                }
+                updateState { copy(movieGenres = genres) }
             },
             onError = { ::onLoadDataError }
         )
@@ -90,33 +82,27 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            callee = {
-                manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() }
-            },
-            onSuccess = { genres ->
-                updateState {
-                    it.copy(tvShowGenres = genres)
-                }
-            },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toGenreUiState() } },
+            onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
             onError = { ::onLoadDataError }
         )
     }
 
     override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
-        updateState { it.copy(selectedMediaTypeUi = mediaTypeUi) }
+        updateState { copy(selectedMediaTypeUi = mediaTypeUi) }
     }
 
 
     override fun onMovieGenreClick(genreId: Int?) {
         if (genreId != state.value.movieSelectedGenreId) {
-            updateState { it.copy(movieSelectedGenreId = genreId) }
+            updateState { copy(movieSelectedGenreId = genreId) }
             fetchMovies(genreId)
         }
     }
 
     override fun onTvShowGenreClick(genreId: Int?) {
         if (genreId != state.value.tvShowSelectedGenreId) {
-            updateState { it.copy(tvShowSelectedGenreId = genreId) }
+            updateState { copy(tvShowSelectedGenreId = genreId) }
             fetchTvShows(genreId)
         }
     }
@@ -128,9 +114,10 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onSaveIconClick(mediaItem: MediaItemUiModel) {
         if (mediaItem.isSaved) {
             savedListsStatusProvider.markItemUnsaved(mediaItem.id)
+            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = mediaItem
                 )
@@ -143,9 +130,9 @@ class WatchingHistoryViewModel @Inject constructor(
     }
 
     private suspend fun loadWatchedHistoryMovies(
-        genreId: Int?
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         val user = try {
             getLoggedInUserUseCase.getLoggedInUser()
         } catch (_: NoLoggedInUserException) {
@@ -159,10 +146,10 @@ class WatchingHistoryViewModel @Inject constructor(
         )
     }
 
-    private suspend fun loadWatchedHistoryTvSeries(
-        genreId: Int?
+    private suspend fun loadWatchedHistoryTvShows(
+        genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         val user = try {
             getLoggedInUserUseCase.getLoggedInUser()
         } catch (_: NoLoggedInUserException) {
@@ -172,30 +159,51 @@ class WatchingHistoryViewModel @Inject constructor(
 
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
-            mediaType = MediaType.TV_SERIES,
+            mediaType = MediaType.TV_SHOW,
             username = user.first().username
         )
     }
 
     private fun onLoadDataError(exception: Throwable) {
         updateState {
-            it.copy(
+            copy(
                 error = exception.message,
                 isLoading = false
             )
         }
+        emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.somethingWentWrongError))
     }
 
-
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+    }
+    override fun onSaveToListResult(success: Boolean) {
+        if (success) {
+            emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))
+        } else {
+            emitEffect(WatchingHistoryScreenEffect.ShowErrorSnackBar(stringProvider.addToListFailed))
+        }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
+    }
+
+    override fun onDismissSnack() {
+        updateState {
+            copy(snackBarData = null)
+        }
+    }
+
+    override fun onShowSuccessSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = false)) }
+    }
+
+    override fun onShowErrorSnackBar(message: String) {
+        updateState { copy(snackBarData = SnackData(message = message, isError = true)) }
     }
 }

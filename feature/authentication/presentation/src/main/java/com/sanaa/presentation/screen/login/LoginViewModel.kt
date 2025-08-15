@@ -3,7 +3,7 @@ package com.sanaa.presentation.screen.login
 import com.sanaa.presentation.screen.login_base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.InvalidUserOrPasswordException
-import exceptions.NoInternetConnectionException
+import exceptions.NoInternetException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.IdentityStringProvider
@@ -19,51 +19,55 @@ class LoginViewModel @Inject constructor(
     LoginScreenInteractionListener {
 
     override fun onUsernameChanged(newUsername: String) {
-        updateStateAndRefreshSubmit { it.copy(username = newUsername, usernameError = null) }
+        updateStateAndRefreshSubmit { copy(username = newUsername, usernameError = null) }
     }
 
     override fun onPasswordChanged(newPassword: String) {
-        updateStateAndRefreshSubmit { it.copy(password = newPassword, passwordError = null) }
+        updateStateAndRefreshSubmit { copy(password = newPassword, passwordError = null) }
     }
 
     override fun onTogglePasswordVisibility() {
-        updateState { it.copy(isPasswordVisible = !it.isPasswordVisible) }
+        updateState { copy(isPasswordVisible = !isPasswordVisible) }
     }
 
     override fun onLoginClicked() {
         val current = state.value
         if (!current.canSubmit) return
 
-        updateState { it.copy(isLoading = true, canSubmit = false) }
+        updateState { copy(isLoading = true, canSubmit = false) }
 
         tryToExecute(
-            callee = {
-                val userName = state.value.username
-                val password = state.value.password
-                if (userName.isNotBlank() && password.isNotBlank()) {
-                    loginUseCase.login(userName, password)
-                } else
-                    throw Exception(identityStringProvider.enterUserNameAndPasswordError)
-            },
-            onSuccess = {
-                updateState { prev ->
-                    val updated = prev.copy(isLoading = false)
-                    updated.copy(canSubmit = isSubmitAllowed(updated))
-                }
-                emitEffect(LoginScreenEffects.ReturnLoggedInResultCode)
-            },
+            callee = login(),
+            onSuccess = onLoginSuccess(),
             onError = ::onDataLoadError
         )
     }
 
+    private fun login(): suspend () -> Unit = {
+        val userName = state.value.username
+        val password = state.value.password
+        if (userName.isNotBlank() && password.isNotBlank()) {
+            loginUseCase.login(userName, password)
+        } else
+            throw Exception(identityStringProvider.enterUserNameAndPasswordError)
+    }
+
+    private fun onLoginSuccess(): (Unit) -> Unit = {
+        updateState {
+            val updated = copy(isLoading = false)
+            updated.copy(canSubmit = isSubmitAllowed(updated))
+        }
+        emitEffect(LoginScreenEffects.ReturnLoggedInResultCode)
+    }
+
     fun onDataLoadError(throwable: Throwable) {
-        updateState { prev ->
-            val updated = prev.copy(isLoading = false)
+        updateState {
+            val updated = copy(isLoading = false)
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
         val message = when (throwable) {
             is InvalidUserOrPasswordException -> identityStringProvider.invalidUserNameAndPasswordError
-            is NoInternetConnectionException -> identityStringProvider.noInternetConnectionError
+            is NoInternetException -> identityStringProvider.noInternetConnectionError
             else -> identityStringProvider.somethingWentWrongError
         }
         emitEffect(LoginScreenEffects.ShowError(message = message))
@@ -81,9 +85,9 @@ class LoginViewModel @Inject constructor(
         emitEffect(LoginScreenEffects.NavigateBack)
     }
 
-    private fun updateStateAndRefreshSubmit(transform: (LoginUiState) -> LoginUiState) {
-        updateState { previous ->
-            val updated = transform(previous)
+    private fun updateStateAndRefreshSubmit(transform: LoginUiState.() -> LoginUiState) {
+        updateState {
+            val updated = transform(this)
             updated.copy(canSubmit = isSubmitAllowed(updated))
         }
     }

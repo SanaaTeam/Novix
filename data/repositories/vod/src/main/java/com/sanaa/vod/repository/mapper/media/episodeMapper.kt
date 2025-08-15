@@ -1,20 +1,20 @@
 package com.sanaa.vod.repository.mapper.media
 
 import com.sanaa.vod.dataSource.remote.dto.tvShow.EpisodeDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Episode
-import kotlinx.datetime.LocalDate
 
 fun EpisodeDto.toEntity(): Episode {
     return Episode(
         id = id,
         title = name,
-        overview = overview.toString(),
+        overview = overview.orEmpty(),
         seasonNumber = seasonNumber,
         number = episodeNumber,
-        imdbRating = voteAverage,
-        durationMinutes = runtime,
-        releaseDate = airDate?.let { LocalDate.parse(it) } ?: LocalDate.parse("1970-01-01"),
+        imdbRating = voteAverage ?: -1f,
+        durationMinutes = runtime ?: -1,
+        releaseDate = getLocalDateOrDefault(airDate),
         stillImagePath = getFullImageUrl(stillPath),
-        rating = rating?.toInt()
+        rating = rating?.toInt() ?: -1,
     )
 }

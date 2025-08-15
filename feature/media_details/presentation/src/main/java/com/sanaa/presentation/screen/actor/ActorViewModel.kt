@@ -1,13 +1,12 @@
 package com.sanaa.presentation.screen.actor
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
-import com.sanaa.presentation.model.mapper.toSeriesUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.ActorScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -23,22 +22,23 @@ class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider
+    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
-
-    private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
+    private val actorId: Int = checkNotNull(
+        savedStateHandle[ActorScreenRoute.ARG_ACTOR_ID]
+    )
 
     init {
         updateUserLoggingStatus()
         loadDetails()
         viewModelScope.launch {
             savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState { current ->
-                    current.copy(
-                        topMovies = current.topMovies.map { movie ->
+                updateState {
+                    copy(
+                        topMovies = topMovies.map { movie ->
                             movie.copy(isSaved = savedIds.contains(movie.id))
                         }
                     )
@@ -50,15 +50,14 @@ class ActorViewModel @Inject constructor(
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag
         )
     }
+
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(userIsLoggedIn = isLogged) }
+    }
+
 
     override fun onBackClicked() {
         emitEffect(ActorScreenEffects.NavigateBack)
@@ -68,16 +67,16 @@ class ActorViewModel @Inject constructor(
         emitEffect(ActorScreenEffects.NavigateToTopMovies(actorId))
     }
 
-    override fun onTopSeriesClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopSeries(actorId))
+    override fun onTopShowsClicked() {
+        emitEffect(ActorScreenEffects.NavigateToTopTvShows(actorId))
     }
 
     override fun onViewAllGalleryClicked() {
         emitEffect(ActorScreenEffects.NavigateToGallery(actorId))
     }
 
-    override fun onSeriesClicked(id: Int) {
-        emitEffect(ActorScreenEffects.NavigateToSeriesDetails(id))
+    override fun onTvShowClicked(id: Int) {
+        emitEffect(ActorScreenEffects.NavigateToTvShowDetails(id))
     }
 
     override fun onMovieClicked(id: Int) {
@@ -85,18 +84,17 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onDismissBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(ActorScreenEffects.NavigateToLogin)
     }
 
     override fun onSaveClicked(movie: MovieUiModel) {
-
-    if (!state.value.userIsLoggedIn) {
-            updateState { it.copy(showLoginBottomSheet = true) }
+        if (!state.value.userIsLoggedIn) {
+            updateState { copy(showLoginBottomSheet = true) }
             return
         }
 
@@ -104,64 +102,58 @@ class ActorViewModel @Inject constructor(
             savedListsStatusProvider.markItemUnsaved(movie.id)
         } else {
             updateState {
-                it.copy(
+                copy(
                     showSaveToListBottomSheet = true,
                     selectedMediaToSave = movie
                 )
             }
         }
-        Log.i("MMMANCY", "CLICKED: ")
-
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
+        updateState { copy(showSaveToListBottomSheet = false, selectedMediaToSave = null) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
 
     private fun loadDetails() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             callee = ::fetchActorDetails,
-            onSuccess = {
-                updateState { it.copy(isLoading = false) }
-            },
-            onError = { e ->
-                updateState { it.copy(isLoading = false) }
-            }
+            onSuccess = { updateState { copy(isLoading = false) } },
+            onError = { e -> updateState { copy(isLoading = false) } }
         )
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
         val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topSeriesDeferred = async { manageActorDetails.getActorTopTvSeries(actorId) }
+        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(actorId) }
         val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
         val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
 
         val actor = actorDeferred.await()
         val topMovies = topMoviesDeferred.await()
-        val topSeries = topSeriesDeferred.await()
+        val topTvShows = topTvShowsDeferred.await()
         val profiles = profilesDeferred.await()
         val gallery = galleryDeferred.await()
 
         updateState {
-            it.copy(
+            copy(
                 actor = actor.toActorUiModel(),
-                topMovies = topMovies.map { m -> m.toUiModel() },
-                topTvSeries = topSeries.map { s -> s.toSeriesUiModel() },
+                topMovies = topMovies.map { m -> m.toState() },
+                topTvShows = topTvShows.map { s -> s.toState() },
                 profileImageUrls = profiles,
                 galleryImageUrls = gallery
             )

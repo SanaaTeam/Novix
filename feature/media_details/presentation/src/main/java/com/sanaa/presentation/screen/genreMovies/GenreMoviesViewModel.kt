@@ -6,10 +6,11 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -25,58 +26,57 @@ class GenreMoviesViewModel @Inject constructor(
     private val manageMoviesDetailsUseCase: ManageMovieUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<GenreMoviesScreenUiState, GenreMoviesEffects>(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
 
-    private val categoryId: Int = checkNotNull(savedStateHandle["categoryId"])
-    private val categoryName: String = checkNotNull(savedStateHandle["categoryName"])
+    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
+    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
 
     init {
         updateUserLoggingStatus()
-        fetchMovies(categoryId)
+        fetchMovies(genreId)
     }
 
     fun updateUserLoggingStatus() {
         tryToCollect(
             callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    it.copy(
-                        userIsLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = ::onCollectLoggedFlag,
         )
     }
 
+    private fun onCollectLoggedFlag(isLogged: Boolean) {
+        updateState { copy(userIsLoggedIn = isLogged) }
+    }
+
+
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(categoryId)
+        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
+        fetchMovies(genreId)
     }
 
 
     override fun onBottomSheetDismiss() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showBottomSheet = false) }
+        updateState { copy(showBottomSheet = false) }
         emitEffect(GenreMoviesEffects.NavigateToLogin)
     }
 
     override fun onDismissSaveToListBottomSheet() {
-        updateState { it.copy(showSaveToListBottomSheet = false) }
+        updateState { copy(showSaveToListBottomSheet = false) }
     }
 
     override fun onCreateNewListClick() {
-        updateState { it.copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
+        updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
 
     override fun onDismissAddListBottomSheet() {
-        updateState { it.copy(showAddListBottomSheet = false) }
+        updateState { copy(showAddListBottomSheet = false) }
     }
 
     override fun onSaveIconClick(media: MovieUiModel) {
@@ -85,7 +85,7 @@ class GenreMoviesViewModel @Inject constructor(
                 savedListsStatusProvider.markItemUnsaved(media.id)
             } else {
                 updateState {
-                    it.copy(
+                    copy(
                         showSaveToListBottomSheet = true,
                         selectedMovieToSave = media
                     )
@@ -104,45 +104,41 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-
-            callee = {
-                loadMoviesByCategory(categoryId)
-            },
-            onCollect = { movies ->
-                updateState {
-                    it.copy(movies = flowOf(movies), title = categoryName, isLoading = false)
-                }
-            },
-            onError = { exception ->
-                if (exception is NoNetworkException) {
-                    updateState {
-                        it.copy(
-                            noInternetConnection = true,
-                            isLoading = false,
-                            error = null
-                        )
-                    }
-                } else {
-                    updateState {
-                        it.copy(error = exception.message, isLoading = false)
-                    }
-                }
-            }
+            callee = { loadMoviesByCategory(categoryId) },
+            onCollect = onCollectMovies(),
+            onError = ::onFetchMoviesFailed
         )
     }
 
     private fun loadMoviesByCategory(genreId: Int): Flow<PagingData<MovieUiModel>> {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingDataSource(genreId) },
-            mapper = Movie::toUiModel
-
+            mapper = Movie::toState
         )
+    }
+
+    private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
+        updateState { copy(movies = flowOf(movies), title = genreName, isLoading = false) }
+    }
+
+    private fun onFetchMoviesFailed(exception: NovixAppException) {
+        if (exception is NoNetworkException) {
+            updateState {
+                copy(
+                    noInternetConnection = true,
+                    isLoading = false,
+                    error = null
+                )
+            }
+        } else {
+            updateState { copy(error = exception.message, isLoading = false) }
+        }
     }
 
 
     private fun createMoviesPagingDataSource(
-        genreId: Int
+        genreId: Int,
     ): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
             manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)

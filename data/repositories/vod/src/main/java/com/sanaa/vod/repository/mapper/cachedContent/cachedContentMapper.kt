@@ -3,29 +3,30 @@ package com.sanaa.vod.repository.mapper.cachedContent
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
+import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Genre
 import entity.Movie
-import entity.TvSeries
-import kotlinx.datetime.LocalDate
+import entity.TvShow
+import kotlin.time.Duration.Companion.minutes
 
 fun Movie.toLocalDto(): MovieLocalDto =
     MovieLocalDto(
         id = id,
         title = title,
         posterImageUrl = posterImageUrl,
-        imdbRating = imdbRating ?: 0f,
+        imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
     )
 
-fun TvSeries.toLocalDto(): TvShowLocalDto =
+fun TvShow.toLocalDto(): TvShowLocalDto =
     TvShowLocalDto(
         id = id,
         title = title,
-        posterImageUrl = posterImageUrl.orEmpty(),
+        posterImageUrl = posterImageUrl,
         imdbRating = imdbRating,
         releaseDate = releaseDate.toString(),
 
-    )
+        )
 
 fun MovieLocalDto.toEntity() = Movie(
     id = id,
@@ -33,23 +34,23 @@ fun MovieLocalDto.toEntity() = Movie(
     posterImageUrl = posterImageUrl,
     imdbRating = imdbRating,
     genres = emptyList(),
-    duration = null,
-    releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1, 1, 1),
+    duration = (-1).minutes,
+    releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     trailerUrl = "",
-    rating = 0,
+    rating = -1,
 )
 
-fun TvShowLocalDto.toEntity() = TvSeries(
+fun TvShowLocalDto.toEntity() = TvShow(
     id = id,
     title = title,
     posterImageUrl = posterImageUrl,
     imdbRating = imdbRating,
     genres = emptyList(),
-    releaseDate = releaseDate?.let(LocalDate::parse) ?: LocalDate(1, 1, 1),
+    releaseDate = getLocalDateOrDefault(releaseDate),
     overview = "",
     seasonsCount = 0,
-    rating = 0,
+    rating = -1,
 )
 
 fun GenreLocalDto.toEntity() = Genre(

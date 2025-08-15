@@ -2,7 +2,9 @@ package com.sanaa.presentation.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -11,11 +13,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
@@ -29,41 +29,35 @@ abstract class BaseViewModel<T, E>(
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
 
-    internal fun updateState(updater: (T) -> T) {
+    internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 
     protected fun <T> tryToExecute(
         callee: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Exception) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
-            try {
-                val result = callee()
-                onSuccess(result)
-            } catch (exception: Exception) {
-                onError(exception)
-            }
+        val handler = createExceptionHandler(onError)
+
+        viewModelScope.launch(dispatcher + handler) {
+            val result = callee()
+            onSuccess(result)
         }
     }
 
     protected fun <T> tryToCollect(
         callee: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
-            try {
-                callee().catch { onError(it) }
-                    .collectLatest { result ->
-                        onCollect(result)
-                    }
-            } catch (exception: Exception) {
-                Timber.w(exception, "Use-case failed")
-                onError(exception)
+        val handler = createExceptionHandler(onError)
+
+        viewModelScope.launch(dispatcher + handler) {
+            callee().collectLatest { result ->
+                onCollect(result)
             }
         }
     }
@@ -73,4 +67,15 @@ abstract class BaseViewModel<T, E>(
             _effect.emit(effect)
         }
     }
+
+
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is NovixAppException -> exception
+                    else -> NovixAppException(exception.message)
+                }
+            )
+        }
 }

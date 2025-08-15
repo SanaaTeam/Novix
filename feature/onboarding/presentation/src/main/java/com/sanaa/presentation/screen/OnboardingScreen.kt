@@ -41,6 +41,7 @@ import com.sanaa.presentation.component.CircleShapeBlur
 import com.sanaa.presentation.component.DialogContainer
 import com.sanaa.presentation.component.OnBoardingPageContentItem
 
+
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
@@ -59,7 +60,7 @@ fun OnboardingScreen(
 }
 
 @Composable
-fun OnBoardingScreenContent(
+private fun OnBoardingScreenContent(
     state: OnboardingUiState,
     interactionListener: OnboardingInteractionsListener,
     modifier: Modifier = Modifier
@@ -188,15 +189,17 @@ fun OnBoardingScreenContent(
     }
 }
 
-
 @Preview(
     showBackground = true,
     heightDp = 800,
     widthDp = 360
 )
+
 @Preview(
     name = "Arabic Preview",
-    locale = "ar"
+    locale = "ar",
+    heightDp = 800,
+    widthDp = 360
 )
 @Composable
 private fun Preview() {
@@ -221,7 +224,7 @@ private fun Preview() {
                     )
                 ),
                 currentPageIndex = 1,
-                isSkipable = false
+                isSkipAble = false
             ),
             interactionListener = object : OnboardingInteractionsListener {
                 override fun onNextPageClick() {}

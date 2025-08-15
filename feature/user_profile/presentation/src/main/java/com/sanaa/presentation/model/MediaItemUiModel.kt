@@ -8,5 +8,4 @@ data class MediaItemUiModel(
     val rating: String? = null,
     val mediaTypeUi: MediaTypeUi,
     val isSaved: Boolean = false,
-
-    )
+)

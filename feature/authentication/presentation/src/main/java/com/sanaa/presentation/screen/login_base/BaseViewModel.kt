@@ -2,7 +2,9 @@ package com.sanaa.presentation.screen.login_base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import exceptions.IdentityException
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,7 @@ import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
     initialState: T,
-    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO
+    val defaultDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ViewModel() {
     private val _state: MutableStateFlow<T> by lazy { MutableStateFlow(initialState) }
     val state: StateFlow<T> by lazy { _state.asStateFlow() }
@@ -23,29 +25,37 @@ abstract class BaseViewModel<T, E>(
     private val _effect = MutableSharedFlow<E>()
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
-    protected fun updateState(updater: (T) -> T) {
+    protected fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 
     protected fun <T> tryToExecute(
         callee: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: IdentityException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        viewModelScope.launch(dispatcher) {
-            try {
-                val result = callee()
-                onSuccess(result)
-            } catch (exception: Exception) {
-                onError(exception)
-            }
+        val handler = createExceptionHandler(onError)
+        viewModelScope.launch(dispatcher + handler) {
+            val result = callee()
+            onSuccess(result)
         }
     }
+
 
     protected fun emitEffect(effect: E) {
         viewModelScope.launch {
             _effect.emit(effect)
         }
     }
+
+    private fun createExceptionHandler(onError: (IdentityException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(
+                when (exception) {
+                    is IdentityException -> exception
+                    else -> IdentityException()
+                }
+            )
+        }
 }

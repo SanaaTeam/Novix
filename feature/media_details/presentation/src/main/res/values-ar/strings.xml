@@ -26,7 +26,7 @@
     <string name="gallery">المعرض</string>
     <string name="actor_photos">معرض الصور</string>
     <string name="top_movie_picks">أفضل الأفلام</string>
-    <string name="top_series_picks">أفضل البرامج</string>
+    <string name="top_tv_shows_picks">أفضل البرامج</string>
     <string name="biography">سيرة ذاتية</string>
     <string name="select_how_much_you_like_it">اختر مدى إعجابك به</string>
     <string name="submit">إرسال</string>
@@ -34,4 +34,8 @@
     <string name="submit_rating_successfully">تم إرسال التقييم بنجاح</string>
     <string name="submit_rating_failed">فشل في إرسال التقييم</string>
     <string name="please_login_to_rate_your_favorite_items">يرجى تسجيل الدخول لتقييم العناصر المفضلة لديك.</string>
+    <string name="created_list_successfully">تم إنشاء القائمة بنجاح</string>
+    <string name="failed_to_create_list">فشل في إنشاء القائمة</string>
+    <string name="added_to_list_successfully">تمت الإضافة إلى القائمة بنجاح</string>
+    <string name="added_to_list_failed">فشلت الإضافة إلى القائمة</string>
 </resources>

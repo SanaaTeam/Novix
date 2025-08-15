@@ -3,8 +3,8 @@ package usecase.search
 import com.google.common.truth.Truth.assertThat
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
-import exceptions.RetrievingDataFailureException
+import entity.TvShow
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -61,26 +61,26 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchMovies() should throw RetrievingDataFailureException when try to search a movie failed`() =
+    fun `searchMovies() should throw NovixAppException when try to search a movie failed`() =
         runTest {
             // Given
             val query = "Sam"
             val page = 1
             coEvery {
                 searchRepository.searchMovies(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchMovies(query, page)
             }
         }
 
     @Test
-    fun `searchTvShows() should call addSearchHistory() from SearchHistoryRepository when search a tv series`() =
+    fun `searchTvShows() should call addSearchHistory() from SearchHistoryRepository when search a tv show`() =
         runTest {
             // Given
-            val query = "TvSeries"
+            val query = "Tv show"
             val page = 1
 
             // When
@@ -93,10 +93,10 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchTvShows() should return tv series search result`() =
+    fun `searchTvShows() should return tv show search result`() =
         runTest {
             // Given
-            val query = "Tv Series"
+            val query = "Tv show"
             val page = 1
             coEvery {
                 searchRepository.searchTvShows(query, page)
@@ -110,17 +110,17 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv series failed`() =
+    fun `searchTvShows() should throw RetrievingDataFailureException when try to search an tv show failed`() =
         runTest {
             // Given
             val query = "Sam"
             val page = 1
             coEvery {
                 searchRepository.searchTvShows(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchTvShows(query, page)
             }
         }
@@ -159,17 +159,17 @@ class SearchUseCaseTest {
         }
 
     @Test
-    fun `searchActors() should throw RetrievingDataFailureException when try to search an actor failed`() =
+    fun `searchActors() should throw NovixAppException when try to search an actor failed`() =
         runTest {
             // Given
             val query = "Sam"
             val page = 1
             coEvery {
                 searchRepository.searchActors(query, page)
-            } throws RetrievingDataFailureException("")
+            } throws NovixAppException("")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 searchUseCase.searchActors(query, page)
             }
         }
@@ -181,15 +181,12 @@ class SearchUseCaseTest {
                 id = 1,
                 name = "title",
                 imageUrl = "",
-                region = null,
-                lastShow = null,
-                gender = Actor.Gender.MALE,
-                department = null,
-                character = null,
-                birthDate = null,
-                deathDate = null,
-                placeOfBirth = null,
-                biography = null,
+                department = "",
+                character = "",
+                birthDate = LocalDate(1, 1, 1),
+                deathDate = LocalDate(1, 1, 1),
+                placeOfBirth = "",
+                biography = "",
             )
         )
 
@@ -203,13 +200,13 @@ class SearchUseCaseTest {
                 duration = 10.minutes,
                 releaseDate = LocalDate(1990, 10, 10),
                 overview = "null",
-                trailerUrl = null,
+                trailerUrl = "",
                 rating = 0
             )
         )
 
         val dummyTvShow = listOf(
-            TvSeries(
+            TvShow(
                 id = 1,
                 title = "title",
                 posterImageUrl = "imageUrl",

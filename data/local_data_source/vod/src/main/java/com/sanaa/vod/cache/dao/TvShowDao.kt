@@ -16,9 +16,6 @@ interface TvShowDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(tvShows: List<TvShowLocalDto>)
 
-    @Query("SELECT * FROM tvshow WHERE id = :id LIMIT 1")
-    suspend fun getTvShowById(id: Int): TvShowLocalDto?
-
     @Query("SELECT * FROM tvshow WHERE (id IN (:ids))")
     suspend fun getTvShowsByIds(ids: List<Int>): List<TvShowLocalDto>
 

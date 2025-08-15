@@ -2,25 +2,24 @@ package com.sanaa.presentation.model.mapper
 
 import android.annotation.SuppressLint
 import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.MediaHistoryItem
 import entity.Movie
 import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
-fun Movie.toUiModel(
-    isBookmarked: Boolean = false,
+fun Movie.toState(
     trailerUrl: String? = null,
 ): MovieUiModel {
     return MovieUiModel(
         id = id,
         title = title,
-        overview = overview.toString(),
+        overview = overview,
         rating = String.format("%.1f", imdbRating),
-        releaseDate = releaseDate.toString(),
-        duration = duration,
-        genres = genres.map { it.toUiModel() },
-        isSaved = isSaved,
+        releaseDate = if (releaseDate != defaultDate) releaseDate.toString() else "",
+        duration = duration.takeIf { it.inWholeMinutes > 0 },
+        genres = genres.map { it.toState() },
         trailerUrl = trailerUrl,
         posterUrl = posterImageUrl
     )
@@ -32,6 +31,6 @@ fun Movie.toHistory(): MediaHistoryItem {
         genres = genres,
         posterImageUrl = posterImageUrl,
         mediaType = MediaType.MOVIE,
-        lastWatchedAt = Clock.System.now()
+        lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
     )
 }

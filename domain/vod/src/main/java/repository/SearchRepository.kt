@@ -2,7 +2,7 @@ package repository
 
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 
 
 interface SearchRepository {
@@ -15,5 +15,5 @@ interface SearchRepository {
     suspend fun searchTvShows(
         query: String,
         page: Int,
-    ): List<TvSeries>
+    ): List<TvShow>
 }

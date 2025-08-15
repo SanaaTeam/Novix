@@ -18,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
@@ -31,15 +30,14 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.modifier.fillWidthOfParent
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreenInteractionListener
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiState
-import com.sanaa.presentation.screen.series.components.CastComponent
+import com.sanaa.presentation.screen.tvShow.components.CastComponent
 import com.sanaa.presentation.shared_component.DotSeparator
 import com.sanaa.presentation.shared_component.IconWithText
 import com.sanaa.presentation.shared_component.ImageSlider
 import com.sanaa.presentation.shared_component.InfoSection
 import com.sanaa.presentation.shared_component.OverviewSection
-import com.sanaa.presentation.util.formatTime
+import com.sanaa.presentation.util.DateTimeUtils.formatTime
 import java.util.Locale
-import kotlin.time.Duration.Companion.hours
 import com.sanaa.designsystem.R as designR
 
 @Composable

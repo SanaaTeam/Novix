@@ -6,4 +6,7 @@ interface MyRatingScreenInteractionListener {
     fun onDeleteIconClick(mediaId: Int, mediaType: MediaTypeUi)
     fun onRetryLoadDetails()
     fun onMediaClick(id: Int, mediaType: MediaTypeUi)
+    fun onDismissSnack()
+    fun onShowSuccessSnackBar(message: String)
+    fun onShowErrorSnackBar(message: String)
 }

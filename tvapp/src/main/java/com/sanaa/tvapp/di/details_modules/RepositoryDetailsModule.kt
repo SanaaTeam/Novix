@@ -9,7 +9,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import repository.ActorRepository
 import repository.MovieRepository
-import repository.TvSeriesRepository
+import repository.TvShowRepository
 import javax.inject.Singleton
 
 @Module
@@ -30,7 +30,7 @@ abstract class RepositoryDetailsModule {
 
     @Binds
     @Singleton
-    abstract fun bindTvSeriesRepository(
+    abstract fun bindTvShowRepository(
         tvShowRepositoryImpl: TvShowRepositoryImpl
-    ): TvSeriesRepository
+    ): TvShowRepository
 }

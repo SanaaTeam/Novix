@@ -13,4 +13,8 @@ interface WatchingHistoryInteractionListener {
     fun onDismissSaveToListBottomSheet()
     fun onCreateNewListClick()
     fun onDismissAddListBottomSheet()
+    fun onDismissSnack()
+    fun onSaveToListResult(success: Boolean)
+    fun onShowSuccessSnackBar(message: String)
+    fun onShowErrorSnackBar(message: String)
 }

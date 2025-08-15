@@ -7,11 +7,14 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiMo
 import com.sanaa.tvapp.util.formatLocalizedDate
 import entity.Episode
 import entity.Season
+import entity.TvShow
+import kotlinx.datetime.Clock
+import usecase.search.search_param.MediaType
 import entity.TvSeries
 
 
 @SuppressLint("DefaultLocale")
-fun TvSeries.toTvShowUiModel(trailerUrl: String? = null) = TvShowDetailsUiModel(
+fun TvShow.toTvShowUiModel(trailerUrl: String? = null) = TvShowDetailsUiModel(
     id = id,
     title = title,
     posterUrl = posterImageUrl,
@@ -41,3 +44,13 @@ fun Episode.toEpisodeUiModel() = EpisodeUiModel(
     overview = overview,
     seasonNumber = seasonNumber,
 )
+
+fun TvShow.toHistory(): MediaHistoryItem {
+    return MediaHistoryItem(
+        id = id,
+        genres = genres,
+        posterImageUrl = posterImageUrl.orEmpty(),
+        mediaType = MediaType.TV_SHOW,
+        lastWatchedAt = Clock.System.now().toEpochMilliseconds(),
+    )
+}

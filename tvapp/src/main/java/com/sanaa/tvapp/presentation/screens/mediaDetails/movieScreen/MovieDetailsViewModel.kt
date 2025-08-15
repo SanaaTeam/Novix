@@ -77,7 +77,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
-        val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
+        val imagesDeferred = async { manageMovieDetails.getMovieImagesUrl(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 

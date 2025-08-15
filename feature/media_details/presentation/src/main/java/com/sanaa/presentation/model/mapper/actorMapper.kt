@@ -1,22 +1,20 @@
 package com.sanaa.presentation.model.mapper
 
 import com.sanaa.presentation.model.ActorUiModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 
 fun Actor.toActorUiModel() = ActorUiModel(
     id = id,
-    imageUrl = imageUrl,
+    imageUrl = imageUrl.takeIf(String::isNotBlank),
     name = name,
-    region = region,
-    lastShow = lastShow,
-    gender = if (gender == Actor.Gender.MALE) "male" else "female",
-    department = department?.toString(),
-    character = character,
+    department = department.takeIf(String::isNotBlank),
+    character = character.takeIf(String::isNotBlank),
     lifeSpan = when {
-        birthDate != null && deathDate != null -> "$birthDate - $deathDate"
-        birthDate != null -> birthDate!!.toString()
+        birthDate != defaultDate && deathDate != defaultDate -> "$birthDate - $deathDate"
+        birthDate != defaultDate -> birthDate.toString()
         else -> null
     },
-    placeOfBirth = placeOfBirth?.toString(),
-    biography = biography?.takeIf(String::isNotBlank),
+    placeOfBirth = placeOfBirth.takeIf(String::isNotBlank),
+    biography = biography.takeIf(String::isNotBlank),
 )

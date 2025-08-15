@@ -22,7 +22,8 @@ abstract class RepositoryCustomListModule {
 
     @Binds
     @Singleton
-    abstract fun bindSavedMovieStatusProvider(
+    abstract fun bindSavedListsStatusProvider(
         savedMovieStatusProviderImpl: SavedListsStatusProviderImpl
     ): SavedListsStatusProvider
+
 }

@@ -5,8 +5,8 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
+import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
@@ -70,7 +70,7 @@ class MovieDetailsViewModelTest {
     fun `onWatchTrailerClick does nothing when trailer missing`() = runTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -210,7 +210,7 @@ class MovieDetailsViewModelTest {
         givenHappy()
         advanceUntilIdle()
 
-        viewModel.updateState { it.copy(showRateBottomSheet = true) }
+        viewModel.updateState { copy(showRateBottomSheet = true) }
         viewModel.onDismissRateBottomSheet()
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
@@ -245,7 +245,7 @@ class MovieDetailsViewModelTest {
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -279,15 +279,15 @@ class MovieDetailsViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
             overview = "Overview1",
-            rating = 0
+            rating = 0,
+            trailerUrl = ""
         )
         private val dummyCast = listOf(
             Actor(
-                id = 1, imageUrl = "/a.jpg", name = "Actor A", region = "US",
-                lastShow = "ShowX", gender = Gender.FEMALE,
+                id = 1, imageUrl = "/a.jpg", name = "Actor A",
                 department = "Acting", character = "Lead",
                 birthDate = LocalDate.parse("1980-01-01"),
-                deathDate = null, placeOfBirth = "LA", biography = "Bio"
+                deathDate = defaultDate, placeOfBirth = "LA", biography = "Bio"
             )
         )
         private val dummySimilar =

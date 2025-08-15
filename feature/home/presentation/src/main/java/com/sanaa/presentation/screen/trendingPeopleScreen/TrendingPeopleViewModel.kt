@@ -9,6 +9,7 @@ import com.sanaa.presentation.state.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,7 @@ import javax.inject.Inject
 class TrendingPeopleViewModel @Inject constructor(
     private val getActorsUseCase: ManageActorUseCase,
     private val stringProvider: VodStringProvider,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TrendingPeopleScreenUiState, TrendingPeopleScreenEffect>(
     initialState = TrendingPeopleScreenUiState(),
     defaultDispatcher = dispatcher
@@ -48,19 +49,19 @@ class TrendingPeopleViewModel @Inject constructor(
 
     private fun onLoadActorsSuccess(pagingData: PagingData<PersonUiState>) {
         updateState {
-            it.copy(
+            copy(
                 people = flowOf(pagingData),
                 isNoInternetConnection = false,
             )
         }
     }
 
-    private fun onDataLoadError(e: Throwable) {
+    private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
-            updateState { it.copy(isNoInternetConnection = true) }
+            updateState { copy(isNoInternetConnection = true) }
             emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.noInternetConnectionError))
         } else {
-            updateState { it.copy(isNoInternetConnection = false) }
+            updateState { copy(isNoInternetConnection = false) }
             emitEffect(TrendingPeopleScreenEffect.ShowError(message = stringProvider.somethingWentWrongError))
         }
     }
@@ -77,9 +78,9 @@ class TrendingPeopleViewModel @Inject constructor(
         loadActors()
     }
 
-    private fun createActorsPagingSource(onError: ((Throwable) -> Unit)? = ::onDataLoadError): PagingSource<Int, Actor> {
-        return BasePagingSourceForHome(onError = onError)
-        { page ->
+    private fun createActorsPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError)
+    : PagingSource<Int, Actor> {
+        return BasePagingSourceForHome(onError = onError) { page ->
             getActorsUseCase.getTrendingActors(page = page)
         }
     }

@@ -1,36 +1,33 @@
 package com.sanaa.presentation.screen
 
+import androidx.lifecycle.ViewModel
 import com.sanaa.feature.onboarding.presentation.R
 import com.sanaa.presentation.component.OnBoardingPageContentItem
-import com.sanaa.presentation.onbordingBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 
 @HiltViewModel
-class OnboardingViewModel @Inject constructor(
-    dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<OnboardingUiState>(OnboardingUiState(), dispatcher),
-    OnboardingInteractionsListener {
+class OnboardingViewModel : ViewModel(), OnboardingInteractionsListener {
+
+    private val _state = MutableStateFlow(OnboardingUiState())
+    val state: StateFlow<OnboardingUiState> = _state.asStateFlow()
 
     init {
         loadOnBoardingPages()
     }
 
     private fun loadOnBoardingPages() {
-        tryToExecute(
-            callee = {
-                updateState {
-                    it.copy(
-                        pageList = getOnBoardingPageContent(),
-                        currentPageIndex = 0
-                    )
-                }
+
+            updateState {
+                copy(
+                    pageList = getOnBoardingPageContent(),
+                    currentPageIndex = 0
+                )
             }
-        )
-    }
+        }
 
     override fun onNextPageClick() {
         val currentIndex = state.value.currentPageIndex
@@ -39,7 +36,7 @@ class OnboardingViewModel @Inject constructor(
         if (currentIndex == lastIndex) {
             onSkipClick()
         } else {
-            updateState { it.copy(currentPageIndex = currentIndex + 1) }
+            updateState { copy(currentPageIndex = currentIndex + 1) }
         }
     }
 
@@ -47,16 +44,16 @@ class OnboardingViewModel @Inject constructor(
         val currentIndex = state.value.currentPageIndex
 
         if (currentIndex > 0) {
-            updateState { it.copy(currentPageIndex = currentIndex - 1) }
+            updateState { copy(currentPageIndex = currentIndex - 1) }
         }
     }
 
     override fun onSkipClick() {
-        updateState { it.copy(isSkipable = true, onboardingIsFinished = true) }
+        updateState { copy(isSkipAble = true, onboardingIsFinished = true) }
     }
 
     override fun setCurrentPage(pageIndex: Int) {
-        updateState { it.copy(currentPageIndex = pageIndex) }
+        updateState { copy(currentPageIndex = pageIndex) }
     }
 
     private fun getOnBoardingPageContent(): List<OnBoardingPageContentItem> {
@@ -77,5 +74,9 @@ class OnboardingViewModel @Inject constructor(
                 imageRes = R.drawable.onboarding_3
             )
         )
+    }
+
+    private fun updateState(update: OnboardingUiState.() -> OnboardingUiState) {
+        _state.value = update(_state.value)
     }
 }

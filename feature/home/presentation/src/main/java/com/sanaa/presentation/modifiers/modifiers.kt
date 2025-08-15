@@ -7,19 +7,13 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 
 fun Modifier.fillWidthOfParent(parentPadding: Dp) = layout { measurable, constraints ->
     val newMaxWidth = constraints.maxWidth + 2 * parentPadding.roundToPx()
@@ -38,10 +32,6 @@ fun Modifier.shimmerEffect(
     angleOfAxisY: Float = 270f,
     durationMillis: Int = 1000,
 ): Modifier = composed {
-    var size by remember {
-        mutableStateOf(IntSize.Zero)
-    }
-
     val shimmerColors = listOf(
         Color.Transparent,
         Color.Transparent,
@@ -77,5 +67,4 @@ fun Modifier.shimmerEffect(
     )
 
     background(brush)
-        .onGloballyPositioned { size = it.size }
 }

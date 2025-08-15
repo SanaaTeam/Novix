@@ -9,7 +9,7 @@ import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.repository.mapper.media.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
@@ -36,7 +36,6 @@ class ActorRepositoryImplTest {
         val result = repository.getActorDetails(1)
 
         assertThat(result.name).isEqualTo("Tom Hanks")
-        assertThat(result.region).isEqualTo(null)
     }
 
     @Test
@@ -49,10 +48,10 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getActorDetails throws RetrievingDataFailureException on Exception`() = runTest {
+    fun `getActorDetails throws NovixAppException on Exception`() = runTest {
         coEvery { remoteDataSource.getActorDetails(any()) } throws RuntimeException()
 
-        assertThrows<RetrievingDataFailureException> {
+        assertThrows<NovixAppException> {
             repository.getActorDetails(1)
         }
     }
@@ -86,31 +85,31 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getProfileImages throws RetrievingDataFailureException when an unknown error occurs`() =
+    fun `getProfileImages throws NovixAppException when an unknown error occurs`() =
         runTest {
             coEvery { remoteDataSource.getActorImages(any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 repository.getProfileImageUrls(1, 1)
             }
         }
 
     @Test
-    fun `getActorTopMovies throws RetrievingDataFailureException when an unknown error occurs`() =
+    fun `getActorTopMovies throws NovixAppException when an unknown error occurs`() =
         runTest {
             coEvery { remoteDataSource.getActorMovies(any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 repository.getActorTopMovies(1)
             }
         }
 
     @Test
-    fun `getActorTopTvShows throws RetrievingDataFailureException when an unknown error occurs`() =
+    fun `getActorTopTvShows throws NovixAppException when an unknown error occurs`() =
         runTest {
             coEvery { remoteDataSource.getActorTvShows(any()) } throws Exception()
 
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 repository.getActorTopTvShows(1)
             }
         }
@@ -123,10 +122,10 @@ class ActorRepositoryImplTest {
     }
 
     @Test
-    fun `getGalleryImages propagates RetrievingDataFailureException on generic error`() = runTest {
+    fun `getGalleryImages propagates NovixAppException on generic error`() = runTest {
         coEvery { remoteDataSource.getActorImages(any()) } throws IllegalStateException("boom")
 
-        assertThrows<RetrievingDataFailureException> { repository.getGalleryImageUrls(42) }
+        assertThrows<NovixAppException> { repository.getGalleryImageUrls(42) }
     }
 
     @Test
@@ -140,8 +139,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopTvShows returns list of TV series`() = runTest {
-        val tvDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorTvShows(1) } returns tvDtos
+        val tvDto = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorTvShows(1) } returns tvDto
 
         val result = repository.getActorTopTvShows(1)
 
@@ -150,8 +149,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getActorTopMovies returns list of movies`() = runTest {
-        val movieDtos = listOf(mockk<ActorCastCreditDto>(relaxed = true))
-        coEvery { remoteDataSource.getActorMovies(1) } returns movieDtos
+        val movieDto = listOf(mockk<ActorCastCreditDto>(relaxed = true))
+        coEvery { remoteDataSource.getActorMovies(1) } returns movieDto
 
         val result = repository.getActorTopMovies(1)
 
@@ -163,7 +162,7 @@ class ActorRepositoryImplTest {
         val error = RuntimeException("Something went wrong")
         coEvery { remoteDataSource.getActorDetails(1) } throws error
 
-        val exception = assertThrows<RetrievingDataFailureException> {
+        val exception = assertThrows<NovixAppException> {
             repository.getActorDetails(1)
         }
 
@@ -173,8 +172,8 @@ class ActorRepositoryImplTest {
 
     @Test
     fun `getProfileImageUrls returns mapped image URLs`() = runTest {
-        val imageDtos = listOf(mockk<ImageDto>(relaxed = true), mockk(relaxed = true))
-        coEvery { remoteDataSource.getActorImages(1) } returns imageDtos
+        val imageDto = listOf(mockk<ImageDto>(relaxed = true), mockk(relaxed = true))
+        coEvery { remoteDataSource.getActorImages(1) } returns imageDto
 
         val result = repository.getProfileImageUrls(1, 2)
 
