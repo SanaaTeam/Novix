@@ -17,7 +17,7 @@ import usecase.search.search_param.MediaType
 fun TvShow.toTvShowUiModel(trailerUrl: String? = null) = TvShowDetailsUiModel(
     id = id,
     title = title,
-    posterPath = posterImageUrl,
+    posterUrl = posterImageUrl,
     overview = overview.toString(),
     rating = String.format("%.1f", imdbRating),
     seasonsCount = seasonsCount,

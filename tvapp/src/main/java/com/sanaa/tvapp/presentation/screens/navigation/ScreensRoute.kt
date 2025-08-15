@@ -12,10 +12,13 @@ class ScreensRoute {
     data class MovieDetails(val movieId: Int) : ScreenRoute()
 
     @Serializable
-    data class TvShowDetails(val tvShowId: Int) : ScreenRoute()
+    data class TvShowDetails(val seriesId: Int) : ScreenRoute()
 
     @Serializable
     data class ActorDetails(val actorId: Int) : ScreenRoute()
+
+    @Serializable
+    data class EpisodeDetails(val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int):ScreenRoute()
 
 
 

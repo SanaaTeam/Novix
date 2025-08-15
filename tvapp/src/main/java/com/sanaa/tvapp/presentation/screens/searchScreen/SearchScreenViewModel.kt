@@ -7,9 +7,9 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import com.sanaa.tvapp.base.TvBasePagingSource
 import com.sanaa.tvapp.base.TvBaseViewModel
+import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
@@ -30,8 +30,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : TvBaseViewModel<SearchTvScreenUiState, Unit>(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : TvBaseViewModel<SearchTvScreenUiState, SearchScreenEffect>(
     SearchTvScreenUiState(),
     dispatcher
 ), SearchScreenInteractionListener {
@@ -176,7 +176,7 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
-    fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
+    private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
         return TvBasePagingSource { page ->
             searchUseCase.searchActors(
                 query = query,
@@ -185,7 +185,7 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
-    fun createTvShowsPagingSource(query: String): PagingSource<Int, TvShow> {
+    private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvShow> {
         return TvBasePagingSource { page ->
             searchUseCase.searchTvShows(
                 query = query,
@@ -194,7 +194,7 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
-    fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
+    private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
         return TvBasePagingSource { page ->
             searchUseCase.searchMovies(
                 query = query,
@@ -205,7 +205,7 @@ class SearchScreenViewModel @Inject constructor(
 
     override fun <T : Any, R : Any> createPagingFlow(
         pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R
+        mapper: (T) -> R,
     ): Flow<PagingData<R>> {
         return Pager(
             config = PagingConfig(
@@ -228,15 +228,20 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     override fun onActorClicked(id: Int) {
-        TODO("Not yet implemented")
+        emitEffect(SearchScreenEffect.NavigateToActorDetails(id))
     }
 
     override fun onLoginButtonClick() {
-        TODO("Not yet implemented")
+        emitEffect(SearchScreenEffect.NavigateToLogin)
     }
 
-    override fun onSearchResultMediaClicked() {
-        TODO("Not yet implemented")
+
+    override fun onMovieClicked(id: Int) {
+        emitEffect(SearchScreenEffect.NavigateToMovieDetails(id))
+    }
+
+    override fun onTvShowClicked(id: Int) {
+        emitEffect(SearchScreenEffect.NavigateToTvShowDetails(id))
     }
 
     companion object {

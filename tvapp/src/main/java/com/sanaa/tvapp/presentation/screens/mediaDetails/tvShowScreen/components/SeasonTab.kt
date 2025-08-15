@@ -10,10 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.chips.ToggleableChip
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.sharedComponents.TvToggleableChip
 
 @Composable
 fun SeasonTab(
@@ -22,7 +22,6 @@ fun SeasonTab(
     seasonCounts: Int,
     modifier: Modifier = Modifier
 ) {
-
     AppText(
         text = stringResource(R.string.season),
         style = Theme.textStyle.title.medium,
@@ -30,7 +29,7 @@ fun SeasonTab(
         modifier = Modifier.padding(horizontal = 36.dp, vertical = 8.dp)
     )
     LazyRow(
-        modifier = Modifier,
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
         contentPadding = PaddingValues(horizontal = 36.dp)
@@ -39,9 +38,12 @@ fun SeasonTab(
             items = (1..seasonCounts).toList(),
             key = { _, item -> item }
         ) { index, item ->
-            ToggleableChip(
+            TvToggleableChip(
+                modifier = Modifier,
                 text = stringResource(R.string.season_number, item),
-                onClick = { onClick(item) },
+                onClick = {
+                    onClick(item)
+                          },
                 isSelected = currentSeason == item,
             )
         }

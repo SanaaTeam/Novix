@@ -45,7 +45,9 @@ fun DetailsHeaderSection(
         ) {
             RemoteBlurredSensitiveImage(
                 imageUrl = backgroundImageUrl,
-                modifier = Modifier.fillMaxWidth().align(Alignment.TopEnd),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopEnd),
                 sensitiveContentThreshold = 0.2f,
                 safeContentThreshold = 0.7f,
                 placeholderContent = {
@@ -65,51 +67,47 @@ fun DetailsHeaderSection(
                     icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
                 )
             }
-            val brushColor = listOf(Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Color.Transparent, Theme.colors.surface)
+            val brushColor = listOf(
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent,
+                Theme.colors.surface
+            )
             Canvas(modifier = Modifier.matchParentSize()) {
                 drawRect(
                     brush = Brush.radialGradient(
                         colors = brushColor,
-                        center = Offset(size.width - size.width/4, size.height - 550.dp.toPx()),
+                        center = Offset(size.width - size.width / 4, size.height - 550.dp.toPx()),
                         radius = size.maxDimension - size.minDimension
                     ),
                     size = size
                 )
             }
-//            Box(
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .background(
-//                        Brush.linearGradient(
-//                            listOf(
-//                                Theme.colors.surface,
-//                                Color.Transparent
-//                            ),
-//                            start = Offset.Zero.copy(y = 1000f),
-//                            end = Offset.Zero.copy(x = 1500f)
-//                        )
-//                    )
-//            )
-        }
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 36.dp, vertical = 24.dp)
-                .fillMaxWidth(0.5f)
-                .align(Alignment.BottomStart),
-        ) {
-            Text(
-                text = title,
-                style = Theme.textStyle.title.large,
-                color = Theme.colors.title
-            )
-            content()
+
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 36.dp, vertical = 24.dp)
+                    .fillMaxWidth(0.5f)
+                    .align(Alignment.BottomStart),
+            ) {
+                Text(
+                    text = title,
+                    style = Theme.textStyle.title.large,
+                    color = Theme.colors.title
+                )
+                content()
+            }
         }
     }
 }
 
 @Preview(device = Devices.TV_1080p, showBackground = false)
 @Composable
-private fun Preview(modifier: Modifier = Modifier) {
+private fun HeaderPreview(modifier: Modifier = Modifier) {
     Column(
         modifier = Modifier
             .systemBarsPadding()

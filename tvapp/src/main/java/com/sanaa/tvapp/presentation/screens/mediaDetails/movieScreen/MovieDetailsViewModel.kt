@@ -31,11 +31,10 @@ class MovieDetailsViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
 
-//    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
-//        "movieId is required in SavedStateHandle"
-//    }
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+        "movieId is required in SavedStateHandle"
+    }
 
-    val movieId = 1087192
 
     init {
         fetchMovieDetails(movieId)
@@ -111,9 +110,7 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onBackClick() {
-        emitEffect(MovieDetailsScreenUiEffect.NavigateBack)
-    }
+
 
     override fun onWatchTrailerClick() {
         TODO("Not yet implemented")

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -21,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,7 +30,6 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.tvapp.R
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
@@ -40,7 +37,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsTopBa
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DotSeparator
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.GenresRow
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.IconWithText
-import com.sanaa.tvapp.presentation.screens.mediaDetails.components.MoviesSlider
+import com.sanaa.tvapp.presentation.screens.mediaDetails.components.SimilarMoviesSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
@@ -49,22 +46,21 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
 
 import com.sanaa.tvapp.state.SnackData
+import com.sanaa.tvapp.R
+
 
 
 @Composable
 fun MovieDetailsScreen(
-    movieId: Int,
     modifier: Modifier = Modifier,
     viewModel: MovieDetailsViewModel = hiltViewModel()
 ) {
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
     val navController = LocalAppNavController.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                MovieDetailsScreenUiEffect.NavigateBack -> { navController.popBackStack()}
                 is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
                 is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
                 MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
@@ -93,9 +89,8 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
-        state.similarMovies.collectAsLazyPagingItems()
-
+    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
+    val navController = LocalAppNavController.current
     NovixScaffold(
         backgroundShapes = { },
         modifier = modifier
@@ -140,8 +135,8 @@ fun MovieDetailsContent(
                                 Column(
                                     modifier = Modifier.fillMaxWidth(),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                                ) {
-
+                                )
+                                {
                                     GenresRow(
                                         genres = state.movieDetails.genres,
                                         onGenreClicked = {
@@ -199,17 +194,22 @@ fun MovieDetailsContent(
                             if (state.cast.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.cast,
+                                    onActorCardClicked = {id->
+                                        navController.navigate(ActorDetails(id))
+                                    }
                                 )
                             }
-                            MoviesSlider(
+                            SimilarMoviesSlider(
                                 moviesPagingData = moviesPagingData,
-                                modifier = Modifier.height(231.dp)
+                                onMovieCardClicked = {id->
+                                    navController.navigate(MovieDetails(id))
+                                }
                             )
                         }
                     }
                 }
             }
-            DetailsTopBar(onBackClick = interactionListener::onBackClick)
+            DetailsTopBar()
         }
     }
 }

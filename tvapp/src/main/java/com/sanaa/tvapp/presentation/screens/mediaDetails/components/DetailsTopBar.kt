@@ -22,7 +22,6 @@ import com.sanaa.tvapp.R
 
 @Composable
 fun DetailsTopBar(
-    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -31,10 +30,6 @@ fun DetailsTopBar(
             .padding(vertical = 16.dp, horizontal = 36.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-        BackButton(
-            onBackClick = onBackClick,
-        )
 
         Spacer(modifier = Modifier.weight(1f))
         Row(
@@ -59,6 +54,6 @@ fun DetailsTopBar(
 @Composable
 fun DetailsTopBarPreview(modifier: Modifier = Modifier) {
     NovixTheme(isDarkMode = true) {
-        DetailsTopBar(onBackClick = {})
+        DetailsTopBar()
     }
 }

@@ -33,23 +33,17 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
 
-    private val tvShowId: Int = 1399
-    //   private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
-//        "seriesId is required in SavedStateHandle"
-//    }
+    private val tvShowId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+        "seriesId is required in SavedStateHandle"
+    }
+
 
     init {
         loadSeries()
 //        updateUserStatus()
     }
 
-    override fun onBackClicked() {
-        emitEffect(TvShowDetailsScreenEffects.NavigateBack)
-    }
 
-    override fun onViewReviewsClicked(seriesId: Int) {
-        emitEffect(TvShowDetailsScreenEffects.NavigateToReviewsScreen(seriesId))
-    }
 
     override fun onActorClicked(actorId: Int) {
         emitEffect(TvShowDetailsScreenEffects.NavigateToActorScreen(actorId))
