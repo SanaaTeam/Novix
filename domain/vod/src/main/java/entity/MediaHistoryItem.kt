@@ -7,5 +7,5 @@ data class MediaHistoryItem(
     val posterImageUrl: String,
     val mediaType: MediaType,
     val genres: List<Genre>,
-    val lastWatchedAt: Long
+    val lastWatchedAt: Long,
 )

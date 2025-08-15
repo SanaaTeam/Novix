@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
@@ -34,6 +35,7 @@ import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationB
 import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors
@@ -43,6 +45,7 @@ fun PlaylistDetailsScreen(
     viewModel: PlaylistDetailsScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val movieList = state.value.movieList.collectAsLazyPagingItems()
     val removedFromListSuccessMsg = stringResource(R.string.removed_from_list_successfully)
     val removedFromListFailedMsg = stringResource(R.string.removed_from_list_failed)
     val context = LocalContext.current
@@ -90,6 +93,10 @@ fun PlaylistDetailsScreen(
                     )
 
                 }
+
+                PlaylistDetailsScreenEffect.RefreshList -> {
+                    movieList.refresh()
+                }
             }
         }
 
@@ -97,6 +104,7 @@ fun PlaylistDetailsScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         PlaylistDetailsContent(
             state = state.value,
+            movieList = movieList,
             interactionListener = viewModel
         )
         AnimatedSnackBarHost(
@@ -110,12 +118,10 @@ fun PlaylistDetailsScreen(
 @Composable
 fun PlaylistDetailsContent(
     state: SavedDetailsScreenUiState,
+    movieList: LazyPagingItems<MediaItem>,
     interactionListener: PlaylistDetailsInteractionListener,
     modifier: Modifier = Modifier,
 ) {
-    val movieList = state.movieList.collectAsLazyPagingItems()
-
-
     NovixScaffold(
         modifier = modifier.background(color = Theme.colors.surface),
         backgroundShapes = {},

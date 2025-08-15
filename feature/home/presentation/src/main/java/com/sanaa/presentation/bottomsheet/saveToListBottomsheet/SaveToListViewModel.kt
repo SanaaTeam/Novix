@@ -2,25 +2,27 @@ package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.BaseViewModel
+import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
-import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val mangeSavedListsUseCase: ManageSavedListsUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
+    private val listsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
+    SaveToListInteractionListener {
 
     init {
         observePlaylists()
@@ -28,7 +30,7 @@ class SaveToListViewModel @Inject constructor(
 
     private fun observePlaylists() {
         tryToCollect(
-            block = { mangeSavedListsUseCase.getSavedLists() },
+            block = { listsStatusProvider.savedLists },
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -37,7 +39,7 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(playlists = playlist.toState()) }
     }
 
-    fun onPlaylistSelected(listId: Long) {
+    override fun onPlaylistSelected(listId: Long) {
         updateState {
             copy(
                 selectedListId = listId,
@@ -46,14 +48,19 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(mediaId: Long) {
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    override fun onAddClicked(mediaId: Long) {
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
 
         tryToExecute(
             block = addMovieToSavedList(selectedListId, mediaId),
+            onSuccess = onAddMovieToSavedListSuccess(mediaId),
             onError = ::onErrorAccrue
         )
     }
@@ -61,20 +68,33 @@ class SaveToListViewModel @Inject constructor(
     private fun addMovieToSavedList(
         selectedListId: Long,
         mediaId: Long,
-    ): suspend () -> Flow<Boolean> = {
+    ): suspend () -> Boolean = {
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()
         )
     }
 
-    private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
+    private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
         updateState {
             copy(
                 isLoading = false,
-                errorMessage = "Failed to add item to list."
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
             )
         }
-        emitEffect(SaveToListEffect.FailedToAdd)
+        listsStatusProvider.markItemSaved(mediaId.toInt())
+        viewModelScope.launch {
+            listsStatusProvider.refreshLists()
+        }
+        emitEffect(SaveToListEffect.Dismiss)
+    }
+
+    private fun onErrorAccrue(exception: NovixAppException) {
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true)
+            )
+        }
     }
 }

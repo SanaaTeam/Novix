@@ -1,11 +1,13 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.screen.componants.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -16,15 +18,17 @@ class SaveToListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
+) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher),
+    SaveToListInteractionListener {
 
     init {
         loadPlaylists()
     }
 
     private fun loadPlaylists() {
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
 
         tryToCollect(
             callee = { manageSavedListsUseCase.getSavedLists() },
@@ -44,7 +48,7 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = false, playlists = uiLists) }
     }
 
-    fun onPlaylistSelected(listId: Long) {
+    override fun onPlaylistSelected(listId: Long) {
         updateState {
             copy(
                 selectedListId = listId, isAddButtonEnabled = true
@@ -52,11 +56,15 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
-    fun onAddClicked(mediaId: Long) {
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    override fun onAddClicked(mediaId: Long) {
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
 
         tryToExecute(
             callee = addMovieToSavedList(selectedListId, mediaId),
@@ -73,23 +81,32 @@ class SaveToListViewModel @Inject constructor(
     }
 
     private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
-        updateState { copy(isLoading = false) }
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+            )
+        }
         savedListsStatusProvider.markItemSaved(mediaId.toInt())
         loadPlaylists()
-        emitEffect(SaveToListEffect.AddedSuccessfully)
+        emitEffect(SaveToListEffect.Dismiss)
     }
 
     private fun onAddMovieToSavedListFailed(exception: NovixAppException) {
         updateState {
             copy(
                 isLoading = false,
-                errorMessage = "Failed to add item to list."
+                snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true)
             )
         }
-        emitEffect(SaveToListEffect.FailedToAdd)
     }
 
     private fun onErrorAccrue(exception: NovixAppException) {
-        updateState { copy(isLoading = false, errorMessage = "Failed to load lists.") }
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(message = stringProvider.somethingWentWrongError, isError = true)
+            )
+        }
     }
 }
