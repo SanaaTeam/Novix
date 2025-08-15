@@ -1,4 +1,3 @@
-
 package com.sanaa.tvapp.presentation.screens.navigation
 
 import androidx.compose.animation.AnimatedVisibility
@@ -36,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.tv.material3.NavigationDrawer
 import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -46,9 +46,7 @@ fun TvNavigation(content: @Composable () -> Unit) {
     val navController = LocalAppNavController.current
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
-    var selectedTab by remember {
-        mutableIntStateOf(0)
-    }
+    var selectedTab by remember { mutableIntStateOf(0) }
 
     val screens = listOf(
         NavBarRoute.Home,
@@ -57,48 +55,57 @@ fun TvNavigation(content: @Composable () -> Unit) {
         NavBarRoute.MyAccount
     )
 
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+    val isDrawerVisible = screens.any { it::class.qualifiedName == currentRoute }
+
     NavigationDrawer(
         drawerContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .focusable(enabled = true, interactionSource)
-                    .padding(end = 12.dp)
-                    .handleDPadKeyEvents(
-                        onUp = {
-                            if (selectedTab != 0) {
-                                selectedTab -= 1
-                                navController.navigate(screens[selectedTab]) {
-                                    popUpTo<NavBarRoute.Home>()
-                                    launchSingleTop = true
-                                }
-                            }
-                        }, onDown = {
-                            if (selectedTab != screens.lastIndex) {
-                                selectedTab += 1
-                                navController.navigate(screens[selectedTab]) {
-                                    popUpTo<NavBarRoute.Home>()
-                                    launchSingleTop = true
-                                }
-                            }
-                        }
-                    ),
-                contentAlignment = Alignment.Center
+            AnimatedVisibility(
+                visible = isDrawerVisible,
             ) {
-                Column(
+                Box(
                     modifier = Modifier
-                        .background(color = Theme.colors.surface)
-                        .selectableGroup(),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                        .fillMaxHeight()
+                        .focusable(enabled = true, interactionSource)
+                        .padding(end = 12.dp)
+                        .handleDPadKeyEvents(
+                            onUp = {
+                                if (selectedTab != 0) {
+                                    selectedTab -= 1
+                                    navController.navigate(screens[selectedTab]) {
+                                        popUpTo<NavBarRoute.Home>()
+                                        launchSingleTop = true
+                                    }
+                                }
+                            },
+                            onDown = {
+                                if (selectedTab != screens.lastIndex) {
+                                    selectedTab += 1
+                                    navController.navigate(screens[selectedTab]) {
+                                        popUpTo<NavBarRoute.Home>()
+                                        launchSingleTop = true
+                                    }
+                                }
+                            }
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
-                    screens.forEachIndexed { index, screen ->
-                        OvalColoredShadow(
-                            hasFocus = isFocused,
-                            isSelected = selectedTab == index,
-                            screen = screen,
-                            shadowColor = Theme.colors.primary
-                        )
+                    Column(
+                        modifier = Modifier
+                            .background(color = Theme.colors.surface)
+                            .selectableGroup(),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        screens.forEachIndexed { index, screen ->
+                            OvalColoredShadow(
+                                hasFocus = isFocused,
+                                isSelected = selectedTab == index,
+                                screen = screen,
+                                shadowColor = Theme.colors.primary
+                            )
+                        }
                     }
                 }
             }
@@ -122,7 +129,7 @@ fun OvalColoredShadow(
     val offsetYPx = with(density) { shadowOffsetY.toPx() }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Box(modifier = Modifier.size(42.dp),) {
+        Box(modifier = Modifier.size(42.dp)) {
             if (isSelected) {
                 Box(
                     modifier = modifier

@@ -3,7 +3,7 @@ package com.sanaa.tvapp.presentation.screens.searchScreen
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.tvapp.base.BaseViewModel
-import com.sanaa.tvapp.base.TvBasePagingSource
+import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
@@ -172,7 +172,7 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     private fun createActorsPagingSource(query: String): PagingSource<Int, Actor> {
-        return TvBasePagingSource { page ->
+        return BasePagingSource { page ->
             searchUseCase.searchActors(
                 query = query,
                 page = page
@@ -181,7 +181,7 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     private fun createTvShowsPagingSource(query: String): PagingSource<Int, TvShow> {
-        return TvBasePagingSource { page ->
+        return BasePagingSource { page ->
             searchUseCase.searchTvShows(
                 query = query,
                 page = page
@@ -190,7 +190,7 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     private fun createMoviesPagingSource(query: String): PagingSource<Int, Movie> {
-        return TvBasePagingSource { page ->
+        return BasePagingSource { page ->
             searchUseCase.searchMovies(
                 query = query,
                 page = page,

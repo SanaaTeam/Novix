@@ -4,7 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.tvapp.base.BaseViewModel
-import com.sanaa.tvapp.base.TvBasePagingSource
+import com.sanaa.tvapp.base.BasePagingSource
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
@@ -105,7 +105,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
-        return TvBasePagingSource { page ->
+        return BasePagingSource { page ->
             manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
         }
     }
