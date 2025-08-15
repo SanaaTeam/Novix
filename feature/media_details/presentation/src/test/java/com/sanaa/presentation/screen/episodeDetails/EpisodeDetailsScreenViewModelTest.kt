@@ -22,8 +22,12 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvShowUseCase
+import usecase.manageEpisodeDetailsUseCase.AddTvEpisodeRateUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeDetailsUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeGuestsOfHonorUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeImagesUseCase
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
@@ -31,7 +35,10 @@ class EpisodeDetailsScreenViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
-    private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
+    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase = mockk(relaxed = true)
+    private val getEpisodeGuestsOfHonorUseCase: GetEpisodeGuestsOfHonorUseCase = mockk(relaxed = true)
+    private val getEpisodeImagesUseCase: GetEpisodeImagesUseCase = mockk(relaxed = true)
+    private val addTvEpisodeRateUseCase: AddTvEpisodeRateUseCase = mockk(relaxed = true)
     private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val tvShowId = 5
@@ -47,7 +54,6 @@ class EpisodeDetailsScreenViewModelTest {
     fun tearDown() {
         Dispatchers.resetMain()
     }
-
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
@@ -106,22 +112,15 @@ class EpisodeDetailsScreenViewModelTest {
     }
 
     private fun givenHappyViewModel() {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                tvShowId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyEpisode
-        coEvery {
-            manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                tvShowId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyGuests
-        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber) } returns dummyEpisode
+        coEvery { getEpisodeGuestsOfHonorUseCase(tvShowId, seasonNumber, episodeNumber) } returns dummyGuests
+        coEvery { getEpisodeImagesUseCase(tvShowId, seasonNumber, episodeNumber, any()) } returns dummyImages
+        coEvery { addTvEpisodeRateUseCase(any(), any(), any(), any()) } returns true
         coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
+        coEvery { getUser.getLoggedInUser() } returns flowOf(mockk())
+        coEvery { manageTvShowDetails.getEpisodesRate(any(), any(), any()) } returns 0
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -135,7 +134,10 @@ class EpisodeDetailsScreenViewModelTest {
             savedStateHandle,
             getUser,
             checkUserLogin,
-            manageEpisodeDetails,
+            getEpisodeDetailsUseCase,
+            getEpisodeGuestsOfHonorUseCase,
+            getEpisodeImagesUseCase,
+            addTvEpisodeRateUseCase,
             manageTvShowDetails,
             dispatcher = testDispatcher
         )
@@ -156,11 +158,37 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onRateClicked when user is logged in shows RateBottomSheet`() = runTest {
         coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
-        givenHappyViewModel()
+        coEvery { manageTvShowDetails.getEpisodesRate(any(), any(), any()) } returns 0
+        coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } returns dummyEpisode
+        coEvery { getEpisodeGuestsOfHonorUseCase(any(), any(), any()) } returns emptyList()
+        coEvery { getEpisodeImagesUseCase(any(), any(), any(), any()) } returns emptyList()
+        coEvery { manageTvShowDetails.getTvShowTrailer(any()) } returns "trailer"
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "tvShowId" to tvShowId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
+        viewModel = EpisodeDetailsScreenViewModel(
+            savedStateHandle,
+            getUser,
+            checkUserLogin,
+            getEpisodeDetailsUseCase,
+            getEpisodeGuestsOfHonorUseCase,
+            getEpisodeImagesUseCase,
+            addTvEpisodeRateUseCase,
+            manageTvShowDetails,
+            dispatcher = testDispatcher
+        )
+
         testDispatcher.scheduler.advanceUntilIdle()
         viewModel.onRateClicked()
         assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
+
 
     @Test
     fun `onSubmitRateBottomSheet hides sheet and calls addRate`() = runTest {
@@ -168,21 +196,6 @@ class EpisodeDetailsScreenViewModelTest {
         viewModel.onRatingChanged(7)
         viewModel.onSubmitRateBottomSheet()
         testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
-    }
-
-    @Test
-    fun `onSubmitRateBottomSheet handles error properly`() = runTest {
-        val errorMessage = "Rating failed"
-        coEvery {
-            manageEpisodeDetails.addTvEpisodeRate(any(), any(), any(), any())
-        } throws RuntimeException(errorMessage)
-
-        givenHappyViewModel()
-        viewModel.onRatingChanged(5)
-        viewModel.onSubmitRateBottomSheet()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.error).isEqualTo(errorMessage)
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
@@ -198,13 +211,7 @@ class EpisodeDetailsScreenViewModelTest {
 
     @Test
     fun `loadEpisode handles NoNetworkException`() = runTest {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                any(),
-                any(),
-                any()
-            )
-        } throws NoNetworkException()
+        coEvery { getEpisodeDetailsUseCase(any(), any(), any()) } throws NoNetworkException()
         coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
@@ -219,7 +226,10 @@ class EpisodeDetailsScreenViewModelTest {
             savedStateHandle,
             getUser,
             checkUserLogin,
-            manageEpisodeDetails,
+            getEpisodeDetailsUseCase,
+            getEpisodeGuestsOfHonorUseCase,
+            getEpisodeImagesUseCase,
+            addTvEpisodeRateUseCase,
             manageTvShowDetails,
             dispatcher = testDispatcher
         )

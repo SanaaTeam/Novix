@@ -19,17 +19,23 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageEpisodeDetailsUseCase
 import usecase.ManageTvShowUseCase
+import usecase.manageEpisodeDetailsUseCase.AddTvEpisodeRateUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeDetailsUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeGuestsOfHonorUseCase
+import usecase.manageEpisodeDetailsUseCase.GetEpisodeImagesUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class EpisodeDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getUser: GetLoggedInUserUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
-    private val manageTvShowDetails: ManageTvShowUseCase,
+    private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
+    private val getEpisodeGuestsOfHonorUseCase: GetEpisodeGuestsOfHonorUseCase,
+    private val getEpisodeImagesUseCase: GetEpisodeImagesUseCase,
+    private val addTvEpisodeRateUseCase: AddTvEpisodeRateUseCase,    private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
@@ -50,7 +56,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         loadEpisode(this@EpisodeDetailsScreenViewModel.tvShowId, seasonNumber, episodeNumber)
         updateUserLoginState()
     }
-
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
@@ -153,24 +158,16 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             updateState { copy(isLoading = true) }
 
             val episodeDeferred = async {
-                manageEpisodeDetails.getEpisodeDetails(
-                    tvShowId,
-                    seasonNumber,
-                    episodeNumber
-                )
+                getEpisodeDetailsUseCase(tvShowId, seasonNumber, episodeNumber)
             }
             val guestsDeferred = async {
-                manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                    tvShowId,
-                    seasonNumber,
-                    episodeNumber
-                )
+                getEpisodeGuestsOfHonorUseCase(tvShowId, seasonNumber, episodeNumber)
             }
-            val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
+            val imagesDeferred = async {
+                getEpisodeImagesUseCase(tvShowId, seasonNumber, episodeNumber, count = 10)
+            }
             val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
-            val ratingDeferred = async {
-                getCurrentUserRating()
-            }
+            val ratingDeferred = async { getCurrentUserRating() }
 
             val episode = episodeDeferred.await()
             val guests = guestsDeferred.await()
@@ -210,14 +207,14 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     private suspend fun submitEpisodeRating() {
-        val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
+        val isSendRateSuccess = addTvEpisodeRateUseCase(
             tvShowId = this@EpisodeDetailsScreenViewModel.tvShowId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
+            throw NovixAppException("Failed to submit rating.")
         } else {
             emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
         }
