@@ -11,7 +11,7 @@ class ManageSavedListsUseCase @Inject constructor(
     suspend fun getSavedLists(): Flow<List<SavedList>> =
         savedListRepository.getSavedLists()
 
-    suspend fun createSavedList(title: String): Flow<SavedList> =
+    suspend fun createSavedList(title: String) =
         savedListRepository.createSavedList(title)
 
     suspend fun deleteSavedList(listId: Int) =

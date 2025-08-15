@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
@@ -17,7 +16,6 @@ import javax.inject.Inject
 class SaveToListsViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<SaveToListsUiState, SaveToListEffects>(SaveToListsUiState(), dispatcher),
@@ -29,9 +27,9 @@ class SaveToListsViewModel @Inject constructor(
 
     private fun loadPlaylists() {
         updateState { copy(isLoading = true) }
-        tryToExecute(
+        tryToCollect(
             callee = { manageSavedListsUseCase.getSavedLists() },
-            onSuccess = ::onLoadPlaylistsSuccess,
+            onCollect = ::onLoadPlaylistsSuccess,
             onError = ::onLoadPlaylistsError
         )
     }
@@ -95,7 +93,6 @@ class SaveToListsViewModel @Inject constructor(
                 snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
             )
         }
-        savedListsStatusProvider.markItemSaved(mediaId.toInt())
         emitEffect(SaveToListEffects.Dismiss)
     }
 

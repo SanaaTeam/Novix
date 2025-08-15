@@ -4,14 +4,14 @@ import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(
@@ -32,7 +32,7 @@ class PlayListScreenViewModel @Inject constructor(
                 if (isUserLoggedIn) {
                     tryToCollect(
                         dispatcher = Dispatchers.IO,
-                        callee = { listsStatusProvider.savedLists },
+                        callee = { manageSavedListsUseCase.getSavedLists() },
                         onCollect = { savedLists ->
                             updateState {
                                 copy(isLoading = false, lists = savedLists.map {
@@ -49,7 +49,6 @@ class PlayListScreenViewModel @Inject constructor(
         )
 
     fun onListDeletedSuccessfully() {
-        refreshLists()
         emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
     }
 
@@ -71,13 +70,4 @@ class PlayListScreenViewModel @Inject constructor(
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
 
-
-    private fun refreshLists() {
-        tryToExecute(
-            callee = { listsStatusProvider.refreshLists() },
-            onSuccess = {
-                loadSavedLists()
-            }
-        )
-    }
 }

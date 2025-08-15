@@ -1,14 +1,11 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import usecase.custom_list.custom_list_param.SavedList
@@ -17,23 +14,13 @@ import javax.inject.Inject
 @HiltViewModel
 class AddBookmarkViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel<AddBookmarkUiState, AddBookmarkEffects>(AddBookmarkUiState(), dispatcher),
     AddBookmarksInteractionListener {
 
     init {
-        refreshLists()
-    }
-
-    private fun refreshLists() {
-        tryToExecute(
-            callee = { savedListsStatusProvider.refreshLists() },
-            onError = {
-                it.printStackTrace()
-            }
-        )
+//        refreshLists()
     }
 
     override fun onSnackBarDismiss() {
@@ -60,27 +47,16 @@ class AddBookmarkViewModel @Inject constructor(
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onSuccess = onAddBookmarkListSuccess(mediaId),
+            onSuccess = ::onAddBookmarkListSuccess,
             onError = ::onErrorAccrue
         )
     }
 
-    private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = { savedList ->
+    private fun onAddBookmarkListSuccess(unit: Unit): (SavedList) -> Unit = { savedList ->
         resetState()
         emitEffect(AddBookmarkEffects.Dismiss)
         updateState {
             copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
-        }
-        savedListsStatusProvider.markItemSaved(mediaId)
-        savedListsStatusProvider.addList(
-            SavedList(
-                title = savedList.title,
-                itemCount = savedList.itemCount,
-                id = savedList.id
-            )
-        )
-        viewModelScope.launch {
-            savedListsStatusProvider.refreshLists()
         }
     }
 
