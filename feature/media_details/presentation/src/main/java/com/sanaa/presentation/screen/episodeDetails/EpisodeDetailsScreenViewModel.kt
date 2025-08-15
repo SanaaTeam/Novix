@@ -35,7 +35,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private val getEpisodeDetailsUseCase: GetEpisodeDetailsUseCase,
     private val getEpisodeGuestsOfHonorUseCase: GetEpisodeGuestsOfHonorUseCase,
     private val getEpisodeImagesUseCase: GetEpisodeImagesUseCase,
-    private val addTvEpisodeRateUseCase: AddTvEpisodeRateUseCase,    private val manageTvShowDetails: ManageTvShowUseCase,
+    private val addTvEpisodeRateUseCase: AddTvEpisodeRateUseCase,
+    private val manageTvShowDetails: ManageTvShowUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
