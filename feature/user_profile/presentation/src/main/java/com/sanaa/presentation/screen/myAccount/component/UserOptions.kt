@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.sanaa.designsystem.R
-import com.sanaa.presentation.provider.LocalThemeMode
+import com.sanaa.presentation.profileProvider.LocalThemeMode
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenInteractionsListener
 import com.sanaa.presentation.screen.myAccount.MyAccountScreenUiState.Companion.ARABIC_LANGUAGE_CODE
 

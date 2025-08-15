@@ -27,6 +27,8 @@
     <string name="season_number">S%d</string>
     <string name="episodes_count">%d Episodes</string>
     <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="please_login_to_access_your_account_details_and_other_features">Please login to access your account details and other features!</string>
     <string name="app_icon">app icon</string>
     <string name="continue_as_guest">Continue as guest</string>
     <string name="Gallery">gallery</string>
@@ -35,5 +37,5 @@
     <string name="search_hint">Search…</string>
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
-
+    <string name="settings">Settings</string>
 </resources>

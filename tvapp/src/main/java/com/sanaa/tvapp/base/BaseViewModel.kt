@@ -36,19 +36,19 @@ abstract class BaseViewModel<T, E>(
     private val _effect = MutableSharedFlow<E>()
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
-    internal fun updateState(updater: (T) -> T) {
+    internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 
     protected fun <T> tryToExecute(
-        callee: suspend () -> T,
+        block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
         onError: (exception: Exception) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         viewModelScope.launch(dispatcher) {
             try {
-                val result = callee()
+                val result = block()
                 onSuccess(result)
             } catch (exception: Exception) {
                 onError(exception)
@@ -57,14 +57,14 @@ abstract class BaseViewModel<T, E>(
     }
 
     protected fun <T> tryToCollect(
-        callee: suspend () -> Flow<T>,
+        block: suspend () -> Flow<T>,
         onCollect: suspend (T) -> Unit,
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         viewModelScope.launch(dispatcher) {
             try {
-                callee().catch { onError(it) }
+                block().catch { onError(it) }
                     .collectLatest { result ->
                         onCollect(result)
                     }
