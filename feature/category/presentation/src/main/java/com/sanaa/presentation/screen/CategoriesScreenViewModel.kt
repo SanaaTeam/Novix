@@ -9,14 +9,15 @@ import entity.Genre
 import exceptions.NoNetworkException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class CategoriesScreenViewModel @Inject constructor(
     private val getTvGenresUseCase: ManageTvShowUseCase,
-    private val getMovieGenresUseCase: ManageMovieUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<CategoriesScreenUiState, CategoriesScreenEffects>(
     CategoriesScreenUiState(),
@@ -27,7 +28,6 @@ class CategoriesScreenViewModel @Inject constructor(
         loadTvGenres()
         loadMovieGenres()
     }
-
 
     override fun onGenreClicked(category: CategoryUiState) {
         emitEffect(
@@ -54,7 +54,6 @@ class CategoriesScreenViewModel @Inject constructor(
         loadMovieGenres()
     }
 
-
     private fun loadTvGenres() {
         updateState { copy(isLoading = true) }
         tryToExecute(
@@ -65,7 +64,6 @@ class CategoriesScreenViewModel @Inject constructor(
             onError = ::onErrorLoading
         )
     }
-
 
     private fun onLoadTvGenresSuccess(tvGenres: List<Genre>) {
         updateState {
@@ -78,12 +76,11 @@ class CategoriesScreenViewModel @Inject constructor(
         }
     }
 
-
     private fun loadMovieGenres() {
         updateState { copy(isLoading = true) }
         tryToExecute(
             callee = {
-                getMovieGenresUseCase.getMovieGenres()
+                getMovieGenresUseCase()
             },
             onSuccess = ::onLoadMovieGenresSuccess,
             onError = ::onErrorLoading

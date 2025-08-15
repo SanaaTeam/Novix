@@ -17,16 +17,16 @@ import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
 import usecase.search.search_param.MediaType
 
 @HiltViewModel
 class WatchingHistoryViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
-    private val manageMovieUseCase: ManageMovieUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -71,7 +71,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private fun fetchMovieGenres() {
         tryToExecute(
             block = {
-                manageMovieUseCase.getMovieGenres().map { it.toGenreUiState() }
+                getMovieGenresUseCase().map { it.toGenreUiState() }
             },
             onSuccess = { genres ->
                 updateState { copy(movieGenres = genres) }

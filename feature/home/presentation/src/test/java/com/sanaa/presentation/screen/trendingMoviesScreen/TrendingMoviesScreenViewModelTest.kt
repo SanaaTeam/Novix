@@ -26,14 +26,16 @@ import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageMovieUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
+import usecase.manageMovieUseCase.GetTrendingMoviesUseCase
 import kotlin.time.Duration.Companion.minutes
 
 
 class TrendingMoviesScreenViewModelTest {
     private lateinit var viewModel: TrendingMoviesScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var manageMovieUseCase: ManageMovieUseCase
+    private lateinit var getMovieGenresUseCase: GetMovieGenresUseCase
+    private lateinit var getTrendingMoviesUseCase: GetTrendingMoviesUseCase
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
     private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
@@ -42,13 +44,13 @@ class TrendingMoviesScreenViewModelTest {
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manageMovieUseCase = mockk(relaxed = true)
+        getMovieGenresUseCase = mockk(relaxed = true)
+        getTrendingMoviesUseCase = mockk(relaxed = true)
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
@@ -56,10 +58,11 @@ class TrendingMoviesScreenViewModelTest {
 
     @Test
     fun `init should fetch genres and update state on creation`() = runTest {
-        coEvery { manageMovieUseCase.getMovieGenres() } returns genres
+        coEvery { getMovieGenresUseCase() } returns genres
 
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,
@@ -72,10 +75,11 @@ class TrendingMoviesScreenViewModelTest {
 
     @Test
     fun `init should fetch movies and update state on creation`() = runTest {
-        coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns movies
+        coEvery { getTrendingMoviesUseCase(any(), any()) } returns movies
 
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,
@@ -91,10 +95,11 @@ class TrendingMoviesScreenViewModelTest {
         runTest {
             val genreId = 2
             coEvery {
-                manageMovieUseCase.getTrendingMovies(any(), genreId)
+                getTrendingMoviesUseCase(any(), genreId)
             } returns movies
             viewModel = TrendingMoviesScreenViewModel(
-                manageMovieUseCase,
+                getMovieGenresUseCase,
+                getTrendingMoviesUseCase,
                 checkIfUserIsLoggedInUseCase,
                 savedListsStatusProvider,
                 stringProvider,
@@ -113,7 +118,8 @@ class TrendingMoviesScreenViewModelTest {
     @Test
     fun `onSaveIconClick should update state to show bottom sheet when called`() = runTest {
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,
@@ -128,9 +134,10 @@ class TrendingMoviesScreenViewModelTest {
 
     @Test
     fun `onGenreClick should not fetchMedia when click on same genre`() = runTest {
-        coEvery { manageMovieUseCase.getTrendingMovies(any(), any()) } returns listOf(mockk())
+        coEvery { getTrendingMoviesUseCase(any(), any()) } returns listOf(mockk())
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,
@@ -142,15 +149,15 @@ class TrendingMoviesScreenViewModelTest {
         viewModel.onGenreClick(selectedGenre)
         testDispatcher.scheduler.advanceUntilIdle()
 
-        coVerify(exactly = 0) { manageMovieUseCase.getTrendingMovies(any(), any()) }
+        coVerify(exactly = 0) { getTrendingMoviesUseCase(any(), any()) }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
         val mediaId = 1
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,
@@ -170,7 +177,8 @@ class TrendingMoviesScreenViewModelTest {
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
         viewModel = TrendingMoviesScreenViewModel(
-            manageMovieUseCase,
+            getMovieGenresUseCase,
+            getTrendingMoviesUseCase,
             checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider,
             stringProvider,

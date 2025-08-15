@@ -29,8 +29,15 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.manageMovieUseCase.AddMovieRateUseCase
+import usecase.manageMovieUseCase.DeleteMovieRateUseCase
+import usecase.manageMovieUseCase.GetMovieCastUseCase
+import usecase.manageMovieUseCase.GetMovieDetailsUseCase
+import usecase.manageMovieUseCase.GetMovieImagesUrlUseCase
+import usecase.manageMovieUseCase.GetMovieRateUseCase
+import usecase.manageMovieUseCase.GetMovieTrailerUseCase
+import usecase.manageMovieUseCase.GetSimilarMoviesByMovieIdUseCase
 import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -38,7 +45,13 @@ class MovieDetailsViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
-    private val manageMovieDetails: ManageMovieUseCase = mockk(relaxed = true)
+    private val getMovieDetailsUseCase: GetMovieDetailsUseCase = mockk(relaxed = true)
+    private val getMovieCastUseCase: GetMovieCastUseCase = mockk(relaxed = true)
+    private val getMovieImagesUrlUseCase: GetMovieImagesUrlUseCase = mockk(relaxed = true)
+    private val getMovieTrailerUseCase: GetMovieTrailerUseCase = mockk(relaxed = true)
+    private val getSimilarMoviesByMovieIdUseCase: GetSimilarMoviesByMovieIdUseCase = mockk(relaxed = true)
+    private val getMovieRateUseCase: GetMovieRateUseCase = mockk(relaxed = true)
+    private val addMovieRateUseCase: AddMovieRateUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
@@ -70,11 +83,11 @@ class MovieDetailsViewModelTest {
 
     @Test
     fun `onWatchTrailerClick does nothing when trailer missing`() = runTest {
-        coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
-        coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
-        coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
+        coEvery { getMovieDetailsUseCase(movieId) } returns dummyMovie
+        coEvery { getMovieCastUseCase(movieId) } returns dummyCast
+        coEvery { getMovieImagesUrlUseCase(movieId, any()) } returns dummyImages
+        coEvery { getSimilarMoviesByMovieIdUseCase(movieId, 1) } returns dummySimilar
+        coEvery { getMovieTrailerUseCase(movieId) } returns null
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
@@ -82,13 +95,20 @@ class MovieDetailsViewModelTest {
 
         viewModel = MovieDetailsViewModel(
             savedStateHandle,
-            manageMovieDetails,
+            getMovieDetailsUseCase,
+            getMovieCastUseCase,
+            getMovieImagesUrlUseCase,
+            getMovieTrailerUseCase,
+            getSimilarMoviesByMovieIdUseCase,
+            getMovieRateUseCase,
+            addMovieRateUseCase,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
             savedListsStatusProvider,
-            stringProvider
-            )
+            stringProvider,
+            dispatcher = testDispatcher
+        )
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -213,7 +233,7 @@ class MovieDetailsViewModelTest {
     @Test
     fun `onSubmitRateBottomSheet sets errorMessage on exception`() = runTest {
         val error = RuntimeException("Something went wrong")
-        coEvery { manageMovieDetails.addMovieRate(any(), any()) } throws error
+        coEvery { addMovieRateUseCase(any(), any()) } throws error
         givenHappy()
         advanceUntilIdle()
 
@@ -238,11 +258,11 @@ class MovieDetailsViewModelTest {
     }
 
     private fun givenHappy() {
-        coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
-        coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
-        coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
-        coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
+        coEvery { getMovieDetailsUseCase(movieId) } returns dummyMovie
+        coEvery { getMovieCastUseCase(movieId) } returns dummyCast
+        coEvery { getMovieImagesUrlUseCase(movieId, any()) } returns dummyImages
+        coEvery { getSimilarMoviesByMovieIdUseCase(movieId, any()) } returns dummySimilar
+        coEvery { getMovieTrailerUseCase(movieId) } returns dummyTrailer
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
@@ -250,13 +270,19 @@ class MovieDetailsViewModelTest {
 
         viewModel = MovieDetailsViewModel(
             savedStateHandle,
-            manageMovieDetails,
+            getMovieDetailsUseCase,
+            getMovieCastUseCase,
+            getMovieImagesUrlUseCase,
+            getMovieTrailerUseCase,
+            getSimilarMoviesByMovieIdUseCase,
+            getMovieRateUseCase,
+            addMovieRateUseCase,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
             savedListsStatusProvider,
             stringProvider,
-            dispatcher = testDispatcher,
+            dispatcher = testDispatcher
 
             )
     }
@@ -305,5 +331,4 @@ class MovieDetailsViewModelTest {
         posterUrl = "poster.jpg",
         isSaved = false
     )
-
 }

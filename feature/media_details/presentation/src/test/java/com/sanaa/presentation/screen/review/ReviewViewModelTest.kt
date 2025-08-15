@@ -10,20 +10,20 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
+import usecase.manageMovieUseCase.GetMovieDetailsUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ReviewViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var manageMovieDetails: ManageMovieUseCase
+    private lateinit var getMovieDetailsUseCase: GetMovieDetailsUseCase
     private lateinit var manageTvShowDetails: ManageTvShowUseCase
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        manageMovieDetails = mockk(relaxed = true)
+        getMovieDetailsUseCase = mockk(relaxed = true)
         manageTvShowDetails = mockk(relaxed = true)
     }
 

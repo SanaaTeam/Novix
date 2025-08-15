@@ -17,13 +17,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageMovieUseCase
+import usecase.manageMovieUseCase.GetMoviesByCategoryUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class GenreMoviesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageMoviesDetailsUseCase: ManageMovieUseCase,
+    private val getMoviesByCategoryUseCase: GetMoviesByCategoryUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -141,7 +141,7 @@ class GenreMoviesViewModel @Inject constructor(
         genreId: Int,
     ): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
-            manageMoviesDetailsUseCase.getMoviesByCategory(genreId = genreId, page = page)
+            getMoviesByCategoryUseCase(genreId = genreId, page = page)
         }
     }
 }

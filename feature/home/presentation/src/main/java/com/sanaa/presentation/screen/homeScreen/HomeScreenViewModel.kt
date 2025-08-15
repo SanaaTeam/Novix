@@ -28,16 +28,23 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageMovieUseCase
+import usecase.ManageTvShowUseCase
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
-import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
+import usecase.manageMovieUseCase.GetPopularMoviesUseCase
+import usecase.manageMovieUseCase.GetTopRatedMoviesUseCase
+import usecase.manageMovieUseCase.GetUpcomingMoviesUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
-    private val manageMovieUseCase: ManageMovieUseCase,
+    private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
+    private val getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
+    private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
@@ -86,7 +93,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadPopularMediaOperation(): List<MediaItem> {
-        val popularMovies = manageMovieUseCase.getPopularMovies(1).map { it.toState() }.take(5)
+        val popularMovies = getPopularMoviesUseCase(1).map { it.toState() }.take(5)
         val popularTvShows = manageTvShowUseCase.getPopularTvShows(1).map { it.toState() }.take(5)
 
         return (popularMovies + popularTvShows).sortedByDescending { media -> media.rating }
@@ -112,7 +119,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     private suspend fun loadTopRatedMediaOperation(): List<MediaItem> {
-        val topRatedMovies = manageMovieUseCase.getTopRatedMovies(1, null)
+        val topRatedMovies = getTopRatedMoviesUseCase(1, null)
             .map { it.toState() }.take(5)
         val topRatedTvShows = manageTvShowUseCase.getTopRatedTvShows(1, null)
             .map { it.toState() }.take(5)
@@ -158,7 +165,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private suspend fun fetchMovieGenresOperation(): List<GenreUiState> {
         updateState { copy(isLoadingGenre = true) }
-        return manageMovieUseCase.getMovieGenres().map { it.toState() }
+        return getMovieGenresUseCase().map { it.toState() }
     }
 
     private fun onFetchMovieGenresSuccess(genres: List<GenreUiState>) {
@@ -256,7 +263,10 @@ class HomeScreenViewModel @Inject constructor(
                     val userLists = manageSavedListsUseCase.getSavedLists()
                     val defaultList = userLists.firstOrNull()
                     if (defaultList != null) {
-                        manageSavedListItemsUseCase.removeMovieFromSavedList(defaultList.id, media.id)
+                        manageSavedListItemsUseCase.removeMovieFromSavedList(
+                            defaultList.id,
+                            media.id
+                        )
                         savedListsStatusProvider.refreshLists()
                     }
                 },
@@ -278,6 +288,7 @@ class HomeScreenViewModel @Inject constructor(
             }
         }
     }
+
     override fun onDismissBottomSheet() {
         updateState { copy(showBottomSheet = false) }
     }
@@ -310,7 +321,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchUpcomingMovies()
     }
 
-
     private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
             updateState { copy(isNoInternetConnection = true) }
@@ -326,7 +336,7 @@ class HomeScreenViewModel @Inject constructor(
         onError: (NovixAppException) -> Unit = ::onDataLoadError,
     ): PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageMovieUseCase.getUpcomingMovies(
+            getUpcomingMoviesUseCase(
                 page = page,
                 genreId = genreId
             )

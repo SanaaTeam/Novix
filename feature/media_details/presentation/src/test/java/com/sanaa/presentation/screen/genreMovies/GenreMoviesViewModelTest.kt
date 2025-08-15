@@ -23,8 +23,9 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageMovieUseCase
+import usecase.manageMovieUseCase.GetMoviesByCategoryUseCase
 import kotlin.time.Duration.Companion.minutes
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,7 +33,7 @@ class GenreMoviesViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var viewModel: GenreMoviesViewModel
-    private lateinit var manageMoviesDetailsUseCase: ManageMovieUseCase
+    private lateinit var getMoviesByCategoryUseCase: GetMoviesByCategoryUseCase
     private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
 
@@ -48,12 +49,12 @@ class GenreMoviesViewModelTest {
 
     @BeforeEach
     fun setup() {
-        manageMoviesDetailsUseCase = mockk(relaxed = true)
+        getMoviesByCategoryUseCase = mockk(relaxed = true)
         clearAllMocks()
     }
 
     private fun createViewModelWithMovies(movies: List<Movie>) {
-        coEvery { manageMoviesDetailsUseCase.getMoviesByCategory(any(), any()) } returns movies
+        coEvery { getMoviesByCategoryUseCase(any(), any()) } returns movies
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -64,14 +65,13 @@ class GenreMoviesViewModelTest {
 
         viewModel = GenreMoviesViewModel(
             savedStateHandle = savedStateHandle,
-            manageMoviesDetailsUseCase = manageMoviesDetailsUseCase,
+            getMoviesByCategoryUseCase = getMoviesByCategoryUseCase,
             dispatcher = testDispatcher,
             checkIfUserIsLoggedInUseCase = checkIfUserIsLoggedInUseCase,
             savedListsStatusProvider = savedListsStatusProvider,
         )
         testDispatcher.scheduler.advanceUntilIdle()
     }
-
 
     @Test
     fun `onBackClick emits NavigateBack effect`() = runTest {
@@ -103,8 +103,6 @@ class GenreMoviesViewModelTest {
         val state = viewModel.state.value
         assertThat(state.userIsLoggedIn).isTrue()
     }
-
-
 
     private companion object {
         val genreList = listOf(

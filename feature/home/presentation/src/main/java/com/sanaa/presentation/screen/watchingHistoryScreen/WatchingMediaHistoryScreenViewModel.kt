@@ -20,15 +20,15 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageMovieUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
 import usecase.search.search_param.MediaType
 import javax.inject.Inject
 
 @HiltViewModel
 class WatchingMediaHistoryScreenViewModel @Inject constructor(
-    private val manageMovieUseCase: ManageMovieUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
     private val manageTvShowUseCase: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
@@ -96,7 +96,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     private fun fetchMovieGenres() {
         tryToExecute(
             onStart = { updateState { copy(isLoading = true) } },
-            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
+            block = { getMovieGenresUseCase().map { it.toState() } },
             onSuccess = ::onFetchMovieGenresSuccess,
             onError = ::onDataLoadError
         )

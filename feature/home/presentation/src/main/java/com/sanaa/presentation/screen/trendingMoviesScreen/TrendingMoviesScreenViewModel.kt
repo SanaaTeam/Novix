@@ -23,12 +23,15 @@ import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.ManageMovieUseCase
+import usecase.manageMovieUseCase.GetMovieGenresUseCase
+import usecase.manageMovieUseCase.GetTrendingMoviesUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class TrendingMoviesScreenViewModel @Inject constructor(
-    private val manageMovieUseCase: ManageMovieUseCase,
+    private val getMovieGenresUseCase: GetMovieGenresUseCase,
+    private val getTrendingMoviesUseCase: GetTrendingMoviesUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
@@ -56,7 +59,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     private fun fetchGenres() {
         tryToExecute(
             onStart = { updateState { copy(isLoading = true) } },
-            block = { manageMovieUseCase.getMovieGenres().map { it.toState() } },
+            block = { getMovieGenresUseCase().map { it.toState() } },
             onSuccess = ::onLoadGenresSuccess,
             onError = ::onDataLoadError
         )
@@ -212,9 +215,9 @@ class TrendingMoviesScreenViewModel @Inject constructor(
     }
 
     private fun createMoviesPagingSource(onError: ((NovixAppException) -> Unit)? = ::onDataLoadError)
-    : PagingSource<Int, Movie> {
+            : PagingSource<Int, Movie> {
         return BasePagingSourceForHome(onError = onError) { page ->
-            manageMovieUseCase.getTrendingMovies(page = page, genreId = state.value.selectedGenreId)
+            getTrendingMoviesUseCase(page = page, genreId = state.value.selectedGenreId)
         }
     }
 }

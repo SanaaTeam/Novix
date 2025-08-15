@@ -32,14 +32,26 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
-import usecase.ManageMovieUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import usecase.manageMovieUseCase.AddMovieRateUseCase
+import usecase.manageMovieUseCase.GetMovieCastUseCase
+import usecase.manageMovieUseCase.GetMovieDetailsUseCase
+import usecase.manageMovieUseCase.GetMovieImagesUrlUseCase
+import usecase.manageMovieUseCase.GetMovieRateUseCase
+import usecase.manageMovieUseCase.GetMovieTrailerUseCase
+import usecase.manageMovieUseCase.GetSimilarMoviesByMovieIdUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val manageMovieDetails: ManageMovieUseCase,
+    private val getMovieDetailsUseCase: GetMovieDetailsUseCase,
+    private val getMovieCastUseCase: GetMovieCastUseCase,
+    private val getMovieImagesUrlUseCase: GetMovieImagesUrlUseCase,
+    private val getMovieTrailerUseCase: GetMovieTrailerUseCase,
+    private val getSimilarMoviesByMovieIdUseCase: GetSimilarMoviesByMovieIdUseCase, // 6
+    private val getMovieRateUseCase: GetMovieRateUseCase,                      // 7
+    private val addMovieRateUseCase: AddMovieRateUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
@@ -210,6 +222,7 @@ class MovieDetailsViewModel @Inject constructor(
             )
         }
     }
+
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -270,7 +283,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun createSimilarMoviesPagingSource(movieId: Int): PagingSource<Int, Movie> {
         return BasePagingSource { page ->
-            manageMovieDetails.getSimilarMoviesByMovieId(movieId, page)
+            getSimilarMoviesByMovieIdUseCase(movieId, page)
         }
     }
 
@@ -283,12 +296,12 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
-        val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
-        val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
-        val imagesDeferred = async { manageMovieDetails.getMovieImagesUrl(movieId) }
-        val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
+        val movieDeferred = async { getMovieDetailsUseCase(movieId) }
+        val castDeferred = async { getMovieCastUseCase(movieId) }
+        val imagesDeferred = async { getMovieImagesUrlUseCase(movieId) }
+        val trailerDeferred = async { getMovieTrailerUseCase(movieId) }
+        val similarFlow = loadSimilarMovies(movieId)
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
         val movie = movieDeferred.await()
@@ -312,14 +325,13 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getCurrentUserRating(movieId: Int): Flow<Int> {
         return getLoggedInUserUseCase.getLoggedInUser()
             .flatMapLatest { user ->
                 flow {
                     try {
-                        val rating = manageMovieDetails.getMovieRate(
+                        val rating = getMovieRateUseCase(
                             user.id,
                             movieId
                         )
@@ -333,7 +345,7 @@ class MovieDetailsViewModel @Inject constructor(
 
     private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
-        val isSendRateSuccess = manageMovieDetails.addMovieRate(
+        val isSendRateSuccess = addMovieRateUseCase(
             movieId = movieId,
             rating = rating.toFloat()
         )
