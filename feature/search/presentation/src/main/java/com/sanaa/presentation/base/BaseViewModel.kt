@@ -64,20 +64,19 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
-        val handler = createExceptionHandler(onError)
-        viewModelScope.launch(dispatcher + handler) {
-            block()
-                .catch { e ->
-                    val error = e.toNovixAppException()
-                    onError(error)
+        viewModelScope.launch(dispatcher) {
+            try {
+                block().collect { value ->
+                    onCollect(value)
                 }
-                .collect { value ->
-                    try {
-                        onCollect(value)
-                    } catch (e: Throwable) {
-                        onError(e.toNovixAppException())
-                    }
+            } catch (e: Throwable) {
+                // Convert and handle ALL errors in one place
+                val error = when (e) {
+                    is NovixAppException -> e
+                    else -> NovixAppException(e.message)
                 }
+                onError(error)
+            }
         }
     }
 
