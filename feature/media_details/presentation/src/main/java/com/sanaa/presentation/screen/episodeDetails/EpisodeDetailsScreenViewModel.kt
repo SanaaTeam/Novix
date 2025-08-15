@@ -215,7 +215,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            throw NovixAppException("Failed to submit rating.")
+            emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
         } else {
             emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
         }
