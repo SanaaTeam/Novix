@@ -48,14 +48,25 @@ fun SaveToListBottomSheet(
     mediaId: Long,
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: SaveToListViewModel = hiltViewModel()
 ) {
-    val viewModel: SaveToListViewModel = hiltViewModel()
+    viewModel.getMediaId(mediaId)
+
     val state by viewModel.state.collectAsState()
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+    val successMessage =
+        stringResource(homeRes.string.added_to_list_successfully)
+    val failMessage =
+        stringResource(homeRes.string.added_to_list_failed)
+
+
+
 
     NovixAnimatedSnackBarHost(
-        data = state.snackBarData,
-        onDismiss = viewModel::onSnackBarDismiss
+        data = snack, onDismiss = { snack = null }
     )
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -71,8 +82,12 @@ fun SaveToListBottomSheet(
         isVisible = isVisible,
         state = state,
         onDismiss = onDismiss,
-        interactionListener = viewModel,
-        mediaId = mediaId,
+        onPlaylistClicked = viewModel::onPlayListClicked,
+        onAddClick = {
+            viewModel.onAddClicked(
+                mediaId = mediaId,
+            )
+        },
         onCreateNewListClick = onCreateNewListClick,
     )
 }
@@ -82,8 +97,8 @@ private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
-    interactionListener: SaveToListInteractionListener,
-    mediaId: Long,
+    onPlaylistClicked: (Long) -> Unit,
+    onAddClick: () -> Unit,
     onCreateNewListClick: () -> Unit,
 ) {
     BaseBottomSheet(
@@ -126,8 +141,8 @@ private fun SaveToListBottomSheetContent(
                         PlaylistItem(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
-                            isSelected = state.selectedListId == playlist.id,
-                            onClick = { interactionListener.onPlaylistSelected(playlist.id) }
+                            isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem ,
+                            onClick = { onPlaylistClicked(playlist.id) }
                         )
                     }
                 }
@@ -204,16 +219,26 @@ private fun PlaylistItem(
 @Composable
 private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
-        PlaylistUiItem(id = 1, title = "My favorite", itemCount = 12),
-        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5),
-        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23)
+        PlaylistUiItem(
+            id = 1, title = "My favorite", itemCount = 12,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = true,
+        ),
+        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = false
+        ),
+        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = false
+            )
     )
 
     var state by remember {
         mutableStateOf(
             SaveToListUiState(
                 playlists = playlists,
-                selectedListId = 1,
+                selectedListsIds = listOf(1L).toMutableList(),
                 isAddButtonEnabled = true
             )
         )
@@ -224,13 +249,8 @@ private fun SaveToListBottomSheetPreview() {
             isVisible = true,
             state = state,
             onDismiss = {},
-            interactionListener = object : SaveToListInteractionListener {
-                override fun onPlaylistSelected(listId: Long) {
-                    state = state.copy(selectedListId = listId)
-                }
+            onPlaylistClicked = { selectedId ->
 
-                override fun onAddClicked(mediaId: Long) {}
-                override fun onSnackBarDismiss() {}
             },
             mediaId = 0,
             onCreateNewListClick = {}

@@ -42,7 +42,7 @@ fun MediaType.toState(): MediaTypeUi = when (this) {
 }
 
 fun SavedList.toState(): PlaylistUiItem {
-    return PlaylistUiItem(title = title, itemCount = itemCount, id = id.toLong())
+    return PlaylistUiItem(title = title, itemCount = itemCount, id = id.toLong(), itemsIds = itemsIds.map { it.toLong() })
 }
 
 fun List<SavedList>.toState(): List<PlaylistUiItem> {
