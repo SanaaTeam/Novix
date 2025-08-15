@@ -5,9 +5,9 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.presentation.base.BasePagingSourceForHome
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BasePagingSourceForHome
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUiState

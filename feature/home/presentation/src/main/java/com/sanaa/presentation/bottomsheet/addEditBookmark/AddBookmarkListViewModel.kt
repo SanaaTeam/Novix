@@ -1,7 +1,7 @@
 package com.sanaa.presentation.bottomsheet.addEditBookmark
 
 import androidx.lifecycle.viewModelScope
-import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.homeBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher

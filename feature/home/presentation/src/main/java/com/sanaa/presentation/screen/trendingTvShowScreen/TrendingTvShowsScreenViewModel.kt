@@ -2,9 +2,9 @@ package com.sanaa.presentation.screen.trendingTvShowScreen
 
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.sanaa.presentation.base.BasePagingSourceForHome
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BasePagingSourceForHome
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState

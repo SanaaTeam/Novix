@@ -1,6 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher

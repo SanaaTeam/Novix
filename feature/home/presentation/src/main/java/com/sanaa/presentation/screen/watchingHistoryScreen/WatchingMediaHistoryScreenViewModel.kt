@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.watchingHistoryScreen
 
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
 import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.MediaTypeUiState
