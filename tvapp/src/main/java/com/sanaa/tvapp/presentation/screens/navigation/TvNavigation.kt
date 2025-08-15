@@ -54,7 +54,6 @@ fun TvNavigation(content: @Composable () -> Unit) {
         NavBarRoute.Home,
         NavBarRoute.Search,
         NavBarRoute.Categories,
-        NavBarRoute.MyList,
         NavBarRoute.MyAccount
     )
 

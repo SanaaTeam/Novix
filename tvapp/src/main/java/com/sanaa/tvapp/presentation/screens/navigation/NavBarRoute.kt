@@ -25,10 +25,6 @@ sealed class NavBarRoute(
         NavBarRoute(R.string.categories, R.drawable.icon_category, R.drawable.icon_category_selected)
 
     @Serializable
-    object MyList :
-        NavBarRoute(R.string.my_list, R.drawable.icon_save, R.drawable.icon_save_selected)
-
-    @Serializable
     object MyAccount :
         NavBarRoute(R.string.my_account, R.drawable.icon_account, R.drawable.icon_account_selected)
 

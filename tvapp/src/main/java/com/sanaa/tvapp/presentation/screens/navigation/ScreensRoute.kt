@@ -1,7 +1,9 @@
 package com.sanaa.tvapp.presentation.screens.navigation
 
 import kotlinx.serialization.Serializable
+
 open class ScreenRoute
+
 @Serializable
 class ScreensRoute {
 
@@ -18,9 +20,17 @@ class ScreensRoute {
     data class ActorDetails(val actorId: Int) : ScreenRoute()
 
     @Serializable
-    data class EpisodeDetails(val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int):ScreenRoute()
+    data class EpisodeDetails(val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int) :
+        ScreenRoute()
 
 
+    @Serializable
+    object ChangePasswordScreenRoute : ScreenRoute()
 
+    @Serializable
+    object MyRatingScreenRoute : ScreenRoute()
+
+    @Serializable
+    object WatchingHistoryScreenRoute : ScreenRoute()
 }
 
