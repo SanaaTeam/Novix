@@ -63,5 +63,5 @@ object LocalSearchDatabaseModule {
 
     @Provides
     fun provideSavedListMovieDao(database: AppDatabase): SavedListDao =
-        database.savedListMovieDao()
+        database.savedListDao()
 }

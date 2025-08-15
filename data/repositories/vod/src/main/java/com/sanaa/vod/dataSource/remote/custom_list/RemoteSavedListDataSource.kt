@@ -7,19 +7,13 @@ interface RemoteSavedListDataSource {
 
     suspend fun fetchUserLists(sessionId: String, page: Int? = null): List<SavedListDto>
 
-    suspend fun createList(
-        sessionId: String,
-        name: String,
-        description: String = " "
-    ): SavedListDto
+    suspend fun createList(sessionId: String, name: String, description: String = ""): SavedListDto
 
-    suspend fun deleteList(sessionId: String, listId: Int)
+    suspend fun deleteList(sessionId: String, listId: Int): Boolean
 
     suspend fun fetchListItems(listId: Int, page: Int? = null): List<SavedItemDto>
 
     suspend fun addItem(sessionId: String, listId: Int, movieId: Int): Boolean
 
     suspend fun removeItem(sessionId: String, listId: Int, movieId: Int): Boolean
-
-    suspend fun isItemSaved(listId: Int, movieId: Int, sessionId: String): Boolean
 }

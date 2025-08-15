@@ -70,23 +70,20 @@ class SaveToListsViewModel @Inject constructor(
 
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = addMovieToSavedList(selectedListId, mediaId),
-            onSuccess = onAddMovieToSavedListSuccess(mediaId),
+            callee = { addMovieToSavedList(selectedListId, mediaId) },
+            onSuccess = ::onAddMovieToSavedListSuccess,
             onError = ::onAddMovieError
         )
     }
 
-    private fun addMovieToSavedList(
-        selectedListId: Long,
-        mediaId: Long,
-    ): suspend () -> Boolean = {
+    private suspend fun addMovieToSavedList(selectedListId: Long, mediaId: Long) {
         manageSavedListItemsUseCase.addMovieToSavedList(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()
         )
     }
 
-    private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
+    private fun onAddMovieToSavedListSuccess(unit: Unit) {
         updateState {
             copy(
                 isLoading = false,

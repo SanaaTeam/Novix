@@ -24,29 +24,20 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         return savedListApiService.getListDetails(response.listId).toListDto()
     }
 
-    override suspend fun deleteList(sessionId: String, listId: Int) {
-        savedListApiService.deleteList(listId, sessionId)
-    }
+    override suspend fun deleteList(sessionId: String, listId: Int) =
+        savedListApiService.deleteList(listId, sessionId).success
+
 
     override suspend fun fetchListItems(listId: Int, page: Int?) =
         savedListApiService.getListDetails(listId, page).items
 
-    override suspend fun addItem(
-        sessionId: String,
-        listId: Int,
-        movieId: Int
-    ): Boolean {
+    override suspend fun addItem(sessionId: String, listId: Int, movieId: Int): Boolean {
         val body = AddOrRemoveItemBody(movieId)
         return attemptAddItem(sessionId, listId, body, MAX_RETRIES).success
     }
 
     override suspend fun removeItem(sessionId: String, listId: Int, movieId: Int) =
         savedListApiService.removeItem(listId, sessionId, AddOrRemoveItemBody(movieId)).success
-
-    override suspend fun isItemSaved(listId: Int, movieId: Int, sessionId: String): Boolean =
-        savedListApiService
-            .checkItemStatus(listId, movieId, sessionId)
-            .itemPresent
 
     private tailrec suspend fun attemptAddItem(
         sessionId: String,

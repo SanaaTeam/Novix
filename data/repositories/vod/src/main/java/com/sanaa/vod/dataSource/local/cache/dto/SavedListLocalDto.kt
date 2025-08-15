@@ -15,18 +15,3 @@ data class SavedListLocalDto(
     @ColumnInfo(name = "movie_ids")
     val movieIds: String,
 )
-
-@Entity(
-    tableName = "saved_movies",
-)
-data class SavedMovieLocalDto(
-    @PrimaryKey
-    val id: Int,
-    @ColumnInfo(name = "poster_url")
-    val posterUrl: String,
-)
-
-
-
-
-

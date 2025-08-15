@@ -13,7 +13,6 @@ import com.sanaa.vod.dataSource.local.cache.dto.CachedContentMetadataLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.GenreLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.MovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
-import com.sanaa.vod.dataSource.local.cache.dto.SavedMovieLocalDto
 import com.sanaa.vod.dataSource.local.cache.dto.TvShowLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.QueryLocalDto
 import com.sanaa.vod.dataSource.local.history.dto.search.RecentViewedLocalDto
@@ -33,7 +32,6 @@ import com.sanaa.vod.history.dao.WatchedMediaHistoryDao
         TvShowLocalDto::class,
         GenreLocalDto::class,
         SavedListLocalDto::class,
-        SavedMovieLocalDto::class
     ],
     version = 1,
     exportSchema = false
@@ -47,5 +45,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
     abstract fun tvShowDao(): TvShowDao
     abstract fun genreDao(): GenreDao
-    abstract fun savedListMovieDao(): SavedListDao
+    abstract fun savedListDao(): SavedListDao
 }
