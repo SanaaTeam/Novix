@@ -1,11 +1,13 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
+import com.sanaa.presentation.components.SnackData
+
 data class SaveToListUiState(
     val playlists: List<PlaylistUiItem> = emptyList(),
     val selectedListId: Long? = null,
     val isLoading: Boolean = false,
     val isAddButtonEnabled: Boolean = false,
-    val errorMessage: String? = null
+    val snackBarData: SnackData? = null
 )
 
 data class PlaylistUiItem(
