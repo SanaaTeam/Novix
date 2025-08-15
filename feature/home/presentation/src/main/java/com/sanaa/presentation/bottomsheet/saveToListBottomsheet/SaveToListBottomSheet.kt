@@ -51,8 +51,10 @@ fun SaveToListBottomSheet(
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
+    viewModel: SaveToListViewModel = hiltViewModel()
 ) {
-    val viewModel: SaveToListViewModel = hiltViewModel()
+    viewModel.getMediaId(mediaId)
+
     val state by viewModel.state.collectAsState()
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val successMessage =
@@ -61,14 +63,12 @@ fun SaveToListBottomSheet(
         stringResource(homeRes.string.added_to_list_failed)
 
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-        }
-    }
+
 
     NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+        data = snack, onDismiss = { snack = null }
+    )
+
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -95,7 +95,7 @@ fun SaveToListBottomSheet(
         isVisible = isVisible,
         state = state,
         onDismiss = onDismiss,
-        onPlaylistSelected = viewModel::onPlaylistSelected,
+        onPlaylistClicked = viewModel::onPlayListClicked,
         onAddClick = {
             viewModel.onAddClicked(
                 mediaId = mediaId,
@@ -111,7 +111,7 @@ private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
-    onPlaylistSelected: (Long) -> Unit,
+    onPlaylistClicked: (Long) -> Unit,
     onAddClick: () -> Unit,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -158,8 +158,8 @@ private fun SaveToListBottomSheetContent(
                         PlaylistItem(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
-                            isSelected = state.selectedListId == playlist.id,
-                            onClick = { onPlaylistSelected(playlist.id) }
+                            isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem ,
+                            onClick = { onPlaylistClicked(playlist.id) }
                         )
                     }
                 }
@@ -236,16 +236,26 @@ private fun PlaylistItem(
 @Composable
 private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
-        PlaylistUiItem(id = 1, title = "My favorite", itemCount = 12),
-        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5),
-        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23)
+        PlaylistUiItem(
+            id = 1, title = "My favorite", itemCount = 12,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = true,
+        ),
+        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = false
+        ),
+        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23,
+            itemsIds = listOf(1L,2L),
+            containsMediaItem = false
+            )
     )
 
     var state by remember {
         mutableStateOf(
             SaveToListUiState(
                 playlists = playlists,
-                selectedListId = 1,
+                selectedListsIds = listOf(1L).toMutableList(),
                 isAddButtonEnabled = true
             )
         )
@@ -256,11 +266,8 @@ private fun SaveToListBottomSheetPreview() {
             isVisible = true,
             state = state,
             onDismiss = {},
-            onPlaylistSelected = { selectedId ->
-                state = state.copy(
-                    selectedListId = selectedId,
-                    isAddButtonEnabled = true
-                )
+            onPlaylistClicked = { selectedId ->
+
             },
             onAddClick = {
                 state = state.copy(isLoading = true)

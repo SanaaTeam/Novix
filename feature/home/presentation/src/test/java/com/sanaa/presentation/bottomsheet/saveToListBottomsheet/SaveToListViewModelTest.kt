@@ -58,13 +58,13 @@ class SaveToListViewModelTest {
         viewModel.onPlaylistSelected(123L)
 
         val state = viewModel.state.value
-        assertThat(state.selectedListId).isEqualTo(123L)
+        assertThat(state.selectedListsIds).isEqualTo(123L)
         assertThat(state.isAddButtonEnabled).isTrue()
     }
 
     @Test
     fun `onAddClicked on success adds item, refreshes, marks saved, and emits success effect`() = runTest {
-        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true
+//        coEvery { manageSavedListItemsUseCase.addMovieToSavedList(any(), any()) } returns true //todo
         initViewModel()
         viewModel.onPlaylistSelected(1L)
 
@@ -100,8 +100,8 @@ class SaveToListViewModelTest {
     private fun initViewModel() {
         viewModel = SaveToListViewModel(
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
-            listsStatusProvider = listsStatusProvider,
-            dispatcher = testDispatcher
+            dispatcher = testDispatcher,
+            mangeSavedListsUseCase = mockk(),//todo
         )
     }
 }
