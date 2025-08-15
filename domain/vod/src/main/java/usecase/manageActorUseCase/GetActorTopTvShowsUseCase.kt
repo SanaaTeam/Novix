@@ -5,8 +5,8 @@ import repository.ActorRepository
 import javax.inject.Inject
 
 class GetActorTopTvShowsUseCase @Inject constructor(
-    private val actorRepo: ActorRepository
+    private val actorRepository: ActorRepository
 ) {
     suspend operator fun invoke(id: Int): List<TvShow> =
-        actorRepo.getActorTopTvShows(id)
+        actorRepository.getActorTopTvShows(id)
 }

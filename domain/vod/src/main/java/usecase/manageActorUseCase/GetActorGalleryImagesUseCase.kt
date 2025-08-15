@@ -4,8 +4,8 @@ import repository.ActorRepository
 import javax.inject.Inject
 
 class GetActorGalleryImagesUseCase @Inject constructor(
-    private val actorRepo: ActorRepository
+    private val actorRepository: ActorRepository
 ) {
     suspend operator fun invoke(id: Int): List<String> =
-        actorRepo.getGalleryImageUrls(id)
+        actorRepository.getGalleryImageUrls(id)
 }
