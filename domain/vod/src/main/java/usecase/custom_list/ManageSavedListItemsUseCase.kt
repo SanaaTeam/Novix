@@ -16,4 +16,5 @@ class ManageSavedListItemsUseCase @Inject constructor(
 
     suspend fun removeMovieFromSavedList(listId: Int, movieId: Int): Flow<Boolean> =
         savedListRepository.removeMovieFromList(listId, movieId)
+
 }

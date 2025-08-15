@@ -19,7 +19,6 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val mangeSavedListsUseCase: ManageSavedListsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState(), dispatcher) {
 
@@ -67,15 +66,6 @@ class SaveToListViewModel @Inject constructor(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()
         )
-    }
-
-    private fun onAddMovieToSavedListSuccess(mediaId: Long): (Boolean) -> Unit = {
-        updateState { copy(isLoading = false) }
-        listsStatusProvider.markItemSaved(mediaId.toInt())
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
-        emitEffect(SaveToListEffect.AddedSuccessfully)
     }
 
     private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
