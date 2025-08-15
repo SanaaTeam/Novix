@@ -29,6 +29,8 @@ import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
+import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
@@ -41,6 +43,8 @@ class HomeScreenViewModel @Inject constructor(
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -247,18 +251,33 @@ class HomeScreenViewModel @Inject constructor(
         }
 
         if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
+            tryToExecute(
+                block = {
+                    val userLists = manageSavedListsUseCase.getSavedLists()
+                    val defaultList = userLists.firstOrNull()
+                    if (defaultList != null) {
+                        manageSavedListItemsUseCase.removeMovieFromSavedList(defaultList.id, media.id)
+                        savedListsStatusProvider.refreshLists()
+                    }
+                },
+                onSuccess = {
+                    savedListsStatusProvider.markItemUnsaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowSuccess(message = "Removed from list."))
+                },
+                onError = {
+                    savedListsStatusProvider.markItemSaved(media.id)
+                    emitEffect(HomeScreenEffect.ShowError(message = "Failed to remove from list."))
+                }
+            )
         } else {
             updateState {
                 copy(
                     showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong(),
                     selectedMediaToSave = media
                 )
             }
         }
     }
-
     override fun onDismissBottomSheet() {
         updateState { copy(showBottomSheet = false) }
     }
