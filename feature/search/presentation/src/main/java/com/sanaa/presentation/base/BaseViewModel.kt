@@ -2,6 +2,7 @@ package com.sanaa.presentation.base
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
@@ -41,31 +42,21 @@ abstract class BaseViewModel<T, E>(
         _state.update(updater)
     }
 
-    private fun createExceptionHandler(onError: (Throwable) -> Unit) =
-        CoroutineExceptionHandler { _, throwable ->
-            Timber.e(throwable, "Unhandled coroutine exception")
-            onError(throwable)
-        }
 
-    protected fun <R> tryToExecute(
-        block: suspend () -> R,
-        onSuccess: (R) -> Unit = {},
-        onError: (exception: Throwable) -> Unit = {},
-        dispatcher: CoroutineDispatcher = defaultDispatcher
+    protected fun <T> tryToExecute(
+        block: suspend () -> T,
+        onSuccess: (T) -> Unit = {},
+        onError: (NovixAppException) -> Unit = {},
+        dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
-        val exceptionHandler = createExceptionHandler(onError)
-
-        viewModelScope.launch(dispatcher + exceptionHandler) {
-            try {
-                val result = block()
-                onSuccess(result)
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                onError(e)
-            }
+        val handler = createExceptionHandler(onError)
+        viewModelScope.launch(dispatcher + handler) {
+            val result = block()
+            onSuccess(result)
         }
     }
+
+
 
     protected fun <R> tryToCollect(
         block: suspend () -> Flow<R>,
@@ -73,23 +64,22 @@ abstract class BaseViewModel<T, E>(
         onError: (exception: Throwable) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
-        val exceptionHandler = createExceptionHandler(onError)
-        viewModelScope.launch(dispatcher + exceptionHandler) {
-            try {
-                block()
-                    .catch { e -> onError(e) }
-                    .collectLatest { value ->
-                        try {
-                            onCollect(value)
-                        } catch (e: Throwable) {
-                            onError(e)
-                        }
+        val handler = createExceptionHandler(onError)
+        viewModelScope.launch(dispatcher + handler) {
+            block()
+                .catch { e ->
+                    // Handle flow errors
+                    val error = e.toNovixAppException()
+                    onError(error)
+                }
+                .collect { value ->
+                    try {
+                        onCollect(value)
+                    } catch (e: Throwable) {
+                        // Handle collection errors
+                        onError(e.toNovixAppException())
                     }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Throwable) {
-                onError(e)
-            }
+                }
         }
     }
 
@@ -110,13 +100,14 @@ abstract class BaseViewModel<T, E>(
     }
 
 
-//    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
-//        CoroutineExceptionHandler { _, exception ->
-//            onError(
-//                when (exception) {
-//                    is NovixAppException -> exception
-//                    else -> NovixAppException(exception.message)
-//                }
-//            )
-//        }
+    private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
+        CoroutineExceptionHandler { _, exception ->
+            onError(exception.toNovixAppException())
+        }
+
+    private fun Throwable.toNovixAppException(): NovixAppException = when (this) {
+        is NovixAppException -> this
+        else -> NovixAppException(message ?: "Unknown error")
+    }
+
 }
