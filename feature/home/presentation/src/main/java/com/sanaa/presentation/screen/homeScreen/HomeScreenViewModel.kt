@@ -22,10 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -41,7 +39,6 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -57,9 +54,6 @@ class HomeScreenViewModel @Inject constructor(
         fetchMovieGenres()
         fetchUpcomingMovies()
     }
-
-    private fun MediaItemUiState.withSaved(savedIds: Set<Int>) =
-        copy(isSaved = savedIds.contains(id))
 
     fun updateUserLoggingStatus() {
         tryToCollect(
@@ -176,9 +170,7 @@ class HomeScreenViewModel @Inject constructor(
         return createPagingFlow(
             pagingSourceFactory = { createUpcomingMoviesPagingDataSource(genreId = genreId) },
             mapper = Movie::toState
-        ).combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-            pagingData.map { it.withSaved(savedIds) }
-        }.cachedIn(viewModelScope)
+        )
     }
 
     private fun onFetchUpcomingMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
@@ -239,16 +231,11 @@ class HomeScreenViewModel @Inject constructor(
             return
         }
 
-        if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong(),
-                    selectedMediaToSave = media
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = media
+            )
         }
     }
 

@@ -14,7 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,17 +28,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
 import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
+import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
+import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.components.MediaListSectionContent
 import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.state.MediaTypeUiState
+import com.sanaa.presentation.components.RequestToLoginBottomSheet
+import com.sanaa.presentation.components.SnackData
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -48,10 +56,38 @@ fun WatchingMediaHistoryScreen(
 
     EffectHandler(viewModel.effect)
 
-    WatchingMediaHistoryScreenContent(
-        state = state.value,
-        interactionListener = viewModel,
-    )
+    val selectedMedia = state.value.selectedMediaToSave
+    if (state.value.userIsLoggedIn) {
+        if (state.value.showSaveToListBottomSheet && selectedMedia != null) {
+            SaveToListBottomSheet(
+                isVisible = true,
+                mediaId = selectedMedia.id.toLong(),
+                onDismiss = viewModel::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = viewModel::onCreateNewListClick
+            )
+        }
+        if (state.value.showAddListBottomSheet && selectedMedia != null) {
+            AddBookmarkListBottomSheet(
+                isVisible = true,
+                onDismiss = viewModel::onDismissAddListBottomSheet,
+                mediaId = selectedMedia.id
+            )
+        }
+    } else {
+        RequestToLoginBottomSheet(
+            isVisible = state.value.showLoginBottomSheet,
+            onDismiss = viewModel::onDismissLoginBottomSheet,
+            onLoginButtonClick = viewModel::onLoginButtonClick
+        )
+    }
+
+    Box(modifier = Modifier.systemBarsPadding()) {
+
+        WatchingMediaHistoryScreenContent(
+            state = state.value,
+            interactionListener = viewModel,
+        )
+    }
 }
 
 @Composable
@@ -150,6 +186,12 @@ private fun EffectHandler(
 ) {
     val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
+    var snack by remember { mutableStateOf<SnackData?>(null) }
+    val authApi = EntryPointAccessors.fromApplication(
+        appContext,
+        HomeApiEntryPoint::class.java
+    ).authenticationApi()
+    val launcher = launchAuthActivityForResult()
 
     val detailsApi: MediaDetailsApi = remember {
         EntryPointAccessors
@@ -162,6 +204,10 @@ private fun EffectHandler(
             when (effect) {
                 is WatchingMediaHistoryScreenEffect.NavigateBack -> {
                     navController.popBackStack()
+                }
+
+                is WatchingMediaHistoryScreenEffect.NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(appContext))
                 }
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
@@ -182,6 +228,10 @@ private fun EffectHandler(
                             )
                         }
                     }
+                }
+
+                is WatchingMediaHistoryScreenEffect.ShowError -> {
+                    snack = SnackData(message = effect.message, isError = true)
                 }
             }
         }

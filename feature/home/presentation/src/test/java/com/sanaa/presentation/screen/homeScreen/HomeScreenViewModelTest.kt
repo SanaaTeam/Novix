@@ -12,11 +12,9 @@ import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,7 +23,6 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -49,7 +46,6 @@ class HomeScreenViewModelTest {
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @BeforeEach
@@ -65,9 +61,6 @@ class HomeScreenViewModelTest {
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     private fun initializeViewModel() {
@@ -77,7 +70,6 @@ class HomeScreenViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher,
         )
