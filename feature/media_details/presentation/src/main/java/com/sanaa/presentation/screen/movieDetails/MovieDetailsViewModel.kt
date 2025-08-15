@@ -64,6 +64,14 @@ class MovieDetailsViewModel @Inject constructor(
         updateUserLoginState()
         observeSavedStatus()
     }
+
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = ::onCollectLoggedFlag
+        )
+    }
+
     private fun observeSavedStatus() {
         viewModelScope.launch {
             var previousSavedIds = savedListsStatusProvider.savedIds.value

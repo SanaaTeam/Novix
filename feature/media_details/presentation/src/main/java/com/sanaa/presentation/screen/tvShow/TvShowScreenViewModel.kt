@@ -40,11 +40,17 @@ class TvShowScreenViewModel @Inject constructor(
     }
 
     init {
-        loadSeries()
         observeUserState()
         loadTvShow()
         fetchUserRating()
         updateUserLoginState()
+    }
+
+    private fun updateUserLoginState() {
+        tryToCollect(
+            callee = { checkUserLogin.isLoggedIn() },
+            onCollect = ::onCollectLoggedFlag,
+        )
     }
 
     override fun onBackClicked() {

@@ -287,7 +287,6 @@ fun TvShowScreenContent(
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.tvShow.trailerUrl,
-                trailerUrl = state.series.trailerUrl,
                 showRatingButton = !state.hasUserSelectedRate,
                 onPlayTrailerClicked = interactionListener::onPlayTrailerClicked,
                 onSetRateClicked = interactionListener::onRateClicked

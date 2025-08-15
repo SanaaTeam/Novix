@@ -132,7 +132,9 @@ private fun MovieDetailsEffectsHandler(
                     )
                 }
 
-                NavigateToLogin -> { launcher.launch(authApi.getLaunchIntent(context)) }
+                NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -227,12 +229,12 @@ private fun MovieDetailsScreenContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding(),
-                modifier = Modifier.align(Alignment.BottomCenter),
                 showRatingButton = !state.hasUserSelectedRate,
                 onSetRateClicked = { interactionListener.onRateMovieClick() }
             )
             if (state.showRateBottomSheet) {
-                val localRating = remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
+                val localRating =
+                    remember(state.imdbRating) { androidx.compose.runtime.mutableStateOf(state.imdbRating) }
                 RateBottomSheet(
                     isRateSelected = localRating.value > 0,
                     imdbRating = localRating.value,
@@ -251,74 +253,75 @@ private fun MovieDetailsScreenContent(
                     LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
                     else -> stringResource(R.string.add_to_list)
                 }
-        }
-    }
-
-    AnimatedVisibility(
-        visible = state.showSaveToListBottomSheet,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        SaveToListBottomSheet(
-            isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId?.toLong() ?: 0,
-            onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-            onCreateNewListClick = interactionListener::onCreateNewListClick,
-        )
-    }
-
-    AnimatedVisibility(
-        visible = state.showAddListBottomSheet && state.selectedMediaId != null,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        AddBookmarkListBottomSheet(
-            isVisible = true,
-            onDismiss = interactionListener::onDismissAddListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0
-        )
-    }
-
-    AnimatedVisibility(
-        visible = state.showRateBottomSheet,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        RateBottomSheet(
-            isRateSelected = state.hasUserSelectedRate,
-            imdbRating = state.imdbRating,
-            onDismiss = interactionListener::onDismissRateBottomSheet,
-            isVisible = true,
-            onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
-            onRatingChanged = interactionListener::onRatingChanged
-        )
-    }
-
-    AnimatedVisibility(
-        visible = state.showLoginBottomSheet,
-        enter = FadeSlideInVertically,
-        exit = FadeSlideOutVertically
-    ) {
-        val title = when (state.loginPromptType) {
-            LoginPromptType.RATE -> stringResource(R.string.rate_it)
-            LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
-            else -> stringResource(R.string.add_to_list)
-        }
-
-        val text = when (state.loginPromptType) {
-            LoginPromptType.RATE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
-            LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
-            else -> stringResource(R.string.request_login)
-        }
-        RequestToLoginBottomSheet(
-            onDismiss = { interactionListener.onDismissLoginBottomSheet() },
-            isVisible = true,
-            title = title,
-            text = text,
-            onLoginButtonClick = {
-                interactionListener.onLoginButtonClick()
             }
-        )
+        }
+
+        AnimatedVisibility(
+            visible = state.showSaveToListBottomSheet,
+            enter = FadeSlideInVertically,
+            exit = FadeSlideOutVertically
+        ) {
+            SaveToListBottomSheet(
+                isVisible = state.showSaveToListBottomSheet,
+                mediaId = state.selectedMediaId?.toLong() ?: 0,
+                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                onCreateNewListClick = interactionListener::onCreateNewListClick,
+            )
+        }
+
+        AnimatedVisibility(
+            visible = state.showAddListBottomSheet && state.selectedMediaId != null,
+            enter = FadeSlideInVertically,
+            exit = FadeSlideOutVertically
+        ) {
+            AddBookmarkListBottomSheet(
+                isVisible = true,
+                onDismiss = interactionListener::onDismissAddListBottomSheet,
+                mediaId = state.selectedMediaId ?: 0
+            )
+        }
+
+        AnimatedVisibility(
+            visible = state.showRateBottomSheet,
+            enter = FadeSlideInVertically,
+            exit = FadeSlideOutVertically
+        ) {
+            RateBottomSheet(
+                isRateSelected = state.hasUserSelectedRate,
+                imdbRating = state.imdbRating,
+                onDismiss = interactionListener::onDismissRateBottomSheet,
+                isVisible = true,
+                onSubmitButtonClick = interactionListener::onSubmitRateBottomSheet,
+                onRatingChanged = interactionListener::onRatingChanged
+            )
+        }
+
+        AnimatedVisibility(
+            visible = state.showLoginBottomSheet,
+            enter = FadeSlideInVertically,
+            exit = FadeSlideOutVertically
+        ) {
+            val title = when (state.loginPromptType) {
+                LoginPromptType.RATE -> stringResource(R.string.rate_it)
+                LoginPromptType.BOOKMARK -> stringResource(R.string.add_to_list)
+                else -> stringResource(R.string.add_to_list)
+            }
+
+            val text = when (state.loginPromptType) {
+                LoginPromptType.RATE -> stringResource(R.string.please_login_to_rate_your_favorite_items)
+                LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
+                else -> stringResource(R.string.request_login)
+            }
+            RequestToLoginBottomSheet(
+                onDismiss = { interactionListener.onDismissLoginBottomSheet() },
+                isVisible = true,
+                title = title,
+                text = text,
+                onLoginButtonClick = {
+                    interactionListener.onLoginButtonClick()
+                }
+            )
+        }
     }
 }
 
