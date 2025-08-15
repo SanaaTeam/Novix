@@ -4,4 +4,5 @@ interface AddBookmarkInteractionListener {
     fun onListTitleChanged(title: String)
     fun resetState()
     fun onAddClicked(mediaId: Int)
+    fun onSnackBarDismiss()
 }

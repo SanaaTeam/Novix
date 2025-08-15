@@ -29,6 +29,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.bottomsheet.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -45,9 +46,16 @@ fun AddBookmarkListBottomSheet(
         onDismiss()
     }
 
+    NovixAnimatedSnackBarHost(
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
+
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            handleDismiss()
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is AddBookmarksEffect.Dismiss -> handleDismiss()
+            }
         }
     }
 
@@ -116,7 +124,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = {interactionListener.onAddClicked(mediaId)},
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -143,6 +151,7 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0
         )
@@ -169,6 +178,7 @@ private fun AddBookmarkListBottomSheetActivePreview() {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0
         )

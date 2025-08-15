@@ -29,7 +29,6 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
-import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
@@ -41,12 +40,6 @@ fun AddBookmarkListBottomSheet(
 ) {
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val successMessage =
-        stringResource(com.sanaa.feature.playlists.presentation.R.string.created_list_successfully)
-    val failMessage =
-        stringResource(com.sanaa.feature.playlists.presentation.R.string.failed_to_create_list)
-
 
     val handleDismiss = {
         viewModel.resetState()
@@ -54,24 +47,15 @@ fun AddBookmarkListBottomSheet(
     }
 
     NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                AddBookmarksEffect.AddSuccess -> {
+                AddBookmarksEffect.Dismiss -> {
                     handleDismiss()
-                    snack = SnackData(
-                        message = successMessage,
-                        isError = false
-                    )
-                }
-
-                AddBookmarksEffect.AddFailure -> {
-                    snack = SnackData(
-                        message = failMessage,
-                        isError = true
-                    )
                 }
             }
         }
@@ -169,6 +153,7 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0
         )
@@ -178,7 +163,7 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
 @Preview(name = "Add Mode - Active", showBackground = true)
 @Composable
 private fun AddBookmarkListBottomSheetActivePreview() {
-    var state by remember {
+    val state by remember {
         mutableStateOf(
             AddBookmarkListUiState(
                 listTitle = "My favorite",
@@ -195,6 +180,7 @@ private fun AddBookmarkListBottomSheetActivePreview() {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
                 override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0
         )
