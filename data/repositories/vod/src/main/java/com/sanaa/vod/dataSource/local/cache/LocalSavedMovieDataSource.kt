@@ -1,23 +1,15 @@
 package com.sanaa.vod.dataSource.local.cache
 
-
-import entity.SavedMovie
+import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
+import com.sanaa.vod.dataSource.local.cache.dto.SavedMovieLocalDto
 import kotlinx.coroutines.flow.Flow
 
+
 interface LocalSavedMovieDataSource {
-
-    suspend fun upsertMovie(movie: SavedMovie)
-    suspend fun upsertAllMovies(movies: List<SavedMovie>)
-
-    suspend fun deleteMovieFromList(movieId: Long, listId: Long)
-    suspend fun deleteAllByListId(listId: Long)
-    suspend fun deleteAllByMovieId(movieId: Long)
-    suspend fun deleteAllSavedMovies()
-
-    suspend fun getSavedMovieById(movieId: Long): SavedMovie?
-    suspend fun getAllSavedMovies(): List<SavedMovie>
-
-    fun observeSavedMovies(): Flow<List<SavedMovie>>
-    fun isMovieSaved(movieId: Long, listId: Long): Flow<Boolean>
-    fun isMovieSaved(movieId: Long): Flow<Boolean>
+    suspend fun insertList(savedLis: SavedListLocalDto)
+    suspend fun deleteList(listId: Int): Flow<Boolean>
+    suspend fun getAllLists(): Flow<List<SavedListLocalDto>>
+    suspend fun getListSavedMovies(listId: Int): Flow<List<SavedMovieLocalDto>>
+    suspend fun addMovieToList(listId: Int, movieId: Int): Flow<Boolean>
+    suspend fun removeMovieFromList(listId: Int, movieId: Int): Flow<Boolean>
 }

@@ -1,6 +1,5 @@
 package com.sanaa.vod.repository
 
-import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
