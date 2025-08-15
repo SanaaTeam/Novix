@@ -167,16 +167,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveMoviesClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            updateState {
-                copy(
-                    showLoginBottomSheet = true
-                )
-            }
-        }
-    }
+
 
     override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
         if (viewed.mediaType == MediaTypeUi.MOVIE) {
@@ -201,7 +192,7 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    override fun onBottomSheetDismiss() {
+    override fun onLoginBottomSheetDismiss() {
         updateState { copy(showLoginBottomSheet = false) }
     }
 

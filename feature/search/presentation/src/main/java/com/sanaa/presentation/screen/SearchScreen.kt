@@ -127,20 +127,16 @@ private fun SearchScreenContent(
                 SaveToListBottomSheet(
                     isVisible = state.showSaveToListBottomSheet,
                     mediaId = mediaItem.id.toLong(),
-                    onDismiss = interactionsListener::onDismissSaveToListBottomSheet,
-                    onCreateNewListClick = interactionsListener::onCreateNewListClick,
-                    onSuccess =  interactionsListener::onSaveToListSuccess,
-                    onFailure =  interactionsListener::onSaveToListFailure,
+                    interactionsListener = interactionsListener,
                 )
             }
             AddBookmarkListBottomSheet(
                 isVisible = state.showAddListBottomSheet,
-                onDismiss = interactionsListener::onDismissAddListBottomSheet,
+                interactionsListener = interactionsListener,
                 mediaId = state.selectedMediaToSave?.id ?: 0
             )
             RequestToLoginBottomSheet(
-                onDismiss = interactionsListener::onBottomSheetDismiss,
-                onLoginButtonClick = interactionsListener::onLoginButtonClick,
+                interactionsListener = interactionsListener,
                 isVisible = state.showLoginBottomSheet,
             )
         }

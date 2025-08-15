@@ -29,12 +29,13 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.SaveListListener
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
-    onDismiss: () -> Unit,
+    interactionsListener : SaveListListener,
     mediaId: Int,
 ) {
     val viewModel: AddBookmarksListViewModel = hiltViewModel()
@@ -42,7 +43,7 @@ fun AddBookmarkListBottomSheet(
 
     val handleDismiss = {
         viewModel.resetState()
-        onDismiss()
+        interactionsListener.onDismissAddListBottomSheet()
     }
 
     LaunchedEffect(Unit) {
