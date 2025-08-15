@@ -25,6 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -38,6 +39,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
@@ -64,8 +66,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onReadMoreClick() {}
-
     override fun onBookmarkClick(movie: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
             promptLogin(LoginPromptType.BOOKMARK)
@@ -77,8 +77,11 @@ class MovieDetailsViewModel @Inject constructor(
                 showSaveToListBottomSheet = true,
                 selectedMediaId = movie.id
             )
-
         }
+    }
+
+    override fun onMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -159,7 +162,11 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             copy(
                 errorMessage = exception.message,
-                showRateBottomSheet = false
+                showRateBottomSheet = false,
+                snackBarData = SnackData(
+                    message = exception.message ?: stringProvider.somethingWentWrongError,
+                    isError = true
+                )
             )
         }
     }
@@ -179,25 +186,35 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onFetchMovieDetailsFailed(exception: NovixAppException) {
-        if (exception is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    errorMessage = null
-                )
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isLoading = false,
-                    errorMessage = exception.message,
-                    noInternetConnection = false
-                )
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = exception.message,
+                        noInternetConnection = false
+                    )
+                }
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = exception.message ?: stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
-
 
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
         return createPagingFlow(
@@ -273,9 +290,10 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingSuccess, isError = false)) }
+            updateState { copy(showRateBottomSheet = false) }
         } else {
-            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingFailed, isError = true)) }
         }
     }
 
@@ -310,6 +328,12 @@ class MovieDetailsViewModel @Inject constructor(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )
+        }
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState {
+            copy(snackBarData = null)
         }
     }
 }

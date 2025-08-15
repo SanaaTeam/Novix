@@ -38,10 +38,10 @@ import com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute
 import com.sanaa.presentation.app.navigation.UserProfileScreenRoute
 import com.sanaa.presentation.app.navigation.WatchingMediaHistoryScreenRoute
 import com.sanaa.presentation.screen.homeScreen.HomeScreen
-import com.sanaa.presentation.screen.mediaTabScreen.topRatingScreen.TopRatedMediaScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen.TrendingMoviesScreen
-import com.sanaa.presentation.screen.trendingMediaScreen.trendingTvShowScreen.TrendingTvShowsScreen
+import com.sanaa.presentation.screen.topRatingScreen.TopRatedMediaScreen
+import com.sanaa.presentation.screen.trendingMoviesScreen.TrendingMoviesScreen
 import com.sanaa.presentation.screen.trendingPeopleScreen.TrendingPeopleScreen
+import com.sanaa.presentation.screen.trendingTvShowScreen.TrendingTvShowsScreen
 import com.sanaa.presentation.screen.watchingHistoryScreen.WatchingMediaHistoryScreen
 import dagger.hilt.android.EntryPointAccessors
 

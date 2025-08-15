@@ -1,8 +1,7 @@
-package com.sanaa.presentation.screen.trendingMediaScreen.trendingMoviesScreen
+package com.sanaa.presentation.screen.trendingMoviesScreen
 
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.screen.trendingMediaScreen.TrendingMediaScreenEffect
 import com.sanaa.presentation.state.MediaItem
 import com.sanaa.presentation.state.MediaTypeUi
 import com.sanaa.presentation.state.mapper.toState
@@ -124,7 +123,7 @@ class TrendingMoviesScreenViewModelTest {
 
         viewModel.onSaveIconClick(media)
 
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test
@@ -162,9 +161,7 @@ class TrendingMoviesScreenViewModelTest {
             viewModel.onMediaClick(mediaId)
             advanceUntilIdle()
             assertThat(awaitItem()).isEqualTo(
-                TrendingMediaScreenEffect.NavigateToMediaDetails(
-                    mediaId
-                )
+                TrendingMoviesScreenEffect.NavigateToMoviesDetails(mediaId)
             )
             cancelAndConsumeRemainingEvents()
         }
@@ -183,7 +180,7 @@ class TrendingMoviesScreenViewModelTest {
         viewModel.onBackClick()
 
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TrendingMediaScreenEffect.NavigateBack)
+            assertThat(awaitItem()).isEqualTo(TrendingMoviesScreenEffect.NavigateBack)
             cancelAndIgnoreRemainingEvents()
         }
     }
