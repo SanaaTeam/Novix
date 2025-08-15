@@ -27,7 +27,7 @@ class SaveToListViewModel @Inject constructor(
 
     private fun observePlaylists() {
         tryToCollect(
-            callee = { listsStatusProvider.savedLists },
+            block = { listsStatusProvider.savedLists },
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -52,7 +52,7 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true, errorMessage = null) }
 
         tryToExecute(
-            callee = addMovieToSavedList(selectedListId, mediaId),
+            block = addMovieToSavedList(selectedListId, mediaId),
             onSuccess = onAddMovieToSavedListSuccess(mediaId),
             onError = ::onErrorAccrue
         )
