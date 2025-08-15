@@ -6,11 +6,11 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.model.SeasonUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.TvShowDetailsUiModel
 import com.sanaa.tvapp.util.formatLocalizedDate
 import entity.Episode
+import entity.MediaHistoryItem
 import entity.Season
 import entity.TvShow
 import kotlinx.datetime.Clock
 import usecase.search.search_param.MediaType
-import entity.TvSeries
 
 
 @SuppressLint("DefaultLocale")

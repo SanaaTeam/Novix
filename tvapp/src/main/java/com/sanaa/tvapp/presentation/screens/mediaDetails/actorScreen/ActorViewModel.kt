@@ -21,7 +21,7 @@ class ActorViewModel @Inject constructor(
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
 
-    private val actorId: Int  = checkNotNull(savedStateHandle["actorId"])
+    private val actorId: Int = checkNotNull(savedStateHandle["actorId"])
 
     init {
         loadDetails()
@@ -57,7 +57,7 @@ class ActorViewModel @Inject constructor(
     private suspend fun fetchActorDetails() = coroutineScope {
         val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvSeries(actorId) }
+        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(actorId) }
         val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
         val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
 

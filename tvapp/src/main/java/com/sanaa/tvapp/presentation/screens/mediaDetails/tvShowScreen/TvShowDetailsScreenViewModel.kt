@@ -33,7 +33,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
 
-    private val seriesId: Int = checkNotNull(savedStateHandle["seriesId"]) {
+    private val tvShowId: Int = checkNotNull(savedStateHandle["seriesId"]) {
         "seriesId is required in SavedStateHandle"
     }
 
