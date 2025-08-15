@@ -1,5 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
+import android.content.Intent
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +21,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
@@ -58,13 +61,17 @@ fun MovieDetailsScreen(
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
                 is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
                 is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
                 MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
-                is MovieDetailsScreenUiEffect.OpenTrailer -> TODO()
+                is MovieDetailsScreenUiEffect.OpenTrailer -> {
+                    val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
+                    context.startActivity(intent)
+                }
                 MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
                 MovieDetailsScreenUiEffect.ShowSuccessSnackBar -> TODO()
             }
@@ -186,7 +193,11 @@ fun MovieDetailsContent(
 
                                     TrailerAndRateSection(
                                         trailerUrl = state.movieDetails.trailerUrl,
-                                        onPlayTrailerClicked = interactionListener::onWatchTrailerClick,
+                                        onPlayTrailerClicked = {
+                                            interactionListener.onWatchTrailerClick(
+                                                state.movieDetails.trailerUrl!!
+                                            )
+                                        },
                                     )
                                 }
                             }

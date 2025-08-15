@@ -112,8 +112,8 @@ class MovieDetailsViewModel @Inject constructor(
 
 
 
-    override fun onWatchTrailerClick() {
-        TODO("Not yet implemented")
+    override fun onWatchTrailerClick(urlString:String) {
+        emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }
 
     override fun onSimilarMovieClick(movieId: Int) {
