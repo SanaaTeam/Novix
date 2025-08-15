@@ -1,7 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen
 
 import androidx.lifecycle.SavedStateHandle
-import com.sanaa.tvapp.base.TvBaseViewModel
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.GenreUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toSeasonUiModel
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class TvShowDetailsScreenViewModel @Inject constructor(
+class ShowDetailsScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val getUser: GetLoggedInUserUseCase,
@@ -28,7 +28,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : TvBaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
+) : BaseViewModel<TvShowDetailsScreenUiState, TvShowDetailsScreenEffects>(
     initialState = TvShowDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
@@ -44,7 +44,6 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     }
 
 
-
     override fun onActorClicked(actorId: Int) {
         emitEffect(TvShowDetailsScreenEffects.NavigateToActorScreen(actorId))
     }
@@ -52,20 +51,20 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     override fun onSeasonNumberClicked(seasonNumber: Int) {
         if (state.value.selectedSeason == seasonNumber) return
         tryToExecute(
-            callee = { fetchSeasonDetails(seasonNumber) },
+            block = { fetchSeasonDetails(seasonNumber) },
             onSuccess = {
-                updateState { it.copy(isLoadingEpisodes = false) }
+                updateState { copy(isLoadingEpisodes = false) }
             }, onError = { e ->
                 if (e is NoNetworkException) {
                     updateState {
-                        it.copy(
+                        copy(
                             noInternetConnection = true,
                             isLoadingEpisodes = false
                         )
                     }
                 } else {
                     updateState {
-                        it.copy(
+                        copy(
                             error = e.message,
                             noInternetConnection = false,
                             isLoadingEpisodes = false
@@ -90,19 +89,19 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     override fun onRateClicked() {
         if (state.value.isUserLoggedIn) {
-            updateState { it.copy(showRateBottomSheet = true) }
+            updateState { copy(showRateBottomSheet = true) }
         } else {
             promptLogin(LoginPromptType.RATE)
         }
     }
 
     override fun onDismissRateBottomSheet() {
-        updateState { it.copy(showRateBottomSheet = false) }
+        updateState { copy(showRateBottomSheet = false) }
     }
 
     override fun onDismissAnyBottomSheet() {
         updateState {
-            it.copy(
+            copy(
                 showRateBottomSheet = false,
                 showLoginBottomSheet = false
             )
@@ -110,24 +109,24 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onLoginButtonClick() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
         emitEffect(TvShowDetailsScreenEffects.NavigateToLogin)
     }
 
     override fun onRatingChanged(newRating: Int) {
-        updateState { it.copy(imdbRating = newRating) }
+        updateState { copy(imdbRating = newRating) }
     }
 
     override fun onDismissLoginBottomSheet() {
-        updateState { it.copy(showLoginBottomSheet = false) }
+        updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
-            callee = ::submitTvShowRating,
+            block = ::submitTvShowRating,
             onError = { exception ->
                 updateState {
-                    it.copy(
+                    copy(
                         error = exception.message,
                         showRateBottomSheet = false
                     )
@@ -135,7 +134,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
             }
         )
         updateState {
-            it.copy(showRateBottomSheet = false)
+            copy(showRateBottomSheet = false)
         }
     }
 
@@ -152,7 +151,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState {
-            it.copy(
+            copy(
                 isLoading = true,
                 error = null,
                 noInternetConnection = false
@@ -163,18 +162,18 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
     private fun loadSeries() {
         tryToExecute(
-            callee = ::fetchSeriesDetails,
+            block = ::fetchSeriesDetails,
             onSuccess = {
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
             },
             onError = { e ->
                 if (e is NoNetworkException) {
-                    updateState { state ->
-                        state.copy(noInternetConnection = true, isLoading = false, error = null)
+                    updateState {
+                        copy(noInternetConnection = true, isLoading = false, error = null)
                     }
                 } else {
-                    updateState { state ->
-                        state.copy(
+                    updateState {
+                        copy(
                             error = e.message,
                             isLoading = false,
                             noInternetConnection = false
@@ -186,7 +185,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     }
 
     private suspend fun fetchSeriesDetails() = coroutineScope {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
 
         val seriesDeferred = async { manageTvShowDetails.getTvShowDetails(tvShowId) }
         val castDeferred = async { manageTvShowDetails.getTvShowCast(tvShowId) }
@@ -204,7 +203,7 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 //        addTvShowToHistory(series)
 
         updateState {
-            it.copy(
+            copy(
                 tvShows = series.toTvShowUiModel(trailer),
                 cast = cast.map { actor -> actor.toActorUiModel() },
                 season = season.toSeasonUiModel(),
@@ -215,11 +214,11 @@ class TvShowDetailsScreenViewModel @Inject constructor(
     }
 
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
-        updateState { it.copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
+        updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
         val season = manageTvShowDetails.getTvShowSeasonDetails(tvShowId, seasonNumber)
 
-        updateState { it.copy(season = season.toSeasonUiModel()) }
+        updateState { copy(season = season.toSeasonUiModel()) }
     }
 
 //    private suspend fun getCurrentUserRating(seriesId: Int): Int {
@@ -247,12 +246,12 @@ class TvShowDetailsScreenViewModel @Inject constructor(
 
 //    private suspend fun updateUserLoginState() {
 //        val isUserLoggedIn = checkUserLogin.isLoggedIn()
-//        updateState { it.copy(isUserLoggedIn = isUserLoggedIn) }
+//        updateState { copy(isUserLoggedIn = isUserLoggedIn) }
 //    }
 
     private fun promptLogin(type: LoginPromptType) {
         updateState {
-            it.copy(
+            copy(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )

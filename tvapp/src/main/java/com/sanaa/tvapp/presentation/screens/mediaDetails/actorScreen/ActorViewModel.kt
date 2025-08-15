@@ -1,7 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.actorScreen
 
 import androidx.lifecycle.SavedStateHandle
-import com.sanaa.tvapp.base.TvBaseViewModel
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toTvShowUiModel
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class ActorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
-) : TvBaseViewModel<ActorScreenUiState, ActorScreenEffects>(
+) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
@@ -37,19 +37,19 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onRetryClicked() {
-        updateState { it.copy(noInternetConnection = false, isLoading = true, error = null) }
+        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
         loadDetails()
     }
 
     private fun loadDetails() {
-        updateState { it.copy(isLoading = true) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            block = ::fetchActorDetails,
             onSuccess = {
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
             },
             onError = { e ->
-                updateState { it.copy(isLoading = false) }
+                updateState { copy(isLoading = false) }
             }
         )
     }
@@ -68,7 +68,7 @@ class ActorViewModel @Inject constructor(
         val gallery = galleryDeferred.await()
 
         updateState {
-            it.copy(
+            copy(
                 actor = actor.toActorUiModel(),
                 topMovies = topMovies.map { m -> m.toDetailsUiModel() },
                 topTvShows = topTvShows.map { t -> t.toTvShowUiModel() },

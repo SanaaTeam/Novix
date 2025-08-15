@@ -1,14 +1,9 @@
 package com.sanaa.tvapp.presentation.screens.searchScreen
 
-import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.base.TvBasePagingSource
-import com.sanaa.tvapp.base.TvBaseViewModel
 import com.sanaa.tvapp.presentation.screens.searchScreen.mapper.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
@@ -31,7 +26,7 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val searchUseCase: SearchUseCase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : TvBaseViewModel<SearchTvScreenUiState, SearchScreenEffect>(
+) : BaseViewModel<SearchTvScreenUiState, SearchScreenEffect>(
     SearchTvScreenUiState(),
     dispatcher
 ), SearchScreenInteractionListener {
@@ -42,7 +37,7 @@ class SearchScreenViewModel @Inject constructor(
 
     fun observeSearchQueryChanges() {
         tryToCollect(
-            callee = ::observeSearchQueryFlow,
+            block = ::observeSearchQueryFlow,
             onCollect = ::onSearchQueryChangedCollected,
             onError = ::onDataLoadError,
         )
@@ -59,7 +54,7 @@ class SearchScreenViewModel @Inject constructor(
 
     private fun clearSearchResults() {
         updateState {
-            it.copy(
+            copy(
                 movies = flowOf(PagingData.empty()),
                 tvShows = flowOf(PagingData.empty()),
                 actors = flowOf(PagingData.empty()),
@@ -72,7 +67,7 @@ class SearchScreenViewModel @Inject constructor(
 
     override fun onTabSelected(index: Int) {
         if (index == state.value.selectedTabIndex) return
-        updateState { it.copy(selectedTabIndex = index) }
+        updateState { copy(selectedTabIndex = index) }
         val searchQuery = state.value.searchQuery
         loadMediaByTab(searchQuery)
     }
@@ -89,7 +84,7 @@ class SearchScreenViewModel @Inject constructor(
     private fun loadTvShows(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadTvShowsOperation(query) },
+            block = { loadTvShowsOperation(query) },
             onCollect = ::onTvShowsLoaded,
             onError = ::onDataLoadError
         )
@@ -98,7 +93,7 @@ class SearchScreenViewModel @Inject constructor(
     private fun loadMovies(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadMoviesOperation(query) },
+            block = { loadMoviesOperation(query) },
             onCollect = ::onMoviesLoaded,
             onError = ::onDataLoadError
         )
@@ -107,14 +102,14 @@ class SearchScreenViewModel @Inject constructor(
     private fun loadActors(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadActorsOperation(query) },
+            block = { loadActorsOperation(query) },
             onCollect = ::onActorsLoaded,
             onError = ::onDataLoadError
         )
     }
 
     private fun setLoadingState() {
-        updateState { it.copy(isLoading = true, error = null, noInternetConnection = false) }
+        updateState { copy(isLoading = true, error = null, noInternetConnection = false) }
     }
 
     private fun loadActorsOperation(query: String): Flow<PagingData<ActorUiModel>> {
@@ -139,35 +134,35 @@ class SearchScreenViewModel @Inject constructor(
     }
 
     private fun onMoviesLoaded(pagingData: PagingData<MovieUiModel>) {
-        updateState { it.copy(movies = flowOf(pagingData)) }
+        updateState { copy(movies = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onTvShowsLoaded(pagingData: PagingData<TvShowUiModel>) {
-        updateState { it.copy(tvShows = flowOf(pagingData)) }
+        updateState { copy(tvShows = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun onActorsLoaded(pagingData: PagingData<ActorUiModel>) {
-        updateState { it.copy(actors = flowOf(pagingData)) }
+        updateState { copy(actors = flowOf(pagingData)) }
         setSuccessState()
     }
 
     private fun setSuccessState() {
-        updateState { it.copy(isLoading = false, noInternetConnection = false) }
+        updateState { copy(isLoading = false, noInternetConnection = false) }
     }
 
     private fun onDataLoadError(e: Throwable) {
-        updateState { currentState ->
+        updateState {
             if (e is NoNetworkException) {
-                currentState.copy(
+                copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             } else {
                 val errorMessage = e.message ?: "An unexpected error occurred."
-                currentState.copy(
+                copy(
                     isLoading = false,
                     error = errorMessage,
                     noInternetConnection = false
@@ -203,24 +198,8 @@ class SearchScreenViewModel @Inject constructor(
         }
     }
 
-    override fun <T : Any, R : Any> createPagingFlow(
-        pagingSourceFactory: () -> PagingSource<Int, T>,
-        mapper: (T) -> R,
-    ): Flow<PagingData<R>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = PAGE_SIZE,
-                enablePlaceholders = false,
-                prefetchDistance = 4
-            ),
-            pagingSourceFactory = pagingSourceFactory
-        ).flow.map { pagingData ->
-            pagingData.map(mapper)
-        }.cachedIn(viewModelScope)
-    }
-
     override fun onSearchQueryChanged(query: String) {
-        updateState { it.copy(searchQuery = query) }
+        updateState { copy(searchQuery = query) }
     }
 
     override fun retrySearch() {

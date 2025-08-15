@@ -3,8 +3,8 @@ package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.base.TvBasePagingSource
-import com.sanaa.tvapp.base.TvBaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
@@ -25,8 +25,8 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageMovieDetails: ManageMovieUseCase,
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : TvBaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+) : BaseViewModel<MovieDetailsScreenUiState, MovieDetailsScreenUiEffect>(
     initialState = MovieDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
@@ -43,18 +43,18 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { it.copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
-            callee = {
+            block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { it.copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false, errorMessage = null) }
             },
             onError = { exception ->
                 if (exception is NoNetworkException) {
                     updateState {
-                        it.copy(
+                        copy(
                             noInternetConnection = true,
                             isLoading = false,
                             errorMessage = null
@@ -62,7 +62,7 @@ class MovieDetailsViewModel @Inject constructor(
                     }
                 } else {
                     updateState {
-                        it.copy(
+                        copy(
                             isLoading = false,
                             errorMessage = exception.message,
                             noInternetConnection = false
@@ -88,7 +88,7 @@ class MovieDetailsViewModel @Inject constructor(
         val similar = similarDeferred.await()
 
         updateState {
-            it.copy(
+            copy(
                 movieDetails = movie.toDetailsUiModel(trailerUrl = trailerUrl),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
@@ -111,8 +111,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-
-    override fun onWatchTrailerClick(urlString:String) {
+    override fun onWatchTrailerClick(urlString: String) {
         emitEffect(MovieDetailsScreenUiEffect.OpenTrailer(urlString))
     }
 
@@ -138,16 +137,16 @@ class MovieDetailsViewModel @Inject constructor(
 
     private fun updateUserLoginState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { loggedIn ->
-                updateState { it.copy(isUserLoggedIn = loggedIn) }
+                updateState { copy(isUserLoggedIn = loggedIn) }
             },
             onError = { },
         )
     }
 
     fun updateUserStatus() {
-        tryToExecute(callee = ::updateUserLoginState)
+        tryToExecute(block = ::updateUserLoginState)
     }
 
     companion object {
