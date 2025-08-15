@@ -1,6 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-interface SaveToListsInteractionListener {
+interface SaveToListInteractionListener {
     fun onPlaylistSelected(listId: Long)
     fun onAddClicked(mediaId: Long)
     fun onSnackBarDismiss()

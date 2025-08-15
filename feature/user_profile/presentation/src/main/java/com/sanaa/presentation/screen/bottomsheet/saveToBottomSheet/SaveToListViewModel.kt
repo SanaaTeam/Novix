@@ -2,9 +2,11 @@ package com.sanaa.presentation.screen.bottomsheet.saveToBottomSheet
 
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.profileBase.BaseViewModel
+import com.sanaa.presentation.screen.bottomsheet.components.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import javax.inject.Inject
 
@@ -12,6 +14,7 @@ import javax.inject.Inject
 class SaveToListViewModel @Inject constructor(
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
     private val listsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
 ) : BaseViewModel<SaveToListUiState, SaveToListEffect>(SaveToListUiState()),
     SaveToListInteractionsListener {
 
@@ -47,11 +50,15 @@ class SaveToListViewModel @Inject constructor(
         }
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     override fun onAddClicked(mediaId: Long) {
         val selectedListId = state.value.selectedListId ?: return
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
 
         tryToExecute(
             block = {
@@ -61,21 +68,25 @@ class SaveToListViewModel @Inject constructor(
                 )
             },
             onSuccess = {
-                updateState { copy(isLoading = false) }
+                updateState {
+                    copy(
+                        isLoading = false,
+                        snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)
+                    )
+                }
                 listsStatusProvider.markItemSaved(mediaId.toInt())
                 viewModelScope.launch {
                     listsStatusProvider.refreshLists()
                 }
-                emitEffect(SaveToListEffect.AddedSuccessfully)
+                emitEffect(SaveToListEffect.Dismiss)
             },
             onError = {
                 updateState {
                     copy(
                         isLoading = false,
-                        errorMessage = "Failed to add item to list."
+                        snackBarData = SnackData(message = stringProvider.addToListFailed, isError = true)
                     )
                 }
-                emitEffect(SaveToListEffect.FailedToAdd)
             }
         )
     }

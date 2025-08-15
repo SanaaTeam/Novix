@@ -40,9 +40,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
-import com.sanaa.feature.home.presentation.R as homeRes
 
 @Composable
 fun SaveToListBottomSheet(
@@ -50,35 +48,20 @@ fun SaveToListBottomSheet(
     mediaId: Long,
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val successMessage =
-        stringResource(homeRes.string.added_to_list_successfully)
-    val failMessage =
-        stringResource(homeRes.string.added_to_list_failed)
 
     NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                SaveToListEffect.AddedSuccessfully -> {
+                SaveToListEffect.Dismiss -> {
                     onDismiss()
-                    snack = SnackData(
-                        message = successMessage,
-                        isError = false
-                    )
-                }
-
-                SaveToListEffect.FailedToAdd -> {
-                    snack = SnackData(
-                        message = failMessage,
-                        isError = true
-                    )
                 }
             }
         }
@@ -135,10 +118,8 @@ private fun SaveToListBottomSheetContent(
                 LazyColumn(
                     modifier = Modifier
                         .heightIn(max = 400.dp)
-
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
-
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(state.playlists, key = { it.id }) { playlist ->
@@ -248,8 +229,8 @@ private fun SaveToListBottomSheetPreview() {
                     state = state.copy(selectedListId = listId)
                 }
 
-                override fun onAddClicked(mediaId: Long) {
-                }
+                override fun onAddClicked(mediaId: Long) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0,
             onCreateNewListClick = {}

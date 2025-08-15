@@ -39,6 +39,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.bottomsheet.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -46,29 +47,21 @@ fun SaveToListBottomSheet(
     isVisible: Boolean,
     mediaId: Long,
     modifier: Modifier = Modifier,
-    onSuccess: () -> Unit = {},
-    onFailure: () -> Unit = {},
     onDismiss: () -> Unit,
     onCreateNewListClick: () -> Unit,
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
 
-    LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            onDismiss()
-        }
-    }
+    NovixAnimatedSnackBarHost(
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                SaveToListEffect.AddedSuccessfully -> {
-                    onSuccess()
-                    onDismiss()
-                }
-
-                SaveToListEffect.FailedToAdd -> onFailure()
+                is SaveToListEffect.Dismiss -> onDismiss()
             }
         }
     }
@@ -126,10 +119,8 @@ private fun SaveToListBottomSheetContent(
                 LazyColumn(
                     modifier = Modifier
                         .heightIn(max = 400.dp)
-
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
-
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(state.playlists, key = { it.id }) { playlist ->
@@ -239,8 +230,8 @@ private fun SaveToListBottomSheetPreview() {
                     state = state.copy(selectedListId = listId)
                 }
 
-                override fun onAddClicked(mediaId: Long) {
-                }
+                override fun onAddClicked(mediaId: Long) {}
+                override fun onSnackBarDismiss() {}
             },
             mediaId = 0,
             onCreateNewListClick = {}
