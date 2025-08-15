@@ -77,9 +77,6 @@ private fun SearchScreenContent(
     tvShowsPagingData: LazyPagingItems<TvShowUiModel>,
     actorsPagingData: LazyPagingItems<ActorUiModel>,
 ) {
-    state.movies.let {
-        Log.d("test99", "SearchScreenContent: state:${state.movies}")
-    }
     NovixScaffold (
         topBar = {
             TopBar(
