@@ -61,14 +61,13 @@ abstract class BaseViewModel<T, E>(
     protected fun <R> tryToCollect(
         block: suspend () -> Flow<R>,
         onCollect: suspend (R) -> Unit,
-        onError: (exception: Throwable) -> Unit = {},
+        onError: (exception: NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher
     ) {
         val handler = createExceptionHandler(onError)
         viewModelScope.launch(dispatcher + handler) {
             block()
                 .catch { e ->
-                    // Handle flow errors
                     val error = e.toNovixAppException()
                     onError(error)
                 }
@@ -76,7 +75,6 @@ abstract class BaseViewModel<T, E>(
                     try {
                         onCollect(value)
                     } catch (e: Throwable) {
-                        // Handle collection errors
                         onError(e.toNovixAppException())
                     }
                 }
