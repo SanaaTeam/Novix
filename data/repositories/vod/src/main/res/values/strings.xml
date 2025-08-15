@@ -6,4 +6,7 @@
     <string name="add_to_list_success">Added to list successfully</string>
     <string name="submit_rating_successfully">Submit rating successfully</string>
     <string name="submit_rating_failed">Submit rating failed</string>
+    <string name="created_list_successfully">Created list successfully</string>
+    <string name="failed_to_create_list">Failed to create list</string>
+    <string name="failed_to_delete_list">Failed to delete list. Please try again.</string>
 </resources>

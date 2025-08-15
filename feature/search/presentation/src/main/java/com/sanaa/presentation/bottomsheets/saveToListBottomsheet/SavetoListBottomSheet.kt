@@ -40,6 +40,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.SaveListListener
+import com.sanaa.presentation.screen.componants.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -51,6 +52,11 @@ fun SaveToListBottomSheet(
 ) {
     val viewModel: SaveToListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
+
+    NovixAnimatedSnackBarHost(
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -87,8 +93,8 @@ private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
-    onPlaylistSelected: (Long) -> Unit,
-    onAddClick: () -> Unit,
+    interactionListener: SaveToListInteractionListener,
+    mediaId: Long,
     onCreateNewListClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,10 +130,8 @@ private fun SaveToListBottomSheetContent(
                 LazyColumn(
                     modifier = Modifier
                         .heightIn(max = 400.dp)
-
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
-
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     items(state.playlists, key = { it.id }) { playlist ->
@@ -135,7 +139,7 @@ private fun SaveToListBottomSheetContent(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
                             isSelected = state.selectedListId == playlist.id,
-                            onClick = { onPlaylistSelected(playlist.id) }
+                            onClick = { interactionListener.onPlaylistSelected(playlist.id) }
                         )
                     }
                 }
@@ -143,7 +147,7 @@ private fun SaveToListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled && !state.isLoading,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -232,15 +236,18 @@ private fun SaveToListBottomSheetPreview() {
             isVisible = true,
             state = state,
             onDismiss = {},
-            onPlaylistSelected = { selectedId ->
-                state = state.copy(
-                    selectedListId = selectedId,
-                    isAddButtonEnabled = true
-                )
+            interactionListener = object : SaveToListInteractionListener {
+                override fun onPlaylistSelected(listId: Long) {
+                    state = state.copy(selectedListId = listId)
+                }
+
+                override fun onAddClicked(mediaId: Long) {
+                    state = state.copy(isLoading = true)
+                }
+
+                override fun onSnackBarDismiss() {}
             },
-            onAddClick = {
-                state = state.copy(isLoading = true)
-            },
+            mediaId = 0,
             onCreateNewListClick = {}
         )
     }

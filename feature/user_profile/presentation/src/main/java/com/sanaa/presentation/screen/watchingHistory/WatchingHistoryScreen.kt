@@ -195,8 +195,6 @@ private fun WatchingHistoryScreenContent(
                 mediaId = mediaItem.id.toLong(),
                 onDismiss = interactionListener::onDismissSaveToListBottomSheet,
                 onCreateNewListClick = interactionListener::onCreateNewListClick,
-                onSuccess = { interactionListener.onSaveToListResult(true) },
-                onFailure = { interactionListener.onSaveToListResult(false) }
             )
         }
     }
