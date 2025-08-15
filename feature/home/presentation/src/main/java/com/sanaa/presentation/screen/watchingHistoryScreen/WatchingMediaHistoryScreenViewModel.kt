@@ -14,7 +14,6 @@ import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import repository.SavedListsStatusProvider
@@ -66,11 +65,6 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         tryToCollect(
             block = {
                 loadMediaHistory(mediaType = MediaType.MOVIE, genreId = genreId)
-                    .combine(savedListsStatusProvider.savedIds) { mediaList, savedIds ->
-                        mediaList.map { media ->
-                            media.copy(isSaved = savedIds.contains(media.id))
-                        }
-                    }
             },
             onCollect = { mediaList -> onFetchMoviesSuccess(mediaList.map { it.toState() }) },
             onError = ::onDataLoadError
@@ -188,6 +182,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
     override fun onDismissAddListBottomSheet() {
         updateState { copy(showAddListBottomSheet = false) }
     }
+
     override fun onLoginButtonClick() {
         emitEffect(WatchingMediaHistoryScreenEffect.NavigateToLogin)
     }

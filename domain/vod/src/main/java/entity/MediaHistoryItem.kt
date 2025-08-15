@@ -8,5 +8,4 @@ data class MediaHistoryItem(
     val mediaType: MediaType,
     val genres: List<Genre>,
     val lastWatchedAt: Long,
-    val isSaved: Boolean = false,
-    )
+)
