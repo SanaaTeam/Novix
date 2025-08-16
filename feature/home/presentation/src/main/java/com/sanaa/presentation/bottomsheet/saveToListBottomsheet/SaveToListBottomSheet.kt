@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,11 +40,10 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
-import com.sanaa.feature.home.presentation.R as homeRes
 
 val TAG = "testingSavedBottomSheet"
+
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
@@ -58,40 +56,16 @@ fun SaveToListBottomSheet(
     viewModel.getMediaId(mediaId)
 
     val state by viewModel.state.collectAsState()
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val successMessage =
-        stringResource(homeRes.string.added_to_list_successfully)
-    val failMessage =
-        stringResource(homeRes.string.added_to_list_failed)
-
-
-
 
     NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null }
+        data = state.snackBarData, onDismiss = { viewModel.onSnackBarDismiss() }
     )
-
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                SaveToListEffect.AddedSuccessfully -> {
-                    onDismiss()
-                    snack = SnackData(
-                        message = successMessage,
-                        isError = false
-                    )
-                    viewModel.clearBottomSheetState()
-                }
-
-                SaveToListEffect.FailedToAdd -> {
-                    onDismiss()
-                    snack = SnackData(
-                        message = failMessage,
-                        isError = true
-                    )
-                    viewModel.clearBottomSheetState()
-                }
+                SaveToListEffect.CreateNewList -> onCreateNewListClick()
+                SaveToListEffect.DismissBottomSheet -> onDismiss()
             }
         }
     }
@@ -100,13 +74,7 @@ fun SaveToListBottomSheet(
         isVisible = isVisible,
         state = state,
         onDismiss = onDismiss,
-        onPlaylistClicked = viewModel::onPlayListClicked,
-        onAddClick = {
-            viewModel.onAddClicked(
-                mediaId = mediaId,
-            )
-        },
-        onCreateNewListClick = onCreateNewListClick,
+        interactionListener = viewModel,
         modifier = modifier
     )
 }
@@ -116,14 +84,15 @@ private fun SaveToListBottomSheetContent(
     isVisible: Boolean,
     state: SaveToListUiState,
     onDismiss: () -> Unit,
-    onPlaylistClicked: (Long) -> Unit,
-    onAddClick: () -> Unit,
-    onCreateNewListClick: () -> Unit,
+    interactionListener: SaveToListInteractionListener,
     modifier: Modifier = Modifier,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
-        onDismiss = onDismiss,
+        onDismiss = {
+            interactionListener.onRequestBottomSheetDismiss()
+            onDismiss()
+                    },
     ) {
         Column(
             modifier = modifier
@@ -136,7 +105,10 @@ private fun SaveToListBottomSheetContent(
                 rightContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_cancel),
-                        onClick = onDismiss
+                        onClick = {
+                            interactionListener.onRequestBottomSheetDismiss()
+                            onDismiss()
+                        }
                     )
                 }
             )
@@ -163,14 +135,8 @@ private fun SaveToListBottomSheetContent(
                         PlaylistItem(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
-                            isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem ,
-                            onClick = {
-                                onPlaylistClicked(playlist.id)
-                                Log.d(
-                                    TAG,
-                                    "SaveToListBottomSheetContent: onClick -> playList:${playlist.title},id: ${playlist.id}"
-                                )
-                            }
+                            isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem,
+                            onClick = { interactionListener.onPlaylistClick(playlist.id) }
                         )
                     }
                 }
@@ -178,9 +144,9 @@ private fun SaveToListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
-                isEnabled = state.isAddButtonEnabled && !state.isLoading,
-                isLoading = state.isLoading,
+                onClick = interactionListener::onAddClick,
+                isEnabled = state.isAddButtonEnabled && !state.isUploading || state.selectedListsIds.isNotEmpty(),
+                isLoading = state.isUploading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
@@ -189,7 +155,7 @@ private fun SaveToListBottomSheetContent(
 
             OutlinedButton(
                 text = stringResource(R.string.create_new_list),
-                onClick = onCreateNewListClick,
+                onClick = interactionListener::onCreateNewListClick,
                 modifier = Modifier
                     .padding(top = 12.dp)
                     .fillMaxWidth()
@@ -249,15 +215,17 @@ private fun SaveToListBottomSheetPreview() {
     val playlists = listOf(
         PlaylistUiItem(
             id = 1, title = "My favorite", itemCount = 12,
-            itemsIds = listOf(1L,2L),
+            itemsIds = listOf(1L, 2L),
             containsMediaItem = true,
         ),
-        PlaylistUiItem(id = 2, title = "My movies", itemCount = 5,
-            itemsIds = listOf(1L,2L),
+        PlaylistUiItem(
+            id = 2, title = "My movies", itemCount = 5,
+            itemsIds = listOf(1L, 2L),
             containsMediaItem = false
         ),
-        PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23,
-            itemsIds = listOf(1L,2L),
+        PlaylistUiItem(
+            id = 3, title = "Watch Later", itemCount = 23,
+            itemsIds = listOf(1L, 2L),
             containsMediaItem = false
         )
     )
@@ -277,13 +245,7 @@ private fun SaveToListBottomSheetPreview() {
             isVisible = true,
             state = state,
             onDismiss = {},
-            onPlaylistClicked = { selectedId ->
-
-            },
-            onAddClick = {
-                state = state.copy(isLoading = true)
-            },
-            onCreateNewListClick = {}
+            interactionListener = TODO(),
         )
     }
 }
