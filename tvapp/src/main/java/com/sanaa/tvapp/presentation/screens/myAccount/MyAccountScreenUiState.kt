@@ -17,6 +17,8 @@ data class MyAccountScreenUiState(
     val savedContentRestriction: ContentRestrictionUiState? = null,
     val watchingHistoryMovies: List<MediaItem> = emptyList(),
     val myRatingMovies: List<MediaItem> = emptyList(),
+    val watchingHistoryTvShows: List<MediaItem> = emptyList(),
+    val myRatingTvShows: List<MediaItem> = emptyList(),
 ) {
     companion object {
         const val ARABIC_LANGUAGE_CODE = "ar"

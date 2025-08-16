@@ -7,6 +7,7 @@ import exceptions.NoInternetException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import service.IdentityStringProvider
+import usecase.CreateGuestSessionUseCase
 import usecase.LoginUseCase
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
+    private val createGuestSessionUseCase: CreateGuestSessionUseCase,
     private val identityStringProvider: IdentityStringProvider,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<LoginUiState, LoginScreenEffects>(LoginUiState(), ioDispatcher),
@@ -82,7 +84,15 @@ class LoginViewModel @Inject constructor(
 
 
     override fun onContinueClicked() {
-        emitEffect(LoginScreenEffects.ReturnGuestResultCode)
+        tryToExecute(
+            block = {
+                createGuestSessionUseCase.createGuestSession()
+            },
+            onSuccess = {
+                emitEffect(LoginScreenEffects.ReturnGuestResultCode)
+            },
+            onError = ::onDataLoadError
+        )
     }
 
     private fun isSubmitAllowed(uiState: LoginUiState): Boolean =

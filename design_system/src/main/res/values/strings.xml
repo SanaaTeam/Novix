@@ -38,6 +38,7 @@
     <string name="moderate_restriction">Moderate</string>
     <string name="unrestricted">Off</string>
     <string name="light">Light</string>
+    <string name="system_language">System Language</string>
     <string name="dark">Dark</string>
     <string name="save">Save</string>
     <string name="blurs_all_sensitive_content">Blurs all sensitive content.</string>

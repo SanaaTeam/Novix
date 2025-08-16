@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,6 +54,9 @@ import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.Navi
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.PopBackStackToWelcomeScreen
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppLanguage
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppTheme
+import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionItem
+import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
@@ -63,6 +65,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScre
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.collectLatest
+import repository.Language
 import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R as tvResource
 
@@ -120,15 +123,16 @@ private fun MyAccountScreenContent(
     state: MyAccountScreenUiState,
     interactionsListener: MyAccountScreenInteractionsListener,
 ) {
-    val sidePaddings = 36.dp
     val scrollState = rememberScrollState()
     val mainTvNavController = LocalAppNavController.current
     val navController = rememberNavController()
 
     Column(
         modifier = Modifier
+            .padding(horizontal = 36.dp)
             .fillMaxWidth()
-            .verticalScroll(scrollState)
+            .verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -153,19 +157,61 @@ private fun MyAccountScreenContent(
         }
 
         Title(
-            modifier = Modifier.padding(horizontal = sidePaddings, vertical = 16.dp),
+            modifier = Modifier,
             title = stringResource(tvResource.string.settings)
         )
 
-        SettingSection(title = stringResource(designSystemResource.string.language)) {
-
+        SettingSection(
+            modifier = Modifier,
+            title = stringResource(designSystemResource.string.language),
+        ) {
+            SettingOptions(
+                settingOptionItems = listOf(
+                    SettingOptionItem(
+                        title = stringResource(designSystemResource.string.english),
+                        tag = Language.ENGLISH,
+                        isSelected = state.selectedLanguage == Language.ENGLISH.code
+                    ),
+                    SettingOptionItem(
+                        title = stringResource(designSystemResource.string.arabic),
+                        tag = Language.ARABIC,
+                        isSelected = state.selectedLanguage == Language.ARABIC.code
+                    )
+                ),
+                onSelected = { interactionsListener.onSelectLanguage(it.tag.code) }
+            )
         }
 
-        SettingSection(title = stringResource(designSystemResource.string.content_restriction)) {
-
+        SettingSection(
+            modifier = Modifier,
+            title = stringResource(designSystemResource.string.content_restriction),
+        ) {
+            SettingOptions(
+                settingOptionItems = listOf(
+                    SettingOptionItem(
+                        title = stringResource(designSystemResource.string.strict_restriction),
+                        description = stringResource(designSystemResource.string.blurs_all_sensitive_content),
+                        tag = ContentRestrictionUiState.RESTRICTED,
+                        isSelected = state.selectedContentRestriction == ContentRestrictionUiState.RESTRICTED
+                    ),
+                    SettingOptionItem(
+                        title = stringResource(designSystemResource.string.moderate_restriction),
+                        description = stringResource(designSystemResource.string.blurs_explicit_scenes_only),
+                        tag = ContentRestrictionUiState.MODERATE_RESTRICTION,
+                        isSelected = state.selectedContentRestriction == ContentRestrictionUiState.MODERATE_RESTRICTION
+                    ),
+                    SettingOptionItem(
+                        title = stringResource(designSystemResource.string.unrestricted),
+                        description = stringResource(designSystemResource.string.no_content_is_blurred),
+                        tag = ContentRestrictionUiState.UNRESTRICTED,
+                        isSelected = state.selectedContentRestriction == ContentRestrictionUiState.UNRESTRICTED
+                    ),
+                ),
+                onSelected = { interactionsListener.onSelectContentRestriction(it.tag) }
+            )
         }
 
-        MyAccountMediaTab(sidePaddings, navController)
+        MyAccountMediaTab(state, navController)
 
         NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
             composable(route = HomeMoviesTapRoute::class) {
@@ -198,7 +244,7 @@ fun MyAccountMovies(
         }
 
         if (state.myRatingMovies.isNotEmpty()) {
-            MediaSection(title = stringResource(tvResource.string.watching_history)) {
+            MediaSection(title = stringResource(designSystemResource.string.my_rating)) {
                 items(items = state.myRatingMovies, key = { it.id }) {
                     ImageList(it, onItemClick = { id -> onItemClick(id) })
                 }
@@ -210,7 +256,7 @@ fun MyAccountMovies(
 
 @Composable
 fun MyAccountMediaTab(
-    sidePaddings: Dp,
+    state: MyAccountScreenUiState,
     navController: NavHostController,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -219,21 +265,31 @@ fun MyAccountMediaTab(
     var selectedTab by remember {
         mutableIntStateOf(0)
     }
-    val tabs = listOf(
-        MediaTabItem(
-            title = stringResource(designSystemResource.string.movies),
-            onFocus = { navController.navigate(HomeMoviesTapRoute) }
-        ),
-        MediaTabItem(
-            title = stringResource(designSystemResource.string.tv_shows),
-            onFocus = { navController.navigate(HomeTvShowsTapRoute) }
-        ),
-    )
+    val tabs = mutableListOf<MediaTabItem>()
+    if (state.watchingHistoryMovies.isNotEmpty() && state.myRatingMovies.isNotEmpty()) {
+        tabs.add(
+            MediaTabItem(
+                title = stringResource(designSystemResource.string.movies),
+                onFocus = { navController.navigate(HomeMoviesTapRoute) }
+            )
+        )
+    }
+
+    if (state.watchingHistoryTvShows.isNotEmpty() && state.myRatingTvShows.isNotEmpty()) {
+        tabs.add(
+            MediaTabItem(
+                title = stringResource(designSystemResource.string.tv_shows),
+                onFocus = { navController.navigate(HomeMoviesTapRoute) }
+            )
+        )
+    }
+
+    if (tabs.isEmpty())
+        return
 
     Box(
         modifier = Modifier
             .focusable(enabled = true, interactionSource)
-            .padding(top = 12.dp, start = sidePaddings, end = sidePaddings)
             .handleDPadKeyEvents(onLeft = {
                 if (selectedTab != 0) {
                     selectedTab -= 1
