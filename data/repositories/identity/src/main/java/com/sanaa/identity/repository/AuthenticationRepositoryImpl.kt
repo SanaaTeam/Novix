@@ -57,8 +57,8 @@ class AuthenticationRepositoryImpl @Inject constructor(
     }
 
     override fun isLoggedIn(): Flow<Boolean> {
-        return userLocalDataSource.getLoggedUser().map {
-            it != null
+        return preferences.sessionId.map { sessionId ->
+            sessionId.isNotBlank()
         }
     }
 
