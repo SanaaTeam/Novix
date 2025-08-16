@@ -14,6 +14,11 @@ data class GenreTvShowsScreenUiState(
     val noInternetConnection: Boolean = false,
     val userIsLoggedIn: Boolean = false
 )
+enum class ScreenState {
+    LOADING,
+    NO_INTERNET,
+    CONTENT
+}
 
 
 
