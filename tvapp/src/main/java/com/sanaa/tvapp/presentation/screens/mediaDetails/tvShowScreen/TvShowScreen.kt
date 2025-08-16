@@ -48,8 +48,8 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components
 import com.sanaa.tvapp.presentation.screens.mediaDetails.tvShowScreen.components.SeasonTab
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
 import com.sanaa.tvapp.state.SnackData
 
 
@@ -69,12 +69,12 @@ fun TvShowScreen(
         viewModel.effect.collect {
             when (it) {
                 is TvShowDetailsScreenEffects.NavigateToActorScreen -> {
-                    navController.navigate(ActorDetails(it.actorId))
+                    navController.navigate(ActorDetailsRoute(it.actorId))
                 }
 
                 is TvShowDetailsScreenEffects.NavigateToEpisodeDetailsScreen -> {
                     navController.navigate(
-                        ScreensRoute.EpisodeDetails(
+                        ScreensRoute.EpisodeDetailsRoute(
                             seriesId = it.seriesId,
                             seasonNumber = it.seasonNumber,
                             episodeNumber = it.episodeNumber
@@ -83,7 +83,7 @@ fun TvShowScreen(
                 }
 
                 TvShowDetailsScreenEffects.NavigateToLogin -> {
-                    navController.navigate(Login)
+                    navController.navigate(LoginRoute)
                 }
 
                 is TvShowDetailsScreenEffects.NavigateToMovieCategoriesScreen -> {

@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.Text
-import com.google.firebase.sessions.api.SessionSubscriber
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
@@ -40,7 +39,7 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopMoviesSli
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TopTvShowsSlider
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 import com.sanaa.tvapp.state.SnackData
 
 @Composable
@@ -53,8 +52,8 @@ fun ActorScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetails(effect.movieId))
-                is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetails(effect.seriesId))
+                is ActorScreenEffects.NavigateToMovieDetails -> navController.navigate(MovieDetailsRoute(effect.movieId))
+                is ActorScreenEffects.NavigateToSeriesDetails -> navController.navigate(ScreensRoute.TvShowDetailsRoute(effect.seriesId))
                 ActorScreenEffects.NavigateToLogin -> TODO()
             }
         }

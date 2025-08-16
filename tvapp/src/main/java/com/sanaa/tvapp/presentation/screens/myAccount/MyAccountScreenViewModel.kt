@@ -51,7 +51,7 @@ class MyAccountScreenViewModel @Inject constructor(
 
         tryToExecute(
             block = ::saveLanguage,
-            onSuccess = ::onSaveLanguageSuccess
+            onSuccess = ::onSaveLanguageSuccess,
         )
     }
 
@@ -71,7 +71,7 @@ class MyAccountScreenViewModel @Inject constructor(
         tryToExecute(
             block = logOutUseCase::logout,
             onSuccess = {
-                emitEffect(MyAccountScreenEffect.PopBackStackToWelcomeScreen)
+                emitEffect(MyAccountScreenEffect.Recreate)
             }
         )
     }

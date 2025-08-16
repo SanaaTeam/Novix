@@ -46,10 +46,10 @@ fun SearchScreen(
     LaunchedEffect(Unit) {
         searchViewModel.effect.collect {
             when(it){
-                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(ScreensRoute.ActorDetails(it.id))
+                is SearchScreenEffect.NavigateToActorDetails -> navController.navigate(ScreensRoute.ActorDetailsRoute(it.id))
                 SearchScreenEffect.NavigateToLogin -> TODO()
-                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(ScreensRoute.MovieDetails(it.id))
-                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(ScreensRoute.TvShowDetails(it.id))
+                is SearchScreenEffect.NavigateToMovieDetails -> navController.navigate(ScreensRoute.MovieDetailsRoute(it.id))
+                is SearchScreenEffect.NavigateToTvShowDetails -> navController.navigate(ScreensRoute.TvShowDetailsRoute(it.id))
             }
     }
 }

@@ -21,18 +21,18 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
         composable<NavBarRoute.Search> { SearchScreen() }
         composable<NavBarRoute.Categories> { CategoriesScreen() }
         composable<NavBarRoute.MyAccount> { MyAccountScreen() }
-        composable<ScreensRoute.MovieDetails> { navBackStackEntry ->
+        composable<ScreensRoute.MovieDetailsRoute> { navBackStackEntry ->
             MovieDetailsScreen()
         }
-        composable<ScreensRoute.TvShowDetails> { navBackStackEntry ->
+        composable<ScreensRoute.TvShowDetailsRoute> { navBackStackEntry ->
             TvShowScreen()
         }
-        composable<ScreensRoute.EpisodeDetails> { navBackStackEntry ->
+        composable<ScreensRoute.EpisodeDetailsRoute> { navBackStackEntry ->
             EpisodeDetailsScreen()
         }
 
-        composable<ScreensRoute.ActorDetails> { navBackStackEntry ->
-            val actorId = navBackStackEntry.toRoute<ScreensRoute.ActorDetails>().actorId
+        composable<ScreensRoute.ActorDetailsRoute> { navBackStackEntry ->
+            val actorId = navBackStackEntry.toRoute<ScreensRoute.ActorDetailsRoute>().actorId
             ActorScreen()
         }
     }
