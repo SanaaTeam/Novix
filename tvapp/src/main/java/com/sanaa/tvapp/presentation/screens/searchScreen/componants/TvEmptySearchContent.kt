@@ -40,21 +40,21 @@ fun TvEmptySearchContent(
         Box(
             modifier = Modifier
                 .padding(bottom = 12.dp)
-                .size(50.dp),
+                .size(80.dp),
 
             contentAlignment = Alignment.Center,
         ) {
             Image(
                 painter = icon,
-                contentDescription = "Empty Search",
+                contentDescription = stringResource(R.string.empty_search_message),
                 modifier = Modifier
-                    .size(50.dp)
+                    .size(80.dp)
             )
             topIcon()
         }
         BasicText(
-                text = text,
-                style = Theme.textStyle.body.small.copy(
+            text = text,
+            style = Theme.textStyle.body.small.copy(
                 color = Theme.colors.body,
                 textAlign = TextAlign.Center
             ),
