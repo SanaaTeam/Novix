@@ -43,6 +43,16 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(playlists = tempPlayList) }
     }
 
+    fun clearBottomSheetState(){
+        updateState {
+            copy(
+                selectedListsIds = mutableListOf(),
+                mediaId = null
+            )
+        }
+    }
+
+
     fun onPlayListClicked(listId: Long) {
         Log.d(TAG, "viewModel:onPlayListClicked: listId:$listId")
         val targetPlaylist = state.value.playlists.find { it.id == listId }
@@ -114,6 +124,16 @@ class SaveToListViewModel @Inject constructor(
             listId = selectedListId.toInt(),
             movieId = mediaId.toInt()
         )
+        emitEffect(SaveToListEffect.AddedSuccessfully)
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false
+                )
+            )
+        }
     }
 
     private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {

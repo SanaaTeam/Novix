@@ -81,13 +81,16 @@ fun SaveToListBottomSheet(
                         message = successMessage,
                         isError = false
                     )
+                    viewModel.clearBottomSheetState()
                 }
 
                 SaveToListEffect.FailedToAdd -> {
+                    onDismiss()
                     snack = SnackData(
                         message = failMessage,
                         isError = true
                     )
+                    viewModel.clearBottomSheetState()
                 }
             }
         }
