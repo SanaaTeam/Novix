@@ -4,9 +4,6 @@ import com.sanaa.tvapp.state.MediaItem
 
 data class MyAccountScreenUiState(
     val currentUser: UserUiState = UserUiState(),
-    val showChangeLanguageBottomSheet: Boolean = false,
-    val showContentRestrictionBottomSheet: Boolean = false,
-    val showChangeThemeBottomSheet: Boolean = false,
     val selectedLanguage: String? = null,
     val selectedContentRestriction: ContentRestrictionUiState? = null,
     val selectedTheme: ThemeUiState? = null,
@@ -20,11 +17,6 @@ data class MyAccountScreenUiState(
     val watchingHistoryTvShows: List<MediaItem> = emptyList(),
     val myRatingTvShows: List<MediaItem> = emptyList(),
 ) {
-    companion object {
-        const val ARABIC_LANGUAGE_CODE = "ar"
-        const val ENGLISH_LANGUAGE_CODE = "en"
-    }
-
     enum class ThemeUiState {
         LIGHT,
         DARK
@@ -35,7 +27,6 @@ data class MyAccountScreenUiState(
         UNRESTRICTED,
         MODERATE_RESTRICTION
     }
-
 }
 
 

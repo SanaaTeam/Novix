@@ -7,11 +7,6 @@ sealed interface MyAccountScreenEffect {
     data class UpdateAppLanguage(
         val language: String
     ) : MyAccountScreenEffect
-
-    data class UpdateAppTheme(
-        val isDarkMode: Boolean
-    ) : MyAccountScreenEffect
-
     object NavigateToLogin : MyAccountScreenEffect
     object PopBackStackToWelcomeScreen : MyAccountScreenEffect
 }

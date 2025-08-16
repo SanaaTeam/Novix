@@ -1,6 +1,8 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.content.res.Configuration
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,8 +55,8 @@ import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.Navi
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.PopBackStackToWelcomeScreen
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppLanguage
-import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppTheme
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
+import com.sanaa.tvapp.presentation.screens.myAccount.component.MyAccountUserInfo
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionItem
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
@@ -66,6 +68,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHist
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
+import java.util.Locale
 import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R as tvResource
 
@@ -74,7 +77,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val view = LocalView.current
-    val activity = view.context as? AppCompatActivity
+    val activity = view.context as? ComponentActivity
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -95,14 +98,6 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
                 NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
                 NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
-                is UpdateAppTheme -> {
-                    if (it.isDarkMode) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    }
-                }
-
                 NavigateToLogin -> {
 
                 }
@@ -129,15 +124,24 @@ private fun MyAccountScreenContent(
 
     Column(
         modifier = Modifier
-            .padding(horizontal = 36.dp)
+            .padding(horizontal = 36.dp, vertical = 24.dp)
             .fillMaxWidth()
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            MyAccountUserInfo(
+                state.currentUser,
+                onLogoutClick = {
+                    interactionsListener.onLogoutButtonClick()
+                }
+            )
+
             Row(
                 modifier = Modifier
-                    .padding(horizontal = 36.dp, vertical = 24.dp)
                     .align(Alignment.CenterEnd),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
