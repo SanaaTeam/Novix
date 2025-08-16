@@ -1,8 +1,7 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
-import android.content.Context
-import android.content.res.Configuration
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +56,7 @@ import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.PopB
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppLanguage
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
 import com.sanaa.tvapp.presentation.screens.myAccount.component.MyAccountUserInfo
+import com.sanaa.tvapp.presentation.screens.myAccount.component.NotLoggedInStateComponent
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptionItem
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingOptions
 import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
@@ -68,7 +68,6 @@ import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHist
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import kotlinx.coroutines.flow.collectLatest
 import repository.Language
-import java.util.Locale
 import com.sanaa.designsystem.R as designSystemResource
 import com.sanaa.tvapp.R as tvResource
 
@@ -77,7 +76,7 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
     val view = LocalView.current
-    val activity = view.context as? ComponentActivity
+    val activity = view.context as? AppCompatActivity
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -109,7 +108,11 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
         }
     }
 
-    MyAccountScreenContent(state, viewModel)
+    if (!state.isUserLoggedIn) {
+        NotLoggedInStateComponent(state, viewModel)
+    } else {
+        MyAccountScreenContent(state, viewModel)
+    }
 }
 
 
