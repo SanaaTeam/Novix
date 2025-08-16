@@ -145,7 +145,7 @@ private fun SaveToListBottomSheetContent(
             PrimaryButton(
                 text = stringResource(R.string.add),
                 onClick = interactionListener::onAddClick,
-                isEnabled = state.isAddButtonEnabled && !state.isUploading || state.selectedListsIds.isNotEmpty(),
+                isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isUploading,
                 modifier = Modifier
                     .fillMaxWidth()
