@@ -54,7 +54,6 @@ class SaveToListViewModel @Inject constructor(
                 isAddButtonEnabled = updated.isNotEmpty()
             )
         }
-        Log.d(TAG, "viewModel:removeUnSelectedList: removed // updated state.selectedListIds:${state.value.selectedListsIds} ")
     }
 
     private fun addSelectedList(selectedListsIds: List<Long>, listId: Long) {
@@ -66,7 +65,6 @@ class SaveToListViewModel @Inject constructor(
             )
         }
 
-        Log.d(TAG, "viewModel:addSelectedList: added // updated state.selectedListIds:${state.value.selectedListsIds} ")
     }
 
 

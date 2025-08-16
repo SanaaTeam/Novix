@@ -42,7 +42,6 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
-val TAG = "testingSavedBottomSheet"
 
 @Composable
 fun SaveToListBottomSheet(
