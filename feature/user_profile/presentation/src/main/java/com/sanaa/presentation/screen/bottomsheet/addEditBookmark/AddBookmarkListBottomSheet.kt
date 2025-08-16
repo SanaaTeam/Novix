@@ -29,6 +29,7 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.presentation.screen.bottomsheet.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -45,9 +46,16 @@ fun AddBookmarkListBottomSheet(
         onDismiss()
     }
 
+    NovixAnimatedSnackBarHost(
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
+
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest {
-            handleDismiss()
+        viewModel.effect.collectLatest { effect ->
+            when (effect) {
+                is AddBookmarksEffect.Dismiss -> handleDismiss()
+            }
         }
     }
 
@@ -55,8 +63,8 @@ fun AddBookmarkListBottomSheet(
         isVisible = isVisible,
         onDismiss = handleDismiss,
         state = state,
-        onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = {viewModel.onAddClicked(mediaId)}
+        interactionListener = viewModel,
+        mediaId = mediaId
     )
 }
 
@@ -65,25 +73,15 @@ private fun AddBookmarkListBottomSheetContent(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     state: AddBookmarkListUiState,
-    onTitleChanged: (String) -> Unit,
-    onAddClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    interactionListener: AddBookmarksInteractionListeners,
+    mediaId: Int,
 ) {
-    var textFieldValue by remember(state.listTitle) {
-        mutableStateOf(
-            TextFieldValue(
-                text = state.listTitle,
-                selection = TextRange(state.listTitle.length)
-            )
-        )
-    }
-
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,12 +106,12 @@ private fun AddBookmarkListBottomSheetContent(
             )
 
             TextField(
-                value = textFieldValue,
+                value = TextFieldValue(
+                    text = state.listTitle,
+                    selection = TextRange(state.listTitle.length)
+                ),
                 onValueChange = { newValue ->
-                    if (textFieldValue.text != newValue.text) {
-                        onTitleChanged(newValue.text)
-                    }
-                    textFieldValue = newValue
+                    interactionListener.onListTitleChanged(newValue.text)
                 },
                 hint = stringResource(R.string.my_favorite_placeholder),
                 icon = painterResource(id = R.drawable.ic_bookmark_list),
@@ -126,7 +124,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -149,8 +147,13 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 listTitle = "",
                 isAddButtonEnabled = false
             ),
-            onTitleChanged = {},
-            onAddClick = {}
+            interactionListener = object : AddBookmarksInteractionListeners {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
+            },
+            mediaId = 0
         )
     }
 }
@@ -171,10 +174,13 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             isVisible = true,
             onDismiss = {},
             state = state,
-            onTitleChanged = { newTitle ->
-                state = state.copy(listTitle = newTitle, isAddButtonEnabled = newTitle.isNotBlank())
+            interactionListener = object : AddBookmarksInteractionListeners {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
-            onAddClick = {}
+            mediaId = 0
         )
     }
 }

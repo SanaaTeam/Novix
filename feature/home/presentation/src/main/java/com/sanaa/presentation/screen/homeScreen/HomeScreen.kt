@@ -14,16 +14,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
-import com.sanaa.presentation.api.navigation.LocalAppNavController
-import com.sanaa.presentation.api.navigation.PlayListScreenRoute
-import com.sanaa.presentation.api.navigation.TopRatedMediaScreenRoute
-import com.sanaa.presentation.api.navigation.TrendingMoviesScreenRoute
-import com.sanaa.presentation.api.navigation.TrendingPeopleScreenRoute
-import com.sanaa.presentation.api.navigation.TrendingTvShowsScreenRoute
-import com.sanaa.presentation.api.navigation.WatchingMediaHistoryScreenRoute
+import com.sanaa.presentation.app.navigation.LocalMainNavController
+import com.sanaa.presentation.app.navigation.PlayListScreenRoute
+import com.sanaa.presentation.app.navigation.TopRatedMediaScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingMoviesScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingPeopleScreenRoute
+import com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute
+import com.sanaa.presentation.app.navigation.WatchingMediaHistoryScreenRoute
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.navigation.HomeApiEntryPoint
+import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.screen.homeScreen.screenContent.HomeScreenContent
 import com.sanaa.presentation.state.MediaTypeUi
 import dagger.hilt.android.EntryPointAccessors
@@ -32,7 +32,7 @@ import dagger.hilt.android.EntryPointAccessors
 fun HomeScreen(
     viewModel: HomeScreenViewModel = hiltViewModel()
 ) {
-    val navController = LocalAppNavController.current
+    val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
 
     val detailsApi: MediaDetailsApi = remember {
