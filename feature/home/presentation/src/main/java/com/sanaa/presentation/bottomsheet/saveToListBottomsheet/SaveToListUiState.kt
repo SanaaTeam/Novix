@@ -7,6 +7,7 @@ data class SaveToListUiState(
     val playlists: List<PlaylistUiItem> = emptyList(),
     val selectedListsIds: MutableList<Long> = mutableListOf(),
     val isLoading: Boolean = false,
+    val isUploading:Boolean = false,
     val isAddButtonEnabled: Boolean = false,
     val snackBarData: SnackData? = null
 )
