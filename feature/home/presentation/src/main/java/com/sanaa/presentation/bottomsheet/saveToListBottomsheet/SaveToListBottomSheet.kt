@@ -42,7 +42,6 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
 
-val TAG = "testingSavedBottomSheet"
 
 @Composable
 fun SaveToListBottomSheet(
@@ -145,7 +144,7 @@ private fun SaveToListBottomSheetContent(
             PrimaryButton(
                 text = stringResource(R.string.add),
                 onClick = interactionListener::onAddClick,
-                isEnabled = state.isAddButtonEnabled && !state.isUploading || state.selectedListsIds.isNotEmpty(),
+                isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isUploading,
                 modifier = Modifier
                     .fillMaxWidth()

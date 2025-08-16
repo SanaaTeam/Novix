@@ -54,7 +54,6 @@ class SaveToListViewModel @Inject constructor(
                 isAddButtonEnabled = updated.isNotEmpty()
             )
         }
-        Log.d(TAG, "viewModel:removeUnSelectedList: removed // updated state.selectedListIds:${state.value.selectedListsIds} ")
     }
 
     private fun addSelectedList(selectedListsIds: List<Long>, listId: Long) {
@@ -62,11 +61,10 @@ class SaveToListViewModel @Inject constructor(
         updateState {
             copy(
                 selectedListsIds = updated,
-                isAddButtonEnabled = true
+                isAddButtonEnabled = updated.isNotEmpty()
             )
         }
 
-        Log.d(TAG, "viewModel:addSelectedList: added // updated state.selectedListIds:${state.value.selectedListsIds} ")
     }
 
 
@@ -112,9 +110,9 @@ class SaveToListViewModel @Inject constructor(
     }
 
     override fun onAddClick() {
-        val selectedListsIds: MutableList<Long> = state.value.selectedListsIds ?: return
-        if (!state.value.isAddButtonEnabled) return
-        updateState { copy(isUploading = true) }
+        val selectedListsIds: MutableList<Long> = state.value.selectedListsIds
+        if (selectedListsIds.isEmpty()) return
+        updateState { copy(isUploading = true, isAddButtonEnabled = false) }
         tryToExecute(
             block = {
                 selectedListsIds.forEach { listId ->
