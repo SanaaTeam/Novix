@@ -1,5 +1,6 @@
 package com.sanaa.presentation.bottomsheet.saveToListBottomsheet
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,7 @@ import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
 import com.sanaa.feature.home.presentation.R as homeRes
 
+val TAG = "testingSavedBottomSheet"
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
@@ -79,13 +81,16 @@ fun SaveToListBottomSheet(
                         message = successMessage,
                         isError = false
                     )
+                    viewModel.clearBottomSheetState()
                 }
 
                 SaveToListEffect.FailedToAdd -> {
+                    onDismiss()
                     snack = SnackData(
                         message = failMessage,
                         isError = true
                     )
+                    viewModel.clearBottomSheetState()
                 }
             }
         }
@@ -159,7 +164,13 @@ private fun SaveToListBottomSheetContent(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
                             isSelected = state.selectedListsIds.contains(playlist.id) || playlist.containsMediaItem ,
-                            onClick = { onPlaylistClicked(playlist.id) }
+                            onClick = {
+                                onPlaylistClicked(playlist.id)
+                                Log.d(
+                                    TAG,
+                                    "SaveToListBottomSheetContent: onClick -> playList:${playlist.title},id: ${playlist.id}"
+                                )
+                            }
                         )
                     }
                 }
@@ -248,7 +259,7 @@ private fun SaveToListBottomSheetPreview() {
         PlaylistUiItem(id = 3, title = "Watch Later", itemCount = 23,
             itemsIds = listOf(1L,2L),
             containsMediaItem = false
-            )
+        )
     )
 
     var state by remember {

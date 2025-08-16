@@ -10,11 +10,9 @@ import entity.Actor
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,7 +23,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -42,7 +40,7 @@ class MovieDetailsViewModelTest {
         mockk(relaxed = true)
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -73,9 +71,6 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -83,10 +78,9 @@ class MovieDetailsViewModelTest {
             manageMovieDetails,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
-
             getUser,
-            savedListsStatusProvider
-        )
+            stringProvider
+            )
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -94,13 +88,6 @@ class MovieDetailsViewModelTest {
             expectNoEvents()
             cancelAndIgnoreRemainingEvents()
         }
-    }
-
-    @Test
-    fun `onReadMoreClick does nothing`() = runTest {
-        givenHappy()
-        advanceUntilIdle()
-        viewModel.onReadMoreClick()
     }
 
     @Test
@@ -248,9 +235,7 @@ class MovieDetailsViewModelTest {
         coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
+
         val savedStateHandle = SavedStateHandle(mapOf("movieId" to movieId))
 
         viewModel = MovieDetailsViewModel(
@@ -259,7 +244,7 @@ class MovieDetailsViewModelTest {
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
             getUser,
-            savedListsStatusProvider,
+            stringProvider,
             dispatcher = testDispatcher,
 
             )

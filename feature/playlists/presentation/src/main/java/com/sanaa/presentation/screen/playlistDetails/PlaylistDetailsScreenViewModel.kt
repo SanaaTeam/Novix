@@ -39,18 +39,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     private fun loadItemsInSaved(listId: Int) {
         updateState { copy(isLoading = true) }
-//        tryToCollect(
-//            callee = {
-//            },
-//            onCollect = { movies ->
-//                updateState {
-//                    copy(movieList = flowOf(movies))
-//                }
-//                updateState { copy(isLoading = false) }
-//
-//            },
-//            onError = ::onDataLoadError
-//        )
+        tryToCollect(
+            callee = { loadSavedMovies(listId) },
+            onCollect = { updateState { copy(movieList = flowOf(it), isLoading = false) } },
+            onError = ::onDataLoadError
+        )
     }
 
     override fun onMediaClick(
@@ -68,13 +61,9 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
                     movieId = mediaItem.id
                 )
             },
-            onSuccess = { movies ->
+            onSuccess = {
                 loadItemsInSaved(listId)
-                updateState {
-                    copy(isLoading = false)
-                }
                 emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
-
             },
             onError = ::onDataLoadError
 
@@ -97,20 +86,18 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
     }
 
-//    private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
-//
-//        return createPagingFlow(
-//            pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
-//            mapper = Movie::toUiModel
-//        )
-//    }
-//
-//    private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
-//        return BasePagingSource { page ->
-//            manageSavedListItemsUseCase.getAllItemsInSavedList(listId, page).collect {
-//            }
-//        }
-//    }
+    private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
+        return  createPagingFlow(
+            pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
+            mapper = Movie::toUiModel
+        )
+    }
+
+    private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
+        return BasePagingSource { page ->
+            manageSavedListItemsUseCase.getItemsInSavedList(listId, page)
+        }
+    }
 
     private fun onDataLoadError(e: NovixAppException) {
         if (e is NoNetworkException) {
@@ -118,7 +105,6 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         } else {
             updateState { copy(isLoading = false, errorMessage = e.message) }
             emitEffect(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
-
         }
     }
 }

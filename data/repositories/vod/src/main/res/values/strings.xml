@@ -4,6 +4,9 @@
     <string name="something_went_wrong_error">Something went wrong, please try again later</string>
     <string name="add_to_list_failed">Add to list failed</string>
     <string name="add_to_list_success">Added to list successfully</string>
-    <string name="delete_rating_message">Delete rating successfully</string>
-    <string name="error_delete_rating_message">failed to delete rating</string>
+    <string name="submit_rating_successfully">Submit rating successfully</string>
+    <string name="submit_rating_failed">Submit rating failed</string>
+    <string name="created_list_successfully">Created list successfully</string>
+    <string name="failed_to_create_list">Failed to create list</string>
+    <string name="failed_to_delete_list">Failed to delete list. Please try again.</string>
 </resources>

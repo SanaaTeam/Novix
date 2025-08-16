@@ -24,30 +24,26 @@ class ManageSavedListItemsUseCaseTest {
 
     @Test
     fun `getAllItemsInSavedList should call repository and return movies`() = runTest {
-        coEvery { savedListRepository.getAllMoviesInList(LIST_ID, PAGE) } returns DUMMY_MOVIES
+        coEvery { savedListRepository.getMoviesInList(LIST_ID, PAGE) } returns DUMMY_MOVIES
 
-        val result = manageSavedListItemsUseCase.getAllItemsInSavedList(LIST_ID, PAGE)
+        val result = manageSavedListItemsUseCase.getItemsInSavedList(LIST_ID, PAGE)
 
         assertThat(result).isEqualTo(DUMMY_MOVIES)
     }
 
     @Test
-    fun `addMovieToSavedList should call repository and return true`() = runTest {
-        coEvery { savedListRepository.addMovieToList(LIST_ID, MOVIE_ID) } returns true
+    fun `addMovieToSavedList should call repository`() = runTest {
 
-        val result = manageSavedListItemsUseCase.addMovieToSavedList(LIST_ID, MOVIE_ID)
+        manageSavedListItemsUseCase.addMovieToSavedList(LIST_ID, MOVIE_ID)
 
-        assertThat(result).isTrue()
         coVerify(exactly = 1) { savedListRepository.addMovieToList(LIST_ID, MOVIE_ID) }
     }
 
     @Test
-    fun `removeMovieFromSavedList should call repository and return true`() = runTest {
-        coEvery { savedListRepository.removeMovieFromList(LIST_ID, MOVIE_ID) } returns true
+    fun `removeMovieFromSavedList should call repository`() = runTest {
 
-        val result = manageSavedListItemsUseCase.removeMovieFromSavedList(LIST_ID, MOVIE_ID)
+        manageSavedListItemsUseCase.removeMovieFromSavedList(LIST_ID, MOVIE_ID)
 
-        assertThat(result).isTrue()
         coVerify(exactly = 1) { savedListRepository.removeMovieFromList(LIST_ID, MOVIE_ID) }
     }
 

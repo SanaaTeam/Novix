@@ -4,6 +4,8 @@
     <string name="something_went_wrong_error">حدث خطأ ما، يرجى المحاولة لاحقًا</string>
     <string name="add_to_list_failed">فشل الحفظ في القائمة</string>
     <string name="add_to_list_success">تم الحفظ في القائمة</string>
-    <string name="delete_rating_message">تم حذف التقييم بنجاح</string>
-    <string name="error_delete_rating_message">فشل في حذف التقييم</string>
+    <string name="submit_rating_successfully">تم إرسال التقييم بنجاح</string>
+    <string name="submit_rating_failed">فشل في إرسال التقييم</string>
+    <string name="created_list_successfully">تم إنشاء القائمة بنجاح</string>
+    <string name="failed_to_create_list">فشل في إنشاء القائمة</string>
 </resources>

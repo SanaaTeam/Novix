@@ -81,7 +81,7 @@ class SavedListRepositoryImplTest {
         coEvery { savedListsStatusProvider.isItemSaved(1) } returns true
         coEvery { savedListsStatusProvider.isItemSaved(2) } returns false
 
-        val movies = repository.getAllMoviesInList(LIST_ID, PAGE)
+        val movies = repository.getMoviesInList(LIST_ID, PAGE)
 
         assertThat(movies).hasSize(2)
         assertThat(movies[0].id).isEqualTo(1)

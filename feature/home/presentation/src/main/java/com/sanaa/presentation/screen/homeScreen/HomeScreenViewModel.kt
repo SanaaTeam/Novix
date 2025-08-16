@@ -1,10 +1,7 @@
 package com.sanaa.presentation.screen.homeScreen
 
-import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.cachedIn
-import androidx.paging.map
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
 import com.sanaa.presentation.state.GenreUiState
@@ -21,10 +18,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
@@ -40,7 +35,6 @@ class HomeScreenViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<HomeScreenUiState, HomeScreenEffect>(
@@ -165,13 +159,7 @@ class HomeScreenViewModel @Inject constructor(
 
     private fun fetchUpcomingMovies(genreId: Int? = null) {
         tryToCollect(
-            block = {
-                loadUpcomingMovies(genreId)
-                    .combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-                        pagingData.map { it.withSaved(savedIds) }
-                    }
-                    .cachedIn(viewModelScope)
-            },
+            block = { loadUpcomingMovies(genreId) },
             onCollect = ::onFetchUpcomingMoviesSuccess,
             onError = ::onDataLoadError,
         )
@@ -246,16 +234,12 @@ class HomeScreenViewModel @Inject constructor(
             return
         }
 
-        if (media.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(media.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaId = media.id.toLong(),
-                    selectedMediaToSave = media
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaId = media.id.toLong(),
+                selectedMediaToSave = media
+            )
         }
     }
 

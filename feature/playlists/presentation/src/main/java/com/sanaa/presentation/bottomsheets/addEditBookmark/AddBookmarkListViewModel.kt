@@ -1,33 +1,30 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.savedBase.BaseViewModel
+import com.sanaa.presentation.screen.playlist.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListsUseCase
-import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class AddBookmarkListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : BaseViewModel<AddBookmarkListUiState, AddBookmarksEffect>(
+) : BaseViewModel<AddBookmarkListUiState, AddBookMarksEffect>(
     AddBookmarkListUiState(),
     dispatcher
-) {
-    init {
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
-        }
+), AddBookMarksInteractionsListener {
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
-    fun onListTitleChanged(title: String) {
+    override fun onListTitleChanged(title: String) {
         updateState {
             copy(
                 listTitle = title,
@@ -36,36 +33,35 @@ class AddBookmarkListViewModel @Inject constructor(
         }
     }
 
-    fun resetState() {
-        updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
+    override fun resetState() {
+        updateState { copy(listTitle = "", isLoading = false) }
     }
 
-    fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
-        tryToCollect(
+//        try{
+//            viewModelScope.launch(dispatcher) {
+//                manageSavedListsUseCase.createSavedList(currentTitle)
+//                onAddBookmarkListSuccess()
+//            }
+//        } catch (exception: NovixAppException) {
+//            onErrorAccrue(exception)
+//        }
+        tryToExecute(
             callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
-            onCollect = onAddBookmarkListSuccess(mediaId),
+            onSuccess = ::onAddBookmarkListSuccess,
             onError = ::onErrorAccrue
         )
     }
 
-    private fun onAddBookmarkListSuccess(mediaId: Int): (SavedList) -> Unit = {
+    private fun onAddBookmarkListSuccess(unit: Unit) {
         resetState()
-        emitEffect(AddBookmarksEffect.AddSuccess)
-        listsStatusProvider.markItemSaved(mediaId)
-        listsStatusProvider.addList(
-            SavedList(
-                title = it.title,
-                itemCount = it.itemCount,
-                id = it.id,
-                itemsIds = emptyList()
-            )
-        )
-        viewModelScope.launch {
-            listsStatusProvider.refreshLists()
+        emitEffect(AddBookMarksEffect.Dismiss)
+        updateState {
+            copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
         }
     }
 
@@ -73,9 +69,8 @@ class AddBookmarkListViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = false,
-                errorMessage = "Failed to create list. Please try again."
+                snackBarData = SnackData(message = stringProvider.createListFailed, isError = true)
             )
         }
-        emitEffect(AddBookmarksEffect.AddFailure)
     }
 }

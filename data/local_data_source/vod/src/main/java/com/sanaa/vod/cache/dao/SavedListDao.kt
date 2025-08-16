@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
-import com.sanaa.vod.dataSource.local.cache.dto.SavedMovieLocalDto
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -17,12 +16,8 @@ interface SavedListDao {
     suspend fun deleteList(listId: Int): Int
 
     @Query("SELECT * FROM saved_lists WHERE id = :listId")
-    fun getListById(listId: Int): Flow<SavedListLocalDto?>
+    fun getListById(listId: Int): SavedListLocalDto?
 
     @Query("SELECT * FROM saved_lists")
     fun getAllLists(): Flow<List<SavedListLocalDto>>
-
-    @Query("SELECT * FROM saved_movies WHERE id IN (:movieIds)")
-    fun getMoviesByIds(movieIds: List<Int>): Flow<List<SavedMovieLocalDto>>
-
 }
