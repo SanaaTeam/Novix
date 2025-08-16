@@ -22,6 +22,7 @@ import androidx.tv.material3.Text
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 
 
@@ -70,6 +71,7 @@ private fun ImageCard(
     ) {
 
         RemoteBlurredSensitiveImage(
+            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
             imageUrl = imageUrl.orEmpty(),
             modifier = Modifier.fillMaxWidth(),
             sensitiveContentThreshold = 0.2f,

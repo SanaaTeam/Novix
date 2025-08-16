@@ -27,6 +27,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 
 
 @Composable
@@ -60,6 +61,7 @@ fun FocusableMediaCard(
             shape = CardDefaults.shape(RoundedCornerShape(12.dp))
         ) {
             RemoteBlurredSensitiveImage(
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                 imageUrl = imageUrl,
                 modifier = Modifier
                     .width(200.dp)
