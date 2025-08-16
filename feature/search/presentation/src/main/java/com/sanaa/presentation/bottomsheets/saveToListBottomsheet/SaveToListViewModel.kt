@@ -31,9 +31,9 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.getSavedLists() },
+            block = { manageSavedListsUseCase.getSavedLists() },
             onSuccess = ::onLoadPlaylistsSuccess,
-            onError = ::onErrorAccrue
+            onError = { ::onErrorAccrue }
         )
     }
 
@@ -67,9 +67,9 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = addMovieToSavedList(selectedListId, mediaId),
+            block = addMovieToSavedList(selectedListId, mediaId),
             onSuccess = onAddMovieToSavedListSuccess(mediaId),
-            onError = ::onAddMovieToSavedListFailed,
+            onError = { ::onAddMovieToSavedListFailed }
         )
     }
 

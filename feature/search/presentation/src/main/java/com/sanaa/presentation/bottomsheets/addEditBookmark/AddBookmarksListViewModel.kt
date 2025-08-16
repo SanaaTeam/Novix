@@ -42,7 +42,7 @@ class AddBookmarksListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
                 emitEffect(AddBookmarksEffect.Dismiss)
