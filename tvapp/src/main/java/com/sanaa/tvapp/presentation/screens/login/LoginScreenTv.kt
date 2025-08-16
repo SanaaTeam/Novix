@@ -47,7 +47,7 @@ import com.sanaa.tvapp.state.SnackData
 
 @Composable
 fun LoginScreenTv(
-    onFinish: () -> Unit,
+    onFinish: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = hiltViewModel(),
 ) {

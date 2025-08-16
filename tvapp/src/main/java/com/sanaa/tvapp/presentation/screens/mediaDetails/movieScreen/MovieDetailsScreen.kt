@@ -33,6 +33,9 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.components.LoginDialog
+import com.sanaa.tvapp.presentation.components.RateDialog
 import com.sanaa.tvapp.presentation.screens.login.components.NovixAnimatedSnackBarHost
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.CastSlider
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.DetailsHeaderSection
@@ -47,10 +50,7 @@ import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
-
 import com.sanaa.tvapp.state.SnackData
-import com.sanaa.tvapp.R
-
 
 
 @Composable
@@ -65,13 +65,20 @@ fun MovieDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetailsRoute(it.actorId))
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetailsRoute(it.movieId))
+                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(
+                    ActorDetailsRoute(it.actorId)
+                )
+
+                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(
+                    MovieDetailsRoute(it.movieId)
+                )
+
                 MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(LoginRoute)
                 is MovieDetailsScreenUiEffect.OpenTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
                     context.startActivity(intent)
                 }
+
                 MovieDetailsScreenUiEffect.ShowErrorSnackBar -> TODO()
                 MovieDetailsScreenUiEffect.ShowSuccessSnackBar -> TODO()
             }
@@ -96,7 +103,8 @@ fun MovieDetailsContent(
     interactionListener: MovieDetailsViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> = state.similarMovies.collectAsLazyPagingItems()
+    val moviesPagingData: LazyPagingItems<MovieDetailsUiModel> =
+        state.similarMovies.collectAsLazyPagingItems()
     val navController = LocalAppNavController.current
     NovixScaffold(
         backgroundShapes = { },
@@ -198,6 +206,9 @@ fun MovieDetailsContent(
                                                 state.movieDetails.trailerUrl!!
                                             )
                                         },
+                                        onRateClicked = {
+                                            interactionListener.onRateMovieClick()
+                                        }
                                     )
                                 }
                             }
@@ -205,22 +216,37 @@ fun MovieDetailsContent(
                             if (state.cast.isNotEmpty()) {
                                 CastSlider(
                                     cast = state.cast,
-                                    onActorCardClicked = {id->
+                                    onActorCardClicked = { id ->
                                         navController.navigate(ActorDetailsRoute(id))
                                     }
                                 )
                             }
                             SimilarMoviesSlider(
                                 moviesPagingData = moviesPagingData,
-                                onMovieCardClicked = {id->
+                                onMovieCardClicked = { id ->
                                     navController.navigate(MovieDetailsRoute(id))
                                 }
                             )
                         }
+
                     }
                 }
             }
             DetailsTopBar()
+            if (state.showRateDialog) {
+                RateDialog(
+                    currentRating = state.rating,
+                    onRatingChanged = interactionListener::onRatingChange,
+                    onDismissRequest = interactionListener::onDismissRateDialog,
+                    onSubmitRating = interactionListener::onSummitRateClick
+                )
+            }
+            if (state.showLoginDialog) {
+                LoginDialog(
+                    onDismissRequest = interactionListener::onDismissLoginBottomSheet,
+                    onLoginClicked = interactionListener::onLoginButtonClick
+                )
+            }
         }
     }
 }

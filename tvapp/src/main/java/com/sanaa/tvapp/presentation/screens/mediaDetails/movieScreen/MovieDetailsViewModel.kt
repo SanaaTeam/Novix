@@ -1,10 +1,11 @@
 package com.sanaa.tvapp.presentation.screens.mediaDetails.movieScreen
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.base.BasePagingSource
+import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toActorUiModel
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.mapper.toDetailsUiModel
@@ -120,7 +121,7 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     override fun onDismissLoginBottomSheet() {
-        TODO("Not yet implemented")
+        updateState { copy(showLoginDialog = false) }
     }
 
     override fun onLoginButtonClick() {
@@ -135,6 +136,32 @@ class MovieDetailsViewModel @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun onRateMovieClick() {
+        if (state.value.isUserLoggedIn) {
+            updateState {
+                copy(showRateDialog = true)
+            }
+        } else {
+            updateState {
+                copy(showLoginDialog = true)
+            }
+        }
+    }
+
+    override fun onRatingChange(rating: Int) {
+        updateState { copy(rating = rating) }
+    }
+
+    override fun onDismissRateDialog() {
+        updateState { copy(showLoginDialog = false) }
+    }
+
+    override fun onSummitRateClick() {
+        tryToExecute(
+            block = ::submitMovieRating,
+        )
+    }
+
     private fun updateUserLoginState() {
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },
@@ -147,6 +174,18 @@ class MovieDetailsViewModel @Inject constructor(
 
     fun updateUserStatus() {
         tryToExecute(block = ::updateUserLoginState)
+    }
+
+
+    private suspend fun submitMovieRating() {
+        val rating = state.value.rating
+        val isSendRateSuccess = manageMovieDetails.addMovieRate(
+            movieId = movieId,
+            rating = rating.toFloat()
+        )
+        if (isSendRateSuccess) {
+            updateState { copy(showRateDialog = false) }
+        }
     }
 
     companion object {
