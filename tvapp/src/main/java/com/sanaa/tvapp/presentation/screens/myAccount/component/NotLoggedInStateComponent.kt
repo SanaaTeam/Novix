@@ -1,12 +1,17 @@
 package com.sanaa.tvapp.presentation.screens.myAccount.component
 
+
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -14,14 +19,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.sanaa.designsystem.design_system.component.button.OutlinedButton
+import androidx.tv.material3.Button
+import androidx.tv.material3.ButtonDefaults
+import androidx.tv.material3.Text
+import com.sanaa.designsystem.design_system.component.button.common.AnimatedLoadingIndicator
 import com.sanaa.designsystem.design_system.component.text.AppText
 import com.sanaa.designsystem.design_system.theme.Theme
+import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenInteractionsListener
+import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState
 import com.sanaa.tvapp.R as tvRes
 
 @Composable
 fun NotLoggedInStateComponent(
-    onLoginClick: () -> Unit,
+    state: MyAccountScreenUiState,
+    interactionsListener: MyAccountScreenInteractionsListener,
     modifier: Modifier = Modifier,
 ) {
     val placeholderResId = tvRes.drawable.users_placeholder
@@ -37,7 +49,7 @@ fun NotLoggedInStateComponent(
             Image(
                 painter = painterResource(placeholderResId),
                 contentDescription = null,
-                modifier = Modifier.size(128.dp)
+                modifier = Modifier.size(50.dp)
             )
             AppText(
                 text = stringResource(tvRes.string.please_login_to_access_your_account_details_and_other_features),
@@ -46,11 +58,34 @@ fun NotLoggedInStateComponent(
                 modifier = Modifier.padding(bottom = 12.dp),
                 textAlign = TextAlign.Center
             )
-            OutlinedButton(
-                text = stringResource(tvRes.string.login),
-                onClick = onLoginClick,
-                modifier = Modifier
-            )
+
+            Button(
+                modifier = Modifier,
+                onClick = { interactionsListener.onLoginButtonClick() },
+                scale = ButtonDefaults.scale(focusedScale = 1.03f),
+                shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = stringResource(R.string.login),
+                        style = Theme.textStyle.label.large,
+                        color = Theme.colors.onPrimary,
+                        textAlign = TextAlign.Center
+                    )
+
+                    AnimatedVisibility(state.isLoading) {
+                        AnimatedLoadingIndicator(
+                            modifier = Modifier.padding(start = 8.dp),
+                            iconTint = Theme.colors.onPrimary,
+                            size = 20.dp,
+                        )
+                    }
+                }
+            }
         }
     }
 }
