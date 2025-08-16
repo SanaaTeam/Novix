@@ -19,15 +19,15 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.search.presentation.R
 import com.sanaa.presentation.provider.LocalThemeProvider
+import com.sanaa.presentation.screen.LoginBottomSheetListener
 
 @Composable
 fun RequestToLoginBottomSheet(
     modifier: Modifier = Modifier,
     isVisible: Boolean,
-    onDismiss: () -> Unit = {},
-    onLoginButtonClick: () -> Unit = {},
     text: String = stringResource(R.string.request_login),
-    title: String = stringResource(R.string.add_to_list)
+    title: String = stringResource(R.string.add_to_list),
+    interactionsListener : LoginBottomSheetListener
 
 ) {
     val loginImageId = if (LocalThemeProvider.current) {
@@ -37,7 +37,7 @@ fun RequestToLoginBottomSheet(
     }
     BaseBottomSheet(
         isVisible = isVisible,
-        onDismiss = onDismiss,
+        onDismiss = interactionsListener::onLoginBottomSheetDismiss,
         content = {
             Column(
                 modifier = modifier
@@ -50,7 +50,7 @@ fun RequestToLoginBottomSheet(
                     rightContent = {
                         TopBarClickableIcon(
                             icon = painterResource(id = R.drawable.icon_cancel),
-                            onClick = onDismiss
+                            onClick = interactionsListener::onLoginBottomSheetDismiss
                         )
                     }
                 )
@@ -70,7 +70,7 @@ fun RequestToLoginBottomSheet(
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp),
                     text = stringResource(R.string.login),
-                    onClick = onLoginButtonClick
+                    onClick = interactionsListener::onLoginButtonClick
                 )
             }
         }
