@@ -17,9 +17,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -86,7 +90,11 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
     val scrollState = rememberScrollState()
     val mainTvNavController = LocalAppNavController.current
     val navController = rememberNavController()
-
+    val carouselFocusRequester = remember { FocusRequester() }
+    
+    LaunchedEffect(Unit) {
+        carouselFocusRequester.requestFocus()
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -115,11 +123,14 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
         }
 
         PopularMoviesCarousel(
-            modifier = Modifier.padding(
-                start = sidePaddings,
-                end = sidePaddings,
-                bottom = 16.dp
-            ),
+            modifier = Modifier
+                .padding(
+                    start = sidePaddings,
+                    end = sidePaddings,
+                    bottom = 16.dp
+                )
+                .focusRequester(carouselFocusRequester),
+
             mediaItems = state.popularMedia,
             onShowDetails = {}
         )
