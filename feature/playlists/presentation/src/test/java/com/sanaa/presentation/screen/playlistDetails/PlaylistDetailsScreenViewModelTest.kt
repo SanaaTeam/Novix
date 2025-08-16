@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
-import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -67,7 +66,7 @@ class PlaylistDetailsScreenViewModelTest {
 
         // Act and Assert within the effect collector
         viewModel.effect.test {
-            viewModel.onSaveIconClick(mediaItem)
+            viewModel.onDeleteIconClick(mediaItem)
             advanceUntilIdle()
 
             // Assert that the correct effect was emitted
@@ -95,7 +94,7 @@ class PlaylistDetailsScreenViewModelTest {
     @Test
     fun `onDeleteListClicked sets showBottomSheet true`() = runTest {
         initViewModel()
-        viewModel.onDeleteListClicked()
+        viewModel.onDeleteListClick()
         assertThat(viewModel.state.value.showBottomSheet).isTrue()
     }
 

@@ -5,10 +5,11 @@ import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 
 interface PlaylistDetailsInteractionListener {
     fun onMediaClick(mediaId: Int, mediaType: MediaTypeUi)
-    fun onSaveIconClick(mediaItem: MediaItem)
+    fun onDeleteIconClick(mediaItem: MediaItem)
     fun onBackClick()
-    fun onDeleteListClicked()
+    fun onDeleteListClick()
+    fun onDeleteListConfirmed()
     fun onDismissBottomSheet()
     fun onListDeletedSuccessfully()
-
+    fun onSnackBarDismiss()
 }

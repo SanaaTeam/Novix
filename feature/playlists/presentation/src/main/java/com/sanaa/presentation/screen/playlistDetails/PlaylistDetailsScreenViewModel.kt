@@ -6,6 +6,7 @@ import androidx.paging.PagingSource
 import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
+import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
@@ -17,24 +18,33 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
 @HiltViewModel
 class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
-    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState(),dispatcher),
+    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(
+        SavedDetailsScreenUiState(), dispatcher
+    ),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
         "listId is required in SavedStateHandle"
     }
+    private val listTitle: String = checkNotNull(savedStateHandle["title"]) {
+        "title is required in SavedStateHandle"
+    }
 
     init {
         loadItemsInSaved(listId)
-        updateState { copy(listId = listId) }
+        updateState { copy(listId = listId, title = listTitle) }
     }
 
     private fun loadItemsInSaved(listId: Int) {
@@ -53,7 +63,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         emitEffect(PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType))
     }
 
-    override fun onSaveIconClick(mediaItem: MediaItem) {
+    override fun onDeleteIconClick(mediaItem: MediaItem) {
         tryToExecute(
             callee = {
                 manageSavedListItemsUseCase.removeMovieFromSavedList(
@@ -63,7 +73,14 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
             },
             onSuccess = {
                 loadItemsInSaved(listId)
-                emitEffect(PlaylistDetailsScreenEffect.ShowSuccessSnackBar)
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = stringProvider.deleteFromListSuccess,
+                            isError = false
+                        )
+                    )
+                }
             },
             onError = ::onDataLoadError
 
@@ -74,8 +91,40 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         emitEffect(PlaylistDetailsScreenEffect.NavigateBack)
     }
 
-    override fun onDeleteListClicked() {
+    override fun onDeleteListClick() {
         updateState { copy(showBottomSheet = true) }
+    }
+
+    override fun onDeleteListConfirmed() {
+        updateState { copy(isLoading = true) }
+
+        tryToExecute(
+            callee = { manageSavedListsUseCase.deleteSavedList(listId) },
+            onSuccess = ::onDeleteConfirmedSuccess,
+            onError = ::onDeleteConfirmedFailed,
+        )
+    }
+
+    private fun onDeleteConfirmedSuccess(unit: Unit) {
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(
+                    message = stringProvider.deleteListSuccess,
+                    isError = false
+                )
+            )
+        }
+        onBackClick()
+    }
+
+    private fun onDeleteConfirmedFailed(exception: NovixAppException) {
+        updateState {
+            copy(
+                isLoading = false,
+                snackBarData = SnackData(message = stringProvider.deleteListFailed, isError = true)
+            )
+        }
     }
 
     override fun onDismissBottomSheet() {
@@ -86,8 +135,12 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
     }
 
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
     private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
-        return  createPagingFlow(
+        return createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
             mapper = Movie::toUiModel
         )
@@ -103,8 +156,15 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         if (e is NoNetworkException) {
             updateState { copy(isLoading = false, errorMessage = null) }
         } else {
-            updateState { copy(isLoading = false, errorMessage = e.message) }
-            emitEffect(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
+            updateState {
+                copy(
+                    isLoading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 }

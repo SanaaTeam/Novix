@@ -57,8 +57,12 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun deleteSavedList(listId: Int) {
         safeCall("Failed to delete list") {
-            remoteSavedListDataSource.deleteList(obtainSessionId(), listId)
-            localSavedMovieDataSource.deleteList(listId)
+            remoteSavedListDataSource.deleteList(obtainSessionId(), listId).also { success ->
+                if (!success) {
+                    throw Exception("Failed to delete list from remote")
+                }
+                localSavedMovieDataSource.deleteList(listId)
+            }
         }
     }
 
@@ -69,11 +73,11 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun addMovieToList(listId: Int, movieId: Int) {
         safeCall("Failed to add movie to list") {
-            val success = remoteSavedListDataSource.addItem(obtainSessionId(), listId, movieId)
-            if (success) {
+            remoteSavedListDataSource.addItem(obtainSessionId(), listId, movieId).also { success ->
+                if (!success) {
+                    throw Exception("Failed to add movie to list on remote")
+                }
                 localSavedMovieDataSource.addMovieToList(listId, movieId)
-            } else {
-                throw Exception("Failed to add movie from list")
             }
         }
     }
@@ -81,7 +85,8 @@ class SavedListRepositoryImpl @Inject constructor(
 
     override suspend fun removeMovieFromList(listId: Int, movieId: Int) {
         safeCall("Failed to remove movie from list") {
-            val success = remoteSavedListDataSource.removeItem(obtainSessionId(), listId, movieId)
+            val success =
+                remoteSavedListDataSource.removeItem(obtainSessionId(), listId, movieId)
             if (success) {
                 localSavedMovieDataSource.removeMovieFromList(listId, movieId)
             } else {

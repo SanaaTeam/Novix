@@ -21,8 +21,6 @@
     <string name="created_list_successfully">تم إنشاء القائمة بنجاح</string>
     <string name="failed_to_create_list">فشل في إنشاء القائمة</string>
 
-    <string name="removed_from_list_successfully">تمت الإزالة من القائمة بنجاح</string>
-    <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
     <string name="the_list_is_empty">القائمة فارغة</string>
 
 </resources>

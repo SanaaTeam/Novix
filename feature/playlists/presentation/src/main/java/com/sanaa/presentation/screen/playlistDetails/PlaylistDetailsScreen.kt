@@ -9,14 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -31,9 +27,8 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
-import com.sanaa.presentation.bottomsheets.deletebottomsheet.DeleteConfirmationBottomSheet
-import com.sanaa.presentation.screen.playlist.SnackData
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
+import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
@@ -46,10 +41,7 @@ fun PlaylistDetailsScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val movieList = state.value.movieList.collectAsLazyPagingItems()
-    val removedFromListSuccessMsg = stringResource(R.string.removed_from_list_successfully)
-    val removedFromListFailedMsg = stringResource(R.string.removed_from_list_failed)
     val context = LocalContext.current
-    var snack by remember { mutableStateOf<SnackData?>(null) }
 
     val navController = LocalNavControllerProvider.current
 
@@ -77,14 +69,6 @@ fun PlaylistDetailsScreen(
                     navController.popBackStack()
                 }
 
-                PlaylistDetailsScreenEffect.ShowErrorSnackBar -> {
-                    snack = SnackData(message = removedFromListFailedMsg, isError = true)
-                }
-
-                PlaylistDetailsScreenEffect.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = removedFromListSuccessMsg, isError = false)
-                }
-
                 is PlaylistDetailsScreenEffect.NavigateToMediaDetails -> {
                     detailsApi.launch(
                         context = navController.context,
@@ -108,8 +92,8 @@ fun PlaylistDetailsScreen(
             interactionListener = viewModel
         )
         AnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null },
+            data = state.value.snackBarData,
+            onDismiss = viewModel::onSnackBarDismiss,
         )
     }
 }
@@ -142,16 +126,16 @@ fun PlaylistDetailsContent(
             SavedDetailsListSectionContent(
                 mediaList = movieList,
                 onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
-                onSaveIconClick = { interactionListener.onSaveIconClick(it) }
+                onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
             )
 
 
         }
         DeleteConfirmationBottomSheet(
             isVisible = state.showBottomSheet,
-            listId = state.listId?.toLong(),
+            isLoading = state.isLoading,
             onDismiss = { interactionListener.onDismissBottomSheet() },
-            onDeleteSuccess = { interactionListener.onListDeletedSuccessfully() }
+            onConfirm = interactionListener::onDeleteListConfirmed
         )
     }
 }
@@ -173,7 +157,7 @@ fun PlaylistDetailsTopBar(
         rightContent = {
             TopBarClickableIcon(
                 icon = painterResource(R.drawable.icon_deleat),
-                onClick = { interactionListener.onDeleteListClicked() },
+                onClick = { interactionListener.onDeleteListClick() },
                 tint = Theme.colors.statusColors.redAccent
             )
         },

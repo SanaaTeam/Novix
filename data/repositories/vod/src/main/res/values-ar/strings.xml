@@ -8,4 +8,8 @@
     <string name="submit_rating_failed">فشل في إرسال التقييم</string>
     <string name="created_list_successfully">تم إنشاء القائمة بنجاح</string>
     <string name="failed_to_create_list">فشل في إنشاء القائمة</string>
+    <string name="failed_to_delete_list">فشل في حذف القائمة</string>
+    <string name="success_to_delete_list">تم حذف القائمة</string>
+    <string name="removed_from_list_successfully">تمت الإزالة من القائمة بنجاح</string>
+    <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.playlistDetails.state
 
 import androidx.paging.PagingData
+import com.sanaa.presentation.screen.playlist.SnackData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -13,5 +14,6 @@ data class SavedDetailsScreenUiState(
     val listId: Int? = null,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItem? = null
+    val selectedMediaToSave: MediaItem? = null,
+    val snackBarData: SnackData? = null
 )
