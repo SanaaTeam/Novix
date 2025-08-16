@@ -1,0 +1,22 @@
+package com.sanaa.presentation.api
+
+import com.sanaa.api.AuthenticationApi
+import com.sanaa.api.CategoryFeatureApi
+import com.sanaa.api.MediaDetailsApi
+import com.sanaa.api.PlaylistsFeatureApi
+import com.sanaa.api.SearchFeatureApi
+import com.sanaa.api.UserProfileFeatureApi
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface HomeApiEntryPoint {
+    fun searchApi(): SearchFeatureApi
+    fun detailsApi(): MediaDetailsApi
+    fun authenticationApi(): AuthenticationApi
+    fun playListApi(): PlaylistsFeatureApi
+    fun userProfileApi(): UserProfileFeatureApi
+    fun categoryApi(): CategoryFeatureApi
+}
