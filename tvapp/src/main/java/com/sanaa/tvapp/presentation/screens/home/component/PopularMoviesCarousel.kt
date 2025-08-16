@@ -56,6 +56,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 import com.sanaa.tvapp.state.MediaItem
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
 import com.sanaa.tvapp.util.shimmerEffect.PlaceholderWithShimmerEffect
@@ -183,6 +184,7 @@ private fun CarouselItemForeground() {
 private fun CarouselItemBackground(movie: MediaItem, modifier: Modifier = Modifier) {
     movie.imageUrl?.let {
         RemoteBlurredSensitiveImage(
+            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
             imageUrl = movie.imageUrl,
             contentDescription = movie.title,
             modifier = modifier

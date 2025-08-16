@@ -2,13 +2,11 @@ package com.sanaa.tvapp.presentation.screens.myAccount
 
 import com.sanaa.tvapp.base.BaseViewModel
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
-import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ThemeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.User
 import kotlinx.coroutines.CoroutineDispatcher
 import repository.ContentRestriction
 import repository.Language
-import repository.Theme
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.LogOutUseCase
@@ -29,7 +27,6 @@ class MyAccountScreenViewModel @Inject constructor(
     init {
         fetchLanguage()
         fetchContentRestriction()
-        fetchTheme()
         checkUserLoggedIn()
         fetchUserData()
         loadSavedLang()
@@ -37,14 +34,6 @@ class MyAccountScreenViewModel @Inject constructor(
 
     override fun onClickChangePassword() {
         emitEffect(MyAccountScreenEffect.NavigateToChangePasswordSetting)
-    }
-
-    override fun onClickContentRestriction() {
-        updateState { copy(showContentRestrictionBottomSheet = true) }
-    }
-
-    override fun onClickLanguageSetting() {
-        updateState { copy(showChangeLanguageBottomSheet = true) }
     }
 
     override fun onClickMyTopRating() {
@@ -57,59 +46,21 @@ class MyAccountScreenViewModel @Inject constructor(
 
     override fun onSelectLanguage(language: String) {
         updateState { copy(selectedLanguage = language) }
-    }
+        if (state.value.savedLanguage == state.value.selectedLanguage)
+            return
 
-    override fun onDismissBottomSheet() {
-        updateState {
-            copy(
-                showContentRestrictionBottomSheet = false,
-                showChangeLanguageBottomSheet = false,
-                showChangeThemeBottomSheet = false
-            )
-        }
-    }
-
-    override fun onSaveLanguageClick() {
-        if (state.value.savedLanguage != state.value.selectedLanguage)
-            tryToExecute(
-                block = ::saveLanguage,
-                onSuccess = ::onSaveLanguageSuccess
-            )
-        else updateState { copy(showChangeLanguageBottomSheet = false) }
+        tryToExecute(
+            block = ::saveLanguage,
+            onSuccess = ::onSaveLanguageSuccess
+        )
     }
 
     override fun onSelectContentRestriction(contentRestriction: ContentRestrictionUiState?) {
         updateState { copy(selectedContentRestriction = contentRestriction) }
-    }
+        if (state.value.savedContentRestriction?.name == state.value.selectedContentRestriction?.name)
+            return
 
-    override fun onSelectTheme(theme: ThemeUiState?) {
-        updateState { copy(selectedTheme = theme) }
-    }
-
-    override fun onSaveThemeClick() {
-        if (state.value.savedTheme?.name != state.value.selectedTheme?.name)
-            tryToExecute(
-                block = ::saveTheme,
-                onSuccess = ::onSaveThemeSuccess
-            )
-        else updateState { copy(showChangeThemeBottomSheet = false) }
-    }
-
-    override fun onSaveContentRestrictionClick() {
-        if (state.value.savedContentRestriction?.name != state.value.selectedContentRestriction?.name)
-            tryToExecute(
-                block = { saveContentRestriction() },
-                onSuccess = {
-                    updateState { copy(showContentRestrictionBottomSheet = false) }
-                }
-            )
-        else ::onSaveContentRestrictionSuccess
-
-    }
-
-
-    override fun onClickAppearance() {
-        updateState { copy(showChangeThemeBottomSheet = true) }
+        tryToExecute(block = { saveContentRestriction() })
     }
 
     override fun onLoginButtonClick() {
@@ -139,25 +90,7 @@ class MyAccountScreenViewModel @Inject constructor(
         )
     }
 
-
-    private fun fetchTheme() {
-        tryToCollect(
-            block = mangeUserPreference::getTheme,
-            onCollect = ::onLoadThemeSuccess
-        )
-    }
-
-    private fun onSaveThemeSuccess(newTheme: Theme) {
-        updateState { copy(showChangeThemeBottomSheet = false) }
-        emitEffect(
-            MyAccountScreenEffect.UpdateAppTheme(
-                isDarkMode = newTheme == Theme.DARK
-            )
-        )
-    }
-
     private fun onSaveLanguageSuccess(newLanguage: Language) {
-        updateState { copy(showChangeLanguageBottomSheet = false) }
         emitEffect(MyAccountScreenEffect.UpdateAppLanguage(newLanguage.code))
     }
 
@@ -198,16 +131,7 @@ class MyAccountScreenViewModel @Inject constructor(
     }
 
     private fun onCheckUserLoginSuccess(isLogged: Boolean) {
-        updateState {
-            copy(
-                isUserLoggedIn = isLogged
-            )
-        }
-
-    }
-
-    private fun onSaveContentRestrictionSuccess() {
-        updateState { copy(showContentRestrictionBottomSheet = false) }
+        updateState { copy(isUserLoggedIn = isLogged) }
     }
 
     private fun onLoadContentRestrictionSuccess(contentRestriction: ContentRestriction) {
@@ -215,15 +139,6 @@ class MyAccountScreenViewModel @Inject constructor(
             copy(
                 selectedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name),
                 savedContentRestriction = ContentRestrictionUiState.valueOf(contentRestriction.name)
-            )
-        }
-    }
-
-    private fun onLoadThemeSuccess(theme: Theme) {
-        updateState {
-            copy(
-                selectedTheme = ThemeUiState.valueOf(theme.name),
-                savedTheme = ThemeUiState.valueOf(theme.name)
             )
         }
     }
@@ -239,12 +154,6 @@ class MyAccountScreenViewModel @Inject constructor(
     private suspend fun saveLanguage(): Language {
         return Language.entries.first { it.code == state.value.selectedLanguage }.also {
             mangeUserPreference.setLanguage(it)
-        }
-    }
-
-    private suspend fun saveTheme(): Theme {
-        return Theme.entries.first { it.name == state.value.selectedTheme?.name }.also {
-            mangeUserPreference.setTheme(it)
         }
     }
 }

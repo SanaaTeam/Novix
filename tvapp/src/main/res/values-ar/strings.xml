@@ -27,7 +27,8 @@
     <string name="season_number">م%d</string>
     <string name="episodes_count">%d حلقات</string>
     <string name="login">تسجيل الدخول</string>
-    <string name="logout">تسجيل خروج</string>  <string name="app_icon">أيقونة التطبيق</string>
+    <string name="logout">تسجيل خروج</string>
+    <string name="app_icon">أيقونة التطبيق</string>
     <string name="please_login_to_access_your_account_details_and_other_features">يرجى تسجيل الدخول للوصول إلى تفاصيل حسابك والميزات الأخرى!</string>
     <string name="continue_as_guest">المتابعة كضيف</string>
     <string name="Gallery">مجموعة الصور</string>
@@ -38,4 +39,7 @@
     <string name="offline_subtitle">تحقق من الاتصال وحاول مرة أخرى، نحن بانتظارك مع الأفلام والفشار</string>
     <string name="offline_title">عذرًا! يبدو أنك غير متصل بالإنترنت.</string>
     <string name="settings">الاعدادات</string>
+    <string name="categories">الفئات</string>
+    <string name="movies">الأفلام</string>
+    <string name="tv_shows">المسلسلات</string>
 </resources>

@@ -44,6 +44,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 import com.sanaa.tvapp.presentation.components.MediaSection
 import com.sanaa.tvapp.presentation.screens.home.component.HomeScreenLoading
 import com.sanaa.tvapp.presentation.screens.home.component.MediaTab
@@ -293,6 +294,7 @@ fun ImageList(
         scale = CardDefaults.scale(focusedScale = 1.05f),
     ) {
         RemoteBlurredSensitiveImage(
+            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
             imageUrl = item.imageUrl ?: "",
             contentDescription = item.title
         ) {

@@ -26,6 +26,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.tvapp.R
+import com.sanaa.tvapp.presentation.api.LocalSafeContentThreshold
 import com.sanaa.tvapp.presentation.screens.searchScreen.componants.RemoteImagePlaceholder
 
 
@@ -34,7 +35,7 @@ fun DetailsHeaderSection(
     backgroundImageUrl: String,
     title: String,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         Box(
@@ -44,6 +45,7 @@ fun DetailsHeaderSection(
                 .align(Alignment.TopEnd)
         ) {
             RemoteBlurredSensitiveImage(
+                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
                 imageUrl = backgroundImageUrl,
                 modifier = Modifier
                     .fillMaxWidth()
