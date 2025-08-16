@@ -38,4 +38,7 @@
     <string name="offline_subtitle">Check your connection and try again, we’ll be waiting with your movies and popcorn </string>
     <string name="offline_title">Oops! It looks like you\'re offline.</string>
     <string name="settings">Settings</string>
+    <string name="categories">Categories</string>
+    <string name="movies">Movies</string>
+    <string name="tv_shows">TV Shows</string>
 </resources>
