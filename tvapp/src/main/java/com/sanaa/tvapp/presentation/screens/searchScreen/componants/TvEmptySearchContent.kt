@@ -40,7 +40,7 @@ fun TvEmptySearchContent(
         Box(
             modifier = Modifier
                 .padding(bottom = 12.dp)
-                .size(150.dp),
+                .size(50.dp),
 
             contentAlignment = Alignment.Center,
         ) {
@@ -48,13 +48,13 @@ fun TvEmptySearchContent(
                 painter = icon,
                 contentDescription = "Empty Search",
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(50.dp)
             )
             topIcon()
         }
         BasicText(
                 text = text,
-                style = Theme.textStyle.body.large.copy(
+                style = Theme.textStyle.body.small.copy(
                 color = Theme.colors.body,
                 textAlign = TextAlign.Center
             ),

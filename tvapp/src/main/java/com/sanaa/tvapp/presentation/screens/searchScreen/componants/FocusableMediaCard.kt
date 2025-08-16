@@ -92,12 +92,10 @@ fun FocusableMediaCard(
                 )
             }
         }
-
-        if (isFocused) {
             Text(
                 text = titleText,
                 style = Theme.textStyle.label.large,
-                color = Theme.colors.primary,
+                color = if (isFocused) Theme.colors.primary else Theme.colors.title,
                 modifier = Modifier
                     .padding(top = 24.dp)
                     .align(Alignment.Start)
@@ -106,4 +104,3 @@ fun FocusableMediaCard(
             )
         }
     }
-}
