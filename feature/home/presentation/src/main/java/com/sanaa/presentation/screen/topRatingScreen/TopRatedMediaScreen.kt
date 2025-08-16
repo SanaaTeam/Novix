@@ -32,6 +32,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.home.presentation.R
+import com.sanaa.presentation.api.HomeApiEntryPoint
 import com.sanaa.presentation.app.navigation.LocalMainNavController
 import com.sanaa.presentation.bottomsheet.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.SaveToListBottomSheet
@@ -40,8 +41,7 @@ import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.PaginatedMediaListSectionContent
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.api.HomeApiEntryPoint
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -116,7 +116,7 @@ private fun TopRatedMediaScreenContent(
                 },
             ) { (selectedMediaType, isNoInternetConnection) ->
                 when (selectedMediaType) {
-                    MediaTypeUi.MOVIE -> {
+                    MediaTypeUiState.MOVIE -> {
                         if (isNoInternetConnection && (topRatedMovies.itemCount == 0)) {
                             NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                         } else {
@@ -126,7 +126,10 @@ private fun TopRatedMediaScreenContent(
                                 selectedGenreId = state.movieSelectedGenreId,
                                 onGenreClick = interactionListener::onMovieGenreClick,
                                 onMediaClick = { media ->
-                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                    interactionListener.onMediaClick(
+                                        media.id,
+                                        media.mediaTypeUiState
+                                    )
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )
@@ -136,7 +139,7 @@ private fun TopRatedMediaScreenContent(
                         }
                     }
 
-                    MediaTypeUi.TV_SHOW -> {
+                    MediaTypeUiState.TV_SHOW -> {
                         if (isNoInternetConnection && (topRatedTvShows.itemCount == 0)) {
                             NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
                         } else {
@@ -146,7 +149,10 @@ private fun TopRatedMediaScreenContent(
                                 selectedGenreId = state.tvShowSelectedGenreId,
                                 onGenreClick = interactionListener::onTvShowGenreClick,
                                 onMediaClick = { media ->
-                                    interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                    interactionListener.onMediaClick(
+                                        media.id,
+                                        media.mediaTypeUiState
+                                    )
                                 },
                                 onSaveIconClick = interactionListener::onSaveIconClick,
                             )
@@ -207,13 +213,13 @@ private fun EffectHandler(
         effect.collectLatest { effect ->
             when (effect) {
                 is TopRatedMediaScreenEffect.NavigateToMediaDetails -> {
-                    if (effect.mediaTypeUiState == MediaTypeUi.MOVIE) {
+                    if (effect.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                         detailsApi.launch(
                             context = navController.context,
                             id = effect.id,
                             startRoute = StartRoute.MOVIE
                         )
-                    } else if (effect.mediaTypeUiState == MediaTypeUi.TV_SHOW) {
+                    } else if (effect.mediaTypeUiState == MediaTypeUiState.TV_SHOW) {
                         detailsApi.launch(
                             context = navController.context,
                             id = effect.id,

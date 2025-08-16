@@ -3,6 +3,8 @@ package com.sanaa.presentation.screen.trendingTvShowScreen
 import androidx.paging.testing.asSnapshot
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import entity.Genre
 import entity.TvShow
@@ -153,6 +155,12 @@ class TrendingTvShowsScreenViewModelTest {
                 seasonsCount = 7,
                 rating = 0
             )
+        )
+        val media = MediaItemUiState(
+            id = 1,
+            title = "Test TV Show",
+            imageUrl = "https://example.com/image.jpg",
+            mediaTypeUiState = MediaTypeUiState.TV_SHOW
         )
     }
 }

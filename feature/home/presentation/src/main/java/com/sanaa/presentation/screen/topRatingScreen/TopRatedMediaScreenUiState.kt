@@ -3,15 +3,15 @@ package com.sanaa.presentation.screen.topRatingScreen
 import androidx.paging.PagingData
 import com.sanaa.presentation.components.SnackData
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 data class TopRatedMediaScreenUiState(
-    val selectedMediaTypeUiState: MediaTypeUi = MediaTypeUi.MOVIE,
-    val movieList: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
-    val tvShowList: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
+    val selectedMediaTypeUiState: MediaTypeUiState = MediaTypeUiState.MOVIE,
+    val movieList: Flow<PagingData<MediaItemUiState>> = flowOf(PagingData.empty()),
+    val tvShowList: Flow<PagingData<MediaItemUiState>> = flowOf(PagingData.empty()),
     val movieGenres: List<GenreUiState> = emptyList(),
     val tvShowGenres: List<GenreUiState> = emptyList(),
     val movieSelectedGenreId: Int? = null,
@@ -22,6 +22,6 @@ data class TopRatedMediaScreenUiState(
     val userIsLoggedIn: Boolean = false,
     val showSaveToListBottomSheet: Boolean = false,
     val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItem? = null,
+    val selectedMediaToSave: MediaItemUiState? = null,
     val snackBarData: SnackData? = null
 )

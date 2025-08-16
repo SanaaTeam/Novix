@@ -1,7 +1,7 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
+import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

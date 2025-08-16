@@ -1,6 +1,5 @@
 package com.sanaa.presentation.screen
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -8,8 +7,6 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.sanaa.presentation.base.BasePagingSource
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
@@ -19,6 +16,8 @@ import com.sanaa.presentation.screen.state.SearchScreenEffects
 import com.sanaa.presentation.screen.state.SearchScreenUiState
 import com.sanaa.presentation.screen.state.TvShowUiModel
 import com.sanaa.presentation.screen.state.mapper.toUiState
+import com.sanaa.presentation.searchBase.BasePagingSource
+import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Actor
 import entity.Movie
@@ -166,8 +165,6 @@ class SearchViewModel @Inject constructor(
             )
         }
     }
-
-
 
     override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
         if (viewed.mediaType == MediaTypeUi.MOVIE) {
