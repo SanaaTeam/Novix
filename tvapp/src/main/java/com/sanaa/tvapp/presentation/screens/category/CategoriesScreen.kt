@@ -19,6 +19,7 @@ import com.sanaa.designsystem.design_system.component.screen_state_content.Netwo
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoriesGrid
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoryTopBar
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreMovieScreenRoute
 
 @Composable
 fun CategoriesScreen(
@@ -27,11 +28,18 @@ fun CategoriesScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalAppNavController.current
 
-
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is CategoriesScreenEffects.NavigateToMovieGenreDetails -> {}
+                is CategoriesScreenEffects.NavigateToMovieGenreDetails -> {
+
+                    navController.navigate(
+                        GenreMovieScreenRoute(
+                            genreId = effect.genreId,
+                            genreName = effect.genreName
+                        )
+                    )
+                }
 
                 is CategoriesScreenEffects.NavigateToTvGenreDetails -> {}
             }
