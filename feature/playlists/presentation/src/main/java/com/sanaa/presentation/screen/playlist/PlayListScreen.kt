@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.playlist
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -10,12 +11,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
@@ -122,6 +127,24 @@ fun PlaylistScreenContent(
         label = "PlaylistContentTransition"
     ) { (isUserLoggedIn, isEmptyList, lists) ->
         when {
+            state.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingIndicator()
+                }
+            }
+           state.noInternetConnection -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NetworkDisconnectionContact(
+                        onRetryClick = { },
+                    )
+                }
+            }
             !isUserLoggedIn -> {
                 PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
             }
@@ -208,5 +231,6 @@ fun fakeListener() = object : PlayListScreenInteractionListener {
     override fun onFabBottomSheetClicked() {}
     override fun onButtonLoginClicked() {}
     override fun onDismissAddBottomSheet() {}
+    override fun onRetryLoadSavedLists(){}
     override fun onItemListClicked(listId: Int, title: String) {}
 }
