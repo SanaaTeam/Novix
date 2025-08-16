@@ -1,5 +1,6 @@
 package com.sanaa.presentation.screen
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -9,6 +10,7 @@ import androidx.paging.cachedIn
 import androidx.paging.map
 import com.sanaa.presentation.base.BasePagingSource
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.ActorUiModel
 import com.sanaa.presentation.screen.state.MediaTypeUi
 import com.sanaa.presentation.screen.state.MovieUiModel
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import repository.ContentRestriction
 import repository.SavedListsStatusProvider
 import repository.Theme
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
@@ -52,6 +55,7 @@ class SearchViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val mangeUserPreferenceUseCase: MangeUserPreferenceUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<SearchScreenUiState, SearchScreenEffects>(
     SearchScreenUiState(),
@@ -93,7 +97,7 @@ class SearchViewModel @Inject constructor(
             emitEffect(SearchScreenEffects.NavigateToTvShowDetails(viewed.id))
         }
         tryToExecute(
-            callee = { addRecentViewedMedia(viewed) },
+            block = { addRecentViewedMedia(viewed) },
             onError = ::onDataLoadError
         )
     }
@@ -135,16 +139,35 @@ class SearchViewModel @Inject constructor(
         updateState { copy(showAddListBottomSheet = false) }
     }
 
-    override fun onSaveMoviesClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            updateState {
-                copy(
-                    showLoginBottomSheet = true
-                )
-            }
+    override fun onSnackBarDismiss() {
+        updateState {
+            copy(snackBarData = null)
         }
     }
+
+    override fun onSaveToListSuccess() {
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListSuccess,
+                    isError = false
+                )
+            )
+        }
+    }
+
+    override fun onSaveToListFailure() {
+        updateState {
+            copy(
+                snackBarData = SnackData(
+                    message = stringProvider.addToListFailed,
+                    isError = true
+                )
+            )
+        }
+    }
+
+
 
     override fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel) {
         if (viewed.mediaType == MediaTypeUi.MOVIE) {
@@ -157,7 +180,7 @@ class SearchViewModel @Inject constructor(
     override fun onDeleteRecentSearchItem(id: Int) {
         updateState { copy(isLoading = true, error = null) }
         tryToExecute(
-            callee = { manageSearchHistoryUseCase.removeSearchHistory(id) },
+            block = { manageSearchHistoryUseCase.removeSearchHistory(id) },
             onSuccess = { setSuccessState() },
             onError = ::onDataLoadError
         )
@@ -169,13 +192,13 @@ class SearchViewModel @Inject constructor(
     }
 
 
-    override fun onBottomSheetDismiss() {
+    override fun onLoginBottomSheetDismiss() {
         updateState { copy(showLoginBottomSheet = false) }
     }
 
     override fun onClearRecentViewClicked() {
         tryToExecute(
-            callee = manageRecentViewedUseCase::clearRecentViewed,
+            block = manageRecentViewedUseCase::clearRecentViewed,
             onError = ::onDataLoadError
         )
     }
@@ -189,7 +212,7 @@ class SearchViewModel @Inject constructor(
 
     fun observeSearchQueryChanges() {
         tryToCollect(
-            callee = ::observeSearchQueryFlow,
+            block = ::observeSearchQueryFlow,
             onCollect = ::onSearchQueryChangedCollected,
             onError = ::onDataLoadError,
         )
@@ -198,7 +221,7 @@ class SearchViewModel @Inject constructor(
     fun observeRecentViewedItems() {
         setLoadingState()
         tryToCollect(
-            callee = ::onGetRecentViewedItems,
+            block = ::onGetRecentViewedItems,
             onCollect = ::onCollectRecentViewedItems,
             onError = ::onDataLoadError
         )
@@ -206,7 +229,7 @@ class SearchViewModel @Inject constructor(
 
     fun observeRecentSearchHistory() {
         tryToCollect(
-            callee = ::getRecentSearchHistory,
+            block = ::getRecentSearchHistory,
             onCollect = ::onCollectRecentSearchHistory,
             onError = ::onDataLoadError
         )
@@ -215,7 +238,7 @@ class SearchViewModel @Inject constructor(
     private fun loadTvShows(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadTvShowsOperation(query) },
+            block = { loadTvShowsOperation(query) },
             onCollect = ::onTvShowsLoaded,
             onError = ::onDataLoadError
         )
@@ -224,7 +247,7 @@ class SearchViewModel @Inject constructor(
     private fun loadMovies(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadMoviesOperation(query) },
+            block = { loadMoviesOperation(query) },
             onCollect = ::onMoviesLoaded,
             onError = ::onDataLoadError
         )
@@ -233,7 +256,7 @@ class SearchViewModel @Inject constructor(
     private fun loadActors(query: String) {
         setLoadingState()
         tryToCollect(
-            callee = { loadActorsOperation(query) },
+            block = { loadActorsOperation(query) },
             onCollect = ::onActorsLoaded,
             onError = ::onDataLoadError
         )
@@ -352,10 +375,13 @@ class SearchViewModel @Inject constructor(
             pagingSourceFactory = { createMoviesPagingSource(query) },
             mapper = Movie::toUiState
         )
-        return moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
-            pagingData.map { movie ->
-                movie.copy(isSaved = savedIds.contains(movie.id))
+
+        return if (state.value.isUserLoggedIn) {
+            moviesPagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
+                pagingData.map { movie -> movie.copy(isSaved = savedIds.contains(movie.id)) }
             }
+        } else {
+            moviesPagingFlow
         }.cachedIn(viewModelScope)
     }
 
@@ -406,7 +432,7 @@ class SearchViewModel @Inject constructor(
 
     private fun observeSelectedTheme() {
         tryToCollect(
-            callee = mangeUserPreferenceUseCase::getTheme,
+            block = mangeUserPreferenceUseCase::getTheme,
             onCollect = { isDarkMode -> updateState { copy(isDarkMode = isDarkMode == Theme.DARK) } },
             onError = ::onDataLoadError
         )
@@ -415,7 +441,7 @@ class SearchViewModel @Inject constructor(
 
     private fun observeContentRestriction() {
         tryToCollect(
-            callee = mangeUserPreferenceUseCase::getContentRestriction,
+            block = mangeUserPreferenceUseCase::getContentRestriction,
             onCollect = ::onCollectContentRestriction,
         )
     }
@@ -435,7 +461,7 @@ class SearchViewModel @Inject constructor(
 
     private fun getUserState() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
