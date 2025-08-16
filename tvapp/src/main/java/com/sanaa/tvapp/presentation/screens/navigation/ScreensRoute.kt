@@ -33,5 +33,12 @@ class ScreensRoute {
 
     @Serializable
     object WatchingHistoryScreenRoute : ScreenRoute()
+
+    @Serializable
+    data class GenreMovieScreenRoute(
+        val genreId: Int,
+        val genreName: String,
+    ) : ScreenRoute()
+
 }
 
