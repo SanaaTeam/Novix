@@ -141,13 +141,13 @@ fun HomeScreenContent(state: HomeScreenUiState, upcomingMovies: LazyPagingItems<
         NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
             composable(route = HomeMoviesTapRoute::class) {
                 HomeMovies(state, upcomingMovies) { id ->
-                    mainTvNavController.navigate(ScreensRoute.MovieDetails(id))
+                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(id))
                 }
             }
 
             composable(route = HomeTvShowsTapRoute::class) {
                 HomeTvShows(state, upcomingMovies) { id ->
-                    mainTvNavController.navigate(ScreensRoute.TvShowDetails(id))
+                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(id))
                 }
             }
         }

@@ -6,23 +6,24 @@ open class ScreenRoute
 
 @Serializable
 class ScreensRoute {
+    @Serializable
+    object LoginRoute : ScreenRoute()
 
     @Serializable
-    object Login : ScreenRoute()
+    data class MovieDetailsRoute(val movieId: Int) : ScreenRoute()
 
     @Serializable
-    data class MovieDetails(val movieId: Int) : ScreenRoute()
+    data class TvShowDetailsRoute(val seriesId: Int) : ScreenRoute()
 
     @Serializable
-    data class TvShowDetails(val seriesId: Int) : ScreenRoute()
+    data class ActorDetailsRoute(val actorId: Int) : ScreenRoute()
 
     @Serializable
-    data class ActorDetails(val actorId: Int) : ScreenRoute()
-
-    @Serializable
-    data class EpisodeDetails(val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int) :
-        ScreenRoute()
-
+    data class EpisodeDetailsRoute(
+        val seriesId: Int,
+        val seasonNumber: Int,
+        val episodeNumber: Int,
+    ) : ScreenRoute()
 
     @Serializable
     object ChangePasswordScreenRoute : ScreenRoute()

@@ -8,5 +8,5 @@ sealed interface MyAccountScreenEffect {
         val language: String
     ) : MyAccountScreenEffect
     object NavigateToLogin : MyAccountScreenEffect
-    object PopBackStackToWelcomeScreen : MyAccountScreenEffect
+    object Recreate : MyAccountScreenEffect
 }

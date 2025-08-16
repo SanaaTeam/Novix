@@ -44,9 +44,9 @@ import com.sanaa.tvapp.presentation.screens.mediaDetails.components.SimilarMovie
 import com.sanaa.tvapp.presentation.screens.mediaDetails.components.TrailerAndRateSection
 import com.sanaa.tvapp.presentation.screens.mediaDetails.model.MovieDetailsUiModel
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetails
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.Login
-import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetails
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ActorDetailsRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MovieDetailsRoute
 
 import com.sanaa.tvapp.state.SnackData
 import com.sanaa.tvapp.R
@@ -65,9 +65,9 @@ fun MovieDetailsScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
             when (it) {
-                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetails(it.actorId))
-                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetails(it.movieId))
-                MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(Login)
+                is MovieDetailsScreenUiEffect.NavigateToActorScreen -> navController.navigate(ActorDetailsRoute(it.actorId))
+                is MovieDetailsScreenUiEffect.NavigateToAnotherMovieDetails -> navController.navigate(MovieDetailsRoute(it.movieId))
+                MovieDetailsScreenUiEffect.NavigateToLogin -> navController.navigate(LoginRoute)
                 is MovieDetailsScreenUiEffect.OpenTrailer -> {
                     val intent = Intent(Intent.ACTION_VIEW, it.url?.toUri())
                     context.startActivity(intent)
@@ -206,14 +206,14 @@ fun MovieDetailsContent(
                                 CastSlider(
                                     cast = state.cast,
                                     onActorCardClicked = {id->
-                                        navController.navigate(ActorDetails(id))
+                                        navController.navigate(ActorDetailsRoute(id))
                                     }
                                 )
                             }
                             SimilarMoviesSlider(
                                 moviesPagingData = moviesPagingData,
                                 onMovieCardClicked = {id->
-                                    navController.navigate(MovieDetails(id))
+                                    navController.navigate(MovieDetailsRoute(id))
                                 }
                             )
                         }

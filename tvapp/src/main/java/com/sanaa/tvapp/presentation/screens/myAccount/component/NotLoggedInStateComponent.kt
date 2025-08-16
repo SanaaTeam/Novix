@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,7 +48,9 @@ fun NotLoggedInStateComponent(
             Image(
                 painter = painterResource(placeholderResId),
                 contentDescription = null,
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(bottom = 8.dp)
             )
             AppText(
                 text = stringResource(tvRes.string.please_login_to_access_your_account_details_and_other_features),
@@ -63,10 +64,14 @@ fun NotLoggedInStateComponent(
                 modifier = Modifier,
                 onClick = { interactionsListener.onLoginButtonClick() },
                 scale = ButtonDefaults.scale(focusedScale = 1.03f),
+                colors = ButtonDefaults.colors(
+                    containerColor = Theme.colors.iconBackgroundLow,
+                    focusedContainerColor = Theme.colors.primary
+                ),
                 shape = ButtonDefaults.shape(RoundedCornerShape(12.dp)),
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier,
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {

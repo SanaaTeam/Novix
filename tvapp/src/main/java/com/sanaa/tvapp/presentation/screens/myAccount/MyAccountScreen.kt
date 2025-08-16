@@ -1,6 +1,5 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
-import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.Image
@@ -52,7 +51,7 @@ import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.Navi
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToLogin
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToMyRating
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.NavigateToWatchingHistory
-import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.PopBackStackToWelcomeScreen
+import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.Recreate
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenEffect.UpdateAppLanguage
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
 import com.sanaa.tvapp.presentation.screens.myAccount.component.MyAccountUserInfo
@@ -63,6 +62,7 @@ import com.sanaa.tvapp.presentation.screens.myAccount.component.SettingSection
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.ChangePasswordScreenRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.LoginRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.MyRatingScreenRoute
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.WatchingHistoryScreenRoute
 import com.sanaa.tvapp.util.modifier.handleDPadKeyEvents
@@ -95,13 +95,19 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                     activity?.recreate()
                 }
 
-                NavigateToMyRating -> navController.navigate(MyRatingScreenRoute)
-                NavigateToWatchingHistory -> navController.navigate(WatchingHistoryScreenRoute)
-                NavigateToLogin -> {
-
+                NavigateToMyRating -> {
+                    navController.navigate(MyRatingScreenRoute)
                 }
 
-                PopBackStackToWelcomeScreen -> {
+                NavigateToWatchingHistory -> {
+                    navController.navigate(WatchingHistoryScreenRoute)
+                }
+
+                NavigateToLogin -> {
+                    navController.navigate(LoginRoute)
+                }
+
+                Recreate -> {
                     activity?.recreate()
                 }
             }
@@ -223,13 +229,13 @@ private fun MyAccountScreenContent(
         NavHost(navController = navController, startDestination = HomeMoviesTapRoute) {
             composable(route = HomeMoviesTapRoute::class) {
                 MyAccountMovies(state) { id ->
-                    mainTvNavController.navigate(ScreensRoute.MovieDetails(id))
+                    mainTvNavController.navigate(ScreensRoute.MovieDetailsRoute(id))
                 }
             }
 
             composable(route = HomeTvShowsTapRoute::class) {
                 MyAccountMovies(state) { id ->
-                    mainTvNavController.navigate(ScreensRoute.TvShowDetails(id))
+                    mainTvNavController.navigate(ScreensRoute.TvShowDetailsRoute(id))
                 }
             }
         }
