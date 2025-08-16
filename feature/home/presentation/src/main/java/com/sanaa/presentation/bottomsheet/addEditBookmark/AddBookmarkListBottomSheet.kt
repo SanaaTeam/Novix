@@ -30,9 +30,8 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.components.SnackData
 import kotlinx.coroutines.flow.collectLatest
-import com.sanaa.feature.home.presentation.R as homeRes
+
 @Composable
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
@@ -41,71 +40,51 @@ fun AddBookmarkListBottomSheet(
 ) {
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
-    var snack by remember { mutableStateOf<SnackData?>(null) }
-    val successMessage =
-        stringResource(homeRes.string.created_list_successfully)
-    val failMessage =
-        stringResource(homeRes.string.failed_to_create_list)
+
     val handleDismiss = {
         viewModel.resetState()
         onDismiss()
     }
+
     NovixAnimatedSnackBarHost(
-        data = snack, onDismiss = { snack = null })
+        data = state.snackBarData,
+        onDismiss = viewModel::onSnackBarDismiss
+    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                AddBookmarkEffect.AddSuccess -> {
+                AddBookmarkEffect.Dismiss -> {
                     handleDismiss()
-                    snack = SnackData(
-                        message = successMessage,
-                        isError = false
-                    )
-                }
-
-                AddBookmarkEffect.AddFailure -> {
-                    snack = SnackData(
-                        message = failMessage,
-                        isError = true
-                    )
                 }
             }
         }
     }
+
     AddBookmarkListBottomSheetContent(
         isVisible = isVisible,
         onDismiss = handleDismiss,
         state = state,
-        onTitleChanged = viewModel::onListTitleChanged,
-        onAddClick = { viewModel.onAddClicked(mediaId) }
+        interactionListener = viewModel,
+        mediaId = mediaId
     )
 }
+
 
 @Composable
 private fun AddBookmarkListBottomSheetContent(
     isVisible: Boolean,
     onDismiss: () -> Unit,
     state: AddBookmarkListUiState,
-    onTitleChanged: (String) -> Unit,
-    onAddClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    interactionListener: AddBookmarkInteractionListener,
+    mediaId: Int,
 ) {
-    var textFieldValue by remember(state.listTitle) {
-        mutableStateOf(
-            TextFieldValue(
-                text = state.listTitle,
-                selection = TextRange(state.listTitle.length)
-            )
-        )
-    }
-
     BaseBottomSheet(
         isVisible = isVisible,
         onDismiss = onDismiss,
     ) {
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -130,12 +109,12 @@ private fun AddBookmarkListBottomSheetContent(
             )
 
             TextField(
-                value = textFieldValue,
+                value = TextFieldValue(
+                    text = state.listTitle,
+                    selection = TextRange(state.listTitle.length)
+                ),
                 onValueChange = { newValue ->
-                    if (textFieldValue.text != newValue.text) {
-                        onTitleChanged(newValue.text)
-                    }
-                    textFieldValue = newValue
+                    interactionListener.onListTitleChanged(newValue.text)
                 },
                 hint = stringResource(R.string.my_favorite_placeholder),
                 icon = painterResource(id = R.drawable.ic_bookmark_list),
@@ -148,7 +127,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = onAddClick,
+                onClick = { interactionListener.onAddClicked(mediaId) },
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -171,8 +150,13 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
                 listTitle = "",
                 isAddButtonEnabled = false
             ),
-            onTitleChanged = {},
-            onAddClick = {}
+            interactionListener = object : AddBookmarkInteractionListener {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
+            },
+            mediaId = 0
         )
     }
 }
@@ -193,10 +177,13 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             isVisible = true,
             onDismiss = {},
             state = state,
-            onTitleChanged = { newTitle ->
-                state = state.copy(listTitle = newTitle, isAddButtonEnabled = newTitle.isNotBlank())
+            interactionListener = object : AddBookmarkInteractionListener {
+                override fun onListTitleChanged(title: String) {}
+                override fun resetState() {}
+                override fun onAddClicked(mediaId: Int) {}
+                override fun onSnackBarDismiss() {}
             },
-            onAddClick = {}
+            mediaId = 0
         )
     }
 }

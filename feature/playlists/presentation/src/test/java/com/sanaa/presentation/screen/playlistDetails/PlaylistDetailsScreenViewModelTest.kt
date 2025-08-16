@@ -8,21 +8,25 @@ import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlaylistDetailsScreenViewModelTest {
 
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true)
+    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private lateinit var viewModel: PlaylistDetailsScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var savedStateHandle: SavedStateHandle
@@ -36,8 +40,8 @@ class PlaylistDetailsScreenViewModelTest {
                 "title" to "My Playlist"
             )
         )
+        every { savedListsStatusProvider.savedIds } returns MutableStateFlow(emptySet())
     }
-
 
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
@@ -48,8 +52,7 @@ class PlaylistDetailsScreenViewModelTest {
         viewModel.onMediaClick(mediaId, mediaType)
 
         viewModel.effect.test {
-            val expectedEffect =
-                PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
+            val expectedEffect = PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
             assertThat(awaitItem()).isEqualTo(expectedEffect)
             cancelAndIgnoreRemainingEvents()
         }
@@ -139,6 +142,7 @@ class PlaylistDetailsScreenViewModelTest {
         viewModel = PlaylistDetailsScreenViewModel(
             savedStateHandle = savedStateHandle,
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
+            savedListsStatusProvider = savedListsStatusProvider,
             dispatcher = testDispatcher
         )
     }

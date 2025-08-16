@@ -31,6 +31,7 @@ import com.sanaa.designsystem.design_system.component.button.TextButton
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.provider.LocalSaveContentThreshold
+import com.sanaa.presentation.screen.RecentViewListener
 import com.sanaa.presentation.screen.SearchScreenInteractionsListener
 import com.sanaa.presentation.screen.componants.cards.MediaPosterCard
 import com.sanaa.presentation.screen.componants.cards.SaveIconChip
@@ -77,7 +78,7 @@ private fun SearchEmptyView() {
 @Composable
 private fun ContentState(
     recentViewed: List<RecentViewedUiModel>,
-    interactionsListener: SearchScreenInteractionsListener,
+    recentViewListener: RecentViewListener,
     recentSearches: List<RecentSearchUiModel>,
 ) {
     LazyColumn(
@@ -88,7 +89,7 @@ private fun ContentState(
                 SectionHeader(
                     title = stringResource(R.string.recent_viewed),
                     actionText = stringResource(R.string.clear_all),
-                    onActionClick = interactionsListener::onClearRecentViewClicked
+                    onActionClick = recentViewListener::onClearRecentViewClicked
                 )
             }
 
@@ -103,7 +104,7 @@ private fun ContentState(
                         MediaPoster(
                             item,
                             onMediaClicked = {
-                                interactionsListener.onRecentViewedMediaClicked(item)
+                                recentViewListener.onRecentViewedMediaClicked(item)
                             }
                         )
                     }
@@ -116,7 +117,7 @@ private fun ContentState(
                 SectionHeader(
                     title = stringResource(R.string.recent_search),
                     actionText = stringResource(R.string.clear_all),
-                    onActionClick = interactionsListener::onClearRecentSearchClicked,
+                    onActionClick = recentViewListener::onClearRecentSearchClicked,
                 )
             }
 
@@ -125,10 +126,10 @@ private fun ContentState(
                 RecentSearchItem(
                     text = item.title,
                     onDeleteClicked = {
-                        interactionsListener.onDeleteRecentSearchItem(item.id)
+                        recentViewListener.onDeleteRecentSearchItem(item.id)
                     },
                     onRecentSearchItemClicked = {
-                        interactionsListener.onRecentSearchItemClicked(item.title)
+                        recentViewListener.onRecentSearchItemClicked(item.title)
                     },
                     modifier = Modifier.animateItem(fadeInSpec = null, fadeOutSpec = null)
                 )

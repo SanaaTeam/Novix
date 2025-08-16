@@ -1,10 +1,12 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
 import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.screen.componants.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.custom_list.ManageSavedListsUseCase
 import javax.inject.Inject
 
@@ -12,10 +14,12 @@ import javax.inject.Inject
 class AddBookmarksListViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel<AddBookmarksListUiState, Unit>(AddBookmarksListUiState(),dispatcher) {
+) : BaseViewModel<AddBookmarksListUiState, AddBookmarksEffect>(AddBookmarksListUiState(), dispatcher),
+    AddBookmarksInteractionsListener {
 
-    fun onListTitleChanged(title: String) {
+    override fun onListTitleChanged(title: String) {
         updateState {
             copy(
                 listTitle = title,
@@ -24,27 +28,34 @@ class AddBookmarksListViewModel @Inject constructor(
         }
     }
 
-    fun resetState() {
-        updateState { copy(listTitle = "", isLoading = false, errorMessage = null) }
+    override fun resetState() {
+        updateState { copy(listTitle = "", isLoading = false) }
     }
 
-    fun onAddClicked(mediaId: Int) {
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
+    }
+
+    override fun onAddClicked(mediaId: Int) {
         if (!state.value.isAddButtonEnabled) return
 
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
-                emitEffect(Unit)
+                emitEffect(AddBookmarksEffect.Dismiss)
+                updateState {
+                    copy(snackBarData = SnackData(message = stringProvider.createListSuccess, isError = false))
+                }
                 savedListsStatusProvider.markItemSaved(mediaId)
             },
             onError = {
                 updateState {
                     copy(
                         isLoading = false,
-                        errorMessage = "Failed to create list. Please try again."
+                        snackBarData = SnackData(message = stringProvider.createListFailed, isError = true)
                     )
                 }
             }

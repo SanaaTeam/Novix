@@ -13,8 +13,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
 abstract class BaseViewModel<T, E>(
@@ -25,57 +31,80 @@ abstract class BaseViewModel<T, E>(
     private val _state = MutableStateFlow(initialState)
     val state: StateFlow<T> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<E>()
-    val effect: SharedFlow<E> = _effect.asSharedFlow()
+    private val _effectChannel = Channel<E>(Channel.BUFFERED)
+    val effect: Flow<E> = _effectChannel.receiveAsFlow()
 
+    private var lastEffect: E? = null
+    private var lastTime = 0L
+    private val effectDebounceMs = 500L
 
     internal fun updateState(updater: T.() -> T) {
         _state.update(updater)
     }
 
+
     protected fun <T> tryToExecute(
-        callee: suspend () -> T,
+        block: suspend () -> T,
         onSuccess: (T) -> Unit = {},
-        onError: (exception: NovixAppException) -> Unit = {},
+        onError: (NovixAppException) -> Unit = {},
         dispatcher: CoroutineDispatcher = defaultDispatcher,
     ) {
         val handler = createExceptionHandler(onError)
-
         viewModelScope.launch(dispatcher + handler) {
-            val result = callee()
+            val result = block()
             onSuccess(result)
         }
     }
 
-    protected fun <T> tryToCollect(
-        callee: suspend () -> Flow<T>,
-        onCollect: suspend (T) -> Unit,
-        onError: (exception: NovixAppException) -> Unit = {},
-        dispatcher: CoroutineDispatcher = defaultDispatcher,
-    ) {
-        val handler = createExceptionHandler(onError)
 
-        viewModelScope.launch(dispatcher + handler) {
-            callee().collectLatest { result ->
-                onCollect(result)
+
+    protected fun <R> tryToCollect(
+        block: suspend () -> Flow<R>,
+        onCollect: suspend (R) -> Unit,
+        onError: (exception: NovixAppException) -> Unit = {},
+        dispatcher: CoroutineDispatcher = defaultDispatcher
+    ) {
+        viewModelScope.launch(dispatcher) {
+            try {
+                block().collect { value ->
+                    onCollect(value)
+                }
+            } catch (e: Throwable) {
+                // Convert and handle ALL errors in one place
+                val error = when (e) {
+                    is NovixAppException -> e
+                    else -> NovixAppException(e.message)
+                }
+                onError(error)
             }
         }
     }
 
     protected fun emitEffect(effect: E) {
+        val now = System.currentTimeMillis()
+
+        val effectType = effect!!::class
+        val lastEffectType = lastEffect?.let { it::class }
+
+        if (effectType == lastEffectType && now - lastTime < effectDebounceMs) return
+
+        lastEffect = effect
+        lastTime = now
+
         viewModelScope.launch {
-            _effect.emit(effect)
+            _effectChannel.send(effect)
         }
     }
 
 
     private fun createExceptionHandler(onError: (NovixAppException) -> Unit) =
         CoroutineExceptionHandler { _, exception ->
-            onError(
-                when (exception) {
-                    is NovixAppException -> exception
-                    else -> NovixAppException(exception.message)
-                }
-            )
+            onError(exception.toNovixAppException())
         }
+
+    private fun Throwable.toNovixAppException(): NovixAppException = when (this) {
+        is NovixAppException -> this
+        else -> NovixAppException(message ?: "Unknown error")
+    }
+
 }
