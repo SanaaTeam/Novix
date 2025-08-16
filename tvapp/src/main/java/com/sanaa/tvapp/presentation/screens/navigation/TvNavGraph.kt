@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.sanaa.tvapp.presentation.screens.category.CategoriesScreen
 import com.sanaa.tvapp.presentation.screens.home.HomeScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.actorScreen.ActorScreen
 import com.sanaa.tvapp.presentation.screens.mediaDetails.episodeScreen.EpisodeDetailsScreen
@@ -18,7 +19,7 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
     NavHost(navController = navController, startDestination = startDestination) {
         composable<NavBarRoute.Home> { HomeScreen() }
         composable<NavBarRoute.Search> { SearchScreen() }
-        composable<NavBarRoute.Categories> { }
+        composable<NavBarRoute.Categories> { CategoriesScreen() }
         composable<NavBarRoute.MyAccount> { MyAccountScreen() }
         composable<ScreensRoute.MovieDetails> { navBackStackEntry ->
             MovieDetailsScreen()
