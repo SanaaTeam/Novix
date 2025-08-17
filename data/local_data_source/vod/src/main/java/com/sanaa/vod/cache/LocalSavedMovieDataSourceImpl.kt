@@ -46,6 +46,10 @@ class LocalSavedMovieDataSourceImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAllLists() {
+        dao.clearAll()
+    }
+
     private fun String.toIdList(): List<Int> =
         split(",").mapNotNull { it.toIntOrNull() }.filter { it > 0 }
 
