@@ -2,6 +2,8 @@ package com.sanaa.tvapp.presentation.screens.genreMovies
 
 import android.app.Activity
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -33,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -106,7 +109,6 @@ fun GenreMoviesScreenContent(
         ) {
         Column(
 
-            //  modifier = Modifier.navigationBarsPadding()
         ) {
 
             GenreMoviesTopBar(state.title.toString())
@@ -126,7 +128,6 @@ fun GenreMoviesScreenContent(
                             NetworkDisconnectionContact(
                                 onRetryClick = { interactionListener.onRetryClicked() },
                                 modifier = Modifier.fillMaxSize(),
-                                //    useDarkTheme = LocalThemeProvider.current
                             )
                         } else {
                             Box(
@@ -159,10 +160,17 @@ fun GenreMoviesScreenContent(
 
                                 val interactionSource = remember { MutableInteractionSource() }
                                 val isFocused by interactionSource.collectIsFocusedAsState()
-
+                                val scale by animateFloatAsState(
+                                    targetValue = if (isFocused) 1.1f else 1f,
+                                    animationSpec = tween(durationMillis = 300)
+                                )
                                 Surface(
                                     modifier = Modifier
                                         .focusable(interactionSource = interactionSource)
+                                        .graphicsLayer(
+                                            scaleX = scale,
+                                            scaleY = scale
+                                        )
                                         .border(
                                             width = if (isFocused) 3.dp else 1.dp,
                                             color = if (isFocused) Theme.colors.primary else Theme.colors.stroke,
@@ -172,7 +180,10 @@ fun GenreMoviesScreenContent(
                                         .clickable(
                                             interactionSource = interactionSource,
                                             indication = null,
-                                            onClick = { interactionListener.onMovieClick(movie.id) }
+
+                                            onClick = {
+                                                interactionListener.onMovieClick(movie.id)
+                                            }
                                         )
                                 ) {
                                     TvMediaPosterCard(
