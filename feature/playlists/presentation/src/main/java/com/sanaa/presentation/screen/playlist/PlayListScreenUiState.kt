@@ -4,6 +4,7 @@ import usecase.custom_list.custom_list_param.SavedList
 
 
 data class PlayListScreenUiState(
+    val screenState: PlaylistScreenState = PlaylistScreenState.Loading,
     val isLoading: Boolean = true,
     val noInternetConnection: Boolean = false,
     val isUserLoggedIn: Boolean = false,
@@ -29,3 +30,11 @@ fun SavedList.toUiModel() = PlayListUiModel(
     title = title,
     mediaCount = itemCount
 )
+
+enum class PlaylistScreenState {
+    Loading,
+    NoInternet,
+    Guest,
+    Empty,
+    WithItems
+}
