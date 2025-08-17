@@ -3,7 +3,6 @@ package com.sanaa.vod.repository.mapper.media
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorDto
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
-import entity.Actor
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -30,7 +29,6 @@ class ActorMapperTest {
         assertEquals("https://image.tmdb.org/t/p/w500/image.jpg", result.imageUrl)
         assertEquals("John Doe", result.name)
         assertEquals("Acting", result.department)
-        assertEquals(Actor.Gender.FEMALE, result.gender)
         assertEquals(LocalDate(1980, 5, 10), result.birthDate)
         assertEquals(getLocalDateOrDefault(null), result.deathDate)
         assertEquals("USA", result.placeOfBirth)
@@ -61,7 +59,7 @@ class ActorMapperTest {
     }
 
     @Test
-    fun `toTvSeries maps ActorCastCreditDto to TvSeries correctly`() {
+    fun `toTvShow maps ActorCastCreditDto to TvShow correctly`() {
         val dto = ActorCastCreditDto(
             id = 200,
             posterPath = "/poster.jpg",
@@ -73,7 +71,7 @@ class ActorMapperTest {
             overview = "A great series"
         )
 
-        val result = dto.toTvSeries()
+        val result = dto.toTvShow()
 
         assertEquals(200, result.id)
         assertEquals("https://image.tmdb.org/t/p/w500/poster.jpg", result.posterImageUrl)
@@ -81,14 +79,6 @@ class ActorMapperTest {
         assertEquals(8.3f, result.imdbRating)
         assertEquals(LocalDate(2022, 3, 15), result.releaseDate)
         assertEquals("A great series", result.overview)
-    }
-
-    @Test
-    fun `apiGenderMapping maps known ids correctly`() {
-        assertEquals(Actor.Gender.MALE, apiGenderMapping(0))
-        assertEquals(Actor.Gender.FEMALE, apiGenderMapping(1))
-        assertEquals(Actor.Gender.MALE, apiGenderMapping(99)) // fallback
-        assertEquals(Actor.Gender.MALE, apiGenderMapping(null)) // fallback
     }
 
     @Test

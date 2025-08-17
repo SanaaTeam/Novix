@@ -2,7 +2,7 @@ package usecase.search
 
 import entity.Actor
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import repository.HistoryRepository
 import repository.SearchRepository
 import javax.inject.Inject
@@ -24,7 +24,7 @@ class SearchUseCase @Inject constructor(
     suspend fun searchTvShows(
         query: String,
         page: Int,
-    ): List<TvSeries> {
+    ): List<TvShow> {
         historyRepository.addSearchHistory(query)
         return searchRepository.searchTvShows(query, page)
     }

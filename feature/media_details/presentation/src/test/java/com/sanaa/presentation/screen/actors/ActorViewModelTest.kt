@@ -10,9 +10,8 @@ import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -73,11 +72,11 @@ class ActorViewModelTest {
     }
 
     @Test
-    fun `onTopSeriesClicked emits NavigateToTopSeries`() = runTest {
+    fun `onTopTvShowClicked emits NavigateToTopTvShow`() = runTest {
         givenHappyViewModel()
-        viewModel.onTopSeriesClicked()
+        viewModel.onTopShowsClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTopSeries(actorId))
+            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTopTvShows(actorId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -93,12 +92,12 @@ class ActorViewModelTest {
     }
 
     @Test
-    fun `onSeriesClicked emits NavigateToSeriesDetails`() = runTest {
+    fun `onTvShowClicked emits NavigateToTvShowDetails`() = runTest {
         givenHappyViewModel()
-        val seriesId = 123
-        viewModel.onSeriesClicked(seriesId)
+        val tvShowId = 123
+        viewModel.onTvShowClicked(tvShowId)
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToSeriesDetails(seriesId))
+            assertThat(awaitItem()).isEqualTo(ActorScreenEffects.NavigateToTvShowDetails(tvShowId))
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -124,7 +123,7 @@ class ActorViewModelTest {
     private fun givenHappyViewModel() {
         coEvery { manageActorDetailsUseCase.getActorDetails(actorId) } returns dummyActor
         coEvery { manageActorDetailsUseCase.getActorTopMovies(actorId) } returns dummyMovies
-        coEvery { manageActorDetailsUseCase.getActorTopTvSeries(actorId) } returns dummySeries
+        coEvery { manageActorDetailsUseCase.getActorTopTvShows(actorId) } returns dummyTvShow
         coEvery { manageActorDetailsUseCase.getGalleryImages(actorId) } returns dummyGallery
         coEvery { manageActorDetailsUseCase.getProfileImages(actorId) } returns dummyProfiles
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -146,9 +145,6 @@ class ActorViewModelTest {
             id = 77,
             imageUrl = "/icon_placeholder_light.xml",
             name = "Jane Doe",
-            region = "UK",
-            lastShow = "Fabulous Show",
-            gender = Gender.FEMALE,
             department = "Acting",
             character = "Detective",
             birthDate = LocalDate.parse("1990-01-01"),
@@ -167,7 +163,8 @@ class ActorViewModelTest {
                 duration = 120.minutes,
                 releaseDate = LocalDate.parse("2020-01-01"),
                 overview = "Overview",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             ),
             Movie(
                 id = 2,
@@ -178,14 +175,15 @@ class ActorViewModelTest {
                 duration = 118.minutes,
                 releaseDate = LocalDate.parse("2022-09-20"),
                 overview = "Overview",
-                rating = 0
+                rating = 0,
+                trailerUrl = ""
             )
         )
 
-        private val dummySeries = listOf(
-            TvSeries(
+        private val dummyTvShow = listOf(
+            TvShow(
                 id = 3,
-                title = "Series One",
+                title = "tv One",
                 overview = "Overview",
                 releaseDate = LocalDate.parse("2019-05-12"),
                 genres = emptyList(),

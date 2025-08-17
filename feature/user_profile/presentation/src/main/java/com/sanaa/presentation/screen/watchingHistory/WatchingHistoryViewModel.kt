@@ -18,7 +18,7 @@ import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 
@@ -27,7 +27,7 @@ class WatchingHistoryViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val manageMovieUseCase: ManageMovieUseCase,
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase,
+    private val manageTvShowUseCase: ManageTvShowUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val savedListsStatusProvider: SavedListsStatusProvider,
@@ -53,7 +53,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShows(genreId: Int? = null) {
         tryToCollect(
-            block = { loadWatchedHistoryTvSeries(genreId) },
+            block = { loadWatchedHistoryTvShows(genreId) },
             onCollect = ::onCollectMovies,
             onError = ::onLoadDataError
         )
@@ -82,7 +82,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
     private fun fetchTvShowGenres() {
         tryToExecute(
-            block = { manageTvSeriesUseCase.getSeriesGenres().map { it.toGenreUiState() } },
+            block = { manageTvShowUseCase.getTvShowGenres().map { it.toGenreUiState() } },
             onSuccess = { genres -> updateState { copy(tvShowGenres = genres) } },
             onError = { ::onLoadDataError }
         )
@@ -146,7 +146,7 @@ class WatchingHistoryViewModel @Inject constructor(
         )
     }
 
-    private suspend fun loadWatchedHistoryTvSeries(
+    private suspend fun loadWatchedHistoryTvShows(
         genreId: Int?,
     ): Flow<List<MediaHistoryItem>> {
         updateState { copy(isLoading = true) }
@@ -159,7 +159,7 @@ class WatchingHistoryViewModel @Inject constructor(
 
         return manageWatchedMediaHistoryUseCase.getMediaHistory(
             genreId = genreId,
-            mediaType = MediaType.TV_SERIES,
+            mediaType = MediaType.TV_SHOW,
             username = user.first().username
         )
     }

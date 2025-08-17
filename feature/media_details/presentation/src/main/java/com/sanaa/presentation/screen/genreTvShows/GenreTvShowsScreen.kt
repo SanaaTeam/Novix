@@ -45,7 +45,7 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.SeriesScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -77,7 +77,7 @@ fun GenreTvShowsScreen(
                 }
 
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
-                    SeriesScreenRoute(effect.id)
+                    TvShowScreenRoute(effect.id)
                 )
 
                 GenreTvShowsEffects.NavigateToLogin -> {
@@ -99,6 +99,11 @@ fun GenreTvShowsScreenContent(
     interactionListener: GenreTvShowsScreenInteractionListener,
 ) {
     val pagedTvShows = state.tvShows.collectAsLazyPagingItems()
+    val screenState = when {
+        pagedTvShows.loadState.refresh is LoadState.Loading -> ScreenState.LOADING
+        pagedTvShows.loadState.refresh is LoadState.Error -> ScreenState.NO_INTERNET
+        else -> ScreenState.CONTENT
+    }
 
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
@@ -124,18 +129,12 @@ fun GenreTvShowsScreenContent(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    targetState = state.isLoading || state.noInternetConnection,
+                    targetState = screenState,
                     contentAlignment = Alignment.Center,
-                    transitionSpec = { fadeIn() togetherWith fadeOut() })
-                {
-                    if (it) {
-                        if (state.noInternetConnection) {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClick() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        } else {
+                    transitionSpec = { fadeIn() togetherWith fadeOut() }
+                ) { currentState ->
+                    when (currentState) {
+                        ScreenState.LOADING -> {
                             Box(
                                 modifier = Modifier.fillMaxSize(),
                                 contentAlignment = Alignment.Center
@@ -143,73 +142,84 @@ fun GenreTvShowsScreenContent(
                                 LoadingIndicator()
                             }
                         }
-                    } else {
-                        LazyVerticalGrid(
-                            modifier = Modifier.fillMaxSize(),
-                            columns = GridCells.Adaptive(minSize = 140.dp),
-                            contentPadding = PaddingValues(
-                                start = 16.dp, end = 16.dp, bottom = 16.dp
-                            ),
-                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            items(
-                                count = pagedTvShows.itemCount,
-                                key = { index ->
-                                    "${index}_${pagedTvShows[index]?.id}"
-                                }
-                            ) { index ->
-                                val tvShow = pagedTvShows[index] ?: return@items
-                                MediaPosterCard(
-                                    posterImage = {
-                                        RemoteBlurredSensitiveImage(
-                                            imageUrl = tvShow.posterPath.orEmpty(),
-                                            modifier = Modifier.fillMaxWidth(),
-                                            sensitiveContentThreshold = 0.2f,
-                                            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                                            safeContentThreshold = LocalSafeContentThreshold.current,
-                                            contentDescription = tvShow.title,
-                                            placeholderContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                            errorContent = {
-                                                RemoteImagePlaceholder(Modifier.fillMaxSize())
-                                            },
-                                        ) {
-                                            OnBlurContent(
-                                                hintText = stringResource(R.string.unsuitable_image),
-                                                textStyle = Theme.textStyle.body.small.copy(
-                                                    color = Color(0x99FFFFFF)
-                                                ),
-                                                iconSize = 24.dp,
-                                                icon = painterResource(designR.drawable.icon_eye_slash),
-                                            )
-                                        }
-                                    },
-                                    topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
-                                    onCardClick = { interactionListener.onTvShowClick(tvShow.id) })
-                            }
 
-                            if (pagedTvShows.loadState.append is LoadState.Loading) {
-                                item(span = { GridItemSpan(maxLineSpan) }) {
-                                    Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        LoadingIndicator()
+                        ScreenState.NO_INTERNET -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryClick() },
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        }
+
+                        ScreenState.CONTENT -> {
+                            LazyVerticalGrid(
+                                modifier = Modifier.fillMaxSize(),
+                                columns = GridCells.Adaptive(minSize = 140.dp),
+                                contentPadding = PaddingValues(
+                                    start = 16.dp, end = 16.dp, bottom = 16.dp
+                                ),
+                                verticalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp)
+                            ) {
+                                items(
+                                    count = pagedTvShows.itemCount,
+                                    key = { index ->
+                                        "${index}_${pagedTvShows[index]?.id}"
+                                    }
+                                ) { index ->
+                                    val tvShow = pagedTvShows[index] ?: return@items
+                                    MediaPosterCard(
+                                        posterImage = {
+                                            RemoteBlurredSensitiveImage(
+                                                imageUrl = tvShow.posterPath.orEmpty(),
+                                                modifier = Modifier.fillMaxWidth(),
+                                                sensitiveContentThreshold = 0.2f,
+                                                isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+                                                safeContentThreshold = LocalSafeContentThreshold.current,
+                                                contentDescription = tvShow.title,
+                                                placeholderContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                                errorContent = {
+                                                    RemoteImagePlaceholder(Modifier.fillMaxSize())
+                                                },
+                                            ) {
+                                                OnBlurContent(
+                                                    hintText = stringResource(R.string.unsuitable_image),
+                                                    textStyle = Theme.textStyle.body.small.copy(
+                                                        color = Color(0x99FFFFFF)
+                                                    ),
+                                                    iconSize = 24.dp,
+                                                    icon = painterResource(designR.drawable.icon_eye_slash),
+                                                )
+                                            }
+                                        },
+                                        topLeftContent = { SaveIconChip(onClick = { interactionListener.onSaveIconClick() }) },
+                                        onCardClick = { interactionListener.onTvShowClick(tvShow.id) })
+                                }
+
+                                if (pagedTvShows.loadState.append is LoadState.Loading) {
+                                    item(span = { GridItemSpan(maxLineSpan) }) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            LoadingIndicator()
+                                        }
                                     }
                                 }
                             }
                         }
                     }
-                    RequestToLoginBottomSheet(
-                        onDismiss = { interactionListener.onBottomSheetDismiss() },
-                        onLoginButtonClick = { interactionListener.onLoginButtonClick() },
-                        isVisible = state.showBottomSheet
-                    )
                 }
+
+                RequestToLoginBottomSheet(
+                    onDismiss = { interactionListener.onBottomSheetDismiss() },
+                    onLoginButtonClick = { interactionListener.onLoginButtonClick() },
+                    isVisible = state.showBottomSheet
+                )
             }
         }
     }

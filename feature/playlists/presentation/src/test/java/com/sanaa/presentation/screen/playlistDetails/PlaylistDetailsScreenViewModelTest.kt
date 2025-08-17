@@ -8,24 +8,25 @@ import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import repository.SavedListsStatusProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlaylistDetailsScreenViewModelTest {
 
     private val manageSavedListItemsUseCase: ManageSavedListItemsUseCase = mockk(relaxed = true)
+    private val savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private lateinit var viewModel: PlaylistDetailsScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var savedStateHandle: SavedStateHandle
@@ -39,8 +40,8 @@ class PlaylistDetailsScreenViewModelTest {
                 "title" to "My Playlist"
             )
         )
+        every { savedListsStatusProvider.savedIds } returns MutableStateFlow(emptySet())
     }
-
 
     @Test
     fun `onMediaClick emits NavigateToMediaDetails effect`() = runTest {
@@ -51,8 +52,7 @@ class PlaylistDetailsScreenViewModelTest {
         viewModel.onMediaClick(mediaId, mediaType)
 
         viewModel.effect.test {
-            val expectedEffect =
-                PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
+            val expectedEffect = PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType)
             assertThat(awaitItem()).isEqualTo(expectedEffect)
             cancelAndIgnoreRemainingEvents()
         }
@@ -71,6 +71,37 @@ class PlaylistDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.isLoading).isFalse()
     }
 
+    @Test
+    fun `onSaveIconClick on failure with general error updates error message`() = runTest {
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val errorMessage = "Database Error"
+        val error = RuntimeException(errorMessage)
+        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+
+        initViewModel()
+
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.errorMessage).isEqualTo(errorMessage)
+    }
+
+    @Test
+    fun `onSaveIconClick on failure with NoNetworkException sets error message to null`() = runTest {
+        val mediaItem = MediaItem(id = 456, title = "", imageUrl = "", isSaved = true)
+        val error = NoNetworkException()
+        coEvery { manageSavedListItemsUseCase.removeMovieFromSavedList(any(), any()) } throws error
+        initViewModel()
+
+        viewModel.onSaveIconClick(mediaItem)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertThat(state.isLoading).isFalse()
+        assertThat(state.errorMessage).isNull()
+    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
@@ -107,59 +138,12 @@ class PlaylistDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onDataLoadError with NoNetworkException sets isLoading false and errorMessage null`() =
-        runTest {
-            initViewModel()
-
-            viewModel.onDataLoadError(NoNetworkException())
-
-            viewModel.state.test {
-                val state = awaitItem()
-                assertThat(state.isLoading).isFalse()
-                assertThat(state.errorMessage).isNull()
-                cancelAndIgnoreRemainingEvents()
-            }
-        }
-
-    @Test
-    fun `onDataLoadError with generic exception sets errorMessage and emits ShowErrorSnackBar effect`() =
-        runTest {
-            initViewModel()
-            val errorMessage = "Something went wrong"
-            val exception = Exception(errorMessage)
-
-            val effectJob = launch {
-                viewModel.effect.test {
-                    val effectItem = awaitItem()
-                    assertThat(effectItem).isEqualTo(PlaylistDetailsScreenEffect.ShowErrorSnackBar)
-                    cancelAndIgnoreRemainingEvents()
-                }
-            }
-
-            viewModel.state.test {
-                awaitItem()
-
-                viewModel.onDataLoadError(exception)
-
-                val updated = awaitItem()
-                assertThat(updated.isLoading).isFalse()
-                assertThat(updated.errorMessage).isEqualTo(errorMessage)
-
-                cancelAndIgnoreRemainingEvents()
-            }
-
-            effectJob.cancel()
-        }
-
-
     private fun initViewModel() {
         viewModel = PlaylistDetailsScreenViewModel(
             savedStateHandle = savedStateHandle,
             manageSavedListItemsUseCase = manageSavedListItemsUseCase,
+            savedListsStatusProvider = savedListsStatusProvider,
             dispatcher = testDispatcher
         )
     }
 }
-
-

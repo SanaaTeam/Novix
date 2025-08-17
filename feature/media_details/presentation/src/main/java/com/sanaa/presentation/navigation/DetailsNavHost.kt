@@ -20,7 +20,7 @@ import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
-import com.sanaa.presentation.screen.actor.screen.TopSeriesScreen
+import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
@@ -31,8 +31,8 @@ import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
-import com.sanaa.presentation.screen.series.SeriesScreen
-import com.sanaa.presentation.screen.series.TvShowScreenViewModel
+import com.sanaa.presentation.screen.tvShow.TvShowScreen
+import com.sanaa.presentation.screen.tvShow.TvShowScreenViewModel
 
 @Composable
 fun DetailsNavHost(
@@ -44,7 +44,7 @@ fun DetailsNavHost(
 ) {
     val initialRoute = when {
         startRoute != null && mediaId != null -> when (startRoute) {
-            StartRoute.SERIES -> SeriesScreenRoute(mediaId)
+            StartRoute.TV_SHOW -> TvShowScreenRoute(mediaId)
             StartRoute.MOVIE -> MovieDetailsScreenRoute(mediaId)
             StartRoute.ACTOR -> ActorScreenRoute(mediaId)
         }
@@ -53,7 +53,7 @@ fun DetailsNavHost(
             if (isTvGenre) {
                 GenreTvShowsScreenRoute(genreId!!, genreName!!)
             } else {
-                GenreMoviesScreenRoute(genreId!!, genreName!!)
+                GenreMovieScreenRoute(genreId!!, genreName!!)
             }
         }
     }
@@ -82,9 +82,9 @@ fun DetailsNavHost(
             startDestination = initialRoute,
             modifier = Modifier.background(Theme.colors.surface)
         ) {
-            composable(route = SeriesScreenRoute::class) {
-                val seriesViewModel: TvShowScreenViewModel = hiltViewModel()
-                SeriesScreen(viewModel = seriesViewModel)
+            composable(route = TvShowScreenRoute::class) {
+                val tvShowScreenViewModel: TvShowScreenViewModel = hiltViewModel()
+                TvShowScreen(viewModel = tvShowScreenViewModel)
             }
 
             composable(route = EpisodeDetailsScreenRoute::class) {
@@ -102,9 +102,9 @@ fun DetailsNavHost(
                 TopMoviesScreen(viewModel = actorViewModel)
             }
 
-            composable(route = TopSeriesScreenRoute::class) {
+            composable(route = TopTvShowsScreenRoute::class) {
                 val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                TopSeriesScreen(viewModel = actorViewModel)
+                TopShowsScreen(viewModel = actorViewModel)
             }
 
             composable(route = ActorGalleryScreenRoute::class) {
@@ -116,8 +116,8 @@ fun DetailsNavHost(
             }
 
             composable(route = ReviewsScreenRoute::class) {
-                val reviewViewModel: ReviewScreenViewModel = hiltViewModel()
-                ReviewsScreen(viewModel = reviewViewModel)
+                val reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel()
+                ReviewsScreen(viewModel = reviewScreenViewModel)
             }
 
             composable(route = MovieDetailsScreenRoute::class) {
@@ -125,7 +125,7 @@ fun DetailsNavHost(
                 MovieDetailsScreen(viewModel = movieDetailsViewModel)
             }
 
-            composable(route = GenreMoviesScreenRoute::class) {
+            composable(route = GenreMovieScreenRoute::class) {
                 val genreMoviesViewModel: GenreMoviesViewModel = hiltViewModel()
                 GenreMoviesScreen(viewModel = genreMoviesViewModel)
             }

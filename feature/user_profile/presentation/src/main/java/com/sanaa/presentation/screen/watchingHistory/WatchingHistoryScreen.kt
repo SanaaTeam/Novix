@@ -87,7 +87,7 @@ private fun WatchingHistoryScreenEffectsHandler(
                     id = effect.id,
                     startRoute = when (effect.mediaTypeUi) {
                         MediaTypeUi.MOVIE -> StartRoute.MOVIE
-                        MediaTypeUi.TV_SHOW -> StartRoute.SERIES
+                        MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
                 is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
@@ -195,8 +195,6 @@ private fun WatchingHistoryScreenContent(
                 mediaId = mediaItem.id.toLong(),
                 onDismiss = interactionListener::onDismissSaveToListBottomSheet,
                 onCreateNewListClick = interactionListener::onCreateNewListClick,
-                onSuccess = { interactionListener.onSaveToListResult(true) },
-                onFailure = { interactionListener.onSaveToListResult(false) }
             )
         }
     }

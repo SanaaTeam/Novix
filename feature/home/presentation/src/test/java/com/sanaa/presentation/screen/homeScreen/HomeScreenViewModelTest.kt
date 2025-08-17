@@ -3,20 +3,18 @@ package com.sanaa.presentation.screen.homeScreen
 import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import entity.User
 import exceptions.NoLoggedInUserException
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -25,12 +23,11 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
 import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import usecase.search.search_param.MediaType
 import kotlin.test.Ignore
@@ -40,7 +37,7 @@ import kotlin.time.Duration.Companion.minutes
 class HomeScreenViewModelTest {
 
     private val manageMovieUseCase: ManageMovieUseCase = mockk(relaxed = true)
-    private val manageTvSeriesUseCase: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowUseCase: ManageTvShowUseCase = mockk(relaxed = true)
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
         mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
@@ -49,35 +46,30 @@ class HomeScreenViewModelTest {
 
     private lateinit var viewModel: HomeScreenViewModel
     private val testDispatcher = StandardTestDispatcher()
-    private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
 
     @BeforeEach
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         coEvery { manageMovieUseCase.getPopularMovies(any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getPopularSeries(any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getPopularTvShows(any()) } returns emptyList()
         coEvery { manageMovieUseCase.getTopRatedMovies(any(), any()) } returns emptyList()
-        coEvery { manageTvSeriesUseCase.getTopRatedTvSeries(any(), any()) } returns emptyList()
+        coEvery { manageTvShowUseCase.getTopRatedTvShows(any(), any()) } returns emptyList()
         coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws NoLoggedInUserException()
         coEvery {
             manageWatchedMediaHistoryUseCase.getMediaHistory(any(), any(), any())
         } returns flowOf(emptyList())
         coEvery { manageMovieUseCase.getMovieGenres() } returns emptyList()
         coEvery { manageMovieUseCase.getUpcomingMovies(any(), any()) } returns emptyList()
-        savedListsStatusProvider = mockk(relaxed = true) {
-            every { savedIds } returns MutableStateFlow(emptySet())
-        }
     }
 
     private fun initializeViewModel() {
         viewModel = HomeScreenViewModel(
             manageMovieUseCase,
-            manageTvSeriesUseCase,
+            manageTvShowUseCase,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
             checkIfUserIsLoggedInUseCase,
-            savedListsStatusProvider,
             stringProvider,
             testDispatcher,
         )
@@ -87,10 +79,10 @@ class HomeScreenViewModelTest {
     fun `init should fetch popular media and update state on success`() = runTest(testDispatcher) {
         // Given
         val popularMovies = listOf(dummyMovie.copy(id = 1))
-        val popularTvSeries = listOf(dummyTvSeries.copy(id = 2))
+        val popularTvShows = listOf(dummyTvShow.copy(id = 2))
 
         coEvery { manageMovieUseCase.getPopularMovies(1) } returns popularMovies
-        coEvery { manageTvSeriesUseCase.getPopularSeries(1) } returns popularTvSeries
+        coEvery { manageTvShowUseCase.getPopularTvShows(1) } returns popularTvShows
 
         // When
         initializeViewModel()
@@ -190,34 +182,34 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `onMoviesCardClicked should emit NavigateToMoviesScreen effect`() =
+    fun `onMoviesCardClicked should emit NavigateToTrendingMoviesScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onMoviesCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingMoviesScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
 
     @Test
-    fun `onTvShowsCardClicked should emit NavigateToTvShowsScreen effect`() =
+    fun `onTvShowsCardClicked should emit NavigateToTrendingTvShowsScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onTvShowsCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingTvShowsScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
 
     @Test
-    fun `onPeopleCardClicked should emit NavigateToPeopleScreen effect`() =
+    fun `onPeopleCardClicked should emit NavigateToTrendingPeopleScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onPeopleCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingPeopleScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -248,11 +240,11 @@ class HomeScreenViewModelTest {
     fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.effect.test {
-            viewModel.onMediaClick(101, MediaTypeUi.MOVIE)
+            viewModel.onMediaClick(101, MediaTypeUiState.MOVIE)
             assertThat(awaitItem()).isEqualTo(
                 HomeScreenEffect.NavigateToMediaDetails(
                     101,
-                    MediaTypeUi.MOVIE
+                    MediaTypeUiState.MOVIE
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -269,25 +261,18 @@ class HomeScreenViewModelTest {
 
     @Ignore
     @Test
-    fun `onSaveIconClick should set showBottomSheet to true`() = runTest(testDispatcher) {
+    fun `onSaveIconClick should set showLoginBottomSheet to true`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
-
-    @Test
-    fun `onSaveIconClick should navigate to playlist screen if user not logged in`() = runTest {
-        initializeViewModel()
-        viewModel.onSaveIconClick(mockk())
-
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()    }
 
     @Test
     fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        viewModel.onDismissBottomSheet()
-        assertThat(viewModel.state.value.showBottomSheet).isFalse()
+        viewModel.onDismissLoginBottomSheet()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test
@@ -296,7 +281,7 @@ class HomeScreenViewModelTest {
         viewModel.onRetryClick()
         advanceUntilIdle()
         coVerify(exactly = 2) { manageMovieUseCase.getPopularMovies(any()) }
-        coVerify(exactly = 2) { manageTvSeriesUseCase.getPopularSeries(any()) }
+        coVerify(exactly = 2) { manageTvShowUseCase.getPopularTvShows(any()) }
     }
 
     @Test
@@ -328,10 +313,10 @@ class HomeScreenViewModelTest {
             duration = 120.minutes,
             releaseDate = LocalDate(2020, 2, 1),
             overview = "",
-            trailerUrl = null,
+            trailerUrl = "",
             rating = 0
         )
-        val dummyTvSeries = TvSeries(
+        val dummyTvShow = TvShow(
             id = 2,
             title = "Dummy Series",
             posterImageUrl = "",
@@ -348,7 +333,8 @@ class HomeScreenViewModelTest {
             id = 1,
             posterImageUrl = "",
             mediaType = MediaType.MOVIE,
-            genres = emptyList()
+            genres = emptyList(),
+            lastWatchedAt = 0L
         )
     }
 }
