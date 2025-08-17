@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheets.removeFromListBottomSheet
 
-import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.playlist.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -151,4 +150,12 @@ class RemoveFromListViewModel @Inject constructor(
             )
         }
     }
+}
+
+fun SavedList.toState(): PlaylistUiItem {
+    return PlaylistUiItem(title = title, itemCount = itemCount, id = id, itemsIds = itemsIds)
+}
+
+fun List<SavedList>.toState(): List<PlaylistUiItem> {
+    return map { it.toState() }
 }

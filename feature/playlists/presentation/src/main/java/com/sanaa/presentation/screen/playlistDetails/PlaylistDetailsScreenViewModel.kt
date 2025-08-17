@@ -30,9 +30,8 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private val manageSavedListsUseCase: ManageSavedListsUseCase,
     private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) :
-    BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(
-        SavedDetailsScreenUiState(noInternetConnection = true), dispatcher
+) : BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(
+        SavedDetailsScreenUiState(), dispatcher
     ),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
