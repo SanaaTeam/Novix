@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun TrendingPeopleScreen(
-    viewModel: TrendingPeopleScreenViewModel = hiltViewModel()
+    viewModel: TrendingPeopleScreenViewModel = hiltViewModel(),
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
 
@@ -78,15 +78,10 @@ private fun TrendingPeopleScreenContent(
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
         },
         modifier = Modifier.systemBarsPadding()
     ) {
@@ -112,15 +107,16 @@ private fun TrendingPeopleScreenContent(
                         LoadingIndicator()
                     }
                 }
-                    else ->{
-                        PersonList(
-                            persons = people,
-                            onItemClick = interactionListener::onActorClick
-                        )
-                        if (people.loadState.hasError) {
-                            RefreshButton(onRetryClick = interactionListener::onRetryClick)
-                        }
+
+                else -> {
+                    PersonList(
+                        persons = people,
+                        onItemClick = interactionListener::onActorClick
+                    )
+                    if (people.loadState.hasError) {
+                        RefreshButton(onRetryClick = interactionListener::onRetryClick)
                     }
+                }
             }
         }
     }

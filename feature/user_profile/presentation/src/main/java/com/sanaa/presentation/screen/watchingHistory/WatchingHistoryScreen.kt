@@ -3,7 +3,6 @@ package com.sanaa.presentation.screen.watchingHistory
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -49,7 +47,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun WatchingHistoryScreen(
     modifier: Modifier = Modifier,
-    viewModel: WatchingHistoryViewModel = hiltViewModel()
+    viewModel: WatchingHistoryViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -64,10 +62,11 @@ fun WatchingHistoryScreen(
         modifier = modifier,
     )
 }
+
 @Composable
 private fun WatchingHistoryScreenEffectsHandler(
     interactionListener: WatchingHistoryInteractionListener,
-    effects: SharedFlow<WatchingHistoryScreenEffect>
+    effects: SharedFlow<WatchingHistoryScreenEffect>,
 ) {
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
@@ -90,12 +89,14 @@ private fun WatchingHistoryScreenEffectsHandler(
                         MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
+
                 is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
                 is ShowSuccessSnackBar -> interactionListener.onShowSuccessSnackBar(effect.message)
             }
         }
     }
 }
+
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
@@ -122,15 +123,10 @@ private fun WatchingHistoryScreenContent(
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onDismissSnack
-                )
-            }
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onDismissSnack
+            )
         }) {
         Column(
             modifier = Modifier

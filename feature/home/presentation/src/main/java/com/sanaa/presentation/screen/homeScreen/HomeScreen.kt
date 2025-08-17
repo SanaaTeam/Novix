@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -62,7 +61,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -93,15 +92,10 @@ private fun HomeScreenContent(
         topBar = { HomeTopBar(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) },
         backgroundShapes = {},
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
         },
         modifier = Modifier.systemBarsPadding()
     ) {
