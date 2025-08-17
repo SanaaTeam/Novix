@@ -40,7 +40,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
     private val route = EpisodeDetailsScreenRoute(
-        tvShowId = checkNotNull(savedStateHandle["seriesId"]),
+        tvShowId = checkNotNull(savedStateHandle["tvShowId"]),
         seasonNumber = checkNotNull(savedStateHandle["seasonNumber"]),
         episodeNumber = checkNotNull(savedStateHandle["episodeNumber"]),
     )
