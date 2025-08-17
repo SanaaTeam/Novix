@@ -6,12 +6,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,83 +40,14 @@ fun ReviewCard(
             .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp))
             .padding(16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(shape = RoundedCornerShape(12.dp))
-                    .background(color = Theme.colors.iconBackgroundLow)
-                    .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp)),
-
-                contentAlignment = Alignment.Center
-            ) {
-                RemoteBlurredSensitiveImage(
-                    imageUrl = review.avatarUrl.orEmpty(),
-                    modifier = Modifier.fillMaxWidth(),
-                    sensitiveContentThreshold = 0.2f,
-                    isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                    safeContentThreshold = LocalSafeContentThreshold.current,
-                    contentDescription = review.authorName,
-                    placeholderContent = {
-                        Image(
-                            painter = painterResource(R.drawable.user_avater),
-                            contentDescription = stringResource(R.string.anonymous),
-                            modifier = Modifier
-                                .size(28.dp)
-                                .align(Alignment.Center),
-                            colorFilter = ColorFilter.tint(Theme.colors.hint)
-
-                        )
-                    },
-                    errorContent = {
-                        Image(
-                            painter = painterResource(R.drawable.user_avater),
-                            contentDescription = stringResource(R.string.anonymous),
-                            modifier = Modifier
-                                .size(28.dp)
-                                .align(Alignment.Center),
-                            colorFilter = ColorFilter.tint(Theme.colors.hint)
-                        )
-                    },
-                ) {
-                    OnBlurContent(
-                        iconSize = 24.dp,
-                        icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
-                    )
-                }
-
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Column {
-
-                AppText(
-                    text = review.authorName.takeUnless { it.isNullOrBlank() }
-                        ?: stringResource(R.string.anonymous),
-                    style = Theme.textStyle.title.medium,
-                    color = Theme.colors.title
-                )
-                review.username?.let {
-                    AppText(
-                        text = it,
-                        style = Theme.textStyle.label.small,
-                        color = Theme.colors.hint
-                    )
-                }
-            }
-            Spacer(modifier = Modifier.weight(1f))
-            review.rating?.let {
-                IconWithText(
-                    text = review.rating,
-                    textColor = Theme.colors.title,
-                    iconRes = R.drawable.icon_star,
-                    contentDescription = review.rating,
-                    tint = Theme.colors.statusColors.yellowAccent,
-                )
-            }
+        Row {
+            UserImage(review)
+            UserInfo(review)
+            ReviewRate(review)
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
         ExpandableText(
+            modifier = Modifier.padding(top = 12.dp),
             text = review.content,
             style = Theme.textStyle.body.small,
             color = Theme.colors.body,
@@ -128,9 +57,8 @@ fun ReviewCard(
             onReadMore = { }
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         IconWithText(
+            modifier = Modifier.padding(top = 12.dp),
             text = review.createdDate,
             iconRes = R.drawable.icon_calender,
             contentDescription = review.createdDate,
@@ -138,4 +66,89 @@ fun ReviewCard(
         )
     }
 
+}
+
+
+@Composable
+private fun UserImage(review: ReviewUiModel) {
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clip(shape = RoundedCornerShape(12.dp))
+            .background(color = Theme.colors.iconBackgroundLow)
+            .border(1.dp, Theme.colors.stroke, RoundedCornerShape(12.dp)),
+
+        contentAlignment = Alignment.Center
+    ) {
+        RemoteBlurredSensitiveImage(
+            imageUrl = review.avatarUrl.orEmpty(),
+            modifier = Modifier.fillMaxWidth(),
+            sensitiveContentThreshold = 0.2f,
+            isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+            safeContentThreshold = LocalSafeContentThreshold.current,
+            contentDescription = review.authorName,
+            placeholderContent = {
+                Image(
+                    painter = painterResource(R.drawable.user_avater),
+                    contentDescription = stringResource(R.string.anonymous),
+                    modifier = Modifier
+                        .size(28.dp)
+                        .align(Alignment.Center),
+                    colorFilter = ColorFilter.tint(Theme.colors.hint)
+
+                )
+            },
+            errorContent = {
+                Image(
+                    painter = painterResource(R.drawable.user_avater),
+                    contentDescription = stringResource(R.string.anonymous),
+                    modifier = Modifier
+                        .size(28.dp)
+                        .align(Alignment.Center),
+                    colorFilter = ColorFilter.tint(Theme.colors.hint)
+                )
+            },
+        ) {
+            OnBlurContent(
+                iconSize = 24.dp,
+                icon = painterResource(com.sanaa.designsystem.R.drawable.icon_eye_slash),
+            )
+        }
+
+    }
+}
+
+@Composable
+private fun RowScope.UserInfo(review: ReviewUiModel) {
+    Column(modifier = Modifier
+        .weight(1f)
+        .padding(start = 8.dp)) {
+        AppText(
+            text = review.authorName.takeUnless { it.isNullOrBlank() }
+                ?: stringResource(R.string.anonymous),
+            style = Theme.textStyle.title.medium,
+            color = Theme.colors.title
+        )
+        review.username?.let {
+            AppText(
+                text = it,
+                style = Theme.textStyle.label.small,
+                color = Theme.colors.hint
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReviewRate(review: ReviewUiModel) {
+    review.rating?.let {
+        IconWithText(
+            modifier = Modifier.padding(top = 4.dp),
+            text = review.rating,
+            textColor = Theme.colors.title,
+            iconRes = R.drawable.icon_star,
+            contentDescription = review.rating,
+            tint = Theme.colors.statusColors.yellowAccent,
+        )
+    }
 }
