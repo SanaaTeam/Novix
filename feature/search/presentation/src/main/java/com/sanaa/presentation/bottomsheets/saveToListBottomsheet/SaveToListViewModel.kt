@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import android.util.Log
 import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.mapper.toState
@@ -139,7 +138,6 @@ class SaveToListViewModel @Inject constructor(
     }
 
     override fun onSnackBarDismiss() {
-        Log.d(TAG, "onSnackBarDismiss: called sanck bar data = null")
         updateState {
             copy(snackBarData = null)
         }

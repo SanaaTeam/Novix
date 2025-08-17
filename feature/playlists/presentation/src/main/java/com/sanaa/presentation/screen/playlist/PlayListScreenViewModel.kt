@@ -43,7 +43,6 @@ class PlayListScreenViewModel @Inject constructor(
 
     private fun fetchAndHandleSavedLists() {
         tryToCollect(
-            dispatcher = Dispatchers.IO,
             callee = { manageSavedListsUseCase.getSavedLists() },
             onCollect = { savedLists ->
                 handleSuccessfulFetch(savedLists)

@@ -20,6 +20,7 @@ import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
+import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
@@ -65,6 +66,7 @@ private fun PlaylistEffectsHandler(
     interactionListener: PlayListScreenInteractionListener,
     onShowSnack: (SnackData) -> Unit
 ) {
+    val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
     val authApi = EntryPointAccessors.fromApplication(
         context,
@@ -88,7 +90,7 @@ private fun PlaylistEffectsHandler(
                     onShowSnack(SnackData(effect.message, true))
 
                 is PlayListScreenEffect.NavigateToSavedDetails ->
-                    interactionListener.onNavigateToSavedDetails(effect.listId, effect.title)
+                    navController.navigate(SavedDetailsScreenRoute(effect.listId, effect.title).route())
             }
         }
     }
