@@ -18,6 +18,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
