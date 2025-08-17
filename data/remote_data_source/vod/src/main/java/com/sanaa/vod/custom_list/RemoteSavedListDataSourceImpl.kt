@@ -4,7 +4,7 @@ import com.sanaa.vod.custom_list.request.AddOrRemoveItemBody
 import com.sanaa.vod.custom_list.request.CreateListBody
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import javax.inject.Inject
 
 class RemoteSavedListDataSourceImpl @Inject constructor(
@@ -18,7 +18,7 @@ class RemoteSavedListDataSourceImpl @Inject constructor(
         sessionId: String,
         name: String,
         description: String
-    ): SavedListDto {
+    ): SavedListRemoteDto {
         val response = savedListApiService
             .createList(sessionId, CreateListBody(name, description, DEFAULT_LANGUAGE))
         return savedListApiService.getListDetails(response.listId).toListDto()
