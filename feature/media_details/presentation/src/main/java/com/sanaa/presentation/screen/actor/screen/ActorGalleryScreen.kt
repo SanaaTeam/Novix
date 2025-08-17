@@ -30,14 +30,14 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.componants.GalleryCard
 import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ActorGalleryScreen(
     navigateBack: () -> Unit,
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     BackHandler(onBack = navigateBack)
 

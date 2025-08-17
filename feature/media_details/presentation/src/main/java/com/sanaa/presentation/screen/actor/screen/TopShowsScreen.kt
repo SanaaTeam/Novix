@@ -41,10 +41,10 @@ import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
 import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -53,7 +53,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopShowsScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -159,7 +159,7 @@ private fun TvShowList(
                 },
                 onCardClick = {
                     navController.navigate(
-                        TvShowDetailsScreenRoute(tvShow.id).route()
+                        TvShowScreenRoute(tvShow.id)
                     )
                 }
             )

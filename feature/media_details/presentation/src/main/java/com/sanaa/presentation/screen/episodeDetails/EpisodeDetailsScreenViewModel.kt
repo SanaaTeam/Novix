@@ -1,10 +1,12 @@
 package com.sanaa.presentation.screen.episodeDetails
 
+import android.R.attr.rating
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
@@ -37,19 +39,15 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     initialState = EpisodeDetailsScreenUiState(),
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
+    private val route = EpisodeDetailsScreenRoute(
+        tvShowId = checkNotNull(savedStateHandle["tvShowId"]),
+        seasonNumber = checkNotNull(savedStateHandle["seasonNumber"]),
+        episodeNumber = checkNotNull(savedStateHandle["episodeNumber"]),
+    )
 
-    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
-        "tvShowId is required in SavedStateHandle"
-    }
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
-        "seasonNumber is required in SavedStateHandle"
-    }
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
-        "episodeNumber is required in SavedStateHandle"
-    }
 
     init {
-        loadEpisode(this@EpisodeDetailsScreenViewModel.tvShowId, seasonNumber, episodeNumber)
+        loadEpisode(route.tvShowId, route.seasonNumber, route.episodeNumber)
         updateUserLoginState()
     }
 
@@ -110,7 +108,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        loadEpisode(tvShowId, seasonNumber, episodeNumber)
+        loadEpisode(route.tvShowId, route.seasonNumber, route.episodeNumber)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -157,6 +155,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                             )
                         }
                     }
+
                     else -> {
                         updateState { copy(error = e.message, isLoading = false) }
                     }
@@ -212,8 +211,8 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     try {
                         val rating = manageTvShowDetails.getEpisodesRate(
                             user.id,
-                            seasonNumber,
-                            episodeNumber
+                            route.seasonNumber,
+                            route.episodeNumber
                         )
                         emit(rating)
                     } catch (e: Exception) {
@@ -225,9 +224,9 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
-            tvShowId = this@EpisodeDetailsScreenViewModel.tvShowId,
-            episodeNumber = episodeNumber,
-            seasonNumber = seasonNumber,
+            tvShowId = route.tvShowId,
+            episodeNumber = route.episodeNumber,
+            seasonNumber = route.seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
