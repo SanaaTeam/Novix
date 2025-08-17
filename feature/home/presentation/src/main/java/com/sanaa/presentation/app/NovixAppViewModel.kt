@@ -35,8 +35,12 @@ class NovixAppViewModel @Inject constructor(
 
     private fun refreshListData() {
         viewModelScope.launch (Dispatchers.IO){
-            checkIfUserIsLoggedInUseCase.isLoggedIn().collectLatest{logged->
-                if (logged)mangeSavedListsUseCase.refreshSavedList()
+            try {
+                checkIfUserIsLoggedInUseCase.isLoggedIn().collectLatest{logged->
+                    if (logged)mangeSavedListsUseCase.refreshSavedList()
+                }
+            }catch (e:Exception){
+                mangeSavedListsUseCase.clearData()
             }
         }
     }
