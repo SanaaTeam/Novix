@@ -7,10 +7,10 @@ import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.GenreMovieScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import exceptions.NoNetworkException
-import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -31,13 +31,14 @@ class GenreMoviesViewModel @Inject constructor(
     initialState = GenreMoviesScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreMoviesScreenInteractionListener {
-
-    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
-    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+    private val route = GenreMovieScreenRoute(
+        genreId = checkNotNull(savedStateHandle["genreId"]),
+        genreName = checkNotNull(savedStateHandle["genreName"]),
+    )
 
     init {
         updateUserLoggingStatus()
-        fetchMovies(genreId)
+        fetchMovies(route.genreId)
     }
 
     fun updateUserLoggingStatus() {
@@ -54,7 +55,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     override fun onRetryClicked() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        fetchMovies(genreId)
+        fetchMovies(route.genreId)
     }
 
 
@@ -119,10 +120,10 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onCollectMovies(): suspend (PagingData<MovieUiModel>) -> Unit = { movies ->
-        updateState { copy(movies = flowOf(movies), title = genreName, isLoading = false) }
+        updateState { copy(movies = flowOf(movies), title = route.genreName, isLoading = false) }
     }
 
-    private fun onFetchMoviesFailed(exception: NovixAppException) {
+    private fun onFetchMoviesFailed(exception: Exception) {
         if (exception is NoNetworkException) {
             updateState {
                 copy(

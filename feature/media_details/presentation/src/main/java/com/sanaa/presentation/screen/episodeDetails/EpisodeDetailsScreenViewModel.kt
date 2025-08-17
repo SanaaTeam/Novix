@@ -39,132 +39,105 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     defaultDispatcher = dispatcher
 ), EpisodeDetailsInteractionListener {
 
-    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
-        "tvShowId is required in SavedStateHandle"
-    }
-    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"]) {
-        "seasonNumber is required in SavedStateHandle"
-    }
-    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"]) {
-        "episodeNumber is required in SavedStateHandle"
-    }
+    private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"])
+    private val seasonNumber: Int = checkNotNull(savedStateHandle["seasonNumber"])
+    private val episodeNumber: Int = checkNotNull(savedStateHandle["episodeNumber"])
 
     init {
-        fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
+        fetchEpisodeDetails()
         updateUserLoginState()
+    }
+
+    private fun <T> fetchData(
+        callee: suspend () -> T,
+        onSuccess: (T) -> Unit,
+    ) {
+        tryToExecute(
+            callee = callee,
+            onSuccess = onSuccess,
+            onError = ::handleError
+        )
+    }
+
+    private fun handleError(exception: NovixAppException) {
+        when (exception) {
+            is NoNetworkException -> {
+                updateState { copy(noInternetConnection = true, isLoading = false, error = null) }
+            }
+
+            else -> {
+                updateState { copy(error = exception.message, isLoading = false) }
+            }
+        }
+    }
+
+    fun fetchEpisodeDetails() {
+        updateState { copy(isLoading = true, noInternetConnection = false, error = null) }
+
+        fetchEpisode()
+        fetchGuests()
+        fetchImages()
+        fetchTrailer()
+        fetchUserRating()
+    }
+
+    private fun fetchEpisode() {
+        fetchData(
+            callee = {
+                manageEpisodeDetails.getEpisodeDetails(
+                    tvShowId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            },
+            onSuccess = { episode ->
+                updateState { copy(episode = episode.toState(), isLoading = false) }
+            }
+        )
+    }
+
+    private fun fetchGuests() {
+        fetchData(
+            callee = {
+                manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                    tvShowId,
+                    seasonNumber,
+                    episodeNumber
+                )
+            },
+            onSuccess = { guests ->
+                updateState { copy(guestOfHonor = guests.map { it.toActorUiModel() }) }
+            }
+        )
+    }
+
+    private fun fetchImages() {
+        fetchData(
+            callee = { manageTvShowDetails.getTvShowImageUrls(tvShowId) },
+            onSuccess = { images ->
+                updateState { copy(imagesUrl = images) }
+            }
+        )
+    }
+
+    private fun fetchTrailer() {
+        fetchData(
+            callee = { manageTvShowDetails.getTvShowTrailer(tvShowId) },
+            onSuccess = { trailerUrl ->
+                updateState { copy(trailerUrl = trailerUrl) }
+            }
+        )
     }
 
     private fun fetchUserRating() {
         viewModelScope.launch {
-            val isLogged = checkUserLogin.isLoggedIn().first()
-            if (isLogged) {
+            if (checkUserLogin.isLoggedIn().first()) {
                 tryToCollect(
                     callee = { getCurrentUserRating() },
-                    onCollect = { rating ->
-                        updateState { copy(imdbRating = rating) }
-                    }
+                    onCollect = { rating -> updateState { copy(imdbRating = rating) } }
                 )
             }
         }
-    }
-
-    override fun onBackClick() {
-        emitEffect(EpisodeDetailsEffects.NavigateBack)
-    }
-
-    override fun onPlayTrailerClick() {
-        emitEffect(EpisodeDetailsEffects.PlayTrailer(state.value.trailerUrl))
-    }
-
-    override fun onGenreTypeClick(genreId: Int) {
-        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(genreId))
-    }
-
-    override fun onCastClick(actorId: Int) {
-        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(actorId))
-    }
-
-    override fun onSavedClick(tvShowId: Int) {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            promptLogin(LoginPromptType.BOOKMARK)
-        }
-
-    }
-
-    override fun onDismissBottomSheet() {
-        updateState { copy(showLoginBottomSheet = false) }
-    }
-
-    override fun onLoginButtonClick() {
-        updateState { copy(showLoginBottomSheet = false) }
-        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
-    }
-
-    override fun onRateClicked() {
-        if (state.value.isUserLoggedIn) {
-            updateState { copy(showRateBottomSheet = true) }
-        } else {
-            promptLogin(LoginPromptType.RATE)
-        }
-    }
-
-    override fun onRetryLoadDetails() {
-        updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        loadEpisode(tvShowId, seasonNumber, episodeNumber)
-    }
-
-    override fun onRatingChanged(newRating: Int) {
-        updateState { copy(imdbRating = newRating) }
-    }
-
-    override fun onDismissRateBottomSheet() {
-        updateState { copy(showRateBottomSheet = false) }
-    }
-
-    override fun onSubmitRateBottomSheet() {
-        tryToExecute(
-            callee = ::submitEpisodeRating,
-            onError = ::onErrorAccrue
-        )
-        updateState {
-            copy(showRateBottomSheet = false)
-        }
-    }
-
-    private fun onErrorAccrue(exception: NovixAppException) {
-        updateState {
-            copy(
-                error = exception.message,
-                showRateBottomSheet = false
-            )
-        }
-    }
-
-    private fun loadEpisode(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
-        tryToExecute(
-            callee = { fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber) },
-            onSuccess = {
-                updateState { copy(isLoading = false) }
-            },
-            onError = { e ->
-                when (e) {
-                    is NoNetworkException -> {
-                        updateState {
-                            copy(
-                                noInternetConnection = true,
-                                error = null,
-                                isLoading = false
-                            )
-                        }
-                    }
-
-                    else -> {
-                        updateState { copy(error = e.message, isLoading = false) }
-                    }
-                }
-            }
-        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -172,133 +145,81 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         return getUser.getLoggedInUser()
             .flatMapLatest { user ->
                 flow {
-                    try {
-                        val rating = manageTvShowDetails.getEpisodesRate(
-                            user.id,
-                            seasonNumber,
-                            episodeNumber
-                        )
-                        emit(rating)
-                    } catch (e: Exception) {
-                        emit(0)
-                    }
+                    emit(
+                        try {
+                            manageTvShowDetails.getEpisodesRate(
+                                user.id,
+                                seasonNumber,
+                                episodeNumber
+                            )
+                        } catch (e: Exception) {
+                            0
+                        }
+                    )
                 }
             }
     }
 
     private suspend fun submitEpisodeRating() {
         val isSendRateSuccess = manageEpisodeDetails.addTvEpisodeRate(
-            tvShowId = this@EpisodeDetailsScreenViewModel.tvShowId,
+            tvShowId = tvShowId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber,
             rating = state.value.imdbRating.toFloat()
         )
-        if (isSendRateSuccess) {
-            updateState {
-                copy(
-                    snackBarData = SnackData(
-                        message = stringProvider.deleteRatingSuccess, isError = false
-                    )
-                )
-            }
-        } else {
-            updateState {
-                copy(
-                    snackBarData = SnackData(
-                        message = stringProvider.deleteRatingFailed,
-                        isError = true
-                    )
-                )
-            }
 
+        val snack = if (isSendRateSuccess) {
+            SnackData(message = stringProvider.deleteRatingSuccess, isError = false)
+        } else {
+            SnackData(message = stringProvider.deleteRatingFailed, isError = true)
         }
+
+        updateState { copy(snackBarData = snack) }
+    }
+
+    override fun onSubmitRateBottomSheet() {
+        tryToExecute(callee = ::submitEpisodeRating, onError = ::handleError)
+        updateState { copy(showRateBottomSheet = false) }
+    }
+
+    override fun onRetryLoadDetails() = fetchEpisodeDetails()
+    override fun onSnackDismissRequested() = updateState { copy(snackBarData = null) }
+    override fun onDismissBottomSheet() = updateState { copy(showLoginBottomSheet = false) }
+    override fun onDismissRateBottomSheet() = updateState { copy(showRateBottomSheet = false) }
+    override fun onRatingChanged(newRating: Int) = updateState { copy(imdbRating = newRating) }
+    override fun onSavedClick(tvShowId: Int) {
+        if (!state.value.isUserLoggedIn) promptLogin(LoginPromptType.BOOKMARK)
+    }
+
+    override fun onRateClicked() {
+        if (state.value.isUserLoggedIn) {
+            updateState { copy(showRateBottomSheet = true) }
+        } else promptLogin(LoginPromptType.RATE)
+    }
+
+    override fun onBackClick() = emitEffect(EpisodeDetailsEffects.NavigateBack)
+    override fun onPlayTrailerClick() =
+        emitEffect(EpisodeDetailsEffects.PlayTrailer(state.value.trailerUrl))
+
+    override fun onGenreTypeClick(genreId: Int) =
+        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(genreId))
+
+    override fun onCastClick(actorId: Int) =
+        emitEffect(EpisodeDetailsEffects.NavigateToActorDetails(actorId))
+
+    override fun onLoginButtonClick() {
+        updateState { copy(showLoginBottomSheet = false) }
+        emitEffect(EpisodeDetailsEffects.NavigateToLogin)
     }
 
     private fun updateUserLoginState() {
         tryToCollect(
             callee = { checkUserLogin.isLoggedIn() },
-            onCollect = { isLogged ->
-                updateState {
-                    copy(
-                        isUserLoggedIn = isLogged
-                    )
-                }
-            },
+            onCollect = { isLogged -> updateState { copy(isUserLoggedIn = isLogged) } }
         )
     }
 
     private fun promptLogin(type: LoginPromptType) {
-        updateState {
-            copy(
-                showLoginBottomSheet = true,
-                loginPromptType = type
-            )
-        }
-    }
-
-    fun fetchEpisodeDetails(
-        tvShowId: Int,
-        seasonNumber: Int,
-        episodeNumber: Int,
-    ) {
-        fetchEpisode(tvShowId, seasonNumber, episodeNumber)
-        fetchGuests(tvShowId, seasonNumber, episodeNumber)
-        fetchImages(tvShowId)
-        fetchTrailer(tvShowId)
-        fetchUserRating()
-    }
-
-    private fun fetchEpisode(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
-        tryToExecute(
-            callee = {
-                manageEpisodeDetails.getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
-            },
-            onSuccess = { episode ->
-                updateState {
-                    copy(episode = episode.toState(), isLoading = false)
-                }
-            },
-            onError = ::onErrorAccrue
-        )
-    }
-
-    private fun fetchGuests(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
-        tryToExecute(
-            callee = {
-                manageEpisodeDetails.getEpisodeGuestsOfHonor(tvShowId, seasonNumber, episodeNumber)
-            },
-            onSuccess = { guests ->
-                updateState {
-                    copy(guestOfHonor = guests.map { it.toActorUiModel() })
-                }
-            },
-            onError = ::onErrorAccrue
-        )
-    }
-
-    private fun fetchImages(tvShowId: Int) {
-        tryToExecute(
-            callee = { manageTvShowDetails.getTvShowImageUrls(tvShowId) },
-            onSuccess = { images ->
-                updateState { copy(imagesUrl = images) }
-            },
-            onError = ::onErrorAccrue
-        )
-    }
-
-    private fun fetchTrailer(tvShowId: Int) {
-        tryToExecute(
-            callee = { manageTvShowDetails.getTvShowTrailer(tvShowId) },
-            onSuccess = { trailerUrl ->
-                updateState { copy(trailerUrl = trailerUrl) }
-            },
-            onError = ::onErrorAccrue
-        )
-    }
-
-    override fun onSnackDismissRequested() {
-        updateState {
-            copy(snackBarData = null)
-        }
+        updateState { copy(showLoginBottomSheet = true, loginPromptType = type) }
     }
 }

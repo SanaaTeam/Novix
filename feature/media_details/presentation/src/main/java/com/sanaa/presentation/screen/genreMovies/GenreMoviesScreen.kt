@@ -79,7 +79,7 @@ fun GenreMoviesScreen(
                 }
 
                 is GenreMoviesEffects.NavigateToMovieDetails -> navController.navigate(
-                    MovieDetailsScreenRoute(effect.id).route()
+                    MovieDetailsScreenRoute(effect.id)
                 )
 
                 GenreMoviesEffects.NavigateToLogin -> {

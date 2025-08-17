@@ -45,12 +45,12 @@ import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIco
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.model.MediaTypeUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.EpisodeDetailsScreenRoute
 import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
@@ -90,7 +90,7 @@ fun TvShowScreen(
             when (it) {
                 is TvShowScreenEffects.NavigateToActorScreen -> {
                     navController.navigate(
-                        ActorScreenRoute(it.actorId).route()
+                        ActorScreenRoute(it.actorId)
                     )
                 }
 
@@ -98,13 +98,13 @@ fun TvShowScreen(
                     navController.navigate(
                         EpisodeDetailsScreenRoute(
                             it.tvShowId, it.seasonNumber, it.episodeNumber
-                        ).route()
+                        )
                     )
                 }
 
                 is TvShowScreenEffects.NavigateToReviewsScreen -> {
                     navController.navigate(
-                        ReviewsScreenRoute(it.tvShowId, MediaTypeParam.TV_SHOW).route()
+                        ReviewsScreenRoute(it.tvShowId, MediaTypeUiModel.TV_SHOW)
                     )
                 }
 
@@ -121,7 +121,7 @@ fun TvShowScreen(
 
                 is TvShowScreenEffects.NavigateToMovieCategoriesScreen -> {
                     navController.navigate(
-                        GenreTvShowsScreenRoute(it.category.id, it.category.name).route()
+                        GenreTvShowsScreenRoute(it.category.id, it.category.name)
                     )
                 }
 
@@ -134,7 +134,6 @@ fun TvShowScreen(
                 }
 
                 TvShowScreenEffects.NavigateToLogin -> {
-                    // Launch authentication activity
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
             }

@@ -5,6 +5,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.details_base.BasePagingSource
 import com.sanaa.presentation.details_base.BaseViewModel
+import com.sanaa.presentation.navigation.GenreTvShowsScreenRoute
 import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,13 +29,14 @@ class GenreTvShowsViewModel @Inject constructor(
     initialState = GenreTvShowsScreenUiState(),
     defaultDispatcher = dispatcher
 ), GenreTvShowsScreenInteractionListener {
-
-    private val genreId: Int = checkNotNull(savedStateHandle["genreId"])
-    private val genreName: String = checkNotNull(savedStateHandle["genreName"])
+    val route = GenreTvShowsScreenRoute(
+        genreId = checkNotNull(savedStateHandle["genreId"]),
+        genreName = checkNotNull(savedStateHandle["genreName"]),
+    )
 
     init {
         updateUserLoggingStatus()
-        getTvShowsByGenreId(genreId)
+        getTvShowsByGenreId(route.genreId)
     }
 
     fun updateUserLoggingStatus() {
@@ -66,7 +68,7 @@ class GenreTvShowsViewModel @Inject constructor(
                 error = null
             )
         }
-        getTvShowsByGenreId(genreId)
+        getTvShowsByGenreId(route.genreId)
     }
 
     override fun onBottomSheetDismiss() {
@@ -97,7 +99,7 @@ class GenreTvShowsViewModel @Inject constructor(
     private fun onCollectTvShowsByGenreId(tvShows: PagingData<TvShowUiState>) {
         updateState {
             copy(
-                title = genreName,
+                title = route.genreName,
                 tvShows = flowOf(tvShows),
                 isLoading = false
             )

@@ -44,7 +44,7 @@ import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
@@ -55,7 +55,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -90,6 +90,7 @@ fun TopMoviesScreen(
         onDismiss = viewModel::onDismissSaveToListBottomSheet,
         onCreateNewListClick = viewModel::onCreateNewListClick,
     )
+
     if (uiState.showAddListBottomSheet && selectedMedia != null) {
         AddBookmarkListBottomSheet(
             isVisible = true,
@@ -194,7 +195,7 @@ private fun TopMoviesContent(
                                             )
                                         },
                                         onCardClick = {
-                                            navController.navigate(MovieDetailsScreenRoute(movie.id).route())
+                                            navController.navigate(MovieDetailsScreenRoute(movie.id))
                                         })
                                 }
                             }

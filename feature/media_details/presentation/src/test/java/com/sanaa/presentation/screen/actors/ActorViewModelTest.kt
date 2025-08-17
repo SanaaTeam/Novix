@@ -1,12 +1,13 @@
 package com.sanaa.presentation.screen.actors
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.navigation.toRoute
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Movie
@@ -36,7 +37,7 @@ class ActorViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val manageActorDetailsUseCase: ManageActorUseCase = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
-    private lateinit var viewModel: ActorViewModel
+    private lateinit var viewModel: ActorScreenViewModel
     private val actorId = 77
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
 
@@ -128,9 +129,10 @@ class ActorViewModelTest {
         savedListsStatusProvider = mockk(relaxed = true) {
             every { savedIds } returns MutableStateFlow(emptySet())
         }
-        val savedStateHandle = SavedStateHandle(mapOf(ActorScreenRoute.ARG_ACTOR_ID to actorId))
 
-        viewModel = ActorViewModel(
+        val savedStateHandle = SavedStateHandle(mapOf("actorId" to actorId))
+
+        viewModel = ActorScreenViewModel(
             savedStateHandle,
             manageActorDetailsUseCase,
             checkIfUserIsLoggedInUseCase,
