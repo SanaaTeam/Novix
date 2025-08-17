@@ -54,7 +54,7 @@ fun RemoteBlurredSensitiveImage(
     imageUrl: String,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    blurRadius: Dp = 30.dp,
+    blurRadius: Dp = 25.dp,
     isBlurEnabled: Boolean = true,
     placeholderContent: @Composable () -> Unit = {},
     errorContent: @Composable () -> Unit = {},
@@ -79,7 +79,7 @@ fun RemoteBlurredSensitiveImage(
             .isBlurEnable(
                 enabled = isBlurEnabled && isSensitive,
                 context = context,
-                blurValue = contentThreshold * 25 // blur value range is from 1 to 25
+                blurValue = blurRadius.value
             )
             .allowHardware(false)
             .build()
@@ -147,10 +147,10 @@ private fun ImageRequest.Builder.isBlurEnable(
     blurValue: Float
 ): ImageRequest.Builder {
     return if (enabled) this.transformations(
-        BlurTransformation(
-            context,
-            blurValue
-        )
+        BlurTransformation(context, blurValue),
+        BlurTransformation(context, blurValue),
+        BlurTransformation(context, blurValue),
+        BlurTransformation(context, blurValue),
     )
     else this
 }
