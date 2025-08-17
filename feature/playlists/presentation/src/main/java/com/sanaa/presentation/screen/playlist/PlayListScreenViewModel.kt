@@ -30,11 +30,14 @@ class PlayListScreenViewModel @Inject constructor(
     }
 
     fun loadSavedLists() {
+        updateState { copy(screenState = PlaylistScreenState.Loading) }
         tryToCollect(
             block = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
                 updateState { copy(isUserLoggedIn = isUserLoggedIn) }
-                if (isUserLoggedIn) {
+                if (!isUserLoggedIn) {
+                    updateState { copy(screenState = PlaylistScreenState.Guest) }
+                } else {
                     fetchAndHandleSavedLists()
                 }
             }
@@ -56,7 +59,7 @@ class PlayListScreenViewModel @Inject constructor(
     private fun handleSuccessfulFetch(savedLists: List<SavedList>) {
         updateState {
             copy(
-                isLoading = false,
+                screenState = if (savedLists.isEmpty()) PlaylistScreenState.Empty else PlaylistScreenState.WithItems,
                 lists = savedLists.map { it.toUiModel() }
             )
         }
@@ -66,8 +69,7 @@ class PlayListScreenViewModel @Inject constructor(
         updateState {
             when (e) {
                 is NoNetworkException -> copy(
-                    isLoading = false,
-                    noInternetConnection = true,
+                    screenState = PlaylistScreenState.NoInternet,
                     snackData = SnackData(
                         message = stringProvider.noInternetConnectionError,
                         isError = false
@@ -75,7 +77,7 @@ class PlayListScreenViewModel @Inject constructor(
                 )
 
                 else -> copy(
-                    isLoading = false,
+                    screenState = PlaylistScreenState.Empty,
                     snackData = SnackData(
                         message = stringProvider.somethingWentWrongError,
                         isError = true

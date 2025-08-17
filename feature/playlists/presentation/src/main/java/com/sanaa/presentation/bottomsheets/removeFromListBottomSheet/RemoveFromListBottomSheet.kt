@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sanaa.designsystem.R
@@ -41,6 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun RemoveFromListBottomSheet(
     isVisible: Boolean,
     mediaId: Int,
+    mediaTitle: String,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: RemoveFromListViewModel = hiltViewModel(),
@@ -48,10 +51,6 @@ fun RemoveFromListBottomSheet(
 ) {
 
     val state by viewModel.state.collectAsState()
-
-    NovixAnimatedSnackBarHost(
-        data = state.snackBarData, onDismiss = { viewModel.onSnackBarDismiss() }
-    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -67,6 +66,7 @@ fun RemoveFromListBottomSheet(
 
     RemoveFromListBottomSheetContent(
         isVisible = isVisible,
+        mediaTitle = mediaTitle,
         state = state,
         onDismiss = onDismiss,
         interactionListener = viewModel,
@@ -77,6 +77,7 @@ fun RemoveFromListBottomSheet(
 @Composable
 private fun RemoveFromListBottomSheetContent(
     isVisible: Boolean,
+    mediaTitle: String,
     state: RemoveFromListUiState,
     onDismiss: () -> Unit,
     interactionListener: RemoveFromListInteractionListener,
@@ -93,7 +94,6 @@ private fun RemoveFromListBottomSheetContent(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             TopBar(
                 screenTitle = stringResource(R.string.remove_from_list),
@@ -107,7 +107,26 @@ private fun RemoveFromListBottomSheetContent(
                     )
                 }
             )
-            if (state.isLoading && state.playlists.isEmpty()) {
+            AppText(
+                text =  stringResource(R.string.remove_from_list_caption),
+                style = Theme.textStyle.body.small,
+                color = Theme.colors.body,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+            )
+
+            AppText(
+                text = mediaTitle,
+                style = Theme.textStyle.body.small,
+                color = Theme.colors.body,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .background(Theme.colors.surfaceHigh, RoundedCornerShape(8.dp))
+                    .padding(vertical = 2.dp),
+                textAlign = TextAlign.Center
+            )
+
+            if (state.isLoading && state.selectedLists.isEmpty()) {
                 Box(
                     modifier = Modifier
                         .height(200.dp)
@@ -119,18 +138,17 @@ private fun RemoveFromListBottomSheetContent(
             } else {
                 LazyColumn(
                     modifier = Modifier
-                        .heightIn(max = 400.dp)
-
+                        .heightIn(max = 300.dp)
                         .padding(horizontal = 16.dp)
                         .padding(top = 16.dp, bottom = 24.dp),
 
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    items(state.playlists, key = { it.id }) { playlist ->
+                    items(state.selectedLists, key = { it.id }) { playlist ->
                         PlaylistItem(
                             title = playlist.title,
                             itemCount = playlist.itemCount,
-                            isSelected = !state.deselectedListsIds.contains(playlist.id),
+                            isSelected = state.deselectedListsIds.contains(playlist.id),
                             onClick = { interactionListener.onPlaylistClick(playlist.id) }
                         )
                     }
@@ -148,6 +166,16 @@ private fun RemoveFromListBottomSheetContent(
                     .height(48.dp)
             )
         }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.TopCenter
+    ){
+        NovixAnimatedSnackBarHost(
+            data = state.snackBarData, onDismiss = interactionListener::onSnackBarDismiss
+        )
     }
 }
 

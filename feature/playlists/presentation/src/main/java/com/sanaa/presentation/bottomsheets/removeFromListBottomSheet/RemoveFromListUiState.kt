@@ -6,6 +6,7 @@ data class RemoveFromListUiState(
     val mediaId:Int? = null,
     val mediaTitle: String = "",
     val playlists: List<PlaylistUiItem> = emptyList(),
+    val selectedLists: List<PlaylistUiItem> = mutableListOf(),
     val deselectedListsIds: MutableList<Int> = mutableListOf(),
     val isLoading: Boolean = false,
     val isUploading:Boolean = false,

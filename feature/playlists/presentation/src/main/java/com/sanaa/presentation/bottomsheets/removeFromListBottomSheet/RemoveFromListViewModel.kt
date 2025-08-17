@@ -3,10 +3,10 @@ package com.sanaa.presentation.bottomsheets.removeFromListBottomSheet
 import com.sanaa.presentation.savedBase.BaseViewModel
 import com.sanaa.presentation.screen.playlist.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
@@ -22,6 +22,9 @@ class RemoveFromListViewModel @Inject constructor(
 ) : BaseViewModel<RemoveFromListUiState, RemoveFromListEffect>(RemoveFromListUiState(), dispatcher)
 ,RemoveFromListInteractionListener{
 
+    init{
+        observePlaylists()
+    }
 
     fun getMediaId(mediaId: Int) {
         updateState { copy(mediaId = mediaId) }
@@ -29,16 +32,17 @@ class RemoveFromListViewModel @Inject constructor(
     }
 
     private fun observePlaylists() {
-        updateState { copy(isLoading = true) }
-        tryToExecute(
-            block = { mangeSavedListsUseCase.getSavedLists().first().filter { it.itemsIds.contains(state.value.mediaId) } },
-            onSuccess = ::onCollectPlaylists,
+        tryToCollect(
+            onStart = { updateState { copy(isLoading = true) } },
+            block = { mangeSavedListsUseCase.getSavedLists() },
+            onCollect = ::onCollectPlaylists,
+            onError = ::onErrorAccrue
         )
     }
 
     private fun onCollectPlaylists(playlist: List<SavedList>) {
-        val tempPlayList = playlist.toState()
-        updateState { copy(playlists = tempPlayList, isLoading = false) }
+        val selectedLists = playlist.filter { it.itemsIds.contains(state.value.mediaId) }.toState()
+        updateState { copy(playlists = playlist.toState(), selectedLists = selectedLists, isLoading = false) }
     }
 
 
@@ -74,16 +78,25 @@ class RemoveFromListViewModel @Inject constructor(
 
     private fun onErrorAccrue(exception: NovixAppException): () -> Unit = {
         updateState {
-            copy(
-                isLoading = false,
-                isUploading = false,
-                snackBarData = SnackData(
-                    message = stringProvider.addToListFailed,
-                    isError = true
-                ),
-                deselectedListsIds = mutableListOf(),
-                mediaId = null
-            )
+            when (exception) {
+                is NoNetworkException -> copy(
+                    isLoading = false,
+                    isUploading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = true
+                    ),
+                )
+
+                else -> copy(
+                    isLoading = false,
+                    isUploading = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    ),
+                )
+            }
         }
     }
 
@@ -110,10 +123,6 @@ class RemoveFromListViewModel @Inject constructor(
                         isUploading = false,
                         isLoading = false,
                         isRemoveButtonEnabled = false,
-                        snackBarData = SnackData(
-                            message = "stringProvider.addToListSuccess",
-                            isError = false,
-                        ),
                         deselectedListsIds = mutableListOf(),
                         mediaId = null
                     )

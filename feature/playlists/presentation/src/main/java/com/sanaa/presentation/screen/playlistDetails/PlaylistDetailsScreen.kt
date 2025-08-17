@@ -116,7 +116,6 @@ fun PlaylistDetailsContent(
                 title = state.title.orEmpty(),
                 interactionListener = interactionListener,
             )
-
         }
     ) {
 
@@ -129,6 +128,7 @@ fun PlaylistDetailsContent(
         RemoveFromListBottomSheet(
             isVisible = state.showRemoveFromListBottomSheet,
             mediaId = state.selectedMediaToRemove?.id ?: 0,
+            mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),
             onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
             onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
         )
@@ -136,7 +136,7 @@ fun PlaylistDetailsContent(
         DeleteConfirmationBottomSheet(
             isVisible = state.showListDeletionConfirmationBottomSheet,
             isLoading = state.isLoading,
-            onDismiss = { interactionListener.onDismissConfirmationBottomSheet() },
+            onDismiss = interactionListener::onDismissConfirmationBottomSheet ,
             onConfirm = interactionListener::onDeleteListConfirmed
         )
     }
