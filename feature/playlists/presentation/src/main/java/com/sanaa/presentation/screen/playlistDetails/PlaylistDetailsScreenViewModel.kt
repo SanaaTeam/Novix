@@ -50,7 +50,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private fun loadItemsInSaved(listId: Int) {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            callee = { loadSavedMovies(listId) },
+            block = { loadSavedMovies(listId) },
             onCollect = { updateState { copy(movieList = flowOf(it), isLoading = false) } },
             onError = ::onDataLoadError
         )
@@ -61,27 +61,23 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onDeleteIconClick(mediaItem: MediaItem) {
-        tryToExecute(
-            callee = {
-                manageSavedListItemsUseCase.removeMovieFromSavedList(
-                    listId = listId,
-                    movieId = mediaItem.id
-                )
-            },
-            onSuccess = {
-                loadItemsInSaved(listId)
-                updateState {
-                    copy(
-                        snackBarData = SnackData(
-                            message = stringProvider.deleteFromListSuccess,
-                            isError = false
-                        )
-                    )
-                }
-            },
-            onError = ::onDataLoadError
+        updateState {
+            copy(
+                showRemoveFromListBottomSheet = true,
+                selectedMediaToRemove = mediaItem
+            )
+        }
+    }
 
-        )
+    override fun onDismissRemoveFromListBottomSheet() {
+        updateState { copy(showRemoveFromListBottomSheet = false, selectedMediaToRemove = null) }
+    }
+
+    override fun onDismissListBottomSheetAfterRemoveSuccess(deselectedListIds: List<Int>) {
+        if (listId in deselectedListIds) {
+            loadItemsInSaved(listId)
+        }
+        updateState { copy(showRemoveFromListBottomSheet = false, selectedMediaToRemove = null) }
     }
 
     override fun onBackClick() {
@@ -89,14 +85,14 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     override fun onDeleteListClick() {
-        updateState { copy(showBottomSheet = true) }
+        updateState { copy(showListDeletionConfirmationBottomSheet = true) }
     }
 
     override fun onDeleteListConfirmed() {
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.deleteSavedList(listId) },
+            block = { manageSavedListsUseCase.deleteSavedList(listId) },
             onSuccess = ::onListDeletionSuccess,
             onError = ::onListDeletionFailed,
         )
@@ -135,8 +131,8 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onDismissBottomSheet() {
-        updateState { copy(showBottomSheet = false) }
+    override fun onDismissConfirmationBottomSheet() {
+        updateState { copy(showListDeletionConfirmationBottomSheet = false) }
     }
 
     override fun onListDeletedSuccessfully() {
@@ -147,7 +143,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState { copy(snackBarData = null) }
     }
 
-    private fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
+    fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
         return createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
             mapper = Movie::toUiModel

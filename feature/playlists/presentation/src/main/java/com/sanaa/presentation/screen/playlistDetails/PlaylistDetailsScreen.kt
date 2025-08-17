@@ -1,25 +1,31 @@
 package com.sanaa.presentation.screen.playlistDetails
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
@@ -27,9 +33,11 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlaylistsApiEntryPoint
+import com.sanaa.presentation.bottomsheets.removeFromListBottomSheet.RemoveFromListBottomSheet
 import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
-import com.sanaa.presentation.screen.playlistDetails.components.SavedDetailsListSectionContent
+import com.sanaa.presentation.screen.playlistDetails.components.EmptyListScreen
+import com.sanaa.presentation.screen.playlistDetails.components.PaginatedMediaListGrid
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
@@ -111,24 +119,24 @@ fun PlaylistDetailsContent(
 
         }
     ) {
-        Column(
-            modifier = modifier
-                .padding(top = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
 
-            SavedDetailsListSectionContent(
-                mediaList = movieList,
-                onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
-                onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
-            )
+        SavedDetailsListSectionContent(
+            mediaList = movieList,
+            onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
+            onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
+        )
 
+        RemoveFromListBottomSheet(
+            isVisible = state.showRemoveFromListBottomSheet,
+            mediaId = state.selectedMediaToRemove?.id ?: 0,
+            onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
+            onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
+        )
 
-        }
         DeleteConfirmationBottomSheet(
-            isVisible = state.showBottomSheet,
+            isVisible = state.showListDeletionConfirmationBottomSheet,
             isLoading = state.isLoading,
-            onDismiss = { interactionListener.onDismissBottomSheet() },
+            onDismiss = { interactionListener.onDismissConfirmationBottomSheet() },
             onConfirm = interactionListener::onDeleteListConfirmed
         )
     }
@@ -161,6 +169,60 @@ fun PlaylistDetailsTopBar(
     )
 }
 
+@Composable
+private fun SavedDetailsListSectionContent(
+    mediaList: LazyPagingItems<MediaItem>,
+    onMediaClick: (MediaItem) -> Unit,
+    modifier: Modifier = Modifier,
+    onSaveIconClick: (MediaItem) -> Unit = {},
+    isScrollEnabled: Boolean = true,
+) {
+    val isListEmpty = mediaList.itemCount == 0
 
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        when {
+            mediaList.loadState.refresh is LoadState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    LoadingIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+            }
 
+            isListEmpty -> {
+                val isDarkTheme = isSystemInDarkTheme()
 
+                val myListImg = if (isDarkTheme) {
+                    R.drawable.no_items
+                } else {
+                    R.drawable.no_items
+                }
+                EmptyListScreen(
+                    messageText = stringResource(R.string.the_list_is_empty),
+                    imageRes = myListImg,
+                    )
+            }
+
+            else -> {
+                PaginatedMediaListGrid(
+                    mediaList = mediaList,
+                    onMediaClick = onMediaClick,
+                    onSaveIconClick = onSaveIconClick,
+                    isScrollEnabled = isScrollEnabled,
+                )
+
+                if (mediaList.loadState.append is LoadState.Loading) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        LoadingIndicator()
+                    }
+                }
+            }
+        }
+    }
+}

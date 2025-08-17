@@ -51,7 +51,7 @@ class AddBookmarkListViewModel @Inject constructor(
 //            onErrorAccrue(exception)
 //        }
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = ::onAddBookmarkListSuccess,
             onError = ::onErrorAccrue
         )

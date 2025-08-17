@@ -6,7 +6,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +30,7 @@ fun EmptyListScreen(
             modifier = Modifier
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
         ) {
             Image(
                 painter = painterResource(imageRes),
@@ -39,7 +38,6 @@ fun EmptyListScreen(
             )
 
             AppText(
-                modifier = Modifier.padding(start = 32.dp, end = 32.dp, bottom = 24.dp),
                 text = messageText,
                 style = Theme.textStyle.body.small,
                 color = Theme.colors.body,

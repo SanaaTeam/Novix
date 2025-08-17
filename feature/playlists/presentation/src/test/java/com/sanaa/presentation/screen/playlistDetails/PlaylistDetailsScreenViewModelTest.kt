@@ -95,15 +95,15 @@ class PlaylistDetailsScreenViewModelTest {
     fun `onDeleteListClicked sets showBottomSheet true`() = runTest {
         initViewModel()
         viewModel.onDeleteListClick()
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showListDeletionConfirmationBottomSheet).isTrue()
     }
 
     @Test
     fun `onDismissBottomSheet sets showBottomSheet false`() = runTest {
         initViewModel()
-        viewModel.updateState { copy(showBottomSheet = true) }
-        viewModel.onDismissBottomSheet()
-        assertThat(viewModel.state.value.showBottomSheet).isFalse()
+        viewModel.updateState { copy(showListDeletionConfirmationBottomSheet = true) }
+        viewModel.onDismissConfirmationBottomSheet()
+        assertThat(viewModel.state.value.showListDeletionConfirmationBottomSheet).isFalse()
     }
 
     @Test
