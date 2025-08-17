@@ -6,19 +6,19 @@ import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
 import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -32,6 +32,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase,
     private val manageTvShowDetails: ManageTvShowUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<EpisodeDetailsScreenUiState, EpisodeDetailsEffects>(
     initialState = EpisodeDetailsScreenUiState(),
@@ -49,7 +50,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
     }
 
     init {
-        loadEpisode(this@EpisodeDetailsScreenViewModel.tvShowId, seasonNumber, episodeNumber)
+        fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
         updateUserLoginState()
     }
 
@@ -157,6 +158,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                             )
                         }
                     }
+
                     else -> {
                         updateState { copy(error = e.message, isLoading = false) }
                     }
@@ -164,45 +166,6 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
         )
     }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    private suspend fun fetchEpisodeDetails(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) =
-        coroutineScope {
-            updateState { copy(isLoading = true) }
-
-            val episodeDeferred = async {
-                manageEpisodeDetails.getEpisodeDetails(
-                    tvShowId,
-                    seasonNumber,
-                    episodeNumber
-                )
-            }
-            val guestsDeferred = async {
-                manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                    tvShowId,
-                    seasonNumber,
-                    episodeNumber
-                )
-            }
-            val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
-            val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
-            val episode = episodeDeferred.await()
-            val guests = guestsDeferred.await()
-            val images = imagesDeferred.await()
-            val trailerUrl = trailerDeferred.await()
-
-            updateState {
-                copy(
-                    episode = episode.toState(),
-                    guestOfHonor = guests.map { actor -> actor.toActorUiModel() },
-                    tvShowId = tvShowId,
-                    imagesUrl = images,
-                    trailerUrl = trailerUrl,
-                )
-            }
-
-            fetchUserRating()
-        }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun getCurrentUserRating(): Flow<Int> {
@@ -231,9 +194,23 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(EpisodeDetailsEffects.ShowSuccessSnackBar)
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess, isError = false
+                    )
+                )
+            }
         } else {
-            emitEffect(EpisodeDetailsEffects.ShowErrorSnackBar)
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
+
         }
     }
 
@@ -256,6 +233,72 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )
+        }
+    }
+
+    fun fetchEpisodeDetails(
+        tvShowId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+    ) {
+        fetchEpisode(tvShowId, seasonNumber, episodeNumber)
+        fetchGuests(tvShowId, seasonNumber, episodeNumber)
+        fetchImages(tvShowId)
+        fetchTrailer(tvShowId)
+        fetchUserRating()
+    }
+
+    private fun fetchEpisode(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
+        tryToExecute(
+            callee = {
+                manageEpisodeDetails.getEpisodeDetails(tvShowId, seasonNumber, episodeNumber)
+            },
+            onSuccess = { episode ->
+                updateState {
+                    copy(episode = episode.toState(), isLoading = false)
+                }
+            },
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private fun fetchGuests(tvShowId: Int, seasonNumber: Int, episodeNumber: Int) {
+        tryToExecute(
+            callee = {
+                manageEpisodeDetails.getEpisodeGuestsOfHonor(tvShowId, seasonNumber, episodeNumber)
+            },
+            onSuccess = { guests ->
+                updateState {
+                    copy(guestOfHonor = guests.map { it.toActorUiModel() })
+                }
+            },
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private fun fetchImages(tvShowId: Int) {
+        tryToExecute(
+            callee = { manageTvShowDetails.getTvShowImageUrls(tvShowId) },
+            onSuccess = { images ->
+                updateState { copy(imagesUrl = images) }
+            },
+            onError = ::onErrorAccrue
+        )
+    }
+
+    private fun fetchTrailer(tvShowId: Int) {
+        tryToExecute(
+            callee = { manageTvShowDetails.getTvShowTrailer(tvShowId) },
+            onSuccess = { trailerUrl ->
+                updateState { copy(trailerUrl = trailerUrl) }
+            },
+            onError = ::onErrorAccrue
+        )
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState {
+            copy(snackBarData = null)
         }
     }
 }
