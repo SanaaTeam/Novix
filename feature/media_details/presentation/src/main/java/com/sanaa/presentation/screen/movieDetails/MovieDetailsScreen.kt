@@ -42,7 +42,6 @@ import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
 import com.sanaa.presentation.model.MediaTypeUiModel
-import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.GenreMovieScreenRoute
@@ -66,7 +65,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieDetailsScreen(
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+    viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -130,7 +129,9 @@ private fun MovieDetailsEffectsHandler(
                     )
                 }
 
-                NavigateToLogin -> { launcher.launch(authApi.getLaunchIntent(context)) }
+                NavigateToLogin -> {
+                    launcher.launch(authApi.getLaunchIntent(context))
+                }
             }
         }
     }
@@ -194,29 +195,33 @@ private fun MovieDetailsScreenContent(
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
-                if (it) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize(),
-                            useDarkTheme = LocalThemeProvider.current
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LoadingIndicator()
+                when {
+                    it -> {
+                        if (state.noInternetConnection) {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryLoadDetails() },
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator()
+                            }
                         }
                     }
-                } else {
-                    MovieDetailsGridContent(
-                        state = state,
-                        pagedSimilarMovies = pagedSimilarMovies,
-                        locale = locale,
-                        interactionListener = interactionListener,
-                        lazyState = lazyState,
-                    )
+
+                    else -> {
+                        MovieDetailsGridContent(
+                            state = state,
+                            pagedSimilarMovies = pagedSimilarMovies,
+                            locale = locale,
+                            interactionListener = interactionListener,
+                            lazyState = lazyState,
+                        )
+                    }
                 }
             }
             BottomContainer(

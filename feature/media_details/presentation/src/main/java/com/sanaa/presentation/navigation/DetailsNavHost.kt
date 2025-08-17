@@ -17,10 +17,9 @@ import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.screen.actor.ActorScreenViewModel
-import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
-import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
-import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
+import com.sanaa.presentation.screen.actorGallery.ActorGalleryScreen
+import com.sanaa.presentation.screen.actorGallery.ActorGalleryScreenViewModel
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
@@ -31,6 +30,10 @@ import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
 import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
+import com.sanaa.presentation.screen.topMoviesScreen.TopMoviesScreen
+import com.sanaa.presentation.screen.topMoviesScreen.TopMoviesScreenViewModel
+import com.sanaa.presentation.screen.topShowsScreen.TopTvShowsScreen
+import com.sanaa.presentation.screen.topShowsScreen.TopTvShowsScreenViewModel
 import com.sanaa.presentation.screen.tvShow.TvShowScreen
 import com.sanaa.presentation.screen.tvShow.TvShowScreenViewModel
 
@@ -98,19 +101,19 @@ fun DetailsNavHost(
             }
 
             composable(route = TopMoviesScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                TopMoviesScreen(viewModel = actorViewModel)
+                val topMoviesScreenViewModel: TopMoviesScreenViewModel = hiltViewModel()
+                TopMoviesScreen(viewModel = topMoviesScreenViewModel)
             }
 
             composable(route = TopTvShowsScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                TopShowsScreen(viewModel = actorViewModel)
+                val topShowsScreenViewModel: TopTvShowsScreenViewModel = hiltViewModel()
+                TopTvShowsScreen(viewModel = topShowsScreenViewModel)
             }
 
             composable(route = ActorGalleryScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
+                val actorGalleryScreenViewModel: ActorGalleryScreenViewModel = hiltViewModel()
                 ActorGalleryScreen(
-                    viewModel = actorViewModel,
+                    viewModel = actorGalleryScreenViewModel,
                     navigateBack = { navController.popBackStack() }
                 )
             }
