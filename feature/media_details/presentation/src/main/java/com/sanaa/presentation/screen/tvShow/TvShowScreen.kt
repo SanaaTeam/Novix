@@ -112,17 +112,13 @@ fun TvShowScreen(
                     )
                 }
 
-                is TvShowScreenEffects.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = it.message, isError = false)
-                }
-                is TvShowScreenEffects.ShowErrorSnackBar -> {
-                    snack = SnackData(message = it.message, isError = true)
-                }
 
                 TvShowScreenEffects.NavigateToLogin -> {
                     // Launch authentication activity
                     launcher.launch(authApi.getLaunchIntent(context))
                 }
+
+                is TvShowScreenEffects.ShowErrorSnackBar -> TODO()
             }
         }
     }

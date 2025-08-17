@@ -39,8 +39,6 @@ class TvShowScreenViewModel @Inject constructor(
     initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
-    private val submitRatingSuccessMsg = stringProvider.getString(R.string.submit_rating_successfully)
-    private val submitRatingFailedMsg = stringProvider.getString(R.string.submit_rating_failed)
     private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
         "tvShowId is required in SavedStateHandle"
     }
@@ -231,9 +229,22 @@ class TvShowScreenViewModel @Inject constructor(
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(TvShowScreenEffects.ShowSuccessSnackBar(submitRatingSuccessMsg.toString()))
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess, isError = false
+                    )
+                )
+            }
         } else {
-            emitEffect(TvShowScreenEffects.ShowErrorSnackBar(submitRatingFailedMsg.toString()))
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
@@ -293,7 +304,7 @@ class TvShowScreenViewModel @Inject constructor(
             copy(
                 showRateBottomSheet = false,
                 snackBarData = SnackData(
-                    message = submitRatingFailedMsg.toString(),
+                    message = stringProvider.deleteRatingFailed,
                     isError = true
                 )
             )

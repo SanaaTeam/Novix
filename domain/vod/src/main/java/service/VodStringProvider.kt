@@ -2,7 +2,6 @@ package service
 
 interface
 VodStringProvider {
-    fun getString(i: Int)
 
     val noInternetConnectionError: String
     val somethingWentWrongError: String

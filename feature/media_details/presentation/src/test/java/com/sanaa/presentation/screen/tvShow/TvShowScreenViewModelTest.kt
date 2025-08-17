@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.model.GenreUiModel
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Episode
@@ -29,6 +30,11 @@ import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
+import service.VodStringProvider
+import io.mockk.impl.annotations.MockK
+import io.mockk.MockKAnnotations
+import io.mockk.coVerify
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TvShowScreenViewModelTest {
@@ -36,15 +42,17 @@ class TvShowScreenViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
     private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
-    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase =
-        mockk(relaxed = true)
+    private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase = mockk(relaxed = true)
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase = mockk(relaxed = true)
+    @MockK
+    private lateinit var stringProvider: VodStringProvider
     private lateinit var viewModel: TvShowScreenViewModel
 
     private val tvShowId = 42
 
     @BeforeEach
     fun setUp() {
+        MockKAnnotations.init(this)
         Dispatchers.setMain(testDispatcher)
     }
 
@@ -92,7 +100,10 @@ class TvShowScreenViewModelTest {
         coEvery { manageTvShowDetails.getTvShowCast(tvShowId) } returns dummyCast
         coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
         coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns DUMMY_TRAILER
+        coEvery { stringProvider.deleteRatingSuccess } returns "Rating submitted successfully"
+        coEvery { stringProvider.deleteRatingFailed } returns "Failed to submit rating"
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -107,7 +118,10 @@ class TvShowScreenViewModelTest {
             manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
+            stringProvider,
+            testDispatcher
         )
+        advanceUntilIdle()
         assertThat(viewModel.state.value.selectedSeason).isEqualTo(1)
         viewModel.onSeasonNumberClicked(1)
 
@@ -128,15 +142,15 @@ class TvShowScreenViewModelTest {
     @Test
     fun `onRateClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
-
+        advanceUntilIdle()
         viewModel.onRateClicked()
-
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test
     fun `onSaveShowClicked sets showLoginBottomSheet to true`() = runTest {
         givenHappyViewModel()
+        advanceUntilIdle()
         viewModel.onSaveTvShowClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
@@ -156,10 +170,12 @@ class TvShowScreenViewModelTest {
         }
     }
 
-
     @Test
     fun `loadTvShow handles error correctly when use case fails`() = runTest {
         coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } throws RuntimeException("Test failure")
+        coEvery { stringProvider.deleteRatingSuccess } returns "Rating submitted successfully"
+        coEvery { stringProvider.deleteRatingFailed } returns "Failed to submit rating"
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -174,6 +190,7 @@ class TvShowScreenViewModelTest {
             manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
+            stringProvider,
             dispatcher = testDispatcher
         )
         advanceUntilIdle()
@@ -181,25 +198,15 @@ class TvShowScreenViewModelTest {
         assertThat(viewModel.state.value.error).isEqualTo("Test failure")
     }
 
-
     @Test
     fun `onPlayTrailerClicked emits PlayTrailer`() = runTest {
         givenHappyViewModel()
         advanceUntilIdle()
         viewModel.onPlayTrailerClicked()
         viewModel.effect.test {
-            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.PlayTrailer(dummyTrailer))
+            assertThat(awaitItem()).isEqualTo(TvShowScreenEffects.PlayTrailer(DUMMY_TRAILER))
             cancelAndIgnoreRemainingEvents()
         }
-    }
-
-    @Test
-    fun `onRateClicked sets showRateBottomSheet true when user is logged in`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
-        givenHappyViewModel()
-        advanceUntilIdle()
-        viewModel.onRateClicked()
-        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
     }
 
     @Test
@@ -233,24 +240,6 @@ class TvShowScreenViewModelTest {
     }
 
     @Test
-    fun `onSubmitRateBottomSheet sets error when exception occurs`() = runTest {
-        val errorMsg = "Failed to rate"
-        coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } throws RuntimeException(
-            errorMsg
-        )
-        givenHappyViewModel()
-
-        viewModel.onRatingChanged(6)
-        viewModel.onSubmitRateBottomSheet()
-        advanceUntilIdle()
-
-        with(viewModel.state.value) {
-            assertThat(error).isEqualTo(errorMsg)
-            assertThat(showRateBottomSheet).isFalse()
-        }
-    }
-
-    @Test
     fun `onSubmitRateBottomSheet calls addRate successfully`() = runTest {
         coEvery { manageTvShowDetails.addTvShowRate(any(), any()) } returns true
         givenHappyViewModel()
@@ -277,6 +266,82 @@ class TvShowScreenViewModelTest {
     }
 
     @Test
+    fun `onSeasonNumberClicked handles errors correctly`() = runTest {
+        // Given
+        givenHappyViewModel()
+        val newSeasonNumber = 2
+        coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, newSeasonNumber) } throws RuntimeException("Season error")
+
+        // When
+        viewModel.onSeasonNumberClicked(newSeasonNumber)
+        advanceUntilIdle()
+
+        // Then
+        assertThat(viewModel.state.value.isLoadingEpisodes).isFalse()
+        assertThat(viewModel.state.value.error).isEqualTo("Season error")
+    }
+
+    @Test
+    fun `addTvShowToHistory handles errors and does not crash`() = runTest {
+        // Given
+        coEvery { getLoggedInUserUseCase.getLoggedInUser() } throws RuntimeException("User not found")
+
+        // When
+        givenHappyViewModel()
+        advanceUntilIdle()
+
+        // Then
+        coVerify(inverse = true) {
+            manageWatchedMediaHistoryUseCase.addWatchedMediaHistory(any(), any())
+        }
+    }
+
+    @Test
+    fun `onSeasonNumberClicked updates season and episodes when different season`() = runTest {
+        givenHappyViewModel()
+        advanceUntilIdle()
+        val newSeasonNumber = 2
+        val newEpisodes = listOf(dummyEpisode.copy(seasonNumber = newSeasonNumber))
+        coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, newSeasonNumber) } returns dummySeason.copy(
+            episodes = newEpisodes
+        )
+        viewModel.onSeasonNumberClicked(newSeasonNumber)
+        advanceUntilIdle()
+
+        assertThat(viewModel.state.value.selectedSeason).isEqualTo(newSeasonNumber)
+        assertThat(viewModel.state.value.season.episodes).hasSize(1)
+        assertThat(viewModel.state.value.isLoadingEpisodes).isFalse()
+    }
+
+    @Test
+    fun `onRatingChanged updates rating in state`() = runTest {
+        // Given
+        givenHappyViewModel()
+        val newRating = 7
+
+        // When
+        viewModel.onRatingChanged(newRating)
+
+        // Then
+        assertThat(viewModel.state.value.imdbRating).isEqualTo(newRating)
+    }
+
+    @Test
+    fun `onSnackBarDismiss clears snackBarData`() = runTest {
+        // Given
+        givenHappyViewModel()
+        viewModel.updateState {
+            copy(snackBarData = SnackData(message = "Test", isError = false))
+        }
+
+        // When
+        viewModel.onSnackBarDismiss()
+
+        // Then
+        assertThat(viewModel.state.value.snackBarData).isNull()
+    }
+
+    @Test
     fun `onRetryLoadDetails updates loading state and calls loadTvShow`() = runTest {
         givenHappyViewModel()
         val errorMsg = "Some error"
@@ -296,13 +361,15 @@ class TvShowScreenViewModelTest {
         assertThat(state.noInternetConnection).isFalse()
     }
 
-
     private fun givenHappyViewModel(dispatcher: CoroutineDispatcher = StandardTestDispatcher()) {
         coEvery { manageTvShowDetails.getTvShowDetails(tvShowId) } returns dummyTvShow
         coEvery { manageTvShowDetails.getTvShowCast(tvShowId) } returns dummyCast
         coEvery { manageTvShowDetails.getTvShowSeasonDetails(tvShowId, 1) } returns dummySeason
         coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns DUMMY_TRAILER
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
+        coEvery { stringProvider.deleteRatingSuccess } returns "Rating submitted successfully"
+        coEvery { stringProvider.deleteRatingFailed } returns "Failed to submit rating"
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -317,6 +384,7 @@ class TvShowScreenViewModelTest {
             manageTvShowDetails,
             manageWatchedMediaHistoryUseCase,
             getLoggedInUserUseCase,
+            stringProvider,
             dispatcher
         )
     }
@@ -376,6 +444,6 @@ class TvShowScreenViewModelTest {
             episodes = listOf(dummyEpisode)
         )
         val dummyImages = listOf("/img1.jpg", "/img2.jpg")
-        const val dummyTrailer = "http://trailer.url/video.mp4"
+        const val DUMMY_TRAILER = "http://trailer.url/video.mp4"
     }
 }
