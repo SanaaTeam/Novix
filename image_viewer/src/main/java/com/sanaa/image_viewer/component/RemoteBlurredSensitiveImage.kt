@@ -79,7 +79,7 @@ fun RemoteBlurredSensitiveImage(
             .isBlurEnable(
                 enabled = isBlurEnabled && isSensitive,
                 context = context,
-                blurValue = blurRadius.value
+                blurValue = contentThreshold * 25 // blur value range is from 1 to 25
             )
             .allowHardware(false)
             .build()
