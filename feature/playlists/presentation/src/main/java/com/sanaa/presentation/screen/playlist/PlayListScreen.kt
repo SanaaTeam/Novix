@@ -139,11 +139,9 @@ private fun PlaylistScreenContent(
 
                 else -> {
                     PlayListWithItemsScreen(
-                        onFabClick = { interactionListener.onFabBottomSheetClicked() },
                         isVisible = state.showAddBottomSheet,
-                        onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
                         lists = lists,
-                        onItemClick = interactionListener::onNavigateToSavedDetails,
+                        interactionListener = interactionListener,
                         isUserLoggedIn = state.isUserLoggedIn
                     )
                 }
