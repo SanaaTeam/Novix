@@ -41,7 +41,6 @@ val boxOverlayBackgroundColor = Brush.horizontalGradient(
 fun CategoryCard(
     category: CategoryUiState,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
 ) {
 
     Box(
@@ -51,11 +50,11 @@ fun CategoryCard(
                 width = 1.dp, color = Theme.colors.stroke, shape = RoundedCornerShape(12.dp)
             )
             .clip(RoundedCornerShape(12.dp))
-            .clickable(
-                onClick = onClick, onClickLabel = category.name
-            )
+
     ) {
         AsyncImage(
+            modifier = Modifier
+                .matchParentSize(),
             model = category.imageResourceId,
             contentDescription = category.name,
             contentScale = ContentScale.Crop,
