@@ -42,7 +42,7 @@ import com.sanaa.presentation.screen.state.TvShowUiModel
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-
+val TAG = "test34"
 @Composable
 fun SearchScreen(
     navigator: SearchNavigatorApi,
@@ -88,6 +88,7 @@ private fun SearchScreenContent(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
+                Log.d(TAG, "SearchScreenContent: snackBarData:${state.snackBarData}")
                 NovixAnimatedSnackBarHost(
                     data = state.snackBarData,
                     onDismiss = interactionsListener::onSnackBarDismiss
@@ -124,7 +125,7 @@ private fun SearchScreenContent(
                 SaveToListBottomSheet(
                     isVisible = state.showSaveToListBottomSheet,
                     mediaId = mediaItem.id.toLong(),
-                    onDismiss = {},
+                    onDismiss = { interactionsListener.onDismissSaveToListBottomSheet() },
                     onCreateNewListClick = {},
                 )
             }

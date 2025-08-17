@@ -42,8 +42,7 @@ import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.screen.componants.NovixAnimatedSnackBarHost
 import kotlinx.coroutines.flow.collectLatest
-
-val TAG = "SaveToListBottomSheetTest"
+val TAG = "test34"
 @Composable
 fun SaveToListBottomSheet(
     isVisible: Boolean,
@@ -57,10 +56,10 @@ fun SaveToListBottomSheet(
 
     val state by viewModel.state.collectAsState()
 
-    Log.d(TAG, "SaveToListBottomSheet: state.snackbarData: ${state.snackBarData}")
+    Log.d(TAG, "SaveToListBottomSheet: snackBar in bottom sheet :${state.snackBarData}")
     NovixAnimatedSnackBarHost(
-        data = state.snackBarData, onDismiss = {
-            Log.d(TAG, "SaveToListBottomSheet: onDismiss SnackBar, sanckBarData:${state.snackBarData}")
+        data = state.snackBarData,
+        onDismiss = {
             viewModel.onSnackBarDismiss()
         }
     )

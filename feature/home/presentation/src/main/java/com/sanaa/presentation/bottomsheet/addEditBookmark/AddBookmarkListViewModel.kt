@@ -1,6 +1,5 @@
 package com.sanaa.presentation.bottomsheet.addEditBookmark
 
-import com.sanaa.presentation.BaseViewModel
 import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.components.SnackData

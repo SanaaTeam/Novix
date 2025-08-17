@@ -11,7 +11,6 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
-import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -46,45 +45,17 @@ class MovieDetailsViewModel @Inject constructor(
     initialState = MovieDetailsUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
-    val route = MovieDetailsScreenRoute(
-        movieId = checkNotNull(savedStateHandle["movieId"]),
-    )
+
+    private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
+        "movieId is required in SavedStateHandle"
+    }
 
     init {
-        fetchMovieDetails(route.movieId)
+        fetchMovieDetails(movieId)
         fetchUserRating()
         updateUserLoginState()
-        observeSavedStatus()
-    }
-    private fun observeSavedStatus() {
-        viewModelScope.launch {
-            var previousSavedIds = savedListsStatusProvider.savedIds.value
-            savedListsStatusProvider.savedIds.collect { newSavedIds ->
-                updateState {
-                    copy(
-                        movieDetails = movieDetails.copy(
-                            isSaved = newSavedIds.contains(route.movieId)
-                        )
-                    )
-                }
-                showSnackBarForSaveStatus(previousSavedIds, newSavedIds)
-                previousSavedIds = newSavedIds
-            }
-        }
     }
 
-    private fun showSnackBarForSaveStatus(previousSavedIds: Set<Int>, newSavedIds: Set<Int>) {
-        if (newSavedIds.contains(route.movieId) && !previousSavedIds.contains(route.movieId)) {
-            updateState {
-                copy(
-                    snackBarData = SnackData(
-                        message = stringProvider.addToListSuccess,
-                        isError = false
-                    )
-                )
-            }
-        }
-    }
     override fun onBackClick() {
         emitEffect(MovieDetailsUiEffect.NavigateBack)
     }
@@ -166,7 +137,7 @@ class MovieDetailsViewModel @Inject constructor(
                 noInternetConnection = false
             )
         }
-        fetchMovieDetails(route.movieId)
+        fetchMovieDetails(movieId)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -261,7 +232,7 @@ class MovieDetailsViewModel @Inject constructor(
     private fun fetchUserRating() {
         if (state.value.isUserLoggedIn) {
             tryToCollect(
-                callee = { getCurrentUserRating(route.movieId) },
+                callee = { getCurrentUserRating(movieId) },
                 onCollect = { rating -> updateState { copy(imdbRating = rating) } },
             )
         }
@@ -315,7 +286,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun submitMovieRating() {
         val rating = state.value.imdbRating
         val isSendRateSuccess = manageMovieDetails.addMovieRate(
-            movieId = route.movieId,
+            movieId = movieId,
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
