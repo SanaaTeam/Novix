@@ -73,7 +73,7 @@ fun RemoteBlurredSensitiveImage(
     var isImageLoaded by rememberSaveable { mutableStateOf(false) }
     var contentThreshold by rememberSaveable { mutableFloatStateOf(.7f) }
 
-    val imageRequest = remember(isImageLoaded) {
+    val imageRequest = remember(isImageLoaded, contentThreshold) {
         ImageRequest.Builder(context)
             .data(imageUrl)
             .isBlurEnable(
@@ -90,7 +90,7 @@ fun RemoteBlurredSensitiveImage(
             try {
                 var bitmap: Bitmap?
 
-                if (!isImageLoaded || contentThreshold != safeContentThreshold || requestState == RequestState.LOADING) {
+                if (!isImageLoaded || contentThreshold != safeContentThreshold) {
                     val loader = ImageLoader(context)
                     val response = loader.execute(imageRequest)
                     bitmap = (response.drawable as? BitmapDrawable)?.bitmap
