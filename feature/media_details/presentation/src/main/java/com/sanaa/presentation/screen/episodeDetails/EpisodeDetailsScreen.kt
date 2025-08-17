@@ -77,7 +77,7 @@ fun EpisodeDetailsScreen(
                 }
 
                 is EpisodeDetailsEffects.NavigateToActorDetails -> {
-                    navController.navigate(ActorScreenRoute(it.actorId).route())
+                    navController.navigate(ActorScreenRoute(it.actorId))
                 }
 
                 is EpisodeDetailsEffects.PlayTrailer -> {
