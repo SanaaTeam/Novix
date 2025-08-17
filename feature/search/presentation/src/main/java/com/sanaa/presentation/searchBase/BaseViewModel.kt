@@ -1,4 +1,4 @@
-package com.sanaa.presentation.base
+package com.sanaa.presentation.searchBase
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

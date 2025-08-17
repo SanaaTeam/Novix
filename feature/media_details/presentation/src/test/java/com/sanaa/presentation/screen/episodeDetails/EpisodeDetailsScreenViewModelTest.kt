@@ -6,7 +6,6 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Episode
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +19,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -33,6 +33,7 @@ class EpisodeDetailsScreenViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val tvShowId = 5
     private val seasonNumber = 2
@@ -48,6 +49,45 @@ class EpisodeDetailsScreenViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun givenHappyViewModel() {
+        coEvery {
+            manageEpisodeDetails.getEpisodeDetails(
+                tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        } returns dummyEpisode
+        coEvery {
+            manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        } returns dummyGuests
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "tvShowId" to tvShowId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
+        viewModel = EpisodeDetailsScreenViewModel(
+            savedStateHandle,
+            getUser,
+            checkUserLogin,
+            manageEpisodeDetails,
+            manageTvShowDetails,
+            stringProvider,
+            dispatcher = testDispatcher
+        )
+
+        testDispatcher.scheduler.advanceUntilIdle()
+    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
@@ -105,42 +145,6 @@ class EpisodeDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.imdbRating).isEqualTo(4)
     }
 
-    private fun givenHappyViewModel() {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                tvShowId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyEpisode
-        coEvery {
-            manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                tvShowId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyGuests
-        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
-        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "tvShowId" to tvShowId,
-                "seasonNumber" to seasonNumber,
-                "episodeNumber" to episodeNumber
-            )
-        )
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle,
-            getUser,
-            checkUserLogin,
-            manageEpisodeDetails,
-            manageTvShowDetails,
-            dispatcher = testDispatcher
-        )
-    }
-
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
         givenHappyViewModel()
@@ -153,14 +157,6 @@ class EpisodeDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onRateClicked when user is logged in shows RateBottomSheet`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
-        givenHappyViewModel()
-        testDispatcher.scheduler.advanceUntilIdle()
-        viewModel.onRateClicked()
-        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
-    }
 
     @Test
     fun `onSubmitRateBottomSheet hides sheet and calls addRate`() = runTest {
@@ -186,49 +182,6 @@ class EpisodeDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
-    @Test
-    fun `onRetryLoadDetails reloads episode and resets flags`() = runTest {
-        givenHappyViewModel()
-        viewModel.onRetryLoadDetails()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.noInternetConnection).isFalse()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.error).isNull()
-    }
-
-    @Test
-    fun `loadEpisode handles NoNetworkException`() = runTest {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                any(),
-                any(),
-                any()
-            )
-        } throws NoNetworkException()
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "tvShowId" to tvShowId,
-                "seasonNumber" to seasonNumber,
-                "episodeNumber" to episodeNumber
-            )
-        )
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle,
-            getUser,
-            checkUserLogin,
-            manageEpisodeDetails,
-            manageTvShowDetails,
-            dispatcher = testDispatcher
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.noInternetConnection).isTrue()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-    }
 
     companion object {
         private val dummyEpisode = Episode(

@@ -15,7 +15,7 @@ import usecase.ManageActorUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class ActorViewModel @Inject constructor(
+class ActorScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
@@ -23,8 +23,8 @@ class ActorViewModel @Inject constructor(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
 ), ActorsScreenInteractionListener {
-    private val actorId: Int = checkNotNull(
-        savedStateHandle[ActorScreenRoute.ARG_ACTOR_ID]
+    private val route = ActorScreenRoute(
+        actorId = checkNotNull(savedStateHandle["actorId"]),
     )
 
     init {
@@ -49,15 +49,15 @@ class ActorViewModel @Inject constructor(
     }
 
     override fun onTopMoviesClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopMovies(actorId))
+        emitEffect(ActorScreenEffects.NavigateToTopMovies(route.actorId))
     }
 
     override fun onTopShowsClicked() {
-        emitEffect(ActorScreenEffects.NavigateToTopTvShows(actorId))
+        emitEffect(ActorScreenEffects.NavigateToTopTvShows(route.actorId))
     }
 
     override fun onViewAllGalleryClicked() {
-        emitEffect(ActorScreenEffects.NavigateToGallery(actorId))
+        emitEffect(ActorScreenEffects.NavigateToGallery(route.actorId))
     }
 
     override fun onTvShowClicked(id: Int) {
@@ -112,17 +112,27 @@ class ActorViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         tryToExecute(
             callee = ::fetchActorDetails,
-            onSuccess = { updateState { copy(isLoading = false) } },
-            onError = { e -> updateState { copy(isLoading = false) } }
+            onSuccess = {
+                updateState { copy(isLoading = false) }
+            },
+            onError = { e ->
+                when (e) {
+                    is exceptions.NoNetworkException ->
+                        updateState { copy(isLoading = false, noInternetConnection = true) }
+
+                    else ->
+                        updateState { copy(isLoading = false, error = e.message) }
+                }
+            }
         )
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
-        val actorDeferred = async { manageActorDetails.getActorDetails(actorId) }
-        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(actorId) }
-        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(actorId) }
-        val profilesDeferred = async { manageActorDetails.getProfileImages(actorId) }
-        val galleryDeferred = async { manageActorDetails.getGalleryImages(actorId) }
+        val actorDeferred = async { manageActorDetails.getActorDetails(route.actorId) }
+        val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(route.actorId) }
+        val topTvShowsDeferred = async { manageActorDetails.getActorTopTvShows(route.actorId) }
+        val profilesDeferred = async { manageActorDetails.getProfileImages(route.actorId) }
+        val galleryDeferred = async { manageActorDetails.getGalleryImages(route.actorId) }
 
         val actor = actorDeferred.await()
         val topMovies = topMoviesDeferred.await()

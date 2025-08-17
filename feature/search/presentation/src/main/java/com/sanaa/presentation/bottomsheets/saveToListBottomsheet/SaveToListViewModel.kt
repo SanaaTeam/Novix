@@ -1,6 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.searchBase.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
 import com.sanaa.presentation.screen.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel

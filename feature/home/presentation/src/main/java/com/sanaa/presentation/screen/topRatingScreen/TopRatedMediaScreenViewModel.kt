@@ -4,10 +4,14 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BasePagingSourceForHome
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -64,7 +68,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchMoviesSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(movieList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -79,7 +83,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItem>>) {
+    private fun onFetchTvShowsSuccess(mediaList: Flow<PagingData<MediaItemUiState>>) {
         updateState {
             copy(tvShowList = mediaList, isLoading = false, isNoInternetConnection = false)
         }
@@ -123,7 +127,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUi) {
+    override fun onMediaTabSelection(mediaTypeUi: MediaTypeUiState) {
         updateState { copy(selectedMediaTypeUiState = mediaTypeUi) }
     }
 
@@ -141,11 +145,11 @@ class TopRatedMediaScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUi) {
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
         emitEffect(TopRatedMediaScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return
@@ -213,7 +217,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedMovies(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
 
         return createPagingFlow(
             pagingSourceFactory = { createMoviePagingDataSource(genreId = genreId) },
@@ -223,7 +227,7 @@ class TopRatedMediaScreenViewModel @Inject constructor(
 
     private fun loadTopRatedTvShows(
         genreId: Int?,
-    ): Flow<PagingData<MediaItem>> {
+    ): Flow<PagingData<MediaItemUiState>> {
 
         return createPagingFlow(
             pagingSourceFactory = { createTvShowPagingDataSource(genreId = genreId) },

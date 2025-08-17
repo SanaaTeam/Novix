@@ -4,9 +4,13 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.base.BasePagingSourceForHome
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BasePagingSourceForHome
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
+import com.sanaa.presentation.state.MediaItemUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
@@ -70,14 +74,14 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         )
     }
 
-    private fun loadMoviesOperation(): Flow<PagingData<MediaItem>> {
+    private fun loadMoviesOperation(): Flow<PagingData<MediaItemUiState>> {
         return createPagingFlow(
             pagingSourceFactory = { createMoviesPagingSource() },
             mapper = Movie::toState
         )
     }
 
-    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItem>) {
+    private fun onLoadMoviesSuccess(pagingData: PagingData<MediaItemUiState>) {
         updateState {
             copy(
                 mediaList = flowOf(pagingData),
@@ -97,7 +101,7 @@ class TrendingMoviesScreenViewModel @Inject constructor(
         emitEffect(TrendingMoviesScreenEffect.NavigateToMoviesDetails(id))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return

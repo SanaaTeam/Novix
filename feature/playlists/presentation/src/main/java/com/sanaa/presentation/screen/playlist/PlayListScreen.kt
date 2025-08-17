@@ -14,6 +14,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanaa.api.launchAuthActivityForResult
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
+import com.sanaa.designsystem.design_system.theme.NovixTheme
+import com.sanaa.feature.playlists.presentation.R
 import com.sanaa.presentation.api.navigationSaved.LocalNavControllerProvider
 import com.sanaa.presentation.api.navigationSaved.PlayListApiEntryPoint
 import com.sanaa.presentation.api.navigationSaved.SavedDetailsScreenRoute
@@ -83,30 +87,32 @@ private fun PlaylistScreenContent(
     state: PlayListScreenUiState,
     interactionListener: PlayListScreenInteractionListener,
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        AnimatedContent(
-            targetState = state.screenState,
-        ) { screenState ->
-            when (screenState) {
-                PlaylistScreenState.Loading -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        LoadingIndicator()
-                    }
+    AnimatedContent(
+        targetState = Triple(state.isUserLoggedIn, state.lists.isEmpty(), state.lists),
+        label = "PlaylistContentTransition"
+    ) { (isUserLoggedIn, isEmptyList, lists) ->
+        when {
+            state.isLoading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingIndicator()
                 }
-
-                PlaylistScreenState.NoInternet -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadSavedLists() },
-                        )
-                    }
+            }
+           state.noInternetConnection -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NetworkDisconnectionContact(
+                        onRetryClick = { },
+                    )
                 }
+            }
+            !isUserLoggedIn -> {
+                PlayListGuestScreen(onLoginClick = { interactionListener.onButtonLoginClicked() })
+            }
 
                 PlaylistScreenState.Guest -> {
                     PlayListGuestScreen(onLoginClick = { interactionListener.onNavigateToLogin() })

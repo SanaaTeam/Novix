@@ -3,8 +3,7 @@ package com.sanaa.presentation.screen.homeScreen
 import androidx.paging.PagingSource
 import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.presentation.state.MediaTypeUi
-import com.sanaa.presentation.state.mapper.toState
+import com.sanaa.presentation.state.MediaTypeUiState
 import entity.Genre
 import entity.MediaHistoryItem
 import entity.Movie
@@ -184,34 +183,34 @@ class HomeScreenViewModelTest {
     }
 
     @Test
-    fun `onMoviesCardClicked should emit NavigateToMoviesScreen effect`() =
+    fun `onMoviesCardClicked should emit NavigateToTrendingMoviesScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onMoviesCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToMoviesScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingMoviesScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
 
     @Test
-    fun `onTvShowsCardClicked should emit NavigateToTvShowsScreen effect`() =
+    fun `onTvShowsCardClicked should emit NavigateToTrendingTvShowsScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onTvShowsCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTvShowsScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingTvShowsScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
 
     @Test
-    fun `onPeopleCardClicked should emit NavigateToPeopleScreen effect`() =
+    fun `onPeopleCardClicked should emit NavigateToTrendingPeopleScreen effect`() =
         runTest(testDispatcher) {
             initializeViewModel()
             viewModel.effect.test {
                 viewModel.onPeopleCardClick()
-                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToPeopleScreen)
+                assertThat(awaitItem()).isEqualTo(HomeScreenEffect.NavigateToTrendingPeopleScreen)
                 cancelAndConsumeRemainingEvents()
             }
         }
@@ -242,11 +241,11 @@ class HomeScreenViewModelTest {
     fun `onMediaClick should emit NavigateToMediaDetails effect`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.effect.test {
-            viewModel.onMediaClick(101, MediaTypeUi.MOVIE)
+            viewModel.onMediaClick(101, MediaTypeUiState.MOVIE)
             assertThat(awaitItem()).isEqualTo(
                 HomeScreenEffect.NavigateToMediaDetails(
                     101,
-                    MediaTypeUi.MOVIE
+                    MediaTypeUiState.MOVIE
                 )
             )
             cancelAndConsumeRemainingEvents()
@@ -263,26 +262,18 @@ class HomeScreenViewModelTest {
 
     @Ignore
     @Test
-    fun `onSaveIconClick should set showBottomSheet to true`() = runTest(testDispatcher) {
+    fun `onSaveIconClick should set showLoginBottomSheet to true`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
-    }
-
-    @Test
-    fun `onSaveIconClick should navigate to playlist screen if user not logged in`() = runTest {
-        initializeViewModel()
-        viewModel.onSaveIconClick(mockk())
-
-        assertThat(viewModel.state.value.showBottomSheet).isTrue()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
     }
 
     @Test
     fun `onDismissBottomSheet should set showBottomSheet to false`() = runTest(testDispatcher) {
         initializeViewModel()
         viewModel.onSaveIconClick(mockk())
-        viewModel.onDismissBottomSheet()
-        assertThat(viewModel.state.value.showBottomSheet).isFalse()
+        viewModel.onDismissLoginBottomSheet()
+        assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
 
     @Test

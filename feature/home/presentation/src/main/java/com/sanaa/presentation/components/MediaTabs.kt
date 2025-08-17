@@ -25,13 +25,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 
 @Composable
 fun MediaTabs(
-    onTabClick: (MediaTypeUi) -> Unit,
+    onTabClick: (MediaTypeUiState) -> Unit,
     modifier: Modifier = Modifier,
-    selectedTab: MediaTypeUi = MediaTypeUi.MOVIE,
+    selectedTab: MediaTypeUiState = MediaTypeUiState.MOVIE,
 ) {
     Box(
         modifier = modifier,
@@ -48,15 +48,15 @@ fun MediaTabs(
             TabButton(
                 text = stringResource(R.string.movies),
                 onClick = onTabClick,
-                isSelected = selectedTab == MediaTypeUi.MOVIE,
-                mediaTypeUi = MediaTypeUi.MOVIE,
+                isSelected = selectedTab == MediaTypeUiState.MOVIE,
+                mediaTypeUiState = MediaTypeUiState.MOVIE,
                 modifier = Modifier.weight(1f)
             )
             TabButton(
                 text = stringResource(R.string.tvshows),
                 onClick = onTabClick,
-                isSelected = selectedTab == MediaTypeUi.TV_SHOW,
-                mediaTypeUi = MediaTypeUi.TV_SHOW,
+                isSelected = selectedTab == MediaTypeUiState.TV_SHOW,
+                mediaTypeUiState = MediaTypeUiState.TV_SHOW,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -66,9 +66,9 @@ fun MediaTabs(
 @Composable
 private fun TabButton(
     text: String,
-    onClick: (MediaTypeUi) -> Unit,
+    onClick: (MediaTypeUiState) -> Unit,
     modifier: Modifier = Modifier,
-    mediaTypeUi: MediaTypeUi,
+    mediaTypeUiState: MediaTypeUiState,
     isSelected: Boolean = false,
     selectedTextColor: Color = Theme.colors.title,
     notSelectedTextColor: Color = Theme.colors.hint,
@@ -84,7 +84,7 @@ private fun TabButton(
         modifier = modifier
             .fillMaxHeight()
             .clickable(
-                onClick = { onClick(mediaTypeUi) },
+                onClick = { onClick(mediaTypeUiState) },
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }
             ),

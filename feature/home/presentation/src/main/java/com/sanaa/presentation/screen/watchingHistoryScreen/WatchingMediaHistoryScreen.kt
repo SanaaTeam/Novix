@@ -14,10 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -42,8 +39,7 @@ import com.sanaa.presentation.components.MediaTabs
 import com.sanaa.presentation.components.NovixAnimatedSnackBarHost
 import com.sanaa.presentation.components.RefreshButton
 import com.sanaa.presentation.components.RequestToLoginBottomSheet
-import com.sanaa.presentation.components.SnackData
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaTypeUiState
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -56,38 +52,10 @@ fun WatchingMediaHistoryScreen(
 
     EffectHandler(viewModel.effect)
 
-    val selectedMedia = state.value.selectedMediaToSave
-    if (state.value.userIsLoggedIn) {
-        if (state.value.showSaveToListBottomSheet && selectedMedia != null) {
-            SaveToListBottomSheet(
-                isVisible = true,
-                mediaId = selectedMedia.id.toLong(),
-                onDismiss = viewModel::onDismissSaveToListBottomSheet,
-                onCreateNewListClick = viewModel::onCreateNewListClick
-            )
-        }
-        if (state.value.showAddListBottomSheet && selectedMedia != null) {
-            AddBookmarkListBottomSheet(
-                isVisible = true,
-                onDismiss = viewModel::onDismissAddListBottomSheet,
-                mediaId = selectedMedia.id
-            )
-        }
-    } else {
-        RequestToLoginBottomSheet(
-            isVisible = state.value.showLoginBottomSheet,
-            onDismiss = viewModel::onDismissLoginBottomSheet,
-            onLoginButtonClick = viewModel::onLoginButtonClick
-        )
-    }
-
-    Box(modifier = Modifier.systemBarsPadding()) {
-
-        WatchingMediaHistoryScreenContent(
-            state = state.value,
-            interactionListener = viewModel,
-        )
-    }
+    WatchingMediaHistoryScreenContent(
+        state = state.value,
+        interactionListener = viewModel,
+    )
 }
 
 @Composable
@@ -144,28 +112,52 @@ private fun WatchingMediaHistoryScreenContent(
             ) { selectedMediaType ->
                 when (selectedMediaType) {
 
-                    MediaTypeUi.MOVIE -> {
+                    MediaTypeUiState.MOVIE -> {
                         MediaListSectionContent(
                             genres = state.movieGenres,
                             mediaList = state.movieList,
                             selectedGenreId = state.movieSelectedGenreId,
                             onGenreClick = interactionListener::onMovieGenreClick,
                             onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                             },
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()
                         )
+                        val selectedMedia = state.selectedMediaToSave
+                        if (state.userIsLoggedIn) {
+                            if (state.showSaveToListBottomSheet && selectedMedia != null) {
+                                SaveToListBottomSheet(
+                                    isVisible = true,
+                                    mediaId = selectedMedia.id.toLong(),
+                                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+                                    onCreateNewListClick = interactionListener::onCreateNewListClick
+                                )
+                            }
+                            if (state.showAddListBottomSheet && selectedMedia != null) {
+                                AddBookmarkListBottomSheet(
+                                    isVisible = true,
+                                    onDismiss = interactionListener::onDismissAddListBottomSheet,
+                                    mediaId = selectedMedia.id
+                                )
+                            }
+                        } else {
+                            RequestToLoginBottomSheet(
+                                isVisible = state.showLoginBottomSheet,
+                                onDismiss = interactionListener::onDismissLoginBottomSheet,
+                                onLoginButtonClick = interactionListener::onLoginButtonClick
+                            )
+                        }
                     }
 
-                    MediaTypeUi.TV_SHOW -> {
+                    MediaTypeUiState.TV_SHOW -> {
                         MediaListSectionContent(
                             genres = state.tvShowGenres,
                             mediaList = state.tvShowList,
                             selectedGenreId = state.tvShowSelectedGenreId,
                             onGenreClick = interactionListener::onTvShowGenreClick,
                             onMediaClick = { media ->
-                                interactionListener.onMediaClick(media.id, media.mediaTypeUi)
+                                interactionListener.onMediaClick(media.id, media.mediaTypeUiState)
                             },
                             onSaveIconClick = interactionListener::onSaveIconClick,
                             modifier = Modifier.fillMaxSize()
@@ -186,7 +178,6 @@ private fun EffectHandler(
 ) {
     val navController = LocalMainNavController.current
     val appContext = LocalContext.current.applicationContext
-    var snack by remember { mutableStateOf<SnackData?>(null) }
     val authApi = EntryPointAccessors.fromApplication(
         appContext,
         HomeApiEntryPoint::class.java
@@ -212,7 +203,7 @@ private fun EffectHandler(
 
                 is WatchingMediaHistoryScreenEffect.NavigateToMediaDetails -> {
                     when (effect.mediaTypeUiState) {
-                        MediaTypeUi.MOVIE -> {
+                        MediaTypeUiState.MOVIE -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
@@ -220,7 +211,7 @@ private fun EffectHandler(
                             )
                         }
 
-                        MediaTypeUi.TV_SHOW -> {
+                        MediaTypeUiState.TV_SHOW -> {
                             detailsApi.launch(
                                 context = navController.context,
                                 id = effect.id,
@@ -228,10 +219,6 @@ private fun EffectHandler(
                             )
                         }
                     }
-                }
-
-                is WatchingMediaHistoryScreenEffect.ShowError -> {
-                    snack = SnackData(message = effect.message, isError = true)
                 }
             }
         }

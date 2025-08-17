@@ -17,5 +17,10 @@ data class GenreMoviesScreenUiState(
     val selectedMovieToSave: MovieUiModel? = null,
     val showAddListBottomSheet: Boolean = false,
 )
+enum class ScreenState {
+    LOADING,
+    NO_INTERNET,
+    CONTENT
+}
 
 

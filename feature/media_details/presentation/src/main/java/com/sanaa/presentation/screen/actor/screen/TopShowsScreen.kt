@@ -30,6 +30,7 @@ import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.BackgroundShapes
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -37,11 +38,13 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.model.TvShowUiState
+import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorViewModel
+import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
+import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -50,7 +53,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopShowsScreen(
-    viewModel: ActorViewModel = hiltViewModel(),
+    viewModel: ActorScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -65,6 +68,7 @@ fun TopShowsScreen(
     TopShowsContent(
         state = uiState,
         navController = navController,
+        interactionListener = viewModel
     )
 
     RequestToLoginBottomSheet(
@@ -79,6 +83,7 @@ fun TopShowsScreen(
 @Composable
 private fun TopShowsContent(
     state: ActorScreenUiState,
+    interactionListener: ActorsScreenInteractionListener,
     navController: NavHostController,
 ) {
     NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
@@ -106,14 +111,25 @@ private fun TopShowsContent(
                     .fillMaxWidth(), contentAlignment = Alignment.Center
             ) {
                 AnimatedContent(
-                    state.isLoading,
+                    targetState = Pair(state.isLoading, state.noInternetConnection),
                     modifier = Modifier.align(Alignment.Center),
                     contentAlignment = Alignment.Center
-                ) { loading ->
-                    if (loading) {
-                        LoadingIndicator()
-                    } else {
-                        TvShowList(state, navController)
+                ) { (isLoading, noInternetConnection) ->
+                    when {
+                        isLoading -> {
+                            LoadingIndicator()
+                        }
+
+                        noInternetConnection -> {
+                            NetworkDisconnectionContact(
+                                onRetryClick = interactionListener::onRetryClicked,
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        }
+
+                        else -> {
+                            TvShowList(state, navController)
+                        }
                     }
                 }
             }
@@ -143,7 +159,7 @@ private fun TvShowList(
                 },
                 onCardClick = {
                     navController.navigate(
-                        TvShowDetailsScreenRoute(tvShow.id).route()
+                        TvShowScreenRoute(tvShow.id)
                     )
                 }
             )

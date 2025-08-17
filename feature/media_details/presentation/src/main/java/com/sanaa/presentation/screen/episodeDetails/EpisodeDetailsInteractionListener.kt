@@ -13,4 +13,5 @@ interface EpisodeDetailsInteractionListener {
     fun onRatingChanged(newRating: Int)
     fun onDismissRateBottomSheet()
     fun onSubmitRateBottomSheet()
+    fun onSnackDismissRequested()
 }

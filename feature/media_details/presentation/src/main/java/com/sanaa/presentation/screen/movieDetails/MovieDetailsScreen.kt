@@ -41,16 +41,15 @@ import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.bottomsheets.addEditBookmark.AddBookmarkListBottomSheet
 import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBottomSheet
+import com.sanaa.presentation.model.MediaTypeUiModel
+import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.GenreMovieScreenRoute
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateBack
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToActorScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToAnotherMovieDetails
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToLogin
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToMovieCategoriesScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsUiEffect.NavigateToReviewsScreen
@@ -113,21 +112,21 @@ private fun MovieDetailsEffectsHandler(
 
                 is NavigateToReviewsScreen -> {
                     currentNavController.navigate(
-                        ReviewsScreenRoute(effect.movieId, MediaTypeParam.MOVIE).route()
+                        ReviewsScreenRoute(effect.movieId, MediaTypeUiModel.MOVIE)
                     )
                 }
 
-                is NavigateToAnotherMovieDetails -> {
-                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId).route())
+                is MovieDetailsUiEffect.NavigateToAnotherMovieDetails -> {
+                    currentNavController.navigate(MovieDetailsScreenRoute(effect.movieId))
                 }
 
-                is NavigateToActorScreen -> {
-                    currentNavController.navigate(ActorScreenRoute(effect.actorId).route())
+                is MovieDetailsUiEffect.NavigateToActorScreen -> {
+                    currentNavController.navigate(ActorScreenRoute(effect.actorId))
                 }
 
                 is NavigateToMovieCategoriesScreen -> {
                     currentNavController.navigate(
-                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName).route()
+                        GenreMovieScreenRoute(effect.categoryId, effect.categoryName)
                     )
                 }
 
