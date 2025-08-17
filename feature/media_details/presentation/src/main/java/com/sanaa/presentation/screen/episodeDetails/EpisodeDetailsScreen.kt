@@ -58,7 +58,7 @@ import com.sanaa.designsystem.R as designR
 fun EpisodeDetailsScreen(
     viewModel: EpisodeDetailsScreenViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalNavControllerProvider.current
 
@@ -92,7 +92,7 @@ fun EpisodeDetailsScreen(
         }
     }
     EpisodeDetailsScreenContent(
-        interactionListener = viewModel, state = state.value
+        interactionListener = viewModel, state = state
     )
 }
 
@@ -107,25 +107,6 @@ private fun EpisodeDetailsScreenContent(
     )
 
     NovixScaffold(
-        topBar = {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(designR.drawable.icon_back),
-                        onClick = interactionListener::onBackClick
-
-                    )
-                }, rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_save), onClick = {
-                            interactionListener.onSavedClick(state.tvShowId)
-                        })
-                }, modifier = Modifier
-                    .background(animatedColor)
-                    .systemBarsPadding()
-                    .zIndex(10f)
-            )
-        },
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
             Box(
@@ -144,6 +125,24 @@ private fun EpisodeDetailsScreenContent(
                 .fillMaxSize()
                 .navigationBarsPadding()
         ) {
+            TopBar(
+                leftContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(designR.drawable.icon_back),
+                        onClick = interactionListener::onBackClick
+
+                    )
+                }, rightContent = {
+                    TopBarClickableIcon(
+                        icon = painterResource(R.drawable.icon_save), onClick = {
+                            interactionListener.onSavedClick(state.tvShowId)
+                        })
+                }, modifier = Modifier
+                    .background(animatedColor)
+                    .systemBarsPadding()
+                    .zIndex(10f)
+            )
+
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
@@ -157,12 +156,8 @@ private fun EpisodeDetailsScreenContent(
                             useDarkTheme = LocalThemeProvider.current
                         )
                     } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LoadingIndicator()
-                        }
+                        LoadingIndicator(modifier = Modifier.align(Alignment.Center))
+
                     }
                 } else {
                     Box(
