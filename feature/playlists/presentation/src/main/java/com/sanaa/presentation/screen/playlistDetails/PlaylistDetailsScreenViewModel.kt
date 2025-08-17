@@ -32,6 +32,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private val savedListsStatusProvider: SavedListsStatusProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
+ 
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(SavedDetailsScreenUiState(),dispatcher),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
