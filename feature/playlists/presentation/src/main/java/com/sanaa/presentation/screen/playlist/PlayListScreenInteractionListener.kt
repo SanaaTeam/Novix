@@ -2,8 +2,8 @@ package com.sanaa.presentation.screen.playlist
 
 interface PlayListScreenInteractionListener {
     fun onFabBottomSheetClicked()
-    fun onButtonLoginClicked()
+    fun onNavigateToLogin()
     fun onDismissAddBottomSheet()
     fun onRetryLoadSavedLists()
-    fun onItemListClicked(listId: Int, title: String)
+    fun onNavigateToSavedDetails(listId: Int, title: String)
 }
