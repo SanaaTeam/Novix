@@ -14,7 +14,6 @@ data class PlayListScreenUiState(
 )
 
 data class SnackData(
-    val id: Long = System.currentTimeMillis(),
     val message: String,
     val isError: Boolean
 )
@@ -23,12 +22,6 @@ data class PlayListUiModel(
     val id: Int = 0,
     val title: String = "",
     val mediaCount: Int = 1
-)
-
-fun PlayListUiModel.toDomain() = SavedList(
-    id = id,
-    title = title,
-    itemCount = mediaCount
 )
 
 fun SavedList.toUiModel() = PlayListUiModel(

@@ -33,7 +33,7 @@ class SaveToListViewModel @Inject constructor(
     private fun observePlaylists() {
         updateState { copy(isLoading = true) }
         tryToCollect(
-            callee = { mangeSavedListsUseCase.getSavedLists() },
+            block = { mangeSavedListsUseCase.getSavedLists() },
             onCollect = ::onCollectPlaylists,
         )
     }
@@ -115,7 +115,7 @@ class SaveToListViewModel @Inject constructor(
         if (selectedListsIds.isEmpty()) return
         updateState { copy(isUploading = true, isAddButtonEnabled = false) }
         tryToExecute(
-            callee = {
+            block = {
                 selectedListsIds.forEach { listId ->
                     addMovieToSavedList(listId, state.value.mediaId!!)
                 }

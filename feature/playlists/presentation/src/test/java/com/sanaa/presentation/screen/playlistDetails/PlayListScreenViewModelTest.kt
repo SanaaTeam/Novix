@@ -4,27 +4,25 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.screen.playlist.PlayListScreenEffect
 import com.sanaa.presentation.screen.playlist.PlayListScreenViewModel
-import io.mockk.coEvery
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
-import usecase.custom_list.custom_list_param.SavedList
+import usecase.custom_list.ManageSavedListsUseCase
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PlayListScreenViewModelTest {
 
     private lateinit var viewModel: PlayListScreenViewModel
-    private val listStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
@@ -51,7 +49,7 @@ class PlayListScreenViewModelTest {
     fun `onButtonLoginClicked emits NavigateToLogin`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onButtonLoginClicked()
+            viewModel.onNavigateToLogin()
             assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
@@ -61,7 +59,7 @@ class PlayListScreenViewModelTest {
     fun `onItemListClicked emits NavigateToSavedDetails`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onItemListClicked(5, "Workout Playlist")
+            viewModel.onNavigateToSavedDetails(5, "Workout Playlist")
             assertThat(awaitItem()).isEqualTo(
                 PlayListScreenEffect.NavigateToSavedDetails(5, "Workout Playlist")
             )
@@ -74,7 +72,9 @@ class PlayListScreenViewModelTest {
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
             checkUserLogin = checkIfUserIsLoggedInUseCase,
-            listsStatusProvider = listStatusProvider,
+            dispatcher = testDispatcher,
+            stringProvider = stringProvider,
+            manageSavedListsUseCase = manageSavedListsUseCase,
         )
     }
 }
