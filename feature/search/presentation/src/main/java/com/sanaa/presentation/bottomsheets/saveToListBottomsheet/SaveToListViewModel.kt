@@ -1,6 +1,6 @@
 package com.sanaa.presentation.bottomsheets.saveToListBottomsheet
 
-import com.sanaa.presentation.base.BaseViewModel
+import com.sanaa.presentation.searchBase.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NovixAppException
@@ -31,9 +31,9 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = { manageSavedListsUseCase.getSavedLists() },
+            block = { manageSavedListsUseCase.getSavedLists() },
             onSuccess = ::onLoadPlaylistsSuccess,
-            onError = ::onErrorAccrue
+            onError = { ::onErrorAccrue }
         )
     }
 
@@ -67,9 +67,9 @@ class SaveToListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
 
         tryToExecute(
-            callee = addMovieToSavedList(selectedListId, mediaId),
+            block = addMovieToSavedList(selectedListId, mediaId),
             onSuccess = onAddMovieToSavedListSuccess(mediaId),
-            onError = ::onAddMovieToSavedListFailed,
+            onError = { ::onAddMovieToSavedListFailed }
         )
     }
 

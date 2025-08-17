@@ -1,26 +1,38 @@
 package com.sanaa.presentation.screen
 
-import android.media.browse.MediaBrowser.MediaItem
 import com.sanaa.presentation.screen.state.MovieUiModel
 import com.sanaa.presentation.screen.state.RecentViewedUiModel
 
-interface SearchScreenInteractionsListener {
-    fun onClearRecentViewClicked()
-    fun onClearRecentSearchClicked()
-    fun onDeleteRecentSearchItem(id: Int)
+interface SearchScreenInteractionsListener:
+    LoginBottomSheetListener,
+    SaveListListener,
+    RecentViewListener
+{
     fun onTabSelected(index: Int)
-    fun onRecentSearchItemClicked(query: String)
-    fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel)
     fun onSearchQueryChanged(query: String)
     fun retrySearch()
     fun onActorClicked(id: Int)
     fun onSearchResultMediaClicked(viewed: RecentViewedUiModel)
-    fun onLoginButtonClick()
-    fun onSaveMoviesClicked()
-    fun onBottomSheetDismiss()
     fun onSaveIconClick(media: MovieUiModel)
-    fun onDismissSaveToListBottomSheet()
-    fun onCreateNewListClick()
-    fun onDismissAddListBottomSheet()
+    fun onSnackBarDismiss()
+}
 
+interface LoginBottomSheetListener{
+    fun onLoginButtonClick()
+    fun onLoginBottomSheetDismiss()
+}
+
+interface SaveListListener{
+    fun onDismissSaveToListBottomSheet()
+    fun onDismissAddListBottomSheet()
+    fun onCreateNewListClick()
+    fun onSaveToListSuccess()
+    fun onSaveToListFailure()
+}
+interface RecentViewListener{
+    fun onClearRecentViewClicked()
+    fun onClearRecentSearchClicked()
+    fun onDeleteRecentSearchItem(id: Int)
+    fun onRecentSearchItemClicked(query: String)
+    fun onRecentViewedMediaClicked(viewed: RecentViewedUiModel)
 }

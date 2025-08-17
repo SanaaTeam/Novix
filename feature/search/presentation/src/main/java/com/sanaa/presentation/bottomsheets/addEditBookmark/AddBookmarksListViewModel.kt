@@ -1,7 +1,7 @@
 package com.sanaa.presentation.bottomsheets.addEditBookmark
 
-import com.sanaa.presentation.base.BaseViewModel
 import com.sanaa.presentation.screen.componants.SnackData
+import com.sanaa.presentation.searchBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +42,7 @@ class AddBookmarksListViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = {
                 resetState()
                 emitEffect(AddBookmarksEffect.Dismiss)

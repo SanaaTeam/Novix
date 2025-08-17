@@ -1,6 +1,7 @@
 package com.sanaa.presentation.screen.episodeDetails
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -51,6 +53,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
         updateUserLoginState()
     }
 
+    private fun fetchUserRating() {
+        viewModelScope.launch {
+            val isLogged = checkUserLogin.isLoggedIn().first()
+            if (isLogged) {
+                tryToCollect(
+                    callee = { getCurrentUserRating() },
+                    onCollect = { rating ->
+                        updateState { copy(imdbRating = rating) }
+                    }
+                )
+            }
+        }
+    }
 
     override fun onBackClick() {
         emitEffect(EpisodeDetailsEffects.NavigateBack)
@@ -95,7 +110,7 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
 
     override fun onRetryLoadDetails() {
         updateState { copy(noInternetConnection = false, isLoading = true, error = null) }
-        loadEpisode(state.value.tvShowId, 0, 0)
+        loadEpisode(tvShowId, seasonNumber, episodeNumber)
     }
 
     override fun onRatingChanged(newRating: Int) {
@@ -132,16 +147,19 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                 updateState { copy(isLoading = false) }
             },
             onError = { e ->
-                if (e is NoNetworkException) {
-                    updateState {
-                        copy(
-                            noInternetConnection = true,
-                            error = null,
-                            isLoading = false
-                        )
+                when (e) {
+                    is NoNetworkException -> {
+                        updateState {
+                            copy(
+                                noInternetConnection = true,
+                                error = null,
+                                isLoading = false
+                            )
+                        }
                     }
-                } else {
-                    updateState { copy(error = error, isLoading = false) }
+                    else -> {
+                        updateState { copy(error = e.message, isLoading = false) }
+                    }
                 }
             }
         )
@@ -168,15 +186,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
             }
             val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
             val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
-            val ratingDeferred = async {
-                getCurrentUserRating()
-            }
-
             val episode = episodeDeferred.await()
             val guests = guestsDeferred.await()
             val images = imagesDeferred.await()
             val trailerUrl = trailerDeferred.await()
-            val currentEpisodesRating = ratingDeferred.await().first()
 
             updateState {
                 copy(
@@ -185,9 +198,10 @@ class EpisodeDetailsScreenViewModel @Inject constructor(
                     tvShowId = tvShowId,
                     imagesUrl = images,
                     trailerUrl = trailerUrl,
-                    imdbRating = currentEpisodesRating
                 )
             }
+
+            fetchUserRating()
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)

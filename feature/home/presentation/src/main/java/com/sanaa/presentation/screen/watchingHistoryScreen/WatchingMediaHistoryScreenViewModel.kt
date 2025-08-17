@@ -1,10 +1,10 @@
 package com.sanaa.presentation.screen.watchingHistoryScreen
 
-import com.sanaa.presentation.BaseViewModel
 import com.sanaa.presentation.components.SnackData
+import com.sanaa.presentation.homeBase.BaseViewModel
 import com.sanaa.presentation.state.GenreUiState
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import com.sanaa.presentation.state.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.MediaHistoryItem
@@ -71,7 +71,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMoviesSuccess(mediaList: List<MediaItem>) {
+    private fun onFetchMoviesSuccess(mediaList: List<MediaItemUiState>) {
         updateState { copy(movieList = mediaList, isLoading = false, showRefreshButton = false) }
     }
 
@@ -131,7 +131,7 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUi) {
+    override fun onMediaTabSelection(mediaTypeUiState: MediaTypeUiState) {
         updateState { copy(selectedMediaTypeUiState = mediaTypeUiState) }
     }
 
@@ -149,11 +149,11 @@ class WatchingMediaHistoryScreenViewModel @Inject constructor(
         fetchTvShows(id)
     }
 
-    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUi) {
+    override fun onMediaClick(id: Int, mediaTypeUiState: MediaTypeUiState) {
         emitEffect(WatchingMediaHistoryScreenEffect.NavigateToMediaDetails(id, mediaTypeUiState))
     }
 
-    override fun onSaveIconClick(media: MediaItem) {
+    override fun onSaveIconClick(media: MediaItemUiState) {
         if (!state.value.userIsLoggedIn) {
             updateState { copy(showLoginBottomSheet = true) }
             return

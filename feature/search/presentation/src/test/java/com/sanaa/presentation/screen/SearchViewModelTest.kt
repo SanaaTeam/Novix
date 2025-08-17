@@ -32,6 +32,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.MangeUserPreferenceUseCase
 import usecase.history.ManageHistoryUseCase
@@ -52,6 +53,7 @@ class SearchViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+    private  val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @BeforeEach
@@ -67,9 +69,8 @@ class SearchViewModelTest {
             dispatcher = testDispatcher,
             checkUserLogin = checkUserLogin,
             mangeUserPreferenceUseCase = mangeUserPreferenceUseCase,
-            savedListsStatusProvider = savedListsStatusProvider
-
-
+            savedListsStatusProvider = savedListsStatusProvider,
+            stringProvider = stringProvider
         )
     }
 
