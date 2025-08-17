@@ -2,44 +2,43 @@ package com.sanaa.presentation.state.mapper
 
 import android.annotation.SuppressLint
 import com.sanaa.presentation.bottomsheet.saveToListBottomsheet.PlaylistUiItem
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import entity.MediaHistoryItem
 import entity.Movie
-import entity.TvSeries
+import entity.TvShow
 import usecase.custom_list.custom_list_param.SavedList
 import usecase.search.search_param.MediaType
 
 @SuppressLint("DefaultLocale")
-fun Movie.toState(): MediaItem = MediaItem(
+fun Movie.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
-    mediaTypeUi = MediaTypeUi.MOVIE,
-    isSaved = isSaved
+    mediaTypeUiState = MediaTypeUiState.MOVIE,
 )
 
 @SuppressLint("DefaultLocale")
-fun TvSeries.toState(): MediaItem = MediaItem(
+fun TvShow.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = title,
     imageUrl = posterImageUrl,
     rating = String.format("%.1f", imdbRating),
-    mediaTypeUi = MediaTypeUi.TV_SHOW
+    mediaTypeUiState = MediaTypeUiState.TV_SHOW
 )
 
-fun MediaHistoryItem.toState(): MediaItem = MediaItem(
+fun MediaHistoryItem.toState(): MediaItemUiState = MediaItemUiState(
     id = id,
     title = "",
     imageUrl = posterImageUrl,
     rating = "",
-    mediaTypeUi = mediaType.toState(),
+    mediaTypeUiState = mediaType.toState(),
 )
 
-fun MediaType.toState(): MediaTypeUi = when (this) {
-    MediaType.MOVIE -> MediaTypeUi.MOVIE
-    MediaType.TV_SERIES -> MediaTypeUi.TV_SHOW
+fun MediaType.toState(): MediaTypeUiState = when (this) {
+    MediaType.MOVIE -> MediaTypeUiState.MOVIE
+    MediaType.TV_SHOW -> MediaTypeUiState.TV_SHOW
 }
 
 fun SavedList.toState(): PlaylistUiItem {

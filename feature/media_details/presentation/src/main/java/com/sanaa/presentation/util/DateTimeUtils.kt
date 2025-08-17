@@ -1,7 +1,6 @@
 package com.sanaa.presentation.util
 
 import android.content.Context
-import android.os.Build
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
@@ -10,7 +9,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 object DateTimeUtils {
-
 
     fun formatLocalizedDate(
         date: LocalDate,

@@ -1,9 +1,7 @@
 package usecase.search
 
 import com.google.common.truth.Truth.assertThat
-import exceptions.FailedToAddException
-import exceptions.FailedToDeleteException
-import exceptions.RetrievingDataFailureException
+import exceptions.NovixAppException
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -48,10 +46,10 @@ class ManageRecentViewedUseCaseTest {
             val item = RecentViewedMedia(1, "https://image.com", MediaType.MOVIE, false)
             coEvery {
                 historyRepository.addRecentViewedMedia(item)
-            } throws FailedToAddException("Recent View Item")
+            } throws NovixAppException("Recent View Item")
 
             // When, Then
-            assertThrows<FailedToAddException> {
+            assertThrows<NovixAppException> {
                 manageRecentViewedUseCase.addRecentViewed(item)
             }
         }
@@ -86,15 +84,15 @@ class ManageRecentViewedUseCaseTest {
         }
 
     @Test
-    fun `getRecentViewed() should throw RetrievingDataFailureException when when try to get recent viewed media failed`() =
+    fun `getRecentViewed() should throw NovixAppException when when try to get recent viewed media failed`() =
         runTest {
             // Given
             coEvery {
                 historyRepository.getRecentViewed(any())
-            } throws RetrievingDataFailureException("Recent View")
+            } throws NovixAppException("Recent View")
 
             // When, Then
-            assertThrows<RetrievingDataFailureException> {
+            assertThrows<NovixAppException> {
                 manageRecentViewedUseCase.getRecentViewed()
             }
         }
@@ -113,15 +111,15 @@ class ManageRecentViewedUseCaseTest {
         }
 
     @Test
-    fun `clearRecentViewed() should throw FailedToDeleteException when there is a problem with adding the recent viewed item`(): Unit =
+    fun `clearRecentViewed() should throw NovixAppException when there is a problem with adding the recent viewed item`(): Unit =
         runTest {
             // Given
             coEvery {
                 historyRepository.clearRecentViewed()
-            } throws FailedToDeleteException("Recent View Item")
+            } throws NovixAppException("Recent View Item")
 
             // When, Then
-            assertThrows<FailedToDeleteException> {
+            assertThrows<NovixAppException> {
                 manageRecentViewedUseCase.clearRecentViewed()
             }
         }

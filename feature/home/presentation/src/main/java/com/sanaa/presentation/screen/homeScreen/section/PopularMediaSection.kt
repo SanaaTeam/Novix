@@ -49,17 +49,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import com.sanaa.designsystem.design_system.component.blur.OnBlurContent
 import com.sanaa.designsystem.design_system.component.carousel.CarouselDots
+import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
+import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
 import com.sanaa.designsystem.design_system.component.section_header.SectionHeader
 import com.sanaa.designsystem.design_system.theme.NovixTheme
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.home.presentation.R
-import com.sanaa.presentation.components.RemoteImagePlaceholder
-import com.sanaa.designsystem.design_system.component.poster.MediaPosterCard
-import com.sanaa.designsystem.design_system.component.chips.SaveIconChip
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
+import com.sanaa.presentation.components.RemoteImagePlaceholder
 import com.sanaa.presentation.providers.LocalSafeContentThreshold
-import com.sanaa.presentation.state.MediaItem
-import com.sanaa.presentation.state.MediaTypeUi
+import com.sanaa.presentation.state.MediaItemUiState
+import com.sanaa.presentation.state.MediaTypeUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -76,9 +76,9 @@ private val overLayGradientColor = Brush.verticalGradient(
 @Composable
 fun PopularMediaSection(
     modifier: Modifier = Modifier,
-    mediaItems: List<MediaItem>,
-    onMediaClick: (MediaItem) -> Unit,
-    onSaveIconClicked: (MediaItem) -> Unit
+    mediaItems: List<MediaItemUiState>,
+    onMediaClick: (MediaItemUiState) -> Unit,
+    onSaveIconClicked: (MediaItemUiState) -> Unit
 ) {
     val pagerState = rememberPagerState(pageCount = { mediaItems.size })
     val coroutineScope = rememberCoroutineScope()        //  ← here
@@ -152,9 +152,9 @@ private fun RatingChip(
 @Composable
 private fun PopularMediaSectionPager(
     state: PagerState,
-    mediaItems: List<MediaItem>,
-    onMediaClick: (MediaItem) -> Unit,
-    onSaveIconClicked: (MediaItem) -> Unit,
+    mediaItems: List<MediaItemUiState>,
+    onMediaClick: (MediaItemUiState) -> Unit,
+    onSaveIconClicked: (MediaItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp.dp
@@ -229,7 +229,7 @@ private fun PopularMediaSectionPager(
                     onCardClick = { onMediaClick(item) },
                     topLeftContent = {
                         if (page == state.currentPage) {
-                            if(item.mediaTypeUi == MediaTypeUi.MOVIE) {
+                            if(item.mediaTypeUiState == MediaTypeUiState.MOVIE) {
                                 SaveIconChip(
                                     onClick = { onSaveIconClicked(item) },
                                     isSaved = item.isSaved

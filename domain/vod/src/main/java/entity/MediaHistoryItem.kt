@@ -1,6 +1,5 @@
 package entity
 
-import kotlinx.datetime.Instant
 import usecase.search.search_param.MediaType
 
 data class MediaHistoryItem(
@@ -8,5 +7,5 @@ data class MediaHistoryItem(
     val posterImageUrl: String,
     val mediaType: MediaType,
     val genres: List<Genre>,
-    val lastWatchedAt: Instant? = null
+    val lastWatchedAt: Long,
 )

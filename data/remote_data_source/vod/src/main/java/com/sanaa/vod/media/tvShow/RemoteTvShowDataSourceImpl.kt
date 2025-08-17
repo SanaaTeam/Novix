@@ -26,9 +26,9 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getTvShowSeasonDetails(
-        seriesId: Int, seasonNumber: Int
+        tvShowId: Int, seasonNumber: Int
     ): SeasonDto = wrapApiCall {
-        apiService.fetchSeasonDetails(seriesId, seasonNumber)
+        apiService.fetchSeasonDetails(tvShowId, seasonNumber)
     }
 
     override suspend fun getTvShowImageUrls(id: Int): List<ImageDto> = wrapApiCall {
@@ -51,20 +51,20 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getEpisodeDetails(
-        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+        tvShowId: Int, seasonNumber: Int, episodeNumber: Int
     ): EpisodeDto =
-        wrapApiCall { apiService.fetchEpisodeDetails(seriesId, seasonNumber, episodeNumber) }
+        wrapApiCall { apiService.fetchEpisodeDetails(tvShowId, seasonNumber, episodeNumber) }
 
     override suspend fun getEpisodeImageUrls(
-        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+        tvShowId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<ImageDto> = wrapApiCall {
-        apiService.fetchEpisodeImages(seriesId, seasonNumber, episodeNumber).backdrops
+        apiService.fetchEpisodeImages(tvShowId, seasonNumber, episodeNumber).backdrops
     }
 
     override suspend fun getEpisodeGuestsOfHonor(
-        seriesId: Int, seasonNumber: Int, episodeNumber: Int
+        tvShowId: Int, seasonNumber: Int, episodeNumber: Int
     ): List<ActorDto> = wrapApiCall {
-        apiService.fetchEpisodeGuestsOfHonor(seriesId, seasonNumber, episodeNumber).guestStars
+        apiService.fetchEpisodeGuestsOfHonor(tvShowId, seasonNumber, episodeNumber).guestStars
             .distinctBy { it.id }
     }
 
@@ -108,13 +108,13 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         ).results.distinctBy { it.id }
     }
 
-    override suspend fun sendTvSeriesRate(
-        seriesId: Int,
+    override suspend fun sendTvShowRate(
+        tvShowId: Int,
         sessionId: String,
         rating: Float
     ): RatingResponse {
-        val response = apiService.rateTvSeries(
-            seriesId = seriesId,
+        val response = apiService.rateTvShow(
+            tvShowId = tvShowId,
             sessionId = sessionId,
             rating = TvShowRateRequest(value = rating)
         )
@@ -122,14 +122,14 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
     }
 
     override suspend fun sendTvEpisodeRate(
-        seriesId: Int,
+        tvShowId: Int,
         seasonNumber: Int,
         episodeNumber: Int,
         sessionId: String,
         rating: Float
     ): RatingResponse {
         val response = apiService.rateTvEpisode(
-            seriesId = seriesId,
+            tvShowId = tvShowId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber,
             sessionId = sessionId,
@@ -137,8 +137,8 @@ class RemoteTvShowDataSourceImpl @Inject constructor(
         )
         return response
     }
-    override suspend fun deleteTvSeriesRate(seriesId: Int, sessionId: String): RatingResponse =
+    override suspend fun deleteTvShowRate(tvShowId: Int, sessionId: String): RatingResponse =
         wrapApiCall {
-            apiService.deleteTvShowRating(seriesId, sessionId)
+            apiService.deleteTvShowRating(tvShowId, sessionId)
         }
 }

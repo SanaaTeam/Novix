@@ -50,8 +50,7 @@ class SavedListRepositoryImpl @Inject constructor(
             coroutineScope {
                 listItems.map { listItem ->
                     async {
-                        val movie = remoteMovieDataSource.fetchMovieDetails(listItem.id).toEntity()
-                        movie.copy(isSaved = savedListsStatusProvider.isItemSaved(movie.id))
+                        remoteMovieDataSource.fetchMovieDetails(listItem.id).toEntity()
                     }
                 }.awaitAll()
             }

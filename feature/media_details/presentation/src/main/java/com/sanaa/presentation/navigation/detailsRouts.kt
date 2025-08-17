@@ -8,24 +8,24 @@ interface Destination {
 }
 
 @Serializable
-data class SeriesDetailsScreenRoute(val seriesId: Int) : Destination {
-    override fun route(): String = "series/$seriesId"
+data class TvShowDetailsScreenRoute(val tvShowId: Int) : Destination {
+    override fun route(): String = "tvShow/$tvShowId"
 
     companion object {
-        const val PATTERN = "series/{seriesId}"
-        const val ARG_SERIES_ID = "seriesId"
+        const val PATTERN = "tvShow/{tvShowId}"
+        const val ARG_TV_SHOW_ID = "tvShowId"
     }
 }
 
 @Serializable
 data class EpisodeDetailsScreenRoute(
-    val seriesId: Int, val seasonNumber: Int, val episodeNumber: Int
+    val tvShowId: Int, val seasonNumber: Int, val episodeNumber: Int
 ) : Destination {
-    override fun route(): String = "series/$seriesId/season/$seasonNumber/episode/$episodeNumber"
+    override fun route(): String = "tvShow/$tvShowId/season/$seasonNumber/episode/$episodeNumber"
 
     companion object {
-        const val PATTERN = "series/{seriesId}/season/{seasonNumber}/episode/{episodeNumber}"
-        const val ARG_SERIES_ID = "seriesId"
+        const val PATTERN = "tvShow/{tvShowId}/season/{seasonNumber}/episode/{episodeNumber}"
+        const val ARG_TH_SHOW_ID = "tvShowId"
         const val ARG_SEASON_NUMBER = "seasonNumber"
         const val ARG_EPISODE_NUMBER = "episodeNumber"
     }
@@ -50,7 +50,7 @@ data class ReviewsScreenRoute(
 
     companion object {
         const val PATTERN = "reviews/{mediaId}/{mediaType}"
-        const val ARG_SERIES_ID = "mediaId"
+        const val ARG_MEDIA_ID = "mediaId"
         const val ARG_MEDIA_TYPE = "mediaType"
     }
 }
@@ -60,12 +60,12 @@ enum class MediaTypeParam {
     @SerialName("movie")
     MOVIE,
 
-    @SerialName("series")
-    SERIES
+    @SerialName("tv_show")
+    TV_SHOW
 }
 
 @Serializable
-data class ActorDetailsScreenRoute(val actorId: Int) : Destination {
+data class ActorScreenRoute(val actorId: Int) : Destination {
     override fun route() = "actor/$actorId"
 
     companion object {
@@ -85,11 +85,11 @@ data class TopMoviesScreenRoute(val actorId: Int) : Destination {
 }
 
 @Serializable
-data class TopSeriesScreenRoute(val actorId: Int) : Destination {
-    override fun route() = "actor/$actorId/top_series"
+data class TopTvShowsScreenRoute(val actorId: Int) : Destination {
+    override fun route() = "actor/$actorId/top_tv_show"
 
     companion object {
-        const val PATTERN = "actor/{actorId}/top_series"
+        const val PATTERN = "actor/{actorId}/top_tv_show"
         const val ARG_ACTOR_ID = "actorId"
     }
 }
@@ -105,23 +105,23 @@ data class ActorGalleryScreenRoute(val actorId: Int) : Destination {
 }
 
 @Serializable
-data class MovieCategoriesScreenRoute(val categoryId: Int, val categoryName: String) : Destination {
-    override fun route() = "movie/$categoryId/$categoryName"
+data class GenreMovieScreenRoute(val genreId: Int, val genreName: String) : Destination {
+    override fun route() = "genre/movie/$genreId/$genreName"
 
     companion object {
-        const val PATTERN = "movie/{categoryId}/{categoryName}"
-        const val ARG_CATEGORY_ID = "categoryId"
-        const val ARG_CATEGORY_NAME = "categoryName"
+        const val PATTERN = "genre/movie/{genreId}/{genreName}"
+        const val ARG_GENRE_ID = "genreId"
+        const val ARG_GENRE_NAME = "genreName"
     }
 }
 
 
 @Serializable
 data class GenreTvShowsScreenRoute(val genreId: Int, val genreName: String) : Destination {
-    override fun route() = "tv/$genreId/$genreName"
+    override fun route() = "genre/tvShow/$genreId/$genreName"
 
     companion object {
-        const val PATTERN = "tv/{genreId}/{genreName}"
+        const val PATTERN = "genre/tvShow/{genreId}/{genreName}"
         const val ARG_GENRE_ID = "genreId"
         const val ARG_GENRE_NAME = "genreName"
     }

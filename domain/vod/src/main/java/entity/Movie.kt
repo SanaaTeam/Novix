@@ -8,11 +8,10 @@ data class Movie(
     val posterImageUrl: String,
     val title: String,
     val genres: List<Genre>,
-    val imdbRating: Float?,
-    val duration: Duration?,
+    val imdbRating: Float,
+    val duration: Duration,
     val releaseDate: LocalDate,
-    val overview: String = "",
-    val trailerUrl: String? = null,
-    val rating: Int?,
-    val isSaved: Boolean = false
+    val overview: String,
+    val trailerUrl: String,
+    val rating: Int,
 )

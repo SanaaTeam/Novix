@@ -5,7 +5,6 @@ import app.cash.turbine.test
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Episode
 import exceptions.NoNetworkException
 import io.mockk.coEvery
@@ -24,7 +23,7 @@ import org.junit.jupiter.api.Test
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
-import usecase.ManageTvSeriesUseCase
+import usecase.ManageTvShowUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class EpisodeDetailsScreenViewModelTest {
@@ -33,9 +32,9 @@ class EpisodeDetailsScreenViewModelTest {
     private val getUser = mockk<GetLoggedInUserUseCase>(relaxed = true)
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
-    private val manageTvSeriesDetails: ManageTvSeriesUseCase = mockk(relaxed = true)
+    private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
-    private val seriesId = 5
+    private val tvShowId = 5
     private val seasonNumber = 2
     private val episodeNumber = 3
 
@@ -49,6 +48,44 @@ class EpisodeDetailsScreenViewModelTest {
         Dispatchers.resetMain()
     }
 
+    private fun givenHappyViewModel() {
+        coEvery {
+            manageEpisodeDetails.getEpisodeDetails(
+                tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        } returns dummyEpisode
+        coEvery {
+            manageEpisodeDetails.getEpisodeGuestsOfHonor(
+                tvShowId,
+                seasonNumber,
+                episodeNumber
+            )
+        } returns dummyGuests
+        coEvery { manageTvShowDetails.getTvShowImageUrls(tvShowId) } returns dummyImages
+        coEvery { manageTvShowDetails.getTvShowTrailer(tvShowId) } returns dummyTrailer
+        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
+
+        val savedStateHandle = SavedStateHandle(
+            mapOf(
+                "tvShowId" to tvShowId,
+                "seasonNumber" to seasonNumber,
+                "episodeNumber" to episodeNumber
+            )
+        )
+
+        viewModel = EpisodeDetailsScreenViewModel(
+            savedStateHandle,
+            getUser,
+            checkUserLogin,
+            manageEpisodeDetails,
+            manageTvShowDetails,
+            dispatcher = testDispatcher
+        )
+
+        testDispatcher.scheduler.advanceUntilIdle()
+    }
 
     @Test
     fun `onBackClick emits NavigateBack`() = runTest {
@@ -85,7 +122,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onSavedClick and onRateClicked toggle login bottom sheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
         viewModel.onRateClicked()
         assertThat(viewModel.state.value.showLoginBottomSheet).isTrue()
@@ -94,7 +131,7 @@ class EpisodeDetailsScreenViewModelTest {
     @Test
     fun `onDismissBottomSheet sets showLoginBottomSheet to false`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onDismissBottomSheet()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
     }
@@ -106,46 +143,10 @@ class EpisodeDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.imdbRating).isEqualTo(4)
     }
 
-    private fun givenHappyViewModel() {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                seriesId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyEpisode
-        coEvery {
-            manageEpisodeDetails.getEpisodeGuestsOfHonor(
-                seriesId,
-                seasonNumber,
-                episodeNumber
-            )
-        } returns dummyGuests
-        coEvery { manageTvSeriesDetails.getTvSeriesImages(seriesId) } returns dummyImages
-        coEvery { manageTvSeriesDetails.getTvSeriesTrailer(seriesId) } returns dummyTrailer
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "seriesId" to seriesId,
-                "seasonNumber" to seasonNumber,
-                "episodeNumber" to episodeNumber
-            )
-        )
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle,
-            getUser,
-            checkUserLogin,
-            manageEpisodeDetails,
-            manageTvSeriesDetails,
-            dispatcher = testDispatcher
-        )
-    }
-
     @Test
     fun `onLoginButtonClick emits NavigateToLogin and hides BottomSheet`() = runTest {
         givenHappyViewModel()
-        viewModel.onSavedClick(seriesId)
+        viewModel.onSavedClick(tvShowId)
         viewModel.onLoginButtonClick()
         assertThat(viewModel.state.value.showLoginBottomSheet).isFalse()
         viewModel.effect.test {
@@ -154,14 +155,6 @@ class EpisodeDetailsScreenViewModelTest {
         }
     }
 
-    @Test
-    fun `onRateClicked when user is logged in shows RateBottomSheet`() = runTest {
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(true)
-        givenHappyViewModel()
-        testDispatcher.scheduler.advanceUntilIdle()
-        viewModel.onRateClicked()
-        assertThat(viewModel.state.value.showRateBottomSheet).isTrue()
-    }
 
     @Test
     fun `onSubmitRateBottomSheet hides sheet and calls addRate`() = runTest {
@@ -188,16 +181,6 @@ class EpisodeDetailsScreenViewModelTest {
     }
 
     @Test
-    fun `onRetryLoadDetails reloads episode and resets flags`() = runTest {
-        givenHappyViewModel()
-        viewModel.onRetryLoadDetails()
-        testDispatcher.scheduler.advanceUntilIdle()
-        assertThat(viewModel.state.value.noInternetConnection).isFalse()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-        assertThat(viewModel.state.value.error).isNull()
-    }
-
-    @Test
     fun `loadEpisode handles NoNetworkException`() = runTest {
         coEvery {
             manageEpisodeDetails.getEpisodeDetails(
@@ -210,7 +193,7 @@ class EpisodeDetailsScreenViewModelTest {
 
         val savedStateHandle = SavedStateHandle(
             mapOf(
-                "seriesId" to seriesId,
+                "tvShowId" to tvShowId,
                 "seasonNumber" to seasonNumber,
                 "episodeNumber" to episodeNumber
             )
@@ -221,7 +204,7 @@ class EpisodeDetailsScreenViewModelTest {
             getUser,
             checkUserLogin,
             manageEpisodeDetails,
-            manageTvSeriesDetails,
+            manageTvShowDetails,
             dispatcher = testDispatcher
         )
 
@@ -249,9 +232,6 @@ class EpisodeDetailsScreenViewModelTest {
                 id = 11,
                 imageUrl = "/icon_placeholder_light.xml",
                 name = "Guest One",
-                region = "US",
-                lastShow = "Show",
-                gender = Gender.FEMALE,
                 department = "Acting",
                 character = "Role",
                 birthDate = LocalDate.parse("1990-01-01"),

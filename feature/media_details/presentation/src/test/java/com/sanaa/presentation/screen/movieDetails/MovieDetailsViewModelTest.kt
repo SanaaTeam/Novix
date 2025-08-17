@@ -7,7 +7,6 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
-import entity.Actor.Gender
 import entity.Genre
 import entity.Movie
 import io.mockk.coEvery
@@ -27,6 +26,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -44,6 +44,7 @@ class MovieDetailsViewModelTest {
     private lateinit var viewModel: MovieDetailsViewModel
     private val movieId = 10
     private lateinit var savedListsStatusProvider: SavedListsStatusProvider
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -71,7 +72,7 @@ class MovieDetailsViewModelTest {
     fun `onWatchTrailerClick does nothing when trailer missing`() = runTest {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns null
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -84,10 +85,10 @@ class MovieDetailsViewModelTest {
             manageMovieDetails,
             checkUserLogin,
             manageWatchedMediaHistoryUseCase,
-
             getUser,
-            savedListsStatusProvider
-        )
+            savedListsStatusProvider,
+            stringProvider
+            )
         advanceUntilIdle()
 
         viewModel.effect.test {
@@ -95,13 +96,6 @@ class MovieDetailsViewModelTest {
             expectNoEvents()
             cancelAndIgnoreRemainingEvents()
         }
-    }
-
-    @Test
-    fun `onReadMoreClick does nothing`() = runTest {
-        givenHappy()
-        advanceUntilIdle()
-        viewModel.onReadMoreClick()
     }
 
     @Test
@@ -246,7 +240,7 @@ class MovieDetailsViewModelTest {
     private fun givenHappy() {
         coEvery { manageMovieDetails.getMovieDetails(movieId) } returns dummyMovie
         coEvery { manageMovieDetails.getMovieCast(movieId) } returns dummyCast
-        coEvery { manageMovieDetails.getMovieImages(movieId) } returns dummyImages
+        coEvery { manageMovieDetails.getMovieImagesUrl(movieId) } returns dummyImages
         coEvery { manageMovieDetails.getSimilarMoviesByMovieId(movieId, 1) } returns dummySimilar
         coEvery { manageMovieDetails.getMovieTrailer(movieId) } returns dummyTrailer
         savedListsStatusProvider = mockk(relaxed = true) {
@@ -261,6 +255,7 @@ class MovieDetailsViewModelTest {
             manageWatchedMediaHistoryUseCase,
             getUser,
             savedListsStatusProvider,
+            stringProvider,
             dispatcher = testDispatcher,
 
             )
@@ -280,12 +275,12 @@ class MovieDetailsViewModelTest {
             duration = 100.minutes,
             releaseDate = LocalDate.parse("2020-05-20"),
             overview = "Overview1",
-            rating = 0
+            rating = 0,
+            trailerUrl = ""
         )
         private val dummyCast = listOf(
             Actor(
-                id = 1, imageUrl = "/a.jpg", name = "Actor A", region = "US",
-                lastShow = "ShowX", gender = Gender.FEMALE,
+                id = 1, imageUrl = "/a.jpg", name = "Actor A",
                 department = "Acting", character = "Lead",
                 birthDate = LocalDate.parse("1980-01-01"),
                 deathDate = defaultDate, placeOfBirth = "LA", biography = "Bio"

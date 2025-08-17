@@ -6,7 +6,6 @@ import entity.Movie
 fun Movie.toUiModel() = MediaItem(
     id = id,
     title = title,
-    isSaved = isSaved,
     imageUrl = posterImageUrl,
 )
 

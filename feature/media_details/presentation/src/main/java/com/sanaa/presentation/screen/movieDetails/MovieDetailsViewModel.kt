@@ -12,11 +12,12 @@ import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
-import com.sanaa.presentation.model.mapper.toUiModel
+import com.sanaa.presentation.model.mapper.toState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageMovieUseCase
@@ -42,11 +44,13 @@ class MovieDetailsViewModel @Inject constructor(
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
     private val savedListsStatusProvider: SavedListsStatusProvider,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<MovieDetailsUiState, MovieDetailsUiEffect>(
     initialState = MovieDetailsUiState(),
     defaultDispatcher = dispatcher
 ), MovieDetailsScreenInteractionListener {
+
 
     private val movieId: Int = checkNotNull(savedStateHandle["movieId"]) {
         "movieId is required in SavedStateHandle"
@@ -56,20 +60,37 @@ class MovieDetailsViewModel @Inject constructor(
         fetchMovieDetails(movieId)
         fetchUserRating()
         updateUserLoginState()
-
+        observeSavedStatus()
+    }
+    private fun observeSavedStatus() {
         viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
+            var previousSavedIds = savedListsStatusProvider.savedIds.value
+            savedListsStatusProvider.savedIds.collect { newSavedIds ->
                 updateState {
                     copy(
                         movieDetails = movieDetails.copy(
-                            isSaved = savedIds.contains(movieDetails.id)
+                            isSaved = newSavedIds.contains(movieId)
                         )
                     )
                 }
+                showSnackBarForSaveStatus(previousSavedIds, newSavedIds)
+                previousSavedIds = newSavedIds
             }
         }
     }
 
+    private fun showSnackBarForSaveStatus(previousSavedIds: Set<Int>, newSavedIds: Set<Int>) {
+        if (newSavedIds.contains(movieId) && !previousSavedIds.contains(movieId)) {
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.addToListSuccess,
+                        isError = false
+                    )
+                )
+            }
+        }
+    }
     override fun onBackClick() {
         emitEffect(MovieDetailsUiEffect.NavigateBack)
     }
@@ -80,8 +101,6 @@ class MovieDetailsViewModel @Inject constructor(
         }
     }
 
-    override fun onReadMoreClick() {}
-
     override fun onBookmarkClick(movie: MovieUiModel) {
         if (!state.value.isUserLoggedIn) {
             promptLogin(LoginPromptType.BOOKMARK)
@@ -90,6 +109,7 @@ class MovieDetailsViewModel @Inject constructor(
 
         if (movie.isSaved) {
             savedListsStatusProvider.markItemUnsaved(movie.id)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.addToListSuccess, isError = false)) }
         } else {
             updateState {
                 copy(
@@ -98,6 +118,10 @@ class MovieDetailsViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    override fun onMovieClick(movieId: Int) {
+        emitEffect(MovieDetailsUiEffect.NavigateToAnotherMovieDetails(movieId))
     }
 
     override fun onDismissSaveToListBottomSheet() {
@@ -167,22 +191,25 @@ class MovieDetailsViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitMovieRating,
-            onError = ::onShowRateBottomSheetFailed
+            onError = ::onShowRateBottomSheetFailed,
         )
         updateState {
             copy(showRateBottomSheet = false)
         }
     }
 
-    private fun onShowRateBottomSheetFailed(throwable: Throwable) {
+    private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                errorMessage = throwable.message,
-                showRateBottomSheet = false
+                errorMessage = exception.message,
+                showRateBottomSheet = false,
+                snackBarData = SnackData(
+                    message = exception.message ?: stringProvider.somethingWentWrongError,
+                    isError = true
+                )
             )
         }
     }
-
     private fun fetchMovieDetails(movieId: Int) {
         updateState { copy(isLoading = true, errorMessage = null) }
         tryToExecute(
@@ -197,31 +224,41 @@ class MovieDetailsViewModel @Inject constructor(
         )
     }
 
-    private fun onFetchMovieDetailsFailed(throwable: Throwable) {
-        if (throwable is NoNetworkException) {
-            updateState {
-                copy(
-                    noInternetConnection = true,
-                    isLoading = false,
-                    errorMessage = null
-                )
+    private fun onFetchMovieDetailsFailed(exception: NovixAppException) {
+        when (exception) {
+            is NoNetworkException -> {
+                updateState {
+                    copy(
+                        noInternetConnection = true,
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                }
             }
-        } else {
-            updateState {
-                copy(
-                    isLoading = false,
-                    errorMessage = throwable.message,
-                    noInternetConnection = false
-                )
+            else -> {
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = exception.message,
+                        noInternetConnection = false
+                    )
+                }
+                updateState {
+                    copy(
+                        snackBarData = SnackData(
+                            message = exception.message ?: stringProvider.somethingWentWrongError,
+                            isError = true
+                        )
+                    )
+                }
             }
         }
     }
 
-
     private fun loadSimilarMovies(movieId: Int): Flow<PagingData<MovieUiModel>> {
         val pagingFlow = createPagingFlow(
             pagingSourceFactory = { createSimilarMoviesPagingSource(movieId) },
-            mapper = { movie -> movie.toUiModel() }
+            mapper = { movie -> movie.toState() }
         )
 
         return pagingFlow.combine(savedListsStatusProvider.savedIds) { pagingData, savedIds ->
@@ -250,7 +287,7 @@ class MovieDetailsViewModel @Inject constructor(
     private suspend fun loadMovieDetails(movieId: Int) = coroutineScope {
         val movieDeferred = async { manageMovieDetails.getMovieDetails(movieId) }
         val castDeferred = async { manageMovieDetails.getMovieCast(movieId) }
-        val imagesDeferred = async { manageMovieDetails.getMovieImages(movieId) }
+        val imagesDeferred = async { manageMovieDetails.getMovieImagesUrl(movieId) }
         val trailerDeferred = async { manageMovieDetails.getMovieTrailer(movieId) }
         val similarDeferred = async { loadSimilarMovies(movieId) }
 
@@ -266,7 +303,7 @@ class MovieDetailsViewModel @Inject constructor(
         addMovieToHistory(movie)
         updateState {
             copy(
-                movieDetails = movie.toUiModel(trailerUrl = trailerUrl)
+                movieDetails = movie.toState(trailerUrl = trailerUrl)
                     .copy(isSaved = isMovieSaved),
                 cast = cast.map { it.toActorUiModel() },
                 imagesUrls = images,
@@ -301,9 +338,10 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(MovieDetailsUiEffect.ShowSuccessSnackBar)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingSuccess, isError = false)) }
+            updateState { copy(showRateBottomSheet = false) }
         } else {
-            emitEffect(MovieDetailsUiEffect.ShowErrorSnackBar)
+            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingFailed, isError = true)) }
         }
     }
 
@@ -338,6 +376,12 @@ class MovieDetailsViewModel @Inject constructor(
                 showLoginBottomSheet = true,
                 loginPromptType = type
             )
+        }
+    }
+
+    override fun onSnackDismissRequested() {
+        updateState {
+            copy(snackBarData = null)
         }
     }
 }
