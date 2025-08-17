@@ -21,6 +21,6 @@
     <string name="created_list_successfully">Created list successfully</string>
     <string name="failed_to_create_list">Failed to create list</string>
 
-    <string name="the_list_is_empty">The list is empty</string>
+    <string name="the_list_is_empty">There is no items here!</string>
 
 </resources>

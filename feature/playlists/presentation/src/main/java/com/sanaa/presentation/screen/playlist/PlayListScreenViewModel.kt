@@ -31,7 +31,7 @@ class PlayListScreenViewModel @Inject constructor(
 
     fun loadSavedLists() {
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
                 updateState { copy(isUserLoggedIn = isUserLoggedIn) }
                 if (isUserLoggedIn) {
@@ -43,7 +43,7 @@ class PlayListScreenViewModel @Inject constructor(
 
     private fun fetchAndHandleSavedLists() {
         tryToCollect(
-            callee = { manageSavedListsUseCase.getSavedLists() },
+            block = { manageSavedListsUseCase.getSavedLists() },
             onCollect = { savedLists ->
                 handleSuccessfulFetch(savedLists)
             },

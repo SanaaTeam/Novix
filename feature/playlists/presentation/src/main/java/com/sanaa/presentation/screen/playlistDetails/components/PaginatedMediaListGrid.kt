@@ -45,8 +45,8 @@ fun PaginatedMediaListGrid(
                         imageUrl = media.imageUrl.orEmpty(),
                         modifier = Modifier.fillMaxWidth(),
                         sensitiveContentThreshold = 0.2f,
-                        // isBlurEnabled = LocalSafeContentThreshold.current != 0f,
-                        //   safeContentThreshold = LocalSafeContentThreshold.current,
+//                         isBlurEnabled = LocalSafeContentThreshold.current != 0f,
+//                           safeContentThreshold = LocalSafeContentThreshold.current,
                         contentDescription = media.title,
                         placeholderContent = {
                             RemoteImagePlaceholder(Modifier.fillMaxSize())

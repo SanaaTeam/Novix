@@ -9,7 +9,9 @@ interface PlaylistDetailsInteractionListener {
     fun onBackClick()
     fun onDeleteListClick()
     fun onDeleteListConfirmed()
-    fun onDismissBottomSheet()
+    fun onDismissConfirmationBottomSheet()
+    fun onDismissRemoveFromListBottomSheet()
+    fun onDismissListBottomSheetAfterRemoveSuccess(deselectedListIds: List<Int>)
     fun onListDeletedSuccessfully()
     fun onSnackBarDismiss()
 }

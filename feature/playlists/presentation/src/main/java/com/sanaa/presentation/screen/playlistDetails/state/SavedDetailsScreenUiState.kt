@@ -8,12 +8,11 @@ import kotlinx.coroutines.flow.flowOf
 data class SavedDetailsScreenUiState(
     val movieList: Flow<PagingData<MediaItem>> = flowOf(PagingData.empty()),
     val isLoading: Boolean = false,
-    val showBottomSheet: Boolean = false,
+    val showListDeletionConfirmationBottomSheet: Boolean = false,
     val title: String? = null,
     val listId: Int? = null,
-    val showSaveToListBottomSheet: Boolean = false,
-    val showAddListBottomSheet: Boolean = false,
-    val selectedMediaToSave: MediaItem? = null,
+    val showRemoveFromListBottomSheet: Boolean = false,
+    val selectedMediaToRemove: MediaItem? = null,
     val snackBarData: SnackData? = null,
     val noInternetConnection: Boolean = false
 )
