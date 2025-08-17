@@ -10,4 +10,5 @@ interface LocalSavedMovieDataSource {
     suspend fun getAllLists(): Flow<List<SavedListLocalDto>>
     suspend fun addMovieToList(listId: Int, movieId: Int)
     suspend fun removeMovieFromList(listId: Int, movieId: Int)
+    suspend fun clearAllLists()
 }

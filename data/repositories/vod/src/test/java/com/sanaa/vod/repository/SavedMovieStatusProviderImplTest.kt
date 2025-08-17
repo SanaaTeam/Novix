@@ -2,8 +2,8 @@ package com.sanaa.vod.repository
 
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -54,11 +54,11 @@ class SavedMovieStatusProviderImplTest {
     fun `refreshItems populates savedIds only once`() = runTest {
         val sessionId = "session"
         val lists = listOf(
-            SavedListDto(1, "List1"),
-            SavedListDto(2, "List2")
+            SavedListRemoteDto(1, "List1"),
+            SavedListRemoteDto(2, "List2")
         )
-        val list1Items = listOf(SavedItemDto(11))
-        val list2Items = listOf(SavedItemDto(22))
+        val list1Items = listOf(SavedItemRemoteDto(11))
+        val list2Items = listOf(SavedItemRemoteDto(22))
 
         coEvery { preferencesManager.sessionId } returns flowOf(sessionId)
         coEvery { remoteSavedListDataSource.fetchUserLists(sessionId) } returns lists
@@ -78,8 +78,8 @@ class SavedMovieStatusProviderImplTest {
     fun `refreshLists populates savedLists with mapped SavedList`() = runTest {
         val sessionId = "session"
         val userLists = listOf(
-            SavedListDto(10, "My List"),
-            SavedListDto(20, "Other List")
+            SavedListRemoteDto(10, "My List"),
+            SavedListRemoteDto(20, "Other List")
         )
         coEvery { preferencesManager.sessionId } returns flowOf(sessionId)
         coEvery { remoteSavedListDataSource.fetchUserLists(sessionId) } returns userLists
@@ -116,8 +116,8 @@ class SavedMovieStatusProviderImplTest {
     @Test
     fun `isItemSaved triggers refreshItems if savedIds empty`() = runTest {
         val sessionId = "session"
-        val userLists = listOf(SavedListDto(1, "List"))
-        val items = listOf(SavedItemDto(123))
+        val userLists = listOf(SavedListRemoteDto(1, "List"))
+        val items = listOf(SavedItemRemoteDto(123))
 
         coEvery { preferencesManager.sessionId } returns flowOf(sessionId)
         coEvery { remoteSavedListDataSource.fetchUserLists(sessionId) } returns userLists

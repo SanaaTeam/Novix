@@ -1,10 +1,11 @@
 package com.sanaa.vod.repository
 
+import android.util.Log
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalSavedMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.repository.mapper.custom_list.toEntity
-import com.sanaa.vod.repository.mapper.custom_list.toLocalDto
+import com.sanaa.vod.repository.mapper.savedList.toEntity
+import com.sanaa.vod.repository.mapper.savedList.toLocalDto
 import com.sanaa.vod.util.safeCall
 import entity.Movie
 import kotlinx.coroutines.flow.Flow
@@ -20,37 +21,39 @@ class SavedListRepositoryImpl @Inject constructor(
     private val preferencesManager: PreferencesManager,
 ) : SavedListRepository {
 
-    override suspend fun getSavedLists(): Flow<List<SavedList>> =
-        safeCall("Failed to fetch saved lists") {
-            localSavedMovieDataSource.getAllLists()
-                .map { lists ->
-                    lists.map {
-                        SavedList(
-                            id = it.id,
-                            title = it.listName,
-                            itemCount = it.movieIds.split(",")
-                                .filter { id -> id.isNotBlank() }.size,
-                            itemsIds = it.movieIds.split(",").filter { id -> id.isNotBlank() }
-                                .map { id -> id.toInt() }
-                        )
-                    }
-                }
-                .also {
-                    val remoteLists = remoteSavedListDataSource.fetchUserLists(obtainSessionId())
-                    remoteLists.forEach { remoteList ->
-                        val movieIds = remoteSavedListDataSource
-                            .fetchListItems(remoteList.id)
-                            .joinToString(",") { item -> item.id.toString() }
-                        localSavedMovieDataSource.insertList(remoteList.toLocalDto(movieIds))
-                    }
-                }
+    override suspend fun getLocalSavedLists(): Flow<List<SavedList>> =
+        safeCall("Failed to get local saved lists") {
+            localSavedMovieDataSource.getAllLists().map {
+                it.toEntity()
+            }
         }
+
+    private suspend fun fetchRemoteSaveLists(): List<SavedList> =
+        safeCall("failed to fetch remote saved lists ") {
+            remoteSavedListDataSource.fetchUserLists(obtainSessionId()).toEntity()
+        }
+
+
+    override suspend fun refreshSavedLists() {
+        val remoteLists = fetchRemoteSaveLists()
+        clearAllLists()
+        insertLocalLists(remoteLists)
+    }
+
+    private suspend fun insertLocalLists(lists: List<SavedList>) {
+        safeCall("failed to insert remote lists to local database") {
+            lists.forEach {
+                localSavedMovieDataSource.insertList(it.toLocalDto())
+            }
+        }
+    }
+
 
     override suspend fun createSavedList(title: String) {
         safeCall("Failed to create list") {
             val createdList = remoteSavedListDataSource.createList(obtainSessionId(), title)
             localSavedMovieDataSource.insertList(
-                createdList.toLocalDto(movieIds = "")
+                createdList.toEntity().toLocalDto()
             )
         }
     }
@@ -63,6 +66,12 @@ class SavedListRepositoryImpl @Inject constructor(
                 }
                 localSavedMovieDataSource.deleteList(listId)
             }
+        }
+    }
+
+    override suspend fun clearAllLists() {
+        safeCall("error clearing all lists data from database") {
+            localSavedMovieDataSource.clearAllLists()
         }
     }
 

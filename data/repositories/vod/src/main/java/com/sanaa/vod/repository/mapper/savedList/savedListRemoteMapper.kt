@@ -1,17 +1,18 @@
-package com.sanaa.vod.repository.mapper.custom_list
+package com.sanaa.vod.repository.mapper.savedList
 
 import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
 import com.sanaa.vod.util.DateTimeUtils.getLocalDateOrDefault
 import entity.Movie
 import usecase.custom_list.custom_list_param.SavedList
 import kotlin.time.Duration.Companion.minutes
 
-fun SavedListDto.toEntity() = SavedList(id, title, itemCount,)
+fun SavedListRemoteDto.toEntity() = SavedList(id, title, itemCount)
+fun List<SavedListRemoteDto>.toEntity() = map { it.toEntity() }
 
-fun SavedItemDto.toEntity() = Movie(
+fun SavedItemRemoteDto.toEntity() = Movie(
     id = id,
     posterImageUrl = getFullImageUrl(posterPath),
     title = title ?: originalTitle.orEmpty(),
@@ -24,12 +25,3 @@ fun SavedItemDto.toEntity() = Movie(
     rating = -1
 )
 
-fun SavedListDto.toLocalDto(
-    movieIds: String
-): SavedListLocalDto {
-    return SavedListLocalDto(
-        id = id,
-        listName = title,
-        movieIds = movieIds,
-    )
-}

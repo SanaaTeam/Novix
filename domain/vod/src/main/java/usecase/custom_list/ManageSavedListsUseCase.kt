@@ -9,7 +9,10 @@ class ManageSavedListsUseCase @Inject constructor(
     private val savedListRepository: SavedListRepository
 ) {
     suspend fun getSavedLists(): Flow<List<SavedList>> =
-        savedListRepository.getSavedLists()
+        savedListRepository.getLocalSavedLists()
+
+    suspend fun refreshSavedList() = savedListRepository.refreshSavedLists()
+    suspend fun clearData() = savedListRepository.clearAllLists()
 
     suspend fun createSavedList(title: String) =
         savedListRepository.createSavedList(title)

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SavedItemDto(
+data class SavedItemRemoteDto(
     @SerialName("id") val id: Int,
     @SerialName("title") val title: String? = null,
     @SerialName("original_title") val originalTitle: String? = null,
