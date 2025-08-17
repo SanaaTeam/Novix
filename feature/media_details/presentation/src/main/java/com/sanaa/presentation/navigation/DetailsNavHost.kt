@@ -9,30 +9,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.presentation.api.LocalThemeProvider
-import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.screen.actor.screen.ActorGalleryScreen
 import com.sanaa.presentation.screen.actor.screen.ActorScreen
 import com.sanaa.presentation.screen.actor.screen.TopMoviesScreen
 import com.sanaa.presentation.screen.actor.screen.TopShowsScreen
 import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreen
-import com.sanaa.presentation.screen.episodeDetails.EpisodeDetailsScreenViewModel
 import com.sanaa.presentation.screen.genreMovies.GenreMoviesScreen
-import com.sanaa.presentation.screen.genreMovies.GenreMoviesViewModel
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
-import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
-import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
-import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
 import com.sanaa.presentation.screen.tvShow.TvShowScreen
-import com.sanaa.presentation.screen.tvShow.TvShowScreenViewModel
 
 @Composable
 fun DetailsNavHost(
@@ -83,56 +75,45 @@ fun DetailsNavHost(
             modifier = Modifier.background(Theme.colors.surface)
         ) {
             composable(route = TvShowScreenRoute::class) {
-                val tvShowScreenViewModel: TvShowScreenViewModel = hiltViewModel()
-                TvShowScreen(viewModel = tvShowScreenViewModel)
+                TvShowScreen()
             }
 
             composable(route = EpisodeDetailsScreenRoute::class) {
-                val episodeViewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
-                EpisodeDetailsScreen(viewModel = episodeViewModel)
+                EpisodeDetailsScreen()
             }
 
             composable(route = ActorScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                ActorScreen(viewModel = actorViewModel)
+                ActorScreen()
             }
 
             composable(route = TopMoviesScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                TopMoviesScreen(viewModel = actorViewModel)
+                TopMoviesScreen()
             }
 
             composable(route = TopTvShowsScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
-                TopShowsScreen(viewModel = actorViewModel)
+                TopShowsScreen()
             }
 
             composable(route = ActorGalleryScreenRoute::class) {
-                val actorViewModel: ActorScreenViewModel = hiltViewModel()
                 ActorGalleryScreen(
-                    viewModel = actorViewModel,
                     navigateBack = { navController.popBackStack() }
                 )
             }
 
             composable(route = ReviewsScreenRoute::class) {
-                val reviewScreenViewModel: ReviewScreenViewModel = hiltViewModel()
-                ReviewsScreen(viewModel = reviewScreenViewModel)
+                ReviewsScreen()
             }
 
             composable(route = MovieDetailsScreenRoute::class) {
-                val movieDetailsViewModel: MovieDetailsViewModel = hiltViewModel()
-                MovieDetailsScreen(viewModel = movieDetailsViewModel)
+                MovieDetailsScreen()
             }
 
             composable(route = GenreMovieScreenRoute::class) {
-                val genreMoviesViewModel: GenreMoviesViewModel = hiltViewModel()
-                GenreMoviesScreen(viewModel = genreMoviesViewModel)
+                GenreMoviesScreen()
             }
 
             composable(route = GenreTvShowsScreenRoute::class) {
-                val genreTvShowsViewModel: GenreTvShowsViewModel = hiltViewModel()
-                GenreTvShowsScreen(viewModel = genreTvShowsViewModel)
+                GenreTvShowsScreen()
             }
         }
     }
