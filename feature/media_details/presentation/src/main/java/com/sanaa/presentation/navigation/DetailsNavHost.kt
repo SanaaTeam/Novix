@@ -29,10 +29,10 @@ import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsScreen
 import com.sanaa.presentation.screen.genreTvShows.GenreTvShowsViewModel
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsScreen
 import com.sanaa.presentation.screen.movieDetails.MovieDetailsViewModel
-import com.sanaa.presentation.screen.review.ReviewsScreenViewModel
+import com.sanaa.presentation.screen.review.ReviewScreenViewModel
 import com.sanaa.presentation.screen.review.ReviewsScreen
 import com.sanaa.presentation.screen.series.SeriesScreen
-import com.sanaa.presentation.screen.series.SeriesScreenViewModel
+import com.sanaa.presentation.screen.series.TvShowScreenViewModel
 
 @Composable
 fun DetailsNavHost(
@@ -83,7 +83,7 @@ fun DetailsNavHost(
             modifier = Modifier.background(Theme.colors.surface)
         ) {
             composable(route = SeriesScreenRoute::class) {
-                val seriesViewModel: SeriesScreenViewModel = hiltViewModel()
+                val seriesViewModel: TvShowScreenViewModel = hiltViewModel()
                 SeriesScreen(viewModel = seriesViewModel)
             }
 
@@ -116,7 +116,7 @@ fun DetailsNavHost(
             }
 
             composable(route = ReviewsScreenRoute::class) {
-                val reviewViewModel: ReviewsScreenViewModel = hiltViewModel()
+                val reviewViewModel: ReviewScreenViewModel = hiltViewModel()
                 ReviewsScreen(viewModel = reviewViewModel)
             }
 

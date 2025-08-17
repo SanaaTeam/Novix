@@ -34,7 +34,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun ReviewsScreen(
-    viewModel: ReviewsScreenViewModel = hiltViewModel()
+    viewModel: ReviewScreenViewModel = hiltViewModel()
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current

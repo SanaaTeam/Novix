@@ -68,7 +68,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun SeriesScreen(
-    viewModel: SeriesScreenViewModel = hiltViewModel()
+    viewModel: TvShowScreenViewModel = hiltViewModel()
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
