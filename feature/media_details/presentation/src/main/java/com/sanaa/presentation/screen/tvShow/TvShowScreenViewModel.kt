@@ -1,12 +1,14 @@
 package com.sanaa.presentation.screen.tvShow
 
 import androidx.lifecycle.SavedStateHandle
+import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.GenreUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
+import com.sanaa.presentation.screen.movieDetails.SnackData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.TvShow
 import exceptions.NoNetworkException
@@ -15,11 +17,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageTvShowUseCase
 import usecase.history.ManageWatchedMediaHistoryUseCase
 import javax.inject.Inject
+
 
 @HiltViewModel
 class TvShowScreenViewModel @Inject constructor(
@@ -29,12 +33,14 @@ class TvShowScreenViewModel @Inject constructor(
     private val manageTvShowDetails: ManageTvShowUseCase,
     private val manageWatchedMediaHistoryUseCase: ManageWatchedMediaHistoryUseCase,
     private val getLoggedInUserUseCase: GetLoggedInUserUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : BaseViewModel<TvShowScreenUiState, TvShowScreenEffects>(
     initialState = TvShowScreenUiState(),
     defaultDispatcher = dispatcher
 ), TvShowScreenInteractionListener {
-
+    private val submitRatingSuccessMsg = stringProvider.getString(R.string.submit_rating_successfully)
+    private val submitRatingFailedMsg = stringProvider.getString(R.string.submit_rating_failed)
     private val tvShowId: Int = checkNotNull(savedStateHandle["tvShowId"]) {
         "tvShowId is required in SavedStateHandle"
     }
@@ -115,11 +121,15 @@ class TvShowScreenViewModel @Inject constructor(
     override fun onSubmitRateBottomSheet() {
         tryToExecute(
             callee = ::submitTvShowRating,
-            onError = ::onSubmitRateBottomSheetFailed
+            onError = ::onSubmitRatingFailed
         )
         updateState {
             copy(showRateBottomSheet = false)
         }
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackBarData = null) }
     }
 
     private fun onSubmitRateBottomSheetFailed(exception: NovixAppException) {
@@ -190,7 +200,6 @@ class TvShowScreenViewModel @Inject constructor(
         val imagesDeferred = async { manageTvShowDetails.getTvShowImageUrls(tvShowId) }
         val trailerDeferred = async { manageTvShowDetails.getTvShowTrailer(tvShowId) }
 
-
         val tvShow = tvShowDeferred.await()
         val cast = castDeferred.await()
         val season = seasonDeferred.await()
@@ -208,7 +217,6 @@ class TvShowScreenViewModel @Inject constructor(
         }
     }
 
-
     private suspend fun fetchSeasonDetails(seasonNumber: Int) {
         updateState { copy(selectedSeason = seasonNumber, isLoadingEpisodes = true) }
 
@@ -217,16 +225,15 @@ class TvShowScreenViewModel @Inject constructor(
         updateState { copy(season = season.toState()) }
     }
 
-
     private suspend fun submitTvShowRating() {
         val isSendRateSuccess = manageTvShowDetails.addTvShowRate(
             tvShowId = tvShowId,
             rating = state.value.imdbRating.toFloat()
         )
         if (isSendRateSuccess) {
-            emitEffect(TvShowScreenEffects.ShowSuccessSnackBar)
+            emitEffect(TvShowScreenEffects.ShowSuccessSnackBar(submitRatingSuccessMsg.toString()))
         } else {
-            emitEffect(TvShowScreenEffects.ShowErrorSnackBar)
+            emitEffect(TvShowScreenEffects.ShowErrorSnackBar(submitRatingFailedMsg.toString()))
         }
     }
 
@@ -278,6 +285,18 @@ class TvShowScreenViewModel @Inject constructor(
                     isLoadingEpisodes = false
                 )
             }
+        }
+    }
+
+    private fun onSubmitRatingFailed(exception: NovixAppException) {
+        updateState {
+            copy(
+                showRateBottomSheet = false,
+                snackBarData = SnackData(
+                    message = submitRatingFailedMsg.toString(),
+                    isError = true
+                )
+            )
         }
     }
 }

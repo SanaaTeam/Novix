@@ -19,4 +19,5 @@ interface TvShowScreenInteractionListener {
     fun onRatingChanged(newRating: Int)
     fun onDismissLoginBottomSheet()
     fun onSubmitRateBottomSheet()
+    fun onSnackBarDismiss()
 }

@@ -7,17 +7,11 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,24 +47,19 @@ import com.sanaa.presentation.navigation.MediaTypeParam
 import com.sanaa.presentation.navigation.ReviewsScreenRoute
 import com.sanaa.presentation.screen.movieDetails.LoginPromptType
 import com.sanaa.presentation.screen.movieDetails.SnackData
-import com.sanaa.presentation.screen.tvShow.components.CastComponent
-import com.sanaa.presentation.screen.tvShow.components.EpisodesContent
-import com.sanaa.presentation.screen.tvShow.components.SeasonTab
-import com.sanaa.presentation.screen.tvShow.components.TvShowHeaderSection
+import com.sanaa.presentation.screen.tvShow.components.TvShowDetailContent
 import com.sanaa.presentation.shared_component.BottomContainer
 import com.sanaa.presentation.shared_component.NovixAnimatedSnackBarHost
-import com.sanaa.presentation.shared_component.OverviewSection
 import com.sanaa.presentation.shared_component.RateBottomSheet
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
+
 @Composable
 fun TvShowScreen(
     viewModel: TvShowScreenViewModel = hiltViewModel()
 ) {
-    val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
-    val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
     var snack by remember { mutableStateOf<SnackData?>(null) }
     val state = viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -83,7 +71,6 @@ fun TvShowScreen(
     ).authenticationApi()
 
     val launcher = launchAuthActivityForResult()
-
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect {
@@ -126,11 +113,10 @@ fun TvShowScreen(
                 }
 
                 is TvShowScreenEffects.ShowSuccessSnackBar -> {
-                    snack = SnackData(message = submitRatingSuccessMsg, isError = false)
+                    snack = SnackData(message = it.message, isError = false)
                 }
-
                 is TvShowScreenEffects.ShowErrorSnackBar -> {
-                    snack = SnackData(submitRatingFailedMsg, isError = true)
+                    snack = SnackData(message = it.message, isError = true)
                 }
 
                 TvShowScreenEffects.NavigateToLogin -> {
@@ -141,59 +127,50 @@ fun TvShowScreen(
         }
     }
 
-    Box {
-        TvShowScreenContent(
-            interactionListener = viewModel, state = state.value
-        )
-
-        NovixAnimatedSnackBarHost(
-            data = snack,
-            onDismiss = { snack = null }
-        )
-    }
+    TvShowScreenContent(
+        interactionListener = viewModel, state = state.value
+    )
 }
 
 @Composable
-fun TvShowScreenContent(
-    interactionListener: TvShowScreenInteractionListener, state: TvShowScreenUiState
+private fun TvShowScreenContent(
+    interactionListener: TvShowScreenInteractionListener,
+    state: TvShowScreenUiState
 ) {
 
     val scrollState = rememberScrollState()
     val animatedColor by animateColorAsState(
         targetValue = if (scrollState.value > 200) Theme.colors.surface else Color.Transparent,
         animationSpec = tween(durationMillis = 500, easing = EaseInOut),
+        label = "TopBarColorAnimation"
     )
 
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
+        snackBarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                NovixAnimatedSnackBarHost(
+                    data = state.snackBarData,
+                    onDismiss = interactionListener::onSnackBarDismiss
+                )
+            }
+        },
     ) {
         Box(
             modifier = Modifier
                 .navigationBarsPadding()
                 .fillMaxSize()
         ) {
-            TopBar(
-                leftContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(designR.drawable.icon_back),
-                        onClick = interactionListener::onBackClicked
-
-                    )
-                }, rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_save),
-                        onClick = interactionListener::onSaveTvShowClicked
-                    )
-                }, modifier = Modifier
-                    .background(animatedColor)
-                    .systemBarsPadding()
-                    .zIndex(10f)
-            )
+            TvShowScreenTopBar(animatedColor, interactionListener)
 
             AnimatedContent(
                 targetState = state.isLoading || state.noInternetConnection,
                 modifier = Modifier.align(Alignment.Center),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
+                label = "MainContentAnimation"
             ) { shouldShowLoadingOrError ->
                 if (shouldShowLoadingOrError) {
                     if (state.noInternetConnection) {
@@ -208,82 +185,10 @@ fun TvShowScreenContent(
                         )
                     }
                 } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(
-                                state = scrollState
-                            )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(bottom = 104.dp)
-                        ) {
-                            TvShowHeaderSection(
-                                title = state.tvShow.title,
-                                rating = state.tvShow.rating,
-                                season = stringResource(
-                                    R.string.seasons_count, state.tvShow.seasonsCount
-                                ),
-                                airDate = state.tvShow.releaseDate,
-                                imagesUrl = state.images,
-                                genres = state.tvShow.genres,
-                                onReviewClicked = {
-                                    interactionListener.onViewReviewsClicked(
-                                        state.tvShow.id
-                                    )
-                                },
-                                onGenreClicked = { genre ->
-                                    interactionListener.onGenreClicked(
-                                        genre
-                                    )
-                                })
-
-                            if (state.tvShow.overview.isNotEmpty()) {
-                                OverviewSection(
-                                    onReadMore = {},
-                                    titleResId = R.string.overview,
-                                    overview = state.tvShow.overview,
-                                    modifier = Modifier.padding(
-                                        start = 16.dp, end = 16.dp, top = 16.dp
-                                    )
-                                )
-                            }
-
-                            if (state.cast.isNotEmpty())
-                                CastComponent(
-                                    casts = state.cast,
-                                    onActorClicked = interactionListener::onActorClicked,
-                                )
-                            SeasonTab(
-                                onClick = interactionListener::onSeasonNumberClicked,
-                                seasonCounts = state.tvShow.seasonsCount,
-                                currentSeason = state.selectedSeason,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-                            AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
-                                if (isLoadingEpisodes) {
-                                    Column(
-                                        modifier = Modifier
-                                            .heightIn(min = 300.dp)
-                                            .fillMaxWidth(),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-
-                                    ) {
-                                        LoadingIndicator()
-                                    }
-                                } else {
-                                    EpisodesContent(
-                                        episodes = state.season.episodes,
-                                        tvShowId = state.tvShow.id,
-                                        onEpisodeClick = interactionListener::onEpisodeClicked
-                                    )
-                                }
-                            }
-                        }
-                    }
+                    TvShowDetailContent(state, interactionListener, scrollState)
                 }
             }
+
             BottomContainer(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 trailerUrl = state.tvShow.trailerUrl,
@@ -322,4 +227,30 @@ fun TvShowScreenContent(
             )
         }
     }
+}
+
+@Composable
+private fun TvShowScreenTopBar(
+    animatedColor: Color,
+    listener: TvShowScreenInteractionListener
+) {
+    TopBar(
+        modifier = Modifier
+            .background(animatedColor)
+            .systemBarsPadding()
+            .zIndex(10f),
+        leftContent = {
+            TopBarClickableIcon(
+                icon = painterResource(designR.drawable.icon_back),
+                onClick = listener::onBackClicked
+
+            )
+        },
+        rightContent = {
+            TopBarClickableIcon(
+                icon = painterResource(R.drawable.icon_save),
+                onClick = listener::onSaveTvShowClicked
+            )
+        },
+    )
 }
