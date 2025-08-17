@@ -47,7 +47,7 @@ class PlayListScreenViewModelTest {
     fun `onButtonLoginClicked emits NavigateToLogin`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onButtonLoginClicked()
+            viewModel.onNavigateToLogin()
             assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
@@ -57,7 +57,7 @@ class PlayListScreenViewModelTest {
     fun `onItemListClicked emits NavigateToSavedDetails`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onItemListClicked(5, "Workout Playlist")
+            viewModel.onNavigateToSavedDetails(5, "Workout Playlist")
             assertThat(awaitItem()).isEqualTo(
                 PlayListScreenEffect.NavigateToSavedDetails(5, "Workout Playlist")
             )
