@@ -42,7 +42,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
 
     PlaylistEffectsHandler(
         viewModel = viewModel,
-        interactionListener = viewModel,
     )
 
 
@@ -56,7 +55,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
 @Composable
 private fun PlaylistEffectsHandler(
     viewModel: PlayListScreenViewModel,
-    interactionListener: PlayListScreenInteractionListener,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -72,7 +70,6 @@ private fun PlaylistEffectsHandler(
             when (effect) {
                 PlayListScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
-                    interactionListener.onNavigateToLogin()
                 }
 
                 is PlayListScreenEffect.NavigateToSavedDetails ->
