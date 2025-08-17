@@ -20,4 +20,7 @@ interface SavedListDao {
 
     @Query("SELECT * FROM saved_lists")
     fun getAllLists(): Flow<List<SavedListLocalDto>>
+
+    @Query("DELETE  FROM saved_lists")
+    fun clearAll()
 }
