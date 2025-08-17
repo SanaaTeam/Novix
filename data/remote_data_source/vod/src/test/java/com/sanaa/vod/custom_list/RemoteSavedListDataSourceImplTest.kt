@@ -8,9 +8,9 @@ import com.sanaa.vod.custom_list.response.ItemStatusResponseDto
 import com.sanaa.vod.custom_list.response.ListApiResponse
 import com.sanaa.vod.custom_list.response.TmdbStatusResponseDto
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDetailsDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import io.mockk.coEvery
 import io.mockk.coJustRun
 import io.mockk.coVerify
@@ -26,12 +26,12 @@ class RemoteSavedListDataSourceImplTest {
     private lateinit var dataSource: RemoteSavedListDataSource
 
     private val dummyLists = listOf(
-        SavedListDto(id = LIST_ID, title = "Watch-Later"),
-        SavedListDto(id = LIST_ID + 1, title = "Favorites")
+        SavedListRemoteDto(id = LIST_ID, title = "Watch-Later"),
+        SavedListRemoteDto(id = LIST_ID + 1, title = "Favorites")
     )
     private val dummyItems = listOf(
-        SavedItemDto(id = 1, title = "A"),
-        SavedItemDto(id = 2, title = "B")
+        SavedItemRemoteDto(id = 1, title = "A"),
+        SavedItemRemoteDto(id = 2, title = "B")
     )
     private val dummyListDetails = SavedListDetailsDto(
         id = LIST_ID,

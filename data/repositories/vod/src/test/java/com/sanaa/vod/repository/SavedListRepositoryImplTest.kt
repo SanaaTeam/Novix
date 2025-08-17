@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.remote.RemoteMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemDto
-import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.movie.MovieDto
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
@@ -32,13 +32,13 @@ class SavedListRepositoryImplTest {
     private lateinit var repository: SavedListRepositoryImpl
 
     private val dummyListsDto = listOf(
-        SavedListDto(id = LIST_ID, title = "Watch-Later"),
-        SavedListDto(id = LIST_ID + 1, title = "Favorites")
+        SavedListRemoteDto(id = LIST_ID, title = "Watch-Later"),
+        SavedListRemoteDto(id = LIST_ID + 1, title = "Favorites")
     )
 
     private val dummyItemsDto = listOf(
-        SavedItemDto(id = 1, title = "A"),
-        SavedItemDto(id = 2, title = "B")
+        SavedItemRemoteDto(id = 1, title = "A"),
+        SavedItemRemoteDto(id = 2, title = "B")
     )
 
     private val dummyMovieDto1 = MovieDto(id = 1, title = "A")
@@ -56,7 +56,7 @@ class SavedListRepositoryImplTest {
     @Test
     fun `createSavedList returns created list`() = runTest {
         coEvery { remoteLists.createList(SESSION_ID, "Watch-Later", any()) } returns
-                SavedListDto(id = LIST_ID, title = "Watch-Later")
+                SavedListRemoteDto(id = LIST_ID, title = "Watch-Later")
 
         val created: SavedList = repository.createSavedList("Watch-Later")
         assertThat(created.id).isEqualTo(LIST_ID)
@@ -66,7 +66,7 @@ class SavedListRepositoryImplTest {
     fun `getSavedLists returns mapped saved lists on success`() = runTest {
         coEvery { remoteLists.fetchUserLists(SESSION_ID) } returns dummyListsDto
 
-        val lists = repository.getSavedLists()
+        val lists = repository.getLocalSavedLists()
 
         assertThat(lists).hasSize(2)
         assertThat(lists[0].id).isEqualTo(LIST_ID)
@@ -119,7 +119,7 @@ class SavedListRepositoryImplTest {
     fun `getSavedLists throws NoNetworkException on ConnectionException`() = runTest {
         coEvery { remoteLists.fetchUserLists(any(), any()) } throws ConnectionException()
 
-        assertThrows<NoNetworkException> { repository.getSavedLists() }
+        assertThrows<NoNetworkException> { repository.getLocalSavedLists() }
     }
 
     private companion object {
