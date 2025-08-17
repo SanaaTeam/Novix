@@ -1,6 +1,5 @@
 package com.sanaa.vod.repository.mapper.savedList
 
-import com.sanaa.vod.dataSource.local.cache.dto.SavedListLocalDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedItemRemoteDto
 import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.repository.mapper.media.getFullImageUrl
@@ -9,8 +8,8 @@ import entity.Movie
 import usecase.custom_list.custom_list_param.SavedList
 import kotlin.time.Duration.Companion.minutes
 
-fun SavedListRemoteDto.toEntity() = SavedList(id, title, itemCount)
-fun List<SavedListRemoteDto>.toEntity() = map { it.toEntity() }
+fun SavedListRemoteDto.toEntity(itemsIds: List<Int>) = SavedList(id, title, itemCount,itemsIds)
+fun List<SavedListRemoteDto>.toEntity(itemsIds:List<Int>) = map { it.toEntity(itemsIds) }
 
 fun SavedItemRemoteDto.toEntity() = Movie(
     id = id,

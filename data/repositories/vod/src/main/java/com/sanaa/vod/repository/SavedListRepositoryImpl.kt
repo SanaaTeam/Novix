@@ -1,9 +1,9 @@
 package com.sanaa.vod.repository
 
-import android.util.Log
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.vod.dataSource.local.cache.LocalSavedMovieDataSource
 import com.sanaa.vod.dataSource.remote.custom_list.RemoteSavedListDataSource
+import com.sanaa.vod.dataSource.remote.dto.cutsom_list.SavedListRemoteDto
 import com.sanaa.vod.repository.mapper.savedList.toEntity
 import com.sanaa.vod.repository.mapper.savedList.toLocalDto
 import com.sanaa.vod.util.safeCall
@@ -30,8 +30,21 @@ class SavedListRepositoryImpl @Inject constructor(
 
     private suspend fun fetchRemoteSaveLists(): List<SavedList> =
         safeCall("failed to fetch remote saved lists ") {
-            remoteSavedListDataSource.fetchUserLists(obtainSessionId()).toEntity()
+            val remoteLists = remoteSavedListDataSource.fetchUserLists(obtainSessionId())
+            val itemsIds = fetchRemoteListsItems(remoteLists)
+            remoteLists.toEntity(itemsIds)
         }
+
+    private suspend fun fetchRemoteListsItems(remoteLists: List<SavedListRemoteDto>) :List<Int>{
+        var movieIds = emptyList<Int>()
+        remoteLists.forEach { remoteList ->
+             movieIds = remoteSavedListDataSource
+                .fetchListItems(remoteList.id)
+                .map { it.id }
+        }
+        return movieIds
+
+    }
 
 
     override suspend fun refreshSavedLists() {
@@ -53,7 +66,7 @@ class SavedListRepositoryImpl @Inject constructor(
         safeCall("Failed to create list") {
             val createdList = remoteSavedListDataSource.createList(obtainSessionId(), title)
             localSavedMovieDataSource.insertList(
-                createdList.toEntity().toLocalDto()
+                createdList.toEntity(emptyList()).toLocalDto()
             )
         }
     }
