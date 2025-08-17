@@ -45,7 +45,7 @@ import com.sanaa.presentation.api.LocalSafeContentThreshold
 import com.sanaa.presentation.api.LocalThemeProvider
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import com.sanaa.presentation.navigation.TvShowDetailsScreenRoute
+import com.sanaa.presentation.navigation.TvShowScreenRoute
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -77,7 +77,7 @@ fun GenreTvShowsScreen(
                 }
 
                 is GenreTvShowsEffects.NavigateToTvShowDetails -> navController.navigate(
-                    TvShowDetailsScreenRoute(effect.id).route()
+                    TvShowScreenRoute(effect.id)
                 )
 
                 GenreTvShowsEffects.NavigateToLogin -> {
