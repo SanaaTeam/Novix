@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +27,6 @@ import kotlinx.coroutines.flow.collectLatest
 fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val navController = LocalNavControllerProvider.current
-    var snackBarData by remember { mutableStateOf<SnackData?>(null) }
 
     LaunchedEffect(Unit) {
         snapshotFlow { navController.currentBackStackEntry }
@@ -48,7 +43,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
     PlaylistEffectsHandler(
         viewModel = viewModel,
         interactionListener = viewModel,
-        onShowSnack = { snackBarData = it }
     )
 
 
@@ -63,7 +57,6 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
 private fun PlaylistEffectsHandler(
     viewModel: PlayListScreenViewModel,
     interactionListener: PlayListScreenInteractionListener,
-    onShowSnack: (SnackData) -> Unit
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -74,7 +67,7 @@ private fun PlaylistEffectsHandler(
 
     val launcher = launchAuthActivityForResult()
 
-    LaunchedEffect(viewModel) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 PlayListScreenEffect.NavigateToLogin -> {
@@ -88,7 +81,6 @@ private fun PlaylistEffectsHandler(
         }
     }
 }
-
 @Composable
 private fun PlaylistScreenContent(
     state: PlayListScreenUiState,
@@ -96,10 +88,10 @@ private fun PlaylistScreenContent(
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         AnimatedContent(
-            targetState = Triple(state.isUserLoggedIn, state.lists.isEmpty(), state.lists),
-        ) { (isUserLoggedIn, isEmptyList, lists) ->
-            when {
-                state.isLoading -> {
+            targetState = state.screenState,
+        ) { screenState ->
+            when (screenState) {
+                PlaylistScreenState.Loading -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
@@ -108,22 +100,22 @@ private fun PlaylistScreenContent(
                     }
                 }
 
-                state.noInternetConnection -> {
+                PlaylistScreenState.NoInternet -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
                         NetworkDisconnectionContact(
-                            onRetryClick = { },
+                            onRetryClick = { interactionListener.onRetryLoadSavedLists() },
                         )
                     }
                 }
 
-                !isUserLoggedIn -> {
+                PlaylistScreenState.Guest -> {
                     PlayListGuestScreen(onLoginClick = { interactionListener.onNavigateToLogin() })
                 }
 
-                isEmptyList -> {
+                PlaylistScreenState.Empty -> {
                     PlaylistEmptyScreen(
                         onFabClick = { interactionListener.onFabBottomSheetClicked() },
                         isVisible = state.showAddBottomSheet,
@@ -131,10 +123,10 @@ private fun PlaylistScreenContent(
                     )
                 }
 
-                else -> {
+                PlaylistScreenState.WithItems -> {
                     PlayListWithItemsScreen(
                         isVisible = state.showAddBottomSheet,
-                        lists = lists,
+                        lists = state.lists,
                         interactionListener = interactionListener,
                         isUserLoggedIn = state.isUserLoggedIn
                     )
