@@ -60,7 +60,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun EpisodeDetailsScreen(
-    viewModel: EpisodeDetailsScreenViewModel = hiltViewModel()
+    viewModel: EpisodeDetailsScreenViewModel = hiltViewModel(),
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -74,7 +74,7 @@ fun EpisodeDetailsScreen(
         DetailsApiEntryPoint::class.java
     ).authenticationApi()
 
-    val launcher =  launchAuthActivityForResult()
+    val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest {
@@ -121,7 +121,7 @@ fun EpisodeDetailsScreen(
 
 @Composable
 private fun EpisodeDetailsScreenContent(
-    interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState
+    interactionListener: EpisodeDetailsInteractionListener, state: EpisodeDetailsScreenUiState,
 ) {
     val scrollState = rememberScrollState()
     val animatedColor by animateColorAsState(
@@ -148,25 +148,19 @@ private fun EpisodeDetailsScreenContent(
                         icon = painterResource(R.drawable.icon_save), onClick = {
                             interactionListener.onSavedClick(state.tvShowId)
                         })
-                }, modifier = Modifier.
-                    background(animatedColor)
+                }, modifier = Modifier
+                    .background(animatedColor)
                     .systemBarsPadding()
                     .zIndex(10f)
             )
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
-                if (it) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize(),
-                            useDarkTheme = LocalThemeProvider.current
-                        )
-                    } else {
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
@@ -174,49 +168,60 @@ private fun EpisodeDetailsScreenContent(
                             LoadingIndicator()
                         }
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(scrollState)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 104.dp)
-                                .align(Alignment.TopCenter)
-                        ) {
-                            TvShowHeaderSection(
-                                title = stringResource(
-                                    R.string.episode_number, state.episode.number
-                                ) + " - ${state.episode.title}",
-                                rating = state.episode.rating,
-                                season = stringResource(
-                                    R.string.season_number, state.episode.seasonNumber
-                                ),
-                                airDate = state.episode.airDate,
-                                imagesUrl = state.imagesUrl,
-                                genres = emptyList(),
-                                showReviews = false,
-                                onGenreClicked = {}
-                            )
 
-                            state.episode.overview?.takeIf { it.isNotBlank() }?.let { overviewText ->
-                                OverviewSection(
-                                    onReadMore = {},
-                                    titleResId = R.string.overview,
-                                    overview = overviewText,
-                                    modifier = Modifier.padding(
-                                        start = 16.dp, end = 16.dp, top = 16.dp
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
+                    }
+
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(scrollState)
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(bottom = 104.dp)
+                                    .align(Alignment.TopCenter)
+                            ) {
+                                TvShowHeaderSection(
+                                    title = stringResource(
+                                        R.string.episode_number, state.episode.number
+                                    ) + " - ${state.episode.title}",
+                                    rating = state.episode.rating,
+                                    season = stringResource(
+                                        R.string.season_number, state.episode.seasonNumber
+                                    ),
+                                    airDate = state.episode.airDate,
+                                    imagesUrl = state.imagesUrl,
+                                    genres = emptyList(),
+                                    showReviews = false,
+                                    onGenreClicked = {}
+                                )
+
+                                state.episode.overview?.takeIf { it.isNotBlank() }
+                                    ?.let { overviewText ->
+                                        OverviewSection(
+                                            onReadMore = {},
+                                            titleResId = R.string.overview,
+                                            overview = overviewText,
+                                            modifier = Modifier.padding(
+                                                start = 16.dp, end = 16.dp, top = 16.dp
+                                            )
+                                        )
+                                    }
+                                if (state.guestOfHonor.isNotEmpty())
+                                    GuestsOfHonorComponent(
+                                        guests = state.guestOfHonor,
+                                        onActorClick = interactionListener::onCastClick,
+                                        modifier = Modifier.padding(top = 16.dp)
                                     )
-                                )
                             }
-                            if (state.guestOfHonor.isNotEmpty())
-                                GuestsOfHonorComponent(
-                                    guests = state.guestOfHonor,
-                                    onActorClick = interactionListener::onCastClick,
-                                    modifier = Modifier.padding(top = 16.dp)
-                                )
                         }
                     }
                 }

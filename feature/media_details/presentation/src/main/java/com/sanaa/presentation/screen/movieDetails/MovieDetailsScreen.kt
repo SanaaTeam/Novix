@@ -191,26 +191,26 @@ private fun MovieDetailsScreenContent(
                 modifier = Modifier.background(color = animatedColor)
             )
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
+            ) { (isLoading, noInternetConnection) ->
                 when {
-                    it -> {
-                        if (state.noInternetConnection) {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryLoadDetails() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                LoadingIndicator()
-                            }
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingIndicator()
                         }
+                    }
+
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
                     }
 
                     else -> {
