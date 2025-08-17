@@ -3,6 +3,7 @@ package com.sanaa.presentation.screen.playlistDetails
 import androidx.lifecycle.SavedStateHandle
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import androidx.paging.filter
 import com.sanaa.presentation.model.toUiModel
 import com.sanaa.presentation.savedBase.BasePagingSource
 import com.sanaa.presentation.savedBase.BaseViewModel
@@ -18,6 +19,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import service.VodStringProvider
 import usecase.custom_list.ManageSavedListItemsUseCase
 import usecase.custom_list.ManageSavedListsUseCase
@@ -75,7 +77,16 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
     override fun onDismissListBottomSheetAfterRemoveSuccess(deselectedListIds: List<Int>) {
         if (listId in deselectedListIds) {
-            loadItemsInSaved(listId)
+            val value = state.value
+            updateState {
+                copy(
+                    movieList = value.movieList.map { pagingData ->
+                        pagingData.filter { mediaItem ->
+                            mediaItem.id != value.selectedMediaToRemove?.id
+                        }
+                    }
+                )
+            }
         }
         updateState { copy(showRemoveFromListBottomSheet = false, selectedMediaToRemove = null) }
     }
