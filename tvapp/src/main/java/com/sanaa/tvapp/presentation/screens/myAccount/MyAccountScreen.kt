@@ -87,12 +87,12 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
 
                 is UpdateAppLanguage -> {
                     val localeList = LocaleListCompat.forLanguageTags(it.language)
-                    if (AppCompatDelegate.getApplicationLocales()
-                            .toLanguageTags() != localeList.toLanguageTags()
-                    ) {
+                    val isLanguageSelected = AppCompatDelegate
+                        .getApplicationLocales()
+                        .toLanguageTags() != localeList.toLanguageTags()
+                    if (isLanguageSelected) {
                         AppCompatDelegate.setApplicationLocales(localeList)
                     }
-                    activity?.recreate()
                 }
 
                 NavigateToMyRating -> {
@@ -104,11 +104,11 @@ fun MyAccountScreen(viewModel: MyAccountScreenViewModel = hiltViewModel()) {
                 }
 
                 NavigateToLogin -> {
-                    navController.navigate(LoginRoute)
+//                    navController.navigate(LoginRoute)
                 }
 
                 Recreate -> {
-                    activity?.recreate()
+                     activity?.recreate()
                 }
             }
         }

@@ -181,6 +181,7 @@ class WatchingHistoryViewModel @Inject constructor(
     override fun onCreateNewListClick() {
         updateState { copy(showSaveToListBottomSheet = false, showAddListBottomSheet = true) }
     }
+
     override fun onSaveToListResult(success: Boolean) {
         if (success) {
             emitEffect(WatchingHistoryScreenEffect.ShowSuccessSnackBar(stringProvider.addToListSuccess))

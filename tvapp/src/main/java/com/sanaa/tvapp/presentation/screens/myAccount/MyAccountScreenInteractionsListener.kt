@@ -1,7 +1,6 @@
 package com.sanaa.tvapp.presentation.screens.myAccount
 
 import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ContentRestrictionUiState
-import com.sanaa.tvapp.presentation.screens.myAccount.MyAccountScreenUiState.ThemeUiState
 
 interface MyAccountScreenInteractionsListener {
     fun onClickChangePassword()

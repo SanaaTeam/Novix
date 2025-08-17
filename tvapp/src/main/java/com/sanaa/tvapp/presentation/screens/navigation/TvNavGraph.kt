@@ -32,7 +32,6 @@ fun TvNavGraph(navController: NavHostController, startDestination: Any) {
         }
 
         composable<ScreensRoute.ActorDetailsRoute> { navBackStackEntry ->
-            val actorId = navBackStackEntry.toRoute<ScreensRoute.ActorDetailsRoute>().actorId
             ActorScreen()
         }
     }
