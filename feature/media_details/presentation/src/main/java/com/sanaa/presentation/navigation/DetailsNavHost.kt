@@ -74,45 +74,45 @@ fun DetailsNavHost(
             startDestination = initialRoute,
             modifier = Modifier.background(Theme.colors.surface)
         ) {
-            composable(route = TvShowScreenRoute::class) {
+            composable<TvShowScreenRoute> {
                 TvShowScreen()
             }
 
-            composable(route = EpisodeDetailsScreenRoute::class) {
+            composable<EpisodeDetailsScreenRoute> {
                 EpisodeDetailsScreen()
             }
 
-            composable(route = ActorScreenRoute::class) {
+            composable<ActorScreenRoute> {
                 ActorScreen()
             }
 
-            composable(route = TopMoviesScreenRoute::class) {
+            composable<TopMoviesScreenRoute> {
                 TopMoviesScreen()
             }
 
-            composable(route = TopTvShowsScreenRoute::class) {
+            composable<TopTvShowsScreenRoute> {
                 TopShowsScreen()
             }
 
-            composable(route = ActorGalleryScreenRoute::class) {
+            composable<ActorGalleryScreenRoute> {
                 ActorGalleryScreen(
                     navigateBack = { navController.popBackStack() }
                 )
             }
 
-            composable(route = ReviewsScreenRoute::class) {
+            composable<ReviewsScreenRoute> {
                 ReviewsScreen()
             }
 
-            composable(route = MovieDetailsScreenRoute::class) {
+            composable<MovieDetailsScreenRoute> {
                 MovieDetailsScreen()
             }
 
-            composable(route = GenreMovieScreenRoute::class) {
+            composable<GenreMovieScreenRoute> {
                 GenreMoviesScreen()
             }
 
-            composable(route = GenreTvShowsScreenRoute::class) {
+            composable<GenreTvShowsScreenRoute> {
                 GenreTvShowsScreen()
             }
         }
