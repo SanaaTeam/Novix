@@ -1,30 +1,33 @@
 package com.sanaa.image_viewer.component
 
+import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import androidx.annotation.FloatRange
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.ImageLoader
+import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.sanaa.image_viewer.cashe.ImageCache
 import com.sanaa.image_viewer.classifier.TfLiteImageClassifier
-import com.sanaa.image_viewer.modifier.blurry
+import com.sanaa.image_viewer.transformation.BlurTransformation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+
 
 /**
  * A composable executes an [ImageRequest] asynchronously and
@@ -65,73 +68,45 @@ fun RemoteBlurredSensitiveImage(
     val coroutineScope = rememberCoroutineScope()
     val classifier = remember { TfLiteImageClassifier(context) }
 
-    var imageBitmap by remember(imageUrl) {
-        mutableStateOf(ImageCache.getBitmap(imageUrl))
-    }
-    var isSensitive by remember(imageUrl, safeContentThreshold, sensitiveContentThreshold) {
-        mutableStateOf(
-            ImageCache.getClassification(
-                imageUrl,
-                safeContentThreshold,
-                sensitiveContentThreshold
-            ) == true
-        )
-    }
-    var requestState by remember(imageUrl) {
-        mutableStateOf(
-            if (imageBitmap != null) RequestState.SUCCESS else RequestState.LOADING
-        )
+    var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
+    var isSensitive by rememberSaveable { mutableStateOf(false) }
+    var isImageLoaded by rememberSaveable { mutableStateOf(false) }
+    var contentThreshold by rememberSaveable { mutableFloatStateOf(.7f) }
+
+    val imageRequest = remember(isImageLoaded) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .isBlurEnable(
+                enabled = isBlurEnabled && isSensitive,
+                context = context,
+                blurValue = blurRadius.value
+            )
+            .allowHardware(false)
+            .build()
     }
 
-    LaunchedEffect(imageUrl, safeContentThreshold, sensitiveContentThreshold) {
+    LaunchedEffect(Unit) {
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                var bitmap = ImageCache.getBitmap(imageUrl)
+                var bitmap: Bitmap?
 
-                if (bitmap == null) {
-                    val request = ImageRequest.Builder(context)
-                        .data(imageUrl)
-                        .allowHardware(false)
-                        .build()
+                if (!isImageLoaded || contentThreshold != safeContentThreshold || requestState == RequestState.LOADING) {
                     val loader = ImageLoader(context)
-                    val response = loader.execute(request)
+                    val response = loader.execute(imageRequest)
                     bitmap = (response.drawable as? BitmapDrawable)?.bitmap
-
-                    bitmap?.let { ImageCache.putBitmap(imageUrl, it) }
-                }
-
-                imageBitmap = bitmap
-
-                if (bitmap != null) {
-                    val cachedClassification = ImageCache.getClassification(
-                        imageUrl,
-                        safeContentThreshold,
-                        sensitiveContentThreshold
-                    )
-
-                    if (cachedClassification != null) {
-                        isSensitive = cachedClassification
-                    } else {
-                        val sensitiveResult = classifier.isInappropriateImage(
-                            bitmap,
+                    bitmap?.let {
+                        isSensitive = classifier.isInappropriateImage(
+                            it,
                             safeContentThreshold,
                             sensitiveContentThreshold
                         )
-                        isSensitive = sensitiveResult
-                        ImageCache.putClassification(
-                            imageUrl,
-                            safeContentThreshold,
-                            sensitiveContentThreshold,
-                            sensitiveResult
-                        )
                     }
-
+                    isImageLoaded = true
+                    contentThreshold = safeContentThreshold
                     requestState = RequestState.SUCCESS
                     onSuccess?.invoke()
-                } else {
-                    requestState = RequestState.ERROR
-                    onError?.invoke()
                 }
+
             } catch (e: Throwable) {
                 requestState = RequestState.ERROR
                 onError?.invoke()
@@ -143,22 +118,12 @@ fun RemoteBlurredSensitiveImage(
         when (requestState) {
             RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
-                imageBitmap?.let { bitmap ->
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = contentDescription,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .blurry(
-                                isBlurForced = false,
-                                isImageSafe = !isSensitive,
-                                blurRadius = blurRadius,
-                                isBlurEnabled = isBlurEnabled,
-                                bitmap = bitmap
-                            ),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                AsyncImage(
+                    model = imageRequest,
+                    contentDescription = contentDescription,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                )
             }
 
             RequestState.ERROR -> errorContent()
@@ -174,4 +139,18 @@ enum class RequestState {
     LOADING,
     SUCCESS,
     ERROR
+}
+
+private fun ImageRequest.Builder.isBlurEnable(
+    enabled: Boolean,
+    context: Context,
+    blurValue: Float
+): ImageRequest.Builder {
+    return if (enabled) this.transformations(
+        BlurTransformation(
+            context,
+            blurValue
+        )
+    )
+    else this
 }
