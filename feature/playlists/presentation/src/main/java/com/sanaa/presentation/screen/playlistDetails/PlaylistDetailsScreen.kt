@@ -54,14 +54,9 @@ fun PlaylistDetailsScreen(
         viewModel.effect.collect {
             when (it) {
                 is PlaylistDetailsScreenEffect.NavigateBackAfterDelete -> {
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "delete_success",
-                        true
-                    )
-                    navController.previousBackStackEntry?.savedStateHandle?.set(
-                        "list_deleted",
-                        true
-                    )
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("list_deleted", true)
                     navController.popBackStack()
                 }
 
@@ -75,7 +70,6 @@ fun PlaylistDetailsScreen(
                         id = it.mediaId,
                         startRoute = StartRoute.MOVIE
                     )
-
                 }
 
                 PlaylistDetailsScreenEffect.RefreshList -> {

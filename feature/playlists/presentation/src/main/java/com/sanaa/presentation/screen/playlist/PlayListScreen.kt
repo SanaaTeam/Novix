@@ -37,11 +37,10 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
         snapshotFlow { navController.currentBackStackEntry }
             .collect { backStackEntry ->
                 val deleted =
-                    backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") ?: false
+                    backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") == true
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
                     backStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
-                    backStackEntry.savedStateHandle.remove<Boolean>("delete_success")
                 }
             }
     }
@@ -83,12 +82,6 @@ private fun PlaylistEffectsHandler(
                     interactionListener.onNavigateToLogin()
                 }
 
-                is PlayListScreenEffect.ShowSuccess ->
-                    onShowSnack(SnackData(effect.message, false))
-
-                is PlayListScreenEffect.ShowError ->
-                    onShowSnack(SnackData(effect.message, true))
-
                 is PlayListScreenEffect.NavigateToSavedDetails ->
                     navController.navigate(SavedDetailsScreenRoute(effect.listId, effect.title).route())
             }
@@ -98,10 +91,9 @@ private fun PlaylistEffectsHandler(
 
 @Composable
 private fun PlaylistScreenContent(
+    state: PlayListScreenUiState,
     interactionListener: PlayListScreenInteractionListener,
-    state: PlayListScreenUiState
 ) {
-    var snackBarData by remember { mutableStateOf<SnackData?>(null) }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         AnimatedContent(
             targetState = Triple(state.isUserLoggedIn, state.lists.isEmpty(), state.lists),
@@ -149,7 +141,7 @@ private fun PlaylistScreenContent(
                 }
             }
         }
-        AnimatedSnackBarHost(data = snackBarData, onDismiss = { snackBarData = null })
+        AnimatedSnackBarHost(data = state.snackData, onDismiss = interactionListener::onSnackBarDismiss)
     }
 }
 

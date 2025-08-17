@@ -68,19 +68,33 @@ class PlayListScreenViewModel @Inject constructor(
                 is NoNetworkException -> copy(
                     isLoading = false,
                     noInternetConnection = true,
-                    errorMessage = stringProvider.noInternetConnectionError
+                    snackData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = false
+                    )
                 )
 
                 else -> copy(
                     isLoading = false,
-                    errorMessage = stringProvider.somethingWentWrongError
+                    snackData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
                 )
             }
         }
     }
 
     fun onListDeletedSuccessfully() {
-        emitEffect(PlayListScreenEffect.ShowSuccess(stringProvider.deleteListSuccess))
+        updateState {
+            copy(
+                snackData = SnackData(message = stringProvider.deleteListSuccess, isError = false)
+            )
+        }
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackData = null) }
     }
 
     override fun onFabBottomSheetClicked() {
@@ -102,5 +116,4 @@ class PlayListScreenViewModel @Inject constructor(
     override fun onNavigateToSavedDetails(listId: Int, title: String) {
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
     }
-
 }

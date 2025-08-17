@@ -5,12 +5,12 @@ import usecase.custom_list.custom_list_param.SavedList
 
 data class PlayListScreenUiState(
     val isLoading: Boolean = true,
-    val errorMessage: String? = null,
     val noInternetConnection: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val isListAdded: Boolean = false,
     val showAddBottomSheet: Boolean = false,
-    val lists: List<PlayListUiModel> = emptyList()
+    val lists: List<PlayListUiModel> = emptyList(),
+    val snackData: SnackData? = null
 )
 
 data class SnackData(

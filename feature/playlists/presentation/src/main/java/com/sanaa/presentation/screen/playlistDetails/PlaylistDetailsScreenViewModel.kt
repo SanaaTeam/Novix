@@ -32,7 +32,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
     BaseViewModel<SavedDetailsScreenUiState, PlaylistDetailsScreenEffect>(
-        SavedDetailsScreenUiState(), dispatcher
+        SavedDetailsScreenUiState(noInternetConnection = true), dispatcher
     ),
     PlaylistDetailsInteractionListener {
     private val listId: Int = checkNotNull(savedStateHandle["listId"]) {
@@ -56,10 +56,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         )
     }
 
-    override fun onMediaClick(
-        mediaId: Int,
-        mediaType: MediaTypeUi,
-    ) {
+    override fun onMediaClick(mediaId: Int, mediaType: MediaTypeUi) {
         emitEffect(PlaylistDetailsScreenEffect.NavigateToMediaDetails(mediaId, mediaType))
     }
 
@@ -100,30 +97,41 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
 
         tryToExecute(
             callee = { manageSavedListsUseCase.deleteSavedList(listId) },
-            onSuccess = ::onDeleteConfirmedSuccess,
-            onError = ::onDeleteConfirmedFailed,
+            onSuccess = ::onListDeletionSuccess,
+            onError = ::onListDeletionFailed,
         )
     }
 
-    private fun onDeleteConfirmedSuccess(unit: Unit) {
+    private fun onListDeletionSuccess(unit: Unit) {
         updateState {
             copy(
                 isLoading = false,
-                snackBarData = SnackData(
-                    message = stringProvider.deleteListSuccess,
-                    isError = false
-                )
             )
         }
-        onBackClick()
+        emitEffect(PlaylistDetailsScreenEffect.NavigateBackAfterDelete)
     }
 
-    private fun onDeleteConfirmedFailed(exception: NovixAppException) {
+    private fun onListDeletionFailed(e: NovixAppException) {
         updateState {
-            copy(
-                isLoading = false,
-                snackBarData = SnackData(message = stringProvider.deleteListFailed, isError = true)
-            )
+            when (e) {
+                is NoNetworkException -> copy(
+                    isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = false
+                    )
+                )
+
+                else -> copy(
+                    isLoading = false,
+                    noInternetConnection = false,
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteListFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 
@@ -153,12 +161,20 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun onDataLoadError(e: NovixAppException) {
-        if (e is NoNetworkException) {
-            updateState { copy(isLoading = false, errorMessage = null) }
-        } else {
-            updateState {
-                copy(
+        updateState {
+            when (e) {
+                is NoNetworkException -> copy(
                     isLoading = false,
+                    noInternetConnection = true,
+                    snackBarData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = false
+                    )
+                )
+
+                else -> copy(
+                    isLoading = false,
+                    noInternetConnection = false,
                     snackBarData = SnackData(
                         message = stringProvider.somethingWentWrongError,
                         isError = true
