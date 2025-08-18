@@ -40,5 +40,11 @@ class ScreensRoute {
         val genreName: String,
     ) : ScreenRoute()
 
+    @Serializable
+    data class GenreTvShowsScreenRoute(
+        val genreId: Int,
+        val genreName: String,
+    ) : ScreenRoute()
+
 }
 
