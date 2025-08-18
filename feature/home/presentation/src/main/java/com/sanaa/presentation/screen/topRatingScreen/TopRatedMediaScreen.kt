@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -73,13 +73,14 @@ private fun TopRatedMediaScreenContent(
                 leftContent = {
                     TopBarClickableIcon(
                         icon = painterResource(id = R.drawable.icon_back),
-                        onClick = interactionListener::onBackClick
+                        onClick = interactionListener::onBackClick,
                     )
                 },
                 screenTitle = stringResource(R.string.top_rated),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 12.dp)
+                    .statusBarsPadding()
             )
         },
         snackBarHost = {
@@ -88,7 +89,6 @@ private fun TopRatedMediaScreenContent(
                 onDismiss = interactionListener::onSnackBarDismiss
             )
         },
-        modifier = modifier.systemBarsPadding(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp)

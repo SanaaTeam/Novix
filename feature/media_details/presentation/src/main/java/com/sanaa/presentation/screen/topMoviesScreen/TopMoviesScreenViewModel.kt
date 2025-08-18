@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toState
-import com.sanaa.presentation.navigation.ActorScreenRoute
 import com.sanaa.presentation.navigation.TopMoviesScreenRoute
 import com.sanaa.presentation.screen.actor.ActorScreenEffects
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,7 +11,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import repository.SavedListsStatusProvider
-import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import javax.inject.Inject
 
@@ -63,7 +61,7 @@ class TopMoviesScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            callee = ::fetchActorTopMovies,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
@@ -79,7 +77,7 @@ class TopMoviesScreenViewModel @Inject constructor(
         )
     }
 
-    private suspend fun fetchActorDetails() = coroutineScope {
+    private suspend fun fetchActorTopMovies() = coroutineScope {
         val topMoviesDeferred = async { manageActorDetails.getActorTopMovies(route.actorId) }
 
         val topMovies = topMoviesDeferred.await()

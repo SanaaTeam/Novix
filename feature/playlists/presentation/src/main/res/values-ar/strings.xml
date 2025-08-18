@@ -23,6 +23,6 @@
 
     <string name="removed_from_list_successfully">تمت الإزالة من القائمة بنجاح</string>
     <string name="removed_from_list_failed">فشل في الإزالة من القائمة</string>
-    <string name="the_list_is_empty">القائمة فارغة</string>
+    <string name="the_list_is_empty">"لا توجد عناصر في هذه القائمة!</string>
 
 </resources>

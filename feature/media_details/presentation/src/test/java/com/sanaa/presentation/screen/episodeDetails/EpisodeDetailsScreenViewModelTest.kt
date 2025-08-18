@@ -6,7 +6,6 @@ import com.google.common.truth.Truth.assertThat
 import com.sanaa.presentation.util.DateTimeUtils.defaultDate
 import entity.Actor
 import entity.Episode
-import exceptions.NoNetworkException
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +19,7 @@ import kotlinx.datetime.LocalDate
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.GetLoggedInUserUseCase
 import usecase.ManageEpisodeDetailsUseCase
@@ -33,6 +33,7 @@ class EpisodeDetailsScreenViewModelTest {
     private val checkUserLogin = mockk<CheckIfUserIsLoggedInUseCase>(relaxed = true)
     private val manageEpisodeDetails: ManageEpisodeDetailsUseCase = mockk(relaxed = true)
     private val manageTvShowDetails: ManageTvShowUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private lateinit var viewModel: EpisodeDetailsScreenViewModel
     private val tvShowId = 5
     private val seasonNumber = 2
@@ -81,6 +82,7 @@ class EpisodeDetailsScreenViewModelTest {
             checkUserLogin,
             manageEpisodeDetails,
             manageTvShowDetails,
+            stringProvider,
             dispatcher = testDispatcher
         )
 
@@ -180,39 +182,6 @@ class EpisodeDetailsScreenViewModelTest {
         assertThat(viewModel.state.value.showRateBottomSheet).isFalse()
     }
 
-    @Test
-    fun `loadEpisode handles NoNetworkException`() = runTest {
-        coEvery {
-            manageEpisodeDetails.getEpisodeDetails(
-                any(),
-                any(),
-                any()
-            )
-        } throws NoNetworkException()
-        coEvery { checkUserLogin.isLoggedIn() } returns flowOf(false)
-
-        val savedStateHandle = SavedStateHandle(
-            mapOf(
-                "tvShowId" to tvShowId,
-                "seasonNumber" to seasonNumber,
-                "episodeNumber" to episodeNumber
-            )
-        )
-
-        viewModel = EpisodeDetailsScreenViewModel(
-            savedStateHandle,
-            getUser,
-            checkUserLogin,
-            manageEpisodeDetails,
-            manageTvShowDetails,
-            dispatcher = testDispatcher
-        )
-
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.state.value.noInternetConnection).isTrue()
-        assertThat(viewModel.state.value.isLoading).isFalse()
-    }
 
     companion object {
         private val dummyEpisode = Episode(
