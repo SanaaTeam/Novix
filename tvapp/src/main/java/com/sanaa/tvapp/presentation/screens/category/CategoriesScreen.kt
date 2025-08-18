@@ -20,6 +20,7 @@ import com.sanaa.tvapp.presentation.screens.category.compnents.CategoriesGrid
 import com.sanaa.tvapp.presentation.screens.category.compnents.CategoryTopBar
 import com.sanaa.tvapp.presentation.screens.navigation.LocalAppNavController
 import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreMovieScreenRoute
+import com.sanaa.tvapp.presentation.screens.navigation.ScreensRoute.GenreTvShowsScreenRoute
 
 @Composable
 fun CategoriesScreen(
@@ -41,7 +42,14 @@ fun CategoriesScreen(
                     )
                 }
 
-                is CategoriesScreenEffects.NavigateToTvGenreDetails -> {}
+                is CategoriesScreenEffects.NavigateToTvGenreDetails -> {
+                    navController.navigate(
+                        GenreTvShowsScreenRoute(
+                            genreId = effect.genreId,
+                            genreName = effect.genreName
+                        )
+                    )
+                }
             }
         }
     }
