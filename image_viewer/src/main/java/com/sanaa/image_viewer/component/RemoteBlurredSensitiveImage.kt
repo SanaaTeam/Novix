@@ -70,29 +70,21 @@ fun RemoteBlurredSensitiveImage(
 
     var requestState by rememberSaveable { mutableStateOf(RequestState.LOADING) }
     var isSensitive by rememberSaveable { mutableStateOf(false) }
-    var isImageLoaded by rememberSaveable { mutableStateOf(false) }
+    var previousUrl by rememberSaveable { mutableStateOf<String?>(null) }
     var contentThreshold by rememberSaveable { mutableFloatStateOf(.7f) }
 
-    val imageRequest = remember(isImageLoaded, contentThreshold) {
-        ImageRequest.Builder(context)
-            .data(imageUrl)
-            .isBlurEnable(
-                enabled = isBlurEnabled && isSensitive,
-                context = context,
-                blurValue = blurRadius.value
-            )
-            .allowHardware(false)
-            .build()
-    }
-
-    LaunchedEffect(Unit) {
+    LaunchedEffect(imageUrl) {
         coroutineScope.launch(Dispatchers.IO) {
             try {
-                var bitmap: Bitmap?
+                if (contentThreshold != safeContentThreshold || previousUrl != imageUrl) {
+                    var bitmap: Bitmap?
+                    val request = ImageRequest.Builder(context)
+                        .data(imageUrl)
+                        .allowHardware(false)
+                        .build()
 
-                if (!isImageLoaded || contentThreshold != safeContentThreshold) {
                     val loader = ImageLoader(context)
-                    val response = loader.execute(imageRequest)
+                    val response = loader.execute(request)
                     bitmap = (response.drawable as? BitmapDrawable)?.bitmap
                     bitmap?.let {
                         isSensitive = classifier.isInappropriateImage(
@@ -101,7 +93,8 @@ fun RemoteBlurredSensitiveImage(
                             sensitiveContentThreshold
                         )
                     }
-                    isImageLoaded = true
+
+                    previousUrl = imageUrl
                     contentThreshold = safeContentThreshold
                     requestState = RequestState.SUCCESS
                     onSuccess?.invoke()
@@ -119,7 +112,15 @@ fun RemoteBlurredSensitiveImage(
             RequestState.LOADING -> placeholderContent()
             RequestState.SUCCESS -> {
                 AsyncImage(
-                    model = imageRequest,
+                    model = ImageRequest.Builder(context)
+                        .data(imageUrl)
+                        .isBlurEnable(
+                            enabled = isBlurEnabled && isSensitive,
+                            context = context,
+                            blurValue = blurRadius.value
+                        )
+                        .allowHardware(false)
+                        .build(),
                     contentDescription = contentDescription,
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
