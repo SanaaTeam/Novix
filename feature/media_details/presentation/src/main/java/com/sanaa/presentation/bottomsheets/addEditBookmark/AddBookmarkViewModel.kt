@@ -29,7 +29,7 @@ class AddBookmarkViewModel @Inject constructor(
 
     private fun refreshLists() {
         tryToExecute(
-            callee = { savedListsStatusProvider.refreshLists() },
+            block = { savedListsStatusProvider.refreshLists() },
             onError = {
                 it.printStackTrace()
             }
@@ -59,7 +59,7 @@ class AddBookmarkViewModel @Inject constructor(
         updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
         tryToExecute(
-            callee = { manageSavedListsUseCase.createSavedList(currentTitle) },
+            block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = onAddBookmarkListSuccess(mediaId),
             onError = ::onErrorAccrue
         )
