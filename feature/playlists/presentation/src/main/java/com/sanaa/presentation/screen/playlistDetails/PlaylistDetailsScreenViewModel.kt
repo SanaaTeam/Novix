@@ -44,11 +44,11 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     init {
-        loadItemsInSaved(listId)
         updateState { copy(listId = listId, title = listTitle) }
+        loadItemsInSavedList(listId)
     }
 
-    private fun loadItemsInSaved(listId: Int) {
+    private fun loadItemsInSavedList(listId: Int) {
         updateState { copy(isLoading = true) }
         tryToCollect(
             block = { loadSavedMovies(listId) },
@@ -153,6 +153,10 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
         updateState { copy(snackBarData = null) }
     }
 
+    override fun onRetryClick() {
+        loadItemsInSavedList(listId)
+    }
+
     fun loadSavedMovies(listId: Int): Flow<PagingData<MediaItem>> {
         return createPagingFlow(
             pagingSourceFactory = { createSavedMoviesPagingSource(listId) },
@@ -161,7 +165,7 @@ class PlaylistDetailsScreenViewModel @Inject constructor(
     }
 
     private fun createSavedMoviesPagingSource(listId: Int): PagingSource<Int, Movie> {
-        return BasePagingSource { page ->
+        return BasePagingSource(onError = ::onDataLoadError) { page ->
             manageSavedListItemsUseCase.getItemsInSavedList(listId, page)
         }
     }

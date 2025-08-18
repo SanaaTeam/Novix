@@ -14,4 +14,5 @@ interface PlaylistDetailsInteractionListener {
     fun onDismissListBottomSheetAfterRemoveSuccess(deselectedListIds: List<Int>)
     fun onListDeletedSuccessfully()
     fun onSnackBarDismiss()
+    fun onRetryClick()
 }

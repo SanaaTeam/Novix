@@ -1,5 +1,10 @@
 package com.sanaa.presentation.screen.playlistDetails
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +32,7 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.design_system.component.loading.LoadingIndicator
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
+import com.sanaa.designsystem.design_system.component.screen_state_content.NetworkDisconnectionContact
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
 import com.sanaa.designsystem.design_system.theme.Theme
@@ -38,10 +44,12 @@ import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlistDetails.components.DeleteConfirmationBottomSheet
 import com.sanaa.presentation.screen.playlistDetails.components.EmptyListScreen
 import com.sanaa.presentation.screen.playlistDetails.components.PaginatedMediaListGrid
+import com.sanaa.presentation.screen.playlistDetails.components.RefreshButton
 import com.sanaa.presentation.screen.playlistDetails.state.MediaItem
 import com.sanaa.presentation.screen.playlistDetails.state.MediaTypeUi
 import com.sanaa.presentation.screen.playlistDetails.state.SavedDetailsScreenUiState
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun PlaylistDetailsScreen(
@@ -49,55 +57,14 @@ fun PlaylistDetailsScreen(
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
     val movieList = state.value.movieList.collectAsLazyPagingItems()
-    val context = LocalContext.current
 
-    val navController = LocalNavControllerProvider.current
+    EffectHandler(effect = viewModel.effect)
 
-    val detailsApi: MediaDetailsApi = remember {
-        EntryPointAccessors
-            .fromApplication(context, PlaylistsApiEntryPoint::class.java)
-            .detailsApi()
-    }
-    LaunchedEffect(Unit) {
-        viewModel.effect.collect {
-            when (it) {
-                is PlaylistDetailsScreenEffect.NavigateBackAfterDelete -> {
-                    navController.previousBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("list_deleted", true)
-                    navController.popBackStack()
-                }
-
-                is PlaylistDetailsScreenEffect.NavigateBack -> {
-                    navController.popBackStack()
-                }
-
-                is PlaylistDetailsScreenEffect.NavigateToMediaDetails -> {
-                    detailsApi.launch(
-                        context = navController.context,
-                        id = it.mediaId,
-                        startRoute = StartRoute.MOVIE
-                    )
-                }
-
-                PlaylistDetailsScreenEffect.RefreshList -> {
-                    movieList.refresh()
-                }
-            }
-        }
-
-    }
-    Box(modifier = Modifier.fillMaxSize()) {
-        PlaylistDetailsContent(
-            state = state.value,
-            movieList = movieList,
-            interactionListener = viewModel
-        )
-        AnimatedSnackBarHost(
-            data = state.value.snackBarData,
-            onDismiss = viewModel::onSnackBarDismiss,
-        )
-    }
+    PlaylistDetailsContent(
+        state = state.value,
+        movieList = movieList,
+        interactionListener = viewModel
+    )
 }
 
 
@@ -116,32 +83,54 @@ fun PlaylistDetailsContent(
                 title = state.title.orEmpty(),
                 interactionListener = interactionListener,
             )
-        }
+        },
+        snackBarHost = {
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss,
+            )
+        },
     ) {
+        AnimatedContent(
+            targetState = state.noInternetConnection,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(150, delayMillis = 150))
+                    .togetherWith(fadeOut(animationSpec = tween(150)))
+            },
+        ) { isNoInternetConnection ->
 
-        SavedDetailsListSectionContent(
-            mediaList = movieList,
-            onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
-            onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
-        )
+            if (isNoInternetConnection && (movieList.itemCount == 0)) {
+                NetworkDisconnectionContact(onRetryClick = interactionListener::onRetryClick)
+            } else {
 
-        RemoveFromListBottomSheet(
-            isVisible = state.showRemoveFromListBottomSheet,
-            mediaId = state.selectedMediaToRemove?.id ?: 0,
-            mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),
-            onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
-            onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
-        )
+                SavedDetailsListSectionContent(
+                    mediaList = movieList,
+                    onMediaClick = { interactionListener.onMediaClick(it.id, MediaTypeUi.MOVIE) },
+                    onSaveIconClick = { interactionListener.onDeleteIconClick(it) }
+                )
 
-        DeleteConfirmationBottomSheet(
-            isVisible = state.showListDeletionConfirmationBottomSheet,
-            isLoading = state.isLoading,
-            onDismiss = interactionListener::onDismissConfirmationBottomSheet ,
-            onConfirm = interactionListener::onDeleteListConfirmed
-        )
+                RemoveFromListBottomSheet(
+                    isVisible = state.showRemoveFromListBottomSheet,
+                    mediaId = state.selectedMediaToRemove?.id ?: 0,
+                    mediaTitle = state.selectedMediaToRemove?.title.orEmpty(),
+                    onDismiss = interactionListener::onDismissRemoveFromListBottomSheet,
+                    onDismissAfterRemoveSuccess = interactionListener::onDismissListBottomSheetAfterRemoveSuccess,
+                )
+
+                DeleteConfirmationBottomSheet(
+                    isVisible = state.showListDeletionConfirmationBottomSheet,
+                    isLoading = state.isLoading,
+                    onDismiss = interactionListener::onDismissConfirmationBottomSheet,
+                    onConfirm = interactionListener::onDeleteListConfirmed
+                )
+                if (movieList.loadState.hasError) {
+                    RefreshButton(onRetryClick = interactionListener::onRetryClick)
+                }
+            }
+        }
     }
-}
 
+}
 
 @Composable
 fun PlaylistDetailsTopBar(
@@ -201,7 +190,7 @@ private fun SavedDetailsListSectionContent(
                 EmptyListScreen(
                     messageText = stringResource(R.string.the_list_is_empty),
                     imageRes = myListImg,
-                    )
+                )
             }
 
             else -> {
@@ -221,6 +210,45 @@ private fun SavedDetailsListSectionContent(
                     ) {
                         LoadingIndicator()
                     }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun EffectHandler(
+    effect: Flow<PlaylistDetailsScreenEffect>,
+) {
+    val context = LocalContext.current
+
+    val navController = LocalNavControllerProvider.current
+
+    val detailsApi: MediaDetailsApi = remember {
+        EntryPointAccessors
+            .fromApplication(context, PlaylistsApiEntryPoint::class.java)
+            .detailsApi()
+    }
+    LaunchedEffect(Unit) {
+        effect.collect { effect ->
+            when (effect) {
+                is PlaylistDetailsScreenEffect.NavigateBackAfterDelete -> {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("list_deleted", true)
+                    navController.popBackStack()
+                }
+
+                is PlaylistDetailsScreenEffect.NavigateBack -> {
+                    navController.popBackStack()
+                }
+
+                is PlaylistDetailsScreenEffect.NavigateToMediaDetails -> {
+                    detailsApi.launch(
+                        context = navController.context,
+                        id = effect.mediaId,
+                        startRoute = StartRoute.MOVIE
+                    )
                 }
             }
         }
