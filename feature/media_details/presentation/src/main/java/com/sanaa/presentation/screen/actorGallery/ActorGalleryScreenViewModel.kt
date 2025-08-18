@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.navigation.ActorGalleryScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -29,20 +31,22 @@ class ActorGalleryScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            block = ::fetchActorDetails,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
-            onError = { e ->
-                when (e) {
-                    is exceptions.NoNetworkException ->
-                        updateState { copy(isLoading = false, noInternetConnection = true) }
-
-                    else ->
-                        updateState { copy(isLoading = false, error = e.message) }
-                }
-            }
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        when (e) {
+            is NoNetworkException ->
+                updateState { copy(isLoading = false, noInternetConnection = true) }
+
+            else ->
+                updateState { copy(isLoading = false, error = e.message) }
+        }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
