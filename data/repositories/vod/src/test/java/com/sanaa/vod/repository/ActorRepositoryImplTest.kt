@@ -1,7 +1,6 @@
 package com.sanaa.vod.repository
 
 import com.google.common.truth.Truth.assertThat
-import com.sanaa.preferences.service.LanguageProvider
 import com.sanaa.vod.dataSource.remote.RemoteActorDataSource
 import com.sanaa.vod.dataSource.remote.dto.ImageDto
 import com.sanaa.vod.dataSource.remote.dto.actor.ActorCastCreditDto
@@ -21,7 +20,6 @@ class ActorRepositoryImplTest {
 
     private lateinit var repository: ActorRepositoryImpl
     private val remoteDataSource: RemoteActorDataSource = mockk(relaxed = true)
-    private val languageProvider: LanguageProvider = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
@@ -31,7 +29,6 @@ class ActorRepositoryImplTest {
     @Test
     fun `getActorDetails returns expected Actor`() = runTest {
         coEvery { remoteDataSource.getActorDetails(1) } returns sampleActorDto
-        coEvery { languageProvider.getCurrentLanguage() } returns "en"
 
         val result = repository.getActorDetails(1)
 
