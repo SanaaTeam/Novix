@@ -57,10 +57,10 @@ class MovieDetailsViewModel @Inject constructor(
 
     init {
         fetchMovieDetails(route.movieId)
-        fetchUserRating()
         updateUserLoginState()
         observeSavedStatus()
     }
+
     private fun observeSavedStatus() {
         viewModelScope.launch {
             var previousSavedIds = savedListsStatusProvider.savedIds.value
@@ -284,12 +284,17 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun fetchUserRating() {
-        if (state.value.isUserLoggedIn) {
-            tryToCollect(
-                block = { getCurrentUserRating(route.movieId) },
-                onCollect = { rating -> updateState { copy(imdbRating = rating) } },
-            )
-        }
+        tryToCollect(
+            block = { getCurrentUserRating(route.movieId) },
+            onCollect = { rating ->
+                updateState {
+                    copy(
+                        imdbRating = rating,
+                        showRateButton = rating > 0
+                    )
+                }
+            },
+        )
     }
 
 
@@ -349,9 +354,10 @@ class MovieDetailsViewModel @Inject constructor(
         if (isSendRateSuccess) {
             updateState {
                 copy(
+                    showRateButton = false,
                     snackBarData = SnackData(
                         message = stringProvider.deleteRatingSuccess,
-                        isError = false
+                        isError = false,
                     )
                 )
             }
@@ -376,6 +382,9 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun onCollectLoggedFlag(isLogged: Boolean) {
+        if (isLogged) {
+            fetchUserRating()
+        }
         updateState { copy(isUserLoggedIn = isLogged) }
     }
 

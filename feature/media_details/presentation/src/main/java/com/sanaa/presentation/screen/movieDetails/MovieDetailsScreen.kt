@@ -226,7 +226,8 @@ private fun MovieDetailsScreenContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding(),
-                onSetRateClicked = { interactionListener.onRateMovieClick() }
+                onSetRateClicked = { interactionListener.onRateMovieClick() },
+                isRateButtonVisible = state.showRateButton
             )
         }
     }

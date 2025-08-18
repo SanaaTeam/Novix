@@ -25,6 +25,7 @@ data class MovieDetailsUiState(
     val showAddListBottomSheet: Boolean = false,
     val selectedMediaId: Int? = null,
     val snackBarData: SnackData? = null,
+    val showRateButton: Boolean = true
 ) {
     val hasUserSelectedRate: Boolean
         get() = imdbRating > 0

@@ -18,37 +18,40 @@ import com.sanaa.designsystem.design_system.component.button.PrimaryButton
 import com.sanaa.feature.mediadetails.presentation.R
 
 
-
 @Composable
 fun BottomContainer(
     modifier: Modifier = Modifier,
     trailerUrl: String? = null,
     onPlayTrailerClicked: () -> Unit = {},
-    onSetRateClicked: () -> Unit = {}
+    onSetRateClicked: () -> Unit = {},
+    isRateButtonVisible: Boolean = true
 ) {
-        Row(
-            modifier = modifier
-                .zIndex(1f)
-                .fillMaxWidth()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, Color(0xFF0D0608))
-                    )
+    Row(
+        modifier = modifier
+            .zIndex(1f)
+            .fillMaxWidth()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.Transparent, Color(0xFF0D0608))
                 )
-                .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+            )
+            .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        if (isRateButtonVisible)
             PrimaryButton(
                 text = null,
                 onClick = onSetRateClicked,
                 icon = painterResource(R.drawable.icon_star_outlined)
             )
-            PrimaryButton(
-                text = stringResource(R.string.play_trailer),
-                isEnabled = trailerUrl != null,
-                modifier = Modifier.weight(1f),
-                onClick = onPlayTrailerClicked,
-            )
-        }
+
+
+        PrimaryButton(
+            text = stringResource(R.string.play_trailer),
+            isEnabled = trailerUrl != null,
+            modifier = Modifier.weight(1f),
+            onClick = onPlayTrailerClicked,
+        )
     }
+}
