@@ -37,6 +37,5 @@ fun PlaylistEmptyScreen(
 @Preview
 @Composable
 private fun PlaylistEmptyScreenPrev() {
-    PlaylistEmptyScreen(
-    )
+    PlaylistEmptyScreen()
 }

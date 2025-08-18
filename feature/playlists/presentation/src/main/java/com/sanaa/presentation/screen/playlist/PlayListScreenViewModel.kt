@@ -3,16 +3,20 @@ package com.sanaa.presentation.screen.playlist
 import com.sanaa.presentation.savedBase.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.custom_list.ManageSavedListsUseCase
+import usecase.custom_list.custom_list_param.SavedList
 import javax.inject.Inject
 
 @HiltViewModel
 class PlayListScreenViewModel @Inject constructor(
     private val checkUserLogin: CheckIfUserIsLoggedInUseCase,
-    private val listsStatusProvider: SavedListsStatusProvider,
+    private val manageSavedListsUseCase: ManageSavedListsUseCase,
+    private val stringProvider: VodStringProvider,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) :
     BaseViewModel<PlayListScreenUiState, PlayListScreenEffect>(
@@ -25,48 +29,81 @@ class PlayListScreenViewModel @Inject constructor(
         loadSavedLists()
     }
 
-    fun loadSavedLists() =
+    fun loadSavedLists() {
+        updateState { copy(screenState = PlaylistScreenState.Loading) }
         tryToCollect(
-            callee = { checkUserLogin.isLoggedIn() },
+            block = { checkUserLogin.isLoggedIn() },
             onCollect = { isUserLoggedIn ->
                 updateState { copy(isUserLoggedIn = isUserLoggedIn) }
-                if (isUserLoggedIn) {
-                    tryToCollect(
-                        dispatcher = Dispatchers.IO,
-                        callee = { listsStatusProvider.savedLists },
-                        onCollect = { savedLists ->
-                            updateState {
-                                copy(isLoading = false, lists = savedLists.map {
-                                    it.toUiModel()
-                                })
-                            }
-                        },
-                        onError = { e ->
-                            if (e is NoNetworkException) {
-                                updateState { copy(isLoading = false, noInternetConnection = true) }
-                            } else {
-                                updateState { copy(isLoading = false, errorMessage = e.message) }
-                            }
-                        }
-                    )
+                if (!isUserLoggedIn) {
+                    updateState { copy(screenState = PlaylistScreenState.Guest) }
+                } else {
+                    fetchAndHandleSavedLists()
                 }
             }
         )
-
-    fun onListDeletedSuccessfully() {
-        refreshLists()
-        emitEffect(PlayListScreenEffect.ShowSuccessToDeleteListSnackBar)
     }
 
+    private fun fetchAndHandleSavedLists() {
+        tryToCollect(
+            onStart = { updateState { copy(screenState = PlaylistScreenState.Loading) } },
+            block = { manageSavedListsUseCase.getSavedLists() },
+            onCollect = ::handleSuccessfulFetch,
+            onError = ::handleFetchError
 
-    override fun onFabBottomSheetClicked() {
+        )
+    }
+
+    private fun handleSuccessfulFetch(savedLists: List<SavedList>) {
+        updateState {
+            copy(
+                screenState = if (savedLists.isEmpty()) PlaylistScreenState.Empty else PlaylistScreenState.WithItems,
+                lists = savedLists.map { it.toUiModel() }
+            )
+        }
+    }
+
+    private fun handleFetchError(e: NovixAppException) {
+        updateState {
+            when (e) {
+                is NoNetworkException -> copy(
+                    screenState = PlaylistScreenState.NoInternet,
+                    snackData = SnackData(
+                        message = stringProvider.noInternetConnectionError,
+                        isError = false
+                    )
+                )
+
+                else -> copy(
+                    screenState = PlaylistScreenState.Empty,
+                    snackData = SnackData(
+                        message = stringProvider.somethingWentWrongError,
+                        isError = true
+                    )
+                )
+            }
+        }
+    }
+
+    fun onListDeletedSuccessfully() {
+        updateState {
+            copy(
+                snackData = SnackData(message = stringProvider.deleteListSuccess, isError = false)
+            )
+        }
+    }
+
+    override fun onSnackBarDismiss() {
+        updateState { copy(snackData = null) }
+    }
+
+    override fun onAddNewListClicked() {
         updateState { copy(showAddBottomSheet = true) }
     }
 
-    override fun onButtonLoginClicked() {
+    override fun onNavigateToLogin() {
         emitEffect(PlayListScreenEffect.NavigateToLogin)
     }
-
 
     override fun onDismissAddBottomSheet() {
         updateState { copy(showAddBottomSheet = false) }
@@ -76,17 +113,7 @@ class PlayListScreenViewModel @Inject constructor(
         loadSavedLists()
     }
 
-    override fun onItemListClicked(listId: Int, title: String) {
+    override fun onNavigateToSavedDetails(listId: Int, title: String) {
         emitEffect(PlayListScreenEffect.NavigateToSavedDetails(listId, title))
-    }
-
-
-    private fun refreshLists() {
-        tryToExecute(
-            callee = { listsStatusProvider.refreshLists() },
-            onSuccess = {
-                loadSavedLists()
-            }
-        )
     }
 }

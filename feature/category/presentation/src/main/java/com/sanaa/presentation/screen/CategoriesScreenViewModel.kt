@@ -58,7 +58,7 @@ class CategoriesScreenViewModel @Inject constructor(
     private fun loadTvGenres() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = {
+            block = {
                 getTvGenresUseCase.getTvShowGenres()
             },
             onSuccess = ::onLoadTvGenresSuccess,
@@ -82,7 +82,7 @@ class CategoriesScreenViewModel @Inject constructor(
     private fun loadMovieGenres() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = {
+            block = {
                 getMovieGenresUseCase.getMovieGenres()
             },
             onSuccess = ::onLoadMovieGenresSuccess,

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -24,7 +25,7 @@ fun NovixScaffold(
     backgroundColor: Color = Theme.colors.primary,
     topBar: @Composable () -> Unit = {},
     bottomBar: @Composable () -> Unit = {},
-    snackBarHost :@Composable ()-> Unit ={},
+    snackBarHost: @Composable () -> Unit = {},
     contentBackground: Color = Theme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
     backgroundShapes: @Composable () -> Unit = { BackgroundShapes() },
@@ -34,7 +35,14 @@ fun NovixScaffold(
         modifier = modifier,
         topBar = topBar,
         bottomBar = bottomBar,
-        snackbarHost =snackBarHost,
+        snackbarHost = {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                snackBarHost()
+            }
+        },
         floatingActionButton = floatingActionButton,
         contentColor = contentColor,
         containerColor = backgroundColor,

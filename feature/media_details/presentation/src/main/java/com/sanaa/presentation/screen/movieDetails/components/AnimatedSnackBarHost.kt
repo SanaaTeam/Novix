@@ -14,6 +14,7 @@ import com.sanaa.designsystem.design_system.component.snack_bar.SnackBar
 import com.sanaa.presentation.screen.movieDetails.SnackData
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @Composable

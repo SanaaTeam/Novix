@@ -23,6 +23,6 @@
 
     <string name="removed_from_list_successfully">Removed from list successfully</string>
     <string name="removed_from_list_failed">Failed to remove from list</string>
-    <string name="the_list_is_empty">The list is empty</string>
+    <string name="the_list_is_empty">There is no items for this list!</string>
 
 </resources>

@@ -37,7 +37,7 @@ class LoginViewModel @Inject constructor(
         updateState { copy(isLoading = true, canSubmit = false) }
 
         tryToExecute(
-            callee = login(),
+            block = login(),
             onSuccess = onLoginSuccess(),
             onError = ::onDataLoadError
         )

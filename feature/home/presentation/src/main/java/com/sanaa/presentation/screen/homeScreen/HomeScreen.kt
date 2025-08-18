@@ -9,7 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -67,7 +66,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel(),
 ) {
 
     val state = viewModel.state.collectAsStateWithLifecycle()
@@ -123,15 +122,10 @@ private fun HomeScreenContent(
             }
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                NovixAnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackBarDismiss
-                )
-            }
+            NovixAnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackBarDismiss
+            )
         },
     ) {
 
@@ -263,29 +257,24 @@ private fun HomeScreenContent(
             RefreshButton(onRetryClick = interactionListener::onRetryClick)
         }
 
-
-        if (state.userIsLoggedIn) {
-            state.selectedMediaToSave?.let { mediaItem ->
-                SaveToListBottomSheet(
-                    isVisible = state.showSaveToListBottomSheet,
-                    mediaId = mediaItem.id.toLong(),
-                    onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                    onCreateNewListClick = interactionListener::onCreateNewListClick,
-                )
-            }
-
-            AddBookmarkListBottomSheet(
-                isVisible = state.showAddListBottomSheet,
-                onDismiss = interactionListener::onDismissAddListBottomSheet,
-                mediaId = state.selectedMediaToSave?.id ?: 0
-            )
-        }
-        RequestToLoginBottomSheet(
-            isVisible = state.showLoginBottomSheet,
-            onDismiss = interactionListener::onDismissLoginBottomSheet,
-            onLoginButtonClick = interactionListener::onLoginButtonClick
-        )
     }
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
+
+    AddBookmarkListBottomSheet(
+        isVisible = state.showAddListBottomSheet,
+        onDismiss = interactionListener::onDismissAddListBottomSheet,
+    )
+
+    RequestToLoginBottomSheet(
+        isVisible = state.showLoginBottomSheet,
+        onDismiss = interactionListener::onDismissLoginBottomSheet,
+        onLoginButtonClick = interactionListener::onLoginButtonClick
+    )
 }
 
 @Composable

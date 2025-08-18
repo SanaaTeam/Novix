@@ -1,9 +1,7 @@
 package com.sanaa.presentation.screen.watchingHistory
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,8 +22,6 @@ import com.sanaa.api.MediaDetailsApi
 import com.sanaa.api.StartRoute
 import com.sanaa.designsystem.R
 import com.sanaa.designsystem.design_system.component.animation.FadeInOut150
-import com.sanaa.designsystem.design_system.component.animation.FadeSlideInVertically
-import com.sanaa.designsystem.design_system.component.animation.FadeSlideOutVertically
 import com.sanaa.designsystem.design_system.component.novix_scaffold.NovixScaffold
 import com.sanaa.designsystem.design_system.component.top_bar.TopBar
 import com.sanaa.designsystem.design_system.component.top_bar.TopBarClickableIcon
@@ -49,7 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun WatchingHistoryScreen(
     modifier: Modifier = Modifier,
-    viewModel: WatchingHistoryViewModel = hiltViewModel()
+    viewModel: WatchingHistoryViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -64,10 +59,11 @@ fun WatchingHistoryScreen(
         modifier = modifier,
     )
 }
+
 @Composable
 private fun WatchingHistoryScreenEffectsHandler(
     interactionListener: WatchingHistoryInteractionListener,
-    effects: SharedFlow<WatchingHistoryScreenEffect>
+    effects: SharedFlow<WatchingHistoryScreenEffect>,
 ) {
     val navController = LocalNavControllerProvider.current
     val appContext = LocalContext.current.applicationContext
@@ -90,12 +86,14 @@ private fun WatchingHistoryScreenEffectsHandler(
                         MediaTypeUi.TV_SHOW -> StartRoute.TV_SHOW
                     }
                 )
+
                 is ShowErrorSnackBar -> interactionListener.onShowErrorSnackBar(effect.message)
                 is ShowSuccessSnackBar -> interactionListener.onShowSuccessSnackBar(effect.message)
             }
         }
     }
 }
+
 @Composable
 private fun WatchingHistoryScreenContent(
     state: WatchingHistoryUiState,
@@ -122,15 +120,10 @@ private fun WatchingHistoryScreenContent(
             )
         },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onDismissSnack
-                )
-            }
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onDismissSnack
+            )
         }) {
         Column(
             modifier = Modifier
@@ -182,26 +175,16 @@ private fun WatchingHistoryScreenContent(
         }
     }
 
+    SaveToListBottomSheet(
+        isVisible = state.showSaveToListBottomSheet,
+        mediaId = state.selectedMediaToSave?.id ?: 0,
+        onDismiss = interactionListener::onDismissSaveToListBottomSheet,
+        onCreateNewListClick = interactionListener::onCreateNewListClick,
+    )
 
-
-    state.selectedMediaToSave?.let { mediaItem ->
-        AnimatedVisibility(
-            visible = state.showSaveToListBottomSheet,
-            enter = FadeSlideInVertically,
-            exit = FadeSlideOutVertically
-        ) {
-            SaveToListBottomSheet(
-                isVisible = state.showSaveToListBottomSheet,
-                mediaId = mediaItem.id.toLong(),
-                onDismiss = interactionListener::onDismissSaveToListBottomSheet,
-                onCreateNewListClick = interactionListener::onCreateNewListClick,
-            )
-        }
-    }
 
     AddBookmarkListBottomSheet(
         isVisible = state.showAddListBottomSheet,
         onDismiss = interactionListener::onDismissAddListBottomSheet,
-        mediaId = state.selectedMediaToSave?.id ?: 0
     )
 }

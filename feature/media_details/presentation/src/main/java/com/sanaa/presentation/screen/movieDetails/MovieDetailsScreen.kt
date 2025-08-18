@@ -137,7 +137,6 @@ private fun MovieDetailsEffectsHandler(
     }
 }
 
-
 @Composable
 private fun MovieDetailsScreenContent(
     state: MovieDetailsUiState,
@@ -169,15 +168,10 @@ private fun MovieDetailsScreenContent(
     NovixScaffold(
         backgroundShapes = { BackgroundShapes() },
         snackBarHost = {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                AnimatedSnackBarHost(
-                    data = state.snackBarData,
-                    onDismiss = interactionListener::onSnackDismissRequested
-                )
-            }
+            AnimatedSnackBarHost(
+                data = state.snackBarData,
+                onDismiss = interactionListener::onSnackDismissRequested
+            )
         },
     ) {
         Box(
@@ -190,27 +184,28 @@ private fun MovieDetailsScreenContent(
                 movie = state.movieDetails,
                 modifier = Modifier.background(color = animatedColor)
             )
+
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) {
+            ) { (isLoading, noInternetConnection) ->
                 when {
-                    it -> {
-                        if (state.noInternetConnection) {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryLoadDetails() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                LoadingIndicator()
-                            }
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            LoadingIndicator()
                         }
+                    }
+
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryLoadDetails() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
                     }
 
                     else -> {
@@ -224,6 +219,7 @@ private fun MovieDetailsScreenContent(
                     }
                 }
             }
+
             BottomContainer(
                 onPlayTrailerClicked = { interactionListener.onWatchTrailerClick() },
                 trailerUrl = state.movieDetails.trailerUrl,
@@ -235,6 +231,14 @@ private fun MovieDetailsScreenContent(
         }
     }
 
+    MovieDetailsBottomSheets(state, interactionListener)
+}
+
+@Composable
+private fun MovieDetailsBottomSheets(
+    state: MovieDetailsUiState,
+    interactionListener: MovieDetailsScreenInteractionListener,
+) {
     AnimatedVisibility(
         visible = state.showSaveToListBottomSheet,
         enter = FadeSlideInVertically,
@@ -242,7 +246,7 @@ private fun MovieDetailsScreenContent(
     ) {
         SaveToListBottomSheet(
             isVisible = state.showSaveToListBottomSheet,
-            mediaId = state.selectedMediaId?.toLong() ?: 0,
+            mediaId = state.selectedMediaId ?: 0,
             onDismiss = interactionListener::onDismissSaveToListBottomSheet,
             onCreateNewListClick = interactionListener::onCreateNewListClick,
         )
@@ -256,7 +260,6 @@ private fun MovieDetailsScreenContent(
         AddBookmarkListBottomSheet(
             isVisible = true,
             onDismiss = interactionListener::onDismissAddListBottomSheet,
-            mediaId = state.selectedMediaId ?: 0
         )
     }
 
@@ -291,6 +294,7 @@ private fun MovieDetailsScreenContent(
             LoginPromptType.BOOKMARK -> stringResource(R.string.request_login)
             else -> stringResource(R.string.request_login)
         }
+
         RequestToLoginBottomSheet(
             onDismiss = { interactionListener.onDismissLoginBottomSheet() },
             isVisible = true,

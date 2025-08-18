@@ -12,15 +12,17 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import repository.SavedListsStatusProvider
+import service.VodStringProvider
 import usecase.CheckIfUserIsLoggedInUseCase
+import usecase.custom_list.ManageSavedListsUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class PlayListScreenViewModelTest {
 
     private lateinit var viewModel: PlayListScreenViewModel
-    private val listStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase = mockk(relaxed = true)
+    private val manageSavedListsUseCase: ManageSavedListsUseCase = mockk(relaxed = true)
+    private val stringProvider: VodStringProvider = mockk(relaxed = true)
     private val testDispatcher = StandardTestDispatcher()
 
     @BeforeEach
@@ -31,7 +33,7 @@ class PlayListScreenViewModelTest {
     @Test
     fun `onFabBottomSheetClicked sets showAddBottomSheet true`() = runTest {
         initViewModel()
-        viewModel.onFabBottomSheetClicked()
+        viewModel.onAddNewListClicked()
         assertThat(viewModel.state.value.showAddBottomSheet).isTrue()
     }
 
@@ -47,7 +49,7 @@ class PlayListScreenViewModelTest {
     fun `onButtonLoginClicked emits NavigateToLogin`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onButtonLoginClicked()
+            viewModel.onNavigateToLogin()
             assertThat(awaitItem()).isEqualTo(PlayListScreenEffect.NavigateToLogin)
             cancelAndIgnoreRemainingEvents()
         }
@@ -57,7 +59,7 @@ class PlayListScreenViewModelTest {
     fun `onItemListClicked emits NavigateToSavedDetails`() = runTest {
         initViewModel()
         viewModel.effect.test {
-            viewModel.onItemListClicked(5, "Workout Playlist")
+            viewModel.onNavigateToSavedDetails(5, "Workout Playlist")
             assertThat(awaitItem()).isEqualTo(
                 PlayListScreenEffect.NavigateToSavedDetails(5, "Workout Playlist")
             )
@@ -70,7 +72,9 @@ class PlayListScreenViewModelTest {
     private fun initViewModel() {
         viewModel = PlayListScreenViewModel(
             checkUserLogin = checkIfUserIsLoggedInUseCase,
-            listsStatusProvider = listStatusProvider,
+            dispatcher = testDispatcher,
+            stringProvider = stringProvider,
+            manageSavedListsUseCase = manageSavedListsUseCase,
         )
     }
 }

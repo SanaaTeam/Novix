@@ -1,6 +1,8 @@
 package com.sanaa.presentation.screen.bottomsheet.addEditBookmark
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,7 +38,6 @@ import kotlinx.coroutines.flow.collectLatest
 fun AddBookmarkListBottomSheet(
     isVisible: Boolean,
     onDismiss: () -> Unit,
-    mediaId: Int,
 ) {
     val viewModel: AddBookmarkListViewModel = hiltViewModel()
     val state by viewModel.state.collectAsState()
@@ -45,11 +46,6 @@ fun AddBookmarkListBottomSheet(
         viewModel.resetState()
         onDismiss()
     }
-
-    NovixAnimatedSnackBarHost(
-        data = state.snackBarData,
-        onDismiss = viewModel::onSnackBarDismiss
-    )
 
     LaunchedEffect(Unit) {
         viewModel.effect.collectLatest { effect ->
@@ -64,7 +60,6 @@ fun AddBookmarkListBottomSheet(
         onDismiss = handleDismiss,
         state = state,
         interactionListener = viewModel,
-        mediaId = mediaId
     )
 }
 
@@ -74,7 +69,6 @@ private fun AddBookmarkListBottomSheetContent(
     onDismiss: () -> Unit,
     state: AddBookmarkListUiState,
     interactionListener: AddBookmarksInteractionListeners,
-    mediaId: Int,
 ) {
     BaseBottomSheet(
         isVisible = isVisible,
@@ -124,7 +118,7 @@ private fun AddBookmarkListBottomSheetContent(
 
             PrimaryButton(
                 text = stringResource(R.string.add),
-                onClick = { interactionListener.onAddClicked(mediaId) },
+                onClick = interactionListener::onAddClicked,
                 isEnabled = state.isAddButtonEnabled,
                 isLoading = state.isLoading,
                 modifier = Modifier
@@ -133,6 +127,16 @@ private fun AddBookmarkListBottomSheetContent(
                     .height(48.dp)
             )
         }
+    }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        NovixAnimatedSnackBarHost(
+            data = state.snackBarData,
+            onDismiss = interactionListener::onSnackBarDismiss
+        )
     }
 }
 
@@ -150,10 +154,9 @@ private fun AddBookmarkListBottomSheetEmptyPreview() {
             interactionListener = object : AddBookmarksInteractionListeners {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
-                override fun onAddClicked(mediaId: Int) {}
+                override fun onAddClicked() {}
                 override fun onSnackBarDismiss() {}
             },
-            mediaId = 0
         )
     }
 }
@@ -177,10 +180,9 @@ private fun AddBookmarkListBottomSheetActivePreview() {
             interactionListener = object : AddBookmarksInteractionListeners {
                 override fun onListTitleChanged(title: String) {}
                 override fun resetState() {}
-                override fun onAddClicked(mediaId: Int) {}
+                override fun onAddClicked() {}
                 override fun onSnackBarDismiss() {}
             },
-            mediaId = 0
         )
     }
 }

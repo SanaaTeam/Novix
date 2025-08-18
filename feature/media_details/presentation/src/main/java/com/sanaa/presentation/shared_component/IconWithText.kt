@@ -20,14 +20,15 @@ fun IconWithText(
     iconRes: Int,
     contentDescription: String?,
     text: String,
-    textColor: Color=Theme.colors.body,
-    tint: Color
+    modifier: Modifier = Modifier,
+    textColor: Color = Theme.colors.body,
+    tint: Color,
 ) {
     Row(
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-
         Image(
             painter = painterResource(id = iconRes),
             contentDescription = contentDescription,

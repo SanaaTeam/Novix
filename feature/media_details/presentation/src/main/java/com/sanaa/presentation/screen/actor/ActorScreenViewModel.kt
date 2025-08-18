@@ -1,18 +1,17 @@
 package com.sanaa.presentation.screen.actor
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import com.sanaa.presentation.details_base.BaseViewModel
 import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toState
 import com.sanaa.presentation.navigation.ActorScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
+import exceptions.NoNetworkException
+import exceptions.NovixAppException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import repository.SavedListsStatusProvider
 import usecase.CheckIfUserIsLoggedInUseCase
 import usecase.ManageActorUseCase
 import javax.inject.Inject
@@ -22,7 +21,6 @@ class ActorScreenViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val manageActorDetails: ManageActorUseCase,
     private val checkIfUserIsLoggedInUseCase: CheckIfUserIsLoggedInUseCase,
-    private val savedListsStatusProvider: SavedListsStatusProvider,
 ) : BaseViewModel<ActorScreenUiState, ActorScreenEffects>(
     initialState = ActorScreenUiState(),
     defaultDispatcher = Dispatchers.IO
@@ -34,22 +32,11 @@ class ActorScreenViewModel @Inject constructor(
     init {
         updateUserLoggingStatus()
         loadDetails()
-        viewModelScope.launch {
-            savedListsStatusProvider.savedIds.collect { savedIds ->
-                updateState {
-                    copy(
-                        topMovies = topMovies.map { movie ->
-                            movie.copy(isSaved = savedIds.contains(movie.id))
-                        }
-                    )
-                }
-            }
-        }
     }
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag
         )
     }
@@ -98,15 +85,11 @@ class ActorScreenViewModel @Inject constructor(
             return
         }
 
-        if (movie.isSaved) {
-            savedListsStatusProvider.markItemUnsaved(movie.id)
-        } else {
-            updateState {
-                copy(
-                    showSaveToListBottomSheet = true,
-                    selectedMediaToSave = movie
-                )
-            }
+        updateState {
+            copy(
+                showSaveToListBottomSheet = true,
+                selectedMediaToSave = movie
+            )
         }
     }
 
@@ -130,20 +113,22 @@ class ActorScreenViewModel @Inject constructor(
     private fun loadDetails() {
         updateState { copy(isLoading = true) }
         tryToExecute(
-            callee = ::fetchActorDetails,
+            block = ::fetchActorDetails,
             onSuccess = {
                 updateState { copy(isLoading = false) }
             },
-            onError = { e ->
-                when (e) {
-                    is exceptions.NoNetworkException ->
-                        updateState { copy(isLoading = false, noInternetConnection = true) }
-
-                    else ->
-                        updateState { copy(isLoading = false, error = e.message) }
-                }
-            }
+            onError = ::onErrorAccrue
         )
+    }
+
+    private fun onErrorAccrue(e: NovixAppException) {
+        when (e) {
+            is NoNetworkException ->
+                updateState { copy(isLoading = false, noInternetConnection = true) }
+
+            else ->
+                updateState { copy(isLoading = false, error = e.message) }
+        }
     }
 
     private suspend fun fetchActorDetails() = coroutineScope {
