@@ -1,7 +1,6 @@
 package com.sanaa.novix.di
 
 
-import android.content.Context
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.sanaa.identity.dataSoruce.local.dataStore.PreferencesManager
 import com.sanaa.novix.BuildConfig
@@ -10,7 +9,6 @@ import com.sanaa.vod.network.interceptor.LanguageInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
@@ -54,10 +52,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideLanguageInterceptor(
-        @ApplicationContext context: Context
-    ): LanguageInterceptor {
-        return LanguageInterceptor(context)
+    fun provideLanguageInterceptor(): LanguageInterceptor {
+        return LanguageInterceptor()
     }
 
     @Provides

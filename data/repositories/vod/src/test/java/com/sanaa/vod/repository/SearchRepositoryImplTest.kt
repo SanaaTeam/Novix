@@ -3,8 +3,8 @@ package com.sanaa.vod.repository
 import com.google.common.truth.Truth.assertThat
 import com.sanaa.vod.dataSource.remote.SearchRemoteDataSource
 import com.sanaa.vod.fake.FakeData.MovieSearchResponse
-import com.sanaa.vod.fake.FakeData.tvShowSearchResponse
 import com.sanaa.vod.fake.FakeData.actorSearchResponse
+import com.sanaa.vod.fake.FakeData.tvShowSearchResponse
 import com.sanaa.vod.repository.mapper.history.toEntity
 import com.sanaa.vod.util.exceptions.ConnectionException
 import exceptions.NoNetworkException
@@ -15,16 +15,14 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import repository.SavedListsStatusProvider
 
 class SearchRepositoryImplTest {
     private lateinit var searchRepository: SearchRepositoryImpl
-    private var savedListsStatusProvider: SavedListsStatusProvider = mockk(relaxed = true)
     private val remoteDataSource: SearchRemoteDataSource = mockk(relaxed = true)
 
     @BeforeEach
     fun setUp() {
-        searchRepository = SearchRepositoryImpl(remoteDataSource, savedListsStatusProvider)
+        searchRepository = SearchRepositoryImpl(remoteDataSource)
     }
 
 
