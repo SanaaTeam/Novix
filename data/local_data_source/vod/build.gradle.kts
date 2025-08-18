@@ -11,7 +11,6 @@ dependencies {
 
 
     implementation(projects.data.repositories.vod)
-    implementation(projects.preferences)
     implementation(projects.domain.vod)
 
     // Room dependencies

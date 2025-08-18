@@ -1,14 +1,16 @@
 package com.sanaa.presentation.screen.playlistDetails.components
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -21,8 +23,7 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.playlists.presentation.R
 
 @Composable
-fun EmptyListScreen(
-    @DrawableRes imageRes: Int,
+fun EmptyItemsScreen(
     messageText: String,
 ) {
     NovixScaffold {
@@ -33,10 +34,13 @@ fun EmptyListScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically)
         ) {
             Image(
-                painter = painterResource(imageRes),
-                contentDescription = null
+                painter = painterResource(R.drawable.no_items),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(bottom = 12.dp)
+                    .size(128.dp),
+                contentScale = ContentScale.Fit
             )
-
             AppText(
                 text = messageText,
                 style = Theme.textStyle.body.small,
@@ -44,7 +48,6 @@ fun EmptyListScreen(
                 textAlign = TextAlign.Center
             )
         }
-
     }
 }
 
@@ -56,14 +59,9 @@ private fun EmptyListScreenLightPreview() {
     NovixTheme(
         isDarkMode = isDarkTheme
     ) {
-        val myListImg = if (isDarkTheme) {
-            R.drawable.no_items
-        } else {
-            R.drawable.no_items
-        }
-        EmptyListScreen(
+
+        EmptyItemsScreen(
             messageText = stringResource(R.string.the_list_is_empty),
-            imageRes = myListImg,
         )
     }
 }
@@ -75,14 +73,9 @@ private fun EmptyListScreenDarkPreview() {
     NovixTheme(
         isDarkMode = isDarkTheme
     ) {
-        val myListImg = if (isDarkTheme) {
-            R.drawable.no_items
-        } else {
-            R.drawable.no_items
-        }
-        EmptyListScreen(
+
+        EmptyItemsScreen(
             messageText = stringResource(R.string.the_list_is_empty),
-            imageRes = myListImg
         )
     }
 

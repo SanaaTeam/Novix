@@ -162,26 +162,26 @@ private fun ActorScreenContent(
             ActorScreenTopBar(animatedColor, interactionListener)
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { noContentYet ->
+            ) { (isLoading, noInternetConnection) ->
                 when {
-                    noContentYet -> {
-                        if (state.noInternetConnection) {
-                            NetworkDisconnectionContact(
-                                onRetryClick = { interactionListener.onRetryClicked() },
-                                modifier = Modifier.fillMaxSize(),
-                                useDarkTheme = LocalThemeProvider.current
-                            )
-                        } else {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center,
-                            ) {
-                                LoadingIndicator()
-                            }
+                    isLoading -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            LoadingIndicator()
                         }
+                    }
+
+                    noInternetConnection -> {
+                        NetworkDisconnectionContact(
+                            onRetryClick = { interactionListener.onRetryClicked() },
+                            modifier = Modifier.fillMaxSize(),
+                            useDarkTheme = LocalThemeProvider.current
+                        )
                     }
 
                     else -> {

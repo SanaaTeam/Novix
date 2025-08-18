@@ -12,7 +12,6 @@ android {
 dependencies {
     implementation(projects.domain.identity)
     implementation(projects.data.remoteDataSource.identity)
-    implementation(projects.preferences)
     implementation(libs.retrofit)
 
     implementation(libs.ktor.serialization.kotlinx.json)

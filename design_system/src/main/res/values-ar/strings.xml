@@ -35,7 +35,7 @@
     <string name="appearance">المظهر</string>
     <string name="language">اللغة</string>
     <string name="arabic">العربية</string>
-    <string name="english">الإنكليزية</string>
+    <string name="english">الإنجليزية</string>
     <string name="strict_restriction">صارم</string>
     <string name="moderate_restriction">معتدل</string>
     <string name="unrestricted">إيقاف</string>
@@ -62,6 +62,6 @@
     <string name="remove_from_list_caption">اضغط على القائمة لازالة الفلم منها</string>
     <string name="remove">أزالة</string>
 
-    <string name="eng">الإنكليزية</string>
+    <string name="eng">الإنجليزية</string>
     <string name="ar">العربية</string>
 </resources>

@@ -68,7 +68,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TvShowScreen(
-    viewModel: TvShowScreenViewModel = hiltViewModel()
+    viewModel: TvShowScreenViewModel = hiltViewModel(),
 ) {
     val submitRatingSuccessMsg = stringResource(R.string.submit_rating_successfully)
     val submitRatingFailedMsg = stringResource(R.string.submit_rating_failed)
@@ -154,7 +154,7 @@ fun TvShowScreen(
 
 @Composable
 fun TvShowScreenContent(
-    interactionListener: TvShowScreenInteractionListener, state: TvShowScreenUiState
+    interactionListener: TvShowScreenInteractionListener, state: TvShowScreenUiState,
 ) {
 
     val scrollState = rememberScrollState()
@@ -185,93 +185,97 @@ fun TvShowScreenContent(
             )
 
             AnimatedContent(
-                targetState = state.isLoading || state.noInternetConnection,
+                targetState = Pair(state.isLoading, state.noInternetConnection),
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
-            ) { shouldShowLoadingOrError ->
-                if (shouldShowLoadingOrError) {
-                    if (state.noInternetConnection) {
+            ) { (isLoading, noInternetConnection) ->
+                when {
+                    isLoading -> {
+                        LoadingIndicator(
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
+
+                    noInternetConnection -> {
                         NetworkDisconnectionContact(
                             onRetryClick = { interactionListener.onRetryLoadDetails() },
                             modifier = Modifier.fillMaxSize(),
                             useDarkTheme = LocalThemeProvider.current
                         )
-                    } else {
-                        LoadingIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
                     }
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .verticalScroll(
-                                state = scrollState
-                            )
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(bottom = 104.dp)
+
+                    else -> {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .verticalScroll(
+                                    state = scrollState
+                                )
                         ) {
-                            TvShowHeaderSection(
-                                title = state.tvShow.title,
-                                rating = state.tvShow.rating,
-                                season = stringResource(
-                                    R.string.seasons_count, state.tvShow.seasonsCount
-                                ),
-                                airDate = state.tvShow.releaseDate,
-                                imagesUrl = state.images,
-                                genres = state.tvShow.genres,
-                                onReviewClicked = {
-                                    interactionListener.onViewReviewsClicked(
-                                        state.tvShow.id
-                                    )
-                                },
-                                onGenreClicked = { genre ->
-                                    interactionListener.onGenreClicked(
-                                        genre
-                                    )
-                                })
+                            Column(
+                                modifier = Modifier.padding(bottom = 104.dp)
+                            ) {
+                                TvShowHeaderSection(
+                                    title = state.tvShow.title,
+                                    rating = state.tvShow.rating,
+                                    season = stringResource(
+                                        R.string.seasons_count, state.tvShow.seasonsCount
+                                    ),
+                                    airDate = state.tvShow.releaseDate,
+                                    imagesUrl = state.images,
+                                    genres = state.tvShow.genres,
+                                    onReviewClicked = {
+                                        interactionListener.onViewReviewsClicked(
+                                            state.tvShow.id
+                                        )
+                                    },
+                                    onGenreClicked = { genre ->
+                                        interactionListener.onGenreClicked(
+                                            genre
+                                        )
+                                    })
 
-                            if (state.tvShow.overview.isNotEmpty()) {
-                                OverviewSection(
-                                    onReadMore = {},
-                                    titleResId = R.string.overview,
-                                    overview = state.tvShow.overview,
-                                    modifier = Modifier.padding(
-                                        start = 16.dp, end = 16.dp, top = 16.dp
+                                if (state.tvShow.overview.isNotEmpty()) {
+                                    OverviewSection(
+                                        onReadMore = {},
+                                        titleResId = R.string.overview,
+                                        overview = state.tvShow.overview,
+                                        modifier = Modifier.padding(
+                                            start = 16.dp, end = 16.dp, top = 16.dp
+                                        )
                                     )
+                                }
+
+                                if (state.cast.isNotEmpty())
+                                    CastComponent(
+                                        casts = state.cast,
+                                        onActorClicked = interactionListener::onActorClicked,
+                                    )
+                                SeasonTab(
+                                    onClick = interactionListener::onSeasonNumberClicked,
+                                    seasonCounts = state.tvShow.seasonsCount,
+                                    currentSeason = state.selectedSeason,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
                                 )
-                            }
+                                AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
+                                    if (isLoadingEpisodes) {
+                                        Column(
+                                            modifier = Modifier
+                                                .heightIn(min = 300.dp)
+                                                .fillMaxWidth(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
 
-                            if (state.cast.isNotEmpty())
-                                CastComponent(
-                                    casts = state.cast,
-                                    onActorClicked = interactionListener::onActorClicked,
-                                )
-                            SeasonTab(
-                                onClick = interactionListener::onSeasonNumberClicked,
-                                seasonCounts = state.tvShow.seasonsCount,
-                                currentSeason = state.selectedSeason,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
-                            AnimatedContent(state.isLoadingEpisodes) { isLoadingEpisodes ->
-                                if (isLoadingEpisodes) {
-                                    Column(
-                                        modifier = Modifier
-                                            .heightIn(min = 300.dp)
-                                            .fillMaxWidth(),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center
-
-                                    ) {
-                                        LoadingIndicator()
+                                        ) {
+                                            LoadingIndicator()
+                                        }
+                                    } else {
+                                        EpisodesContent(
+                                            episodes = state.season.episodes,
+                                            tvShowId = state.tvShow.id,
+                                            onEpisodeClick = interactionListener::onEpisodeClicked
+                                        )
                                     }
-                                } else {
-                                    EpisodesContent(
-                                        episodes = state.season.episodes,
-                                        tvShowId = state.tvShow.id,
-                                        onEpisodeClick = interactionListener::onEpisodeClicked
-                                    )
                                 }
                             }
                         }

@@ -12,6 +12,7 @@ import com.sanaa.presentation.model.MovieUiModel
 import com.sanaa.presentation.model.mapper.toActorUiModel
 import com.sanaa.presentation.model.mapper.toHistory
 import com.sanaa.presentation.model.mapper.toState
+import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import entity.Movie
 import entity.User
@@ -196,6 +197,7 @@ class MovieDetailsViewModel @Inject constructor(
                     )
                 }
             }
+
             else -> {
                 updateState {
                     copy(
@@ -290,10 +292,24 @@ class MovieDetailsViewModel @Inject constructor(
             rating = rating.toFloat()
         )
         if (isSendRateSuccess) {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingSuccess, isError = false)) }
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingSuccess,
+                        isError = false
+                    )
+                )
+            }
             updateState { copy(showRateBottomSheet = false) }
         } else {
-            updateState { copy(snackBarData = SnackData(message = stringProvider.deleteRatingFailed, isError = true)) }
+            updateState {
+                copy(
+                    snackBarData = SnackData(
+                        message = stringProvider.deleteRatingFailed,
+                        isError = true
+                    )
+                )
+            }
         }
     }
 

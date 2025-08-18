@@ -234,7 +234,7 @@ class WatchingHistoryViewModelTest {
             viewModel.state.test {
                 val state = awaitItem()
                 assertThat(state.tvShowSelectedGenreId).isEqualTo(newGenreId)
-                assertThat(state.tvShowList).hasSize(0)
+                assertThat(state.tvShowList).hasSize(1)
                 cancelAndConsumeRemainingEvents()
             }
         }
