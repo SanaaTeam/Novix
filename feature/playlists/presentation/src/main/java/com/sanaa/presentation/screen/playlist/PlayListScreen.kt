@@ -21,6 +21,7 @@ import com.sanaa.presentation.screen.playlist.componants.AnimatedSnackBarHost
 import com.sanaa.presentation.screen.playlist.componants.PlayListGuestScreen
 import com.sanaa.presentation.screen.playlist.componants.PlaylistEmptyScreen
 import dagger.hilt.android.EntryPointAccessors
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -35,26 +36,24 @@ fun PlaylistScreen(viewModel: PlayListScreenViewModel = hiltViewModel()) {
                     backStackEntry?.savedStateHandle?.get<Boolean>("list_deleted") == true
                 if (deleted) {
                     viewModel.onListDeletedSuccessfully()
-                    backStackEntry?.savedStateHandle?.remove<Boolean>("list_deleted")
+                    backStackEntry.savedStateHandle.remove<Boolean>("list_deleted")
                 }
             }
     }
 
     PlaylistEffectsHandler(
-        viewModel = viewModel,
+        effect = viewModel.effect,
     )
-
 
     PlaylistScreenContent(
         interactionListener = viewModel,
         state = state.value
     )
-
 }
 
 @Composable
 private fun PlaylistEffectsHandler(
-    viewModel: PlayListScreenViewModel,
+    effect: Flow<PlayListScreenEffect>,
 ) {
     val navController = LocalNavControllerProvider.current
     val context = LocalContext.current
@@ -66,7 +65,7 @@ private fun PlaylistEffectsHandler(
     val launcher = launchAuthActivityForResult()
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collectLatest { effect ->
+       effect.collectLatest { effect ->
             when (effect) {
                 PlayListScreenEffect.NavigateToLogin -> {
                     launcher.launch(authApi.getLaunchIntent(context))
@@ -114,7 +113,7 @@ private fun PlaylistScreenContent(
 
                 PlaylistScreenState.Empty -> {
                     PlaylistEmptyScreen(
-                        onFabClick = { interactionListener.onFabBottomSheetClicked() },
+                        onFabClick = { interactionListener.onAddNewListClicked() },
                         isVisible = state.showAddBottomSheet,
                         onDismissAddBottomSheet = { interactionListener.onDismissAddBottomSheet() },
                     )

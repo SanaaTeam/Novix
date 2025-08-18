@@ -46,13 +46,11 @@ class PlayListScreenViewModel @Inject constructor(
 
     private fun fetchAndHandleSavedLists() {
         tryToCollect(
+            onStart = { updateState { copy(screenState = PlaylistScreenState.Loading) } },
             block = { manageSavedListsUseCase.getSavedLists() },
-            onCollect = { savedLists ->
-                handleSuccessfulFetch(savedLists)
-            },
-            onError = { e ->
-                handleFetchError(e)
-            }
+            onCollect = ::handleSuccessfulFetch,
+            onError = ::handleFetchError
+            
         )
     }
 
@@ -99,7 +97,7 @@ class PlayListScreenViewModel @Inject constructor(
         updateState { copy(snackData = null) }
     }
 
-    override fun onFabBottomSheetClicked() {
+    override fun onAddNewListClicked() {
         updateState { copy(showAddBottomSheet = true) }
     }
 

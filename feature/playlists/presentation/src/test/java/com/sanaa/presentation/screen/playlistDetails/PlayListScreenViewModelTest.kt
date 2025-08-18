@@ -33,7 +33,7 @@ class PlayListScreenViewModelTest {
     @Test
     fun `onFabBottomSheetClicked sets showAddBottomSheet true`() = runTest {
         initViewModel()
-        viewModel.onFabBottomSheetClicked()
+        viewModel.onAddNewListClicked()
         assertThat(viewModel.state.value.showAddBottomSheet).isTrue()
     }
 

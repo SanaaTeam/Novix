@@ -1,7 +1,7 @@
 package com.sanaa.presentation.screen.playlist
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -37,33 +37,38 @@ fun PlayListWithItemsScreen(
         floatingActionButton = {
             FabButton(
                 icon = painterResource(id = com.sanaa.designsystem.R.drawable.icon_plus),
-                onClick = interactionListener::onFabBottomSheetClicked,
+                onClick = interactionListener::onAddNewListClicked,
                 isLoading = false,
                 isEnabled = true
             )
         }
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(bottom = 24.dp)) {
-                items(lists) { list ->
-                    MyListItem(
-                        onItemClick = { interactionListener.onNavigateToSavedDetails(list.id, list.title) },
-                        title = list.title,
-                        count = list.mediaCount
-                    )
-                }
+            items(lists) { list ->
+                MyListItem(
+                    onItemClick = {
+                        interactionListener.onNavigateToSavedDetails(
+                            list.id,
+                            list.title
+                        )
+                    },
+                    title = list.title,
+                    count = list.mediaCount
+                )
             }
         }
-        if (isUserLoggedIn)
+
+        if (isUserLoggedIn) {
             AddBookmarkListBottomSheet(
                 isVisible = isVisible,
                 onDismiss = interactionListener::onDismissAddBottomSheet,
-                mediaId = 0
             )
+        }
     }
 }

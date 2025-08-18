@@ -37,19 +37,12 @@ class AddBookmarkListViewModel @Inject constructor(
         updateState { copy(listTitle = "", isLoading = false) }
     }
 
-    override fun onAddClicked(mediaId: Int) {
+    override fun onAddClicked() {
         if (!state.value.isAddButtonEnabled) return
 
         updateState { copy(isLoading = true) }
         val currentTitle = state.value.listTitle.trim()
-//        try{
-//            viewModelScope.launch(dispatcher) {
-//                manageSavedListsUseCase.createSavedList(currentTitle)
-//                onAddBookmarkListSuccess()
-//            }
-//        } catch (exception: NovixAppException) {
-//            onErrorAccrue(exception)
-//        }
+
         tryToExecute(
             block = { manageSavedListsUseCase.createSavedList(currentTitle) },
             onSuccess = ::onAddBookmarkListSuccess,

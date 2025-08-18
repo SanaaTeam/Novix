@@ -6,7 +6,7 @@ interface PlayListScreenInteractionListener: PlayListItemsInteractionListener {
     fun onSnackBarDismiss()
 }
 interface PlayListItemsInteractionListener{
-    fun onFabBottomSheetClicked()
+    fun onAddNewListClicked()
     fun onDismissAddBottomSheet()
     fun onNavigateToSavedDetails(listId: Int, title: String)
 }
