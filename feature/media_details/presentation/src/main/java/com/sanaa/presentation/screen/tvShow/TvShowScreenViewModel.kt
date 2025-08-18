@@ -131,13 +131,6 @@ class TvShowScreenViewModel @Inject constructor(
         }
     }
 
-    override fun onSaveTvShowClicked() {
-        val isLoggIn = state.value.isUserLoggedIn
-        if (!isLoggIn) {
-            promptLogin(LoginPromptType.BOOKMARK)
-        }
-    }
-
     override fun onGenreClicked(genre: GenreUiModel) {
         emitEffect(TvShowScreenEffects.NavigateToMovieCategoriesScreen(genre))
     }

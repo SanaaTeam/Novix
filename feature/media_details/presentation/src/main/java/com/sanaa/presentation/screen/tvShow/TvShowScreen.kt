@@ -178,11 +178,6 @@ fun TvShowScreenContent(
                         onClick = interactionListener::onBackClicked
 
                     )
-                }, rightContent = {
-                    TopBarClickableIcon(
-                        icon = painterResource(R.drawable.icon_save),
-                        onClick = interactionListener::onSaveTvShowClicked
-                    )
                 }, modifier = Modifier
                     .background(animatedColor)
                     .systemBarsPadding()
