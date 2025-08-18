@@ -43,7 +43,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     fun updateUserLoggingStatus() {
         tryToCollect(
-            callee = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
+            block = { checkIfUserIsLoggedInUseCase.isLoggedIn() },
             onCollect = ::onCollectLoggedFlag,
         )
     }
@@ -105,7 +105,7 @@ class GenreMoviesViewModel @Inject constructor(
 
     private fun fetchMovies(categoryId: Int) {
         tryToCollect(
-            callee = { loadMoviesByCategory(categoryId) },
+            block = { loadMoviesByCategory(categoryId) },
             onCollect = onCollectMovies(),
             onError = ::onFetchMoviesFailed
         )
@@ -124,19 +124,22 @@ class GenreMoviesViewModel @Inject constructor(
     }
 
     private fun onFetchMoviesFailed(exception: Exception) {
-        if (exception is NoNetworkException) {
-            updateState {
+        when (exception) {
+            is NoNetworkException -> updateState {
                 copy(
                     noInternetConnection = true,
                     isLoading = false,
                     error = null
                 )
             }
-        } else {
-            updateState { copy(error = exception.message, isLoading = false) }
+            else -> updateState {
+                copy(
+                    error = exception.message,
+                    isLoading = false
+                )
+            }
         }
     }
-
 
     private fun createMoviesPagingDataSource(
         genreId: Int,
