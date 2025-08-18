@@ -6,8 +6,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
-import io.mockk.mockk
-import io.mockk.verify
 import org.junit.Rule
 import org.junit.Test
 
