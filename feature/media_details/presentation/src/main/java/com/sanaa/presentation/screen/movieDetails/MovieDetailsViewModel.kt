@@ -133,7 +133,6 @@ class MovieDetailsViewModel @Inject constructor(
         updateState {
             copy(
                 isLoading = true,
-                errorMessage = null,
                 noInternetConnection = false
             )
         }
@@ -161,10 +160,9 @@ class MovieDetailsViewModel @Inject constructor(
     private fun onShowRateBottomSheetFailed(exception: NovixAppException) {
         updateState {
             copy(
-                errorMessage = exception.message,
                 showRateBottomSheet = false,
                 snackBarData = SnackData(
-                    message = exception.message ?: stringProvider.somethingWentWrongError,
+                    message = stringProvider.somethingWentWrongError,
                     isError = true
                 )
             )
@@ -172,13 +170,13 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
     private fun fetchMovieDetails(movieId: Int) {
-        updateState { copy(isLoading = true, errorMessage = null) }
+        updateState { copy(isLoading = true) }
         tryToExecute(
             block = {
                 loadMovieDetails(movieId)
             },
             onSuccess = {
-                updateState { copy(isLoading = false, errorMessage = null) }
+                updateState { copy(isLoading = false) }
             },
             onError = ::onFetchMovieDetailsFailed,
             dispatcher = defaultDispatcher
@@ -192,7 +190,7 @@ class MovieDetailsViewModel @Inject constructor(
                     copy(
                         noInternetConnection = true,
                         isLoading = false,
-                        errorMessage = null
+                        isError = true,
                     )
                 }
             }
@@ -201,16 +199,8 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState {
                     copy(
                         isLoading = false,
-                        errorMessage = exception.message,
-                        noInternetConnection = false
-                    )
-                }
-                updateState {
-                    copy(
-                        snackBarData = SnackData(
-                            message = exception.message ?: stringProvider.somethingWentWrongError,
-                            isError = true
-                        )
+                        isError = true,
+                        noInternetConnection = false,
                     )
                 }
             }
@@ -237,7 +227,7 @@ class MovieDetailsViewModel @Inject constructor(
                 updateState {
                     copy(
                         imdbRating = rating,
-                        showRateButton = rating > 0
+                        showRateButton = rating == 0
                     )
                 }
             },

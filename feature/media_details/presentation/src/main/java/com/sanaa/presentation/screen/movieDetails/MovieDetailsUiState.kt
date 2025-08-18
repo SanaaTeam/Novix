@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flowOf
 data class MovieDetailsUiState(
     val isLoading: Boolean = true,
     val movieDetails: MovieUiModel = MovieUiModel(),
-    val errorMessage: String? = null,
+    val isError: Boolean = false,
     val similarMovies: Flow<PagingData<MovieUiModel>> = flowOf(PagingData.empty()),
     val cast: List<ActorUiModel> = emptyList(),
     val imagesUrls: List<String> = emptyList(),
