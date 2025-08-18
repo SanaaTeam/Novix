@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.actor.screen
+package com.sanaa.presentation.screen.topShowsScreen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -37,14 +37,11 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import com.sanaa.feature.mediadetails.presentation.R
 import com.sanaa.image_viewer.component.RemoteBlurredSensitiveImage
 import com.sanaa.presentation.api.LocalSafeContentThreshold
-import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.api.LocalThemeProvider
+import com.sanaa.presentation.model.TvShowUiState
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.TvShowScreenRoute
-import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
-import com.sanaa.presentation.screen.actor.ActorScreenViewModel
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -52,8 +49,8 @@ import dagger.hilt.android.EntryPointAccessors
 import com.sanaa.designsystem.R as designR
 
 @Composable
-fun TopShowsScreen(
-    viewModel: ActorScreenViewModel = hiltViewModel(),
+fun TopTvShowsScreen(
+    viewModel: TopTvShowsScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -82,8 +79,8 @@ fun TopShowsScreen(
 
 @Composable
 private fun TopShowsContent(
-    state: ActorScreenUiState,
-    interactionListener: ActorsScreenInteractionListener,
+    state: TopTvShowsScreenUiState,
+    interactionListener: TopTvShowsScreenInteractionListener,
     navController: NavHostController,
 ) {
     NovixScaffold(backgroundShapes = { BackgroundShapes() }) {
@@ -139,7 +136,7 @@ private fun TopShowsContent(
 
 @Composable
 private fun TvShowList(
-    state: ActorScreenUiState,
+    state: TopTvShowsScreenUiState,
     navController: NavHostController,
 ) {
     LazyVerticalGrid(

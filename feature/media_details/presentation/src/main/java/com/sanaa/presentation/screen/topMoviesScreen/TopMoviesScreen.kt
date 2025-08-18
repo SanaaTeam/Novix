@@ -1,4 +1,4 @@
-package com.sanaa.presentation.screen.actor.screen
+package com.sanaa.presentation.screen.topMoviesScreen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
@@ -43,9 +43,6 @@ import com.sanaa.presentation.bottomsheets.saveToListBottomsheet.SaveToListBotto
 import com.sanaa.presentation.navigation.DetailsApiEntryPoint
 import com.sanaa.presentation.navigation.LocalNavControllerProvider
 import com.sanaa.presentation.navigation.MovieDetailsScreenRoute
-import com.sanaa.presentation.screen.actor.ActorScreenUiState
-import com.sanaa.presentation.screen.actor.ActorScreenViewModel
-import com.sanaa.presentation.screen.actor.ActorsScreenInteractionListener
 import com.sanaa.presentation.shared_component.RemoteImagePlaceholder
 import com.sanaa.presentation.shared_component.RequestToLoginBottomSheet
 import com.sanaa.presentation.shared_component.cards.MediaPosterCard
@@ -55,7 +52,7 @@ import com.sanaa.designsystem.R as designR
 
 @Composable
 fun TopMoviesScreen(
-    viewModel: ActorScreenViewModel = hiltViewModel(),
+    viewModel: TopMoviesScreenViewModel = hiltViewModel(),
 ) {
     val navController = LocalNavControllerProvider.current
     BackHandler(onBack = { navController.popBackStack() })
@@ -103,9 +100,9 @@ fun TopMoviesScreen(
 
 @Composable
 private fun TopMoviesContent(
-    state: ActorScreenUiState,
+    state: TopMoviesScreenUiState,
     modifier: Modifier = Modifier,
-    interactionListener: ActorsScreenInteractionListener,
+    interactionListener: TopMoviesScreenInteractionListener,
     navController: NavController,
 ) {
     NovixScaffold(
