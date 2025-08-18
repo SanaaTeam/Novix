@@ -18,39 +18,44 @@ import com.sanaa.designsystem.design_system.theme.Theme
 import kotlin.math.sqrt
 
 @Composable
-fun BackgroundShapes() {
-    Box {
+fun BackgroundShapes(modifier: Modifier = Modifier) {
+    Box(modifier) {
         GlowingEquilateralTriangle(
             modifier = Modifier.fillMaxSize(),
+            color = Theme.colors.primary.copy(alpha = 0.08f),
+            offsetYFraction = -0.10f,
             offsetXFraction = -0.35f,
-            sideFraction = 1f,
-            blurRadius = 1000f
+            sideFraction = 1.025f,
+            blurRadius = 150f
         )
 
         GlowingEquilateralTriangle(
             modifier = Modifier.fillMaxSize(),
-            color = Theme.colors.secondary.copy(alpha = 0.07f),
-            offsetXFraction = 0.75f,
-            offsetYFraction = 0.25f,
+            color = Theme.colors.secondary.copy(alpha = 0.05f),
+            offsetXFraction = 0.50f,
+            offsetYFraction = 0.15f,
             rotationDegrees = 180f,
-            sideFraction = 1.8f
+            sideFraction = 1.025f,
+            blurRadius = 150f
+
         )
 
         GlowingEquilateralTriangle(
             modifier = Modifier.fillMaxSize(),
-            color = Theme.colors.primary.copy(alpha = 0.03f),
-            offsetXFraction = -0.25f,
+            color = Theme.colors.primary.copy(alpha = 0.02f),
+            offsetXFraction = -0.35f,
             offsetYFraction = 0.5f,
-            sideFraction = 1f,
-            blurRadius = 900f
+            sideFraction = 1.025f,
+            blurRadius = 150f
         )
 
         GlowingEquilateralTriangle(
             modifier = Modifier.fillMaxSize(),
             color = Theme.colors.primary.copy(alpha = 0.01f),
-            offsetXFraction = 0.75f,
+            blurRadius = 150f,
+            sideFraction = 1.025f,
+            offsetXFraction = 0.50f,
             offsetYFraction = 0.75f,
-            rotationDegrees = 180f
         )
     }
 }
