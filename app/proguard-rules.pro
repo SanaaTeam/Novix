@@ -155,9 +155,7 @@
 -keepclassmembers class com.sanaa.presentation.api.navigation.** { *; }
 -keep @kotlinx.serialization.Serializable class * { *; }
 -keepattributes *Annotation*
--keep class com.sanaa.presentation.api.navigation.MainScreenRoute { *; }
 -keep class com.sanaa.presentation.app.navigation.TrendingMoviesScreenRoute { *; }
 -keep class com.sanaa.presentation.app.navigation.TrendingTvShowsScreenRoute { *; }
 -keep class com.sanaa.presentation.app.navigation.TrendingPeopleScreenRoute { *; }
 -keep class com.sanaa.presentation.app.navigation.TopRatedMediaScreenRoute { *; }
--keep class com.sanaa.presentation.api.navigation.ContinueWatchingMediaScreenRoute { *; }

@@ -65,7 +65,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MovieDetailsScreen(
-    viewModel: MovieDetailsViewModel = hiltViewModel()
+    viewModel: MovieDetailsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -195,29 +195,33 @@ private fun MovieDetailsScreenContent(
                 modifier = Modifier.align(Alignment.Center),
                 contentAlignment = Alignment.Center
             ) {
-                if (it) {
-                    if (state.noInternetConnection) {
-                        NetworkDisconnectionContact(
-                            onRetryClick = { interactionListener.onRetryLoadDetails() },
-                            modifier = Modifier.fillMaxSize(),
-                            useDarkTheme = LocalThemeProvider.current
-                        )
-                    } else {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            LoadingIndicator()
+                when {
+                    it -> {
+                        if (state.noInternetConnection) {
+                            NetworkDisconnectionContact(
+                                onRetryClick = { interactionListener.onRetryLoadDetails() },
+                                modifier = Modifier.fillMaxSize(),
+                                useDarkTheme = LocalThemeProvider.current
+                            )
+                        } else {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                LoadingIndicator()
+                            }
                         }
                     }
-                } else {
-                    MovieDetailsGridContent(
-                        state = state,
-                        pagedSimilarMovies = pagedSimilarMovies,
-                        locale = locale,
-                        interactionListener = interactionListener,
-                        lazyState = lazyState,
-                    )
+
+                    else -> {
+                        MovieDetailsGridContent(
+                            state = state,
+                            pagedSimilarMovies = pagedSimilarMovies,
+                            locale = locale,
+                            interactionListener = interactionListener,
+                            lazyState = lazyState,
+                        )
+                    }
                 }
             }
             BottomContainer(
